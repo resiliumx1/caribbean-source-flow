@@ -31,7 +31,7 @@ export function StoreHeader() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/shop" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-serif font-bold text-lg">M</span>
             </div>
@@ -60,7 +60,13 @@ export function StoreHeader() {
               Bundles
             </Link>
             <Link
-              to="/"
+              to="/retreats"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+            >
+              Retreats
+            </Link>
+            <Link
+              to="/wholesale"
               className="text-sm font-medium text-foreground hover:text-primary transition-colors"
             >
               Wholesale
@@ -155,7 +161,14 @@ export function StoreHeader() {
                   <hr className="my-2" />
 
                   <Link
-                    to="/"
+                    to="/retreats"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    Retreats
+                  </Link>
+                  <Link
+                    to="/wholesale"
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >

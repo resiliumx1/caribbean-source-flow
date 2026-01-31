@@ -4,10 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { StoreProvider } from "@/lib/store-context";
-import Index from "./pages/Index";
+import TrinityHomepage from "./pages/TrinityHomepage";
+import Wholesale from "./pages/Wholesale";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import Retreats from "./pages/Retreats";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,11 +22,13 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<TrinityHomepage />} />
+            <Route path="/wholesale" element={<Wholesale />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/shop/category/:categorySlug" element={<Shop />} />
             <Route path="/shop/:slug" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/retreats" element={<Retreats />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
