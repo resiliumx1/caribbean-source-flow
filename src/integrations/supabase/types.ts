@@ -95,6 +95,47 @@ export type Database = {
           },
         ]
       }
+      concierge_conversations: {
+        Row: {
+          created_at: string
+          escalated: boolean
+          escalation_reason: string | null
+          id: string
+          messages: Json
+          session_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          escalated?: boolean
+          escalation_reason?: string | null
+          id?: string
+          messages?: Json
+          session_id: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          escalated?: boolean
+          escalation_reason?: string | null
+          id?: string
+          messages?: Json
+          session_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concierge_conversations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       delivery_zones: {
         Row: {
           areas: string[]
@@ -452,6 +493,186 @@ export type Database = {
         }
         Relationships: []
       }
+      retreat_bookings: {
+        Row: {
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          deposit_usd: number
+          end_date: string
+          guest_count: number
+          id: string
+          payment_status: string
+          retreat_date_id: string | null
+          retreat_type_id: string
+          special_requests: string | null
+          start_date: string
+          status: string
+          total_usd: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          deposit_usd: number
+          end_date: string
+          guest_count?: number
+          id?: string
+          payment_status?: string
+          retreat_date_id?: string | null
+          retreat_type_id: string
+          special_requests?: string | null
+          start_date: string
+          status?: string
+          total_usd: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          deposit_usd?: number
+          end_date?: string
+          guest_count?: number
+          id?: string
+          payment_status?: string
+          retreat_date_id?: string | null
+          retreat_type_id?: string
+          special_requests?: string | null
+          start_date?: string
+          status?: string
+          total_usd?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retreat_bookings_retreat_date_id_fkey"
+            columns: ["retreat_date_id"]
+            isOneToOne: false
+            referencedRelation: "retreat_dates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "retreat_bookings_retreat_type_id_fkey"
+            columns: ["retreat_type_id"]
+            isOneToOne: false
+            referencedRelation: "retreat_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "retreat_bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      retreat_dates: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          is_published: boolean
+          price_override_usd: number | null
+          retreat_type_id: string
+          spots_booked: number
+          spots_total: number
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          is_published?: boolean
+          price_override_usd?: number | null
+          retreat_type_id: string
+          spots_booked?: number
+          spots_total?: number
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          is_published?: boolean
+          price_override_usd?: number | null
+          retreat_type_id?: string
+          spots_booked?: number
+          spots_total?: number
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retreat_dates_retreat_type_id_fkey"
+            columns: ["retreat_type_id"]
+            isOneToOne: false
+            referencedRelation: "retreat_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      retreat_types: {
+        Row: {
+          base_price_usd: number
+          created_at: string
+          description: string | null
+          id: string
+          includes: Json | null
+          is_active: boolean
+          max_capacity: number
+          max_nights: number
+          min_nights: number
+          name: string
+          price_type: string
+          slug: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          base_price_usd: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          includes?: Json | null
+          is_active?: boolean
+          max_capacity?: number
+          max_nights?: number
+          min_nights?: number
+          name: string
+          price_type: string
+          slug: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          base_price_usd?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          includes?: Json | null
+          is_active?: boolean
+          max_capacity?: number
+          max_nights?: number
+          min_nights?: number
+          name?: string
+          price_type?: string
+          slug?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       shipping_rates: {
         Row: {
           base_rate_usd: number
@@ -485,6 +706,33 @@ export type Database = {
         }
         Relationships: []
       }
+      solo_pricing_tiers: {
+        Row: {
+          created_at: string
+          discount_percent: number
+          id: string
+          max_nights: number
+          min_nights: number
+          nightly_rate_usd: number
+        }
+        Insert: {
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          max_nights: number
+          min_nights: number
+          nightly_rate_usd: number
+        }
+        Update: {
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          max_nights?: number
+          min_nights?: number
+          nightly_rate_usd?: number
+        }
+        Relationships: []
+      }
       store_settings: {
         Row: {
           id: string
@@ -503,6 +751,45 @@ export type Database = {
           key?: string
           updated_at?: string | null
           value?: Json
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          audience: string
+          author_name: string
+          author_title: string | null
+          condition_addressed: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_featured: boolean
+          quote: string
+          results: string | null
+        }
+        Insert: {
+          audience: string
+          author_name: string
+          author_title?: string | null
+          condition_addressed?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          quote: string
+          results?: string | null
+        }
+        Update: {
+          audience?: string
+          author_name?: string
+          author_title?: string | null
+          condition_addressed?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          quote?: string
+          results?: string | null
         }
         Relationships: []
       }
