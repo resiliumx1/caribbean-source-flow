@@ -1,0 +1,173 @@
+import { Link } from "react-router-dom";
+import { Mail, Phone, MapPin, MessageCircle, Instagram, Facebook } from "lucide-react";
+import { useStore } from "@/lib/store-context";
+
+export function StoreFooter() {
+  const { storeEmail, storePhone, whatsappNumber } = useStore();
+
+  return (
+    <footer className="bg-primary text-primary-foreground">
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid md:grid-cols-4 gap-12">
+          {/* Brand */}
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-gold flex items-center justify-center">
+                <span className="text-primary font-serif font-bold text-lg">M</span>
+              </div>
+              <div>
+                <h3 className="font-serif font-bold leading-tight">Mount Kailash</h3>
+                <p className="text-xs text-primary-foreground/70">Rejuvenation Centre</p>
+              </div>
+            </div>
+            <p className="text-sm text-primary-foreground/80 mb-4">
+              Wildcrafted herbal remedies from the rainforests of St. Lucia. 
+              21+ years of bush medicine tradition.
+            </p>
+          </div>
+
+          {/* Shop */}
+          <div>
+            <h4 className="font-serif font-semibold mb-4">Shop</h4>
+            <ul className="space-y-2 text-sm text-primary-foreground/80">
+              <li>
+                <Link to="/shop" className="hover:text-gold transition-colors">
+                  All Products
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop/category/liquid-tinctures" className="hover:text-gold transition-colors">
+                  Liquid Tinctures
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop/category/capsules-powders" className="hover:text-gold transition-colors">
+                  Capsules & Powders
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop/category/traditional-teas" className="hover:text-gold transition-colors">
+                  Traditional Teas
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop/category/curated-bundles" className="hover:text-gold transition-colors">
+                  Curated Bundles
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop/category/raw-herbs" className="hover:text-gold transition-colors">
+                  Raw Herbs
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Information */}
+          <div>
+            <h4 className="font-serif font-semibold mb-4">Information</h4>
+            <ul className="space-y-2 text-sm text-primary-foreground/80">
+              <li>
+                <Link to="/" className="hover:text-gold transition-colors">
+                  Wholesale Inquiries
+                </Link>
+              </li>
+              <li>
+                <Link to="/shipping" className="hover:text-gold transition-colors">
+                  Shipping & Delivery
+                </Link>
+              </li>
+              <li>
+                <Link to="/returns" className="hover:text-gold transition-colors">
+                  Returns Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="hover:text-gold transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="hover:text-gold transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="font-serif font-semibold mb-4">Contact</h4>
+            <ul className="space-y-3 text-sm text-primary-foreground/80">
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-gold" />
+                <a href={`mailto:${storeEmail}`} className="hover:text-gold transition-colors">
+                  {storeEmail}
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-gold" />
+                <a href={`tel:${storePhone}`} className="hover:text-gold transition-colors">
+                  {storePhone}
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <MessageCircle className="w-4 h-4 text-gold" />
+                <a
+                  href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gold transition-colors"
+                >
+                  WhatsApp
+                </a>
+              </li>
+              <li className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-gold mt-0.5" />
+                <span>
+                  Mount Kailash Rejuvenation Centre
+                  <br />
+                  St. Lucia, West Indies
+                </span>
+              </li>
+            </ul>
+
+            {/* Social */}
+            <div className="flex gap-3 mt-4">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-gold hover:text-primary transition-colors"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-gold hover:text-primary transition-colors"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="border-t border-primary-foreground/20 mt-12 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/60">
+            <p>
+              © {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.
+            </p>
+            <p className="text-xs max-w-xl text-center md:text-right">
+              These statements have not been evaluated by the FDA. These products are not 
+              intended to diagnose, treat, cure, or prevent any disease. Traditional use 
+              based on St. Lucian bush medicine practices.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
