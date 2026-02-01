@@ -1,19 +1,18 @@
 import { Link } from "react-router-dom";
-import { ShoppingBag, MessageCircle, Truck } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductPlaceholder } from "./ProductPlaceholder";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/hooks/use-products";
-import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { formatPrice, formatPriceBoth, isLocalVisitor, whatsappNumber } = useStore();
+  const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
 
@@ -47,10 +46,6 @@ export function ProductCard({ product }: ProductCardProps) {
     }
   };
 
-  const whatsappMessage = encodeURIComponent(
-    `Hi, I'm interested in ${product.name}. Is this in stock?`
-  );
-
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -59,19 +54,19 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link to={`/shop/${product.slug}`} className="group">
-      <div className="product-card overflow-hidden">
-        {/* Image */}
-        <div className="relative aspect-[3/4] overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
+        {/* Image Container */}
+        <div className="relative aspect-square bg-muted/30 p-6 flex items-center justify-center">
           {product.image_url ? (
             <img
               src={product.image_url}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <ProductPlaceholder 
-              productType={product.product_type} 
-              className="w-full h-full"
+            <ProductPlaceholder
+              productType={product.product_type}
+              className="w-32 h-48"
             />
           )}
 
@@ -79,7 +74,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.badge && (
             <Badge
               variant={getBadgeVariant(product.badge)}
-              className="absolute top-3 left-3"
+              className="absolute top-4 left-4"
             >
               {getBadgeLabel(product.badge)}
             </Badge>
@@ -87,70 +82,40 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* Stock status */}
           {product.stock_status !== "in_stock" && (
-            <Badge
-              variant="destructive"
-              className="absolute top-3 right-3"
-            >
-              {product.stock_status === "out_of_stock" ? "Out of Stock" : 
-               product.stock_status === "low_stock" ? "Low Stock" : "Pre-order"}
+            <Badge variant="destructive" className="absolute top-4 right-4">
+              {product.stock_status === "out_of_stock"
+                ? "Out of Stock"
+                : product.stock_status === "low_stock"
+                ? "Low Stock"
+                : "Pre-order"}
             </Badge>
           )}
-
-          {/* Quick actions overlay */}
-          <div className="product-card-overlay">
-            <div className="flex gap-2">
-              <Button
-                variant="hero"
-                size="sm"
-                onClick={handleAddToCart}
-                disabled={isAddingToCart || product.stock_status === "out_of_stock"}
-                className="gap-2"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                Add to Cart
-              </Button>
-              <Button
-                variant="heroSecondary"
-                size="icon"
-                asChild
-                onClick={(e) => e.stopPropagation()}
-              >
-                <a
-                  href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                </a>
-              </Button>
-            </div>
-          </div>
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-5">
           {/* Category */}
           {product.product_categories && (
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">
               {product.product_categories.name}
             </p>
           )}
 
           {/* Name */}
-          <h3 className="font-serif font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+          <h3 className="font-serif text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-1">
             {product.name}
           </h3>
 
           {/* Short description */}
           {product.short_description && (
-            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
               {product.short_description}
             </p>
           )}
 
           {/* Price */}
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-lg font-semibold text-foreground">
+          <div className="flex items-baseline gap-2 mb-4">
+            <span className="text-lg font-bold text-foreground">
               {prices.primary}
             </span>
             <span className="text-sm text-muted-foreground">
@@ -158,13 +123,16 @@ export function ProductCard({ product }: ProductCardProps) {
             </span>
           </div>
 
-          {/* Local delivery indicator */}
-          {isLocalVisitor && (
-            <div className="mt-2 flex items-center gap-1 text-xs text-success">
-              <Truck className="w-3 h-3" />
-              <span>Local delivery available</span>
-            </div>
-          )}
+          {/* Add to Cart Button */}
+          <Button
+            variant="default"
+            className="w-full gap-2"
+            onClick={handleAddToCart}
+            disabled={isAddingToCart || product.stock_status === "out_of_stock"}
+          >
+            <ShoppingBag className="w-4 h-4" />
+            Add to Cart
+          </Button>
         </div>
       </div>
     </Link>
