@@ -1,122 +1,64 @@
 
 
-# Product Image Upload System
+# Create Admin Account
 
 ## Overview
 
-Build a complete admin system for uploading and managing product images. This includes backend storage infrastructure and a protected admin interface.
+Set up an admin user account for `yannick23d@gmail.com` so you can access the admin dashboard and upload product images.
 
-## What Will Be Built
+## What Will Be Done
 
-### 1. Storage Infrastructure
-- Create a `product-images` storage bucket for hosting product photos
-- Set up proper RLS policies so only admins can upload/delete images
-- Anyone can view images (public read access for the storefront)
+### 1. Create User Account
+- Add your email to Supabase Auth with a secure password
+- This creates the authentication record
 
-### 2. Admin Dashboard
-- New protected route at `/admin/products`
-- Authentication gate - only users with admin privileges can access
-- Product list with image upload capability for each product
-- Image preview, upload progress, and delete functionality
-
-### 3. Login/Authentication Flow
-- Login page for admin access (since no auth pages exist currently)
-- Session management to maintain admin access
-- Redirect non-admin users away from admin routes
-
----
+### 2. Set Admin Privileges
+- The `handle_new_user()` trigger will automatically create a profile record
+- Update the profile to set `is_admin = true`
 
 ## Technical Details
 
-### Database Migration
+### Step 1: Create Auth User via Edge Function
 
-```text
-+---------------------------+
-|   product-images bucket   |
-+---------------------------+
-| - Public read access      |
-| - Admin-only write access |
-+---------------------------+
+Since we cannot create users directly from SQL, we will create a simple edge function that uses the Supabase Admin API to create your account.
+
+**New File: `supabase/functions/create-admin-user/index.ts`**
+- Uses the service role key to create a user via `supabase.auth.admin.createUser()`
+- Sets a temporary password that you can change later
+- Only runs once to bootstrap the first admin
+
+### Step 2: Set Admin Flag
+
+After the user is created, run a migration to set the admin flag:
+
+```sql
+UPDATE profiles 
+SET is_admin = true 
+WHERE email = 'yannick23d@gmail.com';
 ```
 
-Create storage bucket with the following SQL:
-- Insert bucket into `storage.buckets` with public access enabled
-- RLS policy for SELECT: allow all (public images)
-- RLS policy for INSERT/UPDATE/DELETE: only users where `is_admin()` returns true
+### Step 3: Login Credentials
 
-### New Files to Create
+After setup, you will log in with:
+- **Email**: `yannick23d@gmail.com`
+- **Password**: A temporary password (I will provide it after creation)
 
-| File | Purpose |
-|------|---------|
-| `src/pages/AdminLogin.tsx` | Admin login form |
-| `src/pages/AdminProducts.tsx` | Product management dashboard |
-| `src/components/admin/ProductImageUpload.tsx` | Image upload component with drag-drop |
-| `src/components/admin/AdminLayout.tsx` | Protected layout wrapper |
-| `src/hooks/use-admin.ts` | Admin auth state and permission checks |
-
-### Route Updates
-
-Add to `App.tsx`:
-- `/admin/login` - Admin login page
-- `/admin/products` - Product management (protected)
-
-### Image Upload Flow
-
-```text
-User selects image
-       |
-       v
-Validate file (type, size)
-       |
-       v
-Upload to storage bucket
-       |
-       v
-Get public URL
-       |
-       v
-Update product.image_url in database
-       |
-       v
-Invalidate product queries (refresh UI)
-```
-
-### Security Measures
-
-1. **Authentication Required**: Admin pages require login
-2. **Role Verification**: Check `is_admin()` function on server side via RLS
-3. **Storage Protection**: Only admins can upload/modify images via RLS policies
-4. **File Validation**: Client-side checks for file type (images only) and size limits
+You should change your password after first login via Supabase Auth's password reset flow.
 
 ---
 
 ## Implementation Steps
 
-### Phase 1: Backend Setup
-1. Create `product-images` storage bucket via SQL migration
-2. Add RLS policies for public read, admin-only write
-
-### Phase 2: Authentication
-3. Create `use-admin.ts` hook for auth state management
-4. Create `AdminLogin.tsx` page with email/password form
-5. Create `AdminLayout.tsx` wrapper that checks admin status
-
-### Phase 3: Product Management UI
-6. Create `ProductImageUpload.tsx` component
-7. Create `AdminProducts.tsx` page with product list and upload UI
-8. Update `App.tsx` with new admin routes
-
-### Phase 4: Integration
-9. Wire up image upload to update product records
-10. Ensure product cards and detail pages display uploaded images
+1. Create edge function `create-admin-user` that creates the user with your email
+2. Deploy and call the edge function once to create your account
+3. Run SQL migration to set `is_admin = true` on your profile
+4. Test login at `/admin/login`
 
 ---
 
-## Expected Result
+## Security Notes
 
-After implementation, you will be able to:
-- Navigate to `/admin/login` and sign in with an admin account
-- See a list of all products with their current images (or placeholders)
-- Click "Upload Image" on any product to add/replace its photo
-- Images automatically appear on the shop page and product detail pages
+- The edge function will be a one-time bootstrap tool
+- After your account is created, the function can be removed
+- Your password will be set securely and you'll be prompted to change it
 
