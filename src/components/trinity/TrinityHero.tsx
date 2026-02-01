@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import heroImage from "@/assets/hero-farm.jpg";
 
 interface TrinityDoor {
   icon: React.ReactNode;
@@ -72,13 +71,17 @@ export function TrinityHero() {
 
   return (
     <section className="relative min-h-screen flex flex-col">
-      {/* Background Image with Overlay */}
+      {/* Background Video with Overlay */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={heroImage}
-          alt="Mount Kailash volcanic rainforest"
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
           className="w-full h-full object-cover"
-        />
+        >
+          <source src="/videos/hero-background.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 via-foreground/60 to-foreground/80" />
       </div>
 
