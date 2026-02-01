@@ -1,19 +1,26 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { ShopHero } from "@/components/store/ShopHero";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { CategoryNav } from "@/components/store/CategoryNav";
 import { ProductCard } from "@/components/store/ProductCard";
+import { QuickViewModal } from "@/components/store/QuickViewModal";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
-import { useProducts, useCategories } from "@/hooks/use-products";
+import { useProducts, useCategories, type Product } from "@/hooks/use-products";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Shop() {
   const { categorySlug } = useParams();
   const { data: products, isLoading } = useProducts(categorySlug);
   const { data: categories } = useCategories();
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
   const currentCategory = categories?.find((c) => c.slug === categorySlug);
+
+  const handleQuickView = (product: Product) => {
+    setQuickViewProduct(product);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -57,7 +64,11 @@ export default function Shop() {
         ) : products && products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard 
+                key={product.id} 
+                product={product}
+                onQuickView={handleQuickView}
+              />
             ))}
           </div>
         ) : (
@@ -71,6 +82,13 @@ export default function Shop() {
 
       <StoreFooter />
       <WhatsAppFloat />
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        open={!!quickViewProduct}
+        onOpenChange={(open) => !open && setQuickViewProduct(null)}
+      />
     </div>
   );
 }
