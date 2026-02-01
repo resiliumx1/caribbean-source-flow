@@ -373,6 +373,7 @@ export type Database = {
       }
       products: {
         Row: {
+          additional_images: string[] | null
           badge: string | null
           category_id: string | null
           contraindications: string | null
@@ -398,6 +399,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          additional_images?: string[] | null
           badge?: string | null
           category_id?: string | null
           contraindications?: string | null
@@ -423,6 +425,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          additional_images?: string[] | null
           badge?: string | null
           category_id?: string | null
           contraindications?: string | null

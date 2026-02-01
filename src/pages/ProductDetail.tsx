@@ -4,7 +4,7 @@ import { useState } from "react";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
-import { ProductPlaceholder } from "@/components/store/ProductPlaceholder";
+import { ProductGallery } from "@/components/store/ProductGallery";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -84,23 +84,17 @@ export default function ProductDetail() {
         </Link>
 
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          {/* Image */}
+          {/* Image Gallery */}
           <div className="relative">
-            {product.image_url ? (
-              <img
-                src={product.image_url}
-                alt={product.name}
-                className="w-full aspect-square object-cover rounded-xl"
-              />
-            ) : (
-              <ProductPlaceholder
-                productType={product.product_type}
-                className="w-full aspect-square rounded-xl"
-              />
-            )}
+            <ProductGallery
+              primaryImage={product.image_url}
+              additionalImages={(product as any).additional_images ?? []}
+              productType={product.product_type}
+              productName={product.name}
+            />
 
             {/* Badges */}
-            <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+            <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
               {product.badge && (
                 <Badge variant="default">
                   {product.badge === "best_seller" ? "Best Seller" :
