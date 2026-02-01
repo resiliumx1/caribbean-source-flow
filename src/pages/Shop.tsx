@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { StoreHeader } from "@/components/store/StoreHeader";
-import { StoreHero } from "@/components/store/StoreHero";
+import { ShopHero } from "@/components/store/ShopHero";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { CategoryNav } from "@/components/store/CategoryNav";
 import { ProductCard } from "@/components/store/ProductCard";
@@ -18,53 +18,44 @@ export default function Shop() {
   return (
     <div className="min-h-screen bg-background">
       <StoreHeader />
-      
-      {!categorySlug && <StoreHero />}
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Category header */}
+      {/* Hero Section */}
+      <ShopHero />
+
+      <main className="container mx-auto px-4 py-12">
+        {/* Category header when viewing specific category */}
         {categorySlug && currentCategory && (
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-2">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-3">
               {currentCategory.name}
-            </h1>
+            </h2>
             {currentCategory.description && (
-              <p className="text-muted-foreground max-w-2xl">
+              <p className="text-muted-foreground max-w-2xl mx-auto">
                 {currentCategory.description}
               </p>
             )}
           </div>
         )}
 
-        {!categorySlug && (
-          <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-2">
-              The Dispensary
-            </h2>
-            <p className="text-muted-foreground">
-              Explore our complete collection of wildcrafted St. Lucian botanicals
-            </p>
-          </div>
-        )}
-
         {/* Category navigation */}
-        <div className="mb-8">
+        <div className="mb-12">
           <CategoryNav />
         </div>
 
-        {/* Product grid */}
+        {/* Product grid - 3 columns on desktop */}
         {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="space-y-3">
-                <Skeleton className="aspect-[3/4] rounded-xl" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="space-y-4">
+                <Skeleton className="aspect-square rounded-2xl" />
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-10 w-full rounded-md" />
               </div>
             ))}
           </div>
         ) : products && products.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
