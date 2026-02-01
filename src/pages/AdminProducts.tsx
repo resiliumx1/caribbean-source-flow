@@ -136,7 +136,8 @@ export default function AdminProducts() {
                   productId={product.id}
                   productName={product.name}
                   currentImageUrl={product.image_url}
-                  onUploadComplete={(url) => handleImageUpdate(product.id, url)}
+                  additionalImages={(product as any).additional_images ?? []}
+                  onUploadComplete={() => handleImageUpdate(product.id, "")}
                 />
               </CardContent>
             </Card>
