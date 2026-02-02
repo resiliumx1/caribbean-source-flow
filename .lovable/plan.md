@@ -1,282 +1,213 @@
 
 
-# Enhanced Product & Retreat Experience
+# Product Catalog Enhancement & Navigation Update
 
 ## Overview
 
-This plan covers six interconnected features to improve the shopping and retreat experience:
-
-1. **Full-width product photos** on the product detail page
-2. **Retreat image management** - admin backend for retreat photos
-3. **Retreat gallery** on the public retreats page
-4. **Bundle promotions** - special badges/callouts for bundles
-5. **Herb size variants** with quantity discounts up to 1lb
-6. **Image zoom** - beautiful lightbox-style zoom on product photos
+This plan addresses three key areas:
+1. Add missing tea products, tea bundles, and the Virility Male Balance Tonic
+2. Reclassify "Liquid Tinctures" category to "Tonics"
+3. Highlight the Bundles link in navigation to entice customers
 
 ---
 
-## Feature 1: Full-Width Product Photos
+## Part 1: Missing Products to Add
 
-Currently the product detail page uses a 50/50 grid. We will make the image column larger and more prominent.
+Based on scraping the live website, the following products are missing from the database:
 
-### Changes
+### Missing Teas (2 products)
 
-| File | Description |
-|------|-------------|
-| `src/pages/ProductDetail.tsx` | Change grid from `md:grid-cols-2` to asymmetric layout |
-| `src/components/store/ProductGallery.tsx` | Make images larger with sticky positioning |
+| Product | Price USD | Description |
+|---------|-----------|-------------|
+| Virili-Tea | $33 | Potent herbal blend with Sensitive, Sarsaparilla, Medina, Anamu, Chaney Roots, Sea Moss, Stinging Nettle, Bay Leaf, and Cinnamon Leaf for energy, stamina, and libido |
+| Urinary Cleanse Tea | $35 | Blend of Stinging Nettle, Seed Under Leaf, and Spanish Needle for urinary tract health and detoxification |
 
-### Layout Change
+### Missing Tea Bundles (2 bundles)
 
-```text
-Current:        New:
-+------+------+ +--------+----+
-| 50%  | 50%  | |  60%   |40% |
-|      |      | |        |    |
-| IMG  | INFO | |  IMG   |INFO|
-|      |      | |(sticky)|    |
-+------+------+ +--------+----+
-```
+| Bundle | Price USD | Contents |
+|--------|-----------|----------|
+| Queenly Tea Bundle | $99 | Moon Cycle Tea + Digestive Rescue Tea + Restful Tea (feminine wellness) |
+| Kingly Tea Bundle | $99 | Urinary Cleanse + Medina Tea + Virili-Tea (male reproductive health) |
 
-The image will:
-- Take 60% of the width on desktop
-- Be sticky (stays visible while scrolling product details)
-- Have larger thumbnails positioned vertically on the left side
+### Missing Bundles (2 bundles)
 
----
+| Bundle | Price USD | Contents |
+|--------|-----------|----------|
+| Detox Bundle | $147 | Cassia Alata + Colax + Dewormer + Blood Detox (deep cleansing) |
+| Super Male Vitality Package | $290 | Full body detox and vital rebalancing for men, includes Prosperity |
 
-## Feature 2: Retreat Image Management (Admin Backend)
+### Missing Tonic Product (1 product)
 
-Create an admin page similar to product image management for uploading retreat photos.
-
-### Database Changes
-
-Create new table `retreat_gallery`:
-
-| Column | Type | Description |
-|--------|------|-------------|
-| id | uuid | Primary key |
-| title | text | Optional caption |
-| description | text | Optional description |
-| image_url | text | Storage URL |
-| category | text | "experience", "accommodation", "nature", "ceremony" |
-| display_order | integer | Sorting |
-| is_featured | boolean | Show in hero section |
-| created_at | timestamp | Auto |
-
-### New Files
-
-| File | Purpose |
-|------|---------|
-| `src/pages/AdminRetreats.tsx` | Admin page for retreat gallery management |
-| `src/components/admin/RetreatImageUpload.tsx` | Upload component for retreat images |
-| `src/hooks/use-retreat-gallery.ts` | Query hooks for retreat gallery |
-
-### Admin Route
-
-Add `/admin/retreats` to the admin layout navigation.
+| Product | Price USD | Description |
+|---------|-----------|-------------|
+| Virility Male Balance Tonic | $150 | Proprietary herbal blend with Sensitiva, Sarsaparilla, Medina, Anamu, Chaney Roots, Sea Moss, Stinging Nettle, Caribbean Bay Leaf for male vitality and endurance (PRE-ORDER) |
 
 ---
 
-## Feature 3: Retreat Gallery (Public Page)
+## Part 2: Category Reclassification
 
-Add a visual gallery section to the Retreats page showcasing the retreat experience.
+### Current State
+- Category name: "Liquid Tinctures"
+- Category slug: "liquid-tinctures"
 
-### New Component
+### After Update
+- Category name: "Tonics"
+- Category slug: "tonics"
 
-| File | Purpose |
-|------|---------|
-| `src/components/retreats/RetreatGallery.tsx` | Masonry/grid gallery with lightbox |
-
-### Features
-- Masonry-style grid layout
-- Categories: Experience, Accommodation, Nature, Ceremony
-- Clickable images open in lightbox with zoom
-- Caption/description overlay on hover
-
-### Integration
-
-Add `<RetreatGallery />` to `src/pages/Retreats.tsx` between existing sections.
+### Database Changes Required
+1. Update `product_categories` table: change name and slug for the liquid tinctures category
+2. All products currently in this category will automatically be reclassified
 
 ---
 
-## Feature 4: Bundle Promotions
+## Part 3: Bundles Navigation Highlight
 
-Add special promotional callouts for bundle products.
-
-### Database Changes
-
-Add columns to `products` table:
-
-| Column | Type | Description |
-|--------|------|-------------|
-| promotion_text | text | "Save $25!" or "Best Value" |
-| promotion_badge | text | "savings", "popular", "limited" |
-| original_price_usd | numeric | For showing crossed-out price |
-| original_price_xcd | numeric | For showing crossed-out price |
-
-### UI Changes
-
-| File | Changes |
-|------|---------|
-| `src/components/store/ProductCard.tsx` | Show promotion badge, strikethrough pricing |
-| `src/pages/ProductDetail.tsx` | Display bundle savings prominently |
+### Design Approach
+Make the "Bundles" link visually stand out to attract clicks. This will use a gradient background, subtle animation, and a sparkle/gift icon.
 
 ### Visual Design
 
-```text
-+---------------------------+
-| [HOT DEAL] Save $25!      |
-|                           |
-| ~~$75~~ $50               |
-| Bundle & Save             |
-+---------------------------+
+Desktop navigation:
 ```
++-------+  +------------------------+  +---------+  +-----------+
+| Shop  |  | [sparkle] Bundles [%]  |  | Retreats |  | Wholesale |
++-------+  +------------------------+  +---------+  +-----------+
+                     ^
+            Gradient background (gold/earth tones)
+            Subtle pulse animation
+            "Save" or sparkle icon
+```
+
+Mobile menu: Same treatment with eye-catching styling
+
+### Styling Details
+- Background: Gradient from gold to earth tones (matches brand)
+- Border: Golden border with subtle glow
+- Icon: Sparkles or Gift icon
+- Text: "Bundles" with optional "Save" badge
+- Animation: Subtle pulse on hover, gentle glow effect
 
 ---
 
-## Feature 5: Herb Size Variants with Discounts
+## Implementation Steps
 
-Allow raw herbs to be ordered in multiple sizes (1oz, 2oz, 4oz, 8oz, 1lb) with volume discounts.
+### Step 1: Database Updates
+1. Insert the 7 missing products into the `products` table
+2. Update the "Liquid Tinctures" category to "Tonics" in `product_categories`
+3. Set promotional badges on the new bundles (they should display savings)
 
-### Database Changes
+### Step 2: Update StoreHeader Component
+Modify `src/components/store/StoreHeader.tsx` to:
+- Add special styling for the Bundles navigation link
+- Include a sparkle icon and gradient background
+- Add subtle hover animation
 
-Create new table `product_variants`:
+### Step 3: Update CategoryNav Component
+Modify `src/components/store/CategoryNav.tsx` to:
+- Add visual distinction for the Bundles category pill
+- Include special styling that makes it stand out from other categories
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | uuid | Primary key |
-| product_id | uuid | FK to products |
-| size_label | text | "1 oz", "2 oz", "4 oz", "8 oz", "1 lb" |
-| size_oz | integer | Size in ounces (1, 2, 4, 8, 16) |
-| price_usd | numeric | Price for this size |
-| price_xcd | numeric | Price for this size |
-| discount_percent | integer | Discount applied (0, 5, 10, 15, 20) |
-| stock_status | text | Stock for this variant |
-| is_default | boolean | Default selected size |
+### Step 4: Update Mobile Menu
+Enhance the Bundles link in the mobile sheet menu with the same eye-catching treatment
 
-### New Hook
+---
 
-| File | Purpose |
-|------|---------|
-| `src/hooks/use-product-variants.ts` | Fetch variants for a product |
-
-### UI Changes
+## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/pages/ProductDetail.tsx` | Add size selector with pricing table |
-| `src/components/store/ProductCard.tsx` | Show "From $X" pricing for herbs |
+| `src/components/store/StoreHeader.tsx` | Add highlighted Bundles link with gradient, icon, animation |
+| `src/components/store/CategoryNav.tsx` | Add special styling for Bundles category pill |
 
-### Size Selector UI
+### Database Operations
+- INSERT 7 new products with full details (descriptions, pricing, images from source)
+- UPDATE product_categories to rename "Liquid Tinctures" to "Tonics"
 
-```text
-Select Size:
-+-------+  +-------+  +-------+  +-------+  +--------+
-| 1 oz  |  | 2 oz  |  | 4 oz  |  | 8 oz  |  |  1 lb  |
-| $8    |  | $15   |  | $28   |  | $50   |  |  $90   |
-|       |  | -5%   |  | -10%  |  | -15%  |  |  -20%  |
-+-------+  +-------+  +-------+  +-------+  +--------+
+---
+
+## New Products Detail
+
+### Virili-Tea
+- **Type**: tea
+- **Category**: Traditional Teas
+- **Price**: $33 USD / $89.10 XCD
+- **Short Description**: Potent blend for energy, stamina, and libido
+- **Traditional Use**: Male vitality, sexual health, energy boost
+- **Ingredients**: Sensitive, Sarsaparilla, Medina, Anamu, Chaney Roots, Sea Moss, Stinging Nettle, Bay Leaf, Cinnamon Leaf
+
+### Urinary Cleanse Tea
+- **Type**: tea
+- **Category**: Traditional Teas
+- **Price**: $35 USD / $94.50 XCD
+- **Short Description**: Supports urinary tract health and detox
+- **Traditional Use**: Urinary health, kidney support, inflammation relief
+- **Ingredients**: Stinging Nettle, Seed Under Leaf, Spanish Needle
+
+### Queenly Tea Bundle
+- **Type**: bundle
+- **Category**: Curated Bundles
+- **Price**: $99 USD / $267.30 XCD
+- **Original Price**: $103 (saves $4)
+- **Short Description**: Feminine wellness trio for hormonal balance, digestion, and rest
+- **Promotion Badge**: popular
+- **Promotion Text**: Complete feminine wellness
+
+### Kingly Tea Bundle
+- **Type**: bundle
+- **Category**: Curated Bundles
+- **Price**: $99 USD / $267.30 XCD
+- **Original Price**: $103 (saves $4)
+- **Short Description**: Male wellness trio for vitality, urinary health, and energy
+- **Promotion Badge**: popular
+- **Promotion Text**: Complete male wellness
+
+### Detox Bundle
+- **Type**: bundle
+- **Category**: Curated Bundles
+- **Price**: $147 USD / $396.90 XCD
+- **Short Description**: Deep cleansing for digestion, elimination, and blood purification
+- **Promotion Badge**: savings
+- **Promotion Text**: Ultimate detox system
+
+### Super Male Vitality Package
+- **Type**: bundle
+- **Category**: Curated Bundles
+- **Price**: $290 USD / $783 XCD
+- **Short Description**: Ultimate full body detox and vital rebalancing for men
+- **Promotion Badge**: popular
+- **Promotion Text**: Best value for men
+- **Badge**: best_seller (5-star rated)
+
+### Virility Male Balance Tonic
+- **Type**: tonic (new product type, will use the renamed Tonics category)
+- **Category**: Tonics (formerly Liquid Tinctures)
+- **Price**: $150 USD / $405 XCD
+- **Stock Status**: pre_order
+- **Short Description**: Proprietary herbal blend for male resilience, stamina, and vitality
+- **Traditional Use**: Male performance, hormone balance, stress management, endurance
+- **Ingredients**: Sensitiva (Mimosa pudica), Sarsaparilla, Medina, Anamu, Chaney Roots, Sea Moss, Stinging Nettle, Caribbean Bay Leaf
+
+---
+
+## Navigation Highlight CSS Approach
+
+```css
+/* Bundles link special styling */
+.bundles-highlight {
+  background: linear-gradient(135deg, #d4a574 0%, #8b7355 100%);
+  color: #fef6e4;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(212, 165, 116, 0.5);
+  box-shadow: 0 0 12px rgba(212, 165, 116, 0.3);
+  animation: subtle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(212, 165, 116, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(212, 165, 116, 0.5); }
+}
 ```
 
-### Cart Integration
-
-Update cart to store selected variant:
-- Add `variant_id` column to `cart_items` table
-- Update `use-cart.ts` to pass variant
-
----
-
-## Feature 6: Image Zoom (Lightbox)
-
-Add a beautiful zoom feature when clicking product images.
-
-### New Component
-
-| File | Purpose |
-|------|---------|
-| `src/components/ui/image-lightbox.tsx` | Reusable lightbox with zoom |
-
-### Features
-- Click image to open fullscreen overlay
-- Pinch-to-zoom on mobile
-- Click-and-drag to pan zoomed image
-- Smooth animations
-- Close on backdrop click or escape key
-- Navigation arrows for multiple images
-
-### Integration
-
-| File | Changes |
-|------|---------|
-| `src/components/store/ProductGallery.tsx` | Open lightbox on click |
-| `src/components/retreats/RetreatGallery.tsx` | Open lightbox on click |
-
-### Design
-
-```text
-+----------------------------------+
-|                             [X]  |
-|   +-------------------------+    |
-|   |                         |    |
-| < |    ZOOMED IMAGE         | >  |
-|   |                         |    |
-|   +-------------------------+    |
-|         o  o  o  o               |
-+----------------------------------+
-```
-
----
-
-## Implementation Order
-
-### Phase 1: Database & Backend
-1. Create `retreat_gallery` table with RLS policies
-2. Add `promotion_text`, `promotion_badge`, `original_price_usd/xcd` to products
-3. Create `product_variants` table with RLS policies
-4. Add `variant_id` to `cart_items`
-5. Create storage bucket for retreat images
-
-### Phase 2: Core Components
-6. Build `ImageLightbox` component (shared)
-7. Update `ProductGallery` with zoom trigger
-8. Create full-width product detail layout
-
-### Phase 3: Herb Variants
-9. Create `use-product-variants` hook
-10. Build size selector component
-11. Update cart logic for variants
-
-### Phase 4: Bundle Promotions
-12. Update `ProductCard` with promotion badges
-13. Update `ProductDetail` with savings display
-
-### Phase 5: Retreat Gallery
-14. Create `RetreatGallery` component
-15. Add to Retreats page
-16. Build admin page for retreat images
-17. Create `RetreatImageUpload` component
-
----
-
-## Technical Notes
-
-### Storage
-- Create `retreat-images` bucket (public)
-- Reuse existing `product-images` bucket
-
-### RLS Policies
-
-All new tables will have:
-- Public SELECT for active/published items
-- Admin-only INSERT, UPDATE, DELETE
-
-### Type Updates
-
-The Supabase types file will auto-update after migrations.
-
-### Mobile Considerations
-- Size selector should be horizontal scrollable on mobile
-- Lightbox needs touch gesture support
-- Gallery should stack to single column
+This creates an elegant, eye-catching effect that draws attention without being garish, fitting the natural/wellness brand aesthetic.
 
