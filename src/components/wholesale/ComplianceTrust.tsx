@@ -2,9 +2,9 @@ import { FileCheck, Shield, Award, Globe, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const trustBadges = [
-  { icon: FileCheck, label: "FDA-Registered Facility" },
+  { icon: FileCheck, label: "Certified Processing Facility" },
   { icon: Shield, label: "cGMP Compliant" },
-  { icon: Award, label: "Organic Certified" },
+  { icon: Award, label: "100% Natural" },
   { icon: Globe, label: "US & UK Export Ready" },
 ];
 
@@ -23,7 +23,7 @@ export const ComplianceTrust = ({ onScrollToForm }: ComplianceTrustProps) => {
             </h2>
             <p className="text-lg text-primary-foreground/80">
               Every shipment includes batch-level COAs, origin certificates, 
-              and FDA-compliant labeling. No surprises at the border.
+              and export-compliant labeling. No surprises at the border.
             </p>
           </div>
           

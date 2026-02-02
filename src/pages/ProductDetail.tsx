@@ -154,8 +154,8 @@ export default function ProductDetail() {
               </Link>
             )}
 
-            {/* Name */}
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mt-2 mb-4">
+            {/* Name - BLACK, bold */}
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#0B0B0B] mt-2 mb-4">
               {product.name}
             </h1>
 
@@ -174,12 +174,10 @@ export default function ProductDetail() {
                   Fermented Formulation
                 </div>
               )}
-              {product.badge === "wildcrafted" && (
-                <div className="inline-flex items-center gap-1 text-sm text-primary">
-                  <Leaf className="w-4 h-4" />
-                  100% Natural
-                </div>
-              )}
+              <div className="inline-flex items-center gap-1 text-sm text-primary">
+                <Leaf className="w-4 h-4" />
+                100% Natural • Made in Saint Lucia • Non-GMO • Vegan
+              </div>
               {isLocalVisitor && (
                 <div className="inline-flex items-center gap-1 text-sm text-success">
                   <Truck className="w-4 h-4" />
@@ -203,23 +201,23 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* Price */}
+            {/* Price - BLACK, bold */}
             <div className="mb-6">
               <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-foreground">
+                <span className="text-3xl font-bold text-[#0B0B0B]">
                   {prices.primary}
                 </span>
                 {originalPriceUsd && (
-                  <span className="text-xl text-muted-foreground line-through">
+                  <span className="text-xl text-[#3A3A3A] line-through">
                     {formatPrice(originalPriceUsd * quantity, (originalPriceXcd || 0) * quantity)}
                   </span>
                 )}
-                <span className="text-lg text-muted-foreground">
+                <span className="text-lg text-[#3A3A3A]">
                   {prices.secondary}
                 </span>
               </div>
               {product.size_info && (
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-[#3A3A3A] mt-1">
                   {product.size_info}
                 </p>
               )}
@@ -259,18 +257,51 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Key Benefits Section */}
+            {/* 1) Key Benefits Section */}
             {product.traditional_use && (
-              <div className="mb-8 p-4 bg-forest/5 rounded-xl border border-forest/20">
-                <h3 className="font-serif font-semibold text-foreground mb-3">Key Benefits</h3>
-                <div className="space-y-2">
+              <div className="mb-6 p-5 bg-[#1F3A2E]/5 rounded-xl border border-[#1F3A2E]/20">
+                <h3 className="font-serif font-bold text-[#0B0B0B] text-lg mb-4">Key Benefits</h3>
+                <div className="space-y-3">
                   {product.traditional_use.split(",").slice(0, 5).map((benefit, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                      <span className="text-foreground">{benefit.trim()}</span>
+                    <div key={i} className="flex items-center gap-3 text-sm">
+                      <div className="w-5 h-5 rounded-full bg-[#1F3A2E] flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                      <span className="text-[#0B0B0B]">{benefit.trim()}</span>
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* 2) Dosage Section */}
+            {product.dosage_instructions && (
+              <div className="mb-6 p-5 bg-[#1F3A2E]/5 rounded-xl border border-[#1F3A2E]/20">
+                <h3 className="font-serif font-bold text-[#0B0B0B] text-lg mb-3">How to Use</h3>
+                <p className="text-[#0B0B0B] text-sm whitespace-pre-line leading-relaxed">
+                  {product.dosage_instructions}
+                </p>
+                {product.contraindications && (
+                  <div className="mt-4 p-3 bg-warning/10 rounded-lg border border-warning/20">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-warning mt-0.5" />
+                      <div>
+                        <p className="font-medium text-[#0B0B0B] text-sm">Contraindications</p>
+                        <p className="text-sm text-[#3A3A3A]">{product.contraindications}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 3) Full Product Description */}
+            {product.description && (
+              <div className="mb-6 p-5 bg-muted/30 rounded-xl border border-border">
+                <h3 className="font-serif font-bold text-[#0B0B0B] text-lg mb-3">About This Formulation</h3>
+                <p className="text-[#3A3A3A] text-sm whitespace-pre-line leading-relaxed">
+                  {product.description}
+                </p>
               </div>
             )}
 
@@ -290,19 +321,19 @@ export default function ProductDetail() {
 
             {/* Bulk Order Notice for Raw Herbs */}
             {isRawHerb && (
-              <div className="p-4 bg-forest/5 rounded-xl border border-forest/20 mb-6">
+              <div className="p-4 bg-[#1F3A2E]/5 rounded-xl border border-[#1F3A2E]/20 mb-6">
                 <div className="flex items-start gap-3">
-                  <MessageCircle className="w-5 h-5 text-forest flex-shrink-0 mt-0.5" />
+                  <MessageCircle className="w-5 h-5 text-[#1F3A2E] flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-foreground text-sm">Bulk Orders Available</p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="font-semibold text-[#0B0B0B] text-sm">Bulk Orders Available</p>
+                    <p className="text-sm text-[#3A3A3A] mt-1">
                       Each order is 1 lb. Contact us for discounted pricing on quantities of 4-10 lbs.
                     </p>
                     <a
                       href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${encodeURIComponent(`Hi, I'd like to inquire about bulk pricing for ${product.name} (4-10 lbs).`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm font-medium text-forest hover:text-forest-dark mt-2"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-[#1F3A2E] hover:text-[#1F3A2E]/80 mt-2"
                     >
                       <MessageCircle className="w-4 h-4" />
                       WhatsApp for Bulk Pricing
@@ -312,76 +343,69 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* Educational Accordions */}
-            <Accordion type="multiple" className="w-full" defaultValue={["how-to-use"]}>
-              {product.traditional_use && (
-                <AccordionItem value="traditional-use">
-                  <AccordionTrigger className="font-serif">
-                    Traditional Use
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground whitespace-pre-line">
-                    {product.traditional_use}
-                  </AccordionContent>
-                </AccordionItem>
-              )}
-
+            {/* Additional Info Accordions */}
+            <Accordion type="multiple" className="w-full" defaultValue={[]}>
               {product.pharmaceutical_info && (
                 <AccordionItem value="science">
-                  <AccordionTrigger className="font-serif">
+                  <AccordionTrigger className="font-serif text-[#0B0B0B]">
                     The Science
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground whitespace-pre-line">
+                  <AccordionContent className="text-[#3A3A3A] whitespace-pre-line">
                     {product.pharmaceutical_info}
-                  </AccordionContent>
-                </AccordionItem>
-              )}
-
-              {product.dosage_instructions && (
-                <AccordionItem value="how-to-use">
-                  <AccordionTrigger className="font-serif">
-                    How to Use
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground whitespace-pre-line">
-                    {product.dosage_instructions}
-                    {product.contraindications && (
-                      <div className="mt-4 p-3 bg-warning/10 rounded-lg border border-warning/20">
-                        <div className="flex items-start gap-2">
-                          <AlertCircle className="w-4 h-4 text-warning mt-0.5" />
-                          <div>
-                            <p className="font-medium text-warning-foreground text-sm">Contraindications</p>
-                            <p className="text-sm">{product.contraindications}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </AccordionContent>
                 </AccordionItem>
               )}
 
               {product.ingredients && (
                 <AccordionItem value="ingredients">
-                  <AccordionTrigger className="font-serif">
+                  <AccordionTrigger className="font-serif text-[#0B0B0B]">
                     Ingredients
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground whitespace-pre-line">
+                  <AccordionContent className="text-[#3A3A3A] whitespace-pre-line">
                     {product.ingredients}
                   </AccordionContent>
                 </AccordionItem>
               )}
 
+              <AccordionItem value="sourcing">
+                <AccordionTrigger className="font-serif text-[#0B0B0B]">
+                  Sourcing & Integrity
+                </AccordionTrigger>
+                <AccordionContent className="text-[#3A3A3A]">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#1F3A2E]" />
+                      <span>100% Natural</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#1F3A2E]" />
+                      <span>Vegan & Non-GMO</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#1F3A2E]" />
+                      <span>Made in Saint Lucia</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#1F3A2E]" />
+                      <span>No synthetic fillers or artificial coloring</span>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem value="shipping">
-                <AccordionTrigger className="font-serif">
+                <AccordionTrigger className="font-serif text-[#0B0B0B]">
                   Shipping & Delivery
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-[#3A3A3A]">
                   <div className="space-y-3">
                     <div>
-                      <p className="font-medium text-foreground">St. Lucia (Local Delivery)</p>
+                      <p className="font-medium text-[#0B0B0B]">St. Lucia (Local Delivery)</p>
                       <p>Same-day delivery available for orders placed before 2 PM (North region).</p>
                       <p>Delivery fees: EC$15-25 depending on zone.</p>
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">International Shipping</p>
+                      <p className="font-medium text-[#0B0B0B]">International Shipping</p>
                       <p>Ships worldwide from St. Lucia within 3-5 business days via courier.</p>
                       <p>Tracking provided for all orders.</p>
                     </div>

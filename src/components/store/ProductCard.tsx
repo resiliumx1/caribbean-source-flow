@@ -140,7 +140,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
           {categoryLabel}
         </p>
 
-        {/* Product Name - BLACK, high contrast */}
+        {/* Product Name - BLACK, high contrast, bold */}
         <Link to={`/shop/${product.slug}`}>
           <h3 className="font-serif text-xl font-bold tracking-tight text-[#0B0B0B] group-hover:text-primary transition-colors line-clamp-1">
             {product.name}
