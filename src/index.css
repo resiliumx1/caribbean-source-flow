@@ -336,4 +336,25 @@
   .delay-300 { animation-delay: 300ms; }
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
+
+  /* Bundles highlight effect */
+  @keyframes bundles-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 12px hsla(var(--gold), 0.3);
+    }
+    50% { 
+      box-shadow: 0 0 20px hsla(var(--gold), 0.5);
+    }
+  }
+
+  .bundles-highlight {
+    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--earth-light)) 100%);
+    color: hsl(var(--cream));
+    border: 1px solid hsla(var(--gold), 0.5);
+    animation: bundles-pulse 3s ease-in-out infinite;
+  }
+
+  .bundles-highlight:hover {
+    background: linear-gradient(135deg, hsl(var(--gold-light)) 0%, hsl(var(--gold)) 100%);
+  }
 }
