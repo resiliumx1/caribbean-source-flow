@@ -8,6 +8,8 @@ interface CTACard {
   descriptor: string;
   cta: string;
   route: string;
+  iconColor: string;
+  iconBg: string;
 }
 
 const ctaCards: CTACard[] = [
@@ -17,6 +19,8 @@ const ctaCards: CTACard[] = [
     descriptor: "Daily remedies crafted for balance, vitality, and long-term wellness.",
     cta: "Explore Products",
     route: "/shop",
+    iconColor: "#1F3A2E",
+    iconBg: "rgba(31, 58, 46, 0.12)",
   },
   {
     icon: Package,
@@ -24,40 +28,79 @@ const ctaCards: CTACard[] = [
     descriptor: "Bulk herbs and formulations trusted by clinics, retailers, and wellness brands.",
     cta: "Access Wholesale",
     route: "/wholesale",
+    iconColor: "#8B5E34",
+    iconBg: "rgba(139, 94, 52, 0.12)",
   },
   {
     icon: Mountain,
-    title: "Healing Retreats at Mount Kailash Rejuvenation Centre Saint Lucia",
+    title: "Healing Retreats in Saint Lucia",
     descriptor: "Immersive experiences designed for deep restoration and clarity.",
     cta: "View Retreats",
     route: "/retreats",
+    iconColor: "#2E7D32",
+    iconBg: "linear-gradient(135deg, rgba(46, 125, 50, 0.15), rgba(30, 136, 229, 0.12), rgba(178, 135, 53, 0.1))",
   },
 ];
-
-const iconVariants = {
-  initial: { scale: 1, rotate: 0 },
-  hover: {
-    scale: 1.15,
-    rotate: 5,
-    transition: { type: "spring" as const, stiffness: 400, damping: 10 },
-  },
-};
 
 const cardVariants = {
   initial: { y: 0 },
   hover: {
-    y: -8,
-    transition: { type: "spring" as const, stiffness: 300, damping: 20 },
+    y: -4,
+    transition: { type: "tween" as const, duration: 0.3, ease: "easeOut" as const },
   },
 };
 
-const textVariants = {
-  initial: { y: 0 },
+const iconVariants = {
+  initial: { scale: 1, y: 0 },
   hover: {
-    y: -4,
-    transition: { type: "spring" as const, stiffness: 300, damping: 20 },
+    scale: 1.06,
+    y: -2,
+    transition: { type: "tween" as const, duration: 0.3, ease: "easeOut" as const },
   },
 };
+
+const titleVariants = {
+  initial: { y: 0 },
+  hover: {
+    y: -1,
+    transition: { type: "tween" as const, duration: 0.3, ease: "easeOut" as const },
+  },
+};
+
+const arrowVariants = {
+  initial: { x: 0 },
+  hover: {
+    x: 4,
+    transition: { type: "tween" as const, duration: 0.3, ease: "easeOut" as const },
+  },
+};
+
+// Custom gradient mountain icon component
+function GradientMountainIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="url(#mountainGradient)"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <defs>
+        <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#2E7D32" />
+          <stop offset="50%" stopColor="#1E88E5" />
+          <stop offset="100%" stopColor="#B28735" />
+        </linearGradient>
+      </defs>
+      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+    </svg>
+  );
+}
 
 export function TrinityHero() {
   return (
@@ -91,68 +134,78 @@ export function TrinityHero() {
             </p>
           </div>
 
-          {/* Glass CTA Cards */}
+          {/* Professional CTA Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {ctaCards.map((card, index) => {
-              const Icon = card.icon;
+              const isRetreats = card.route === "/retreats";
+              
               return (
                 <Link key={card.route} to={card.route}>
                   <motion.div
-                    className="group relative overflow-hidden rounded-2xl backdrop-blur-xl border-2 p-6 md:p-8 transition-all duration-300 cursor-pointer h-full"
+                    className="group relative overflow-hidden rounded-2xl p-6 md:p-8 cursor-pointer h-full"
                     style={{
-                      background: "rgba(255, 255, 255, 0.08)",
-                      borderColor: "rgba(255, 255, 255, 0.15)",
+                      background: "rgba(255, 255, 255, 0.95)",
+                      border: "1px solid rgba(0, 0, 0, 0.12)",
+                      boxShadow: "0 4px 20px -4px rgba(0, 0, 0, 0.08)",
                     }}
                     variants={cardVariants}
                     initial="initial"
                     whileHover="hover"
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
+                    onHoverStart={() => {}}
+                    onHoverEnd={() => {}}
                   >
-                    {/* Hover glow effect */}
-                    <div 
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    {/* Hover state border and shadow enhancement */}
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl pointer-events-none"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
                       style={{
-                        background: "radial-gradient(circle at 50% 50%, hsla(39, 55%, 45%, 0.15) 0%, transparent 70%)",
-                      }}
-                    />
-                    
-                    {/* Border glow on hover */}
-                    <div 
-                      className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                      style={{
-                        boxShadow: "inset 0 0 0 2px hsla(39, 55%, 45%, 0.5), 0 20px 40px -12px hsla(39, 55%, 45%, 0.25)",
+                        border: "1px solid rgba(0, 0, 0, 0.2)",
+                        boxShadow: "0 8px 30px -8px rgba(0, 0, 0, 0.15)",
                       }}
                     />
 
-                    {/* Icon */}
+                    {/* Icon Chip */}
                     <motion.div
-                      className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 transition-colors duration-300"
+                      className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-5"
                       style={{
-                        background: "hsla(39, 55%, 45%, 0.2)",
+                        background: typeof card.iconBg === 'string' && card.iconBg.includes('gradient') 
+                          ? card.iconBg 
+                          : card.iconBg,
                       }}
                       variants={iconVariants}
                     >
-                      <Icon 
-                        className="w-8 h-8 transition-colors duration-300" 
-                        style={{ color: "hsl(39, 55%, 55%)" }}
-                      />
+                      {isRetreats ? (
+                        <GradientMountainIcon className="w-7 h-7" />
+                      ) : (
+                        <card.icon 
+                          className="w-7 h-7" 
+                          style={{ color: card.iconColor }}
+                          strokeWidth={2}
+                        />
+                      )}
                     </motion.div>
 
                     {/* Content */}
-                    <motion.div variants={textVariants}>
-                      <h2 className="text-xl md:text-2xl font-bold text-background mb-3">
-                        {card.title}
-                      </h2>
-                      <p className="text-background/75 mb-6 text-sm leading-relaxed">
-                        {card.descriptor}
-                      </p>
-                    </motion.div>
+                    <motion.h2 
+                      className="text-xl md:text-2xl font-bold mb-3"
+                      style={{ color: "#1a1a1a" }}
+                      variants={titleVariants}
+                    >
+                      {card.title}
+                    </motion.h2>
+                    <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
+                      {card.descriptor}
+                    </p>
 
-                    {/* CTA */}
-                    <div className="flex items-center gap-2 font-semibold group-hover:gap-3 transition-all duration-300" style={{ color: "hsl(39, 55%, 55%)" }}>
+                    {/* CTA Link */}
+                    <div className="flex items-center gap-2 font-semibold text-primary">
                       {card.cta}
-                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                      <motion.span variants={arrowVariants} className="inline-flex">
+                        <ArrowRight className="w-5 h-5" />
+                      </motion.span>
                     </div>
                   </motion.div>
                 </Link>

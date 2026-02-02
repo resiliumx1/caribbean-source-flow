@@ -21,8 +21,8 @@ Deno.serve(async (req) => {
       },
     });
 
-    const email = "yannick23d@gmail.com";
-    const password = "TrinityAdmin2024!";
+    const email = "kailash123@gmail.com";
+    const password = "admin123";
 
     // Check if user already exists
     const { data: existingUsers } = await supabase.auth.admin.listUsers();
@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
         message: "Admin user created successfully",
         email,
         userId: user.user?.id,
-        note: "Password is: TrinityAdmin2024! - Please change it after first login.",
+        note: "Password is: admin123 - Please change it after first login.",
       }),
       { 
         headers: { ...corsHeaders, "Content-Type": "application/json" } 

@@ -116,7 +116,7 @@ export function StoreHeader() {
               </Button>
             </Link>
 
-            <Link to="/account" className="hidden sm:block">
+            <Link to="/admin/login" className="hidden sm:block">
               <Button variant="ghost" size="icon">
                 <User className="w-5 h-5" />
               </Button>
@@ -170,11 +170,11 @@ export function StoreHeader() {
                   <hr className="my-2" />
 
                   <Link
-                    to="/account"
+                    to="/admin/login"
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >
-                    My Account
+                    Admin Login
                   </Link>
 
                   <hr className="my-2" />
