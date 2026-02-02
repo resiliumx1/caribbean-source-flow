@@ -29,14 +29,14 @@ export function RetreatsHero() {
         <div className="absolute inset-0 bg-gradient-to-r from-[hsl(150,30%,10%)]/90 via-[hsl(150,25%,15%)]/70 to-transparent" />
       </div>
 
-      {/* Content */}
+      {/* Content - using explicit white text on dark overlay */}
       <div className="relative z-10 container mx-auto max-w-6xl px-4 py-20">
         <div className="max-w-2xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-background leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-tight mb-6">
             Restore. Reset. Reconnect.
           </h1>
 
-          <p className="text-xl text-background/90 leading-relaxed mb-8">
+          <p className="text-xl text-white/90 leading-relaxed mb-8">
             Immersive wellness retreats in Saint Lucia designed to guide deep restoration—physically, mentally, and energetically.
           </p>
 
