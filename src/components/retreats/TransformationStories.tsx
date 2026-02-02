@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Quote, MapPin } from "lucide-react";
+import { Quote, MapPin, Star } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface Testimonial {
   id: string;
@@ -10,6 +11,13 @@ interface Testimonial {
   condition_addressed: string | null;
   results: string | null;
 }
+
+// Placeholder avatar images for testimonials
+const avatarImages = [
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+];
 
 export function TransformationStories() {
   const { data: testimonials = [] } = useQuery({
@@ -76,11 +84,18 @@ export function TransformationStories() {
               key={story.id}
               className="bg-card rounded-2xl border border-border p-8 transition-all hover:shadow-lg"
             >
-              {/* Avatar placeholder */}
+              {/* Circular photo avatar */}
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xl font-bold text-primary">
-                  {story.author_name.charAt(0)}
-                </div>
+                <Avatar className="w-16 h-16 border-2 border-primary/20">
+                  <AvatarImage 
+                    src={avatarImages[index % avatarImages.length]} 
+                    alt={story.author_name}
+                    className="object-cover"
+                  />
+                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20 text-xl font-bold text-primary">
+                    {story.author_name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <div className="font-semibold text-foreground">
                     {story.author_name}
@@ -91,6 +106,15 @@ export function TransformationStories() {
                       {story.author_title}
                     </div>
                   )}
+                  {/* Bright 5-star rating */}
+                  <div className="flex items-center gap-0.5 mt-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className="w-4 h-4 fill-amber-400 text-amber-400" 
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
 

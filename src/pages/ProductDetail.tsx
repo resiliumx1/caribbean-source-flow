@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles, MessageCircle, Check } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
 import { ProductGallery } from "@/components/store/ProductGallery";
@@ -23,6 +23,11 @@ export default function ProductDetail() {
   const { formatPrice, formatPriceBoth, whatsappNumber, isLocalVisitor } = useStore();
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+
+  // Scroll to top on page load
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
 
   // Set default variant when variants load
   useEffect(() => {
