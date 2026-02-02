@@ -48,7 +48,7 @@ export function RetreatsHero() {
             >
               <Button
                 size="lg"
-                className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90"
+                className="w-full sm:w-auto bg-[#1F3A2E] text-white hover:bg-[#2a4d3d] shadow-lg"
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
                 Book a Private Retreat
@@ -56,9 +56,8 @@ export function RetreatsHero() {
             </a>
             <Button
               size="lg"
-              variant="outline"
               onClick={scrollToCalendar}
-              className="w-full sm:w-auto border-background/30 text-background hover:bg-background/10"
+              className="w-full sm:w-auto bg-[#3d6b4f] text-white hover:bg-[#4a7d5d] border-0 shadow-lg"
             >
               <Calendar className="w-5 h-5 mr-2" />
               Join a Group Retreat

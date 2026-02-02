@@ -1,37 +1,48 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { ClipboardCheck, Leaf, Utensils, Heart, Package, Flower2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { ClipboardCheck, Leaf, Utensils, Heart, Package, Flower2, Sparkles } from "lucide-react";
 
 const steps = [
   {
     icon: ClipboardCheck,
     title: "Assess",
     description: "Personalized intake and consultation to understand your body, lifestyle, and goals.",
+    color: "#4A9D6B", // Vibrant healing green
+    glowColor: "rgba(74, 157, 107, 0.4)",
   },
   {
     icon: Leaf,
     title: "Cleanse",
     description: "Targeted herbal detox protocols using natural formulations designed for cellular support.",
+    color: "#2E8B57", // Sea green
+    glowColor: "rgba(46, 139, 87, 0.4)",
   },
   {
     icon: Utensils,
     title: "Nourish",
     description: "Plant-based meals and formulations grown in volcanic soil to replenish minerals and energy.",
+    color: "#6B8E23", // Olive drab - earthy nourishing
+    glowColor: "rgba(107, 142, 35, 0.4)",
   },
   {
     icon: Heart,
     title: "Integrate",
     description: "Breathwork, bush walks, stillness, and guided practices to lock in results.",
+    color: "#8B4A6B", // Muted rose - heart-centered
+    glowColor: "rgba(139, 74, 107, 0.4)",
   },
   {
     icon: Package,
     title: "Sustain",
     description: "Post-experience support, follow-up consultation, and ongoing formulation access.",
+    color: "#5D7A4A", // Forest sage - sustaining growth
+    glowColor: "rgba(93, 122, 74, 0.4)",
   },
 ];
 
 export function ProtocolTimeline() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [activeStep, setActiveStep] = useState<number | null>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 80%", "end 60%"],
@@ -57,7 +68,7 @@ export function ProtocolTimeline() {
         <div className="relative">
           {/* SVG Flowing Vine Connector - Desktop */}
           <svg
-            className="hidden md:block absolute top-1/2 left-0 w-full h-32 -translate-y-1/2 z-0"
+            className="hidden md:block absolute top-[60px] left-0 w-full h-32 z-0"
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
             style={{ overflow: "visible" }}
@@ -125,59 +136,92 @@ export function ProtocolTimeline() {
           </svg>
 
           {/* Steps */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-12 md:gap-4 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-16 md:gap-4 relative z-10 pt-8">
             {steps.map((step, index) => {
               const Icon = step.icon;
+              const isActive = activeStep === index;
               return (
                 <motion.div
                   key={step.title}
-                  className="relative flex flex-col items-center md:items-center text-center group pl-16 md:pl-0"
+                  className="relative flex flex-col items-center md:items-center text-center group pl-16 md:pl-0 cursor-pointer"
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.6, delay: index * 0.15 }}
+                  onMouseEnter={() => setActiveStep(index)}
+                  onMouseLeave={() => setActiveStep(null)}
                 >
                   {/* Blossom node - appears at milestone */}
                   <motion.div
-                    className="absolute -top-3 md:top-auto md:-translate-y-16 left-4 md:left-1/2 md:-translate-x-1/2"
-                    initial={{ opacity: 0, scale: 0 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
+                    className="absolute -top-6 md:-top-8 left-4 md:left-1/2 md:-translate-x-1/2"
+                    initial={{ opacity: 0, scale: 0, rotate: -45 }}
+                    whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 + index * 0.15, duration: 0.5, type: "spring" }}
                   >
-                    <Flower2 className="w-5 h-5 text-accent" />
+                    <motion.div
+                      animate={isActive ? { scale: 1.3, rotate: 15 } : { scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <Flower2 
+                        className="w-6 h-6 drop-shadow-lg" 
+                        style={{ color: step.color }}
+                      />
+                    </motion.div>
                   </motion.div>
 
-                  {/* Main Icon Circle with glow effect on hover */}
+                  {/* Main Icon Circle with colorful glow effect on hover */}
                   <motion.div
-                    className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-background border-2 border-primary/30 flex items-center justify-center mb-6 relative shadow-lg cursor-pointer group-hover:border-primary transition-all duration-300"
+                    className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mb-4 relative shadow-lg cursor-pointer transition-all duration-300"
+                    style={{
+                      backgroundColor: isActive ? step.color : 'hsl(var(--background))',
+                      border: `3px solid ${step.color}`,
+                      boxShadow: isActive ? `0 0 30px ${step.glowColor}, 0 0 60px ${step.glowColor}` : `0 4px 20px rgba(0,0,0,0.1)`,
+                    }}
                     whileHover={{ 
-                      scale: 1.08, 
-                      boxShadow: "0 0 30px rgba(31, 58, 46, 0.25)",
+                      scale: 1.1, 
                     }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    {/* Soft glow ring on hover */}
-                    <div className="absolute inset-0 rounded-full bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm scale-110" />
+                    {/* Animated sparkle effect on hover */}
+                    {isActive && (
+                      <motion.div
+                        className="absolute -top-2 -right-2"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Sparkles className="w-5 h-5 text-amber-400" />
+                      </motion.div>
+                    )}
                     
-                    <Icon className="w-8 h-8 md:w-10 md:h-10 text-primary relative z-10" />
+                    <Icon 
+                      className="w-9 h-9 md:w-11 md:h-11 relative z-10 transition-colors duration-300" 
+                      style={{ color: isActive ? 'white' : step.color }}
+                    />
                     
                     {/* Pulsing ring animation */}
                     <motion.div
-                      className="absolute inset-0 rounded-full border-2 border-primary/20"
+                      className="absolute inset-0 rounded-full"
+                      style={{ border: `2px solid ${step.color}` }}
                       initial={{ scale: 1, opacity: 0 }}
-                      whileHover={{ scale: 1.3, opacity: [0, 0.5, 0] }}
+                      animate={isActive ? { scale: 1.4, opacity: [0, 0.6, 0] } : {}}
                       transition={{ duration: 1.2, repeat: Infinity }}
                     />
                   </motion.div>
 
-                  {/* Content */}
-                  <h3 className="text-xl font-bold text-foreground mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed max-w-[220px]">
-                    {step.description}
-                  </p>
+                  {/* Content - moved lower with more spacing */}
+                  <div className="mt-4">
+                    <h3 
+                      className="text-xl md:text-2xl font-bold mb-3 transition-colors duration-300"
+                      style={{ color: step.color }}
+                    >
+                      {step.title}
+                    </h3>
+                    <p className="text-[15px] text-foreground font-medium leading-relaxed max-w-[220px]">
+                      {step.description}
+                    </p>
+                  </div>
                 </motion.div>
               );
             })}
