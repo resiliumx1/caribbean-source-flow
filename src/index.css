@@ -9,56 +9,62 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Lora&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono&display=swap");
+
 @layer base {
   :root {
     /* Core Brand Colors - St. Lucian Rainforest & Volcanic Earth */
-    --background: 45 30% 96%;
-    --foreground: 150 25% 12%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
 
-    --card: 45 25% 98%;
-    --card-foreground: 150 25% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
 
-    --popover: 45 25% 98%;
-    --popover-foreground: 150 25% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
 
     /* Forest Green - Primary brand color */
-    --primary: 150 35% 22%;
-    --primary-foreground: 45 30% 96%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
 
     /* Volcanic Brown - Earth tones */
-    --secondary: 25 30% 25%;
-    --secondary-foreground: 45 30% 96%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
 
     /* Cream/Parchment - Natural paper tones */
-    --muted: 40 20% 90%;
-    --muted-foreground: 150 15% 40%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
     /* Gold/Turmeric Accent - Sea moss reference */
-    --accent: 42 85% 55%;
-    --accent-foreground: 150 25% 12%;
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 45 30% 96%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 40 20% 85%;
-    --input: 40 20% 88%;
-    --ring: 150 35% 30%;
+    --border: 0 0% 0%;
+    --input: 0 0% 0%;
+    --ring: 0 0% 0%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
 
     /* Extended palette for B2B */
     --forest: 150 35% 22%;
     --forest-light: 150 25% 35%;
     --forest-dark: 150 40% 15%;
-    
+
     --earth: 25 30% 25%;
     --earth-light: 25 25% 40%;
     --earth-warm: 20 35% 30%;
-    
+
     --gold: 42 85% 55%;
     --gold-light: 45 80% 70%;
     --gold-dark: 40 90% 42%;
-    
+
     --cream: 45 30% 96%;
     --cream-warm: 40 35% 92%;
     --parchment: 38 25% 88%;
@@ -66,7 +72,7 @@
     /* Semantic tokens */
     --success: 150 60% 35%;
     --success-foreground: 45 30% 96%;
-    
+
     --warning: 42 85% 50%;
     --warning-foreground: 150 25% 12%;
 
@@ -84,52 +90,86 @@
 
     /* Sidebar tokens */
     --sidebar-background: 45 25% 97%;
-    --sidebar-foreground: 150 25% 20%;
-    --sidebar-primary: 150 35% 22%;
-    --sidebar-primary-foreground: 45 30% 96%;
-    --sidebar-accent: 40 20% 92%;
-    --sidebar-accent-foreground: 150 25% 20%;
-    --sidebar-border: 40 20% 88%;
-    --sidebar-ring: 150 35% 30%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 0 0% 0%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 90%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 0%;
+    --sidebar-ring: 0 0% 0%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar: 0 0% 98%;
+    --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --shadow-2xs: 1px 1px 0px 0px #000000;
+    --shadow-xs: 2px 2px 0px 0px #000000;
+    --shadow-sm: 3px 3px 0px 0px #000000;
+    --shadow: 5px 5px 0px 0px #000000;
+    --shadow-md: 8px 8px 0px 0px #000000;
+    --shadow-lg: 12px 12px 0px 0px #000000;
+    --shadow-xl: 16px 16px 0px 0px #000000;
+    --shadow-2xl: 24px 24px 0px 0px #000000;
+    --tracking-normal: 0em;
+    --spacing: 0.25rem;
   }
 
   .dark {
-    --background: 150 30% 8%;
-    --foreground: 45 25% 95%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 150 25% 12%;
-    --card-foreground: 45 25% 95%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 150 25% 12%;
-    --popover-foreground: 45 25% 95%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 42 85% 55%;
-    --primary-foreground: 150 30% 8%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 40 20% 18%;
-    --secondary-foreground: 45 25% 95%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 150 20% 18%;
-    --muted-foreground: 45 15% 65%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 42 85% 55%;
-    --accent-foreground: 150 30% 8%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 45%;
-    --destructive-foreground: 45 25% 95%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 150 20% 20%;
-    --input: 150 20% 20%;
-    --ring: 42 85% 55%;
+    --border: 0 0% 100%;
+    --input: 0 0% 100%;
+    --ring: 0 0% 100%;
 
     --sidebar-background: 150 25% 10%;
-    --sidebar-foreground: 45 20% 90%;
-    --sidebar-primary: 42 85% 55%;
-    --sidebar-primary-foreground: 150 30% 8%;
-    --sidebar-accent: 150 20% 16%;
-    --sidebar-accent-foreground: 45 20% 90%;
-    --sidebar-border: 150 20% 18%;
-    --sidebar-ring: 42 85% 55%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 100%;
+    --sidebar-ring: 0 0% 100%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar: 0 0% 5%;
+    --radius: 0rem;
+    --shadow-2xs: 1px 1px 0px 0px #ffffff;
+    --shadow-xs: 2px 2px 0px 0px #ffffff;
+    --shadow-sm: 3px 3px 0px 0px #ffffff;
+    --shadow: 5px 5px 0px 0px #ffffff;
+    --shadow-md: 8px 8px 0px 0px #ffffff;
+    --shadow-lg: 12px 12px 0px 0px #ffffff;
+    --shadow-xl: 16px 16px 0px 0px #ffffff;
+    --shadow-2xl: 24px 24px 0px 0px #ffffff;
   }
 }
 
