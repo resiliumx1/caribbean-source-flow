@@ -173,8 +173,8 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
             <span className="text-xl font-bold text-forest">
               {prices.primary}
             </span>
-            <span className="text-xs text-forest font-medium">
-              Subscribe & Save 15%
+            <span className="text-xs text-muted-foreground">
+              {prices.secondary}
             </span>
           </div>
           
