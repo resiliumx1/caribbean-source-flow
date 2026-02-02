@@ -223,6 +223,93 @@ export default function ProductDetail() {
               )}
             </div>
 
+            {/* ========== KEY BENEFITS (EXACT SPEC) ========== */}
+            {product.traditional_use && (
+              <div className="mb-0">
+                {/* Heading: 18-20px, weight 600-700, color #0B0B0B */}
+                <h3 className="text-[18px] font-semibold text-[#0B0B0B] mb-4">
+                  Key Benefits
+                </h3>
+                {/* Vertical list with 12px gap */}
+                <div className="flex flex-col gap-3">
+                  {product.traditional_use.split(",").slice(0, 5).map((benefit, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      {/* Icon: 22px diameter circle, bg #1F3A2E */}
+                      <div 
+                        className="flex-shrink-0 flex items-center justify-center rounded-full"
+                        style={{ width: '22px', height: '22px', backgroundColor: '#1F3A2E' }}
+                      >
+                        {/* White checkmark, 12-14px */}
+                        <Check className="text-white" style={{ width: '13px', height: '13px' }} />
+                      </div>
+                      {/* Text: 15-16px, color #0B0B0B, weight 400-500 */}
+                      <span 
+                        className="font-normal"
+                        style={{ fontSize: '15px', color: '#0B0B0B' }}
+                      >
+                        {benefit.trim()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {/* Divider: 1px, rgba(11,11,11,0.12), 24px spacing above/below */}
+                <div 
+                  className="my-6"
+                  style={{ height: '1px', backgroundColor: 'rgba(11,11,11,0.12)' }}
+                />
+              </div>
+            )}
+
+            {/* ========== DOSAGE (EXACT SPEC) ========== */}
+            {product.dosage_instructions && (
+              <div className="mb-0">
+                {/* Heading: same as Key Benefits */}
+                <h3 className="text-[18px] font-semibold text-[#0B0B0B] mb-3">
+                  Dosage
+                </h3>
+                {/* Text: 15-16px, line-height 1.6, color #0B0B0B */}
+                <p 
+                  className="whitespace-pre-line"
+                  style={{ fontSize: '15px', lineHeight: '1.6', color: '#0B0B0B' }}
+                >
+                  {product.dosage_instructions}
+                </p>
+                {product.contraindications && (
+                  <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-[#0B0B0B] text-sm">Contraindications</p>
+                        <p className="text-sm text-[#0B0B0B]">{product.contraindications}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {/* Divider: 1px, rgba(11,11,11,0.12), 24px spacing above/below */}
+                <div 
+                  className="my-6"
+                  style={{ height: '1px', backgroundColor: 'rgba(11,11,11,0.12)' }}
+                />
+              </div>
+            )}
+
+            {/* ========== PRODUCT DESCRIPTION (EXACT SPEC) ========== */}
+            {product.description && (
+              <div className="mb-6">
+                {/* Heading: same typography */}
+                <h3 className="text-[18px] font-semibold text-[#0B0B0B] mb-3">
+                  About This Formulation
+                </h3>
+                {/* Body text: 15-16px, line-height 1.6, color #0B0B0B */}
+                <p 
+                  className="whitespace-pre-line"
+                  style={{ fontSize: '15px', lineHeight: '1.6', color: '#0B0B0B' }}
+                >
+                  {product.description}
+                </p>
+              </div>
+            )}
+
             {/* Variant selector for herbs */}
             {variants.length > 0 && (
               <div className="mb-6">
@@ -236,8 +323,8 @@ export default function ProductDetail() {
 
             {/* Quantity selector */}
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-sm font-medium text-foreground">Quantity</span>
-              <div className="flex items-center border border-border rounded-lg">
+              <span className="text-sm font-medium text-[#0B0B0B]">Quantity</span>
+              <div className="flex items-center border border-[rgba(11,11,11,0.12)] rounded-lg">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -246,7 +333,7 @@ export default function ProductDetail() {
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="w-12 text-center font-medium">{quantity}</span>
+                <span className="w-12 text-center font-medium text-[#0B0B0B]">{quantity}</span>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -256,54 +343,6 @@ export default function ProductDetail() {
                 </Button>
               </div>
             </div>
-
-            {/* 1) Key Benefits Section */}
-            {product.traditional_use && (
-              <div className="mb-6 p-5 bg-[#1F3A2E]/5 rounded-xl border border-[#1F3A2E]/20">
-                <h3 className="font-serif font-bold text-[#0B0B0B] text-lg mb-4">Key Benefits</h3>
-                <div className="space-y-3">
-                  {product.traditional_use.split(",").slice(0, 5).map((benefit, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm">
-                      <div className="w-5 h-5 rounded-full bg-[#1F3A2E] flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3 h-3 text-white" />
-                      </div>
-                      <span className="text-[#0B0B0B]">{benefit.trim()}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 2) Dosage Section */}
-            {product.dosage_instructions && (
-              <div className="mb-6 p-5 bg-[#1F3A2E]/5 rounded-xl border border-[#1F3A2E]/20">
-                <h3 className="font-serif font-bold text-[#0B0B0B] text-lg mb-3">How to Use</h3>
-                <p className="text-[#0B0B0B] text-sm whitespace-pre-line leading-relaxed">
-                  {product.dosage_instructions}
-                </p>
-                {product.contraindications && (
-                  <div className="mt-4 p-3 bg-warning/10 rounded-lg border border-warning/20">
-                    <div className="flex items-start gap-2">
-                      <AlertCircle className="w-4 h-4 text-warning mt-0.5" />
-                      <div>
-                        <p className="font-medium text-[#0B0B0B] text-sm">Contraindications</p>
-                        <p className="text-sm text-[#3A3A3A]">{product.contraindications}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 3) Full Product Description */}
-            {product.description && (
-              <div className="mb-6 p-5 bg-muted/30 rounded-xl border border-border">
-                <h3 className="font-serif font-bold text-[#0B0B0B] text-lg mb-3">About This Formulation</h3>
-                <p className="text-[#3A3A3A] text-sm whitespace-pre-line leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-            )}
 
             {/* Actions */}
             <div className="mb-8">
