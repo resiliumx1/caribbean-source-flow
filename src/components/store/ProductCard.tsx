@@ -82,7 +82,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
 
       {/* Image Container - Clean background with proper object fit */}
       <Link to={`/shop/${product.slug}`} className="block relative aspect-square bg-gradient-to-b from-muted/20 to-muted/5 overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center p-8">
+        <div className="absolute inset-0 flex items-center justify-center p-4">
           {product.image_url ? (
             <img
               src={product.image_url}
