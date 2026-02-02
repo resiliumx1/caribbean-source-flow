@@ -27,7 +27,7 @@ const ctaCards: CTACard[] = [
   },
   {
     icon: Mountain,
-    title: "Healing Retreats in Saint Lucia",
+    title: "Healing Retreats at Mount Kailash Rejuvenation Centre Saint Lucia",
     descriptor: "Immersive experiences designed for deep restoration and clarity.",
     cta: "View Retreats",
     route: "/retreats",
