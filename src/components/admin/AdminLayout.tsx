@@ -37,6 +37,10 @@ export default function AdminLayout() {
           <div className="flex items-center gap-3">
             <Shield className="h-6 w-6 text-primary" />
             <span className="font-semibold text-lg">Admin Dashboard</span>
+            <nav className="flex items-center gap-4 ml-8">
+              <a href="/admin/products" className="text-sm hover:text-primary transition-colors">Products</a>
+              <a href="/admin/retreats" className="text-sm hover:text-primary transition-colors">Retreats</a>
+            </nav>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">{user.email}</span>

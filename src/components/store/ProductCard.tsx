@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingBag, Star, Eye, Leaf } from "lucide-react";
+import { ShoppingBag, Star, Eye, Leaf, Sparkles, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductPlaceholder } from "./ProductPlaceholder";
@@ -13,9 +13,15 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onQuickView }: ProductCardProps) {
-  const { formatPriceBoth } = useStore();
+  const { formatPrice, formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
+
+  // Check for promotions (these fields now exist in the Product type)
+  const promotionBadge = (product as any).promotion_badge;
+  const promotionText = (product as any).promotion_text;
+  const originalPriceUsd = (product as any).original_price_usd;
+  const originalPriceXcd = (product as any).original_price_xcd;
 
   // Generate consistent rating based on product id (in real app, this would come from DB)
   const rating = 4 + (parseInt(product.id.slice(-2), 16) % 10) / 10;
@@ -87,10 +93,20 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           )}
         </div>
 
-        {/* Badge */}
-        {product.badge && (
-          <Badge className={`absolute top-4 left-4 ${getBadgeColor(product.badge)}`}>
-            {getBadgeLabel(product.badge)}
+        {/* Badges */}
+        {(promotionBadge || product.badge) && (
+          <Badge className={`absolute top-4 left-4 gap-1 ${
+            promotionBadge 
+              ? "bg-accent text-accent-foreground" 
+              : getBadgeColor(product.badge)
+          }`}>
+            {promotionBadge && <Sparkles className="w-3 h-3" />}
+            {promotionBadge 
+              ? (promotionBadge === "savings" ? "Hot Deal" : 
+                 promotionBadge === "popular" ? "Popular" : 
+                 promotionBadge === "limited" ? "Limited" : promotionBadge)
+              : getBadgeLabel(product.badge)
+            }
           </Badge>
         )}
 
@@ -166,14 +182,29 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           </div>
         )}
 
+        {/* Promotion callout */}
+        {promotionText && (
+          <div className="flex items-center gap-1.5 text-xs text-accent-foreground bg-accent/10 rounded-lg px-2 py-1 mb-3">
+            <Tag className="w-3 h-3" />
+            <span className="font-medium">{promotionText}</span>
+          </div>
+        )}
+
         {/* Price */}
         <div className="flex items-baseline gap-2 mb-4">
           <span className="text-xl font-bold text-foreground">
             {prices.primary}
           </span>
-          <span className="text-sm text-muted-foreground">
-            {prices.secondary}
-          </span>
+          {originalPriceUsd && (
+            <span className="text-sm text-muted-foreground line-through">
+              {formatPrice(originalPriceUsd, originalPriceXcd || 0)}
+            </span>
+          )}
+          {!originalPriceUsd && (
+            <span className="text-sm text-muted-foreground">
+              {prices.secondary}
+            </span>
+          )}
         </div>
 
         {/* Subscribe & Save hint */}
