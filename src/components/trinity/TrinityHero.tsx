@@ -1,77 +1,68 @@
 import { Link } from "react-router-dom";
-import { Building2, ShoppingBag, Mountain, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
+import { Leaf, Package, Mountain, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
-interface TrinityDoor {
-  icon: React.ReactNode;
+interface CTACard {
+  icon: React.ElementType;
   title: string;
-  subtext: string;
+  descriptor: string;
   cta: string;
   route: string;
-  urgency?: string;
 }
 
+const ctaCards: CTACard[] = [
+  {
+    icon: Leaf,
+    title: "Shop Natural Formulations",
+    descriptor: "Daily remedies crafted for balance, vitality, and long-term wellness.",
+    cta: "Explore Products",
+    route: "/shop",
+  },
+  {
+    icon: Package,
+    title: "Wholesale & Practitioners",
+    descriptor: "Bulk herbs and formulations trusted by clinics, retailers, and wellness brands.",
+    cta: "Access Wholesale",
+    route: "/wholesale",
+  },
+  {
+    icon: Mountain,
+    title: "Healing Retreats in Saint Lucia",
+    descriptor: "Immersive experiences designed for deep restoration and clarity.",
+    cta: "View Retreats",
+    route: "/retreats",
+  },
+];
+
+const iconVariants = {
+  initial: { scale: 1, rotate: 0 },
+  hover: {
+    scale: 1.15,
+    rotate: 5,
+    transition: { type: "spring" as const, stiffness: 400, damping: 10 },
+  },
+};
+
+const cardVariants = {
+  initial: { y: 0 },
+  hover: {
+    y: -8,
+    transition: { type: "spring" as const, stiffness: 300, damping: 20 },
+  },
+};
+
+const textVariants = {
+  initial: { y: 0 },
+  hover: {
+    y: -4,
+    transition: { type: "spring" as const, stiffness: 300, damping: 20 },
+  },
+};
+
 export function TrinityHero() {
-  // Fetch next available group retreat for urgency display
-  const { data: nextRetreat } = useQuery({
-    queryKey: ["next-group-retreat"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("retreat_dates")
-        .select(`
-          *,
-          retreat_types!inner(slug, name, type)
-        `)
-        .eq("retreat_types.type", "group")
-        .eq("is_published", true)
-        .gte("start_date", new Date().toISOString().split("T")[0])
-        .order("start_date", { ascending: true })
-        .limit(1)
-        .single();
-
-      if (error) return null;
-      return data;
-    },
-  });
-
-  const spotsLeft = nextRetreat
-    ? nextRetreat.spots_total - nextRetreat.spots_booked
-    : null;
-
-  const doors: TrinityDoor[] = [
-    {
-      icon: <Building2 className="w-8 h-8" />,
-      title: "Supply Your Dispensary",
-      subtext: "100% natural bulk herbs, graduate pricing, COA documentation",
-      cta: "Access Wholesale",
-      route: "/wholesale",
-    },
-    {
-      icon: <ShoppingBag className="w-8 h-8" />,
-      title: "Shop The Formulations",
-      subtext: "Immune tonics, detox blends, vitality elixirs. Ships in 3 days",
-      cta: "Browse Remedies",
-      route: "/shop",
-    },
-    {
-      icon: <Mountain className="w-8 h-8" />,
-      title: "Begin Your Transformation",
-      subtext: "7-day cellular detox immersions. Limited availability",
-      cta: "Check Availability",
-      route: "/retreats",
-      urgency:
-        nextRetreat && spotsLeft !== null
-          ? `Next Group: ${format(new Date(nextRetreat.start_date), "MMM d")} – ${spotsLeft} Spot${spotsLeft !== 1 ? "s" : ""} Left`
-          : undefined,
-    },
-  ];
-
   return (
     <section className="relative min-h-screen flex flex-col pt-16">
-      {/* Background Video with Dark Overlay - NO white/cream */}
+      {/* Background Video with Dark Overlay */}
       <div className="absolute inset-0 z-0">
         <video
           autoPlay
@@ -82,7 +73,7 @@ export function TrinityHero() {
         >
           <source src="/videos/hero-background.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(150,30%,10%)]/85 via-[hsl(150,25%,15%)]/65 to-[hsl(150,30%,10%)]/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(150,30%,8%)]/90 via-[hsl(150,25%,12%)]/75 to-[hsl(150,30%,8%)]/90" />
       </div>
 
       {/* Content */}
@@ -91,51 +82,82 @@ export function TrinityHero() {
           {/* Headlines */}
           <div className="text-center mb-12 md:mb-16 animate-fade-in">
             <h1 className="hero-title text-background mb-6">
-              Medicine from the Volcanic Soil of St. Lucia
+              Where Natural Wellness Finds Its Source
             </h1>
-            <p className="hero-subtitle text-background/90 max-w-3xl mx-auto">
-              Hand-harvested by bush medicine practitioners, naturally fermented
-              for cellular bioavailability
+            <p className="hero-subtitle text-background/90 max-w-4xl mx-auto">
+              Crafted in Saint Lucia using herbs grown in mineral-rich volcanic soil, 
+              Mt. Kailash delivers natural formulations, immersive retreats, and trusted 
+              wholesale supply—designed to restore balance at every level.
             </p>
           </div>
 
-          {/* Three Doors */}
+          {/* Glass CTA Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {doors.map((door, index) => (
-              <Link
-                key={door.route}
-                to={door.route}
-                className="group relative overflow-hidden rounded-2xl bg-background/10 backdrop-blur-md border-2 border-background/20 p-6 md:p-8 transition-all duration-300 hover:bg-background/20 hover:border-accent hover:-translate-y-2 animate-slide-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Icon */}
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 text-accent mb-6 group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  {door.icon}
-                </div>
+            {ctaCards.map((card, index) => {
+              const Icon = card.icon;
+              return (
+                <Link key={card.route} to={card.route}>
+                  <motion.div
+                    className="group relative overflow-hidden rounded-2xl backdrop-blur-xl border-2 p-6 md:p-8 transition-all duration-300 cursor-pointer h-full"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.08)",
+                      borderColor: "rgba(255, 255, 255, 0.15)",
+                    }}
+                    variants={cardVariants}
+                    initial="initial"
+                    whileHover="hover"
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    {/* Hover glow effect */}
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{
+                        background: "radial-gradient(circle at 50% 50%, hsla(39, 55%, 45%, 0.15) 0%, transparent 70%)",
+                      }}
+                    />
+                    
+                    {/* Border glow on hover */}
+                    <div 
+                      className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                      style={{
+                        boxShadow: "inset 0 0 0 2px hsla(39, 55%, 45%, 0.5), 0 20px 40px -12px hsla(39, 55%, 45%, 0.25)",
+                      }}
+                    />
 
-                {/* Content */}
-                <h2 className="text-2xl font-bold text-background mb-3">
-                  {door.title}
-                </h2>
-                <p className="text-background/80 mb-6 text-sm leading-relaxed">
-                  {door.subtext}
-                </p>
+                    {/* Icon */}
+                    <motion.div
+                      className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 transition-colors duration-300"
+                      style={{
+                        background: "hsla(39, 55%, 45%, 0.2)",
+                      }}
+                      variants={iconVariants}
+                    >
+                      <Icon 
+                        className="w-8 h-8 transition-colors duration-300" 
+                        style={{ color: "hsl(39, 55%, 55%)" }}
+                      />
+                    </motion.div>
 
-                {/* Urgency Badge */}
-                {door.urgency && (
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/90 text-accent-foreground text-xs font-semibold mb-4">
-                    <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-                    {door.urgency}
-                  </div>
-                )}
+                    {/* Content */}
+                    <motion.div variants={textVariants}>
+                      <h2 className="text-xl md:text-2xl font-bold text-background mb-3">
+                        {card.title}
+                      </h2>
+                      <p className="text-background/75 mb-6 text-sm leading-relaxed">
+                        {card.descriptor}
+                      </p>
+                    </motion.div>
 
-                {/* CTA */}
-                <div className="flex items-center gap-2 text-accent font-semibold group-hover:gap-3 transition-all">
-                  {door.cta}
-                  <ChevronRight className="w-5 h-5" />
-                </div>
-              </Link>
-            ))}
+                    {/* CTA */}
+                    <div className="flex items-center gap-2 font-semibold group-hover:gap-3 transition-all duration-300" style={{ color: "hsl(39, 55%, 55%)" }}>
+                      {card.cta}
+                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </motion.div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>

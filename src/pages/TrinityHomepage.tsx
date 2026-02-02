@@ -5,18 +5,24 @@ import { ByTheNumbers } from "@/components/trinity/ByTheNumbers";
 import { ReSegmentation } from "@/components/trinity/ReSegmentation";
 import { UnifiedFooter } from "@/components/trinity/UnifiedFooter";
 import { WhatsAppButton } from "@/components/wholesale/WhatsAppButton";
+import { ConciergeButton } from "@/components/concierge/ConciergeButton";
+import { StoreHeader } from "@/components/store/StoreHeader";
 
 const TrinityHomepage = () => {
   return (
-    <main className="min-h-screen">
-      <TrinityHero />
-      <OriginStory />
-      <SocialProofMatrix />
-      <ByTheNumbers />
-      <ReSegmentation />
-      <UnifiedFooter />
-      <WhatsAppButton />
-    </main>
+    <>
+      <StoreHeader />
+      <main className="min-h-screen">
+        <TrinityHero />
+        <OriginStory />
+        <SocialProofMatrix />
+        <ByTheNumbers />
+        <ReSegmentation />
+        <UnifiedFooter />
+        <WhatsAppButton />
+        <ConciergeButton />
+      </main>
+    </>
   );
 };
 
