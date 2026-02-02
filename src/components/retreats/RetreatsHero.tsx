@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-farm.jpg";
 
@@ -13,7 +13,7 @@ export function RetreatsHero() {
   };
 
   const whatsappMessage = encodeURIComponent(
-    "Hello, I'm interested in learning more about your Solo Deep Detox retreat options. Could you share more information about availability and what's included?"
+    "Hello, I'm interested in learning more about your private retreat options. Could you share more information about availability and what's included?"
   );
 
   return (
@@ -25,38 +25,21 @@ export function RetreatsHero() {
           alt="Mount Kailash rainforest retreat"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/60 to-transparent" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto max-w-6xl px-4 py-20">
         <div className="max-w-2xl">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-accent/20 text-accent text-sm font-semibold mb-6 animate-fade-in">
-            Immersion, Not Vacation
-          </span>
-
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-background leading-tight mb-6 animate-slide-up">
-            Detox at the Cellular Level
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-background leading-tight mb-6">
+            Restore. Reset. Reconnect.
           </h1>
 
-          <p className="text-xl text-background/90 leading-relaxed mb-8 animate-slide-up delay-100">
-            Reclaim your vitality in St. Lucia's volcanic rainforest. 7-day
-            Bush Medicine Immersions & personalized Solo Retreats guided by
-            Master Herbalist Priest Kailash.
+          <p className="text-xl text-background/90 leading-relaxed mb-8">
+            Immersive wellness retreats in Saint Lucia designed to guide deep restoration—physically, mentally, and energetically.
           </p>
 
-          <p className="text-background/80 mb-8 animate-slide-up delay-200">
-            <strong>Medically-informed. Traditionally-rooted.</strong>
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 animate-slide-up delay-300">
-            <Button
-              size="lg"
-              onClick={scrollToCalendar}
-              className="bg-accent text-accent-foreground hover:bg-accent/90"
-            >
-              Check Group Availability
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4">
             <a
               href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}
               target="_blank"
@@ -64,13 +47,21 @@ export function RetreatsHero() {
             >
               <Button
                 size="lg"
-                variant="outline"
-                className="w-full sm:w-auto border-background/30 text-background hover:bg-background/10"
+                className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90"
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
-                Inquire About Solo Retreat
+                Book a Private Retreat
               </Button>
             </a>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={scrollToCalendar}
+              className="w-full sm:w-auto border-background/30 text-background hover:bg-background/10"
+            >
+              <Calendar className="w-5 h-5 mr-2" />
+              Join a Group Retreat
+            </Button>
           </div>
         </div>
       </div>

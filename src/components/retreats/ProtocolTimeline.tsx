@@ -1,38 +1,39 @@
+import { motion } from "framer-motion";
 import { ClipboardCheck, Leaf, Utensils, Heart, Package } from "lucide-react";
 
 const steps = [
   {
     icon: ClipboardCheck,
     title: "Assess",
-    description: "Pre-arrival questionnaire + Zoom consultation with Priest Kailash",
+    description: "Personalized intake and consultation to understand your body, lifestyle, and goals.",
     color: "text-primary",
     bgColor: "bg-primary/10",
   },
   {
     icon: Leaf,
     title: "Cleanse",
-    description: "Cellular detox using natural herbs (Colax, Blood Detox, Pure Green)",
-    color: "text-success",
-    bgColor: "bg-success/10",
+    description: "Targeted herbal detox protocols using natural formulations designed for cellular support.",
+    color: "text-emerald-600",
+    bgColor: "bg-emerald-50",
   },
   {
     icon: Utensils,
     title: "Nourish",
-    description: "Ital plant-based cuisine grown in volcanic soil",
-    color: "text-accent",
-    bgColor: "bg-accent/10",
+    description: "Plant-based meals and formulations grown in volcanic soil to replenish minerals and energy.",
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
   },
   {
     icon: Heart,
     title: "Integrate",
-    description: "Bush walks, meditation, breathwork, and rest",
-    color: "text-secondary",
-    bgColor: "bg-secondary/10",
+    description: "Breathwork, bush walks, stillness, and guided practices to lock in results.",
+    color: "text-rose-600",
+    bgColor: "bg-rose-50",
   },
   {
     icon: Package,
     title: "Sustain",
-    description: "30-day post-retreat formulation supply + follow-up consultation",
+    description: "Post-experience support, follow-up consultation, and ongoing formulation access.",
     color: "text-primary",
     bgColor: "bg-primary/10",
   },
@@ -40,55 +41,86 @@ const steps = [
 
 export function ProtocolTimeline() {
   return (
-    <section className="py-20 md:py-28 bg-muted/30">
+    <section className="py-20 md:py-28 bg-muted/30 overflow-hidden">
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-semibold mb-4">
-            The Protocol
-          </span>
-          <h2 className="section-header mb-4">Your Transformation Journey</h2>
-          <p className="section-subheader mx-auto">
-            A medically-informed, five-phase approach to cellular wellness and
-            lasting vitality.
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
+            Your Transformation Journey
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            A guided path from assessment to lasting vitality—designed to restore balance, not overwhelm the body.
           </p>
         </div>
 
-        {/* Timeline */}
+        {/* Flowing Timeline */}
         <div className="relative">
-          {/* Connector Line - Desktop */}
-          <div className="hidden md:block absolute top-12 left-0 right-0 h-0.5 bg-border" />
+          {/* Flowing connector line - Desktop */}
+          <svg
+            className="hidden md:block absolute top-1/2 left-0 w-full h-4 -translate-y-1/2 z-0"
+            viewBox="0 0 1200 40"
+            preserveAspectRatio="none"
+          >
+            <motion.path
+              d="M0,20 Q150,5 240,20 T480,20 T720,20 T960,20 T1200,20"
+              fill="none"
+              stroke="hsl(var(--border))"
+              strokeWidth="2"
+              strokeDasharray="8 4"
+              initial={{ pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+            />
+          </svg>
 
           {/* Steps */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-4 relative z-10">
             {steps.map((step, index) => {
               const Icon = step.icon;
               return (
-                <div
+                <motion.div
                   key={step.title}
-                  className="relative flex flex-col items-center text-center animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="relative flex flex-col items-center text-center group"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: index * 0.15 }}
                 >
-                  {/* Icon Circle */}
-                  <div
-                    className={`w-24 h-24 rounded-full ${step.bgColor} flex items-center justify-center mb-6 relative z-10 bg-background border-4 border-background shadow-lg`}
+                  {/* Organic Icon Circle with hover animation */}
+                  <motion.div
+                    className={`w-20 h-20 md:w-24 md:h-24 rounded-full ${step.bgColor} flex items-center justify-center mb-6 relative bg-background border-2 border-border shadow-lg cursor-pointer`}
+                    whileHover={{ 
+                      scale: 1.1, 
+                      boxShadow: "0 10px 40px rgba(0,0,0,0.15)",
+                      borderColor: "hsl(var(--primary))"
+                    }}
+                    transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <Icon className={`w-10 h-10 ${step.color}`} />
-                  </div>
+                    <Icon className={`w-8 h-8 md:w-10 md:h-10 ${step.color}`} />
+                    
+                    {/* Subtle pulse ring on hover */}
+                    <motion.div
+                      className="absolute inset-0 rounded-full border-2 border-primary/30"
+                      initial={{ scale: 1, opacity: 0 }}
+                      whileHover={{ scale: 1.2, opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </motion.div>
 
-                  {/* Step Number */}
-                  <div className="absolute top-0 right-1/2 translate-x-1/2 -translate-y-2 w-6 h-6 rounded-full bg-accent text-accent-foreground text-xs font-bold flex items-center justify-center">
-                    {index + 1}
-                  </div>
+                  {/* Mobile connector */}
+                  {index < steps.length - 1 && (
+                    <div className="md:hidden absolute left-1/2 -bottom-4 w-0.5 h-8 bg-border -translate-x-1/2" />
+                  )}
 
                   {/* Content */}
                   <h3 className="text-xl font-bold text-foreground mb-2">
                     {step.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed max-w-[200px]">
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-[220px]">
                     {step.description}
                   </p>
-                </div>
+                </motion.div>
               );
             })}
           </div>

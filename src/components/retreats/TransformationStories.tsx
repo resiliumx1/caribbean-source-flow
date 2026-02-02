@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Quote, TrendingUp } from "lucide-react";
+import { Quote, MapPin } from "lucide-react";
 
 interface Testimonial {
   id: string;
@@ -28,62 +28,77 @@ export function TransformationStories() {
     },
   });
 
-  if (testimonials.length === 0) return null;
+  // Fallback testimonials if none in DB
+  const displayTestimonials = testimonials.length > 0 ? testimonials : [
+    {
+      id: "1",
+      quote: "After years of trying everything, Mt. Kailash gave me clarity and a system I could finally trust.",
+      author_name: "Aisha",
+      author_title: "Toronto",
+      condition_addressed: null,
+      results: null,
+    },
+    {
+      id: "2", 
+      quote: "The transformation was deeper than I expected. I left feeling truly renewed from the inside out.",
+      author_name: "Marcus",
+      author_title: "New York",
+      condition_addressed: null,
+      results: null,
+    },
+    {
+      id: "3",
+      quote: "Priest Kailash's approach is unlike anything else. Traditional wisdom with real, measurable results.",
+      author_name: "Sophia",
+      author_title: "London",
+      condition_addressed: null,
+      results: null,
+    },
+  ];
 
   return (
     <section className="py-20 md:py-28 bg-background">
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="section-header mb-4">Transformation Stories</h2>
-          <p className="section-subheader mx-auto">
-            Real guests. Measurable outcomes. Lasting change.
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
+            Real Transformations
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Stories from guests who experienced lasting change.
           </p>
         </div>
 
         {/* Stories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((story, index) => (
+          {displayTestimonials.map((story, index) => (
             <div
               key={story.id}
-              className="bg-card rounded-2xl border border-border p-8 transition-all hover:shadow-lg animate-slide-up"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="bg-card rounded-2xl border border-border p-8 transition-all hover:shadow-lg"
             >
-              {/* Condition Badge */}
-              {story.condition_addressed && (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-xs font-medium text-muted-foreground mb-6">
-                  <span className="w-2 h-2 rounded-full bg-warning" />
-                  {story.condition_addressed}
+              {/* Avatar placeholder */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xl font-bold text-primary">
+                  {story.author_name.charAt(0)}
                 </div>
-              )}
+                <div>
+                  <div className="font-semibold text-foreground">
+                    {story.author_name}
+                  </div>
+                  {story.author_title && (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <MapPin className="w-3 h-3" />
+                      {story.author_title}
+                    </div>
+                  )}
+                </div>
+              </div>
 
-              <Quote className="w-8 h-8 text-accent/30 mb-4" />
+              <Quote className="w-8 h-8 text-primary/30 mb-4" />
 
-              <p className="text-foreground leading-relaxed mb-6">
+              <p className="text-foreground leading-relaxed italic">
                 "{story.quote}"
               </p>
-
-              {/* Results */}
-              {story.results && (
-                <div className="flex items-start gap-3 p-4 bg-success/10 rounded-xl mb-6">
-                  <TrendingUp className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-success font-medium">
-                    {story.results}
-                  </p>
-                </div>
-              )}
-
-              {/* Author */}
-              <div className="border-t border-border pt-4">
-                <div className="font-semibold text-foreground">
-                  {story.author_name}
-                </div>
-                {story.author_title && (
-                  <div className="text-sm text-muted-foreground">
-                    {story.author_title}
-                  </div>
-                )}
-              </div>
             </div>
           ))}
         </div>

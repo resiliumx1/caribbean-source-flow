@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useCategories } from "@/hooks/use-products";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles } from "lucide-react";
 
 export function CategoryNav() {
   const { data: categories, isLoading } = useCategories();
@@ -24,10 +23,10 @@ export function CategoryNav() {
       <Link
         to="/shop"
         className={cn(
-          "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 shadow-sm",
+          "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 border-2",
           currentPath === "/shop"
-            ? "bg-forest text-cream shadow-soft"
-            : "bg-cream border border-border text-foreground hover:bg-muted hover:border-forest/30"
+            ? "bg-foreground text-background border-foreground"
+            : "bg-background border-foreground/80 text-foreground hover:bg-muted"
         )}
       >
         All
@@ -37,31 +36,18 @@ export function CategoryNav() {
         const isActive = currentPath === `/shop/category/${category.slug}`;
         const isBundles = category.slug === "curated-bundles";
 
-        if (isBundles) {
-          return (
-            <Link
-              key={category.id}
-              to={`/shop/category/${category.slug}`}
-              className={cn(
-                "bundles-highlight inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 hover:scale-105",
-                isActive && "ring-2 ring-offset-2 ring-gold"
-              )}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              {category.name}
-            </Link>
-          );
-        }
+        // Skip bundles category
+        if (isBundles) return null;
 
         return (
           <Link
             key={category.id}
             to={`/shop/category/${category.slug}`}
             className={cn(
-              "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 shadow-sm",
+              "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 border-2",
               isActive
-                ? "bg-forest text-cream shadow-soft"
-                : "bg-cream border border-border text-foreground hover:bg-muted hover:border-forest/30"
+                ? "bg-foreground text-background border-foreground"
+                : "bg-background border-foreground/80 text-foreground hover:bg-muted"
             )}
           >
             {category.name}
