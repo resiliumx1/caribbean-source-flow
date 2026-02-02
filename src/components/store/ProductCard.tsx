@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingBag, Star, Eye, Leaf, Sparkles, Tag } from "lucide-react";
+import { ShoppingCart, Star, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductPlaceholder } from "./ProductPlaceholder";
@@ -17,28 +17,13 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const { addToCart, isAddingToCart } = useCart();
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
 
-  // Check for promotions (these fields now exist in the Product type)
-  const promotionBadge = (product as any).promotion_badge;
-  const promotionText = (product as any).promotion_text;
-  const originalPriceUsd = (product as any).original_price_usd;
-  const originalPriceXcd = (product as any).original_price_xcd;
-
-  // Generate consistent rating based on product id (in real app, this would come from DB)
+  // Generate consistent rating based on product id
   const rating = 4 + (parseInt(product.id.slice(-2), 16) % 10) / 10;
   const reviewCount = 100 + (parseInt(product.id.slice(-4), 16) % 250);
 
-  const getBadgeColor = (badge: string | null) => {
-    switch (badge) {
-      case "best_seller":
-        return "bg-accent text-accent-foreground";
-      case "new":
-        return "bg-forest text-cream";
-      case "staff_pick":
-        return "bg-earth text-cream";
-      default:
-        return "bg-forest text-cream";
-    }
-  };
+  // Get category display name
+  const categoryLabel = product.product_categories?.name?.toUpperCase() || 
+    product.product_type.replace(/_/g, ' ').toUpperCase();
 
   const getBadgeLabel = (badge: string | null) => {
     switch (badge) {
@@ -57,70 +42,59 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
     }
   };
 
+  const getBadgeColor = (badge: string | null) => {
+    switch (badge) {
+      case "best_seller":
+        return "bg-forest text-cream";
+      case "new":
+        return "bg-forest text-cream";
+      case "staff_pick":
+        return "bg-gold text-cream";
+      default:
+        return "bg-forest text-cream";
+    }
+  };
+
+  // Extract 3 key benefits from traditional_use or short_description
+  const getBenefits = (): string[] => {
+    if (product.traditional_use) {
+      return product.traditional_use.split(",").slice(0, 3).map(s => s.trim());
+    }
+    return [];
+  };
+
+  const benefits = getBenefits();
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart({ productId: product.id, quantity: 1 });
   };
 
-  const handleQuickView = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onQuickView?.(product);
-  };
-
   return (
-    <div className="group relative bg-card rounded-2xl border border-border overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
-      {/* Decorative leaf background */}
-      <div className="absolute top-0 right-0 text-forest/5 pointer-events-none">
-        <Leaf className="w-32 h-32 -rotate-45 translate-x-8 -translate-y-8" />
-      </div>
+    <div className="group relative bg-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-elevated">
+      {/* Badge */}
+      {product.badge && (
+        <Badge className={`absolute top-4 left-4 z-10 ${getBadgeColor(product.badge)}`}>
+          {getBadgeLabel(product.badge)}
+        </Badge>
+      )}
 
-      {/* Image Container */}
-      <Link to={`/shop/${product.slug}`} className="block relative aspect-square bg-gradient-to-br from-muted/30 to-muted/10 p-6 overflow-hidden">
-        <div className="relative w-full h-full flex items-center justify-center">
+      {/* Image Container - Clean background with proper object fit */}
+      <Link to={`/shop/${product.slug}`} className="block relative aspect-square bg-gradient-to-b from-muted/20 to-muted/5 overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center p-8">
           {product.image_url ? (
             <img
               src={product.image_url}
               alt={product.name}
-              className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-110"
+              className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <ProductPlaceholder
               productType={product.product_type}
-              className="w-28 h-40 transition-transform duration-500 group-hover:scale-110"
+              className="w-32 h-44 transition-transform duration-500 group-hover:scale-105"
             />
           )}
-        </div>
-
-        {/* Badges */}
-        {(promotionBadge || product.badge) && (
-          <Badge className={`absolute top-4 left-4 gap-1 ${
-            promotionBadge 
-              ? "bg-accent text-accent-foreground" 
-              : getBadgeColor(product.badge)
-          }`}>
-            {promotionBadge && <Sparkles className="w-3 h-3" />}
-            {promotionBadge 
-              ? (promotionBadge === "savings" ? "Hot Deal" : 
-                 promotionBadge === "popular" ? "Popular" : 
-                 promotionBadge === "limited" ? "Limited" : promotionBadge)
-              : getBadgeLabel(product.badge)
-            }
-          </Badge>
-        )}
-
-        {/* Quick View Overlay */}
-        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors duration-300 flex items-center justify-center">
-          <Button
-            variant="secondary"
-            size="sm"
-            className="opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 gap-2 bg-cream/95 text-foreground hover:bg-cream shadow-elevated"
-            onClick={handleQuickView}
-          >
-            <Eye className="w-4 h-4" />
-            Quick View
-          </Button>
         </div>
 
         {/* Stock status */}
@@ -136,14 +110,33 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
       </Link>
 
       {/* Content */}
-      <div className="p-5 relative">
+      <div className="p-5 space-y-3">
+        {/* Category label */}
+        <p className="text-xs font-semibold tracking-wider text-gold uppercase">
+          {categoryLabel}
+        </p>
+
+        {/* Product Name */}
+        <Link to={`/shop/${product.slug}`}>
+          <h3 className="font-serif text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+            {product.name}
+          </h3>
+        </Link>
+
+        {/* Short description */}
+        {product.short_description && (
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {product.short_description}
+          </p>
+        )}
+
         {/* Rating */}
-        <div className="flex items-center gap-1.5 mb-2">
+        <div className="flex items-center gap-1.5">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-3.5 h-3.5 ${
+                className={`w-4 h-4 ${
                   i < Math.floor(rating)
                     ? "fill-gold text-gold"
                     : i < rating
@@ -153,75 +146,49 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
               />
             ))}
           </div>
-          <span className="text-xs text-muted-foreground">({reviewCount})</span>
+          <span className="text-sm text-muted-foreground">({reviewCount})</span>
         </div>
 
-        {/* Name */}
-        <Link to={`/shop/${product.slug}`}>
-          <h3 className="font-serif text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-1">
-            {product.name}
-          </h3>
-        </Link>
-
-        {/* Short description */}
-        {product.short_description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-4 min-h-[40px]">
-            {product.short_description}
-          </p>
-        )}
-
-        {/* Feature bullets from traditional_use */}
-        {product.traditional_use && (
-          <div className="space-y-1 mb-4">
-            {product.traditional_use.split(",").slice(0, 2).map((use, i) => (
-              <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Leaf className="w-3 h-3 text-forest flex-shrink-0" />
-                <span className="line-clamp-1">{use.trim()}</span>
-              </div>
-            ))}
+        {/* Extended description / benefits with checkmarks */}
+        {(benefits.length > 0 || product.short_description) && (
+          <div className="space-y-1.5 pt-1">
+            {benefits.length > 0 ? (
+              benefits.map((benefit, i) => (
+                <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <Check className="w-4 h-4 text-forest flex-shrink-0 mt-0.5" />
+                  <span className="line-clamp-1">{benefit}</span>
+                </div>
+              ))
+            ) : product.short_description ? (
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {product.short_description}
+              </p>
+            ) : null}
           </div>
         )}
 
-        {/* Promotion callout */}
-        {promotionText && (
-          <div className="flex items-center gap-1.5 text-xs text-accent-foreground bg-accent/10 rounded-lg px-2 py-1 mb-3">
-            <Tag className="w-3 h-3" />
-            <span className="font-medium">{promotionText}</span>
+        {/* Price and Add to Cart - side by side */}
+        <div className="flex items-center justify-between pt-2 gap-3">
+          <div className="flex flex-col">
+            <span className="text-xl font-bold text-forest">
+              {prices.primary}
+            </span>
+            <span className="text-xs text-forest font-medium">
+              Subscribe & Save 15%
+            </span>
           </div>
-        )}
-
-        {/* Price */}
-        <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-xl font-bold text-foreground">
-            {prices.primary}
-          </span>
-          {originalPriceUsd && (
-            <span className="text-sm text-muted-foreground line-through">
-              {formatPrice(originalPriceUsd, originalPriceXcd || 0)}
-            </span>
-          )}
-          {!originalPriceUsd && (
-            <span className="text-sm text-muted-foreground">
-              {prices.secondary}
-            </span>
-          )}
+          
+          <Button
+            variant="default"
+            size="sm"
+            className="gap-2 bg-forest hover:bg-forest-dark text-cream px-4"
+            onClick={handleAddToCart}
+            disabled={isAddingToCart || product.stock_status === "out_of_stock"}
+          >
+            <ShoppingCart className="w-4 h-4" />
+            Add to Cart
+          </Button>
         </div>
-
-        {/* Subscribe & Save hint */}
-        <p className="text-xs text-forest font-medium mb-3">
-          Subscribe & Save 15%
-        </p>
-
-        {/* Add to Cart Button */}
-        <Button
-          variant="default"
-          className="w-full gap-2 bg-forest hover:bg-forest-dark text-cream"
-          onClick={handleAddToCart}
-          disabled={isAddingToCart || product.stock_status === "out_of_stock"}
-        >
-          <ShoppingBag className="w-4 h-4" />
-          Add to Cart
-        </Button>
       </div>
     </div>
   );

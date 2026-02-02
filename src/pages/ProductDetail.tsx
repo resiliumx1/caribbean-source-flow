@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, MessageCircle, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -32,6 +32,9 @@ export default function ProductDetail() {
       setSelectedVariant(defaultVariant);
     }
   }, [variants, selectedVariant]);
+
+  // Check if product is a raw herb
+  const isRawHerb = product?.product_type === "raw_herb";
 
   if (isLoading) {
     return (
@@ -82,15 +85,10 @@ export default function ProductDetail() {
   const prices = formatPriceBoth(currentPriceUsd * quantity, currentPriceXcd * quantity);
   const hasPromotion = promotionText || originalPriceUsd;
 
-  const whatsappMessage = encodeURIComponent(
-    `Hi, I have questions about ${product.name} before ordering.`
-  );
-
   const handleAddToCart = () => {
     addToCart({ 
       productId: product.id, 
       quantity,
-      // variant support would go here
     });
   };
 
@@ -110,44 +108,46 @@ export default function ProductDetail() {
 
         {/* Main grid - 60/40 split for larger images */}
         <div className="grid lg:grid-cols-[1fr_450px] gap-8 lg:gap-12">
-          {/* Image Gallery - full width on left */}
+          {/* Image Gallery - full width on left with proper fit */}
           <div className="relative">
-            <ProductGallery
-              primaryImage={product.image_url}
-              additionalImages={(product as any).additional_images ?? []}
-              productType={product.product_type}
-              productName={product.name}
-            />
+            <div className="sticky top-24">
+              <ProductGallery
+                primaryImage={product.image_url}
+                additionalImages={(product as any).additional_images ?? []}
+                productType={product.product_type}
+                productName={product.name}
+              />
 
-            {/* Badges */}
-            <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
-              {/* Promotion badge */}
-              {promotionBadge && (
-                <Badge className="bg-accent text-accent-foreground gap-1">
-                  <Sparkles className="w-3 h-3" />
-                  {promotionBadge === "savings" ? "Hot Deal" : 
-                   promotionBadge === "popular" ? "Popular" : 
-                   promotionBadge === "limited" ? "Limited" : promotionBadge}
-                </Badge>
-              )}
-              {product.badge && !promotionBadge && (
-                <Badge variant="default">
-                  {product.badge === "best_seller" ? "Best Seller" :
-                   product.badge === "fermented" ? "Fermented" :
-                   product.badge === "wildcrafted" ? "Wildcrafted" :
-                   product.badge === "new" ? "New" : product.badge}
-                </Badge>
-              )}
-              {product.stock_status !== "in_stock" && (
-                <Badge variant="destructive">
-                  {product.stock_status === "out_of_stock" ? "Out of Stock" :
-                   product.stock_status === "low_stock" ? "Low Stock" : "Pre-order"}
-                </Badge>
-              )}
+              {/* Badges */}
+              <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
+                {/* Promotion badge */}
+                {promotionBadge && (
+                  <Badge className="bg-accent text-accent-foreground gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    {promotionBadge === "savings" ? "Hot Deal" : 
+                     promotionBadge === "popular" ? "Popular" : 
+                     promotionBadge === "limited" ? "Limited" : promotionBadge}
+                  </Badge>
+                )}
+                {product.badge && !promotionBadge && (
+                  <Badge variant="default">
+                    {product.badge === "best_seller" ? "Best Seller" :
+                     product.badge === "fermented" ? "Fermented" :
+                     product.badge === "wildcrafted" ? "Wildcrafted" :
+                     product.badge === "new" ? "New" : product.badge}
+                  </Badge>
+                )}
+                {product.stock_status !== "in_stock" && (
+                  <Badge variant="destructive">
+                    {product.stock_status === "out_of_stock" ? "Out of Stock" :
+                     product.stock_status === "low_stock" ? "Low Stock" : "Pre-order"}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Details */}
+          {/* Details - Right side */}
           <div>
             {/* Category */}
             {product.product_categories && (
@@ -264,33 +264,46 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            {/* Actions - removed dosage guide button */}
+            <div className="mb-8">
               <Button
                 variant="hero"
                 size="xl"
                 onClick={handleAddToCart}
                 disabled={isAddingToCart || product.stock_status === "out_of_stock"}
-                className="flex-1 gap-2"
+                className="w-full gap-2"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {product.stock_status === "out_of_stock" ? "Out of Stock" : "Add to Bag"}
               </Button>
-              <Button variant="outline" size="xl" asChild>
-                <a
-                  href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="gap-2"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Request Dosing Guidance
-                </a>
-              </Button>
             </div>
 
+            {/* Bulk Order Notice for Raw Herbs */}
+            {isRawHerb && (
+              <div className="p-4 bg-forest/5 rounded-xl border border-forest/20 mb-6">
+                <div className="flex items-start gap-3">
+                  <MessageCircle className="w-5 h-5 text-forest flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">Bulk Orders Available</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Each order is 1 lb. Contact us for discounted pricing on quantities of 4-10 lbs.
+                    </p>
+                    <a
+                      href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${encodeURIComponent(`Hi, I'd like to inquire about bulk pricing for ${product.name} (4-10 lbs).`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-forest hover:text-forest-dark mt-2"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp for Bulk Pricing
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Educational Accordions */}
-            <Accordion type="multiple" className="w-full">
+            <Accordion type="multiple" className="w-full" defaultValue={["how-to-use"]}>
               {product.traditional_use && (
                 <AccordionItem value="traditional-use">
                   <AccordionTrigger className="font-serif">
