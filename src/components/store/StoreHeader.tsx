@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Menu, X, User, Phone, MessageCircle } from "lucide-react";
+import { ShoppingBag, Menu, X, User, Phone, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrencyToggle } from "./CurrencyToggle";
 import { useCart } from "@/hooks/use-cart";
@@ -55,8 +55,9 @@ export function StoreHeader() {
             </Link>
             <Link
               to="/shop/category/curated-bundles"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+              className="bundles-highlight inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 hover:scale-105"
             >
+              <Sparkles className="w-3.5 h-3.5" />
               Bundles
             </Link>
             <Link
@@ -146,8 +147,9 @@ export function StoreHeader() {
                   <Link
                     to="/shop/category/curated-bundles"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    className="bundles-highlight inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold w-fit"
                   >
+                    <Sparkles className="w-4 h-4" />
                     Curated Bundles
                   </Link>
                   <Link
