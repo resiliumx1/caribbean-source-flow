@@ -1,6 +1,6 @@
 import { ArrowRight, Calendar, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-farm.jpg";
+import heroImage from "@/assets/wholesale-hero.jpg";
 
 interface HeroProps {
   onScrollToForm: () => void;
