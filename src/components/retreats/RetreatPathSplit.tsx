@@ -83,10 +83,10 @@ export function RetreatPathSplit() {
                 .map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-3 text-[15px] text-[#0B0B0B] font-medium"
+                    className="flex items-center gap-3 text-[15px] text-foreground font-medium"
                   >
-                    <div className="w-6 h-6 rounded-full bg-[#1F3A2E] flex items-center justify-center flex-shrink-0">
-                      <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-primary-foreground" strokeWidth={3} />
                     </div>
                     {item}
                   </li>
@@ -166,10 +166,10 @@ export function RetreatPathSplit() {
                 .map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-3 text-[15px] text-[#0B0B0B] font-medium"
+                    className="flex items-center gap-3 text-[15px] text-foreground font-medium"
                   >
-                    <div className="w-6 h-6 rounded-full bg-[#1F3A2E] flex items-center justify-center flex-shrink-0">
-                      <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-primary-foreground" strokeWidth={3} />
                     </div>
                     {item}
                   </li>
