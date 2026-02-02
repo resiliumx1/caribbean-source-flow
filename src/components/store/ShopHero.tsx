@@ -9,7 +9,7 @@ const trustBadges = [
 
 export function ShopHero() {
   return (
-    <section className="relative h-[400px] md:h-[480px] overflow-hidden">
+    <section className="relative h-[400px] md:h-[480px] overflow-hidden pt-16">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
@@ -17,7 +17,8 @@ export function ShopHero() {
           alt="St. Lucian rainforest"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 via-foreground/60 to-foreground/80" />
+        {/* Dark gradient overlay - NO white/cream */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(150,30%,10%)]/85 via-[hsl(150,25%,15%)]/65 to-[hsl(150,30%,10%)]/85" />
       </div>
 
       {/* Content */}

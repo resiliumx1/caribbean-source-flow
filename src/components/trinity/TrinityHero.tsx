@@ -70,8 +70,8 @@ export function TrinityHero() {
   ];
 
   return (
-    <section className="relative min-h-screen flex flex-col">
-      {/* Background Video with Overlay */}
+    <section className="relative min-h-screen flex flex-col pt-16">
+      {/* Background Video with Dark Overlay - NO white/cream */}
       <div className="absolute inset-0 z-0">
         <video
           autoPlay
@@ -82,7 +82,7 @@ export function TrinityHero() {
         >
           <source src="/videos/hero-background.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 via-foreground/60 to-foreground/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(150,30%,10%)]/85 via-[hsl(150,25%,15%)]/65 to-[hsl(150,30%,10%)]/85" />
       </div>
 
       {/* Content */}

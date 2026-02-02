@@ -17,7 +17,7 @@ export function RetreatsHero() {
   );
 
   return (
-    <section className="relative min-h-[70vh] flex items-center">
+    <section className="relative min-h-[70vh] flex items-center pt-20">
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img
@@ -25,7 +25,8 @@ export function RetreatsHero() {
           alt="Mount Kailash rainforest retreat"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/60 to-transparent" />
+        {/* Dark gradient overlay - NO white/cream */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(150,30%,10%)]/90 via-[hsl(150,25%,15%)]/70 to-transparent" />
       </div>
 
       {/* Content */}

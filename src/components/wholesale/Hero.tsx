@@ -12,15 +12,15 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
   );
 
   return (
-    <section className="relative min-h-screen flex items-center">
+    <section className="relative min-h-screen flex items-center pt-16">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${heroImage})` }}
       />
       
-      {/* Overlay */}
-      <div className="hero-overlay absolute inset-0" />
+      {/* Dark Overlay - NO white/cream */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(150,30%,10%)]/85 via-[hsl(150,25%,15%)]/70 to-[hsl(150,30%,10%)]/80" />
       
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
