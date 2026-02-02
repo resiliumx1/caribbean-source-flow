@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingBag, Menu, User, MessageCircle } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 
 export function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { cartCount } = useCart();
   const { whatsappNumber, isLocalVisitor } = useStore();
 
@@ -18,8 +19,23 @@ export function StoreHeader() {
     "Hello, I'd like a consultation on which products are right for me."
   );
 
+  // Scroll listener for background transition
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <header 
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? "bg-background/98 backdrop-blur-md shadow-md border-b border-border" 
+          : "bg-background/95 backdrop-blur-sm border-b border-border/50"
+      }`}
+    >
       {/* Announcement bar */}
       {isLocalVisitor && (
         <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
@@ -74,15 +90,12 @@ export function StoreHeader() {
             >
               Wholesale
             </Link>
-            <a
-              href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
+            <Link
+              to="/about"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
             >
-              <MessageCircle className="w-4 h-4" />
-              Consult
-            </a>
+              About
+            </Link>
           </nav>
 
           {/* Actions */}
@@ -130,39 +143,8 @@ export function StoreHeader() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >
-                    Shop All
+                    Shop
                   </Link>
-                  <Link
-                    to="/shop/category/liquid-tinctures"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Liquid Tinctures
-                  </Link>
-                  <Link
-                    to="/shop/category/capsules-powders"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Capsules & Powders
-                  </Link>
-                  <Link
-                    to="/shop/category/traditional-teas"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Traditional Teas
-                  </Link>
-                  <Link
-                    to="/shop/category/raw-herbs"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Raw Herbs
-                  </Link>
-
-                  <hr className="my-2" />
-
                   <Link
                     to="/retreats"
                     onClick={() => setMobileMenuOpen(false)}
@@ -175,8 +157,18 @@ export function StoreHeader() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >
-                    Wholesale Inquiries
+                    Wholesale
                   </Link>
+                  <Link
+                    to="/about"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    About
+                  </Link>
+
+                  <hr className="my-2" />
+
                   <Link
                     to="/account"
                     onClick={() => setMobileMenuOpen(false)}
