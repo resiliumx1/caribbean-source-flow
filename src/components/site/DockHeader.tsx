@@ -45,18 +45,21 @@ export function DockHeader() {
           className="border-border/30 bg-background/60 dark:bg-background/40"
         >
           {navItems.map((item) => (
-            <Tooltip key={item.label}>
-              <TooltipTrigger asChild>
-                <Link to={item.href}>
-                  <DockIcon className="bg-muted/60 hover:bg-muted transition-colors">
+            <DockIcon key={item.label} className="bg-muted/60 hover:bg-muted transition-colors">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link 
+                    to={item.href} 
+                    className="flex items-center justify-center w-full h-full"
+                  >
                     <item.icon className="h-5 w-5 text-foreground" />
-                  </DockIcon>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">
-                {item.label}
-              </TooltipContent>
-            </Tooltip>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs">
+                  {item.label}
+                </TooltipContent>
+              </Tooltip>
+            </DockIcon>
           ))}
         </Dock>
       </div>
