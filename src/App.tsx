@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import { StoreProvider } from "@/lib/store-context";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import TrinityHomepage from "./pages/TrinityHomepage";
@@ -54,15 +55,23 @@ function AppContent() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <StoreProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
-      </TooltipProvider>
-    </StoreProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      storageKey="theme"
+      disableTransitionOnChange
+    >
+      <StoreProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </TooltipProvider>
+      </StoreProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

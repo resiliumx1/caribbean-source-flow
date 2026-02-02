@@ -140,9 +140,9 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
           {categoryLabel}
         </p>
 
-        {/* Product Name - BLACK, high contrast, bold */}
+        {/* Product Name - high contrast, bold */}
         <Link to={`/shop/${product.slug}`}>
-          <h3 className="font-serif text-xl font-bold tracking-tight text-[#0B0B0B] group-hover:text-primary transition-colors line-clamp-1">
+          <h3 className="font-serif text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-1">
             {product.name}
           </h3>
         </Link>
@@ -163,14 +163,14 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
               />
             ))}
           </div>
-          <span className="text-sm text-[#0B0B0B]/60">({reviewCount})</span>
+          <span className="text-sm text-muted-foreground">({reviewCount})</span>
         </div>
 
-        {/* Key Benefits checklist - dark gray for readability */}
+        {/* Key Benefits checklist */}
         {benefits.length > 0 && (
           <div className="space-y-1.5 pt-1">
             {benefits.map((benefit, i) => (
-              <div key={i} className="flex items-start gap-2 text-sm text-[#0B0B0B]/70">
+              <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                 <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                 <span className="line-clamp-1">{benefit}</span>
               </div>
@@ -181,10 +181,10 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
         {/* Price and Add to Cart - side by side */}
         <div className="flex items-center justify-between pt-2 gap-3">
           <div className="flex flex-col">
-            <span className="text-xl font-bold text-[#0B0B0B]">
+            <span className="text-xl font-bold text-foreground">
               {prices.primary}
             </span>
-            <span className="text-xs text-[#0B0B0B]/60">
+            <span className="text-xs text-muted-foreground">
               {prices.secondary}
             </span>
           </div>
