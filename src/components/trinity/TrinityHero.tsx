@@ -81,10 +81,10 @@ export function TrinityHero() {
         <div className="container mx-auto max-w-6xl">
           {/* Headlines */}
           <div className="text-center mb-12 md:mb-16 animate-fade-in">
-            <h1 className="hero-title text-background mb-6">
+            <h1 className="hero-title mb-6" style={{ color: "hsl(39, 70%, 65%)" }}>
               Where Natural Wellness Finds Its Source
             </h1>
-            <p className="hero-subtitle text-background/90 max-w-4xl mx-auto">
+            <p className="hero-subtitle max-w-4xl mx-auto" style={{ color: "hsl(45, 30%, 90%)" }}>
               Crafted in Saint Lucia using herbs grown in mineral-rich volcanic soil, 
               Mt. Kailash delivers natural formulations, immersive retreats, and trusted 
               wholesale supply—designed to restore balance at every level.
