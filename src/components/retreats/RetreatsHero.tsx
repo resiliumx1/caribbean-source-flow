@@ -1,6 +1,6 @@
 import { MessageCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-farm.jpg";
+import heroImage from "@/assets/retreat-hero-yoga.jpg";
 
 const whatsappNumber = "+17582855195";
 
@@ -41,19 +41,14 @@ export function RetreatsHero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Button
+              size="lg"
+              onClick={scrollToCalendar}
+              className="w-full sm:w-auto bg-[#1F3A2E] text-white hover:bg-[#2a4d3d] shadow-lg"
             >
-              <Button
-                size="lg"
-                className="w-full sm:w-auto bg-[#1F3A2E] text-white hover:bg-[#2a4d3d] shadow-lg"
-              >
-                <MessageCircle className="w-5 h-5 mr-2" />
-                Book a Private Retreat
-              </Button>
-            </a>
+              <MessageCircle className="w-5 h-5 mr-2" />
+              Book a Private Retreat
+            </Button>
             <Button
               size="lg"
               onClick={scrollToCalendar}

@@ -258,6 +258,9 @@ export function RetreatCalendar() {
                 const spotsLeft =
                   retreat && retreat.spots_total - retreat.spots_booked;
                 const isSelected = isDateSelected(day);
+                
+                // For solo mode - all future dates are available
+                const isSoloAvailable = selectedType === "solo" && !isPast;
 
                 return (
                   <button
@@ -269,11 +272,13 @@ export function RetreatCalendar() {
                       ${isPast ? "text-muted-foreground/40 cursor-not-allowed" : ""}
                       ${
                         isSelected
-                          ? "bg-accent text-accent-foreground"
+                          ? "bg-[#1F3A2E] text-white"
                           : inRetreat && selectedType === "group"
-                            ? "bg-primary/20 text-primary hover:bg-primary/30"
-                            : !isPast && selectedType === "solo"
-                              ? "hover:bg-muted cursor-pointer"
+                            ? spotsLeft !== undefined && spotsLeft <= 3
+                              ? "bg-[#3B82F6]/20 text-[#3B82F6] hover:bg-[#3B82F6]/30"
+                              : "bg-[#22C55E]/20 text-[#22C55E] hover:bg-[#22C55E]/30"
+                            : isSoloAvailable
+                              ? "bg-[#22C55E]/10 text-[#22C55E] hover:bg-[#22C55E]/20 cursor-pointer"
                               : ""
                       }
                       ${selectedType === "group" && !inRetreat && !isPast ? "text-muted-foreground" : ""}
@@ -289,8 +294,8 @@ export function RetreatCalendar() {
                             spotsLeft === 0
                               ? "bg-destructive text-destructive-foreground"
                               : spotsLeft <= 3
-                                ? "bg-warning text-warning-foreground"
-                                : "bg-success text-success-foreground"
+                                ? "bg-[#3B82F6] text-white"
+                                : "bg-[#22C55E] text-white"
                           }`}
                         >
                           {spotsLeft}
@@ -303,28 +308,33 @@ export function RetreatCalendar() {
 
             {/* Legend */}
             <div className="flex flex-wrap gap-4 mt-6 text-sm">
-              {selectedType === "group" && (
+              {selectedType === "group" ? (
                 <>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded bg-primary/20" />
-                    <span className="text-muted-foreground">Group dates</span>
+                    <div className="w-4 h-4 rounded bg-[#22C55E]/20" />
+                    <span className="text-muted-foreground">Available dates</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-success text-[8px] flex items-center justify-center text-success-foreground font-bold">
+                    <div className="w-4 h-4 rounded-full bg-[#22C55E] text-[8px] flex items-center justify-center text-white font-bold">
                       5+
                     </div>
-                    <span className="text-muted-foreground">Available</span>
+                    <span className="text-muted-foreground">Available spots</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-warning text-[8px] flex items-center justify-center text-warning-foreground font-bold">
+                    <div className="w-4 h-4 rounded-full bg-[#3B82F6] text-[8px] flex items-center justify-center text-white font-bold">
                       3
                     </div>
-                    <span className="text-muted-foreground">Limited</span>
+                    <span className="text-muted-foreground">Limited spots</span>
                   </div>
                 </>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-[#22C55E]/20" />
+                  <span className="text-muted-foreground">Available for solo booking</span>
+                </div>
               )}
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded bg-accent" />
+                <div className="w-4 h-4 rounded bg-[#1F3A2E]" />
                 <span className="text-muted-foreground">Selected</span>
               </div>
             </div>
