@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
-import { Loader2, Shield } from "lucide-react";
+import { Loader2, Shield, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
@@ -43,7 +44,13 @@ export default function AdminLayout() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user.email}</span>
+            <Link to="/">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Home className="h-4 w-4" />
+                <span className="hidden sm:inline">Back to Site</span>
+              </Button>
+            </Link>
+            <span className="text-sm text-muted-foreground hidden sm:inline">{user.email}</span>
             <button
               onClick={() => signOut()}
               className="text-sm text-destructive hover:underline"
