@@ -5,6 +5,7 @@ import { RetreatGallery } from "@/components/retreats/RetreatGallery";
 import { TransformationStories } from "@/components/retreats/TransformationStories";
 import { PriestKailashBio } from "@/components/retreats/PriestKailashBio";
 import { RetreatCalendar } from "@/components/retreats/RetreatCalendar";
+import { GroupRetreatsList } from "@/components/retreats/GroupRetreatsList";
 import { RetreatFAQ } from "@/components/retreats/RetreatFAQ";
 import { UnifiedFooter } from "@/components/trinity/UnifiedFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
@@ -16,6 +17,7 @@ const Retreats = () => {
       <RetreatsHero />
       <RetreatPathSplit />
       <ProtocolTimeline />
+      <GroupRetreatsList />
       <RetreatGallery />
       <TransformationStories />
       <PriestKailashBio />
