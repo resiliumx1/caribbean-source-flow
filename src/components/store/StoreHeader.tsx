@@ -91,12 +91,6 @@ export function StoreHeader() {
             >
               Wholesale
             </Link>
-            <Link
-              to="/about"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              About
-            </Link>
           </nav>
 
           {/* Actions */}
@@ -162,13 +156,6 @@ export function StoreHeader() {
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >
                     Wholesale
-                  </Link>
-                  <Link
-                    to="/about"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    About
                   </Link>
 
                   <hr className="my-2" />
