@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, MessageCircle, Instagram, Facebook } from "lucide-react";
 import { useStore } from "@/lib/store-context";
+import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
 
 export function StoreFooter() {
   const { storeEmail, storePhone, whatsappNumber } = useStore();
@@ -12,17 +13,19 @@ export function StoreFooter() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-gold flex items-center justify-center">
-                <span className="text-primary font-serif font-bold text-lg">M</span>
-              </div>
+              <img
+                src={mtKailashLogo}
+                alt="Mount Kailash Rejuvenation Centre"
+                className="w-10 h-10 rounded-full object-cover"
+              />
               <div>
                 <h3 className="font-serif font-bold leading-tight">Mount Kailash</h3>
                 <p className="text-xs text-primary-foreground/70">Rejuvenation Centre</p>
               </div>
             </div>
             <p className="text-sm text-primary-foreground/80 mb-4">
-              Wildcrafted herbal remedies from the rainforests of St. Lucia. 
-              21+ years of bush medicine tradition.
+              100% natural herbal remedies from the rainforests of St. Lucia. 
+              Non-GMO, vegan formulations. 21+ years of bush medicine tradition.
             </p>
           </div>
 
@@ -161,9 +164,8 @@ export function StoreFooter() {
               © {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.
             </p>
             <p className="text-xs max-w-xl text-center md:text-right">
-              These statements have not been evaluated by the FDA. These products are not 
-              intended to diagnose, treat, cure, or prevent any disease. Traditional use 
-              based on St. Lucian bush medicine practices.
+              Traditional use based on St. Lucian bush medicine practices under the guidance
+              of Right Honourable Priest Kailash Kay Leonce.
             </p>
           </div>
         </div>

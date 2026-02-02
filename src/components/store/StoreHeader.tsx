@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingBag, Menu, X, User, Phone, MessageCircle, Sparkles } from "lucide-react";
+import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
 import { Button } from "@/components/ui/button";
 import { CurrencyToggle } from "./CurrencyToggle";
 import { useCart } from "@/hooks/use-cart";
@@ -32,9 +33,11 @@ export function StoreHeader() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-serif font-bold text-lg">M</span>
-            </div>
+            <img
+              src={mtKailashLogo}
+              alt="Mount Kailash Rejuvenation Centre"
+              className="h-10 w-10 rounded-full object-cover"
+            />
             <div className="hidden sm:block">
               <h1 className="font-serif font-bold text-foreground leading-tight">
                 Mount Kailash

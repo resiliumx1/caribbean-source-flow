@@ -95,7 +95,7 @@ export const Footer = () => {
         <div className="border-t border-secondary-foreground/10 pt-8">
           <div className="text-xs text-secondary-foreground/50 space-y-2">
             <p>
-              <strong>FDA Disclaimer:</strong> These products are not intended to diagnose, treat, cure, or prevent any disease.
+              For manufacturing and formulation use only. Not for retail consumer resale without proper labeling.
             </p>
             <p>
               For manufacturing and formulation use only. Not for retail consumer resale without proper labeling.

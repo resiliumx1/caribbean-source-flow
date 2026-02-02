@@ -26,9 +26,7 @@ export function ShopHero() {
           Premium Herbal <span className="text-gradient-gold">Products</span>
         </h1>
         <p className="hero-subtitle text-cream/90 max-w-2xl mb-8">
-          Wildcrafted from Mount Kailash and the surrounding Saint Lucian rainforest.
-          <br />
-          100% natural, vegan formulations for optimal health.
+          100% natural • Made in Saint Lucia • Non-GMO • Vegan
         </p>
 
         {/* Trust Badges */}

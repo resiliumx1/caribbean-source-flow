@@ -16,6 +16,7 @@ export function useProducts(categorySlug?: string) {
         .from("products")
         .select("*, product_categories(*)")
         .eq("is_active", true)
+        .order("image_url", { ascending: false, nullsFirst: false })
         .order("display_order", { ascending: true });
 
       if (categorySlug) {

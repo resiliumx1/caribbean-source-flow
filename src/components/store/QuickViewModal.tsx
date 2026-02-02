@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, Star, Leaf, X, Plus, Minus } from "lucide-react";
+import { ShoppingBag, Star, Check, X, Plus, Minus } from "lucide-react";
 import { ProductPlaceholder } from "./ProductPlaceholder";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
@@ -36,7 +36,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
       case "fermented":
         return "Fermented";
       case "wildcrafted":
-        return "Wildcrafted";
+        return "100% Natural";
       case "new":
         return "New";
       case "staff_pick":
@@ -71,14 +71,14 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
 
             {/* Badge */}
             {product.badge && (
-              <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">
+              <Badge className={`absolute top-4 left-4 ${product.badge === "best_seller" ? "bg-orange-500 text-white" : "bg-accent text-accent-foreground"}`}>
                 {getBadgeLabel(product.badge)}
               </Badge>
             )}
 
-            {/* Decorative leaf */}
+            {/* Decorative check */}
             <div className="absolute bottom-4 right-4 text-forest/20">
-              <Leaf className="w-16 h-16" />
+              <Check className="w-16 h-16" />
             </div>
           </div>
 
@@ -132,12 +132,13 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
               </p>
             )}
 
-            {/* Traditional use as feature bullets */}
+            {/* Key Benefits checklist */}
             {product.traditional_use && (
               <div className="mb-6 space-y-2">
-                {product.traditional_use.split(",").slice(0, 3).map((use, i) => (
+                <p className="text-sm font-semibold text-foreground mb-2">Key Benefits</p>
+                {product.traditional_use.split(",").slice(0, 5).map((use, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm">
-                    <Leaf className="w-4 h-4 text-forest" />
+                    <Check className="w-4 h-4 text-forest flex-shrink-0" />
                     <span className="text-foreground">{use.trim()}</span>
                   </div>
                 ))}

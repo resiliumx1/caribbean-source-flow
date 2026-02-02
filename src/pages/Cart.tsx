@@ -53,7 +53,7 @@ export default function Cart() {
             Your Bag is Empty
           </h1>
           <p className="text-muted-foreground mb-8">
-            Explore our collection of wildcrafted St. Lucian botanicals.
+            Explore our collection of natural St. Lucian botanicals.
           </p>
           <Button asChild size="lg">
             <Link to="/shop">Continue Shopping</Link>

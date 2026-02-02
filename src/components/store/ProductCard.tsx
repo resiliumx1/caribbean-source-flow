@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Star, Check } from "lucide-react";
+import { ShoppingCart, Star, Check, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductPlaceholder } from "./ProductPlaceholder";
@@ -10,9 +10,10 @@ import type { Product } from "@/hooks/use-products";
 interface ProductCardProps {
   product: Product;
   onQuickView?: (product: Product) => void;
+  showBestSellerBadge?: boolean;
 }
 
-export function ProductCard({ product, onQuickView }: ProductCardProps) {
+export function ProductCard({ product, onQuickView, showBestSellerBadge }: ProductCardProps) {
   const { formatPrice, formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
@@ -32,7 +33,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
       case "fermented":
         return "Fermented";
       case "wildcrafted":
-        return "Wildcrafted";
+        return "100% Natural";
       case "new":
         return "New";
       case "staff_pick":
@@ -45,7 +46,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const getBadgeColor = (badge: string | null) => {
     switch (badge) {
       case "best_seller":
-        return "bg-forest text-cream";
+        return "bg-orange-500 text-white";
       case "new":
         return "bg-forest text-cream";
       case "staff_pick":
@@ -71,12 +72,22 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
     addToCart({ productId: product.id, quantity: 1 });
   };
 
+  const handleQuickView = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onQuickView?.(product);
+  };
+
+  // Determine if we should show best seller badge
+  const displayBestSeller = showBestSellerBadge || product.badge === "best_seller";
+  const displayBadge = displayBestSeller ? "best_seller" : product.badge;
+
   return (
-    <div className="group relative bg-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-elevated">
+    <div className="group relative bg-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-elevated shadow-sm">
       {/* Badge */}
-      {product.badge && (
-        <Badge className={`absolute top-4 left-4 z-10 ${getBadgeColor(product.badge)}`}>
-          {getBadgeLabel(product.badge)}
+      {displayBadge && (
+        <Badge className={`absolute top-4 left-4 z-10 ${displayBestSeller ? "bg-orange-500 text-white" : getBadgeColor(displayBadge)}`}>
+          {displayBestSeller ? "Best Seller" : getBadgeLabel(displayBadge)}
         </Badge>
       )}
 
@@ -95,6 +106,19 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
               className="w-32 h-44 transition-transform duration-500 group-hover:scale-105"
             />
           )}
+        </div>
+
+        {/* Quick View Overlay - appears on hover */}
+        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="gap-2 shadow-lg"
+            onClick={handleQuickView}
+          >
+            <Eye className="w-4 h-4" />
+            Quick View
+          </Button>
         </div>
 
         {/* Stock status */}
@@ -123,13 +147,6 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           </h3>
         </Link>
 
-        {/* Short description */}
-        {product.short_description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {product.short_description}
-          </p>
-        )}
-
         {/* Rating */}
         <div className="flex items-center gap-1.5">
           <div className="flex items-center">
@@ -149,21 +166,15 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           <span className="text-sm text-muted-foreground">({reviewCount})</span>
         </div>
 
-        {/* Extended description / benefits with checkmarks */}
-        {(benefits.length > 0 || product.short_description) && (
+        {/* Key Benefits checklist */}
+        {benefits.length > 0 && (
           <div className="space-y-1.5 pt-1">
-            {benefits.length > 0 ? (
-              benefits.map((benefit, i) => (
-                <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0 mt-0.5" />
-                  <span className="line-clamp-1">{benefit}</span>
-                </div>
-              ))
-            ) : product.short_description ? (
-              <p className="text-sm text-muted-foreground line-clamp-3">
-                {product.short_description}
-              </p>
-            ) : null}
+            {benefits.map((benefit, i) => (
+              <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Check className="w-4 h-4 text-forest flex-shrink-0 mt-0.5" />
+                <span className="line-clamp-1">{benefit}</span>
+              </div>
+            ))}
           </div>
         )}
 

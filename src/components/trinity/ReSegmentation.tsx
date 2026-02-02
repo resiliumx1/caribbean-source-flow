@@ -21,7 +21,7 @@ const paths = [
     icon: ShoppingBag,
     title: "For Wellness Seekers",
     description:
-      "Shop our full catalog of liquid tinctures, capsules, powders, and traditional teas. Each formulation crafted with wildcrafted herbs from St. Lucia's volcanic soil.",
+      "Shop our full catalog of liquid tinctures, capsules, powders, and traditional teas. Each formulation crafted with natural herbs from St. Lucia's volcanic soil.",
     features: [
       "Ships in 3 business days",
       "Local St. Lucia delivery",

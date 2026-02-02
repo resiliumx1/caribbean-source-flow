@@ -63,13 +63,18 @@ export default function Shop() {
           </div>
         ) : products && products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {products.map((product) => (
-              <ProductCard 
-                key={product.id} 
-                product={product}
-                onQuickView={handleQuickView}
-              />
-            ))}
+            {products.map((product, index) => {
+              // Products with images that appear first get Best Seller badge (only in "All" view)
+              const showBestSellerBadge = !categorySlug && !!product.image_url && index < 6;
+              return (
+                <ProductCard 
+                  key={product.id} 
+                  product={product}
+                  onQuickView={handleQuickView}
+                  showBestSellerBadge={showBestSellerBadge}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-16">
