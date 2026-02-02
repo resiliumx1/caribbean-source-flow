@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Menu, X, User, Phone, MessageCircle, Sparkles } from "lucide-react";
+import { ShoppingBag, Menu, User, MessageCircle } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
 import { Button } from "@/components/ui/button";
 import { CurrencyToggle } from "./CurrencyToggle";
@@ -51,17 +51,16 @@ export function StoreHeader() {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6">
             <Link
+              to="/"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+            >
+              Home
+            </Link>
+            <Link
               to="/shop"
               className="text-sm font-medium text-foreground hover:text-primary transition-colors"
             >
               Shop
-            </Link>
-            <Link
-              to="/shop/category/curated-bundles"
-              className="bundles-highlight inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 hover:scale-105"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              Bundles
             </Link>
             <Link
               to="/retreats"
@@ -120,6 +119,13 @@ export function StoreHeader() {
               <SheetContent side="right" className="w-72">
                 <nav className="flex flex-col gap-4 mt-8">
                   <Link
+                    to="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    Home
+                  </Link>
+                  <Link
                     to="/shop"
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
@@ -146,14 +152,6 @@ export function StoreHeader() {
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >
                     Traditional Teas
-                  </Link>
-                  <Link
-                    to="/shop/category/curated-bundles"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="bundles-highlight inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold w-fit"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    Curated Bundles
                   </Link>
                   <Link
                     to="/shop/category/raw-herbs"

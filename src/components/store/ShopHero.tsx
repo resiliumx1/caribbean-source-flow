@@ -1,8 +1,8 @@
-import { Leaf, CheckCircle, MapPin, Sparkles } from "lucide-react";
+import { Leaf, CheckCircle, MapPin, Heart } from "lucide-react";
 
 const trustBadges = [
-  { icon: Sparkles, label: "100% Natural" },
-  { icon: Leaf, label: "Vegan" },
+  { icon: Leaf, label: "100% Natural" },
+  { icon: Heart, label: "Vegan" },
   { icon: CheckCircle, label: "Non-GMO" },
   { icon: MapPin, label: "Made in St. Lucia" },
 ];
@@ -17,16 +17,19 @@ export function ShopHero() {
           alt="St. Lucian rainforest"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-forest/70 via-forest/50 to-forest/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 via-foreground/60 to-foreground/80" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 h-full flex flex-col items-center justify-center text-center">
-        <h1 className="hero-title text-cream mb-4">
-          Premium Herbal <span className="text-gradient-gold">Products</span>
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-background mb-4 max-w-3xl">
+          Premium Herbal Formulations for Daily Balance
         </h1>
-        <p className="hero-subtitle text-cream/90 max-w-2xl mb-8">
-          100% natural • Made in Saint Lucia • Non-GMO • Vegan
+        <p className="text-lg md:text-xl text-background/90 max-w-2xl mb-4">
+          100% natural, vegan, non-GMO remedies made in Saint Lucia using traditional bush medicine and mineral-rich volcanic soil.
+        </p>
+        <p className="text-sm text-background/70 mb-8">
+          Crafted for consistency • Designed for integration • Rooted in tradition
         </p>
 
         {/* Trust Badges */}
@@ -34,9 +37,9 @@ export function ShopHero() {
           {trustBadges.map((badge) => (
             <div
               key={badge.label}
-              className="flex items-center gap-2 px-4 py-2.5 bg-cream/95 rounded-full text-sm font-medium text-forest shadow-soft"
+              className="flex items-center gap-2 px-4 py-2.5 bg-background/95 rounded-full text-sm font-medium text-foreground shadow-sm"
             >
-              <badge.icon className="w-4 h-4 text-gold" />
+              <badge.icon className="w-4 h-4 text-primary" />
               <span>{badge.label}</span>
             </div>
           ))}
