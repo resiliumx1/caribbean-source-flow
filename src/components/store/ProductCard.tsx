@@ -136,13 +136,13 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
       {/* Content */}
       <div className="p-5 space-y-3">
         {/* Category label */}
-        <p className="text-xs font-semibold tracking-wider text-gold uppercase">
+        <p className="text-xs font-semibold tracking-wider text-primary uppercase">
           {categoryLabel}
         </p>
 
-        {/* Product Name */}
+        {/* Product Name - BLACK, high contrast */}
         <Link to={`/shop/${product.slug}`}>
-          <h3 className="font-serif text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+          <h3 className="font-serif text-xl font-bold tracking-tight text-[#0B0B0B] group-hover:text-primary transition-colors line-clamp-1">
             {product.name}
           </h3>
         </Link>
@@ -163,15 +163,15 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
               />
             ))}
           </div>
-          <span className="text-sm text-muted-foreground">({reviewCount})</span>
+          <span className="text-sm text-[#0B0B0B]/60">({reviewCount})</span>
         </div>
 
-        {/* Key Benefits checklist */}
+        {/* Key Benefits checklist - dark gray for readability */}
         {benefits.length > 0 && (
           <div className="space-y-1.5 pt-1">
             {benefits.map((benefit, i) => (
-              <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                <Check className="w-4 h-4 text-forest flex-shrink-0 mt-0.5" />
+              <div key={i} className="flex items-start gap-2 text-sm text-[#0B0B0B]/70">
+                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                 <span className="line-clamp-1">{benefit}</span>
               </div>
             ))}
@@ -181,10 +181,10 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
         {/* Price and Add to Cart - side by side */}
         <div className="flex items-center justify-between pt-2 gap-3">
           <div className="flex flex-col">
-            <span className="text-xl font-bold text-forest">
+            <span className="text-xl font-bold text-[#0B0B0B]">
               {prices.primary}
             </span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-[#0B0B0B]/60">
               {prices.secondary}
             </span>
           </div>
@@ -192,7 +192,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
           <Button
             variant="default"
             size="sm"
-            className="gap-2 bg-forest hover:bg-forest-dark text-cream px-4"
+            className="gap-2 bg-primary hover:bg-sage-dark text-white px-4"
             onClick={handleAddToCart}
             disabled={isAddingToCart || product.stock_status === "out_of_stock"}
           >

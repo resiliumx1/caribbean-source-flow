@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { Header } from "@/components/wholesale/Header";
 import { Hero } from "@/components/wholesale/Hero";
 import { ProblemSolution } from "@/components/wholesale/ProblemSolution";
 import { ProductGrid } from "@/components/wholesale/ProductGrid";
@@ -17,8 +16,7 @@ const Wholesale = () => {
   };
 
   return (
-    <main className="min-h-screen">
-      <Header onScrollToForm={scrollToForm} />
+    <main className="min-h-screen pt-0">
       <Hero onScrollToForm={scrollToForm} />
       <ProblemSolution />
       <ProductGrid onScrollToForm={scrollToForm} />
