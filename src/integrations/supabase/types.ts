@@ -61,6 +61,7 @@ export type Database = {
           quantity: number
           updated_at: string | null
           user_id: string
+          variant_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -69,6 +70,7 @@ export type Database = {
           quantity?: number
           updated_at?: string | null
           user_id: string
+          variant_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -77,6 +79,7 @@ export type Database = {
           quantity?: number
           updated_at?: string | null
           user_id?: string
+          variant_id?: string | null
         }
         Relationships: [
           {
@@ -91,6 +94,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
             referencedColumns: ["id"]
           },
         ]
@@ -371,6 +381,53 @@ export type Database = {
         }
         Relationships: []
       }
+      product_variants: {
+        Row: {
+          created_at: string
+          discount_percent: number
+          id: string
+          is_default: boolean
+          price_usd: number
+          price_xcd: number
+          product_id: string
+          size_label: string
+          size_oz: number
+          stock_status: string
+        }
+        Insert: {
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_default?: boolean
+          price_usd: number
+          price_xcd: number
+          product_id: string
+          size_label: string
+          size_oz: number
+          stock_status?: string
+        }
+        Update: {
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_default?: boolean
+          price_usd?: number
+          price_xcd?: number
+          product_id?: string
+          size_label?: string
+          size_oz?: number
+          stock_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           additional_images: string[] | null
@@ -387,10 +444,14 @@ export type Database = {
           is_active: boolean | null
           is_featured: boolean | null
           name: string
+          original_price_usd: number | null
+          original_price_xcd: number | null
           pharmaceutical_info: string | null
           price_usd: number
           price_xcd: number
           product_type: string
+          promotion_badge: string | null
+          promotion_text: string | null
           short_description: string | null
           size_info: string | null
           slug: string
@@ -413,10 +474,14 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           name: string
+          original_price_usd?: number | null
+          original_price_xcd?: number | null
           pharmaceutical_info?: string | null
           price_usd: number
           price_xcd: number
           product_type: string
+          promotion_badge?: string | null
+          promotion_text?: string | null
           short_description?: string | null
           size_info?: string | null
           slug: string
@@ -439,10 +504,14 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           name?: string
+          original_price_usd?: number | null
+          original_price_xcd?: number | null
           pharmaceutical_info?: string | null
           price_usd?: number
           price_xcd?: number
           product_type?: string
+          promotion_badge?: string | null
+          promotion_text?: string | null
           short_description?: string | null
           size_info?: string | null
           slug?: string
@@ -624,6 +693,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      retreat_gallery: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          image_url: string
+          is_featured: boolean
+          title: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url: string
+          is_featured?: boolean
+          title?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string
+          is_featured?: boolean
+          title?: string | null
+        }
+        Relationships: []
       }
       retreat_types: {
         Row: {

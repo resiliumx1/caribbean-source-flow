@@ -1,15 +1,17 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, MessageCircle, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, ShoppingBag, MessageCircle, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
 import { ProductGallery } from "@/components/store/ProductGallery";
+import { VariantSelector } from "@/components/store/VariantSelector";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProduct, useBundleItems } from "@/hooks/use-products";
+import { useProductVariants, type ProductVariant } from "@/hooks/use-product-variants";
 import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 
@@ -17,9 +19,19 @@ export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { data: product, isLoading } = useProduct(slug || "");
   const { data: bundleItems } = useBundleItems(product?.product_type === "bundle" ? product.id : "");
+  const { data: variants = [] } = useProductVariants(product?.id);
   const { addToCart, isAddingToCart } = useCart();
   const { formatPrice, formatPriceBoth, whatsappNumber, isLocalVisitor } = useStore();
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+
+  // Set default variant when variants load
+  useEffect(() => {
+    if (variants.length > 0 && !selectedVariant) {
+      const defaultVariant = variants.find((v) => v.is_default) || variants[0];
+      setSelectedVariant(defaultVariant);
+    }
+  }, [variants, selectedVariant]);
 
   if (isLoading) {
     return (
@@ -59,14 +71,27 @@ export default function ProductDetail() {
     );
   }
 
-  const prices = formatPriceBoth(product.price_usd * quantity, product.price_xcd * quantity);
+  // Use variant price if selected, otherwise product price
+  const currentPriceUsd = selectedVariant ? selectedVariant.price_usd : product.price_usd;
+  const currentPriceXcd = selectedVariant ? selectedVariant.price_xcd : product.price_xcd;
+  const originalPriceUsd = (product as any).original_price_usd;
+  const originalPriceXcd = (product as any).original_price_xcd;
+  const promotionText = (product as any).promotion_text;
+  const promotionBadge = (product as any).promotion_badge;
+
+  const prices = formatPriceBoth(currentPriceUsd * quantity, currentPriceXcd * quantity);
+  const hasPromotion = promotionText || originalPriceUsd;
 
   const whatsappMessage = encodeURIComponent(
     `Hi, I have questions about ${product.name} before ordering.`
   );
 
   const handleAddToCart = () => {
-    addToCart({ productId: product.id, quantity });
+    addToCart({ 
+      productId: product.id, 
+      quantity,
+      // variant support would go here
+    });
   };
 
   return (
@@ -83,8 +108,9 @@ export default function ProductDetail() {
           Back to Shop
         </Link>
 
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          {/* Image Gallery */}
+        {/* Main grid - 60/40 split for larger images */}
+        <div className="grid lg:grid-cols-[1fr_450px] gap-8 lg:gap-12">
+          {/* Image Gallery - full width on left */}
           <div className="relative">
             <ProductGallery
               primaryImage={product.image_url}
@@ -95,7 +121,16 @@ export default function ProductDetail() {
 
             {/* Badges */}
             <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
-              {product.badge && (
+              {/* Promotion badge */}
+              {promotionBadge && (
+                <Badge className="bg-accent text-accent-foreground gap-1">
+                  <Sparkles className="w-3 h-3" />
+                  {promotionBadge === "savings" ? "Hot Deal" : 
+                   promotionBadge === "popular" ? "Popular" : 
+                   promotionBadge === "limited" ? "Limited" : promotionBadge}
+                </Badge>
+              )}
+              {product.badge && !promotionBadge && (
                 <Badge variant="default">
                   {product.badge === "best_seller" ? "Best Seller" :
                    product.badge === "fermented" ? "Fermented" :
@@ -158,12 +193,32 @@ export default function ProductDetail() {
               )}
             </div>
 
+            {/* Promotion callout */}
+            {hasPromotion && (
+              <div className="p-4 bg-accent/10 rounded-xl border border-accent/20 mb-6">
+                <div className="flex items-center gap-2 text-accent-foreground">
+                  <Tag className="w-5 h-5" />
+                  <span className="font-semibold">{promotionText || "Special Offer!"}</span>
+                </div>
+                {originalPriceUsd && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Save {formatPrice(originalPriceUsd - currentPriceUsd, (originalPriceXcd || 0) - currentPriceXcd)} on this item
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Price */}
             <div className="mb-6">
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-bold text-foreground">
                   {prices.primary}
                 </span>
+                {originalPriceUsd && (
+                  <span className="text-xl text-muted-foreground line-through">
+                    {formatPrice(originalPriceUsd * quantity, (originalPriceXcd || 0) * quantity)}
+                  </span>
+                )}
                 <span className="text-lg text-muted-foreground">
                   {prices.secondary}
                 </span>
@@ -174,6 +229,17 @@ export default function ProductDetail() {
                 </p>
               )}
             </div>
+
+            {/* Variant selector for herbs */}
+            {variants.length > 0 && (
+              <div className="mb-6">
+                <VariantSelector
+                  variants={variants}
+                  selectedVariant={selectedVariant}
+                  onSelect={setSelectedVariant}
+                />
+              </div>
+            )}
 
             {/* Quantity selector */}
             <div className="flex items-center gap-4 mb-6">
