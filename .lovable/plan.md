@@ -1,213 +1,132 @@
 
 
-# Product Catalog Enhancement & Navigation Update
+## Implementation Plan: Complete Shop UI Overhaul
 
-## Overview
-
-This plan addresses three key areas:
-1. Add missing tea products, tea bundles, and the Virility Male Balance Tonic
-2. Reclassify "Liquid Tinctures" category to "Tonics"
-3. Highlight the Bundles link in navigation to entice customers
-
----
-
-## Part 1: Missing Products to Add
-
-Based on scraping the live website, the following products are missing from the database:
-
-### Missing Teas (2 products)
-
-| Product | Price USD | Description |
-|---------|-----------|-------------|
-| Virili-Tea | $33 | Potent herbal blend with Sensitive, Sarsaparilla, Medina, Anamu, Chaney Roots, Sea Moss, Stinging Nettle, Bay Leaf, and Cinnamon Leaf for energy, stamina, and libido |
-| Urinary Cleanse Tea | $35 | Blend of Stinging Nettle, Seed Under Leaf, and Spanish Needle for urinary tract health and detoxification |
-
-### Missing Tea Bundles (2 bundles)
-
-| Bundle | Price USD | Contents |
-|--------|-----------|----------|
-| Queenly Tea Bundle | $99 | Moon Cycle Tea + Digestive Rescue Tea + Restful Tea (feminine wellness) |
-| Kingly Tea Bundle | $99 | Urinary Cleanse + Medina Tea + Virili-Tea (male reproductive health) |
-
-### Missing Bundles (2 bundles)
-
-| Bundle | Price USD | Contents |
-|--------|-----------|----------|
-| Detox Bundle | $147 | Cassia Alata + Colax + Dewormer + Blood Detox (deep cleansing) |
-| Super Male Vitality Package | $290 | Full body detox and vital rebalancing for men, includes Prosperity |
-
-### Missing Tonic Product (1 product)
-
-| Product | Price USD | Description |
-|---------|-----------|-------------|
-| Virility Male Balance Tonic | $150 | Proprietary herbal blend with Sensitiva, Sarsaparilla, Medina, Anamu, Chaney Roots, Sea Moss, Stinging Nettle, Caribbean Bay Leaf for male vitality and endurance (PRE-ORDER) |
+### Overview
+This plan addresses all 6 requirements in your original request:
+1. Product images fitting the view window properly
+2. Scraping dosage info from mountkailashslu.com and updating the database
+3. Product cards matching the screenshot design
+4. Product detail page with right-side data format (per video)
+5. Removing the "request dosage guide" prompt
+6. Adding bulk order callout for raw herbs
 
 ---
 
-## Part 2: Category Reclassification
+### Phase 1: Fix Product Image Display (Fitting View Window)
 
-### Current State
-- Category name: "Liquid Tinctures"
-- Category slug: "liquid-tinctures"
+**Problem**: Images may have excessive padding causing them to appear too small.
 
-### After Update
-- Category name: "Tonics"
-- Category slug: "tonics"
-
-### Database Changes Required
-1. Update `product_categories` table: change name and slug for the liquid tinctures category
-2. All products currently in this category will automatically be reclassified
+**Changes**:
+- **ProductCard.tsx**: Reduce the `p-8` padding to `p-4` in the image container so products fill more of the card
+- **ProductGallery.tsx**: Adjust the main image container to use less padding (`p-2` instead of `p-4`) so the image takes up more visual space
+- Keep `object-contain` to maintain aspect ratio without cropping
 
 ---
 
-## Part 3: Bundles Navigation Highlight
+### Phase 2: Scrape and Update Dosage Instructions
 
-### Design Approach
-Make the "Bundles" link visually stand out to attract clicks. This will use a gradient background, subtle animation, and a sparkle/gift icon.
+**Products needing dosage data** (currently missing):
+- Queenly Tea Bundle
+- Kingly Tea Bundle  
+- Detox Bundle
+- Virility Male Balance Tonic
 
-### Visual Design
+**Data source**: mountkailashslu.com product pages
 
-Desktop navigation:
-```
-+-------+  +------------------------+  +---------+  +-----------+
-| Shop  |  | [sparkle] Bundles [%]  |  | Retreats |  | Wholesale |
-+-------+  +------------------------+  +---------+  +-----------+
-                     ^
-            Gradient background (gold/earth tones)
-            Subtle pulse animation
-            "Save" or sparkle icon
-```
-
-Mobile menu: Same treatment with eye-catching styling
-
-### Styling Details
-- Background: Gradient from gold to earth tones (matches brand)
-- Border: Golden border with subtle glow
-- Icon: Sparkles or Gift icon
-- Text: "Bundles" with optional "Save" badge
-- Animation: Subtle pulse on hover, gentle glow effect
+**Database update** with scraped dosage instructions:
+- **Queenly Tea Bundle**: Bundle protocol (steep 1 bag, 8oz water, 7-10 min, 2-3 cups daily)
+- **Kingly Tea Bundle**: Bundle protocol for men's wellness teas
+- **Detox Bundle**: Week 1-2 Colax protocol, then add other products
+- **Virility Male Balance Tonic**: Adults - 30 drops in water, 3 times daily
 
 ---
 
-## Implementation Steps
+### Phase 3: Product Card Redesign (Match Screenshot)
 
-### Step 1: Database Updates
-1. Insert the 7 missing products into the `products` table
-2. Update the "Liquid Tinctures" category to "Tonics" in `product_categories`
-3. Set promotional badges on the new bundles (they should display savings)
+Based on the screenshot analysis, the target design includes:
+- Uppercase category label (already implemented)
+- Product name (already implemented)
+- Short tagline/description (already implemented)
+- Star rating with review count in parentheses (already implemented)
+- Benefit checkmarks from traditional_use (already implemented)
+- Dual pricing (primary large, secondary small) - implemented but needs verification
+- "Add to Cart" button - already present
 
-### Step 2: Update StoreHeader Component
-Modify `src/components/store/StoreHeader.tsx` to:
-- Add special styling for the Bundles navigation link
-- Include a sparkle icon and gradient background
-- Add subtle hover animation
-
-### Step 3: Update CategoryNav Component
-Modify `src/components/store/CategoryNav.tsx` to:
-- Add visual distinction for the Bundles category pill
-- Include special styling that makes it stand out from other categories
-
-### Step 4: Update Mobile Menu
-Enhance the Bundles link in the mobile sheet menu with the same eye-catching treatment
+**Key fixes needed**:
+- Ensure benefits are properly extracted (comma-separated from `traditional_use`)
+- Remove any lingering "Subscribe & Save" references (already removed per last diff)
+- Confirm the card layout renders correctly in the preview
 
 ---
 
-## Files to Modify
+### Phase 4: Product Detail Page Layout (Right-Side Data Format)
+
+Based on the video reference, the PDP should show:
+- **Left side (60%)**: Large product image gallery with thumbnails
+- **Right side (40%)**: Product info in vertical stack:
+  - Category link
+  - Product name
+  - Short description
+  - Trust badges
+  - Price display
+  - Quantity selector
+  - Add to Bag button
+  - Educational accordions (Traditional Use, The Science, How to Use, Ingredients)
+
+**Current status**: Most of this is already implemented in ProductDetail.tsx. Need to verify:
+- Grid is `lg:grid-cols-[1fr_450px]` (roughly 60/40 split) - DONE
+- Accordions are present for Traditional Use, Science, How to Use, Ingredients - DONE
+- "Request dosage guide" button removed - DONE
+
+---
+
+### Phase 5: Remove "Request Dosage Guide" Prompt
+
+**Status**: Already completed in previous work. The ProductDetail.tsx no longer contains any dosage guide request button - verified by code review (lines 267-279 show only the "Add to Bag" button).
+
+---
+
+### Phase 6: Raw Herbs Bulk Order Callout
+
+**Status**: Already implemented. Lines 281-303 in ProductDetail.tsx show:
+- Check for `isRawHerb` (product_type === "raw_herb")
+- Display callout box with "Each order is 1 lb"
+- Contact info for 4-10 lb bulk pricing
+- WhatsApp link for bulk inquiries
+
+---
+
+### Technical Implementation Summary
+
+**Files to modify**:
 
 | File | Changes |
 |------|---------|
-| `src/components/store/StoreHeader.tsx` | Add highlighted Bundles link with gradient, icon, animation |
-| `src/components/store/CategoryNav.tsx` | Add special styling for Bundles category pill |
+| `src/components/store/ProductCard.tsx` | Reduce image container padding from `p-8` to `p-4` |
+| `src/components/store/ProductGallery.tsx` | Reduce main image padding from `p-4` to `p-2` |
+| Database migration | Update dosage_instructions for 4 products |
 
-### Database Operations
-- INSERT 7 new products with full details (descriptions, pricing, images from source)
-- UPDATE product_categories to rename "Liquid Tinctures" to "Tonics"
-
----
-
-## New Products Detail
-
-### Virili-Tea
-- **Type**: tea
-- **Category**: Traditional Teas
-- **Price**: $33 USD / $89.10 XCD
-- **Short Description**: Potent blend for energy, stamina, and libido
-- **Traditional Use**: Male vitality, sexual health, energy boost
-- **Ingredients**: Sensitive, Sarsaparilla, Medina, Anamu, Chaney Roots, Sea Moss, Stinging Nettle, Bay Leaf, Cinnamon Leaf
-
-### Urinary Cleanse Tea
-- **Type**: tea
-- **Category**: Traditional Teas
-- **Price**: $35 USD / $94.50 XCD
-- **Short Description**: Supports urinary tract health and detox
-- **Traditional Use**: Urinary health, kidney support, inflammation relief
-- **Ingredients**: Stinging Nettle, Seed Under Leaf, Spanish Needle
-
-### Queenly Tea Bundle
-- **Type**: bundle
-- **Category**: Curated Bundles
-- **Price**: $99 USD / $267.30 XCD
-- **Original Price**: $103 (saves $4)
-- **Short Description**: Feminine wellness trio for hormonal balance, digestion, and rest
-- **Promotion Badge**: popular
-- **Promotion Text**: Complete feminine wellness
-
-### Kingly Tea Bundle
-- **Type**: bundle
-- **Category**: Curated Bundles
-- **Price**: $99 USD / $267.30 XCD
-- **Original Price**: $103 (saves $4)
-- **Short Description**: Male wellness trio for vitality, urinary health, and energy
-- **Promotion Badge**: popular
-- **Promotion Text**: Complete male wellness
-
-### Detox Bundle
-- **Type**: bundle
-- **Category**: Curated Bundles
-- **Price**: $147 USD / $396.90 XCD
-- **Short Description**: Deep cleansing for digestion, elimination, and blood purification
-- **Promotion Badge**: savings
-- **Promotion Text**: Ultimate detox system
-
-### Super Male Vitality Package
-- **Type**: bundle
-- **Category**: Curated Bundles
-- **Price**: $290 USD / $783 XCD
-- **Short Description**: Ultimate full body detox and vital rebalancing for men
-- **Promotion Badge**: popular
-- **Promotion Text**: Best value for men
-- **Badge**: best_seller (5-star rated)
-
-### Virility Male Balance Tonic
-- **Type**: tonic (new product type, will use the renamed Tonics category)
-- **Category**: Tonics (formerly Liquid Tinctures)
-- **Price**: $150 USD / $405 XCD
-- **Stock Status**: pre_order
-- **Short Description**: Proprietary herbal blend for male resilience, stamina, and vitality
-- **Traditional Use**: Male performance, hormone balance, stress management, endurance
-- **Ingredients**: Sensitiva (Mimosa pudica), Sarsaparilla, Medina, Anamu, Chaney Roots, Sea Moss, Stinging Nettle, Caribbean Bay Leaf
-
----
-
-## Navigation Highlight CSS Approach
-
-```css
-/* Bundles link special styling */
-.bundles-highlight {
-  background: linear-gradient(135deg, #d4a574 0%, #8b7355 100%);
-  color: #fef6e4;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(212, 165, 116, 0.5);
-  box-shadow: 0 0 12px rgba(212, 165, 116, 0.3);
-  animation: subtle-pulse 3s ease-in-out infinite;
-}
-
-@keyframes subtle-pulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(212, 165, 116, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(212, 165, 116, 0.5); }
-}
+**Database updates** (SQL migration):
+```text
+UPDATE products SET dosage_instructions = '...' WHERE slug = 'queenly-tea-bundle';
+UPDATE products SET dosage_instructions = '...' WHERE slug = 'kingly-tea-bundle';
+UPDATE products SET dosage_instructions = '...' WHERE slug = 'detox-bundle';
+UPDATE products SET dosage_instructions = '...' WHERE slug = 'virility-male-balance-tonic';
 ```
 
-This creates an elegant, eye-catching effect that draws attention without being garish, fitting the natural/wellness brand aesthetic.
+---
+
+### Why the Shop Might "Look the Same"
+
+Possible reasons the preview isn't showing changes:
+1. **Browser caching**: The preview might be serving cached CSS/JS
+2. **Build not refreshing**: The changes may not have been hot-reloaded
+3. **Inspecting wrong URL**: Ensure you're on `/shop` in the preview panel
+
+**Verification steps** after implementation:
+1. Hard refresh the preview (Ctrl+Shift+R or Cmd+Shift+R)
+2. Navigate to `/shop` and verify product cards
+3. Click into a product and verify the right-side format
+4. Check a raw herb product (like Soursop Leaves) for the bulk order notice
 
