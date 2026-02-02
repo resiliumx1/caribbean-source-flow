@@ -45,7 +45,7 @@ export function TrinityHero() {
     {
       icon: <Building2 className="w-8 h-8" />,
       title: "Supply Your Dispensary",
-      subtext: "Wildcrafted bulk herbs, graduate pricing, COA documentation",
+      subtext: "100% natural bulk herbs, graduate pricing, COA documentation",
       cta: "Access Wholesale",
       route: "/wholesale",
     },
@@ -151,7 +151,7 @@ export function TrinityHero() {
             <span className="hidden md:inline text-secondary-foreground/40">|</span>
             <span className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              FDA-Registered Facility
+              Certified Processing Facility
             </span>
             <span className="hidden md:inline text-secondary-foreground/40">|</span>
             <span className="flex items-center gap-2">

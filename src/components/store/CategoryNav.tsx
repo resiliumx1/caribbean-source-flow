@@ -24,7 +24,7 @@ export function CategoryNav() {
       <Link
         to="/shop"
         className={cn(
-          "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
+          "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 shadow-sm",
           currentPath === "/shop"
             ? "bg-forest text-cream shadow-soft"
             : "bg-cream border border-border text-foreground hover:bg-muted hover:border-forest/30"
@@ -58,7 +58,7 @@ export function CategoryNav() {
             key={category.id}
             to={`/shop/category/${category.slug}`}
             className={cn(
-              "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200",
+              "px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 shadow-sm",
               isActive
                 ? "bg-forest text-cream shadow-soft"
                 : "bg-cream border border-border text-foreground hover:bg-muted hover:border-forest/30"

@@ -81,7 +81,7 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
             Our <span className="text-gradient-gold">Product Catalog</span>
           </h2>
           <p className="section-subheader mx-auto">
-            Authentic St. Lucian botanicals, wildcrafted and processed with care. 
+            Authentic St. Lucian botanicals, naturally harvested and processed with care. 
             Custom pricing based on your volume requirements.
           </p>
         </div>

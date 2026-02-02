@@ -11,7 +11,7 @@ const steps = [
   {
     icon: Leaf,
     title: "Cleanse",
-    description: "Cellular detox using wildcrafted herbs (Colax, Blood Detox, Pure Green)",
+    description: "Cellular detox using natural herbs (Colax, Blood Detox, Pure Green)",
     color: "text-success",
     bgColor: "bg-success/10",
   },

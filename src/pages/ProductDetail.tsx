@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles, MessageCircle } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles, MessageCircle, Check } from "lucide-react";
 import { useState, useEffect } from "react";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -130,10 +130,10 @@ export default function ProductDetail() {
                   </Badge>
                 )}
                 {product.badge && !promotionBadge && (
-                  <Badge variant="default">
+                  <Badge variant="default" className={product.badge === "best_seller" ? "bg-orange-500 text-white" : ""}>
                     {product.badge === "best_seller" ? "Best Seller" :
                      product.badge === "fermented" ? "Fermented" :
-                     product.badge === "wildcrafted" ? "Wildcrafted" :
+                     product.badge === "wildcrafted" ? "100% Natural" :
                      product.badge === "new" ? "New" : product.badge}
                   </Badge>
                 )}
@@ -182,7 +182,7 @@ export default function ProductDetail() {
               {product.badge === "wildcrafted" && (
                 <div className="inline-flex items-center gap-1 text-sm text-primary">
                   <Leaf className="w-4 h-4" />
-                  Wildcrafted
+                  100% Natural
                 </div>
               )}
               {isLocalVisitor && (
@@ -264,7 +264,22 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Actions - removed dosage guide button */}
+            {/* Key Benefits Section */}
+            {product.traditional_use && (
+              <div className="mb-8 p-4 bg-forest/5 rounded-xl border border-forest/20">
+                <h3 className="font-serif font-semibold text-foreground mb-3">Key Benefits</h3>
+                <div className="space-y-2">
+                  {product.traditional_use.split(",").slice(0, 5).map((benefit, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-forest flex-shrink-0" />
+                      <span className="text-foreground">{benefit.trim()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
             <div className="mb-8">
               <Button
                 variant="hero"
@@ -399,15 +414,6 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* FDA Disclaimer */}
-            <div className="mt-8 p-4 bg-muted/30 rounded-lg text-xs text-muted-foreground">
-              <p>
-                These statements have not been evaluated by the FDA. This product is not 
-                intended to diagnose, treat, cure, or prevent any disease. Traditional use 
-                based on St. Lucian bush medicine practices under the guidance of Right 
-                Honourable Priest Kailash Kay Leonce.
-              </p>
-            </div>
           </div>
         </div>
       </main>

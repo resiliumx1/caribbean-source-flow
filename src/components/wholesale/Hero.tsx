@@ -30,7 +30,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
           </h1>
           
           <p className="hero-subtitle text-cream/90 mb-8 animate-slide-up delay-100">
-            St. Lucian wildcrafted herbs with full documentation and Miami warehousing. 
+            St. Lucian natural herbs with full documentation and Miami warehousing. 
             No customs surprises. No quality gaps. Custom pricing for your volume.
           </p>
           

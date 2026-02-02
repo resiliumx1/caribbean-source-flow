@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { MessageCircle, Phone, Mail, MapPin } from "lucide-react";
+import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
 
 const whatsappNumber = "+17582855195";
 const whatsappMessage = encodeURIComponent(
@@ -15,11 +16,11 @@ export function UnifiedFooter() {
           {/* Brand Column */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-accent-foreground font-serif font-bold text-lg">
-                  M
-                </span>
-              </div>
+              <img
+                src={mtKailashLogo}
+                alt="Mount Kailash Rejuvenation Centre"
+                className="w-10 h-10 rounded-full object-cover"
+              />
               <div>
                 <div className="font-serif font-bold">Mount Kailash</div>
                 <div className="text-xs text-secondary-foreground/70">
@@ -197,9 +198,7 @@ export function UnifiedFooter() {
               All rights reserved.
             </p>
             <p className="text-center md:text-right max-w-xl">
-              <strong>FDA Disclaimer:</strong> These statements have not been
-              evaluated by the FDA. Products are not intended to diagnose,
-              treat, cure, or prevent any disease.
+              Traditional use based on St. Lucian bush medicine practices.
             </p>
           </div>
         </div>
