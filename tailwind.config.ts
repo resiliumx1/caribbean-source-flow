@@ -89,10 +89,25 @@ export default {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			},
-  			forest: {
+			forest: {
   				DEFAULT: 'hsl(var(--forest))',
   				light: 'hsl(var(--forest-light))',
   				dark: 'hsl(var(--forest-dark))'
+  			},
+  			sage: {
+  				DEFAULT: 'hsl(var(--sage))',
+  				light: 'hsl(var(--sage-light))',
+  				dark: 'hsl(var(--sage-dark))'
+  			},
+  			ocean: {
+  				DEFAULT: 'hsl(var(--ocean))',
+  				light: 'hsl(var(--ocean-light))',
+  				dark: 'hsl(var(--ocean-dark))'
+  			},
+  			taupe: {
+  				DEFAULT: 'hsl(var(--taupe))',
+  				light: 'hsl(var(--taupe-light))',
+  				dark: 'hsl(var(--taupe-dark))'
   			},
   			earth: {
   				DEFAULT: 'hsl(var(--earth))',
@@ -106,8 +121,9 @@ export default {
   			},
   			cream: {
   				DEFAULT: 'hsl(var(--cream))',
-  				warm: 'hsl(var(--cream-warm))'
+  				warm: 'hsl(var(--warm-white))'
   			},
+  			sand: 'hsl(var(--sand))',
   			parchment: 'hsl(var(--parchment))',
   			success: {
   				DEFAULT: 'hsl(var(--success))',

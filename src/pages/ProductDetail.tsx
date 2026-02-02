@@ -1,7 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles, MessageCircle, Check } from "lucide-react";
 import { useState, useEffect } from "react";
-import { StoreHeader } from "@/components/store/StoreHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
 import { ProductGallery } from "@/components/store/ProductGallery";
@@ -39,7 +38,6 @@ export default function ProductDetail() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <StoreHeader />
         <main className="container mx-auto px-4 py-8">
           <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
             <Skeleton className="aspect-square rounded-xl" />
@@ -58,7 +56,6 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <div className="min-h-screen bg-background">
-        <StoreHeader />
         <main className="container mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-serif font-bold text-foreground mb-4">
             Product Not Found
@@ -94,8 +91,6 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <StoreHeader />
-
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <Link

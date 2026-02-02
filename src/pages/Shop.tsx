@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { StoreHeader } from "@/components/store/StoreHeader";
 import { ShopHero } from "@/components/store/ShopHero";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { CategoryNav } from "@/components/store/CategoryNav";
@@ -24,8 +23,6 @@ export default function Shop() {
 
   return (
     <div className="min-h-screen bg-background">
-      <StoreHeader />
-
       {/* Hero Section */}
       <ShopHero />
 

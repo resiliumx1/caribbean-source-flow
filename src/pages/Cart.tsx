@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, ArrowRight, Minus, Plus, Trash2, MessageCircle } from "lucide-react";
-import { StoreHeader } from "@/components/store/StoreHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
 import { ProductPlaceholder } from "@/components/store/ProductPlaceholder";
@@ -32,7 +31,6 @@ export default function Cart() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <StoreHeader />
         <main className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-serif font-bold text-foreground mb-8">
             Shopping Bag
@@ -46,7 +44,6 @@ export default function Cart() {
   if (cartCount === 0) {
     return (
       <div className="min-h-screen bg-background">
-        <StoreHeader />
         <main className="container mx-auto px-4 py-16 text-center">
           <ShoppingBag className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h1 className="text-2xl font-serif font-bold text-foreground mb-4">
@@ -66,8 +63,6 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen bg-background">
-      <StoreHeader />
-
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-serif font-bold text-foreground mb-8">
           Shopping Bag ({cartCount} {cartCount === 1 ? "item" : "items"})

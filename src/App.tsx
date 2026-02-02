@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { StoreProvider } from "@/lib/store-context";
-import { DockHeader } from "@/components/site/DockHeader";
+import { StoreHeader } from "@/components/store/StoreHeader";
 import TrinityHomepage from "./pages/TrinityHomepage";
 import Wholesale from "./pages/Wholesale";
 import Shop from "./pages/Shop";
@@ -19,18 +19,18 @@ import AdminLayout from "./components/admin/AdminLayout";
 
 const queryClient = new QueryClient();
 
-// Pages that should NOT show the DockHeader (they have their own headers or are admin)
-const pagesWithoutDock = ["/", "/admin"];
+// Pages that should NOT show the header (admin only)
+const pagesWithoutHeader = ["/admin"];
 
 function AppContent() {
   const location = useLocation();
-  const showDock = !pagesWithoutDock.some(
-    (path) => location.pathname === path || location.pathname.startsWith("/admin")
+  const showHeader = !pagesWithoutHeader.some(
+    (path) => location.pathname.startsWith(path)
   );
 
   return (
     <>
-      {showDock && <DockHeader />}
+      {showHeader && <StoreHeader />}
       <Routes>
         <Route path="/" element={<TrinityHomepage />} />
         <Route path="/wholesale" element={<Wholesale />} />
