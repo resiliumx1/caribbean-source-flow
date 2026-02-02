@@ -1,132 +1,252 @@
 
 
-## Implementation Plan: Complete Shop UI Overhaul
+## Complete Products Experience Overhaul Implementation Plan
 
 ### Overview
-This plan addresses all 6 requirements in your original request:
-1. Product images fitting the view window properly
-2. Scraping dosage info from mountkailashslu.com and updating the database
-3. Product cards matching the screenshot design
-4. Product detail page with right-side data format (per video)
-5. Removing the "request dosage guide" prompt
-6. Adding bulk order callout for raw herbs
+This plan comprehensively addresses the shop/products experience to match the video reference, while also implementing site-wide content changes including logo addition, FDA removal, and wildcrafted replacement.
 
 ---
 
-### Phase 1: Fix Product Image Display (Fitting View Window)
+### Phase 1: Add Mt Kailash Logo to Project
 
-**Problem**: Images may have excessive padding causing them to appear too small.
+**Action**: Copy the uploaded logo to project assets and integrate it into the header and footer.
+
+**File**: Copy `user-uploads://KHALASH_LOGO.jpeg` to `src/assets/mt-kailash-logo.jpeg`
+
+**Changes Required**:
+- **StoreHeader.tsx**: Replace the `M` placeholder circle with the actual logo image (sized appropriately for header, ~40px height)
+- **StoreFooter.tsx**: Add smaller logo in the brand column
+- **UnifiedFooter.tsx**: Replace placeholder with logo image
+
+---
+
+### Phase 2: Product Card Redesign (Match Video)
+
+**File**: `src/components/store/ProductCard.tsx`
+
+**Current Issues**:
+- Missing "Quick View" hover overlay
+- Badge color should be orange for Best Seller
+- Layout needs minor refinements
 
 **Changes**:
-- **ProductCard.tsx**: Reduce the `p-8` padding to `p-4` in the image container so products fill more of the card
-- **ProductGallery.tsx**: Adjust the main image container to use less padding (`p-2` instead of `p-4`) so the image takes up more visual space
-- Keep `object-contain` to maintain aspect ratio without cropping
+| Element | Current | Target |
+|---------|---------|--------|
+| Badge color | `bg-forest text-cream` | `bg-orange-500 text-white` for Best Seller |
+| Quick View | Missing | Add hover overlay button |
+| Image container | `p-4` | Keep but ensure clean background |
+| Benefits list | Uses `Check` icon | Keep (matches video) |
+| Price + Add to Cart | Side by side | Keep (matches video) |
+
+**Add Quick View Overlay**:
+```text
+On hover, show a "Quick View" button overlay on the image area
+that calls the existing onQuickView prop
+```
 
 ---
 
-### Phase 2: Scrape and Update Dosage Instructions
+### Phase 3: Category Filter Pills Enhancement
 
-**Products needing dosage data** (currently missing):
-- Queenly Tea Bundle
-- Kingly Tea Bundle  
-- Detox Bundle
-- Virility Male Balance Tonic
+**File**: `src/components/store/CategoryNav.tsx`
 
-**Data source**: mountkailashslu.com product pages
+**Current State**: Already has rounded pill filters with "All" and category options
 
-**Database update** with scraped dosage instructions:
-- **Queenly Tea Bundle**: Bundle protocol (steep 1 bag, 8oz water, 7-10 min, 2-3 cups daily)
-- **Kingly Tea Bundle**: Bundle protocol for men's wellness teas
-- **Detox Bundle**: Week 1-2 Colax protocol, then add other products
-- **Virility Male Balance Tonic**: Adults - 30 drops in water, 3 times daily
+**Changes**:
+- Add subtle shadow to pills (`shadow-sm`)
+- Ensure active state is clearly highlighted
+- Current implementation is close to target; minor styling tweaks
 
 ---
 
-### Phase 3: Product Card Redesign (Match Screenshot)
+### Phase 4: Quick View Modal Enhancement
 
-Based on the screenshot analysis, the target design includes:
-- Uppercase category label (already implemented)
-- Product name (already implemented)
-- Short tagline/description (already implemented)
-- Star rating with review count in parentheses (already implemented)
-- Benefit checkmarks from traditional_use (already implemented)
-- Dual pricing (primary large, secondary small) - implemented but needs verification
-- "Add to Cart" button - already present
+**File**: `src/components/store/QuickViewModal.tsx`
 
-**Key fixes needed**:
-- Ensure benefits are properly extracted (comma-separated from `traditional_use`)
-- Remove any lingering "Subscribe & Save" references (already removed per last diff)
-- Confirm the card layout renders correctly in the preview
+**Current State**: Has most elements needed
+
+**Enhancements**:
+- Add "Key Benefits" checklist section explicitly (currently shows `traditional_use` as bullets with Leaf icons)
+- Change icon from `Leaf` to `Check` for consistency with ProductCard
+- Ensure quantity selector and Add to Cart are prominent
 
 ---
 
-### Phase 4: Product Detail Page Layout (Right-Side Data Format)
+### Phase 5: Product Detail Page - Key Benefits Section
 
-Based on the video reference, the PDP should show:
-- **Left side (60%)**: Large product image gallery with thumbnails
-- **Right side (40%)**: Product info in vertical stack:
-  - Category link
-  - Product name
-  - Short description
-  - Trust badges
-  - Price display
-  - Quantity selector
-  - Add to Bag button
-  - Educational accordions (Traditional Use, The Science, How to Use, Ingredients)
+**File**: `src/pages/ProductDetail.tsx`
 
-**Current status**: Most of this is already implemented in ProductDetail.tsx. Need to verify:
-- Grid is `lg:grid-cols-[1fr_450px]` (roughly 60/40 split) - DONE
-- Accordions are present for Traditional Use, Science, How to Use, Ingredients - DONE
-- "Request dosage guide" button removed - DONE
+**Current Layout**: Already has 60/40 split with accordions
 
----
+**Changes Required**:
+1. Add a dedicated "Key Benefits" section above the accordions with check icons
+2. Extract benefits from `traditional_use` field (comma-separated)
+3. Display as checklist similar to ProductCard
 
-### Phase 5: Remove "Request Dosage Guide" Prompt
-
-**Status**: Already completed in previous work. The ProductDetail.tsx no longer contains any dosage guide request button - verified by code review (lines 267-279 show only the "Add to Bag" button).
+**New Section** (above accordions):
+```text
+Key Benefits
+[Check] Benefit 1
+[Check] Benefit 2
+[Check] Benefit 3
+```
 
 ---
 
-### Phase 6: Raw Herbs Bulk Order Callout
+### Phase 6: Remove FDA Wording Everywhere
 
-**Status**: Already implemented. Lines 281-303 in ProductDetail.tsx show:
-- Check for `isRawHerb` (product_type === "raw_herb")
-- Display callout box with "Each order is 1 lb"
-- Contact info for 4-10 lb bulk pricing
-- WhatsApp link for bulk inquiries
+**Files to Update**:
+
+| File | Change |
+|------|--------|
+| `src/pages/ProductDetail.tsx` (lines 402-410) | Remove entire FDA disclaimer section |
+| `src/components/store/StoreFooter.tsx` (lines 163-166) | Remove FDA disclaimer text |
+| `src/components/trinity/UnifiedFooter.tsx` (lines 199-202) | Remove FDA disclaimer |
+| `src/components/wholesale/Footer.tsx` (lines 97-99) | Remove FDA disclaimer line |
+| `src/components/trinity/TrinityHero.tsx` (line 154) | Change "FDA-Registered Facility" to different trust badge |
+
+**Replacement for TrinityHero Trust Badge**:
+- Change "FDA-Registered Facility" to "Certified Processing Facility" or similar
+
+---
+
+### Phase 7: Replace "Wildcrafted" Wording
+
+**Replacement phrase**: `100% Natural • Made in Saint Lucia • Non-GMO • Vegan`
+
+**Files to Update**:
+
+| File | Line(s) | Current Text | New Text |
+|------|---------|--------------|----------|
+| `src/components/store/StoreFooter.tsx` | 24 | "Wildcrafted herbal remedies..." | "100% natural herbal remedies from the rainforests of St. Lucia. Non-GMO, vegan formulations. 21+ years of bush medicine tradition." |
+| `src/components/store/ShopHero.tsx` | 62 | `<span>Wildcrafted</span>` | `<span>100% Natural</span>` |
+| `src/components/store/ShopHero.tsx` (alternate file) | 29 | "Wildcrafted from Mount Kailash..." | "100% natural • Made in Saint Lucia • Non-GMO • Vegan" |
+| `src/components/wholesale/Hero.tsx` | 33 | "St. Lucian wildcrafted herbs..." | "St. Lucian natural herbs..." |
+| `src/components/trinity/TrinityHero.tsx` | 48 | "Wildcrafted bulk herbs" | "100% natural bulk herbs" |
+| `src/components/trinity/ReSegmentation.tsx` | 24 | "wildcrafted herbs" | "natural herbs" |
+| `src/components/wholesale/ProductGrid.tsx` | 84 | "wildcrafted and processed" | "naturally harvested and processed" |
+| `src/pages/Cart.tsx` | 56 | "wildcrafted St. Lucian botanicals" | "natural St. Lucian botanicals" |
+| `src/components/retreats/ProtocolTimeline.tsx` | 14 | "wildcrafted herbs" | "natural herbs" |
+| ProductCard.tsx, QuickViewModal.tsx, ProductDetail.tsx | Badge cases | Keep "wildcrafted" as database badge but display as "100% Natural" |
+
+---
+
+### Phase 8: Products Ordering - Images First + Best Seller Badge
+
+**File**: `src/hooks/use-products.ts`
+
+**Change**: Modify the products query to order by:
+1. Products with `image_url` first (not null)
+2. Then by `display_order`
+
+**Add client-side logic** in `Shop.tsx`:
+- For products with images that appear first, automatically show "Best Seller" badge
+
+**Alternative Approach**: Keep server ordering simple, add client-side sorting:
+```text
+Sort products so those with image_url come first
+Mark those products with a "Best Seller" badge visually
+```
+
+---
+
+### Phase 9: Header Consistency Check
+
+**Current State**: StoreHeader is used on Shop and ProductDetail pages. Other pages use different headers.
+
+**Files Using Headers**:
+- TrinityHomepage: No header (video background with doors)
+- Wholesale: Uses `<Header />` from wholesale folder
+- Retreats: Uses `<StoreHeader />`
+- Cart: Uses `<StoreHeader />`
+
+**Action**: The StoreHeader will be updated with the logo. The Wholesale `Header` component should also get the logo for consistency.
 
 ---
 
 ### Technical Implementation Summary
 
-**Files to modify**:
+**Files to Create**:
+- Copy logo: `src/assets/mt-kailash-logo.jpeg`
 
-| File | Changes |
-|------|---------|
-| `src/components/store/ProductCard.tsx` | Reduce image container padding from `p-8` to `p-4` |
-| `src/components/store/ProductGallery.tsx` | Reduce main image padding from `p-4` to `p-2` |
-| Database migration | Update dosage_instructions for 4 products |
+**Files to Modify**:
 
-**Database updates** (SQL migration):
-```text
-UPDATE products SET dosage_instructions = '...' WHERE slug = 'queenly-tea-bundle';
-UPDATE products SET dosage_instructions = '...' WHERE slug = 'kingly-tea-bundle';
-UPDATE products SET dosage_instructions = '...' WHERE slug = 'detox-bundle';
-UPDATE products SET dosage_instructions = '...' WHERE slug = 'virility-male-balance-tonic';
-```
+| File | Priority | Type of Change |
+|------|----------|----------------|
+| `src/components/store/ProductCard.tsx` | High | Add Quick View overlay, change badge color |
+| `src/components/store/StoreHeader.tsx` | High | Add logo image |
+| `src/components/store/StoreFooter.tsx` | High | Add logo, remove FDA, update wildcrafted text |
+| `src/pages/ProductDetail.tsx` | High | Add Key Benefits section, remove FDA |
+| `src/components/store/QuickViewModal.tsx` | Medium | Change Leaf to Check icons |
+| `src/components/trinity/UnifiedFooter.tsx` | Medium | Add logo, remove FDA |
+| `src/components/trinity/TrinityHero.tsx` | Medium | Remove FDA badge, update wildcrafted text |
+| `src/components/wholesale/Footer.tsx` | Medium | Remove FDA disclaimer |
+| `src/components/wholesale/Hero.tsx` | Medium | Update wildcrafted text |
+| `src/components/wholesale/Header.tsx` | Medium | Add logo |
+| `src/components/store/ShopHero.tsx` | Medium | Update wildcrafted badge |
+| `src/hooks/use-products.ts` | Medium | Sort products with images first |
+| `src/pages/Shop.tsx` | Low | Add Best Seller logic for products with images |
+| `src/components/store/CategoryNav.tsx` | Low | Add subtle shadow to pills |
+| `src/components/trinity/ReSegmentation.tsx` | Low | Update wildcrafted text |
+| `src/components/wholesale/ProductGrid.tsx` | Low | Update wildcrafted text |
+| `src/pages/Cart.tsx` | Low | Update wildcrafted text |
+| `src/components/retreats/ProtocolTimeline.tsx` | Low | Update wildcrafted text |
 
 ---
 
-### Why the Shop Might "Look the Same"
+### Database Considerations
 
-Possible reasons the preview isn't showing changes:
-1. **Browser caching**: The preview might be serving cached CSS/JS
-2. **Build not refreshing**: The changes may not have been hot-reloaded
-3. **Inspecting wrong URL**: Ensure you're on `/shop` in the preview panel
+No database changes required. The badge display logic will map existing database values to new display text:
+- `wildcrafted` badge will display as "100% Natural"
+- Products with `image_url` not null will receive visual "Best Seller" treatment
 
-**Verification steps** after implementation:
-1. Hard refresh the preview (Ctrl+Shift+R or Cmd+Shift+R)
-2. Navigate to `/shop` and verify product cards
-3. Click into a product and verify the right-side format
-4. Check a raw herb product (like Soursop Leaves) for the bulk order notice
+---
+
+### Visual Reference Alignment
+
+Based on the video/screenshot analysis:
+
+**Product Card Requirements** (matching reference):
+- Badge top-left (orange for Best Seller)
+- Product image centered, clean background
+- Category label (small, muted)
+- Product name
+- Star rating row
+- Key Benefits checklist (3-5 bullets with checkmarks)
+- Price on left, Add to Cart button on right
+- "Quick View" appears on hover over image
+
+**Product Detail Page Requirements**:
+- Two-column layout (image left, details right)
+- Key Benefits section with checklist icons
+- Accordions for: Description, Traditional Use, Usage Instructions, Ingredients
+
+---
+
+### Verification Steps After Implementation
+
+1. Navigate to `/shop` and verify:
+   - Product cards show Quick View on hover
+   - Best Seller badges are orange
+   - Products with images appear first
+   - Key benefits checklist appears on cards
+
+2. Click Quick View and verify:
+   - Modal shows product image, name, rating, price
+   - Key Benefits checklist is visible
+   - Quantity selector works
+   - Add to Cart button functions
+
+3. Click into a product and verify:
+   - Key Benefits section appears on right side
+   - No FDA disclaimer anywhere
+   - Accordions present for educational content
+
+4. Check header on all pages:
+   - Mt Kailash logo appears in header
+   - Clicking logo navigates to home
+
+5. Search for text across site:
+   - "FDA" should not appear anywhere
+   - "Wildcrafted" should be replaced with natural/St. Lucia messaging
 
