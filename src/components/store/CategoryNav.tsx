@@ -23,10 +23,10 @@ export function CategoryNav() {
       <Link
         to="/shop"
         className={cn(
-          "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border-[3px]",
+          "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border-2",
           currentPath === "/shop"
-            ? "bg-[#1F3A2E] text-white border-[#1F3A2E]"
-            : "bg-background border-[#0B0B0B] text-[#0B0B0B] hover:bg-muted"
+            ? "bg-primary text-primary-foreground border-primary"
+            : "bg-card border-border text-foreground hover:bg-muted hover:border-muted-foreground/30"
         )}
       >
         All
@@ -44,10 +44,10 @@ export function CategoryNav() {
             key={category.id}
             to={`/shop/category/${category.slug}`}
             className={cn(
-              "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border-[3px]",
+              "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border-2",
               isActive
-                ? "bg-[#1F3A2E] text-white border-[#1F3A2E]"
-                : "bg-background border-[#0B0B0B] text-[#0B0B0B] hover:bg-muted"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-card border-border text-foreground hover:bg-muted hover:border-muted-foreground/30"
             )}
           >
             {category.name}

@@ -7,15 +7,17 @@ interface Stat {
   suffix: string;
   label: string;
   icon: React.ElementType;
-  color: string;
+  colorClass: string;
+  bgClass: string;
 }
 
+// Using Tailwind classes that adapt to dark mode
 const stats: Stat[] = [
-  { value: 43000, suffix: "+", label: "Bottles formulated annually", icon: Leaf, color: "hsl(75, 26%, 53%)" },
-  { value: 21, suffix: "", label: "Years clinical practice", icon: Calendar, color: "hsl(39, 55%, 50%)" },
-  { value: 500, suffix: "+", label: "Herbal physicians trained", icon: GraduationCap, color: "hsl(150, 30%, 35%)" },
-  { value: 3, suffix: "", label: "Days to US door", icon: Truck, color: "hsl(200, 25%, 55%)" },
-  { value: 7, suffix: "", label: "Days average retreat", icon: Users, color: "hsl(39, 55%, 50%)" },
+  { value: 43000, suffix: "+", label: "Bottles formulated annually", icon: Leaf, colorClass: "text-secondary", bgClass: "bg-secondary/20" },
+  { value: 21, suffix: "", label: "Years clinical practice", icon: Calendar, colorClass: "text-accent", bgClass: "bg-accent/20" },
+  { value: 500, suffix: "+", label: "Herbal physicians trained", icon: GraduationCap, colorClass: "text-cream dark:text-cream", bgClass: "bg-cream/20 dark:bg-cream/10" },
+  { value: 3, suffix: "", label: "Days to US door", icon: Truck, colorClass: "text-ocean dark:text-ocean-light", bgClass: "bg-ocean/20 dark:bg-ocean/10" },
+  { value: 7, suffix: "", label: "Days average retreat", icon: Users, colorClass: "text-accent", bgClass: "bg-accent/20" },
 ];
 
 function AnimatedCounter({
@@ -106,7 +108,7 @@ export function ByTheNumbers() {
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-4"
+            className="text-3xl md:text-4xl font-bold mb-4 text-primary-foreground"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
@@ -143,25 +145,15 @@ export function ByTheNumbers() {
               >
                 {/* Icon circle with gradient */}
                 <motion.div
-                  className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-4 relative"
-                  style={{
-                    background: `linear-gradient(135deg, ${stat.color}40 0%, ${stat.color}20 100%)`,
-                    boxShadow: `0 8px 32px -8px ${stat.color}40`,
-                  }}
+                  className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-4 relative ${stat.bgClass}`}
                   whileHover={{ scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Icon 
-                    className="w-7 h-7 md:w-8 md:h-8" 
-                    style={{ color: stat.color }}
-                  />
+                  <Icon className={`w-7 h-7 md:w-8 md:h-8 ${stat.colorClass}`} />
                 </motion.div>
 
-                {/* Number */}
-                <div 
-                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2"
-                  style={{ color: stat.color }}
-                >
+                {/* Number - using high contrast colors that work in dark mode */}
+                <div className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-2 ${stat.colorClass}`}>
                   <AnimatedCounter
                     target={stat.value}
                     suffix={stat.suffix}
@@ -170,7 +162,7 @@ export function ByTheNumbers() {
                 </div>
 
                 {/* Label */}
-                <div className="text-xs md:text-sm text-primary-foreground/70 leading-tight">
+                <div className="text-xs md:text-sm text-primary-foreground/80 leading-tight">
                   {stat.label}
                 </div>
               </motion.div>
