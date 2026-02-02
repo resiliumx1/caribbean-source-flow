@@ -69,7 +69,7 @@ export function RetreatPathSplit() {
             </div>
 
             {/* Inclusions */}
-            <ul className="space-y-2 mb-8">
+            <ul className="space-y-3 mb-8">
               {(
                 soloRetreat?.includes || [
                   "Private rainforest cabin",
@@ -83,9 +83,11 @@ export function RetreatPathSplit() {
                 .map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-2 text-sm text-foreground"
+                    className="flex items-center gap-3 text-[15px] text-[#0B0B0B] font-medium"
                   >
-                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                    <div className="w-6 h-6 rounded-full bg-[#1F3A2E] flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                    </div>
                     {item}
                   </li>
                 ))}
@@ -109,7 +111,7 @@ export function RetreatPathSplit() {
               </div>
             </div>
 
-            <Button onClick={scrollToCalendar} className="w-full" size="lg">
+            <Button onClick={scrollToCalendar} className="w-full bg-[#1F3A2E] hover:bg-[#2a4d3d] text-white" size="lg">
               Request Consultation
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -150,7 +152,7 @@ export function RetreatPathSplit() {
             </div>
 
             {/* Inclusions */}
-            <ul className="space-y-2 mb-8">
+            <ul className="space-y-3 mb-8">
               {(
                 groupRetreat?.includes || [
                   "Shared traditional accommodations",
@@ -164,9 +166,11 @@ export function RetreatPathSplit() {
                 .map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-2 text-sm text-foreground"
+                    className="flex items-center gap-3 text-[15px] text-[#0B0B0B] font-medium"
                   >
-                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                    <div className="w-6 h-6 rounded-full bg-[#1F3A2E] flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                    </div>
                     {item}
                   </li>
                 ))}
@@ -187,7 +191,7 @@ export function RetreatPathSplit() {
               </div>
             </div>
 
-            <Button onClick={scrollToCalendar} variant="outline" className="w-full" size="lg">
+            <Button onClick={scrollToCalendar} className="w-full bg-[#3d6b4f] hover:bg-[#4a7d5d] text-white border-0" size="lg">
               View 2025 Dates
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
