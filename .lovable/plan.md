@@ -1,252 +1,274 @@
 
 
-## Complete Products Experience Overhaul Implementation Plan
+# Homepage Hero and UX Redesign Plan
 
-### Overview
-This plan comprehensively addresses the shop/products experience to match the video reference, while also implementing site-wide content changes including logo addition, FDA removal, and wildcrafted replacement.
-
----
-
-### Phase 1: Add Mt Kailash Logo to Project
-
-**Action**: Copy the uploaded logo to project assets and integrate it into the header and footer.
-
-**File**: Copy `user-uploads://KHALASH_LOGO.jpeg` to `src/assets/mt-kailash-logo.jpeg`
-
-**Changes Required**:
-- **StoreHeader.tsx**: Replace the `M` placeholder circle with the actual logo image (sized appropriately for header, ~40px height)
-- **StoreFooter.tsx**: Add smaller logo in the brand column
-- **UnifiedFooter.tsx**: Replace placeholder with logo image
+## Overview
+This plan redesigns the homepage to create a masterful, trust-building experience. The visitor should feel: "This is the source. Everything I need is here." The implementation follows quiet authority over hype, with elegant glass-morphism CTA cards, interactive testimonial carousels, and an unobtrusive AI assistant.
 
 ---
 
-### Phase 2: Product Card Redesign (Match Video)
+## Section 1: Global Header Enforcement
 
-**File**: `src/components/store/ProductCard.tsx`
+### Current State
+- Header exists in `StoreHeader.tsx` with sticky positioning
+- Contains: Home, Shop, Retreats, Wholesale, Consult
+- Missing: About link
 
-**Current Issues**:
-- Missing "Quick View" hover overlay
-- Badge color should be orange for Best Seller
-- Layout needs minor refinements
+### Changes Required
+**File: `src/components/store/StoreHeader.tsx`**
+- Add "About" link to desktop and mobile navigation
+- Add subtle background + shadow transition on scroll using a scroll listener
+- Ensure no "Bundles" or dock navigation exists (already removed)
 
-**Changes**:
-| Element | Current | Target |
-|---------|---------|--------|
-| Badge color | `bg-forest text-cream` | `bg-orange-500 text-white` for Best Seller |
-| Quick View | Missing | Add hover overlay button |
-| Image container | `p-4` | Keep but ensure clean background |
-| Benefits list | Uses `Check` icon | Keep (matches video) |
-| Price + Add to Cart | Side by side | Keep (matches video) |
+---
 
-**Add Quick View Overlay**:
+## Section 2: Hero Section Redesign
+
+### Current State
+- Background video with dark gradient overlay
+- Headline: "Medicine from the Volcanic Soil of St. Lucia"
+- Three door cards (Wholesale, Shop, Retreats)
+
+### New Design Specification
+
+**File: `src/components/trinity/TrinityHero.tsx`**
+
+**A) Hero Copy Update**
 ```text
-On hover, show a "Quick View" button overlay on the image area
-that calls the existing onQuickView prop
+H1: "Where Natural Wellness Finds Its Source"
+H2: "Crafted in Saint Lucia using herbs grown in mineral-rich volcanic soil, Mt. Kailash delivers natural formulations, immersive retreats, and trusted wholesale supply—designed to restore balance at every level."
 ```
 
----
+**B) Three Glass CTA Cards**
+Replace current door cards with elegant glass-morphism cards:
 
-### Phase 3: Category Filter Pills Enhancement
+| Card | Icon | Title | Descriptor | CTA Text |
+|------|------|-------|------------|----------|
+| Retail | Leaf/Droplet | Shop Natural Formulations | Daily remedies crafted for balance, vitality, and long-term wellness. | Explore Products → |
+| Wholesale | Package/Handshake | Wholesale & Practitioners | Bulk herbs and formulations trusted by clinics, retailers, and wellness brands. | Access Wholesale → |
+| Retreats | Mountain | Healing Retreats in Saint Lucia | Immersive experiences designed for deep restoration and clarity. | View Retreats → |
 
-**File**: `src/components/store/CategoryNav.tsx`
+**C) Card Styling**
+- Soft glass/translucent background: `bg-white/10 backdrop-blur-xl`
+- Rounded corners: `rounded-2xl`
+- Subtle shadow and border glow on hover
+- Entire card clickable with Link wrapper
+- Icon animations on hover: scale + rotation + pulse using framer-motion
+- Text shifts upward slightly on hover
+- Border glows with gold/sage color
 
-**Current State**: Already has rounded pill filters with "All" and category options
-
-**Changes**:
-- Add subtle shadow to pills (`shadow-sm`)
-- Ensure active state is clearly highlighted
-- Current implementation is close to target; minor styling tweaks
-
----
-
-### Phase 4: Quick View Modal Enhancement
-
-**File**: `src/components/store/QuickViewModal.tsx`
-
-**Current State**: Has most elements needed
-
-**Enhancements**:
-- Add "Key Benefits" checklist section explicitly (currently shows `traditional_use` as bullets with Leaf icons)
-- Change icon from `Leaf` to `Check` for consistency with ProductCard
-- Ensure quantity selector and Add to Cart are prominent
+**D) Trust Bar**
+Keep existing trust bar but ensure no dock navigation
 
 ---
 
-### Phase 5: Product Detail Page - Key Benefits Section
+## Section 3: Reviews/Transformation Stories Carousel
 
-**File**: `src/pages/ProductDetail.tsx`
+### Current State
+- `SocialProofMatrix.tsx` displays static 3-column grid of testimonials
+- No carousel, no photos, no auto-scroll
 
-**Current Layout**: Already has 60/40 split with accordions
+### New Design
 
-**Changes Required**:
-1. Add a dedicated "Key Benefits" section above the accordions with check icons
-2. Extract benefits from `traditional_use` field (comma-separated)
-3. Display as checklist similar to ProductCard
+**File: `src/components/trinity/SocialProofMatrix.tsx` (complete rewrite)**
 
-**New Section** (above accordions):
+**A) Section Title**
 ```text
-Key Benefits
-[Check] Benefit 1
-[Check] Benefit 2
-[Check] Benefit 3
+"Trusted by People on Their Wellness Journey"
 ```
 
----
+**B) Interactive Carousel**
+- Horizontal carousel using Embla Carousel (already installed)
+- Auto-scroll slowly (every 5 seconds)
+- Hover pauses motion
+- Active card slightly enlarges with scale transform
 
-### Phase 6: Remove FDA Wording Everywhere
-
-**Files to Update**:
-
-| File | Change |
-|------|--------|
-| `src/pages/ProductDetail.tsx` (lines 402-410) | Remove entire FDA disclaimer section |
-| `src/components/store/StoreFooter.tsx` (lines 163-166) | Remove FDA disclaimer text |
-| `src/components/trinity/UnifiedFooter.tsx` (lines 199-202) | Remove FDA disclaimer |
-| `src/components/wholesale/Footer.tsx` (lines 97-99) | Remove FDA disclaimer line |
-| `src/components/trinity/TrinityHero.tsx` (line 154) | Change "FDA-Registered Facility" to different trust badge |
-
-**Replacement for TrinityHero Trust Badge**:
-- Change "FDA-Registered Facility" to "Certified Processing Facility" or similar
+**C) Testimonial Card Design**
+Each card includes:
+- Small circular photo avatar (40px)
+- Name + location
+- Short quote
+- Colorful, fluid icons (gold, sage, ocean blue)
+- Slight motion on hover
+- Background: subtle gradient, not flat white
 
 ---
 
-### Phase 7: Replace "Wildcrafted" Wording
+## Section 4: "By The Numbers" Redesign
 
-**Replacement phrase**: `100% Natural • Made in Saint Lucia • Non-GMO • Vegan`
+### Current State
+- `ByTheNumbers.tsx` has animated counters
+- Static grid layout with rigid boxes
 
-**Files to Update**:
+### New Design
 
-| File | Line(s) | Current Text | New Text |
-|------|---------|--------------|----------|
-| `src/components/store/StoreFooter.tsx` | 24 | "Wildcrafted herbal remedies..." | "100% natural herbal remedies from the rainforests of St. Lucia. Non-GMO, vegan formulations. 21+ years of bush medicine tradition." |
-| `src/components/store/ShopHero.tsx` | 62 | `<span>Wildcrafted</span>` | `<span>100% Natural</span>` |
-| `src/components/store/ShopHero.tsx` (alternate file) | 29 | "Wildcrafted from Mount Kailash..." | "100% natural • Made in Saint Lucia • Non-GMO • Vegan" |
-| `src/components/wholesale/Hero.tsx` | 33 | "St. Lucian wildcrafted herbs..." | "St. Lucian natural herbs..." |
-| `src/components/trinity/TrinityHero.tsx` | 48 | "Wildcrafted bulk herbs" | "100% natural bulk herbs" |
-| `src/components/trinity/ReSegmentation.tsx` | 24 | "wildcrafted herbs" | "natural herbs" |
-| `src/components/wholesale/ProductGrid.tsx` | 84 | "wildcrafted and processed" | "naturally harvested and processed" |
-| `src/pages/Cart.tsx` | 56 | "wildcrafted St. Lucian botanicals" | "natural St. Lucian botanicals" |
-| `src/components/retreats/ProtocolTimeline.tsx` | 14 | "wildcrafted herbs" | "natural herbs" |
-| ProductCard.tsx, QuickViewModal.tsx, ProductDetail.tsx | Badge cases | Keep "wildcrafted" as database badge but display as "100% Natural" |
+**File: `src/components/trinity/ByTheNumbers.tsx`**
 
----
-
-### Phase 8: Products Ordering - Images First + Best Seller Badge
-
-**File**: `src/hooks/use-products.ts`
-
-**Change**: Modify the products query to order by:
-1. Products with `image_url` first (not null)
-2. Then by `display_order`
-
-**Add client-side logic** in `Shop.tsx`:
-- For products with images that appear first, automatically show "Best Seller" badge
-
-**Alternative Approach**: Keep server ordering simple, add client-side sorting:
+**A) Section Title Change**
 ```text
-Sort products so those with image_url come first
-Mark those products with a "Best Seller" badge visually
+"Rooted in Real Results"
 ```
 
----
-
-### Phase 9: Header Consistency Check
-
-**Current State**: StoreHeader is used on Shop and ProductDetail pages. Other pages use different headers.
-
-**Files Using Headers**:
-- TrinityHomepage: No header (video background with doors)
-- Wholesale: Uses `<Header />` from wholesale folder
-- Retreats: Uses `<StoreHeader />`
-- Cart: Uses `<StoreHeader />`
-
-**Action**: The StoreHeader will be updated with the logo. The Wholesale `Header` component should also get the logo for consistency.
+**B) Visual Improvements**
+- Replace rigid grid with flowing organic layout
+- Add curved SVG dividers between stats
+- Icons morph/pulse gently on visibility
+- Numbers animate upward with stagger effect
+- Use gradient backgrounds for stat circles
 
 ---
 
-### Technical Implementation Summary
+## Section 5: "Choose Your Path" Section Redesign
 
-**Files to Create**:
-- Copy logo: `src/assets/mt-kailash-logo.jpeg`
+### Current State
+- `ReSegmentation.tsx` has three path cards
+- Standard card layout with features list
 
-**Files to Modify**:
+### New Design
 
-| File | Priority | Type of Change |
-|------|----------|----------------|
-| `src/components/store/ProductCard.tsx` | High | Add Quick View overlay, change badge color |
-| `src/components/store/StoreHeader.tsx` | High | Add logo image |
-| `src/components/store/StoreFooter.tsx` | High | Add logo, remove FDA, update wildcrafted text |
-| `src/pages/ProductDetail.tsx` | High | Add Key Benefits section, remove FDA |
-| `src/components/store/QuickViewModal.tsx` | Medium | Change Leaf to Check icons |
-| `src/components/trinity/UnifiedFooter.tsx` | Medium | Add logo, remove FDA |
-| `src/components/trinity/TrinityHero.tsx` | Medium | Remove FDA badge, update wildcrafted text |
-| `src/components/wholesale/Footer.tsx` | Medium | Remove FDA disclaimer |
-| `src/components/wholesale/Hero.tsx` | Medium | Update wildcrafted text |
-| `src/components/wholesale/Header.tsx` | Medium | Add logo |
-| `src/components/store/ShopHero.tsx` | Medium | Update wildcrafted badge |
-| `src/hooks/use-products.ts` | Medium | Sort products with images first |
-| `src/pages/Shop.tsx` | Low | Add Best Seller logic for products with images |
-| `src/components/store/CategoryNav.tsx` | Low | Add subtle shadow to pills |
-| `src/components/trinity/ReSegmentation.tsx` | Low | Update wildcrafted text |
-| `src/components/wholesale/ProductGrid.tsx` | Low | Update wildcrafted text |
-| `src/pages/Cart.tsx` | Low | Update wildcrafted text |
-| `src/components/retreats/ProtocolTimeline.tsx` | Low | Update wildcrafted text |
+**File: `src/components/trinity/ReSegmentation.tsx`**
+
+**A) Paths**
+| Path | Title | For |
+|------|-------|-----|
+| Retail | Retail Wellness | Wellness Seekers |
+| Wholesale | Professional Supply | Practitioners & Retailers |
+| Retreats | Immersive Retreats | Transformation Seekers |
+
+**B) Visual Enhancements**
+- Organic shapes with soft blob backgrounds
+- Soft shadows with depth
+- Subtle parallax effect on scroll using framer-motion
+- Entire cards clickable
+- Icon hover animations matching hero CTAs
+- Remove "bush medicine" wording as per memory
 
 ---
 
-### Database Considerations
+## Section 6: AI Chat Assistant
 
-No database changes required. The badge display logic will map existing database values to new display text:
-- `wildcrafted` badge will display as "100% Natural"
-- Products with `image_url` not null will receive visual "Best Seller" treatment
+### Current State
+- `ConciergeButton.tsx` renders a floating button
+- `ConciergePanel.tsx` renders a slide-in panel
+- Already context-aware via edge function
 
----
+### Changes Required
 
-### Visual Reference Alignment
+**File: `src/components/concierge/ConciergeButton.tsx`**
 
-Based on the video/screenshot analysis:
+**A) Icon Style Update**
+- Change from text button to minimal icon-only design
+- Use Sparkles or Leaf icon
+- Add gentle pulse animation to indicate availability
+- Position: bottom-right, offset from WhatsApp button
 
-**Product Card Requirements** (matching reference):
-- Badge top-left (orange for Best Seller)
-- Product image centered, clean background
-- Category label (small, muted)
-- Product name
-- Star rating row
-- Key Benefits checklist (3-5 bullets with checkmarks)
-- Price on left, Add to Cart button on right
-- "Quick View" appears on hover over image
+**B) Behavior Verification**
+- Already answers products, dosage, retreats, wholesale questions
+- Already routes to relevant contact paths
+- Ensure never intrusive (icon only, no auto-open)
 
-**Product Detail Page Requirements**:
-- Two-column layout (image left, details right)
-- Key Benefits section with checklist icons
-- Accordions for: Description, Traditional Use, Usage Instructions, Ingredients
+**File: `src/pages/TrinityHomepage.tsx`**
+- Add `ConciergeButton` to homepage
 
 ---
 
-### Verification Steps After Implementation
+## Section 7: Performance & SEO
 
-1. Navigate to `/shop` and verify:
-   - Product cards show Quick View on hover
-   - Best Seller badges are orange
-   - Products with images appear first
-   - Key benefits checklist appears on cards
+### Changes Required
 
-2. Click Quick View and verify:
-   - Modal shows product image, name, rating, price
-   - Key Benefits checklist is visible
-   - Quantity selector works
-   - Add to Cart button functions
+**File: `index.html`**
+- Update meta title: "Natural Wellness from Saint Lucia | Mt. Kailash Rejuvenation Centre"
+- Update meta description to match new hero copy
+- Ensure clean H1 structure (only one per page)
 
-3. Click into a product and verify:
-   - Key Benefits section appears on right side
-   - No FDA disclaimer anywhere
-   - Accordions present for educational content
+**File: `src/components/trinity/TrinityHero.tsx`**
+- Add `loading="lazy"` to non-critical images
+- Ensure video has proper compression attributes
+- Add descriptive alt text to all images
 
-4. Check header on all pages:
-   - Mt Kailash logo appears in header
-   - Clicking logo navigates to home
+---
 
-5. Search for text across site:
-   - "FDA" should not appear anywhere
-   - "Wildcrafted" should be replaced with natural/St. Lucia messaging
+## Technical Implementation Details
+
+### New Dependencies
+None required - all needed packages already installed:
+- framer-motion (for animations)
+- embla-carousel-react (for testimonial carousel)
+- lucide-react (for icons)
+
+### Animation Specifications
+
+**Icon Hover Animation (framer-motion)**
+```tsx
+const iconVariants = {
+  initial: { scale: 1, rotate: 0 },
+  hover: { 
+    scale: 1.15, 
+    rotate: 5,
+    transition: { type: "spring", stiffness: 400 }
+  }
+};
+```
+
+**Card Hover Animation**
+```tsx
+const cardVariants = {
+  initial: { y: 0 },
+  hover: { 
+    y: -8,
+    boxShadow: "0 20px 40px -12px rgba(178,135,53,0.3)",
+    borderColor: "rgba(178,135,53,0.6)"
+  }
+};
+```
+
+**Pulse Animation for AI Button**
+```css
+@keyframes gentle-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+```
+
+### Color Mapping
+| Element | Color | CSS Variable |
+|---------|-------|--------------|
+| Card glow | Gold | `hsl(var(--gold))` |
+| Border glow | Sage | `hsl(var(--sage))` |
+| Icon accent | Gold | `#B28735` |
+| Glass bg | White 10% | `rgba(255,255,255,0.1)` |
+
+---
+
+## Files to Create/Modify
+
+| File | Action | Purpose |
+|------|--------|---------|
+| `src/components/trinity/TrinityHero.tsx` | Modify | New hero copy + glass CTA cards |
+| `src/components/trinity/SocialProofMatrix.tsx` | Rewrite | Interactive testimonial carousel |
+| `src/components/trinity/ByTheNumbers.tsx` | Modify | Organic flowing layout |
+| `src/components/trinity/ReSegmentation.tsx` | Modify | Elevated path cards with parallax |
+| `src/components/concierge/ConciergeButton.tsx` | Modify | Icon-only with pulse animation |
+| `src/components/store/StoreHeader.tsx` | Modify | Add About link + scroll shadow |
+| `src/pages/TrinityHomepage.tsx` | Modify | Add ConciergeButton |
+| `index.html` | Modify | SEO meta updates |
+| `src/index.css` | Modify | Add glass-morphism utilities |
+
+---
+
+## Acceptance Criteria
+
+After implementation, verify each item:
+
+- [ ] **Header**: Sticky on all pages, includes About, smooth scroll shadow
+- [ ] **Hero H1/H2**: Exact copy as specified
+- [ ] **Hero CTAs**: Three glass cards with icon animations
+- [ ] **Reviews**: Horizontal carousel with photos, auto-scroll, pause on hover
+- [ ] **By The Numbers**: Animated counters, organic flowing design
+- [ ] **Choose Your Path**: Parallax cards, clickable, icon animations
+- [ ] **AI Assistant**: Icon-only floating button with pulse
+- [ ] **SEO**: One H1 per page, updated meta tags
+- [ ] **Performance**: Lazy loading, no heavy JS on initial load
+- [ ] **No Dock**: Dock navigation completely removed
+- [ ] **No Bundles**: Bundles removed from navigation
 
