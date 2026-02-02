@@ -22,17 +22,12 @@ function CtaCard({
   return (
     <Link to={href} className="block h-full">
       <motion.div
-        className="group relative h-full rounded-2xl bg-white/95 backdrop-blur-sm p-6 md:p-8 cursor-pointer overflow-hidden"
+        className="group relative h-full rounded-2xl bg-card/95 backdrop-blur-sm p-6 md:p-8 cursor-pointer overflow-hidden border border-border hover:shadow-elevated transition-shadow"
         style={{
-          border: "1px solid rgba(0, 0, 0, 0.12)",
-          boxShadow: "0 4px 20px -4px rgba(0, 0, 0, 0.08)",
+          boxShadow: "var(--shadow-soft)",
         }}
         initial={{ y: 0 }}
-        whileHover={{ 
-          y: -4,
-          boxShadow: "0 12px 32px -8px rgba(0, 0, 0, 0.15)",
-          borderColor: "rgba(0, 0, 0, 0.2)",
-        }}
+        whileHover={{ y: -4 }}
         transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
       >
         {/* Icon chip */}
@@ -48,14 +43,14 @@ function CtaCard({
         {/* Text */}
         <div className="space-y-3">
           <motion.h3
-            className="text-xl md:text-2xl font-bold text-gray-900"
+            className="text-xl md:text-2xl font-bold text-card-foreground"
             initial={{ y: 0, opacity: 1 }}
             whileHover={{ y: -1 }}
             transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
           >
             {title}
           </motion.h3>
-          <p className="text-gray-600 text-sm leading-relaxed">
+          <p className="text-muted-foreground text-sm leading-relaxed">
             {desc}
           </p>
         </div>
@@ -104,9 +99,9 @@ function GradientMountainIcon({ className }: { className?: string }) {
     >
       <defs>
         <linearGradient id="heroMountainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#2E7D32" />
-          <stop offset="50%" stopColor="#1E88E5" />
-          <stop offset="100%" stopColor="#B28735" />
+          <stop offset="0%" stopColor="hsl(var(--primary))" />
+          <stop offset="50%" stopColor="hsl(var(--secondary))" />
+          <stop offset="100%" stopColor="hsl(var(--accent))" />
         </linearGradient>
       </defs>
       <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
@@ -121,8 +116,8 @@ export default function HeroCtas() {
         href="/shop"
         title="Shop Natural Formulations"
         desc="Daily remedies crafted for balance, vitality, and long-term wellness."
-        icon={<Leaf className="w-7 h-7 text-emerald-700" />}
-        iconBgClass="bg-emerald-50/80"
+        icon={<Leaf className="w-7 h-7 text-primary" />}
+        iconBgClass="bg-primary/10"
         linkText="Explore Products →"
       />
 
@@ -130,8 +125,8 @@ export default function HeroCtas() {
         href="/wholesale"
         title="Wholesale & Practitioners"
         desc="Bulk herbs and formulations trusted by clinics, retailers, and wellness brands."
-        icon={<Package className="w-7 h-7 text-[#7A4E2D]" />}
-        iconBgClass="bg-amber-50/80"
+        icon={<Package className="w-7 h-7 text-accent" />}
+        iconBgClass="bg-accent/10"
         linkText="Access Wholesale →"
       />
 
@@ -140,7 +135,7 @@ export default function HeroCtas() {
         title="Healing Retreats in Saint Lucia"
         desc="Immersive experiences designed for deep restoration and clarity."
         icon={<GradientMountainIcon className="w-7 h-7" />}
-        iconBgClass="bg-sky-50/80"
+        iconBgClass="bg-secondary/30"
         linkText="View Retreats →"
       />
     </div>

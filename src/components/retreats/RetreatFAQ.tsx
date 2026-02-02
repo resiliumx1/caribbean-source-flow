@@ -1,82 +1,128 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { MapPin, Backpack, Utensils, Stethoscope, Plane, Calendar, Check } from "lucide-react";
 
-const faqs = [
+const practicalTopics = [
   {
-    question: "Where is Mount Kailash located and how do I get there?",
-    answer:
-      "We're located in Soufrière, St. Lucia, in the shadow of the Pitons. Airport transfers from Hewanorra International Airport (UVF) are included with all retreat packages. The scenic drive takes approximately 90 minutes and passes through the island's most beautiful landscapes.",
+    id: "location",
+    icon: MapPin,
+    title: "Location & Getting There",
+    points: [
+      "Located in Soufrière, St. Lucia, near the Pitons",
+      "Airport transfers from Hewanorra (UVF) included",
+      "Scenic 90-minute drive through the island's beauty",
+      "Private transportation arranged for all guests",
+    ],
   },
   {
-    question: "What should I bring to the retreat?",
-    answer:
-      "Bring comfortable hiking shoes, natural toiletries (no synthetic fragrances), lightweight clothing for tropical weather, and a journal. We provide all linens, towels, rain ponchos, and herbal products. A detailed packing list is sent upon booking confirmation.",
+    id: "packing",
+    icon: Backpack,
+    title: "What to Pack",
+    points: [
+      "Comfortable hiking shoes for nature walks",
+      "Natural toiletries (no synthetic fragrances)",
+      "Lightweight clothing for tropical weather",
+      "Journal for reflection and insights",
+    ],
+    helper: "We provide linens, towels, rain ponchos, and all herbal products.",
   },
   {
-    question: "Can I take my regular medications during the retreat?",
-    answer:
-      "We evaluate each case individually. Please disclose all medications during your pre-arrival assessment. Some pharmaceuticals may interact with our herbal protocols and require adjustment. We work alongside your physician to ensure safety.",
+    id: "dietary",
+    icon: Utensils,
+    title: "Dietary Information",
+    points: [
+      "All meals are strictly ital (plant-based)",
+      "No meat, dairy, or processed foods",
+      "Ingredients sourced from our volcanic soil gardens",
+      "Gluten-free options available upon request",
+    ],
+    helper: "Please inform us of any allergies during your pre-arrival assessment.",
   },
   {
-    question: "What is the food like?",
-    answer:
-      "All meals are strictly ital—plant-based cuisine prepared according to Rastafarian dietary principles. No meat, dairy, or processed foods. Ingredients are sourced from our volcanic soil gardens. The cuisine is designed to support your detoxification process.",
+    id: "medical",
+    icon: Stethoscope,
+    title: "Medical Considerations",
+    points: [
+      "Each case evaluated individually",
+      "Disclose all medications during pre-arrival assessment",
+      "Some pharmaceuticals may require adjustment",
+      "We work alongside your physician for safety",
+    ],
   },
   {
-    question: "Is it safe for solo female travelers?",
-    answer:
-      "Absolutely. Our retreat centre has 24/7 staff, secure private cabins, and a peaceful community atmosphere. Many of our guests are solo female travelers seeking transformation in a supportive environment.",
+    id: "travel",
+    icon: Plane,
+    title: "Travel Requirements",
+    points: [
+      "Valid passport required for all international guests",
+      "Travel insurance with medical evacuation required",
+      "No visa needed for most nationalities (90 days)",
+      "Recommended providers available upon request",
+    ],
   },
   {
-    question: "What is your cancellation policy?",
-    answer:
-      "Group Immersions: 100% refundable up to 30 days before arrival, 50% refundable 15-29 days, non-refundable within 14 days. Solo Retreats: 100% refundable up to 14 days, 50% refundable 7-13 days. We offer full credit toward future dates for any cancellation.",
-  },
-  {
-    question: "What if I have dietary restrictions or allergies?",
-    answer:
-      "Our ital cuisine naturally accommodates most dietary needs (vegan, gluten-free options available). Please inform us of any allergies during your pre-arrival assessment. Our kitchen staff is experienced in preparing meals for guests with various restrictions.",
-  },
-  {
-    question: "Do I need travel insurance?",
-    answer:
-      "Yes, we require all international guests to have travel insurance that covers medical evacuation. St. Lucia has excellent healthcare facilities, but insurance provides peace of mind. We can recommend providers upon request.",
+    id: "cancellation",
+    icon: Calendar,
+    title: "Cancellation Policy",
+    points: [
+      "Group: 100% refund 30+ days before arrival",
+      "Group: 50% refund 15-29 days before arrival",
+      "Solo: 100% refund 14+ days before arrival",
+      "Full credit toward future dates for any cancellation",
+    ],
   },
 ];
 
 export function RetreatFAQ() {
   return (
     <section className="py-20 md:py-28 bg-background">
-      <div className="container mx-auto max-w-3xl px-4">
+      <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="section-header mb-4">Practical Matters</h2>
-          <p className="section-subheader mx-auto">
-            Everything you need to know before your transformative journey.
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-serif">
+            Practical Matters
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Everything you need to know before your transformative journey to Mount Kailash.
           </p>
         </div>
 
-        {/* FAQ Accordion */}
-        <Accordion type="single" collapsible className="space-y-4">
-          {faqs.map((faq, index) => (
-            <AccordionItem
-              key={index}
-              value={`faq-${index}`}
-              className="bg-card rounded-xl border border-border px-6 data-[state=open]:border-accent transition-colors"
+        {/* 2-Column Card Grid */}
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+          {practicalTopics.map((topic) => (
+            <div
+              key={topic.id}
+              className="bg-card rounded-xl border border-border p-5 md:p-6 transition-all duration-300 hover:shadow-soft"
             >
-              <AccordionTrigger className="text-left font-semibold hover:no-underline py-5">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-5 leading-relaxed">
-                {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
+              {/* Icon + Title Row */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <topic.icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="text-lg md:text-xl font-semibold text-foreground font-serif">
+                  {topic.title}
+                </h3>
+              </div>
+
+              {/* Bullet List */}
+              <ul className="space-y-2.5">
+                {topic.points.map((point, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-[15px] md:text-base text-foreground leading-relaxed">
+                      {point}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Helper Text */}
+              {topic.helper && (
+                <p className="mt-4 text-sm text-muted-foreground italic border-t border-border pt-4">
+                  {topic.helper}
+                </p>
+              )}
+            </div>
           ))}
-        </Accordion>
+        </div>
       </div>
     </section>
   );

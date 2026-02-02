@@ -4,6 +4,7 @@ import { ShoppingBag, Menu, User, MessageCircle } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
 import { Button } from "@/components/ui/button";
 import { CurrencyToggle } from "./CurrencyToggle";
+import { SkyToggle } from "@/components/ui/sky-toggle";
 import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -100,6 +101,9 @@ export function StoreHeader() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <div className="hidden sm:block">
+              <SkyToggle />
+            </div>
             <CurrencyToggle />
 
             <Link to="/cart" className="relative">
@@ -176,6 +180,14 @@ export function StoreHeader() {
                   >
                     Admin Login
                   </Link>
+
+                  <hr className="my-2" />
+
+                  {/* Mobile theme toggle */}
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-lg font-medium text-foreground">Theme</span>
+                    <SkyToggle />
+                  </div>
 
                   <hr className="my-2" />
 

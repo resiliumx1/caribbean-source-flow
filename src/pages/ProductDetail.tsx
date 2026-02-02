@@ -159,8 +159,8 @@ export default function ProductDetail() {
               </Link>
             )}
 
-            {/* Name - BLACK, bold */}
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#0B0B0B] mt-2 mb-4">
+            {/* Name */}
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mt-2 mb-4">
               {product.name}
             </h1>
 
@@ -206,110 +206,81 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* Price - BLACK, bold */}
+            {/* Price */}
             <div className="mb-6">
               <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-[#0B0B0B]">
+                <span className="text-3xl font-bold text-foreground">
                   {prices.primary}
                 </span>
                 {originalPriceUsd && (
-                  <span className="text-xl text-[#3A3A3A] line-through">
+                  <span className="text-xl text-muted-foreground line-through">
                     {formatPrice(originalPriceUsd * quantity, (originalPriceXcd || 0) * quantity)}
                   </span>
                 )}
-                <span className="text-lg text-[#3A3A3A]">
+                <span className="text-lg text-muted-foreground">
                   {prices.secondary}
                 </span>
               </div>
               {product.size_info && (
-                <p className="text-sm text-[#3A3A3A] mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {product.size_info}
                 </p>
               )}
             </div>
 
-            {/* ========== KEY BENEFITS (EXACT SPEC) ========== */}
+            {/* ========== KEY BENEFITS ========== */}
             {product.traditional_use && (
               <div className="mb-0">
-                {/* Heading: 18-20px, weight 600-700, color #0B0B0B */}
-                <h3 className="text-[18px] font-semibold text-[#0B0B0B] mb-4">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Key Benefits
                 </h3>
-                {/* Vertical list with 12px gap */}
                 <div className="flex flex-col gap-3">
                   {product.traditional_use.split(",").slice(0, 5).map((benefit, i) => (
                     <div key={i} className="flex items-center gap-3">
-                      {/* Icon: 22px diameter circle, bg #1F3A2E */}
-                      <div 
-                        className="flex-shrink-0 flex items-center justify-center rounded-full"
-                        style={{ width: '22px', height: '22px', backgroundColor: '#1F3A2E' }}
-                      >
-                        {/* White checkmark, 12-14px */}
-                        <Check className="text-white" style={{ width: '13px', height: '13px' }} />
+                      <div className="flex-shrink-0 w-[22px] h-[22px] flex items-center justify-center rounded-full bg-primary">
+                        <Check className="w-[13px] h-[13px] text-primary-foreground" />
                       </div>
-                      {/* Text: 15-16px, color #0B0B0B, weight 400-500 */}
-                      <span 
-                        className="font-normal"
-                        style={{ fontSize: '15px', color: '#0B0B0B' }}
-                      >
+                      <span className="text-[15px] font-normal text-foreground">
                         {benefit.trim()}
                       </span>
                     </div>
                   ))}
                 </div>
-                {/* Divider: 1px, rgba(11,11,11,0.12), 24px spacing above/below */}
-                <div 
-                  className="my-6"
-                  style={{ height: '1px', backgroundColor: 'rgba(11,11,11,0.12)' }}
-                />
+                <div className="my-6 h-px bg-border" />
               </div>
             )}
 
-            {/* ========== DOSAGE (EXACT SPEC) ========== */}
+            {/* ========== DOSAGE ========== */}
             {product.dosage_instructions && (
               <div className="mb-0">
-                {/* Heading: same as Key Benefits */}
-                <h3 className="text-[18px] font-semibold text-[#0B0B0B] mb-3">
+                <h3 className="text-lg font-semibold text-foreground mb-3">
                   Dosage
                 </h3>
-                {/* Text: 15-16px, line-height 1.6, color #0B0B0B */}
-                <p 
-                  className="whitespace-pre-line"
-                  style={{ fontSize: '15px', lineHeight: '1.6', color: '#0B0B0B' }}
-                >
+                <p className="text-[15px] leading-relaxed text-foreground whitespace-pre-line">
                   {product.dosage_instructions}
                 </p>
                 {product.contraindications && (
-                  <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                  <div className="mt-4 p-3 bg-warning/10 rounded-lg border border-warning/20">
                     <div className="flex items-start gap-2">
-                      <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <AlertCircle className="w-4 h-4 text-warning mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium text-[#0B0B0B] text-sm">Contraindications</p>
-                        <p className="text-sm text-[#0B0B0B]">{product.contraindications}</p>
+                        <p className="font-medium text-foreground text-sm">Contraindications</p>
+                        <p className="text-sm text-muted-foreground">{product.contraindications}</p>
                       </div>
                     </div>
                   </div>
                 )}
-                {/* Divider: 1px, rgba(11,11,11,0.12), 24px spacing above/below */}
-                <div 
-                  className="my-6"
-                  style={{ height: '1px', backgroundColor: 'rgba(11,11,11,0.12)' }}
-                />
+                <div className="my-6 h-px bg-border" />
               </div>
             )}
 
-            {/* ========== PRODUCT DESCRIPTION (EXACT SPEC) ========== */}
+            {/* ========== PRODUCT DESCRIPTION ========== */}
             {product.description && (
               <div className="mb-6">
-                {/* Heading: same typography */}
-                <h3 className="text-[18px] font-semibold text-[#0B0B0B] mb-3">
+                <h3 className="text-lg font-semibold text-foreground mb-3">
                   About This Formulation
                 </h3>
-                {/* Body text: 15-16px, line-height 1.6, color #0B0B0B */}
-                <p 
-                  className="whitespace-pre-line"
-                  style={{ fontSize: '15px', lineHeight: '1.6', color: '#0B0B0B' }}
-                >
+                <p className="text-[15px] leading-relaxed text-foreground whitespace-pre-line">
                   {product.description}
                 </p>
               </div>
@@ -328,8 +299,8 @@ export default function ProductDetail() {
 
             {/* Quantity selector */}
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-sm font-medium text-[#0B0B0B]">Quantity</span>
-              <div className="flex items-center border border-[rgba(11,11,11,0.12)] rounded-lg">
+              <span className="text-sm font-medium text-foreground">Quantity</span>
+              <div className="flex items-center border border-border rounded-lg">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -338,7 +309,7 @@ export default function ProductDetail() {
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="w-12 text-center font-medium text-[#0B0B0B]">{quantity}</span>
+                <span className="w-12 text-center font-medium text-foreground">{quantity}</span>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -365,19 +336,19 @@ export default function ProductDetail() {
 
             {/* Bulk Order Notice for Raw Herbs */}
             {isRawHerb && (
-              <div className="p-4 bg-[#1F3A2E]/5 rounded-xl border border-[#1F3A2E]/20 mb-6">
+              <div className="p-4 bg-primary/5 rounded-xl border border-primary/20 mb-6">
                 <div className="flex items-start gap-3">
-                  <MessageCircle className="w-5 h-5 text-[#1F3A2E] flex-shrink-0 mt-0.5" />
+                  <MessageCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-[#0B0B0B] text-sm">Bulk Orders Available</p>
-                    <p className="text-sm text-[#3A3A3A] mt-1">
+                    <p className="font-semibold text-foreground text-sm">Bulk Orders Available</p>
+                    <p className="text-sm text-muted-foreground mt-1">
                       Each order is 1 lb. Contact us for discounted pricing on quantities of 4-10 lbs.
                     </p>
                     <a
                       href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${encodeURIComponent(`Hi, I'd like to inquire about bulk pricing for ${product.name} (4-10 lbs).`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm font-medium text-[#1F3A2E] hover:text-[#1F3A2E]/80 mt-2"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 mt-2"
                     >
                       <MessageCircle className="w-4 h-4" />
                       WhatsApp for Bulk Pricing
@@ -391,10 +362,10 @@ export default function ProductDetail() {
             <Accordion type="multiple" className="w-full" defaultValue={[]}>
               {product.pharmaceutical_info && (
                 <AccordionItem value="science">
-                  <AccordionTrigger className="font-serif text-[#0B0B0B]">
+                  <AccordionTrigger className="font-serif text-foreground">
                     The Science
                   </AccordionTrigger>
-                  <AccordionContent className="text-[#3A3A3A] whitespace-pre-line">
+                  <AccordionContent className="text-muted-foreground whitespace-pre-line">
                     {product.pharmaceutical_info}
                   </AccordionContent>
                 </AccordionItem>
@@ -402,35 +373,35 @@ export default function ProductDetail() {
 
               {product.ingredients && (
                 <AccordionItem value="ingredients">
-                  <AccordionTrigger className="font-serif text-[#0B0B0B]">
+                  <AccordionTrigger className="font-serif text-foreground">
                     Ingredients
                   </AccordionTrigger>
-                  <AccordionContent className="text-[#3A3A3A] whitespace-pre-line">
+                  <AccordionContent className="text-muted-foreground whitespace-pre-line">
                     {product.ingredients}
                   </AccordionContent>
                 </AccordionItem>
               )}
 
               <AccordionItem value="sourcing">
-                <AccordionTrigger className="font-serif text-[#0B0B0B]">
+                <AccordionTrigger className="font-serif text-foreground">
                   Sourcing & Integrity
                 </AccordionTrigger>
-                <AccordionContent className="text-[#3A3A3A]">
+                <AccordionContent className="text-muted-foreground">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#1F3A2E]" />
+                      <Check className="w-4 h-4 text-primary" />
                       <span>100% Natural</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#1F3A2E]" />
+                      <Check className="w-4 h-4 text-primary" />
                       <span>Vegan & Non-GMO</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#1F3A2E]" />
+                      <Check className="w-4 h-4 text-primary" />
                       <span>Made in Saint Lucia</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#1F3A2E]" />
+                      <Check className="w-4 h-4 text-primary" />
                       <span>No synthetic fillers or artificial coloring</span>
                     </div>
                   </div>
@@ -438,18 +409,18 @@ export default function ProductDetail() {
               </AccordionItem>
 
               <AccordionItem value="shipping">
-                <AccordionTrigger className="font-serif text-[#0B0B0B]">
+                <AccordionTrigger className="font-serif text-foreground">
                   Shipping & Delivery
                 </AccordionTrigger>
-                <AccordionContent className="text-[#3A3A3A]">
+                <AccordionContent className="text-muted-foreground">
                   <div className="space-y-3">
                     <div>
-                      <p className="font-medium text-[#0B0B0B]">St. Lucia (Local Delivery)</p>
+                      <p className="font-medium text-foreground">St. Lucia (Local Delivery)</p>
                       <p>Same-day delivery available for orders placed before 2 PM (North region).</p>
                       <p>Delivery fees: EC$15-25 depending on zone.</p>
                     </div>
                     <div>
-                      <p className="font-medium text-[#0B0B0B]">International Shipping</p>
+                      <p className="font-medium text-foreground">International Shipping</p>
                       <p>Ships worldwide from St. Lucia within 3-5 business days via courier.</p>
                       <p>Tracking provided for all orders.</p>
                     </div>
