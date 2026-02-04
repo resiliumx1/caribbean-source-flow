@@ -7,6 +7,10 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const MAX_REQUESTS_PER_WINDOW = 30; // 30 requests per hour per session
+
 // Escalation keywords that trigger immediate handoff
 const ESCALATION_KEYWORDS = [
   "refund",
@@ -24,6 +28,44 @@ const ESCALATION_KEYWORDS = [
   "blood thinner",
   "prescription",
 ];
+
+// In-memory rate limit store (resets on cold start, but provides basic protection)
+const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
+
+function checkRateLimit(sessionId: string): { allowed: boolean; remaining: number; resetIn: number } {
+  const now = Date.now();
+  const entry = rateLimitStore.get(sessionId);
+  
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    // New window or expired window
+    rateLimitStore.set(sessionId, { count: 1, windowStart: now });
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1, resetIn: RATE_LIMIT_WINDOW_MS };
+  }
+  
+  if (entry.count >= MAX_REQUESTS_PER_WINDOW) {
+    const resetIn = RATE_LIMIT_WINDOW_MS - (now - entry.windowStart);
+    return { allowed: false, remaining: 0, resetIn };
+  }
+  
+  entry.count++;
+  const remaining = MAX_REQUESTS_PER_WINDOW - entry.count;
+  const resetIn = RATE_LIMIT_WINDOW_MS - (now - entry.windowStart);
+  return { allowed: true, remaining, resetIn };
+}
+
+// Cleanup old entries periodically (run every 100 requests)
+let requestCounter = 0;
+function cleanupRateLimitStore() {
+  requestCounter++;
+  if (requestCounter % 100 === 0) {
+    const now = Date.now();
+    for (const [key, value] of rateLimitStore.entries()) {
+      if (now - value.windowStart > RATE_LIMIT_WINDOW_MS * 2) {
+        rateLimitStore.delete(key);
+      }
+    }
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -49,6 +91,30 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "Invalid session ID" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check rate limit BEFORE processing
+    cleanupRateLimitStore();
+    const rateLimit = checkRateLimit(sessionId);
+    
+    if (!rateLimit.allowed) {
+      const resetMinutes = Math.ceil(rateLimit.resetIn / 60000);
+      return new Response(
+        JSON.stringify({ 
+          error: `Rate limit exceeded. Please try again in ${resetMinutes} minutes, or contact us via WhatsApp: +1(758)285-5195`,
+          retryAfter: Math.ceil(rateLimit.resetIn / 1000)
+        }),
+        { 
+          status: 429, 
+          headers: { 
+            ...corsHeaders, 
+            "Content-Type": "application/json",
+            "Retry-After": String(Math.ceil(rateLimit.resetIn / 1000)),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": String(Math.ceil(rateLimit.resetIn / 1000))
+          } 
+        }
       );
     }
 
@@ -221,8 +287,14 @@ The customer has mentioned something that requires human attention. Acknowledge 
       }
     }
 
+    // Add rate limit headers to successful response
     return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      headers: { 
+        ...corsHeaders, 
+        "Content-Type": "text/event-stream",
+        "X-RateLimit-Remaining": String(rateLimit.remaining),
+        "X-RateLimit-Reset": String(Math.ceil(rateLimit.resetIn / 1000))
+      },
     });
   } catch (error) {
     console.error("Concierge chat error:", error);
