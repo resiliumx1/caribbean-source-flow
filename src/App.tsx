@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { StoreProvider } from "@/lib/store-context";
 import { StoreHeader } from "@/components/store/StoreHeader";
+import ComingSoon from "@/components/ComingSoon";
 import TrinityHomepage from "./pages/TrinityHomepage";
 import Wholesale from "./pages/Wholesale";
 import Shop from "./pages/Shop";
@@ -19,6 +20,9 @@ import AdminRetreats from "./pages/AdminRetreats";
 import AdminLayout from "./components/admin/AdminLayout";
 
 const queryClient = new QueryClient();
+
+// Toggle this to false when ready to launch
+const COMING_SOON = true;
 
 // Pages that should NOT show the header (admin only)
 const pagesWithoutHeader = ["/admin"];
@@ -53,26 +57,33 @@ function AppContent() {
   );
 }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      storageKey="theme"
-      disableTransitionOnChange
-    >
-      <StoreProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppContent />
-          </BrowserRouter>
-        </TooltipProvider>
-      </StoreProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Show Coming Soon page when enabled
+  if (COMING_SOON) {
+    return <ComingSoon />;
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        storageKey="theme"
+        disableTransitionOnChange
+      >
+        <StoreProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AppContent />
+            </BrowserRouter>
+          </TooltipProvider>
+        </StoreProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
