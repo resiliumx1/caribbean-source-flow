@@ -22,7 +22,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 const queryClient = new QueryClient();
 
 // Toggle this to false when ready to launch
-const COMING_SOON = true;
+const COMING_SOON = false;
 
 // Pages that should NOT show the header (admin only)
 const pagesWithoutHeader = ["/admin"];
