@@ -13,6 +13,8 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Retreats from "./pages/Retreats";
+import School from "./pages/School";
+import HerbalPhysicianCourse from "./pages/HerbalPhysicianCourse";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminProducts from "./pages/AdminProducts";
@@ -44,6 +46,8 @@ function AppContent() {
         <Route path="/shop/:slug" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/retreats" element={<Retreats />} />
+        <Route path="/school" element={<School />} />
+        <Route path="/school/herbal-physician-course" element={<HerbalPhysicianCourse />} />
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>

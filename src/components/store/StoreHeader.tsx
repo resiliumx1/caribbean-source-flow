@@ -86,6 +86,12 @@ export function StoreHeader() {
               Retreats
             </Link>
             <Link
+              to="/school"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+            >
+              School
+            </Link>
+            <Link
               to="/wholesale"
               className="text-sm font-medium text-foreground hover:text-primary transition-colors"
             >
@@ -149,6 +155,13 @@ export function StoreHeader() {
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >
                     Retreats
+                  </Link>
+                  <Link
+                    to="/school"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    School
                   </Link>
                   <Link
                     to="/wholesale"
