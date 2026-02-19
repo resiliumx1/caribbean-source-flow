@@ -16,6 +16,7 @@ import Retreats from "./pages/Retreats";
 import School from "./pages/School";
 import HerbalPhysicianCourse from "./pages/HerbalPhysicianCourse";
 import NotFound from "./pages/NotFound";
+import GoddessCard from "./pages/GoddessCard";
 import AdminLogin from "./pages/AdminLogin";
 import AdminProducts from "./pages/AdminProducts";
 import AdminRetreats from "./pages/AdminRetreats";
@@ -26,8 +27,8 @@ const queryClient = new QueryClient();
 // Toggle this to false when ready to launch
 const COMING_SOON = false;
 
-// Pages that should NOT show the header (admin only)
-const pagesWithoutHeader = ["/admin"];
+// Pages that should NOT show the header
+const pagesWithoutHeader = ["/admin", "/goddess"];
 
 function AppContent() {
   const location = useLocation();
@@ -54,6 +55,8 @@ function AppContent() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="retreats" element={<AdminRetreats />} />
         </Route>
+        {/* Hidden direct-link-only pages */}
+        <Route path="/goddess" element={<GoddessCard />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
