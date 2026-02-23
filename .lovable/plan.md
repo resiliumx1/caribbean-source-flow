@@ -1,86 +1,131 @@
 
-# GoddessCard — Refinements Plan
 
-## What Needs Changing
+# MKRC Marketing Pages: The Answer + Webinars
 
-### 1. QR Code — Fixed URL + Clickable Lightbox
-**Problem:** `pageUrl = window.location.href` — in preview/development this points to the Lovable preview URL, not the published card URL. The QR should always encode the **published** URL: `https://caribbean-source-flow.lovable.app/goddess`.
-
-**Fix:** Hardcode `const CARD_URL = "https://caribbean-source-flow.lovable.app/goddess"` and use it for both the QR `value` prop and the Share API `url`.
-
-**Clickable QR:** Add a `[qrLightboxOpen, setQrLightboxOpen]` state. Wrap the QR div in a `<button>` that opens a new QR lightbox — a full-screen dark overlay displaying a much larger QR (280px) with the instruction "Point your camera here". Reuse the existing `Lightbox` overlay pattern with an `X` close button.
+Two new premium marketing pages added as `/the-answer` and `/webinars` routes alongside the existing site. The current homepage remains at `/`. Full-stack features (reviews, product comparison, video footer) will be built in a follow-up after these pages are complete.
 
 ---
 
-### 2. Bio Font — More Elegant & Professional
-**Problem:** The current font is `'Cormorant Garamond', 'Georgia', serif` at `text-[15px]` — this renders well but the sizing and weight feel generic.
+## Scope
 
-**Fix:**
-- Increase font size to `text-[17px]` for better elegance
-- Add `font-light` (300 weight) to all paragraphs — Cormorant Garamond at light weight reads beautifully
-- Increase `leading-relaxed` to `leading-[1.85]` for more breathing room between lines
-- The pull-quote ("She does not simply lead…") bumps to `text-[19px]`, italic, with a left gold border accent (`border-l-2 border-[#C8A84E] pl-4`) instead of just color styling
-- Add `letter-spacing: 0.01em` via inline style for subtle refinement
-
----
-
-### 3. Contact Links — Verify & Fix
-**Review of current state:**
-- Phone rows use `href="tel:+13059429407"` and `href="tel:+17582855195"` ✓
-- Email rows use `href="mailto:..."` ✓
-- Website uses `href="https://mountkailashslu.com"` ✓
-- WhatsApp quick action uses `href="https://wa.me/13059429407"` ✓
-
-**One issue:** The `ContactRow` component has `target={href.startsWith("http") ? "_blank" : undefined}` — this correctly opens the website in a new tab. Tel and mailto links do NOT get `target="_blank"` (correct). These are already properly wired.
-
-**No code change needed here** — all contact links already route correctly.
+- **New route:** `/the-answer` -- Premium product landing page for "The Answer" tincture (Chronixx endorsement)
+- **New route:** `/webinars` -- Free wellness webinar hub with upcoming + archive + host bio + email signup
+- **Shared components:** New MKRC-specific header, footer, theme toggle, and scroll-reveal utility
+- **Design system:** New CSS custom properties layer for the MKRC dark/light theme (coexists with existing Tailwind theme)
+- **Google Fonts:** DM Serif Display, Plus Jakarta Sans, Space Grotesk (added to index.html)
+- **No backend changes** -- All content is static; email signup shows a success message client-side only
 
 ---
 
-### 4. WhatsApp — Business Number
-**Current:** Both the quick-action button and the bottom CTA WhatsApp button point to `wa.me/13059429407` (US number).
+## New Files
 
-**Fix:** Change WhatsApp links to use the business's primary WhatsApp number `+1 (305) 942-9407` — this is already the US/main number, so it's already correct. No change needed.
+### Pages
+1. `src/pages/TheAnswer.tsx` -- Full product landing page with 7 sections (Hero, Chronixx, Ingredients, Craft, Benefits, How To Use, Final CTA)
+2. `src/pages/Webinars.tsx` -- Webinar hub with 7 sections (Hero, Featured, Archive with filter, Why Attend, Host Bio, Email Signup, Final CTA)
+
+### Shared Components (src/components/mkrc/)
+3. `src/components/mkrc/MKRCHeader.tsx` -- Fixed header with nav links (Shop, The Answer, Webinars, Programs, Retreats), theme toggle (moon/sun), mobile hamburger overlay
+4. `src/components/mkrc/MKRCFooter.tsx` -- 4-column footer (Brand, Shop, Learn, Connect) with social icons and copyright
+5. `src/components/mkrc/MKRCThemeToggle.tsx` -- Circular button toggling `data-mkrc-theme` attribute on `<html>` and persisting to localStorage key `mkrc-theme`
+6. `src/components/mkrc/ScrollReveal.tsx` -- Wrapper component using IntersectionObserver to fade-in + slide-up children; respects `prefers-reduced-motion`
+7. `src/components/mkrc/SectionLabel.tsx` -- Reusable small uppercase label with optional gold line (Space Grotesk, gold color)
+8. `src/components/mkrc/CounterAnimation.tsx` -- Animated number counter (0 to target) triggered on viewport entry
+
+### Styles
+9. `src/styles/mkrc-theme.css` -- All CSS custom properties for both dark/light themes, imported into `index.css`
+
+### Updated Files
+10. `src/App.tsx` -- Add `/the-answer` and `/webinars` routes; conditionally render `MKRCHeader` on those routes instead of `StoreHeader`
+11. `src/index.css` -- Import `mkrc-theme.css` and add the Google Fonts import for DM Serif Display + Plus Jakarta Sans
+12. `index.html` -- FOUC prevention script for `mkrc-theme` localStorage key
 
 ---
 
-### 5. Share Card Button — Color + Full Share Sheet
-**Problem:** The "Share Card" button is currently a plain border outline with no color — it blends in and doesn't draw attention.
+## Design System (mkrc-theme.css)
 
-**Fix — Color the Share Card button:**
-- Replace the colorless bordered style with a warm gold gradient: `background: linear-gradient(135deg, #C8A84E, #E67E22)` — white text, no border
-- This makes it visually distinct and inviting
+A scoped CSS layer using `[data-mkrc-theme="dark"]` and `[data-mkrc-theme="light"]` selectors so it does not conflict with the existing Tailwind dark mode. Default is dark.
 
-**Fix — Share functionality already uses Web Share API:**
-The current `handleShare` already calls `navigator.share()` which opens the native device share sheet (iOS/Android share modal with all installed apps, AirDrop, Messages, etc.). If not available (desktop), it copies to clipboard. This is already correct.
+All colors from the spec will be defined as CSS custom properties (--bg-primary, --accent-gold, --text-primary, etc.) and consumed via inline styles or utility classes within the MKRC components only.
 
-**Improvement:** Add a more robust fallback chain:
+Typography classes:
+- `.mkrc-display` -- DM Serif Display for headlines
+- `.mkrc-body` -- Plus Jakarta Sans for body text
+- `.mkrc-label` -- Space Grotesk, uppercase, letter-spacing for badges/CTAs
+
+---
+
+## Page 1: The Answer (/the-answer)
+
+Seven sections, all static content:
+
+1. **Hero** -- Full-viewport, background image with low-opacity overlay + radial gradients. Two-column layout (text left, product bottle right with gold glow). Badge "Nature's Booster Shot", H1 "The Answer.", subtitle, Chronixx endorsement line, two CTAs ("Get The Answer" links to WooCommerce add-to-cart, "What's Inside" smooth-scrolls to #ingredients), certification pills.
+
+2. **Chronixx Endorsement** -- Background --bg-secondary. Large decorative "Chronixx" text, blockquote, attribution, bio paragraph, 3 animated stat counters (3.4M listeners, #1 Billboard, 2x Tonight Show).
+
+3. **Ingredients (#ingredients)** -- 3-card grid (Anamu, Vervain, Soursop Leaves). Each card: icon, herb name, Latin name italic, description, property tags. Hover: lift + gold top border.
+
+4. **The Craft** -- 5-step horizontal timeline (Selection, Cleaning, Steeping, 21 Days in Oak, The Answer). Mobile: vertical stack. Each step: icon, number, title, description.
+
+5. **Benefits** -- 6 cards in 3x2 grid. Below: certification strip (Vegan, Non-GMO, etc.).
+
+6. **How To Use** -- 3 simple steps + product image on right.
+
+7. **Final CTA (#purchase)** -- Centered. Product image, "Add to Cart" (external WooCommerce link), "Explore All Products" (external shop link), 5-star social proof line.
+
+---
+
+## Page 2: Webinars (/webinars)
+
+Seven sections:
+
+1. **Hero** -- Centered. Badge "Free Wellness Education", H1, subtitle, two scroll-to CTAs, 3 animated stat counters.
+
+2. **Featured Upcoming (#featured)** -- Two-column. Left: webinar image with "Upcoming Live" + "Free" badges. Right: meta info, title, description, bullet list, "Register Free on Zoom" (green button, external link), "Get Reminded" (scrolls to #signup).
+
+3. **Archive (#archive)** -- Category filter buttons (All Topics, Women's Health, Men's Health, Nutrition, Herbal Medicine, Detox, Mental Wellness). 6 webinar cards in filterable grid. Each card: replay tag, category label, title, description, duration, "Watch Replay" button.
+
+4. **Why Attend** -- 4 cards: Expert-Led, 100% Free, Interactive, Actionable.
+
+5. **About the Host (#host)** -- Two-column. Placeholder photo + bio for Honorable Priest Kailash. Credential pills.
+
+6. **Email Signup (#signup)** -- Name + email form fields. Client-side only: on submit shows "Subscribed!" message. Privacy line.
+
+7. **Final CTA** -- 4 link cards (Herbal Physician Course, Group Retreats, Personalised Retreats, Consultations) linking to external URLs.
+
+---
+
+## Routing Changes (App.tsx)
+
+```text
+/the-answer  -->  TheAnswer page (MKRCHeader + MKRCFooter)
+/webinars     -->  Webinars page (MKRCHeader + MKRCFooter)
 ```
-1. navigator.share() → native share sheet (iOS/Android — opens WhatsApp, Messages, Email, etc.)
-2. Fallback: navigator.clipboard.writeText(CARD_URL) → show "Link Copied!" feedback
-```
+
+The `AppContent` component will check if the current path starts with `/the-answer` or `/webinars` and render `MKRCHeader` instead of `StoreHeader`. The MKRC pages will include their own `MKRCFooter` at the bottom.
+
+Add both paths to `pagesWithoutHeader` so the existing `StoreHeader` is suppressed on these routes.
 
 ---
 
-### 6. Quick Action Bar — Call/Email/WhatsApp color treatment
-All three already have correct `href` values. We will ensure the icon background pill gets a subtle colored tint to reinforce each action visually:
-- Call: soft emerald tint behind phone icon `bg-emerald-500/10`
-- Email: soft gold tint `bg-[#C8A84E]/10`
-- WhatsApp: soft green tint `bg-green-500/10`
-- Share: soft orange tint `bg-[#E67E22]/10`
+## Accessibility and Responsiveness
+
+- All interactive elements have visible focus states (gold outline)
+- Theme toggle and hamburger have aria-labels
+- Images have descriptive alt text
+- `ScrollReveal` respects `prefers-reduced-motion: reduce`
+- Breakpoints: desktop 1200px+, tablet 768-1199px, mobile less than 768px
+- Hero becomes single column on mobile, grids collapse (3 to 2 to 1), footer stacks
+- Mobile nav: full-screen overlay with close button
+- Touch targets minimum 44px
 
 ---
 
-## Summary of File Changes
+## Technical Notes
 
-**`src/pages/GoddessCard.tsx`** — single file edit covering:
+- No database changes needed -- all content is hardcoded
+- No new dependencies needed -- uses existing framer-motion for animations, lucide-react for icons, react-router-dom for routing
+- The MKRC theme system is isolated from the existing next-themes dark mode via a separate `data-mkrc-theme` attribute
+- External links use `target="_blank" rel="noopener noreferrer"`
+- Internal nav links use React Router `Link` components
+- "Add to Cart" / "Get The Answer" buttons link to `https://mountkailashslu.com/?add-to-cart=90` (WooCommerce)
 
-1. **`CARD_URL` constant** — hardcode published URL, replace `pageUrl` references
-2. **`handleShare`** — use `CARD_URL` instead of `window.location.href`
-3. **QR Lightbox state** — add `qrLightboxOpen` state + a `QRLightbox` component that renders full-screen with a 280px QR
-4. **QR section** — wrap QR display in a clickable button → opens QR lightbox; QR `value` uses `CARD_URL`
-5. **Bio section** — refined font sizing, weight, leading, pull-quote border treatment
-6. **Share Card CTA button** — replace outline style with gold/orange gradient + white text
-7. **Quick Action icons** — add colored background tints to icon containers
-
-No new files, no new dependencies, no routing changes needed.
