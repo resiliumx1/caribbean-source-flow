@@ -21,6 +21,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminProducts from "./pages/AdminProducts";
 import AdminRetreats from "./pages/AdminRetreats";
 import AdminLayout from "./components/admin/AdminLayout";
+import TheAnswer from "./pages/TheAnswer";
+import WebinarsPage from "./pages/Webinars";
 
 const queryClient = new QueryClient();
 
@@ -28,7 +30,7 @@ const queryClient = new QueryClient();
 const COMING_SOON = false;
 
 // Pages that should NOT show the header
-const pagesWithoutHeader = ["/admin", "/goddess"];
+const pagesWithoutHeader = ["/admin", "/goddess", "/the-answer", "/webinars"];
 
 function AppContent() {
   const location = useLocation();
@@ -49,6 +51,9 @@ function AppContent() {
         <Route path="/retreats" element={<Retreats />} />
         <Route path="/school" element={<School />} />
         <Route path="/school/herbal-physician-course" element={<HerbalPhysicianCourse />} />
+        {/* MKRC Marketing Pages */}
+        <Route path="/the-answer" element={<TheAnswer />} />
+        <Route path="/webinars" element={<WebinarsPage />} />
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
