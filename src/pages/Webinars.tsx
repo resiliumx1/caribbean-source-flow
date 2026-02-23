@@ -1,0 +1,334 @@
+import { useEffect, useState } from "react";
+import MKRCHeader from "@/components/mkrc/MKRCHeader";
+import MKRCFooter from "@/components/mkrc/MKRCFooter";
+import ScrollReveal from "@/components/mkrc/ScrollReveal";
+import SectionLabel from "@/components/mkrc/SectionLabel";
+import CounterAnimation from "@/components/mkrc/CounterAnimation";
+import webinarImg from "@/assets/mkrc-webinar-featured.jpg";
+
+const CATEGORIES = ["All Topics", "Women's Health", "Men's Health", "Nutrition", "Herbal Medicine", "Detox", "Mental Wellness"];
+const CATEGORY_MAP: Record<string, string> = {
+  "All Topics": "all",
+  "Women's Health": "women",
+  "Men's Health": "men",
+  "Nutrition": "nutrition",
+  "Herbal Medicine": "herbal",
+  "Detox": "detox",
+  "Mental Wellness": "mental",
+};
+
+const WEBINARS = [
+  { category: "detox", icon: "🧹", title: "Detox & Parasite Cleansing: The Foundation of Health", desc: "Discover why cleansing your system of parasites and toxins is the essential first step to any healing protocol.", duration: "~75 min" },
+  { category: "mental", icon: "🧠", title: "Herbal Medicine for Stress, Anxiety & Sleep", desc: "Natural approaches to calming the nervous system, improving sleep quality, and building long-term mental resilience.", duration: "~60 min" },
+  { category: "men", icon: "💪", title: "Men's Vitality: Prostate Health & Natural Performance", desc: "The herbs and protocols Caribbean men have relied on for generations to maintain prostate health and vitality.", duration: "~70 min" },
+  { category: "herbal", icon: "🔥", title: "Understanding Inflammation: The Root of All Disease", desc: "How chronic inflammation silently destroys your health — and the Caribbean herbal protocols that address it at the source.", duration: "~80 min" },
+  { category: "nutrition", icon: "🩸", title: "Building Blood: Iron, Energy & Caribbean Superfoods", desc: "Natural strategies to combat fatigue and anemia using iron-rich Caribbean superfoods and traditional blood-building herbs.", duration: "~65 min" },
+  { category: "women", icon: "🌸", title: "Fibroids, PCOS & Endometriosis: A Natural Protocol", desc: "How Caribbean herbal medicine approaches the most common reproductive conditions affecting women today.", duration: "~85 min" },
+];
+
+const WHY_CARDS = [
+  { icon: "🎓", title: "Expert-Led", desc: "Over 20 years of herbal medicine expertise distilled into accessible, practical sessions." },
+  { icon: "🆓", title: "100% Free", desc: "No cost. No hidden upsell. Pure education." },
+  { icon: "💬", title: "Interactive", desc: "Every live session includes open Q&A." },
+  { icon: "✅", title: "Actionable", desc: "Leave every session with practical steps and herbal protocols you can implement today." },
+];
+
+const JOURNEY_CARDS = [
+  { icon: "📚", title: "Herbal Physician Course", desc: "10-month certification program", href: "https://mountkailashslu.com/hsek-application/" },
+  { icon: "🏔️", title: "Group Retreats", desc: "Immersive healing in Saint Lucia", href: "https://mountkailashslu.com/" },
+  { icon: "🌿", title: "Personalised Retreats", desc: "Tailored wellness experiences", href: "https://mountkailashslu.com/" },
+  { icon: "🗣️", title: "Consultations", desc: "1-on-1 with Priest Kailash", href: "https://mountkailashslu.com/" },
+];
+
+const HOST_CREDS = ["Based in Saint Lucia", "20+ Years Practice", "Thousands Guided", "Herbal Medicine Master"];
+
+export default function Webinars() {
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [subscribed, setSubscribed] = useState(false);
+
+  useEffect(() => {
+    document.title = "Free Wellness Webinars | Mount Kailash Rejuvenation Centre";
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", "Join free live webinars on herbal medicine, natural health & holistic wellness with Honorable Priest Kailash. Expert-led sessions on immunity, fertility, detox & more.");
+    if (!document.documentElement.getAttribute("data-mkrc-theme")) {
+      const stored = localStorage.getItem("mkrc-theme") || "dark";
+      document.documentElement.setAttribute("data-mkrc-theme", stored);
+    }
+  }, []);
+
+  const filtered = activeFilter === "all" ? WEBINARS : WEBINARS.filter((w) => w.category === activeFilter);
+
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubscribed(true);
+  };
+
+  return (
+    <div className="mkrc-page mkrc-body">
+      <MKRCHeader />
+
+      {/* ===== 1. HERO ===== */}
+      <section className="flex items-center justify-center text-center" style={{ minHeight: "90vh", padding: "120px 24px 80px" }}>
+        <ScrollReveal>
+          <span
+            className="mkrc-label inline-block mb-6 px-4 py-2 rounded-full text-xs"
+            style={{ border: "1px solid var(--mkrc-accent-green)", color: "var(--mkrc-accent-green)" }}
+          >
+            Free Wellness Education
+          </span>
+          <h1 className="mkrc-display mb-6" style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)", lineHeight: 1.1, maxWidth: 800, margin: "0 auto" }}>
+            Your Healing Journey Starts With <em>Knowledge.</em>
+          </h1>
+          <p className="mb-8 max-w-2xl mx-auto" style={{ color: "var(--mkrc-text-secondary)", fontSize: "1.1rem" }}>
+            Free expert-led webinars on herbal medicine, nutrition, and holistic wellness — with Honorable Priest Kailash and the MKRC wellness team.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            <a href="#featured" className="mkrc-btn-green">Browse Upcoming Webinars</a>
+            <a href="#archive" className="mkrc-btn-secondary">Watch Past Sessions</a>
+          </div>
+          <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto">
+            <div>
+              <div className="text-3xl font-bold"><CounterAnimation target={20} suffix="" /></div>
+              <p className="text-xs mt-1" style={{ color: "var(--mkrc-text-secondary)" }}>Years of Expertise</p>
+            </div>
+            <div>
+              <div className="text-3xl font-bold" style={{ color: "var(--mkrc-accent-gold)" }}>100%</div>
+              <p className="text-xs mt-1" style={{ color: "var(--mkrc-text-secondary)" }}>Always Free</p>
+            </div>
+            <div>
+              <div className="text-3xl font-bold"><CounterAnimation target={1000} prefix="" suffix="+" /></div>
+              <p className="text-xs mt-1" style={{ color: "var(--mkrc-text-secondary)" }}>Attendees Worldwide</p>
+            </div>
+          </div>
+        </ScrollReveal>
+      </section>
+
+      {/* ===== 2. FEATURED ===== */}
+      <section id="featured" style={{ backgroundColor: "var(--mkrc-bg-secondary)", padding: "100px 0" }}>
+        <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center" style={{ maxWidth: 1200, padding: "0 24px" }}>
+          <ScrollReveal>
+            <div className="relative rounded-xl overflow-hidden">
+              <img src={webinarImg} alt="Reproductive Wellness Webinar with Honorable Priest Kailash" className="w-full h-auto object-cover" />
+              <div className="absolute top-4 left-4 flex gap-2">
+                <span className="mkrc-label text-xs px-3 py-1 rounded-full flex items-center gap-1.5" style={{ backgroundColor: "rgba(220,50,50,0.9)", color: "#fff", fontSize: "0.65rem" }}>
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" /> Upcoming Live
+                </span>
+                <span className="mkrc-label text-xs px-3 py-1 rounded-full" style={{ backgroundColor: "var(--mkrc-accent-green)", color: "#fff", fontSize: "0.65rem" }}>
+                  Free
+                </span>
+              </div>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={150}>
+            <SectionLabel text="Next Live Session" />
+            <p className="text-sm mb-2" style={{ color: "var(--mkrc-text-tertiary)" }}>Date TBA · ~90 min · Via Zoom</p>
+            <h2 className="mkrc-display text-2xl md:text-3xl mb-4">
+              Reproductive Wellness: Nature's Approach to Fertility, Hormonal Balance & Vitality
+            </h2>
+            <p className="mb-6 text-sm leading-relaxed" style={{ color: "var(--mkrc-text-secondary)" }}>
+              Your reproductive health is the foundation of your overall wellbeing. In this free live session, Honorable Priest Kailash reveals the herbal protocols and lifestyle shifts that have helped hundreds of men and women across the Caribbean restore hormonal balance, boost fertility naturally, and reclaim their vitality.
+            </p>
+            <ul className="mb-8 flex flex-col gap-2">
+              {[
+                "The root causes of hormonal imbalance and how nature addresses them",
+                "Caribbean herbs that support fertility, menstrual health, and reproductive function",
+                "Daily rituals to nurture your reproductive system naturally",
+                "Live Q&A with Honorable Priest Kailash",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm" style={{ color: "var(--mkrc-text-secondary)" }}>
+                  <span style={{ color: "var(--mkrc-accent-green)" }}>✓</span> {item}
+                </li>
+              ))}
+            </ul>
+            <div className="flex flex-wrap gap-4">
+              <a href="https://us06web.zoom.us/j/83340011876?pwd=vMrImiKGYGWbGbaioYt6RTEw2sbo0A.1" target="_blank" rel="noopener noreferrer" className="mkrc-btn-green">
+                Register Free on Zoom
+              </a>
+              <a href="#signup" className="mkrc-btn-secondary">Get Reminded</a>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ===== 3. ARCHIVE ===== */}
+      <section id="archive" className="mkrc-section">
+        <ScrollReveal className="text-center mb-10">
+          <SectionLabel text="On Demand" showLine={false} />
+          <h2 className="mkrc-display text-3xl md:text-4xl mb-4">Past Sessions & Replays</h2>
+          <p style={{ color: "var(--mkrc-text-secondary)" }}>Missed a live session? Catch up on any of our previous webinars at your own pace.</p>
+        </ScrollReveal>
+
+        {/* Filter */}
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          {CATEGORIES.map((cat) => {
+            const val = CATEGORY_MAP[cat];
+            const active = val === activeFilter;
+            return (
+              <button
+                key={cat}
+                onClick={() => setActiveFilter(val)}
+                className="mkrc-label text-xs px-4 py-2 rounded-full transition-all duration-200"
+                style={{
+                  fontSize: "0.7rem",
+                  backgroundColor: active ? "var(--mkrc-accent-gold)" : "transparent",
+                  color: active ? "var(--mkrc-text-inverse)" : "var(--mkrc-text-secondary)",
+                  border: active ? "1px solid var(--mkrc-accent-gold)" : "1px solid var(--mkrc-border-medium)",
+                  cursor: "pointer",
+                }}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((w, i) => (
+            <ScrollReveal key={w.title} delay={i * 80}>
+              <div className="mkrc-card h-full flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="mkrc-label text-xs px-2 py-1 rounded" style={{ fontSize: "0.6rem", border: "1px solid var(--mkrc-border-subtle)", color: "var(--mkrc-text-tertiary)" }}>
+                    Replay
+                  </span>
+                  <span className="mkrc-label text-xs" style={{ fontSize: "0.6rem", color: "var(--mkrc-accent-gold)" }}>
+                    {CATEGORIES.find((c) => CATEGORY_MAP[c] === w.category)?.replace("'s Health", "") || w.category}
+                  </span>
+                </div>
+                <span className="text-3xl mb-3">{w.icon}</span>
+                <h3 className="mkrc-display text-lg mb-2 flex-grow">{w.title}</h3>
+                <p className="text-sm mb-4" style={{ color: "var(--mkrc-text-secondary)" }}>{w.desc}</p>
+                <div className="flex items-center justify-between mt-auto pt-4" style={{ borderTop: "1px solid var(--mkrc-border-subtle)" }}>
+                  <span className="text-xs" style={{ color: "var(--mkrc-text-tertiary)" }}>{w.duration}</span>
+                  <button className="mkrc-btn-secondary" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
+                    Watch Replay
+                  </button>
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== 4. WHY ATTEND ===== */}
+      <section style={{ backgroundColor: "var(--mkrc-bg-secondary)", padding: "100px 0" }}>
+        <div className="mx-auto" style={{ maxWidth: 1200, padding: "0 24px" }}>
+          <ScrollReveal className="text-center mb-14">
+            <SectionLabel text="Why Attend" showLine={false} />
+            <h2 className="mkrc-display text-3xl md:text-4xl">Wellness Education, Without the Price Tag.</h2>
+          </ScrollReveal>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {WHY_CARDS.map((c, i) => (
+              <ScrollReveal key={c.title} delay={i * 100}>
+                <div className="mkrc-card text-center h-full">
+                  <span className="text-3xl mb-3 block">{c.icon}</span>
+                  <h3 className="mkrc-display text-lg mb-2">{c.title}</h3>
+                  <p className="text-sm" style={{ color: "var(--mkrc-text-secondary)" }}>{c.desc}</p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== 5. HOST ===== */}
+      <section id="host" className="mkrc-section">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <ScrollReveal>
+            <div className="rounded-xl overflow-hidden flex items-center justify-center" style={{ backgroundColor: "var(--mkrc-bg-elevated)", minHeight: 400, border: "1px solid var(--mkrc-border-subtle)" }}>
+              <p className="mkrc-label text-sm" style={{ color: "var(--mkrc-text-tertiary)" }}>Host Photo</p>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={150}>
+            <SectionLabel text="Your Host" />
+            <h2 className="mkrc-display text-3xl mb-1">Honorable Priest Kailash</h2>
+            <p className="mb-6 text-sm" style={{ color: "var(--mkrc-text-tertiary)" }}>Founder, Mount Kailash Rejuvenation Centre</p>
+            <p className="leading-relaxed mb-6" style={{ color: "var(--mkrc-text-secondary)" }}>
+              For over two decades, Honorable Priest Kailash has dedicated his life to the study and practice of herbal medicine. From the mountains of Saint Lucia, he has guided thousands on their journey to natural health through MKRC's products, retreats, courses, and consultations. His webinars bring that same depth of knowledge directly to your screen — wherever you are in the world. No jargon. No gatekeeping. Just the wisdom of nature, shared freely.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {HOST_CREDS.map((c) => (
+                <span key={c} className="mkrc-label text-xs px-3 py-1.5 rounded-full" style={{ fontSize: "0.65rem", border: "1px solid var(--mkrc-border-subtle)", color: "var(--mkrc-text-tertiary)" }}>
+                  {c}
+                </span>
+              ))}
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ===== 6. SIGNUP ===== */}
+      <section id="signup" style={{ backgroundColor: "var(--mkrc-bg-secondary)", padding: "100px 0" }}>
+        <div className="mx-auto text-center" style={{ maxWidth: 560, padding: "0 24px" }}>
+          <ScrollReveal>
+            <SectionLabel text="Stay Connected" showLine={false} />
+            <h2 className="mkrc-display text-3xl mb-4">Never Miss a Webinar</h2>
+            <p className="mb-8" style={{ color: "var(--mkrc-text-secondary)" }}>
+              Get notified when new webinars are announced. Plus, receive exclusive herbal wellness tips delivered to your inbox.
+            </p>
+            {subscribed ? (
+              <div className="mkrc-card text-center py-8">
+                <span className="text-4xl mb-3 block">✅</span>
+                <p className="mkrc-display text-xl">Subscribed!</p>
+                <p className="text-sm mt-2" style={{ color: "var(--mkrc-text-secondary)" }}>We'll keep you in the loop.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSignup} className="flex flex-col gap-4">
+                <input
+                  type="text"
+                  placeholder="Your Name"
+                  required
+                  className="mkrc-body rounded-lg px-4 py-3 text-sm outline-none"
+                  style={{
+                    backgroundColor: "var(--mkrc-bg-surface)",
+                    border: "1px solid var(--mkrc-border-subtle)",
+                    color: "var(--mkrc-text-primary)",
+                  }}
+                />
+                <input
+                  type="email"
+                  placeholder="Your Email"
+                  required
+                  className="mkrc-body rounded-lg px-4 py-3 text-sm outline-none"
+                  style={{
+                    backgroundColor: "var(--mkrc-bg-surface)",
+                    border: "1px solid var(--mkrc-border-subtle)",
+                    color: "var(--mkrc-text-primary)",
+                  }}
+                />
+                <button type="submit" className="mkrc-btn-primary w-full">Subscribe</button>
+                <p className="text-xs" style={{ color: "var(--mkrc-text-tertiary)" }}>
+                  We respect your inbox. Unsubscribe anytime. No spam, ever.
+                </p>
+              </form>
+            )}
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ===== 7. FINAL CTA ===== */}
+      <section className="mkrc-section">
+        <ScrollReveal className="text-center mb-14">
+          <SectionLabel text="Continue Your Journey" showLine={false} />
+          <h2 className="mkrc-display text-3xl md:text-4xl mb-4">No Upcoming Webinar? Keep Exploring.</h2>
+          <p style={{ color: "var(--mkrc-text-secondary)" }}>
+            Your path to natural health doesn't stop here. Dive deeper with our courses, retreats, and one-on-one consultations.
+          </p>
+        </ScrollReveal>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          {JOURNEY_CARDS.map((c, i) => (
+            <ScrollReveal key={c.title} delay={i * 100}>
+              <a href={c.href} target="_blank" rel="noopener noreferrer" className="mkrc-card block text-center no-underline" style={{ textDecoration: "none", color: "inherit" }}>
+                <span className="text-3xl mb-3 block">{c.icon}</span>
+                <h3 className="mkrc-display text-lg mb-1">{c.title}</h3>
+                <p className="text-sm" style={{ color: "var(--mkrc-text-secondary)" }}>{c.desc}</p>
+              </a>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      <MKRCFooter />
+    </div>
+  );
+}
