@@ -778,6 +778,88 @@ export type Database = {
         }
         Relationships: []
       }
+      review_helpfulness: {
+        Row: {
+          created_at: string
+          id: string
+          review_id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          review_id: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          review_id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_helpfulness_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          content: string
+          created_at: string
+          helpful_count: number
+          id: string
+          images: Json | null
+          is_verified_purchase: boolean
+          product_id: string
+          rating: number
+          status: string
+          title: string
+          user_email: string
+          user_name: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          helpful_count?: number
+          id?: string
+          images?: Json | null
+          is_verified_purchase?: boolean
+          product_id: string
+          rating: number
+          status?: string
+          title: string
+          user_email: string
+          user_name: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          helpful_count?: number
+          id?: string
+          images?: Json | null
+          is_verified_purchase?: boolean
+          product_id?: string
+          rating?: number
+          status?: string
+          title?: string
+          user_email?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shipping_rates: {
         Row: {
           base_rate_usd: number
@@ -903,6 +985,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_verified_purchase: {
+        Args: { p_email: string; p_product_id: string }
+        Returns: boolean
+      }
       is_admin: { Args: never; Returns: boolean }
       is_order_owner_or_admin: {
         Args: { target_order_id: string }
