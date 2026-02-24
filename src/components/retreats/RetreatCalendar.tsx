@@ -146,8 +146,8 @@ export function RetreatCalendar() {
       const calc = calculateSoloPrice(nights, pricingTiers);
       if (!calc) return null;
       return {
-        total: calc.total,
-        deposit: calc.total / 2,
+        total: calc.total * guestCount,
+        deposit: (calc.total * guestCount) / 2,
         nights,
         perUnit: calc.nightly,
         unitLabel: "per night",
@@ -167,7 +167,7 @@ export function RetreatCalendar() {
       ? format(selectedRange.end, "MMM d, yyyy")
       : "";
     return encodeURIComponent(
-      `Hello, I'm interested in booking a ${selectedType} retreat from ${startDate}${endDate ? ` to ${endDate}` : ""}${selectedType === "group" ? ` for ${guestCount} guest(s)` : ""}. Can you provide more details?`
+      `Hello, I'm interested in booking a ${selectedType} retreat from ${startDate}${endDate ? ` to ${endDate}` : ""} for ${guestCount} patron(s). Can you provide more details?`
     );
   }, [selectedRange, selectedType, guestCount]);
 
@@ -368,9 +368,9 @@ export function RetreatCalendar() {
                     </span>
                   </div>
 
-                  {selectedType === "group" && (
+                  {(
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Guests</span>
+                      <span className="text-muted-foreground">Patrons</span>
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
@@ -407,8 +407,8 @@ export function RetreatCalendar() {
                         <span className="text-muted-foreground">
                           {formatPrice(pricing.perUnit, pricing.perUnit * EXCHANGE_RATE)} × {pricing.nights}{" "}
                           {pricing.unitLabel === "per person"
-                            ? `× ${guestCount} guest${guestCount > 1 ? "s" : ""}`
-                            : "nights"}
+                            ? `× ${guestCount} patron${guestCount > 1 ? "s" : ""}`
+                            : `nights${guestCount > 1 ? ` × ${guestCount} patrons` : ""}`}
                         </span>
                       </div>
                       {pricing.discount && pricing.discount > 0 && (

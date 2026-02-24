@@ -20,7 +20,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
 
   // Generate consistent rating based on product id (min 4.5, max 5.0)
-  const rating = 4.5 + (parseInt(product.id.slice(-2), 16) % 6) / 10;
+  const rating = 4.7 + (parseInt(product.id.slice(-2), 16) % 4) / 10;
   const reviewCount = 120 + (parseInt(product.id.slice(-4), 16) % 231);
 
   // Get category display name
@@ -156,7 +156,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
                   i < Math.floor(rating)
                     ? "fill-gold text-gold"
                     : i < rating
-                    ? "fill-gold/50 text-gold"
+                    ? "fill-gold text-gold"
                     : "text-muted-foreground/30"
                 }`}
               />
