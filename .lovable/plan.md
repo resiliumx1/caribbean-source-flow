@@ -1,60 +1,45 @@
 
 
-# Add Retreat Video Gallery Section
+# Replace TheAnswer Page with Uploaded Design
 
 ## Overview
-Create a new `retreat_videos` database table and a `RetreatVideoGallery` component that displays retreat videos in a dedicated section, visually separate from the existing photo gallery on the Retreats page.
+Replace the current `TheAnswer.tsx` with the redesigned version from the uploaded export file. The uploaded version uses CSS class-based styling with lucide-react icons instead of emojis and inline styles, providing a more polished, maintainable design.
 
-## Database
+## Key Differences from Current Version
+- **Icons**: Lucide-react icons (Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles, etc.) replace emoji characters
+- **Styling**: Dedicated CSS file with class names (`answer-hero`, `chronixx-section`, `ingredients-section`, etc.) replaces inline styles
+- **Structure**: More refined layout with proper CSS Grid, responsive breakpoints, and hover effects defined in CSS
+- **Smooth scroll**: Adds a `scrollToSection` helper for in-page navigation
+- **ScrollReveal**: Uses a `stagger` prop (needs to be added to the existing component)
 
-**New table: `retreat_videos`**
-| Column | Type | Notes |
-|--------|------|-------|
-| id | UUID | Primary key, default gen_random_uuid() |
-| title | TEXT | Video title |
-| description | TEXT | Optional caption |
-| video_url | TEXT | NOT NULL, public URL from storage or external link (e.g. YouTube) |
-| thumbnail_url | TEXT | Optional poster/thumbnail image |
-| category | TEXT | DEFAULT 'experience' (same categories as photos) |
-| display_order | INTEGER | DEFAULT 0 |
-| is_featured | BOOLEAN | DEFAULT false |
-| created_at | TIMESTAMPTZ | DEFAULT now() |
+## Files to Create
 
-RLS: public SELECT for all users (videos are public content). INSERT/UPDATE/DELETE restricted to authenticated admin users (same pattern as `retreat_gallery`).
+### `src/pages/TheAnswer.css`
+- Complete CSS for TheAnswer page (~700 lines)
+- All CSS variables mapped from the uploaded format (`--bg-primary`, `--color-gold`) to the existing MKRC theme system (`--mkrc-bg-primary`, `--mkrc-accent-gold`)
+- Sections: Hero, Chronixx endorsement, Ingredients, Craft process, Benefits, How to Use, Final CTA
+- Full responsive breakpoints (1199px, 900px, 600px)
 
-**Storage:** Use the existing `retreat-images` bucket for thumbnails; video files can be uploaded there too or linked externally (YouTube embeds).
+## Files to Modify
 
-## New Files
+### `src/pages/TheAnswer.tsx`
+- Complete rewrite using the uploaded JSX structure
+- Keep existing imports: `MKRCHeader`, `MKRCFooter`, `ScrollReveal`, `CounterAnimation`, `SectionLabel`, and image assets
+- Add lucide-react icon imports (Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles, ChevronDown, Star, ArrowRight, CheckCircle2)
+- Import the new `TheAnswer.css` file
+- Add `scrollToSection` helper function for smooth anchor navigation
+- Same content/copy as uploaded version (matching ingredients data, benefits, craft steps, etc.)
 
-### `src/hooks/use-retreat-videos.ts`
-- `useRetreatVideos(category?)` -- fetches from `retreat_videos` table, ordered by `display_order`
-- `useRetreatVideoMutations()` -- upload, update, delete mutations (same pattern as `use-retreat-gallery.ts`)
-- Export `RETREAT_VIDEO_CATEGORIES` (same set: Experience, Healing, Food, Other)
+### `src/components/mkrc/ScrollReveal.tsx`
+- Add optional `stagger` prop support (the uploaded version uses `<ScrollReveal stagger>` to stagger child animations)
+- When `stagger` is true, add a `reveal-stagger` CSS class to the wrapper
 
-### `src/components/retreats/RetreatVideoGallery.tsx`
-- Renders below the existing photo gallery section
-- Header: "Sacred Journey Videos" with subtitle
-- Responsive grid: 1 column mobile, 2 columns tablet, 3 columns desktop
-- Each video card shows:
-  - Thumbnail with a centered play button overlay
-  - Title and description below
-  - Click opens a Dialog/modal with an embedded video player (`<video>` tag for direct files, or iframe for YouTube)
-- Loading skeleton state and empty "Videos Coming Soon" state (same pattern as photo gallery)
-- Category filter tabs matching the photo gallery filters
+### `src/styles/mkrc-theme.css`
+- Add supplementary CSS variables needed by TheAnswer.css that don't exist yet (spacing tokens like `--mkrc-space-sm`, `--mkrc-space-md`, `--mkrc-space-lg`, `--mkrc-space-xl`, `--mkrc-space-2xl`, radius tokens like `--mkrc-radius-md`, `--mkrc-radius-lg`, `--mkrc-radius-xl`, font tokens, transition tokens)
+- Add stagger animation CSS classes (`.reveal-stagger > *` with incremental delays)
 
-## Modified Files
-
-### `src/pages/Retreats.tsx`
-- Import and add `<RetreatVideoGallery />` directly after `<RetreatGallery />`
-
-### `src/pages/AdminRetreatDates.tsx` (or new admin page)
-- Add a "Videos" tab/section to the retreat admin for uploading and managing retreat videos (title, description, category, file upload or URL input, thumbnail, display order)
-
-## Technical Details
-
-- Videos are rendered using the native HTML5 `<video>` element inside a Dialog modal for direct uploads
-- For YouTube/external links, detect the URL pattern and render an iframe embed instead
-- Thumbnails are auto-generated if not provided (show a gradient placeholder with a Play icon)
-- Video files uploaded to storage are stored in the `retreat-images` bucket (or a new `retreat-videos` bucket if preferred)
-- The section uses the same visual language as the photo gallery (rounded corners, hover effects, cream background) but is clearly separated with its own heading
+## Technical Notes
+- The uploaded file is UTF-16 encoded; content will be decoded and properly formatted
+- CSS variables will be mapped to the existing `--mkrc-*` namespace to maintain theme consistency (dark/light mode will continue to work)
+- No new dependencies needed -- lucide-react is already installed
 
