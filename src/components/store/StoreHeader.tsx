@@ -10,6 +10,16 @@ import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 
+const NAV_LINKS = [
+  { label: "Home", to: "/" },
+  { label: "Shop", to: "/shop" },
+  { label: "The Answer", to: "/the-answer" },
+  { label: "Retreats", to: "/retreats" },
+  { label: "School", to: "/school" },
+  { label: "Webinars", to: "/webinars" },
+  { label: "Wholesale", to: "/wholesale" },
+];
+
 export function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,7 +30,6 @@ export function StoreHeader() {
     "Hello, I'd like a consultation on which products are right for me."
   );
 
-  // Scroll listener for background transition
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -37,7 +46,6 @@ export function StoreHeader() {
           : "bg-background/95 backdrop-blur-sm border-b border-border/50"
       }`}
     >
-      {/* Announcement bar */}
       {isLocalVisitor && (
         <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
           <span className="inline-flex items-center gap-2">
@@ -66,37 +74,16 @@ export function StoreHeader() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              to="/"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              to="/shop"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              Shop
-            </Link>
-            <Link
-              to="/retreats"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              Retreats
-            </Link>
-            <Link
-              to="/school"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              School
-            </Link>
-            <Link
-              to="/wholesale"
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              Wholesale
-            </Link>
+          <nav className="hidden lg:flex items-center gap-5">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.label}
+                to={link.to}
+                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Actions */}
@@ -128,48 +115,23 @@ export function StoreHeader() {
 
             {/* Mobile menu */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild className="md:hidden">
+              <SheetTrigger asChild className="lg:hidden">
                 <Button variant="ghost" size="icon">
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-72">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link
-                    to="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Home
-                  </Link>
-                  <Link
-                    to="/shop"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Shop
-                  </Link>
-                  <Link
-                    to="/retreats"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Retreats
-                  </Link>
-                  <Link
-                    to="/school"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    School
-                  </Link>
-                  <Link
-                    to="/wholesale"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    Wholesale
-                  </Link>
+                  {NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.label}
+                      to={link.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
 
                   <hr className="my-2" />
 
@@ -183,7 +145,6 @@ export function StoreHeader() {
 
                   <hr className="my-2" />
 
-                  {/* Mobile theme toggle */}
                   <div className="flex items-center justify-between py-2">
                     <span className="text-lg font-medium text-foreground">Theme</span>
                     <SkyToggle />

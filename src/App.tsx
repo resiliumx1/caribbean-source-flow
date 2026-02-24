@@ -35,7 +35,7 @@ const queryClient = new QueryClient();
 const COMING_SOON = false;
 
 // Pages that should NOT show the header
-const pagesWithoutHeader = ["/admin", "/goddess", "/the-answer", "/webinars"];
+const pagesWithoutHeader = ["/admin", "/goddess"];
 
 function AppContent() {
   const location = useLocation();
