@@ -5,6 +5,10 @@ import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
 import { ProductGallery } from "@/components/store/ProductGallery";
 import { VariantSelector } from "@/components/store/VariantSelector";
+import { VideoFooter } from "@/components/store/VideoFooter";
+import { RelatedProducts } from "@/components/store/RelatedProducts";
+import { ReviewSection } from "@/components/reviews/ReviewSection";
+import { CompareButton } from "@/components/store/CompareButton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -321,17 +325,18 @@ export default function ProductDetail() {
             </div>
 
             {/* Actions */}
-            <div className="mb-8">
+            <div className="flex gap-3 mb-8">
               <Button
                 variant="hero"
                 size="xl"
                 onClick={handleAddToCart}
                 disabled={isAddingToCart || product.stock_status === "out_of_stock"}
-                className="w-full gap-2"
+                className="flex-1 gap-2"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {product.stock_status === "out_of_stock" ? "Out of Stock" : "Add to Bag"}
               </Button>
+              <CompareButton productId={product.id} size="default" className="h-14" />
             </div>
 
             {/* Bulk Order Notice for Raw Herbs */}
@@ -450,8 +455,15 @@ export default function ProductDetail() {
 
           </div>
         </div>
+
+        {/* Reviews */}
+        <ReviewSection productId={product.id} />
+
+        {/* Related Products */}
+        <RelatedProducts productId={product.id} categoryId={product.category_id} />
       </main>
 
+      <VideoFooter />
       <StoreFooter />
       <WhatsAppFloat />
     </div>
