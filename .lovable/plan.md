@@ -1,130 +1,68 @@
 
+# Fix Plan: 6 Issues
 
-# Full Implementation Plan -- 9 Features + Performance Optimization
+## 1. Product Card Layout Fix (Desktop)
 
-This plan implements all 9 approved features in the most credit-efficient way, batching related changes together. Image compression is added to all upload flows for fast loading.
+The product name uses `line-clamp-1` which truncates long names, and the "Add" button row is cramped. Changes to `ProductCard.tsx`:
+- Change product name from `text-xl` to `text-lg` and use `line-clamp-2` instead of `line-clamp-1` so names wrap properly
+- Change "Add to Cart" button text from "Add" to just the cart icon (icon-only button) on smaller cards, keeping layout compact
+- Reduce padding from `p-5` to `p-4` in the content section
 
----
+## 2. WhatsApp Widget -- Icon Only (All Pages)
 
-## Database Migrations (1 migration, run first)
+The current `whatsapp-float` CSS class renders a pill-shaped button with text. The user wants just a small circular icon button.
 
-Two columns added:
-- `retreat_dates.promo_label` (TEXT, nullable) -- admin-set promotional labels
-- `retreat_gallery.custom_category_label` (TEXT, nullable) -- custom label for "Other" category
+**`src/index.css`:** Change `.whatsapp-float` to be a small 56x56 circle with just the icon, no text. Remove the `gap`, `px-5 py-3` padding and replace with fixed dimensions.
 
-Plus: Insert 10 monthly group retreat dates for 2026 (March-December) for the "Bush Medicine Immersion" retreat type.
+**`src/pages/TrinityHomepage.tsx` and `src/pages/Retreats.tsx`:** Remove the `<span>` text from the GoddessWhatsApp component -- only render the `<MessageCircle />` icon.
 
----
+**`src/components/wholesale/WhatsAppButton.tsx` and `src/components/store/WhatsAppFloat.tsx`:** Same -- remove the text span, keep icon only.
 
-## Batch 1: Retreat Reordering + Group Dates + WhatsApp Button (5 files)
+## 3. Retreat Dates: Add Description + Icons
 
-**RetreatCalendar.tsx:**
-- Change default `selectedType` from `"group"` to `"solo"`
-- Swap button order: Solo first, Group second
+**Database migration:** Add `description TEXT` column to `retreat_dates` table.
 
-**RetreatPathSplit.tsx:**
-- Swap card positions: Solo/Private card first (left), Group card second (right)  
-- Change "View 2025 Dates" to "View 2026 Dates"
+**`AdminRetreatDates.tsx`:** Add a description textarea field to the add/edit form.
 
-**Retreats.tsx:**
-- Move `<RetreatCalendar />` above `<GroupRetreatsList />` in the page flow
-- Replace `<ConciergeButton />` with a WhatsApp floating button for Goddess Itopia (phone: +1 305-942-9407)
+**`GroupRetreatsList.tsx`:** When a retreat date is clicked, show its description in the booking dialog. Add retreat-type icons (Users icon for group, User icon for solo) next to each date card.
 
-**TrinityHomepage.tsx:**
-- Replace `<ConciergeButton />` with the same WhatsApp floating button
+**`RetreatCalendar.tsx`:** Show retreat type icons (User for solo, Users for group) in the type toggle buttons (already done). When a group date is selected in the pricing panel, display the description if available.
 
-**GroupRetreatsList.tsx:**
-- Change heading from "2025" to "2026"
-- Display `promo_label` from database as a badge when present (replaces hardcoded "Only X spots left" logic)
+## 4. Compare Bar -- Clear/Dismiss Persists Across Pages
 
----
+The issue: `CompareBar` uses `useState(false)` for `dismissed`, which resets on every page navigation. And `clearAll()` empties items but the compare bar disappears naturally (items.length === 0). The real problem is that when you click "Clear" it calls `clearAll()` which empties localStorage, but next reload the bar is gone anyway. The issue is when clicking the X dismiss button -- `dismissed` is local state and resets on navigation.
 
-## Batch 2: Retreat Gallery Categories + Admin Retreat Dates (4 files)
+**Fix in `comparison-context.tsx`:** Add a `dismissed` boolean to the localStorage data. When user clicks dismiss or clear, set `dismissed: true` in storage. When items become empty (after clear), also mark dismissed. Only show the bar if items > 0 AND not dismissed. Reset dismissed when a new item is added.
 
-**use-retreat-gallery.ts:**
-- Replace categories: remove Accommodation, Nature, Ceremony; add Healing, Food, Other
+**`CompareBar.tsx`:** Remove local `dismissed` state -- use `isDismissed` from context instead. Add `dismiss()` function to context.
 
-**AdminRetreats.tsx:**
-- Update category dropdown to match new categories
-- Add text input for custom label when "Other" is selected
+## 5. Retreat Booking Dates Extended to 2030
 
-**RetreatGallery.tsx:**
-- Display custom category label for "Other" category items
+**`RetreatCalendar.tsx`:** Currently there's no year limit on the calendar navigation. The solo booking already allows any future date. No code change needed for the calendar itself since it uses `addMonths`/`subMonths` with no upper bound.
 
-**New file -- AdminRetreatDates.tsx:**
-- Full CRUD page for managing group retreat dates
-- Add/edit/delete dates with date pickers, spot counts, price overrides
-- Promotional label dropdown: "Few Slots Left", "Reserve Your Spot", "Early Bird", "Last Chance", "New", or custom text
-- Table view of all dates with inline editing
+**`AdminRetreatDates.tsx`:** Ensure the date inputs accept dates up to 2030. The HTML date inputs have no max constraint currently, so this already works. Add a note in the UI: "Schedule retreats through 2030".
 
-**AdminLayout.tsx + App.tsx:**
-- Add "Retreat Dates" nav link and `/admin/retreat-dates` route
+## 6. Replace "2026 Group Retreat Dates" Section with "Coming Soon"
+
+**`GroupRetreatsList.tsx`:** Replace the entire section content with a simple "Coming Soon" message. Keep the section wrapper but show a centered card with a calendar icon, "Group Retreat Dates -- Coming Soon" heading, a brief message, and a WhatsApp link to inquire. Remove all the date listing and booking modal code.
 
 ---
 
-## Batch 3: Product Card Ratings + Badges + Admin Product Form + Image Fix (4 files)
+## Technical Summary
 
-**ProductCard.tsx:**
-- Change rating formula: minimum 4.5 (range 4.5-5.0 based on product ID hash)
-- Change review count: minimum 120 (range 120-350)
-- Add new badge types to `getBadgeLabel`/`getBadgeColor`: "low_stock" (amber), "recently_restocked" (green), "limited_edition" (purple), "100_natural" (green)
+### Database Migration
+- `retreat_dates` -- add `description TEXT` column
 
-**AdminProducts.tsx:**
-- Add "Add Product" dialog form with fields: name, slug (auto-generated), product_type dropdown, category dropdown, price_usd, price_xcd, short_description, badge selector, stock_status
-- Add inline badge editor dropdown on each product card (updates badge column directly)
-
-**ProductImageUpload.tsx:**
-- Remove the invisible `<label>` overlay (lines ~356-365) that blocks X and Star button clicks
-- Add a small "Replace" button in the hover overlay instead
-- SEO filenames: generate as `{product-slug}-{slot}-{timestamp}.{ext}` instead of `{productId}-{slot}-{timestamp}`
-- **Image compression**: Before uploading, use Canvas API to resize images to max 1200px width and compress to WebP format (quality 0.82). This reduces file sizes by 60-80% without visible quality loss, making the site load significantly faster.
-
----
-
-## Batch 4: Image Compression for Retreat Gallery
-
-**use-retreat-gallery.ts (uploadImage mutation):**
-- Add the same Canvas-based compression before uploading retreat gallery images
-- Max dimension 1600px, WebP output at quality 0.82
-
----
-
-## Image Compression Utility (shared)
-
-**New file -- src/lib/image-utils.ts:**
-A shared utility function `compressImage(file: File, options?)` that:
-1. Loads the image into an off-screen canvas
-2. Scales to max width/height (default 1200px for products, 1600px for gallery)
-3. Exports as WebP at 0.82 quality (falls back to JPEG 0.85 if WebP unsupported)
-4. Returns a new File object ready for upload
-5. Skips compression if file is already small (under 100KB)
-
-This ensures every uploaded image is optimized for web delivery without manual intervention.
-
----
-
-## Performance Notes
-
-- All product and gallery images will be compressed client-side before upload (WebP, ~80% quality)
-- Existing images already in storage are unaffected but new uploads will be much smaller
-- Images already use `loading="lazy"` in the gallery
-- Product images use `object-contain` which works well with compressed images
-- No server-side processing needed -- compression happens in the browser before upload
-
----
-
-## Summary of All Changes
-
-| Area | Files Changed | New Files |
-|------|--------------|-----------|
-| DB Migration | 1 migration (2 columns + 10 retreat dates) | -- |
-| Retreat reorder | RetreatCalendar, RetreatPathSplit, Retreats, GroupRetreatsList | -- |
-| WhatsApp button | TrinityHomepage, Retreats | -- |
-| Gallery categories | use-retreat-gallery, AdminRetreats, RetreatGallery | -- |
-| Admin retreat dates | AdminLayout, App.tsx | AdminRetreatDates.tsx |
-| Product ratings/badges | ProductCard | -- |
-| Admin products | AdminProducts | -- |
-| Image upload fix + SEO + compression | ProductImageUpload, use-retreat-gallery | image-utils.ts |
-
-Total: ~12 modified files, 2 new files, 1 DB migration
-
+### Modified Files (8 files)
+| File | Change |
+|------|--------|
+| `ProductCard.tsx` | Smaller text, icon-only cart button, tighter spacing |
+| `index.css` | WhatsApp float = small circle, icon only |
+| `TrinityHomepage.tsx` | Remove text from WhatsApp button |
+| `Retreats.tsx` | Remove text from WhatsApp button |
+| `WhatsAppButton.tsx` | Remove text span |
+| `WhatsAppFloat.tsx` | Remove text span |
+| `GroupRetreatsList.tsx` | Replace with "Coming Soon" card |
+| `comparison-context.tsx` | Persist dismissed state in localStorage |
+| `CompareBar.tsx` | Use context dismissed state instead of local state |
+| `AdminRetreatDates.tsx` | Add description field, note about 2030 |
