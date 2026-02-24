@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,8 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export function CompareBar() {
-  const { items, removeFromCompare, clearAll } = useComparison();
-  const [dismissed, setDismissed] = useState(false);
+  const { items, removeFromCompare, clearAll, isDismissed, dismiss } = useComparison();
 
   const { data: products = [] } = useQuery({
     queryKey: ["compare-products", items],
@@ -23,7 +21,7 @@ export function CompareBar() {
     enabled: items.length > 0,
   });
 
-  if (items.length === 0 || dismissed) return null;
+  if (items.length === 0 || isDismissed) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border shadow-elevated p-3">
@@ -56,7 +54,7 @@ export function CompareBar() {
           </Button>
           <button onClick={clearAll} className="text-xs text-muted-foreground hover:text-foreground">Clear</button>
           <button
-            onClick={() => setDismissed(true)}
+            onClick={dismiss}
             className="text-muted-foreground hover:text-foreground ml-1"
             aria-label="Dismiss compare bar"
           >

@@ -133,7 +133,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
       </Link>
 
       {/* Content */}
-      <div className="p-5 space-y-3">
+      <div className="p-4 space-y-3">
         {/* Category label */}
         <p className="text-xs font-semibold tracking-wider text-primary uppercase">
           {categoryLabel}
@@ -141,7 +141,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
 
         {/* Product Name - high contrast, bold */}
         <Link to={`/shop/${product.slug}`}>
-          <h3 className="font-serif text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-1">
+          <h3 className="font-serif text-lg font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
             {product.name}
           </h3>
         </Link>
@@ -192,13 +192,13 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
             <CompareButton productId={product.id} />
             <Button
               variant="default"
-              size="sm"
-              className="gap-2 bg-primary hover:bg-sage-dark text-primary-foreground px-4"
+              size="icon"
+              className="bg-primary hover:bg-sage-dark text-primary-foreground h-9 w-9"
               onClick={handleAddToCart}
               disabled={isAddingToCart || product.stock_status === "out_of_stock"}
+              aria-label="Add to cart"
             >
               <ShoppingCart className="w-4 h-4" />
-              Add
             </Button>
           </div>
         </div>

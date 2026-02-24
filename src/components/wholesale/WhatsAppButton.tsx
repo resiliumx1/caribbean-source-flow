@@ -14,7 +14,6 @@ export const WhatsAppButton = () => {
       aria-label="Chat with us on WhatsApp"
     >
       <MessageCircle className="w-6 h-6" />
-      <span className="hidden sm:inline">Chat with Sourcing Team</span>
     </a>
   );
 };
