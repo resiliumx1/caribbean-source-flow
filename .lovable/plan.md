@@ -1,35 +1,60 @@
 
 
-# Fix Plan: Retreat Patron Count + Star Rating Display
+# Add Retreat Video Gallery Section
 
-## 1. Solo Retreat -- Add Patron/Guest Count
+## Overview
+Create a new `retreat_videos` database table and a `RetreatVideoGallery` component that displays retreat videos in a dedicated section, visually separate from the existing photo gallery on the Retreats page.
 
-**`RetreatCalendar.tsx`:**
-- The `guestCount` state already exists but is only shown for group retreats (line 371: `selectedType === "group"`)
-- Show the guest count selector for BOTH solo and group retreats by removing the `selectedType === "group"` condition
-- Update the solo pricing calculation to multiply by `guestCount`:
-  - Change `total: calc.total` to `total: calc.total * guestCount`
-  - Change `deposit: calc.total / 2` to `deposit: (calc.total * guestCount) / 2`
-- Update the WhatsApp message to include guest count for solo retreats too
-- Change the label from "Guests" to "Patrons" for both retreat types
+## Database
 
-## 2. Fix Star Rating Display
+**New table: `retreat_videos`**
+| Column | Type | Notes |
+|--------|------|-------|
+| id | UUID | Primary key, default gen_random_uuid() |
+| title | TEXT | Video title |
+| description | TEXT | Optional caption |
+| video_url | TEXT | NOT NULL, public URL from storage or external link (e.g. YouTube) |
+| thumbnail_url | TEXT | Optional poster/thumbnail image |
+| category | TEXT | DEFAULT 'experience' (same categories as photos) |
+| display_order | INTEGER | DEFAULT 0 |
+| is_featured | BOOLEAN | DEFAULT false |
+| created_at | TIMESTAMPTZ | DEFAULT now() |
 
-**`ProductCard.tsx`:**
-The problem is the formula can produce 4.5 which renders as 4 filled + 1 half-opacity star (looks like ~4 stars). Two changes:
+RLS: public SELECT for all users (videos are public content). INSERT/UPDATE/DELETE restricted to authenticated admin users (same pattern as `retreat_gallery`).
 
-- **Raise the floor to 4.7:** Change the formula from `4.5 + (... % 6) / 10` to `4.7 + (... % 4) / 10` -- this produces ratings of 4.7, 4.8, 4.9, or 5.0 only
-- **Fix the half-star rendering:** Change `fill-gold/50 text-gold` to `fill-gold text-gold` so partial stars appear fully gold (since all values are 4.7+ the 5th star should look nearly full, not faint)
-- This ensures every product visually shows either 4 full + 1 bright partial star, or 5 full stars
+**Storage:** Use the existing `retreat-images` bucket for thumbnails; video files can be uploaded there too or linked externally (YouTube embeds).
+
+## New Files
+
+### `src/hooks/use-retreat-videos.ts`
+- `useRetreatVideos(category?)` -- fetches from `retreat_videos` table, ordered by `display_order`
+- `useRetreatVideoMutations()` -- upload, update, delete mutations (same pattern as `use-retreat-gallery.ts`)
+- Export `RETREAT_VIDEO_CATEGORIES` (same set: Experience, Healing, Food, Other)
+
+### `src/components/retreats/RetreatVideoGallery.tsx`
+- Renders below the existing photo gallery section
+- Header: "Sacred Journey Videos" with subtitle
+- Responsive grid: 1 column mobile, 2 columns tablet, 3 columns desktop
+- Each video card shows:
+  - Thumbnail with a centered play button overlay
+  - Title and description below
+  - Click opens a Dialog/modal with an embedded video player (`<video>` tag for direct files, or iframe for YouTube)
+- Loading skeleton state and empty "Videos Coming Soon" state (same pattern as photo gallery)
+- Category filter tabs matching the photo gallery filters
+
+## Modified Files
+
+### `src/pages/Retreats.tsx`
+- Import and add `<RetreatVideoGallery />` directly after `<RetreatGallery />`
+
+### `src/pages/AdminRetreatDates.tsx` (or new admin page)
+- Add a "Videos" tab/section to the retreat admin for uploading and managing retreat videos (title, description, category, file upload or URL input, thumbnail, display order)
 
 ## Technical Details
 
-### Files Modified: 2
-
-| File | Change |
-|------|--------|
-| `RetreatCalendar.tsx` | Remove group-only condition on guest count, multiply solo pricing by guestCount, update WhatsApp message |
-| `ProductCard.tsx` | Raise minimum rating to 4.7, fix half-star opacity to full gold fill |
-
-### No database changes needed
+- Videos are rendered using the native HTML5 `<video>` element inside a Dialog modal for direct uploads
+- For YouTube/external links, detect the URL pattern and render an iframe embed instead
+- Thumbnails are auto-generated if not provided (show a gradient placeholder with a Play icon)
+- Video files uploaded to storage are stored in the `retreat-images` bucket (or a new `retreat-videos` bucket if preferred)
+- The section uses the same visual language as the photo gallery (rounded corners, hover effects, cream background) but is clearly separated with its own heading
 
