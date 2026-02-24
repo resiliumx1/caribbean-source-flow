@@ -19,9 +19,9 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
   const { addToCart, isAddingToCart } = useCart();
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
 
-  // Generate consistent rating based on product id
-  const rating = 4 + (parseInt(product.id.slice(-2), 16) % 10) / 10;
-  const reviewCount = 100 + (parseInt(product.id.slice(-4), 16) % 250);
+  // Generate consistent rating based on product id (min 4.5, max 5.0)
+  const rating = 4.5 + (parseInt(product.id.slice(-2), 16) % 6) / 10;
+  const reviewCount = 120 + (parseInt(product.id.slice(-4), 16) % 231);
 
   // Get category display name
   const categoryLabel = product.product_categories?.name?.toUpperCase() || 
@@ -29,31 +29,29 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
 
   const getBadgeLabel = (badge: string | null) => {
     switch (badge) {
-      case "best_seller":
-        return "Best Seller";
-      case "fermented":
-        return "Fermented";
-      case "wildcrafted":
-        return "100% Natural";
-      case "new":
-        return "New";
-      case "staff_pick":
-        return "Staff Pick";
-      default:
-        return badge;
+      case "best_seller": return "Best Seller";
+      case "fermented": return "Fermented";
+      case "wildcrafted": return "100% Natural";
+      case "100_natural": return "100% Natural";
+      case "new": return "New";
+      case "staff_pick": return "Staff Pick";
+      case "low_stock": return "Low Stock";
+      case "recently_restocked": return "Back in Stock";
+      case "limited_edition": return "Limited Edition";
+      default: return badge;
     }
   };
 
   const getBadgeColor = (badge: string | null) => {
     switch (badge) {
-      case "best_seller":
-        return "bg-orange-500 text-white";
-      case "new":
-        return "bg-forest text-cream";
-      case "staff_pick":
-        return "bg-gold text-cream";
-      default:
-        return "bg-forest text-cream";
+      case "best_seller": return "bg-orange-500 text-white";
+      case "new": return "bg-forest text-cream";
+      case "staff_pick": return "bg-gold text-cream";
+      case "low_stock": return "bg-amber-500 text-white";
+      case "recently_restocked": return "bg-emerald-600 text-white";
+      case "limited_edition": return "bg-purple-600 text-white";
+      case "100_natural": return "bg-emerald-600 text-white";
+      default: return "bg-forest text-cream";
     }
   };
 

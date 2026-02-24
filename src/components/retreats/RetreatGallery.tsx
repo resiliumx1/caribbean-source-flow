@@ -114,7 +114,9 @@ export function RetreatGallery() {
                   </p>
                 )}
                 <span className="text-white/60 text-xs mt-1 capitalize">
-                  {image.category}
+                  {image.category === "other" && (image as any).custom_category_label
+                    ? (image as any).custom_category_label
+                    : image.category}
                 </span>
               </div>
             </div>

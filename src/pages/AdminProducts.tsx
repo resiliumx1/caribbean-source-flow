@@ -1,17 +1,68 @@
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import ProductImageUpload from "@/components/admin/ProductImageUpload";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Package, ImageIcon, Loader2 } from "lucide-react";
+import { Search, Package, ImageIcon, Loader2, Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import type { Product } from "@/hooks/use-products";
+
+const BADGE_OPTIONS = [
+  { value: "none", label: "None" },
+  { value: "best_seller", label: "Best Seller" },
+  { value: "new", label: "New" },
+  { value: "staff_pick", label: "Staff Pick" },
+  { value: "100_natural", label: "100% Natural" },
+  { value: "low_stock", label: "Low Stock" },
+  { value: "recently_restocked", label: "Back in Stock" },
+  { value: "limited_edition", label: "Limited Edition" },
+];
+
+const PRODUCT_TYPES = [
+  { value: "tincture", label: "Tincture" },
+  { value: "capsule", label: "Capsule" },
+  { value: "tea", label: "Tea" },
+  { value: "oil", label: "Oil" },
+  { value: "powder", label: "Powder" },
+  { value: "bundle", label: "Bundle" },
+  { value: "seamoss", label: "Sea Moss" },
+  { value: "other", label: "Other" },
+];
 
 export default function AdminProducts() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    product_type: "tincture",
+    category_id: "",
+    price_usd: "",
+    price_xcd: "",
+    short_description: "",
+    badge: "none",
+    stock_status: "in_stock",
+  });
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["admin-products"],
@@ -20,9 +71,60 @@ export default function AdminProducts() {
         .from("products")
         .select("*, product_categories(*)")
         .order("display_order", { ascending: true });
-
       if (error) throw error;
       return data as Product[];
+    },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["product-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_categories")
+        .select("*")
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const createProduct = useMutation({
+    mutationFn: async () => {
+      const slug = newProduct.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const priceUsd = parseFloat(newProduct.price_usd);
+      const priceXcd = parseFloat(newProduct.price_xcd) || priceUsd * 2.7;
+
+      const { error } = await supabase.from("products").insert({
+        name: newProduct.name,
+        slug,
+        product_type: newProduct.product_type,
+        category_id: newProduct.category_id || null,
+        price_usd: priceUsd,
+        price_xcd: priceXcd,
+        short_description: newProduct.short_description || null,
+        badge: newProduct.badge === "none" ? null : newProduct.badge,
+        stock_status: newProduct.stock_status,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast({ title: "Product created" });
+      setIsAddOpen(false);
+      setNewProduct({ name: "", product_type: "tincture", category_id: "", price_usd: "", price_xcd: "", short_description: "", badge: "none", stock_status: "in_stock" });
+    },
+    onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const updateBadge = useMutation({
+    mutationFn: async ({ id, badge }: { id: string; badge: string | null }) => {
+      const { error } = await supabase.from("products").update({ badge }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
@@ -31,8 +133,7 @@ export default function AdminProducts() {
     product.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleImageUpdate = (productId: string, newUrl: string) => {
-    // Invalidate queries to refresh data
+  const handleImageUpdate = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-products"] });
     queryClient.invalidateQueries({ queryKey: ["products"] });
     queryClient.invalidateQueries({ queryKey: ["product"] });
@@ -43,73 +144,112 @@ export default function AdminProducts() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Product Images</h1>
-        <p className="text-muted-foreground mt-1">
-          Upload and manage product images for your store
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Products</h1>
+          <p className="text-muted-foreground mt-1">Manage products, images, and badges</p>
+        </div>
+        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2"><Plus className="w-4 h-4" />Add Product</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader><DialogTitle>Add New Product</DialogTitle></DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div>
+                <label className="text-sm font-medium">Product Name</label>
+                <Input value={newProduct.name} onChange={(e) => setNewProduct((p) => ({ ...p, name: e.target.value }))} placeholder="e.g., Soursop Leaf Tincture" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Type</label>
+                  <Select value={newProduct.product_type} onValueChange={(v) => setNewProduct((p) => ({ ...p, product_type: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {PRODUCT_TYPES.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Category</label>
+                  <Select value={newProduct.category_id} onValueChange={(v) => setNewProduct((p) => ({ ...p, category_id: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                    <SelectContent>
+                      {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Price (USD)</label>
+                  <Input type="number" step="0.01" value={newProduct.price_usd} onChange={(e) => setNewProduct((p) => ({ ...p, price_usd: e.target.value }))} placeholder="29.99" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Price (XCD)</label>
+                  <Input type="number" step="0.01" value={newProduct.price_xcd} onChange={(e) => setNewProduct((p) => ({ ...p, price_xcd: e.target.value }))} placeholder="Auto from USD" />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Short Description</label>
+                <Textarea value={newProduct.short_description} onChange={(e) => setNewProduct((p) => ({ ...p, short_description: e.target.value }))} placeholder="Brief product description..." rows={2} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Badge</label>
+                  <Select value={newProduct.badge} onValueChange={(v) => setNewProduct((p) => ({ ...p, badge: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {BADGE_OPTIONS.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Stock Status</label>
+                  <Select value={newProduct.stock_status} onValueChange={(v) => setNewProduct((p) => ({ ...p, stock_status: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="in_stock">In Stock</SelectItem>
+                      <SelectItem value="low_stock">Low Stock</SelectItem>
+                      <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                      <SelectItem value="pre_order">Pre-order</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <Button onClick={() => createProduct.mutate()} disabled={!newProduct.name || !newProduct.price_usd || createProduct.isPending} className="w-full">
+                {createProduct.isPending ? "Creating..." : "Create Product"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Products
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold">{totalProducts}</span>
-            </div>
-          </CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Total Products</CardTitle></CardHeader>
+          <CardContent><div className="flex items-center gap-2"><Package className="h-5 w-5 text-primary" /><span className="text-2xl font-bold">{totalProducts}</span></div></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              With Images
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <ImageIcon className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold">{productsWithImages}</span>
-            </div>
-          </CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">With Images</CardTitle></CardHeader>
+          <CardContent><div className="flex items-center gap-2"><ImageIcon className="h-5 w-5 text-primary" /><span className="text-2xl font-bold">{productsWithImages}</span></div></CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Missing Images
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <ImageIcon className="h-5 w-5 text-destructive" />
-              <span className="text-2xl font-bold">{totalProducts - productsWithImages}</span>
-            </div>
-          </CardContent>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Missing Images</CardTitle></CardHeader>
+          <CardContent><div className="flex items-center gap-2"><ImageIcon className="h-5 w-5 text-destructive" /><span className="text-2xl font-bold">{totalProducts - productsWithImages}</span></div></CardContent>
         </Card>
       </div>
 
       {/* Search */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search products..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
-        />
+        <Input placeholder="Search products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
       </div>
 
       {/* Products Grid */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
+        <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts?.map((product) => (
@@ -118,18 +258,24 @@ export default function AdminProducts() {
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-base line-clamp-2">{product.name}</CardTitle>
                   {product.image_url ? (
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 shrink-0">
-                      Has Image
-                    </Badge>
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 shrink-0">Has Image</Badge>
                   ) : (
-                    <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 shrink-0">
-                      No Image
-                    </Badge>
+                    <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 shrink-0">No Image</Badge>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  {product.product_categories?.name ?? "Uncategorized"}
-                </p>
+                <p className="text-sm text-muted-foreground">{product.product_categories?.name ?? "Uncategorized"}</p>
+                {/* Inline badge editor */}
+                <Select
+                  value={product.badge || "none"}
+                  onValueChange={(v) => updateBadge.mutate({ id: product.id, badge: v === "none" ? null : v })}
+                >
+                  <SelectTrigger className="h-7 text-xs w-full mt-1">
+                    <SelectValue placeholder="Badge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BADGE_OPTIONS.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </CardHeader>
               <CardContent>
                 <ProductImageUpload
@@ -137,7 +283,7 @@ export default function AdminProducts() {
                   productName={product.name}
                   currentImageUrl={product.image_url}
                   additionalImages={(product as any).additional_images ?? []}
-                  onUploadComplete={() => handleImageUpdate(product.id, "")}
+                  onUploadComplete={handleImageUpdate}
                 />
               </CardContent>
             </Card>

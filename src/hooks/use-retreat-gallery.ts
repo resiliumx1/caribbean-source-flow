@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { compressImage } from "@/lib/image-utils";
 
 export interface RetreatGalleryImage {
   id: string;
@@ -15,9 +16,9 @@ export interface RetreatGalleryImage {
 
 export const RETREAT_CATEGORIES = [
   { value: "experience", label: "Experience" },
-  { value: "accommodation", label: "Accommodation" },
-  { value: "nature", label: "Nature" },
-  { value: "ceremony", label: "Ceremony" },
+  { value: "healing", label: "Healing" },
+  { value: "food", label: "Food" },
+  { value: "other", label: "Other" },
 ] as const;
 
 export function useRetreatGallery(category?: string) {
@@ -74,13 +75,16 @@ export function useRetreatGalleryMutations() {
       category: string;
       isFeatured?: boolean;
     }) => {
+      // Compress before upload
+      const compressed = await compressImage(file, { maxWidth: 1600, maxHeight: 1600 });
+
       // Upload to storage
-      const fileExt = file.name.split(".").pop();
+      const fileExt = compressed.name.split(".").pop();
       const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from("retreat-images")
-        .upload(fileName, file);
+        .upload(fileName, compressed);
 
       if (uploadError) throw uploadError;
 

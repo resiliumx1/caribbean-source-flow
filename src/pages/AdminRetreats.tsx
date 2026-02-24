@@ -80,12 +80,12 @@ export default function AdminRetreats() {
     switch (category) {
       case "experience":
         return "bg-forest text-cream";
-      case "accommodation":
-        return "bg-earth text-cream";
-      case "nature":
-        return "bg-accent text-accent-foreground";
-      case "ceremony":
+      case "healing":
         return "bg-primary text-primary-foreground";
+      case "food":
+        return "bg-accent text-accent-foreground";
+      case "other":
+        return "bg-muted text-muted-foreground";
       default:
         return "bg-muted text-muted-foreground";
     }
