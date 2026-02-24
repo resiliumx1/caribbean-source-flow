@@ -1,10 +1,9 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles,
   ChevronDown, Star, ArrowRight, CheckCircle2
 } from "lucide-react";
-import MKRCHeader from "@/components/mkrc/MKRCHeader";
-import MKRCFooter from "@/components/mkrc/MKRCFooter";
 import ScrollReveal from "@/components/mkrc/ScrollReveal";
 import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
@@ -75,15 +74,10 @@ export default function TheAnswer() {
     document.title = "The Answer — Nature's Immune Booster Shot | Endorsed by Chronixx | MKRC";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute("content", "The Answer is MKRC's best-selling immune system enhancer — a handcrafted herbal tincture endorsed by reggae icon Chronixx. Made in Saint Lucia with Anamu, Vervain & Soursop Leaves. Oak-aged 21 days.");
-    if (!document.documentElement.getAttribute("data-mkrc-theme")) {
-      const stored = localStorage.getItem("mkrc-theme") || "dark";
-      document.documentElement.setAttribute("data-mkrc-theme", stored);
-    }
   }, []);
 
   return (
-    <div className="mkrc-page mkrc-body">
-      <MKRCHeader />
+    <div className="bg-[#0D0D0D] text-[#F5F0E8] min-h-screen" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
       {/* ===== 1. HERO ===== */}
       <section className="answer-hero">
@@ -108,14 +102,12 @@ export default function TheAnswer() {
               Your body already knows how to heal. This hand-crafted herbal tincture — trusted by thousands across the Caribbean and endorsed by <strong>Chronixx</strong> — delivers nature's most potent immune-fortifying herbs straight to your cells. No chemicals. No shortcuts. Just The Answer.
             </p>
             <div className="answer-hero__ctas">
-              <a
-                href="https://mountkailashslu.com/?add-to-cart=90"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/shop/the-answer"
                 className="mkrc-btn-primary"
               >
                 Get The Answer <ArrowRight size={16} />
-              </a>
+              </Link>
               <button
                 onClick={() => scrollToSection("ingredients")}
                 className="mkrc-btn-secondary"
@@ -360,22 +352,18 @@ export default function TheAnswer() {
             className="final-cta__bottle"
           />
           <div className="final-cta__actions">
-            <a
-              href="https://mountkailashslu.com/?add-to-cart=90"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/shop/the-answer"
               className="mkrc-btn-primary"
             >
               Get The Answer Now <ArrowRight size={16} />
-            </a>
-            <a
-              href="https://mountkailashslu.com/shop/"
-              target="_blank"
-              rel="noopener noreferrer"
+            </Link>
+            <Link
+              to="/shop"
               className="mkrc-btn-secondary"
             >
               Browse All Products
-            </a>
+            </Link>
           </div>
           <div className="final-cta__badges">
             {["Vegan", "Non-GMO", "Saint Lucia"].map((b) => (
@@ -384,8 +372,6 @@ export default function TheAnswer() {
           </div>
         </ScrollReveal>
       </section>
-
-      <MKRCFooter />
     </div>
   );
 }
