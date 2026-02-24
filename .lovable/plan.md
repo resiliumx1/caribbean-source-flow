@@ -1,131 +1,208 @@
 
 
-# MKRC Marketing Pages: The Answer + Webinars
+# Full-Stack Features: Reviews, Related Products, Video Footer, Product Comparison
 
-Two new premium marketing pages added as `/the-answer` and `/webinars` routes alongside the existing site. The current homepage remains at `/`. Full-stack features (reviews, product comparison, video footer) will be built in a follow-up after these pages are complete.
-
----
-
-## Scope
-
-- **New route:** `/the-answer` -- Premium product landing page for "The Answer" tincture (Chronixx endorsement)
-- **New route:** `/webinars` -- Free wellness webinar hub with upcoming + archive + host bio + email signup
-- **Shared components:** New MKRC-specific header, footer, theme toggle, and scroll-reveal utility
-- **Design system:** New CSS custom properties layer for the MKRC dark/light theme (coexists with existing Tailwind theme)
-- **Google Fonts:** DM Serif Display, Plus Jakarta Sans, Space Grotesk (added to index.html)
-- **No backend changes** -- All content is static; email signup shows a success message client-side only
+Four integrated features added to the existing MKRC store, using the current database and admin infrastructure.
 
 ---
 
-## New Files
+## Phase 1: Database Setup
 
-### Pages
-1. `src/pages/TheAnswer.tsx` -- Full product landing page with 7 sections (Hero, Chronixx, Ingredients, Craft, Benefits, How To Use, Final CTA)
-2. `src/pages/Webinars.tsx` -- Webinar hub with 7 sections (Hero, Featured, Archive with filter, Why Attend, Host Bio, Email Signup, Final CTA)
+### New Tables
 
-### Shared Components (src/components/mkrc/)
-3. `src/components/mkrc/MKRCHeader.tsx` -- Fixed header with nav links (Shop, The Answer, Webinars, Programs, Retreats), theme toggle (moon/sun), mobile hamburger overlay
-4. `src/components/mkrc/MKRCFooter.tsx` -- 4-column footer (Brand, Shop, Learn, Connect) with social icons and copyright
-5. `src/components/mkrc/MKRCThemeToggle.tsx` -- Circular button toggling `data-mkrc-theme` attribute on `<html>` and persisting to localStorage key `mkrc-theme`
-6. `src/components/mkrc/ScrollReveal.tsx` -- Wrapper component using IntersectionObserver to fade-in + slide-up children; respects `prefers-reduced-motion`
-7. `src/components/mkrc/SectionLabel.tsx` -- Reusable small uppercase label with optional gold line (Space Grotesk, gold color)
-8. `src/components/mkrc/CounterAnimation.tsx` -- Animated number counter (0 to target) triggered on viewport entry
+**`reviews`**
+- id (uuid, PK)
+- product_id (uuid, FK to products)
+- user_name (text, not null)
+- user_email (text, not null)
+- rating (integer, 1-5, not null)
+- title (text, not null)
+- content (text, not null)
+- images (jsonb, default '[]')
+- status (text, default 'pending' -- values: pending/approved/rejected)
+- helpful_count (integer, default 0)
+- is_verified_purchase (boolean, default false)
+- created_at (timestamptz, default now())
 
-### Styles
-9. `src/styles/mkrc-theme.css` -- All CSS custom properties for both dark/light themes, imported into `index.css`
+**`review_helpfulness`**
+- id (uuid, PK)
+- review_id (uuid, FK to reviews ON DELETE CASCADE)
+- session_id (text, not null)
+- created_at (timestamptz, default now())
+- UNIQUE(review_id, session_id)
+
+### Storage
+
+- Create `review-images` public bucket for review image uploads
+
+### RLS Policies
+
+- **reviews SELECT**: Anyone can read where `status = 'approved'` OR `is_admin()`
+- **reviews INSERT**: Anyone can insert (public review submission) with status forced to 'pending'
+- **reviews UPDATE/DELETE**: Only `is_admin()`
+- **review_helpfulness INSERT**: Anyone can insert (public voting)
+- **review_helpfulness SELECT**: Anyone can read
+- **review-images storage**: Public read; authenticated upload with 2MB file size limit
+
+### Verified Purchase Check
+
+- Create a database function `check_verified_purchase(p_email text, p_product_id uuid)` that returns boolean by checking if an order exists in the `orders` table with matching email and an `order_items` entry for that product_id.
+
+---
+
+## Phase 2: Review System Frontend
+
+### New Files
+
+1. **`src/hooks/use-reviews.ts`** -- React Query hooks:
+   - `useProductReviews(productId, page)` -- fetch approved reviews with pagination (10 per page)
+   - `useReviewStats(productId)` -- fetch average rating, total count, and star distribution
+   - `useSubmitReview()` -- mutation to insert review + upload images to storage
+   - `useMarkHelpful(reviewId)` -- mutation to increment helpful count (checks session_id in localStorage to prevent duplicates)
+
+2. **`src/components/reviews/StarRating.tsx`** -- Reusable star display (read-only) and interactive star input component
+
+3. **`src/components/reviews/ReviewSection.tsx`** -- Full review section for product pages:
+   - Average rating with large star display
+   - Total review count
+   - 5-star to 1-star distribution bars (visual percentage bars)
+   - "Write a Review" button opening ReviewForm modal
+   - Paginated review list (10 per page, load more button)
+   - Each review card: stars, title, content, user name, date, "Verified Purchase" badge, image gallery (horizontal scroll on mobile), "Helpful?" thumbs-up button with count
+
+4. **`src/components/reviews/ReviewForm.tsx`** -- Modal form:
+   - Interactive star rating selector
+   - Name, email, title, content fields (validated with zod)
+   - Image upload (max 3, 2MB each, client-side compression via canvas resize before upload)
+   - Honeypot hidden field for spam protection
+   - Submit button with loading state
+   - Success message: "Thank you! Your review is pending approval."
+
+5. **`src/components/reviews/ReviewCard.tsx`** -- Individual review display card with image gallery grid
+
+### Integration Point
+
+- Add `<ReviewSection productId={product.id} />` to `src/pages/ProductDetail.tsx` below the existing accordion section, above the bundle items section.
+
+---
+
+## Phase 3: Admin Reviews Dashboard
+
+### New Files
+
+1. **`src/pages/AdminReviews.tsx`** -- Protected admin page:
+   - Filter tabs: Pending (default) | Approved | Rejected | All
+   - Sort dropdown: Newest first, Rating high-low, Rating low-high
+   - Table view: checkbox, product name (joined from products table), user name, rating (stars), status badge (color-coded), date, action buttons
+   - Bulk actions bar (appears when checkboxes selected): Approve, Reject, Delete buttons
+   - Quick preview modal: full review text, images, user info, approve/reject/delete actions
+   - Empty state per tab
 
 ### Updated Files
-10. `src/App.tsx` -- Add `/the-answer` and `/webinars` routes; conditionally render `MKRCHeader` on those routes instead of `StoreHeader`
-11. `src/index.css` -- Import `mkrc-theme.css` and add the Google Fonts import for DM Serif Display + Plus Jakarta Sans
-12. `index.html` -- FOUC prevention script for `mkrc-theme` localStorage key
+
+- **`src/App.tsx`** -- Add `<Route path="reviews" element={<AdminReviews />} />` inside the admin layout
+- **`src/components/admin/AdminLayout.tsx`** -- Add "Reviews" link to admin nav bar
 
 ---
 
-## Design System (mkrc-theme.css)
+## Phase 4: Related Products
 
-A scoped CSS layer using `[data-mkrc-theme="dark"]` and `[data-mkrc-theme="light"]` selectors so it does not conflict with the existing Tailwind dark mode. Default is dark.
+### New Files
 
-All colors from the spec will be defined as CSS custom properties (--bg-primary, --accent-gold, --text-primary, etc.) and consumed via inline styles or utility classes within the MKRC components only.
+1. **`src/components/store/RelatedProducts.tsx`** -- "You May Also Need" section:
+   - Query: products in same category, exclude current product, limit 3
+   - If fewer than 3, fill with featured products from other categories
+   - Desktop: 3-column grid
+   - Mobile: horizontal scroll with snap points
+   - Each card: image, name, price, category badge, "View Details" link
+   - Lazy loaded (only renders when scrolled into view)
 
-Typography classes:
-- `.mkrc-display` -- DM Serif Display for headlines
-- `.mkrc-body` -- Plus Jakarta Sans for body text
-- `.mkrc-label` -- Space Grotesk, uppercase, letter-spacing for badges/CTAs
+### Integration Point
 
----
-
-## Page 1: The Answer (/the-answer)
-
-Seven sections, all static content:
-
-1. **Hero** -- Full-viewport, background image with low-opacity overlay + radial gradients. Two-column layout (text left, product bottle right with gold glow). Badge "Nature's Booster Shot", H1 "The Answer.", subtitle, Chronixx endorsement line, two CTAs ("Get The Answer" links to WooCommerce add-to-cart, "What's Inside" smooth-scrolls to #ingredients), certification pills.
-
-2. **Chronixx Endorsement** -- Background --bg-secondary. Large decorative "Chronixx" text, blockquote, attribution, bio paragraph, 3 animated stat counters (3.4M listeners, #1 Billboard, 2x Tonight Show).
-
-3. **Ingredients (#ingredients)** -- 3-card grid (Anamu, Vervain, Soursop Leaves). Each card: icon, herb name, Latin name italic, description, property tags. Hover: lift + gold top border.
-
-4. **The Craft** -- 5-step horizontal timeline (Selection, Cleaning, Steeping, 21 Days in Oak, The Answer). Mobile: vertical stack. Each step: icon, number, title, description.
-
-5. **Benefits** -- 6 cards in 3x2 grid. Below: certification strip (Vegan, Non-GMO, etc.).
-
-6. **How To Use** -- 3 simple steps + product image on right.
-
-7. **Final CTA (#purchase)** -- Centered. Product image, "Add to Cart" (external WooCommerce link), "Explore All Products" (external shop link), 5-star social proof line.
+- Add `<RelatedProducts productId={product.id} categoryId={product.category_id} />` to `src/pages/ProductDetail.tsx` above `<StoreFooter />`
 
 ---
 
-## Page 2: Webinars (/webinars)
+## Phase 5: Video Footer
 
-Seven sections:
+### New Files
 
-1. **Hero** -- Centered. Badge "Free Wellness Education", H1, subtitle, two scroll-to CTAs, 3 animated stat counters.
+1. **`src/components/store/VideoFooter.tsx`** -- Looping background video section:
+   - Video element: autoplay, muted, loop, playsinline, preload="metadata"
+   - Uses `public/videos/hero-background.mp4` (already exists in project) as placeholder; includes ffmpeg compression command in comments
+   - 40% dark overlay gradient for text readability
+   - IntersectionObserver: pause video when off-screen
+   - Mobile (under 768px): static poster image only, no video (saves data/battery)
+   - Content overlay: "Begin Your Sacred Journey" heading + CTA button linking to `/retreats`
+   - Respects prefers-reduced-motion
 
-2. **Featured Upcoming (#featured)** -- Two-column. Left: webinar image with "Upcoming Live" + "Free" badges. Right: meta info, title, description, bullet list, "Register Free on Zoom" (green button, external link), "Get Reminded" (scrolls to #signup).
+### Integration Point
 
-3. **Archive (#archive)** -- Category filter buttons (All Topics, Women's Health, Men's Health, Nutrition, Herbal Medicine, Detox, Mental Wellness). 6 webinar cards in filterable grid. Each card: replay tag, category label, title, description, duration, "Watch Replay" button.
-
-4. **Why Attend** -- 4 cards: Expert-Led, 100% Free, Interactive, Actionable.
-
-5. **About the Host (#host)** -- Two-column. Placeholder photo + bio for Honorable Priest Kailash. Credential pills.
-
-6. **Email Signup (#signup)** -- Name + email form fields. Client-side only: on submit shows "Subscribed!" message. Privacy line.
-
-7. **Final CTA** -- 4 link cards (Herbal Physician Course, Group Retreats, Personalised Retreats, Consultations) linking to external URLs.
-
----
-
-## Routing Changes (App.tsx)
-
-```text
-/the-answer  -->  TheAnswer page (MKRCHeader + MKRCFooter)
-/webinars     -->  Webinars page (MKRCHeader + MKRCFooter)
-```
-
-The `AppContent` component will check if the current path starts with `/the-answer` or `/webinars` and render `MKRCHeader` instead of `StoreHeader`. The MKRC pages will include their own `MKRCFooter` at the bottom.
-
-Add both paths to `pagesWithoutHeader` so the existing `StoreHeader` is suppressed on these routes.
+- Add `<VideoFooter />` to product detail page and optionally the main homepage, placed above the regular footer
 
 ---
 
-## Accessibility and Responsiveness
+## Phase 6: Product Comparison
 
-- All interactive elements have visible focus states (gold outline)
-- Theme toggle and hamburger have aria-labels
-- Images have descriptive alt text
-- `ScrollReveal` respects `prefers-reduced-motion: reduce`
-- Breakpoints: desktop 1200px+, tablet 768-1199px, mobile less than 768px
-- Hero becomes single column on mobile, grids collapse (3 to 2 to 1), footer stacks
-- Mobile nav: full-screen overlay with close button
-- Touch targets minimum 44px
+### New Files
+
+1. **`src/lib/comparison-context.tsx`** -- React Context provider:
+   - State: array of product IDs (max 3)
+   - Persist to localStorage key `kailash_compare` with 24-hour expiry
+   - Actions: addToCompare, removeFromCompare, clearAll, isInCompare
+   - Toast notifications via sonner
+
+2. **`src/components/store/CompareButton.tsx`** -- Toggle button for product cards and detail page:
+   - Shows "Compare" / "Remove" state
+   - Disabled with tooltip when 3 items already selected
+   - Count badge showing number of items in compare list
+
+3. **`src/components/store/CompareBar.tsx`** -- Fixed bottom bar:
+   - Only visible when compare list has items
+   - Shows product thumbnail images (max 3)
+   - "Compare Now" button linking to `/compare`
+   - "Clear All" link
+   - Dismissible (hide bar without clearing list)
+
+4. **`src/pages/ComparePage.tsx`** -- Full comparison page at `/compare`:
+   - Desktop: side-by-side columns (max 3)
+   - Sticky header row with product images, names, remove buttons
+   - Comparison rows: Price (USD/XCD), Category, Product Type, Size, Key Benefits, Stock Status
+   - Mobile: horizontal scroll table with sticky first column
+   - Empty state: illustration with "Select products to compare" + link to shop
+   - Deep link support: reads `?compare=id1,id2,id3` from URL params
+   - Print-friendly CSS (@media print)
+
+### Updated Files
+
+- **`src/App.tsx`** -- Add `/compare` route, wrap app in `ComparisonProvider`
+- **`src/components/store/ProductCard.tsx`** -- Add `<CompareButton>` to each card
+- **`src/pages/ProductDetail.tsx`** -- Add `<CompareButton>` next to "Add to Bag"
 
 ---
 
-## Technical Notes
+## Technical Details
 
-- No database changes needed -- all content is hardcoded
-- No new dependencies needed -- uses existing framer-motion for animations, lucide-react for icons, react-router-dom for routing
-- The MKRC theme system is isolated from the existing next-themes dark mode via a separate `data-mkrc-theme` attribute
-- External links use `target="_blank" rel="noopener noreferrer"`
-- Internal nav links use React Router `Link` components
-- "Add to Cart" / "Get The Answer" buttons link to `https://mountkailashslu.com/?add-to-cart=90` (WooCommerce)
+### Existing Patterns Followed
+
+- Admin auth uses the existing `useAdmin()` hook and `is_admin()` database function -- no changes to auth system needed
+- RLS policies use the existing `is_admin()` security definer function
+- React Query for all data fetching (consistent with existing hooks)
+- Tailwind CSS for styling (matches existing product cards, admin pages)
+- Sonner for toast notifications (already in project)
+
+### No New Dependencies
+
+All features built with existing packages: React, react-router-dom, @tanstack/react-query, lucide-react, @supabase/supabase-js, sonner, zod, Tailwind CSS.
+
+### Image Compression (Review Uploads)
+
+Client-side compression using HTML Canvas API before uploading to storage -- resize images to max 1200px width, convert to JPEG at 80% quality. No additional library needed.
+
+### File Count Summary
+
+- New files: ~12 files
+- Modified files: ~5 files (App.tsx, ProductDetail.tsx, ProductCard.tsx, AdminLayout.tsx, index.css)
+- New database tables: 2 (reviews, review_helpfulness)
+- New storage bucket: 1 (review-images)
 
