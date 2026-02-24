@@ -4,9 +4,10 @@ interface ScrollRevealProps {
   children: ReactNode;
   className?: string;
   delay?: number;
+  stagger?: boolean;
 }
 
-export default function ScrollReveal({ children, className = "", delay = 0 }: ScrollRevealProps) {
+export default function ScrollReveal({ children, className = "", delay = 0, stagger = false }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,7 +35,7 @@ export default function ScrollReveal({ children, className = "", delay = 0 }: Sc
   }, [delay]);
 
   return (
-    <div ref={ref} className={`mkrc-reveal ${className}`}>
+    <div ref={ref} className={`mkrc-reveal${stagger ? " reveal-stagger" : ""} ${className}`}>
       {children}
     </div>
   );
