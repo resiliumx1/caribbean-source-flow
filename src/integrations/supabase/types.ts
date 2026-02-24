@@ -650,6 +650,7 @@ export type Database = {
       retreat_dates: {
         Row: {
           created_at: string
+          description: string | null
           end_date: string
           id: string
           is_published: boolean
@@ -663,6 +664,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          description?: string | null
           end_date: string
           id?: string
           is_published?: boolean
@@ -676,6 +678,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          description?: string | null
           end_date?: string
           id?: string
           is_published?: boolean

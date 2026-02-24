@@ -7,6 +7,8 @@ interface ComparisonContextType {
   removeFromCompare: (id: string) => void;
   clearAll: () => void;
   isInCompare: (id: string) => boolean;
+  isDismissed: boolean;
+  dismiss: () => void;
 }
 
 const ComparisonContext = createContext<ComparisonContextType | undefined>(undefined);
@@ -14,31 +16,33 @@ const ComparisonContext = createContext<ComparisonContextType | undefined>(undef
 const STORAGE_KEY = "kailash_compare";
 const EXPIRY_MS = 24 * 60 * 60 * 1000;
 
-function loadFromStorage(): string[] {
+function loadFromStorage(): { items: string[]; dismissed: boolean } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) return { items: [], dismissed: false };
     const parsed = JSON.parse(raw);
     if (Date.now() - parsed.timestamp > EXPIRY_MS) {
       localStorage.removeItem(STORAGE_KEY);
-      return [];
+      return { items: [], dismissed: false };
     }
-    return parsed.items ?? [];
+    return { items: parsed.items ?? [], dismissed: parsed.dismissed ?? false };
   } catch {
-    return [];
+    return { items: [], dismissed: false };
   }
 }
 
-function saveToStorage(items: string[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ items, timestamp: Date.now() }));
+function saveToStorage(items: string[], dismissed: boolean) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ items, dismissed, timestamp: Date.now() }));
 }
 
 export function ComparisonProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<string[]>(loadFromStorage);
+  const stored = loadFromStorage();
+  const [items, setItems] = useState<string[]>(stored.items);
+  const [isDismissed, setIsDismissed] = useState(stored.dismissed);
 
   useEffect(() => {
-    saveToStorage(items);
-  }, [items]);
+    saveToStorage(items, isDismissed);
+  }, [items, isDismissed]);
 
   const addToCompare = (id: string) => {
     if (items.includes(id)) return;
@@ -47,6 +51,7 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
       return;
     }
     setItems((prev) => [...prev, id]);
+    setIsDismissed(false);
     toast.success("Added to compare", {
       action: { label: "View", onClick: () => window.location.assign("/compare") },
     });
@@ -56,12 +61,17 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
     setItems((prev) => prev.filter((i) => i !== id));
   };
 
-  const clearAll = () => setItems([]);
+  const clearAll = () => {
+    setItems([]);
+    setIsDismissed(true);
+  };
 
   const isInCompare = (id: string) => items.includes(id);
 
+  const dismiss = () => setIsDismissed(true);
+
   return (
-    <ComparisonContext.Provider value={{ items, addToCompare, removeFromCompare, clearAll, isInCompare }}>
+    <ComparisonContext.Provider value={{ items, addToCompare, removeFromCompare, clearAll, isInCompare, isDismissed, dismiss }}>
       {children}
     </ComparisonContext.Provider>
   );

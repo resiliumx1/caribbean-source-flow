@@ -49,6 +49,7 @@ export default function AdminRetreatDates() {
     price_override_usd: "",
     promo_label: "",
     custom_promo: "",
+    description: "",
   });
 
   const { data: retreatTypes = [] } = useQuery({
@@ -90,6 +91,7 @@ export default function AdminRetreatDates() {
         spots_total: form.spots_total,
         price_override_usd: form.price_override_usd ? parseFloat(form.price_override_usd) : null,
         promo_label: label,
+        description: form.description || null,
       } as any);
       if (error) throw error;
     },
@@ -98,7 +100,7 @@ export default function AdminRetreatDates() {
       queryClient.invalidateQueries({ queryKey: ["retreat-dates"] });
       toast({ title: "Date added" });
       setIsDialogOpen(false);
-      setForm({ start_date: "", end_date: "", spots_total: 10, price_override_usd: "", promo_label: "", custom_promo: "" });
+      setForm({ start_date: "", end_date: "", spots_total: 10, price_override_usd: "", promo_label: "", custom_promo: "", description: "" });
     },
     onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
@@ -139,7 +141,7 @@ export default function AdminRetreatDates() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Retreat Dates</h1>
-          <p className="text-muted-foreground mt-1">Manage group retreat schedule and promotional labels</p>
+          <p className="text-muted-foreground mt-1">Manage group retreat schedule and promotional labels · Schedule retreats through 2030</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -183,6 +185,15 @@ export default function AdminRetreatDates() {
                 {form.promo_label === "custom" && (
                   <Input className="mt-2" placeholder="Custom label text" value={form.custom_promo} onChange={(e) => setForm((p) => ({ ...p, custom_promo: e.target.value }))} />
                 )}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Description</label>
+                <textarea
+                  className="w-full mt-1 p-2 border border-border rounded-md bg-background text-foreground text-sm min-h-[80px]"
+                  placeholder="Details shown when retreat is clicked..."
+                  value={form.description}
+                  onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+                />
               </div>
               <Button onClick={() => addDate.mutate()} disabled={!form.start_date || !form.end_date || addDate.isPending} className="w-full">
                 {addDate.isPending ? "Adding..." : "Add Date"}

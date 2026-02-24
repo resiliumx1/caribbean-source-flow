@@ -1,0 +1,1 @@
+ALTER TABLE public.retreat_dates ADD COLUMN IF NOT EXISTS description TEXT;

@@ -17,7 +17,6 @@ export function WhatsAppFloat() {
       aria-label={`Chat with ${salesManager} on WhatsApp`}
     >
       <MessageCircle className="w-6 h-6" />
-      <span className="hidden sm:inline">Chat with {salesManager}</span>
     </a>
   );
 }
