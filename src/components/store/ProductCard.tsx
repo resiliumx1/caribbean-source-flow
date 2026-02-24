@@ -3,6 +3,7 @@ import { ShoppingCart, Star, Check, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductPlaceholder } from "./ProductPlaceholder";
+import { CompareButton } from "./CompareButton";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/hooks/use-products";
@@ -179,7 +180,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
         )}
 
         {/* Price and Add to Cart - side by side */}
-        <div className="flex items-center justify-between pt-2 gap-3">
+          <div className="flex items-center justify-between pt-2 gap-3">
           <div className="flex flex-col">
             <span className="text-xl font-bold text-foreground">
               {prices.primary}
@@ -189,16 +190,19 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
             </span>
           </div>
           
-          <Button
-            variant="default"
-            size="sm"
-            className="gap-2 bg-primary hover:bg-sage-dark text-white px-4"
-            onClick={handleAddToCart}
-            disabled={isAddingToCart || product.stock_status === "out_of_stock"}
-          >
-            <ShoppingCart className="w-4 h-4" />
-            Add to Cart
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <CompareButton productId={product.id} />
+            <Button
+              variant="default"
+              size="sm"
+              className="gap-2 bg-primary hover:bg-sage-dark text-primary-foreground px-4"
+              onClick={handleAddToCart}
+              disabled={isAddingToCart || product.stock_status === "out_of_stock"}
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Add
+            </Button>
+          </div>
         </div>
       </div>
     </div>
