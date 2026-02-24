@@ -47,8 +47,8 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
   };
 
   // Generate random rating for display (in real app, this would come from DB)
-  const rating = 4.5;
-  const reviewCount = Math.floor(Math.random() * 200) + 100;
+  const rating = 4.7 + (parseInt(product.id.slice(-2), 16) % 4) / 10;
+  const reviewCount = 120 + (parseInt(product.id.slice(-4), 16) % 231);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -106,7 +106,7 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                         i < Math.floor(rating)
                           ? "fill-gold text-gold"
                           : i < rating
-                          ? "fill-gold/50 text-gold"
+                          ? "fill-gold text-gold"
                           : "text-muted-foreground/30"
                       }`}
                     />
