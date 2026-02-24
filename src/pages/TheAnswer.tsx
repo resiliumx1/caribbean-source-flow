@@ -1,4 +1,8 @@
 import { useEffect } from "react";
+import {
+  Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles,
+  ChevronDown, Star, ArrowRight, CheckCircle2
+} from "lucide-react";
 import MKRCHeader from "@/components/mkrc/MKRCHeader";
 import MKRCFooter from "@/components/mkrc/MKRCFooter";
 import ScrollReveal from "@/components/mkrc/ScrollReveal";
@@ -7,59 +11,70 @@ import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import heroBottle from "@/assets/mkrc-the-answer-bottle.jpg";
 import tincture from "@/assets/mkrc-answer-tincture.png";
 import heroBg from "@/assets/mkrc-hero-bg.jpg";
+import "./TheAnswer.css";
+
+const scrollToSection = (id: string) => {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+};
 
 const INGREDIENTS = [
   {
-    icon: "🌿",
+    icon: Leaf,
     name: "Fey Duvan (Anamu)",
     latin: "Petiveria alliacea",
     alias: "The Caribbean's Secret Weapon",
-    desc: "Used for centuries across the Caribbean and South America to fortify the immune system. Research from Memorial Sloan Kettering confirms its antimicrobial, antiviral, and immunomodulatory properties. Rich in dibenzyl trisulphide — a rare organic sulphur compound that supports your body's natural defenses.",
-    tags: ["Antimicrobial", "Antiviral", "Immunomodulatory", "Anti-Inflammatory"],
+    desc: "Used for centuries across the Caribbean and South America to fortify the immune system. Research confirms its antimicrobial, antiviral, and immunomodulatory properties. Rich in dibenzyl trisulphide (DTS) — a rare organic sulphur compound that supports your body's natural defenses.",
+    tags: ["Antimicrobial", "Immunomodulatory", "Anti-inflammatory"],
   },
   {
-    icon: "🍃",
+    icon: FlaskConical,
     name: "Vervain",
     latin: "Verbena officinalis",
-    alias: "The Purifier",
-    desc: "A cornerstone of Caribbean herbal tradition, Vervain has been trusted for generations as a powerful cleanser and immune ally. Its antibacterial and antimicrobial properties work in concert with the other ingredients to create a comprehensive shield for your system.",
-    tags: ["Antibacterial", "Antimicrobial", "Cleansing", "Traditional Use"],
+    alias: "The Sacred Cleansing Herb",
+    desc: "Revered throughout the Caribbean for its potent cleansing and immune-boosting properties. Known for antibacterial and antimicrobial action, Vervain has been a staple in traditional herbal practice for cleansing the blood, calming the nerves, and strengthening the body's resistance against infection.",
+    tags: ["Antibacterial", "Blood Cleanser", "Nerve Tonic"],
   },
   {
-    icon: "🌱",
+    icon: Sparkles,
     name: "Soursop Leaves",
     latin: "Annona muricata",
-    alias: "The Activator",
-    desc: "Revered across the Caribbean and Latin America, Soursop leaves activate your immune system at the cellular level through MAP kinase pathways. This isn't folk wisdom alone — modern science is catching up to what Caribbean healers have known for centuries.",
-    tags: ["Immune Activation", "Cellular Health", "Antioxidant", "MAP Kinase"],
+    alias: "Nature's Cellular Guardian",
+    desc: "Widely used across the Caribbean and Latin America, soursop leaves enhance immunity through activation of MAP kinase pathways. Traditionally valued for their ability to support cellular health, promote natural apoptosis of mutated cells, and provide a powerful antioxidant shield.",
+    tags: ["Immune Enhancer", "Antioxidant", "Cellular Health"],
   },
 ];
 
 const CRAFT_STEPS = [
-  { icon: "🌿", title: "Selection", desc: "Hand-selected roots, leaves, and bark sourced from Saint Lucia's rich botanical landscape." },
-  { icon: "💧", title: "Cleaning", desc: "Each herb is meticulously cleaned and prepared by hand." },
-  { icon: "🫙", title: "Steeping", desc: "Steeped in organic barley alcohol to extract the full spectrum of medicinal compounds." },
-  { icon: "🪵", title: "21 Days in Oak", desc: "Placed in oak barrels for 21 days to mature." },
-  { icon: "✨", title: "The Answer", desc: "Delivered as a liquid tincture for rapid, easy absorption." },
+  { icon: Leaf, title: "Selection", desc: "Roots, leaves, and bark are hand-selected from trusted Caribbean sources. Only the finest specimens are chosen — each batch begins with intention." },
+  { icon: Droplets, title: "Cleaning", desc: "Every herb is meticulously cleaned and prepared by hand. This is not a factory — it is a practice rooted in care and reverence." },
+  { icon: FlaskConical, title: "Steeping", desc: "The herbs are steeped in organic barley alcohol, extracting their full spectrum of active compounds and medicinal properties." },
+  { icon: Shield, title: "21 Days in Oak", desc: "The tincture rests in oak barrels for three weeks. The oak imparts depth and character while the herbs fully mature and integrate." },
+  { icon: Sparkles, title: "Liquid Tincture", desc: "Delivered in liquid form for maximum absorption. One dose. Daily protection. Your immune system, empowered." },
 ];
 
 const BENEFITS = [
-  { icon: "🛡️", title: "Immune Fortification", desc: "Daily support that strengthens your body's natural defenses against communicable diseases, including seasonal flu." },
-  { icon: "🔥", title: "Anti-Inflammatory", desc: "Herbs with powerful anti-inflammatory, antibacterial, and antimicrobial properties working in synergy." },
-  { icon: "🧬", title: "Cellular Health", desc: "Contains compounds traditionally shown to support natural cell death (apoptosis) of mutated cells and promote healthy cellular function." },
-  { icon: "🌸", title: "Women's Wellness", desc: "A key component of the Super Female Package — traditionally used to support menstrual health and minimize fibroid symptoms." },
-  { icon: "⚡", title: "Rapid Absorption", desc: "Liquid tincture format delivers herbal compounds directly into your system." },
-  { icon: "🔄", title: "Daily Prevention", desc: "You don't need to be sick to use The Answer. Take it daily as a preventative measure." },
+  { icon: Shield, title: "Immune Fortification", desc: "Strengthens and enhances your immune system for daily resistance against infectious and communicable diseases." },
+  { icon: Leaf, title: "Anti-Inflammatory", desc: "Powerful anti-inflammatory, antibacterial, and antimicrobial properties combat chronic inflammation at the root." },
+  { icon: Heart, title: "Women's Health", desc: "A core component of the Super Female Package — helps prevent excessive menstrual bleeding and minimize fibroid symptoms." },
+  { icon: Sparkles, title: "Cellular Health", desc: "Herbs shown to reduce mutated cell growth and initiate natural apoptosis — your body's built-in cleansing mechanism." },
+  { icon: Droplets, title: "Easy Absorption", desc: "Liquid tincture format ensures rapid, full-spectrum absorption. Take diluted in water or straight for immediate effect." },
+  { icon: FlaskConical, title: "Daily Prevention", desc: "You don't need to be sick to benefit. One dose each day builds a foundation of health that compounds over time." },
 ];
 
-const CERTS = ["Vegan", "Non-GMO", "Hand-Selected", "Chemical-Free", "Made in Saint Lucia", "Premium Quality"];
+const CERTS = ["Vegan", "Non-GMO", "Hand-Selected", "Chemical-Free", "Caribbean Hand-Crafted", "Made in Saint Lucia", "Premium Quality"];
+
+const HOWTO_STEPS = [
+  { title: "Measure Your Dose", desc: "Use the built-in dropper to measure your daily serving of The Answer." },
+  { title: "Dilute or Take Straight", desc: "Add to a glass of water for a milder taste, or take it undiluted for maximum potency." },
+  { title: "Make It a Ritual", desc: "Consistency is key. Take The Answer daily to build lasting immunity and protection." },
+];
 
 export default function TheAnswer() {
   useEffect(() => {
     document.title = "The Answer — Nature's Immune Booster Shot | Endorsed by Chronixx | MKRC";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute("content", "The Answer is MKRC's best-selling immune system enhancer — a handcrafted herbal tincture endorsed by reggae icon Chronixx. Made in Saint Lucia with Anamu, Vervain & Soursop Leaves. Oak-aged 21 days.");
-    // Set MKRC theme
     if (!document.documentElement.getAttribute("data-mkrc-theme")) {
       const stored = localStorage.getItem("mkrc-theme") || "dark";
       document.documentElement.setAttribute("data-mkrc-theme", stored);
@@ -71,195 +86,115 @@ export default function TheAnswer() {
       <MKRCHeader />
 
       {/* ===== 1. HERO ===== */}
-      <section
-        className="relative flex items-center justify-center overflow-hidden"
-        style={{ minHeight: "100vh" }}
-      >
-        {/* BG image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${heroBg})`,
-            opacity: 0.12,
-          }}
-        />
-        {/* Radial gradients */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse at 20% 50%, var(--mkrc-glow-green) 0%, transparent 60%), radial-gradient(ellipse at 80% 30%, var(--mkrc-glow-gold) 0%, transparent 50%)",
-          }}
-        />
+      <section className="answer-hero">
+        <div className="answer-hero__bg" style={{ backgroundImage: `url(${heroBg})` }} />
+        <div className="answer-hero__gradients" />
 
-        <div
-          className="relative z-10 mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12"
-          style={{ maxWidth: 1200, padding: "120px 24px 80px" }}
-        >
-          {/* Text */}
+        <div className="answer-hero__inner">
           <ScrollReveal>
-            <span
-              className="mkrc-label inline-block mb-6 px-4 py-2 rounded-full text-xs"
-              style={{
-                border: "1px solid var(--mkrc-accent-gold)",
-                color: "var(--mkrc-accent-gold)",
-              }}
-            >
-              Nature's Booster Shot
-            </span>
-            <h1
-              className="mkrc-display mb-4"
-              style={{ fontSize: "clamp(3rem, 6vw, 5.5rem)", lineHeight: 1.05 }}
-            >
-              <em>The Answer.</em>
+            <div className="answer-hero__badge mkrc-label">
+              <Shield size={14} />
+              <span>Endorsed by Chronixx</span>
+              <span>·</span>
+              <span>Made in Saint Lucia</span>
+            </div>
+            <h1 className="answer-hero__title mkrc-display">
+              The <em>Answer.</em>
             </h1>
-            <p
-              className="mkrc-display mb-6"
-              style={{
-                fontSize: "clamp(1rem, 2vw, 1.25rem)",
-                fontStyle: "italic",
-                color: "var(--mkrc-text-secondary)",
-              }}
-            >
+            <p className="answer-hero__subtitle mkrc-display">
               21 days in oak. Centuries of Caribbean wisdom. One powerful dose.
             </p>
-            <p className="mb-8" style={{ color: "var(--mkrc-text-secondary)" }}>
-              Endorsed by <strong style={{ color: "var(--mkrc-accent-gold)" }}>Chronixx</strong>. Trusted by thousands across the Caribbean.
+            <p className="answer-hero__desc">
+              Your body already knows how to heal. This hand-crafted herbal tincture — trusted by thousands across the Caribbean and endorsed by <strong>Chronixx</strong> — delivers nature's most potent immune-fortifying herbs straight to your cells. No chemicals. No shortcuts. Just The Answer.
             </p>
-            <div className="flex flex-wrap gap-4 mb-8">
+            <div className="answer-hero__ctas">
               <a
                 href="https://mountkailashslu.com/?add-to-cart=90"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mkrc-btn-primary"
               >
-                Get The Answer
+                Get The Answer <ArrowRight size={16} />
               </a>
-              <a href="#ingredients" className="mkrc-btn-secondary">
-                What's Inside
-              </a>
+              <button
+                onClick={() => scrollToSection("ingredients")}
+                className="mkrc-btn-secondary"
+              >
+                Learn What's Inside <ChevronDown size={16} />
+              </button>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="answer-hero__certs">
               {["Vegan", "Non-GMO", "Chemical-Free", "Made in Saint Lucia"].map((c) => (
-                <span
-                  key={c}
-                  className="mkrc-label text-xs px-3 py-1 rounded-full"
-                  style={{
-                    border: "1px solid var(--mkrc-border-subtle)",
-                    color: "var(--mkrc-text-tertiary)",
-                    fontSize: "0.65rem",
-                  }}
-                >
-                  {c}
-                </span>
+                <span key={c} className="answer-hero__cert-tag mkrc-label">{c}</span>
               ))}
             </div>
           </ScrollReveal>
 
-          {/* Bottle */}
-          <ScrollReveal delay={200} className="flex justify-center">
-            <div
-              className="relative"
-              style={{
-                filter: "drop-shadow(0 0 60px var(--mkrc-glow-gold))",
-              }}
-            >
+          <ScrollReveal delay={200} className="answer-hero__bottle">
+            <div className="answer-hero__bottle-glow">
               <img
                 src={heroBottle}
                 alt="The Answer — MKRC immune system enhancer tincture bottle"
-                className="max-w-xs md:max-w-sm lg:max-w-md object-contain"
-                style={{ animation: "float 6s ease-in-out infinite" }}
+                className="answer-hero__bottle-img"
               />
             </div>
           </ScrollReveal>
         </div>
 
-        <style>{`
-          @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            @keyframes float { 0%, 100% { transform: none; } }
-          }
-        `}</style>
+        <button
+          className="answer-hero__scroll-hint"
+          onClick={() => scrollToSection("chronixx")}
+          aria-label="Scroll to learn more"
+        >
+          <ChevronDown size={20} />
+        </button>
       </section>
 
       {/* ===== 2. CHRONIXX ===== */}
-      <section style={{ backgroundColor: "var(--mkrc-bg-secondary)", padding: "100px 0" }}>
-        <div
-          className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative"
-          style={{ maxWidth: 1200, padding: "0 24px" }}
-        >
-          {/* Left decorative */}
+      <section id="chronixx" className="chronixx-section">
+        <div className="chronixx-section__inner">
           <ScrollReveal className="relative">
-            <span
-              className="mkrc-display absolute top-0 left-0 select-none pointer-events-none"
-              style={{
-                fontSize: "clamp(4rem, 10vw, 8rem)",
-                color: "var(--mkrc-text-tertiary)",
-                opacity: 0.1,
-                lineHeight: 1,
-              }}
-            >
-              Chronixx
-            </span>
-            <div
-              className="mt-16 rounded-xl overflow-hidden flex items-center justify-center"
-              style={{
-                backgroundColor: "var(--mkrc-bg-elevated)",
-                minHeight: 320,
-                border: "1px solid var(--mkrc-border-subtle)",
-              }}
-            >
-              <p className="mkrc-label text-sm" style={{ color: "var(--mkrc-text-tertiary)" }}>
+            <SectionLabel text="Artist Endorsement" />
+            <span className="chronixx-section__watermark mkrc-display">Chronixx</span>
+            <div className="chronixx-section__photo-placeholder">
+              <p className="mkrc-label" style={{ fontSize: "0.875rem", color: "var(--mkrc-text-tertiary)" }}>
                 Chronixx Photo
               </p>
             </div>
           </ScrollReveal>
 
-          {/* Right content */}
           <ScrollReveal delay={150}>
-            <SectionLabel text="The Endorsement" />
-            <blockquote
-              className="mkrc-display text-2xl md:text-3xl mb-6"
-              style={{ fontStyle: "italic", lineHeight: 1.4 }}
-            >
-              "The Answer is part of my daily ritual. Nature provides everything we need — this is proof of that."
+            <h2 className="mkrc-display text-3xl md:text-4xl mb-2">Chronixx</h2>
+            <p className="chronixx-section__title">
+              Jamaican reggae icon · Grammy-nominated artist · Advocate for natural living
+            </p>
+            <blockquote className="chronixx-section__quote mkrc-display text-2xl md:text-3xl">
+              "The Answer is part of my daily ritual. Nature provides everything we need — this is real medicine from real roots, crafted by real people who understand the power of Caribbean herbs."
             </blockquote>
-            <p className="mb-1" style={{ color: "var(--mkrc-accent-gold)", fontWeight: 600 }}>
-              Chronixx
+            <p className="chronixx-section__bio">
+              With 3.4 million+ monthly Spotify listeners, two Tonight Show appearances, and a Billboard No. 1 Reggae album, Chronixx is a leading voice of the Reggae Revival movement. His commitment to roots culture and natural living makes him an authentic champion for MKRC's mission.
             </p>
-            <p className="mb-6 text-sm" style={{ color: "var(--mkrc-text-secondary)" }}>
-              Jamaican reggae icon. Grammy-nominated artist. Advocate for natural living.
+            <p className="chronixx-section__note">
+              * Quote shown is a placeholder — replace with actual endorsement statement from Chronixx.
             </p>
-            <p className="mb-8 text-sm leading-relaxed" style={{ color: "var(--mkrc-text-secondary)" }}>
-              Jamar McNaughton — known to the world as Chronixx — is a leading voice in the Reggae Revival movement. With over 3.4 million monthly Spotify listeners, performances at Glastonbury and The Tonight Show, and lyrics that champion resilience and natural living, his partnership with MKRC is as authentic as the herbs in the bottle.
-            </p>
-            <div className="grid grid-cols-3 gap-6 text-center">
+            <div className="chronixx-section__stats">
               <div>
-                <div className="text-3xl font-bold">
-                  <CounterAnimation target={3.4} decimals={1} suffix="" />
+                <div className="chronixx-section__stat-value">
+                  <CounterAnimation target={3.4} decimals={1} suffix="M+" />
                 </div>
-                <p className="text-xs mt-1" style={{ color: "var(--mkrc-text-secondary)" }}>
-                  Million Monthly Listeners
-                </p>
+                <p className="chronixx-section__stat-label">Monthly Listeners</p>
               </div>
               <div>
-                <div className="text-3xl font-bold" style={{ color: "var(--mkrc-accent-gold)" }}>
+                <div className="chronixx-section__stat-value" style={{ color: "var(--mkrc-accent-gold)" }}>
                   #1
                 </div>
-                <p className="text-xs mt-1" style={{ color: "var(--mkrc-text-secondary)" }}>
-                  Billboard Reggae Albums
-                </p>
+                <p className="chronixx-section__stat-label">Billboard Reggae</p>
               </div>
               <div>
-                <div className="text-3xl font-bold">
-                  <CounterAnimation target={2} suffix="x" />
+                <div className="chronixx-section__stat-value">
+                  <CounterAnimation target={2} suffix="" />
                 </div>
-                <p className="text-xs mt-1" style={{ color: "var(--mkrc-text-secondary)" }}>
-                  Tonight Show Appearances
-                </p>
+                <p className="chronixx-section__stat-label">Tonight Show</p>
               </div>
             </div>
           </ScrollReveal>
@@ -267,45 +202,31 @@ export default function TheAnswer() {
       </section>
 
       {/* ===== 3. INGREDIENTS ===== */}
-      <section id="ingredients" className="mkrc-section">
-        <ScrollReveal className="text-center mb-14">
+      <section id="ingredients" className="ingredients-section">
+        <ScrollReveal className="ingredients-section__header">
           <SectionLabel text="What's Inside" showLine={false} />
           <h2 className="mkrc-display text-3xl md:text-4xl mb-4">
-            Three Herbs. Centuries of Proof.
+            Three Powerhouse Herbs.<br />Centuries of Proof.
           </h2>
-          <p className="max-w-2xl mx-auto" style={{ color: "var(--mkrc-text-secondary)" }}>
-            Every drop of The Answer carries the concentrated power of Caribbean medicinal herbs — selected for their proven ability to strengthen your body's natural defenses.
+          <p className="ingredients-section__desc">
+            Every drop of The Answer contains a precise blend of Caribbean medicinal herbs, each chosen for their proven ability to fortify and protect the human body.
           </p>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="ingredients-section__grid">
           {INGREDIENTS.map((herb, i) => (
-            <ScrollReveal key={herb.name} delay={i * 100}>
-              <div className="mkrc-card h-full">
-                <span className="text-3xl mb-4 block">{herb.icon}</span>
+            <ScrollReveal key={herb.name} delay={i * 120}>
+              <div className="mkrc-card ingredient-card">
+                <div className="ingredient-card__icon">
+                  <herb.icon size={28} />
+                </div>
                 <h3 className="mkrc-display text-xl mb-1">{herb.name}</h3>
-                <p className="mkrc-display text-sm mb-1" style={{ fontStyle: "italic", color: "var(--mkrc-text-tertiary)" }}>
-                  {herb.latin}
-                </p>
-                <p className="mkrc-label text-xs mb-3" style={{ color: "var(--mkrc-accent-gold)", fontSize: "0.65rem" }}>
-                  {herb.alias}
-                </p>
-                <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--mkrc-text-secondary)" }}>
-                  {herb.desc}
-                </p>
-                <div className="flex flex-wrap gap-2">
+                <p className="ingredient-card__latin mkrc-display">{herb.latin}</p>
+                <p className="ingredient-card__alias mkrc-label">{herb.alias}</p>
+                <p className="ingredient-card__desc">{herb.desc}</p>
+                <div className="ingredient-card__tags">
                   {herb.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="mkrc-label text-xs px-2 py-1 rounded"
-                      style={{
-                        fontSize: "0.6rem",
-                        border: "1px solid var(--mkrc-border-subtle)",
-                        color: "var(--mkrc-text-tertiary)",
-                      }}
-                    >
-                      {tag}
-                    </span>
+                    <span key={tag} className="ingredient-card__tag mkrc-label">{tag}</span>
                   ))}
                 </div>
               </div>
@@ -315,77 +236,69 @@ export default function TheAnswer() {
       </section>
 
       {/* ===== 4. THE CRAFT ===== */}
-      <section style={{ backgroundColor: "var(--mkrc-bg-secondary)", padding: "100px 0" }}>
-        <div className="mx-auto" style={{ maxWidth: 1200, padding: "0 24px" }}>
-          <ScrollReveal className="text-center mb-14">
+      <section className="craft-section">
+        <div className="craft-section__inner">
+          <ScrollReveal className="craft-section__header">
             <SectionLabel text="The Craft" showLine={false} />
             <h2 className="mkrc-display text-3xl md:text-4xl mb-4">
               From Root to Remedy.
             </h2>
-            <p className="max-w-2xl mx-auto" style={{ color: "var(--mkrc-text-secondary)" }}>
+            <p className="craft-section__desc">
               Every batch of The Answer is hand-selected, carefully steeped, and aged in oak barrels for 21 days. No shortcuts. No chemicals. Just nature, patience, and precision.
             </p>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {CRAFT_STEPS.map((step, i) => (
-              <ScrollReveal key={step.title} delay={i * 100}>
-                <div className="text-center">
-                  <span className="text-3xl mb-3 block">{step.icon}</span>
-                  <span
-                    className="mkrc-label text-xs block mb-2"
-                    style={{ color: "var(--mkrc-accent-gold)", fontSize: "0.65rem" }}
-                  >
-                    Step {i + 1}
+          <ScrollReveal stagger>
+            <div className="craft-section__grid">
+              {CRAFT_STEPS.map((step, i) => (
+                <div key={step.title} className="craft-step">
+                  <div className="craft-step__icon">
+                    <step.icon size={22} />
+                  </div>
+                  <span className="craft-step__number mkrc-label">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="mkrc-display text-lg mb-2">{step.title}</h3>
-                  <p className="text-sm" style={{ color: "var(--mkrc-text-secondary)" }}>
-                    {step.desc}
-                  </p>
+                  <h3 className="craft-step__title mkrc-display text-lg">{step.title}</h3>
+                  <p className="craft-step__desc">{step.desc}</p>
                 </div>
-              </ScrollReveal>
-            ))}
-          </div>
+              ))}
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ===== 5. BENEFITS ===== */}
-      <section className="mkrc-section">
-        <ScrollReveal className="text-center mb-14">
+      <section className="benefits-section">
+        <ScrollReveal className="benefits-section__header">
           <SectionLabel text="Why The Answer" showLine={false} />
           <h2 className="mkrc-display text-3xl md:text-4xl mb-4">
-            Your Body's Daily Shield.
+            Daily Protection.<br />Total Fortification.
           </h2>
+          <p className="benefits-section__subtitle">
+            You don't need to be sick to use The Answer. Take it daily as a preventative measure — giving your body the natural tools it needs to resist, repair, and thrive.
+          </p>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {BENEFITS.map((b, i) => (
-            <ScrollReveal key={b.title} delay={i * 80}>
-              <div className="mkrc-card h-full">
-                <span className="text-2xl mb-3 block">{b.icon}</span>
-                <h3 className="mkrc-display text-lg mb-2">{b.title}</h3>
-                <p className="text-sm" style={{ color: "var(--mkrc-text-secondary)" }}>
-                  {b.desc}
-                </p>
+        <ScrollReveal stagger>
+          <div className="benefits-section__grid">
+            {BENEFITS.map((b) => (
+              <div key={b.title} className="mkrc-card benefit-card">
+                <div className="benefit-card__icon">
+                  <b.icon size={24} />
+                </div>
+                <h3 className="benefit-card__title mkrc-display text-lg">{b.title}</h3>
+                <p className="benefit-card__desc">{b.desc}</p>
               </div>
-            </ScrollReveal>
-          ))}
-        </div>
+            ))}
+          </div>
+        </ScrollReveal>
 
-        {/* Certification strip */}
         <ScrollReveal>
-          <div className="flex flex-wrap justify-center gap-4">
+          <SectionLabel text="Certifications" showLine={false} />
+          <div className="benefits-section__certs">
             {CERTS.map((c) => (
-              <span
-                key={c}
-                className="mkrc-label text-xs px-4 py-2 rounded-full"
-                style={{
-                  border: "1px solid var(--mkrc-border-subtle)",
-                  color: "var(--mkrc-text-tertiary)",
-                  fontSize: "0.65rem",
-                }}
-              >
-                ✓ {c}
+              <span key={c} className="benefits-section__cert mkrc-label">
+                <CheckCircle2 size={14} /> {c}
               </span>
             ))}
           </div>
@@ -393,76 +306,67 @@ export default function TheAnswer() {
       </section>
 
       {/* ===== 6. HOW TO USE ===== */}
-      <section style={{ backgroundColor: "var(--mkrc-bg-secondary)", padding: "100px 0" }}>
-        <div
-          className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-          style={{ maxWidth: 1200, padding: "0 24px" }}
-        >
+      <section className="howto-section">
+        <div className="howto-section__inner">
           <ScrollReveal>
-            <SectionLabel text="How To Use" />
+            <SectionLabel text="How to Use" />
             <h2 className="mkrc-display text-3xl md:text-4xl mb-4">
-              One Dose. Total Protection.
+              Simple. Powerful. Daily.
             </h2>
             <p className="mb-8" style={{ color: "var(--mkrc-text-secondary)" }}>
-              Taking The Answer is as simple as it gets. No complicated protocols. No meal timing. Just a daily ritual that takes seconds and works for hours.
+              Take daily. Diluted in water or straight. One dose. Total protection.
             </p>
-            <div className="flex flex-col gap-6">
-              {[
-                "Measure your dose.",
-                "Choose your method — straight or diluted in water.",
-                "Make it daily — consistency is key.",
-              ].map((step, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <span
-                    className="mkrc-label flex items-center justify-center rounded-full flex-shrink-0"
-                    style={{
-                      width: 36,
-                      height: 36,
-                      border: "1px solid var(--mkrc-accent-gold)",
-                      color: "var(--mkrc-accent-gold)",
-                      fontSize: "0.8rem",
-                    }}
-                  >
-                    {i + 1}
-                  </span>
-                  <p className="pt-1.5">{step}</p>
+            <div className="howto-section__steps">
+              {HOWTO_STEPS.map((step, i) => (
+                <div key={i} className="howto-step">
+                  <span className="howto-step__number mkrc-label">{i + 1}</span>
+                  <div>
+                    <p className="howto-step__title">{step.title}</p>
+                    <p className="howto-step__desc">{step.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </ScrollReveal>
-          <ScrollReveal delay={200} className="flex justify-center">
+          <ScrollReveal delay={200} className="howto-section__image">
             <img
               src={tincture}
               alt="The Answer tincture bottle by MKRC"
-              className="max-w-[280px] md:max-w-[340px] object-contain"
+              className="howto-section__img"
             />
           </ScrollReveal>
         </div>
       </section>
 
       {/* ===== 7. FINAL CTA ===== */}
-      <section id="purchase" className="mkrc-section text-center">
+      <section id="purchase" className="final-cta">
         <ScrollReveal>
-          <SectionLabel text="Make It Yours" showLine={false} />
+          <SectionLabel text="Your Immune System Deserves The Answer" showLine={false} />
           <h2 className="mkrc-display text-3xl md:text-4xl mb-4">
-            Your Body Already Knows How to Heal.<br />Give it The Answer.
+            Join Thousands Who've Made The Answer Their Daily Ritual.
           </h2>
-          <p className="mb-8 max-w-xl mx-auto" style={{ color: "var(--mkrc-text-secondary)" }}>
-            Join thousands who've made this Caribbean-crafted tincture their daily ritual.
+          <div className="final-cta__stars">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={20} fill="currentColor" />
+            ))}
+          </div>
+          <p className="final-cta__testimonial">
+            "I've been taking The Answer for over a year now. I haven't been sick once. This is real herbal medicine — from people who truly understand the craft."
           </p>
+          <p className="final-cta__attribution">— Verified Customer</p>
           <img
             src={heroBottle}
             alt="The Answer bottle"
-            className="max-w-[200px] mx-auto mb-8 object-contain"
+            className="final-cta__bottle"
           />
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="final-cta__actions">
             <a
               href="https://mountkailashslu.com/?add-to-cart=90"
               target="_blank"
               rel="noopener noreferrer"
               className="mkrc-btn-primary"
             >
-              Add to Cart
+              Get The Answer Now <ArrowRight size={16} />
             </a>
             <a
               href="https://mountkailashslu.com/shop/"
@@ -470,13 +374,14 @@ export default function TheAnswer() {
               rel="noopener noreferrer"
               className="mkrc-btn-secondary"
             >
-              Explore All Products
+              Browse All Products
             </a>
           </div>
-          <p className="text-sm" style={{ color: "var(--mkrc-text-secondary)" }}>
-            <span style={{ color: "var(--mkrc-accent-gold)" }}>★★★★★</span>{" "}
-            Trusted by thousands across the Caribbean and beyond.
-          </p>
+          <div className="final-cta__badges">
+            {["Vegan", "Non-GMO", "Saint Lucia"].map((b) => (
+              <span key={b} className="final-cta__badge mkrc-label">{b}</span>
+            ))}
+          </div>
         </ScrollReveal>
       </section>
 
