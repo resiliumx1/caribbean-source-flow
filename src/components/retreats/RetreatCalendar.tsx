@@ -28,7 +28,7 @@ const EXCHANGE_RATE = 2.70;
 
 export function RetreatCalendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedType, setSelectedType] = useState<"group" | "solo">("group");
+  const [selectedType, setSelectedType] = useState<"group" | "solo">("solo");
   const [selectedRange, setSelectedRange] = useState<{
     start: Date | null;
     end: Date | null;
@@ -189,17 +189,6 @@ export function RetreatCalendar() {
             {/* Type Toggle */}
             <div className="flex gap-2 mb-6">
               <Button
-                variant={selectedType === "group" ? "default" : "outline"}
-                onClick={() => {
-                  setSelectedType("group");
-                  setSelectedRange({ start: null, end: null });
-                }}
-                className="flex-1"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Group Immersion
-              </Button>
-              <Button
                 variant={selectedType === "solo" ? "default" : "outline"}
                 onClick={() => {
                   setSelectedType("solo");
@@ -209,6 +198,17 @@ export function RetreatCalendar() {
               >
                 <User className="w-4 h-4 mr-2" />
                 Solo Retreat
+              </Button>
+              <Button
+                variant={selectedType === "group" ? "default" : "outline"}
+                onClick={() => {
+                  setSelectedType("group");
+                  setSelectedRange({ start: null, end: null });
+                }}
+                className="flex-1"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Group Immersion
               </Button>
             </div>
 

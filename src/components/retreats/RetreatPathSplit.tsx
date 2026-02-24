@@ -192,7 +192,7 @@ export function RetreatPathSplit() {
             </div>
 
             <Button onClick={scrollToCalendar} className="w-full bg-[#3d6b4f] hover:bg-[#4a7d5d] text-white border-0" size="lg">
-              View 2025 Dates
+              View 2026 Dates
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>

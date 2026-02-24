@@ -654,6 +654,7 @@ export type Database = {
           id: string
           is_published: boolean
           price_override_usd: number | null
+          promo_label: string | null
           retreat_type_id: string
           spots_booked: number
           spots_total: number
@@ -666,6 +667,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           price_override_usd?: number | null
+          promo_label?: string | null
           retreat_type_id: string
           spots_booked?: number
           spots_total?: number
@@ -678,6 +680,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           price_override_usd?: number | null
+          promo_label?: string | null
           retreat_type_id?: string
           spots_booked?: number
           spots_total?: number
@@ -698,6 +701,7 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          custom_category_label: string | null
           description: string | null
           display_order: number
           id: string
@@ -708,6 +712,7 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
+          custom_category_label?: string | null
           description?: string | null
           display_order?: number
           id?: string
@@ -718,6 +723,7 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          custom_category_label?: string | null
           description?: string | null
           display_order?: number
           id?: string

@@ -41,6 +41,7 @@ export default function AdminLayout() {
             <nav className="flex items-center gap-4 ml-8">
               <a href="/admin/products" className="text-sm hover:text-primary transition-colors">Products</a>
               <a href="/admin/retreats" className="text-sm hover:text-primary transition-colors">Retreats</a>
+              <a href="/admin/retreat-dates" className="text-sm hover:text-primary transition-colors">Retreat Dates</a>
               <a href="/admin/reviews" className="text-sm hover:text-primary transition-colors">Reviews</a>
             </nav>
           </div>

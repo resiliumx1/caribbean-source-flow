@@ -50,7 +50,7 @@ export function GroupRetreatsList() {
       <div className="container mx-auto max-w-4xl px-4">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-3">
-            2025 Group Retreat Dates
+            2026 Group Retreat Dates
           </h2>
           <p className="text-muted-foreground">
             7-day immersive experiences. Limited to 10 guests per retreat.
@@ -123,12 +123,16 @@ export function GroupRetreatsList() {
                     </div>
                   </div>
 
-                  {/* Availability badge */}
-                  {spotsLeft > 0 && spotsLeft <= 3 && (
+                  {/* Promo label from admin or availability badge */}
+                  {(retreat as any).promo_label ? (
+                    <Badge variant="secondary" className="mt-3 bg-primary/10 text-primary">
+                      {(retreat as any).promo_label}
+                    </Badge>
+                  ) : spotsLeft > 0 && spotsLeft <= 3 ? (
                     <Badge variant="secondary" className="mt-3 bg-amber-100 text-amber-800">
                       Only {spotsLeft} spots left – Book soon!
                     </Badge>
-                  )}
+                  ) : null}
                 </button>
               );
             })

@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, X, Image as ImageIcon, Loader2, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { compressImage } from "@/lib/image-utils";
 
 interface ProductImageUploadProps {
   productId: string;
@@ -69,9 +70,13 @@ export default function ProductImageUpload({
     setUploadProgress(0);
 
     try {
-      // Create unique filename
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${productId}-${slotIndex}-${Date.now()}.${fileExt}`;
+      // Compress image before upload
+      const compressed = await compressImage(file, { maxWidth: 1200, maxHeight: 1200 });
+
+      // Create SEO-friendly filename
+      const slug = productName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const fileExt = compressed.name.split(".").pop();
+      const fileName = `${slug}-${slotIndex}-${Date.now()}.${fileExt}`;
       const filePath = `products/${fileName}`;
 
       // Simulate progress
@@ -82,7 +87,7 @@ export default function ProductImageUpload({
       // Upload to storage
       const { error: uploadError } = await supabase.storage
         .from("product-images")
-        .upload(filePath, file, {
+        .upload(filePath, compressed, {
           cacheControl: "3600",
           upsert: true,
         });
@@ -358,8 +363,9 @@ function ImageSlotComponent({
           </button>
         </div>
 
-        {/* Upload replacement overlay */}
-        <label className="absolute inset-0 cursor-pointer opacity-0">
+        {/* Replace button in hover overlay */}
+        <label className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer bg-white/90 text-foreground text-[10px] font-medium px-2 py-1 rounded hover:bg-white z-10">
+          Replace
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
