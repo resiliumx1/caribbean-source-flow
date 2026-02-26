@@ -1,42 +1,30 @@
 
 
-# WooCommerce Integration — Implementation Plan
+## Retry WooCommerce Sync
 
-## Step 1: Store WooCommerce Secrets
-Save three secrets securely in the backend:
-- `WOO_CONSUMER_KEY` — your consumer key (provided)
-- `WOO_CONSUMER_SECRET` — your consumer secret (provided)
-- `WOO_STORE_URL` — `https://mountkailashslu.com`
+Now that you have Administrator access on both sites, we need to:
 
-## Step 2: Create `woo-sync` Edge Function
-A backend function that:
-- Connects to `https://mountkailashslu.com/wp-json/wc/v3/products` using your API credentials
-- Fetches all WooCommerce products (paginated, 100 per page)
-- For each product, upserts into your existing `products` table:
-  - Name, description, short description, images
-  - USD price from WooCommerce, XCD auto-calculated at 2.70x
-  - Stock status mapping (publish/draft to in_stock/out_of_stock)
-  - Category matching (creates categories if needed)
-- Uses the service role key to bypass RLS for admin-level writes
-- Protected so only admins can trigger it
+1. **Update the WooCommerce API secrets** with freshly generated keys from your WordPress admin (WooCommerce → Settings → Advanced → REST API → Add Key, with Read/Write permissions and an Administrator user).
 
-## Step 3: Create `woo-order` Edge Function
-A backend function that:
-- Accepts cart items and customer info from your Lovable checkout
-- Creates a corresponding order in WooCommerce via the REST API
-- Returns the WooCommerce order ID and checkout/payment URL
-- Customer gets redirected to WooCommerce for payment processing
+2. **Redeploy and test the woo-sync function** to confirm the 401 error is resolved and products sync successfully.
 
-## Step 4: Add "Sync from WooCommerce" Button
-Update the Admin Products page (`/admin/products`) to include a sync button in the header area that:
-- Calls the `woo-sync` function
-- Shows a loading spinner while syncing
-- Displays a success/error toast with count of products synced
-- Sits next to the existing "Add Product" button
+3. **Verify synced products** appear correctly in the database with proper pricing, images, and WooCommerce IDs.
 
-## Technical Notes
-- Both edge functions use `verify_jwt = false` in config.toml with in-code auth validation
-- The sync function uses WooCommerce Basic Auth (consumer key/secret as query params for HTTPS)
-- Product slug matching prevents duplicates during sync
-- No database schema changes needed — the existing `products` table has all required fields
+### What you need to do first
+
+Before I can proceed, please:
+1. Go to your WordPress admin at **mountkailashslu.com/wp-admin**
+2. Navigate to **WooCommerce → Settings → Advanced → REST API**
+3. Click **Add Key**
+4. Set **Description** to `Lovable Store Integration`, **User** to your admin account, **Permissions** to **Read/Write**
+5. Click **Generate API Key**
+6. Copy both the **Consumer Key** and **Consumer Secret** immediately (the secret is only shown once)
+
+Once approved, I will prompt you to enter the new keys and then test the sync.
+
+### Technical Details
+
+- The `woo-sync` edge function will be redeployed after updating secrets
+- A test call will be made to verify the WooCommerce API responds with product data
+- The `woo-order` function will also be tested to confirm order creation works end-to-end
 
