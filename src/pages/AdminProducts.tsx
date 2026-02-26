@@ -22,7 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProductImageUpload from "@/components/admin/ProductImageUpload";
-import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X, Trash2 } from "lucide-react";
+import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X, Trash2, RefreshCw } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -67,6 +67,7 @@ const PRODUCT_TYPES = [
 export default function AdminProducts() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [editingName, setEditingName] = useState<string | null>(null);
   const [editNameValue, setEditNameValue] = useState("");
   const [editingPrice, setEditingPrice] = useState<string | null>(null);
@@ -238,9 +239,49 @@ export default function AdminProducts() {
           <p className="text-muted-foreground mt-1">Manage products, images, and badges</p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2"><Plus className="w-4 h-4" />Add Product</Button>
-          </DialogTrigger>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              className="gap-2"
+              disabled={isSyncing}
+              onClick={async () => {
+                setIsSyncing(true);
+                try {
+                  const { data: sessionData } = await supabase.auth.getSession();
+                  const token = sessionData?.session?.access_token;
+                  if (!token) throw new Error("Not authenticated");
+                  const res = await fetch(
+                    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/woo-sync`,
+                    {
+                      method: "POST",
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                      },
+                    }
+                  );
+                  const result = await res.json();
+                  if (!res.ok) throw new Error(result.error || "Sync failed");
+                  toast({
+                    title: "WooCommerce Sync Complete",
+                    description: `${result.synced} products synced (${result.created} new, ${result.updated} updated)${result.errors.length ? `, ${result.errors.length} errors` : ""}`,
+                  });
+                  queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+                  queryClient.invalidateQueries({ queryKey: ["products"] });
+                } catch (e: any) {
+                  toast({ title: "Sync Failed", description: e.message, variant: "destructive" });
+                } finally {
+                  setIsSyncing(false);
+                }
+              }}
+            >
+              {isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+              {isSyncing ? "Syncing..." : "Sync from WooCommerce"}
+            </Button>
+            <DialogTrigger asChild>
+              <Button className="gap-2"><Plus className="w-4 h-4" />Add Product</Button>
+            </DialogTrigger>
+          </div>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader><DialogTitle>Add New Product</DialogTitle></DialogHeader>
             <div className="space-y-4 pt-4">
