@@ -34,10 +34,6 @@ export function CategoryNav() {
 
       {categories?.map((category) => {
         const isActive = currentPath === `/shop/category/${category.slug}`;
-        const isBundles = category.slug === "curated-bundles";
-
-        // Skip bundles category
-        if (isBundles) return null;
 
         return (
           <Link
