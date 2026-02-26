@@ -129,6 +129,7 @@ Deno.serve(async (req) => {
     let synced = 0;
     let created = 0;
     let updated = 0;
+    let images_preserved = 0;
     const errors: string[] = [];
 
     for (const woo of allWooProducts) {
@@ -198,11 +199,18 @@ Deno.serve(async (req) => {
         // Check if product exists by slug
         const { data: existing } = await adminClient
           .from("products")
-          .select("id")
+          .select("id, image_url")
           .eq("slug", woo.slug)
           .maybeSingle();
 
         if (existing) {
+          // Preserve custom images (stored in Supabase storage)
+          const hasCustomImage = existing.image_url?.includes('supabase.co');
+          if (hasCustomImage) {
+            delete productData.image_url;
+            delete productData.additional_images;
+            images_preserved++;
+          }
           await adminClient
             .from("products")
             .update(productData)
@@ -225,6 +233,7 @@ Deno.serve(async (req) => {
         synced,
         created,
         updated,
+        images_preserved,
         errors,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
