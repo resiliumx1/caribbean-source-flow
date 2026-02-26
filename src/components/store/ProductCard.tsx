@@ -108,7 +108,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
         </div>
 
         {/* Quick View Overlay - appears on hover */}
-        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+        <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <Button
             variant="secondary"
             size="sm"

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ProductPlaceholder } from "./ProductPlaceholder";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
-import { ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductGalleryProps {
   primaryImage: string | null;
@@ -56,12 +56,23 @@ export function ProductGallery({
           className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
         />
 
-        {/* Zoom indicator overlay */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
-          <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
-            <ZoomIn className="w-6 h-6 text-foreground" />
-          </div>
-        </div>
+        {/* Navigation arrows */}
+        {allImages.length > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); setSelectedIndex((i) => (i - 1 + allImages.length) % allImages.length); }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+            >
+              <ChevronLeft className="w-5 h-5 text-foreground" />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setSelectedIndex((i) => (i + 1) % allImages.length); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm rounded-full p-2 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+            >
+              <ChevronRight className="w-5 h-5 text-foreground" />
+            </button>
+          </>
+        )}
 
         {/* Image counter */}
         {allImages.length > 1 && (

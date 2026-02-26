@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Plus, Trash2, Star, GripVertical, Upload, X } from "lucide-react";
+import { Plus, Trash2, Star, Upload, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,6 +29,9 @@ export default function AdminRetreats() {
   const { data: images = [], isLoading } = useRetreatGallery();
   const { uploadImage, updateImage, deleteImage } = useRetreatGalleryMutations();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingImage, setEditingImage] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
   const [uploadForm, setUploadForm] = useState({
     file: null as File | null,
     title: "",
@@ -74,6 +77,17 @@ export default function AdminRetreats() {
     if (confirm("Are you sure you want to delete this image?")) {
       deleteImage.mutate(id);
     }
+  };
+
+  const handleStartEdit = (image: any) => {
+    setEditingImage(image.id);
+    setEditTitle(image.title || "");
+    setEditDescription(image.description || "");
+  };
+
+  const handleSaveEdit = (id: string) => {
+    updateImage.mutate({ id, title: editTitle || null, description: editDescription || null });
+    setEditingImage(null);
   };
 
   const getCategoryColor = (category: string) => {
@@ -302,6 +316,14 @@ export default function AdminRetreats() {
                 <Button
                   variant="secondary"
                   size="icon"
+                  onClick={() => handleStartEdit(image)}
+                  className="w-10 h-10"
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="icon"
                   onClick={() => handleToggleFeatured(image.id, image.is_featured)}
                   className="w-10 h-10"
                 >
@@ -319,13 +341,43 @@ export default function AdminRetreats() {
                 </Button>
               </div>
 
-              {/* Info */}
-              {image.title && (
-                <div className="p-3">
-                  <p className="text-sm font-medium text-foreground line-clamp-1">
-                    {image.title}
-                  </p>
+              {/* Info / Edit */}
+              {editingImage === image.id ? (
+                <div className="p-3 space-y-2">
+                  <Input
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    placeholder="Title"
+                    className="h-7 text-xs"
+                    autoFocus
+                  />
+                  <Textarea
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                    placeholder="Description"
+                    rows={2}
+                    className="text-xs"
+                  />
+                  <div className="flex gap-1">
+                    <Button size="sm" className="h-6 text-xs" onClick={() => handleSaveEdit(image.id)}>Save</Button>
+                    <Button size="sm" variant="ghost" className="h-6 text-xs" onClick={() => setEditingImage(null)}>Cancel</Button>
+                  </div>
                 </div>
+              ) : (
+                (image.title || image.description) && (
+                  <div className="p-3">
+                    {image.title && (
+                      <p className="text-sm font-medium text-foreground line-clamp-1">
+                        {image.title}
+                      </p>
+                    )}
+                    {image.description && (
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {image.description}
+                      </p>
+                    )}
+                  </div>
+                )
               )}
             </div>
           ))}

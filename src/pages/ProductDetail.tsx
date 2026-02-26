@@ -426,7 +426,7 @@ export default function ProductDetail() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground">International Shipping</p>
-                      <p>Ships worldwide from St. Lucia within 3-5 business days via courier.</p>
+                      <p>3-5 day shipping from U.S. for all international orders.</p>
                       <p>Tracking provided for all orders.</p>
                     </div>
                   </div>
