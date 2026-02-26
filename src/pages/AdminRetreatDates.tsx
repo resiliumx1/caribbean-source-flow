@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -27,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Trash2, Calendar, Loader2 } from "lucide-react";
+import { Plus, Trash2, Calendar, Loader2, Pencil, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const PROMO_LABELS = [
@@ -42,6 +41,8 @@ export default function AdminRetreatDates() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
+  const [editPriceValue, setEditPriceValue] = useState("");
   const [form, setForm] = useState({
     start_date: "",
     end_date: "",
@@ -130,6 +131,27 @@ export default function AdminRetreatDates() {
       queryClient.invalidateQueries({ queryKey: ["retreat-dates"] });
     },
   });
+
+  const updatePrice = useMutation({
+    mutationFn: async ({ id, price }: { id: string; price: number | null }) => {
+      const { error } = await supabase
+        .from("retreat_dates")
+        .update({ price_override_usd: price } as any)
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-retreat-dates"] });
+      queryClient.invalidateQueries({ queryKey: ["retreat-dates"] });
+      toast({ title: "Price updated" });
+      setEditingPriceId(null);
+    },
+  });
+
+  const handleSavePrice = (id: string) => {
+    const val = editPriceValue.trim();
+    updatePrice.mutate({ id, price: val ? parseFloat(val) : null });
+  };
 
   const groupDates = dates.filter((d) => {
     const rt = d.retreat_types as any;
@@ -228,7 +250,32 @@ export default function AdminRetreatDates() {
                   {format(new Date(d.start_date), "MMM d")} – {format(new Date(d.end_date), "MMM d, yyyy")}
                 </TableCell>
                 <TableCell>{d.spots_booked}/{d.spots_total}</TableCell>
-                <TableCell>{d.price_override_usd ? `$${d.price_override_usd}` : "Default"}</TableCell>
+                <TableCell>
+                  {editingPriceId === d.id ? (
+                    <div className="flex items-center gap-1">
+                      <Input
+                        value={editPriceValue}
+                        onChange={(e) => setEditPriceValue(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") handleSavePrice(d.id); if (e.key === "Escape") setEditingPriceId(null); }}
+                        placeholder="Default"
+                        type="number"
+                        step="0.01"
+                        className="h-7 w-24 text-xs"
+                        autoFocus
+                      />
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleSavePrice(d.id)}><Check className="w-3 h-3" /></Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => setEditingPriceId(null)}><X className="w-3 h-3" /></Button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setEditingPriceId(d.id); setEditPriceValue(d.price_override_usd ? String(d.price_override_usd) : ""); }}
+                      className="flex items-center gap-1 text-sm hover:text-foreground text-muted-foreground"
+                    >
+                      {d.price_override_usd ? `$${d.price_override_usd}` : "Default"}
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                  )}
+                </TableCell>
                 <TableCell>
                   <Select
                     value={(d as any).promo_label || "none"}

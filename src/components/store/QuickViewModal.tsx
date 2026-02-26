@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, Star, Check, X, Plus, Minus } from "lucide-react";
+import { ShoppingBag, Star, Check, X, Plus, Minus, ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductPlaceholder } from "./ProductPlaceholder";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
@@ -19,8 +19,13 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
   const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   if (!product) return null;
+
+  const allImages = [product.image_url, ...((product as any).additional_images || [])].filter(
+    (url): url is string => !!url
+  );
 
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
 
@@ -56,9 +61,9 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
         <div className="grid md:grid-cols-2 gap-0">
           {/* Product Image */}
           <div className="relative bg-muted/30 p-8 flex items-center justify-center min-h-[400px]">
-            {product.image_url ? (
+            {allImages.length > 0 ? (
               <img
-                src={product.image_url}
+                src={allImages[selectedImageIndex]}
                 alt={product.name}
                 className="max-w-full max-h-[350px] object-contain"
               />
@@ -69,17 +74,33 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
               />
             )}
 
+            {/* Navigation arrows */}
+            {allImages.length > 1 && (
+              <>
+                <button
+                  onClick={() => setSelectedImageIndex((i) => (i - 1 + allImages.length) % allImages.length)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-background transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5 text-foreground" />
+                </button>
+                <button
+                  onClick={() => setSelectedImageIndex((i) => (i + 1) % allImages.length)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-background transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5 text-foreground" />
+                </button>
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                  {selectedImageIndex + 1} / {allImages.length}
+                </div>
+              </>
+            )}
+
             {/* Badge */}
             {product.badge && (
               <Badge className={`absolute top-4 left-4 ${product.badge === "best_seller" ? "bg-orange-500 text-white" : "bg-accent text-accent-foreground"}`}>
                 {getBadgeLabel(product.badge)}
               </Badge>
             )}
-
-            {/* Decorative check */}
-            <div className="absolute bottom-4 right-4 text-forest/20">
-              <Check className="w-16 h-16" />
-            </div>
           </div>
 
           {/* Product Details */}

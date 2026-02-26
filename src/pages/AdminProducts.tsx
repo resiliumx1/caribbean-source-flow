@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -21,7 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProductImageUpload from "@/components/admin/ProductImageUpload";
-import { Search, Package, ImageIcon, Loader2, Plus } from "lucide-react";
+import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Product } from "@/hooks/use-products";
 
@@ -50,6 +51,13 @@ const PRODUCT_TYPES = [
 export default function AdminProducts() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingName, setEditingName] = useState<string | null>(null);
+  const [editNameValue, setEditNameValue] = useState("");
+  const [editingPrice, setEditingPrice] = useState<string | null>(null);
+  const [editPriceUsd, setEditPriceUsd] = useState("");
+  const [editPriceXcd, setEditPriceXcd] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkCategoryId, setBulkCategoryId] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -117,6 +125,19 @@ export default function AdminProducts() {
     onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
+  const updateProduct = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Record<string, any> }) => {
+      const { error } = await supabase.from("products").update(updates).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast({ title: "Product updated" });
+    },
+    onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
   const updateBadge = useMutation({
     mutationFn: async ({ id, badge }: { id: string; badge: string | null }) => {
       const { error } = await supabase.from("products").update({ badge }).eq("id", id);
@@ -128,6 +149,21 @@ export default function AdminProducts() {
     },
   });
 
+  const bulkUpdateCategory = useMutation({
+    mutationFn: async ({ ids, category_id }: { ids: string[]; category_id: string }) => {
+      const { error } = await supabase.from("products").update({ category_id }).in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast({ title: `${selectedIds.size} products updated` });
+      setSelectedIds(new Set());
+      setBulkCategoryId("");
+    },
+    onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
   const filteredProducts = products?.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     product.slug.toLowerCase().includes(searchQuery.toLowerCase())
@@ -137,6 +173,29 @@ export default function AdminProducts() {
     queryClient.invalidateQueries({ queryKey: ["admin-products"] });
     queryClient.invalidateQueries({ queryKey: ["products"] });
     queryClient.invalidateQueries({ queryKey: ["product"] });
+  };
+
+  const handleSaveName = (id: string) => {
+    if (!editNameValue.trim()) return;
+    const slug = editNameValue.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    updateProduct.mutate({ id, updates: { name: editNameValue.trim(), slug } });
+    setEditingName(null);
+  };
+
+  const handleSavePrice = (id: string) => {
+    const usd = parseFloat(editPriceUsd);
+    const xcd = parseFloat(editPriceXcd);
+    if (isNaN(usd)) return;
+    updateProduct.mutate({ id, updates: { price_usd: usd, price_xcd: isNaN(xcd) ? usd * 2.7 : xcd } });
+    setEditingPrice(null);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   };
 
   const productsWithImages = products?.filter((p) => p.image_url).length ?? 0;
@@ -241,6 +300,23 @@ export default function AdminProducts() {
         </Card>
       </div>
 
+      {/* Bulk Action Bar */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 p-3 bg-primary/10 border border-primary/20 rounded-xl">
+          <span className="text-sm font-medium">{selectedIds.size} selected</span>
+          <Select value={bulkCategoryId} onValueChange={setBulkCategoryId}>
+            <SelectTrigger className="w-48 h-8 text-xs"><SelectValue placeholder="Assign category..." /></SelectTrigger>
+            <SelectContent>
+              {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Button size="sm" disabled={!bulkCategoryId || bulkUpdateCategory.isPending} onClick={() => bulkUpdateCategory.mutate({ ids: Array.from(selectedIds), category_id: bulkCategoryId })}>
+            Apply
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>Clear</Button>
+        </div>
+      )}
+
       {/* Search */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -255,15 +331,61 @@ export default function AdminProducts() {
           {filteredProducts?.map((product) => (
             <Card key={product.id} className="overflow-hidden">
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-base line-clamp-2">{product.name}</CardTitle>
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    checked={selectedIds.has(product.id)}
+                    onCheckedChange={() => toggleSelect(product.id)}
+                    className="mt-1"
+                  />
+                  <div className="flex-1 min-w-0">
+                    {/* Editable Name */}
+                    {editingName === product.id ? (
+                      <div className="flex items-center gap-1">
+                        <Input
+                          value={editNameValue}
+                          onChange={(e) => setEditNameValue(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === "Enter") handleSaveName(product.id); if (e.key === "Escape") setEditingName(null); }}
+                          className="h-7 text-sm"
+                          autoFocus
+                        />
+                        <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => handleSaveName(product.id)}><Check className="w-3 h-3" /></Button>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => setEditingName(null)}><X className="w-3 h-3" /></Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 group/name">
+                        <CardTitle className="text-base line-clamp-2">{product.name}</CardTitle>
+                        <button onClick={() => { setEditingName(product.id); setEditNameValue(product.name); }} className="opacity-0 group-hover/name:opacity-100 transition-opacity shrink-0">
+                          <Pencil className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Editable Price */}
+                    {editingPrice === product.id ? (
+                      <div className="flex items-center gap-1 mt-1">
+                        <Input value={editPriceUsd} onChange={(e) => setEditPriceUsd(e.target.value)} placeholder="USD" className="h-6 text-xs w-20" type="number" step="0.01" autoFocus />
+                        <Input value={editPriceXcd} onChange={(e) => setEditPriceXcd(e.target.value)} placeholder="XCD" className="h-6 text-xs w-20" type="number" step="0.01" />
+                        <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0" onClick={() => handleSavePrice(product.id)}><Check className="w-3 h-3" /></Button>
+                        <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0" onClick={() => setEditingPrice(null)}><X className="w-3 h-3" /></Button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => { setEditingPrice(product.id); setEditPriceUsd(String(product.price_usd)); setEditPriceXcd(String(product.price_xcd)); }}
+                        className="text-xs text-muted-foreground hover:text-foreground mt-1 flex items-center gap-1"
+                      >
+                        ${product.price_usd} / EC${product.price_xcd}
+                        <Pencil className="w-3 h-3 opacity-0 group-hover:opacity-100" />
+                      </button>
+                    )}
+
+                    <p className="text-sm text-muted-foreground">{product.product_categories?.name ?? "Uncategorized"}</p>
+                  </div>
                   {product.image_url ? (
                     <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 shrink-0">Has Image</Badge>
                   ) : (
                     <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 shrink-0">No Image</Badge>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">{product.product_categories?.name ?? "Uncategorized"}</p>
                 {/* Inline badge editor */}
                 <Select
                   value={product.badge || "none"}
