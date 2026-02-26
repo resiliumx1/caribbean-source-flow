@@ -46,6 +46,10 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
         return "New";
       case "staff_pick":
         return "Staff Pick";
+      case "bulk":
+        return "Bulk";
+      case "popular":
+        return "Popular";
       default:
         return badge;
     }
