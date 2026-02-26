@@ -35,6 +35,8 @@ const BADGE_OPTIONS = [
   { value: "low_stock", label: "Low Stock" },
   { value: "recently_restocked", label: "Back in Stock" },
   { value: "limited_edition", label: "Limited Edition" },
+  { value: "bulk", label: "Bulk" },
+  { value: "popular", label: "Popular" },
 ];
 
 const PRODUCT_TYPES = [

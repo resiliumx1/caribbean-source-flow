@@ -38,6 +38,8 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
       case "low_stock": return "Low Stock";
       case "recently_restocked": return "Back in Stock";
       case "limited_edition": return "Limited Edition";
+      case "bulk": return "Bulk";
+      case "popular": return "Popular";
       default: return badge;
     }
   };
@@ -51,6 +53,8 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge }: Produ
       case "recently_restocked": return "bg-emerald-600 text-white";
       case "limited_edition": return "bg-purple-600 text-white";
       case "100_natural": return "bg-emerald-600 text-white";
+      case "bulk": return "bg-teal-600 text-white";
+      case "popular": return "bg-blue-600 text-white";
       default: return "bg-forest text-cream";
     }
   };
