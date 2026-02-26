@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { ShopHero } from "@/components/store/ShopHero";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -8,12 +8,27 @@ import { QuickViewModal } from "@/components/store/QuickViewModal";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
 import { useProducts, useCategories, type Product } from "@/hooks/use-products";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 
 export default function Shop() {
   const { categorySlug } = useParams();
   const { data: products, isLoading } = useProducts(categorySlug);
   const { data: categories } = useCategories();
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+    if (!searchQuery.trim()) return products;
+    const q = searchQuery.toLowerCase();
+    return products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.short_description?.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q)
+    );
+  }, [products, searchQuery]);
 
   const currentCategory = categories?.find((c) => c.slug === categorySlug);
 
@@ -41,6 +56,25 @@ export default function Shop() {
           </div>
         )}
 
+        {/* Search bar */}
+        <div className="relative max-w-md mx-auto mb-8">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-10 rounded-full"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
         {/* Category navigation */}
         <div className="mb-12">
           <CategoryNav />
@@ -58,11 +92,10 @@ export default function Shop() {
               </div>
             ))}
           </div>
-        ) : products && products.length > 0 ? (
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {products.map((product, index) => {
-              // Products with images that appear first get Best Seller badge (only in "All" view)
-              const showBestSellerBadge = !categorySlug && !!product.image_url && index < 6;
+            {filteredProducts.map((product, index) => {
+              const showBestSellerBadge = !categorySlug && !searchQuery && !!product.image_url && index < 6;
               return (
                 <ProductCard 
                   key={product.id} 
@@ -76,7 +109,7 @@ export default function Shop() {
         ) : (
           <div className="text-center py-16">
             <p className="text-lg text-muted-foreground">
-              No products found in this category.
+              {searchQuery ? `No products found for "${searchQuery}".` : "No products found in this category."}
             </p>
           </div>
         )}
