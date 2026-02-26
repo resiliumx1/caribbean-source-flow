@@ -83,7 +83,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    const baseApi = `${wooUrl}/wp-json/wc/v3`;
+    const baseApi = `${wooUrl.replace(/\/+$/, '')}/wp-json/wc/v3`;
+
+    console.log("DEBUG woo-sync: baseApi =", baseApi);
+    console.log("DEBUG woo-sync: wooKey starts with =", wooKey.substring(0, 10));
 
     // Fetch all products from WooCommerce (paginated)
     const allWooProducts: WooProduct[] = [];
@@ -92,9 +95,11 @@ Deno.serve(async (req) => {
 
     while (hasMore) {
       const url = `${baseApi}/products?consumer_key=${encodeURIComponent(wooKey)}&consumer_secret=${encodeURIComponent(wooSecret)}&per_page=100&page=${page}&status=publish`;
+      console.log("DEBUG woo-sync: fetching page", page);
       const res = await fetch(url);
       if (!res.ok) {
         const body = await res.text();
+        console.error("DEBUG woo-sync: response status =", res.status, "body =", body);
         throw new Error(`WooCommerce API error [${res.status}]: ${body}`);
       }
       const products: WooProduct[] = await res.json();
