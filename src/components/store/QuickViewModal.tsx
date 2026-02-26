@@ -217,10 +217,11 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
               {/* View Full Details Link */}
               <Link
                 to={`/shop/${product.slug}`}
-                className="block text-center text-sm text-primary hover:underline"
                 onClick={() => onOpenChange(false)}
               >
-                View Full Details →
+                <Button variant="outline" size="lg" className="w-full gap-2 font-semibold">
+                  View Full Details →
+                </Button>
               </Link>
             </div>
           </div>
