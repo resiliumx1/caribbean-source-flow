@@ -1,30 +1,61 @@
 
+Goal: Fix WooCommerce authentication from our side so your integration uses Basic Auth headers (the method your server accepts), then verify sync works end-to-end.
 
-## Retry WooCommerce Sync
+What I confirmed in your current code:
+1. `woo-sync` currently sends credentials in query params:
+   - `.../products?consumer_key=...&consumer_secret=...`
+2. `woo-order` also sends credentials in query params:
+   - `.../orders?consumer_key=...&consumer_secret=...`
+3. Your latest backend test still returns:
+   - `woocommerce_rest_cannot_view` (401)
+4. Database check confirms sync has not succeeded yet:
+   - `products` total: 49
+   - `woo_product_id` populated: 0
 
-Now that you have Administrator access on both sites, we need to:
+So yes — right now it is still using query-string auth in code, and that is the likely blocker.
 
-1. **Update the WooCommerce API secrets** with freshly generated keys from your WordPress admin (WooCommerce → Settings → Advanced → REST API → Add Key, with Read/Write permissions and an Administrator user).
+Implementation plan (on my side):
+1. Replace Woo auth mechanism in both backend functions
+   - Update `supabase/functions/woo-sync/index.ts`
+   - Update `supabase/functions/woo-order/index.ts`
+   - Build `Authorization: Basic <base64(ck_xxx:cs_xxx)>` header
+   - Remove `consumer_key` / `consumer_secret` from URLs entirely
+   - Keep HTTPS endpoint usage unchanged
 
-2. **Redeploy and test the woo-sync function** to confirm the 401 error is resolved and products sync successfully.
+2. Harden URL handling to avoid formatting pitfalls
+   - Normalize `WOO_STORE_URL` before building endpoint:
+     - trim spaces
+     - remove trailing slash
+     - strip accidental `/wp-json` or `/wc/v3` suffixes if present
+   - Always derive API root internally as:
+     - `<normalized-domain>/wp-json/wc/v3`
 
-3. **Verify synced products** appear correctly in the database with proper pricing, images, and WooCommerce IDs.
+3. Improve diagnostics safely
+   - Keep debug logging without exposing secrets
+   - Log:
+     - normalized base API URL
+     - auth mode used (`basic_header`)
+     - Woo status code and response body on failure
+   - Ensure no raw key/secret is logged
 
-### What you need to do first
+4. Verify the fix immediately after update
+   - Call `woo-sync` endpoint as admin
+   - Success criteria:
+     - no 401 from Woo
+     - response returns `synced/created/updated`
+   - Validate database outcome:
+     - `woo_product_id` is populated for synced products
+     - sample rows include name/slug/woo_product_id/image/prices
 
-Before I can proceed, please:
-1. Go to your WordPress admin at **mountkailashslu.com/wp-admin**
-2. Navigate to **WooCommerce → Settings → Advanced → REST API**
-3. Click **Add Key**
-4. Set **Description** to `Lovable Store Integration`, **User** to your admin account, **Permissions** to **Read/Write**
-5. Click **Generate API Key**
-6. Copy both the **Consumer Key** and **Consumer Secret** immediately (the secret is only shown once)
+5. Validate checkout integration path after sync
+   - Run a controlled `woo-order` backend test with a valid synced product
+   - Confirm Woo order creation returns `order_id`, `order_number`, `payment_url`
+   - If needed, use a non-production test item/customer details and report exact result
 
-Once approved, I will prompt you to enter the new keys and then test the sync.
+Expected outcome:
+- Sync and order creation will authenticate the same way Postman does (Basic Auth header), eliminating the query-auth mismatch that is causing your current 401.
 
-### Technical Details
-
-- The `woo-sync` edge function will be redeployed after updating secrets
-- A test call will be made to verify the WooCommerce API responds with product data
-- The `woo-order` function will also be tested to confirm order creation works end-to-end
-
+Technical notes:
+- No database schema changes required.
+- No frontend route changes required.
+- The fix is isolated to backend function request construction + URL normalization + safer logging.
