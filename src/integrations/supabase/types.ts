@@ -458,6 +458,7 @@ export type Database = {
           stock_status: string | null
           traditional_use: string | null
           updated_at: string | null
+          woo_product_id: number | null
         }
         Insert: {
           additional_images?: string[] | null
@@ -488,6 +489,7 @@ export type Database = {
           stock_status?: string | null
           traditional_use?: string | null
           updated_at?: string | null
+          woo_product_id?: number | null
         }
         Update: {
           additional_images?: string[] | null
@@ -518,6 +520,7 @@ export type Database = {
           stock_status?: string | null
           traditional_use?: string | null
           updated_at?: string | null
+          woo_product_id?: number | null
         }
         Relationships: [
           {
