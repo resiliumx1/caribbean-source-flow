@@ -23,6 +23,7 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
@@ -39,11 +40,11 @@ Deno.serve(async (req) => {
 
     // Parse request body
     const body = await req.json();
-    const { line_items, billing, shipping, payment_method, customer_note } = body;
+    const { items, billing, customer_note } = body;
 
-    if (!line_items || !Array.isArray(line_items) || line_items.length === 0) {
+    if (!items || !Array.isArray(items) || items.length === 0) {
       return new Response(
-        JSON.stringify({ error: "line_items is required" }),
+        JSON.stringify({ error: "items is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -67,10 +68,38 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Look up woo_product_id for each item from DB
+    const adminClient = createClient(supabaseUrl, supabaseServiceKey);
+    const productIds = items.map((i: any) => i.product_id);
+    const { data: products, error: prodErr } = await adminClient
+      .from("products")
+      .select("id, woo_product_id, name")
+      .in("id", productIds);
+
+    if (prodErr) throw new Error(`Failed to look up products: ${prodErr.message}`);
+
+    const productMap = new Map(
+      (products || []).map((p) => [p.id, p])
+    );
+
+    // Build WooCommerce line_items
+    const lineItems = items.map((item: any) => {
+      const product = productMap.get(item.product_id);
+      if (!product?.woo_product_id) {
+        throw new Error(
+          `Product "${product?.name || item.product_id}" has no WooCommerce ID. Run a sync first.`
+        );
+      }
+      return {
+        product_id: product.woo_product_id,
+        quantity: item.quantity || 1,
+      };
+    });
+
     // Create order in WooCommerce
     const orderData = {
-      payment_method: payment_method || "cod",
-      payment_method_title: payment_method === "cod" ? "Cash on Delivery" : payment_method,
+      payment_method: "cod",
+      payment_method_title: "Cash on Delivery",
       set_paid: false,
       billing: {
         first_name: billing.first_name || "",
@@ -84,12 +113,7 @@ Deno.serve(async (req) => {
         postcode: billing.postcode || "",
         country: billing.country || "LC",
       },
-      shipping: shipping || undefined,
-      line_items: line_items.map((item: any) => ({
-        product_id: item.product_id,
-        quantity: item.quantity || 1,
-        ...(item.variation_id ? { variation_id: item.variation_id } : {}),
-      })),
+      line_items: lineItems,
       customer_note: customer_note || "",
     };
 

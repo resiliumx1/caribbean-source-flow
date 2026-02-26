@@ -14,6 +14,7 @@ import Wholesale from "./pages/Wholesale";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import Retreats from "./pages/Retreats";
 import School from "./pages/School";
 import HerbalPhysicianCourse from "./pages/HerbalPhysicianCourse";
@@ -53,6 +54,7 @@ function AppContent() {
         <Route path="/shop/category/:categorySlug" element={<Shop />} />
         <Route path="/shop/:slug" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/compare" element={<ComparePage />} />
         <Route path="/retreats" element={<Retreats />} />
         <Route path="/school" element={<School />} />

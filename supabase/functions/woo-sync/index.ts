@@ -162,6 +162,7 @@ Deno.serve(async (req) => {
         const productData = {
           name: woo.name,
           slug: woo.slug,
+          woo_product_id: woo.id,
           product_type: woo.type === "simple" ? "tincture" : woo.type,
           category_id: categoryId,
           price_usd: woo.sale_price ? parseFloat(woo.sale_price) : priceUsd,
