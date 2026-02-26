@@ -1,125 +1,110 @@
 
 
-# Implementation Plan
+# Plan: Badge Categories, Price Corrections, and Arrow Verification
 
-## Overview
-This plan covers 7 changes across admin backend, shop frontend, and product detail pages.
+## 1. Add "Bulk" and "Popular" Badge Options
 
----
+**Files:** `src/pages/AdminProducts.tsx`, `src/components/store/ProductCard.tsx`, `src/components/store/QuickViewModal.tsx`
 
-## 1. Editable Product Names (Admin)
-Add inline name editing to each product card in `/admin/products`. An edit (pencil) icon next to the product name opens an input field. On blur or Enter, save the updated name and regenerate the slug.
+Add two new badge options to the `BADGE_OPTIONS` array and their corresponding display labels/colors:
+- `bulk` -- label: "Bulk", color: teal/cyan
+- `popular` -- label: "Popular", color: blue
 
-**Files:** `src/pages/AdminProducts.tsx`
-- Add an `updateProduct` mutation for name changes
-- Add inline edit state per product (click pencil icon to toggle input)
-- On save, update both `name` and `slug` in the database
+Update `getBadgeLabel()` and `getBadgeColor()` in ProductCard and QuickViewModal to handle these new values.
 
 ---
 
-## 2. Editable Product Pricing (Admin)
-Add inline price editing (USD and XCD) to each product card in the admin grid.
+## 2. Navigation Arrows -- Already Implemented (Explanation)
 
-**Files:** `src/pages/AdminProducts.tsx`
-- Show current USD/XCD prices below the product name
-- Click to edit with small input fields
-- Save via the same `updateProduct` mutation
+The chevron arrows and image counter (e.g., "1/3") ARE already coded in both:
+- **QuickViewModal** (lines 77-96): Left/right arrows + counter badge
+- **ProductGallery** (lines 59-82): Left/right arrows on hover + counter badge
 
----
+They only render when `allImages.length > 1`. Most products currently have only 1 uploaded image, so the arrows are hidden. Products with multiple images (The Answer, Virility Capsules, Dewormer, Fertility, Super Male Vitality Package, Nerve Tonic Capsules, Pure Green) should already show arrows.
 
-## 3. Editable Retreat Gallery Titles/Descriptions (Admin)
-Enable editing titles and descriptions of uploaded retreat images and videos after upload.
-
-**Files:** `src/pages/AdminRetreats.tsx`
-- Add an edit button in the hover overlay on each gallery image
-- Opens a small dialog or inline edit for title/description fields
-- Save via `updateImage` mutation (already exists)
+**No code changes needed** -- the feature works. If arrows aren't appearing on a specific product, it means that product needs additional images uploaded via the admin panel.
 
 ---
 
-## 4. Editable Retreat Date Pricing (Admin)
-Add inline price editing to the retreat dates table.
+## 3. Price Corrections from WooCommerce
 
-**Files:** `src/pages/AdminRetreatDates.tsx`
-- Make the Price column cells editable (click to toggle input)
-- Add an `updatePrice` mutation to update `price_override_usd`
+Update all product prices to match the live WooCommerce store at mountkailashslu.com/shop/. XCD will be calculated as USD x 2.70.
+
+Here is the full mapping (current price -> correct price):
+
+| Product | Current USD | WooCommerce USD | Change |
+|---------|------------|----------------|--------|
+| The Answer | $35.00 | $50.00 | Yes |
+| Pure Gold | $36.00 | $45.00 | Yes |
+| Pure Green | $34.00 | $45.00 | Yes |
+| Prosperity | $42.00 | $45.00 | Yes |
+| Dewormer | $32.00 | $42.00 | Yes |
+| Fey Duvan Syrup | $38.00 | $45.00 | Yes |
+| Blood Detox | $34.00 | $45.00 | Yes |
+| Tranquility | $35.00 | $60.00 | Yes |
+| Fertility | $38.00 | $45.00 | Yes |
+| Hemp Syrup | $40.00 | $90.00 | Yes |
+| Free Flow | $32.00 | $40.00 | Yes |
+| Colax | $28.00 | $45.00 | Yes |
+| Nerve Tonic Capsules | $45.00 | $100.00 | Yes |
+| Virility Male Tonic | $45.00 | $45.00 | No |
+| Virility Male Balance Capsules | $65.00 | $45.00 | Yes |
+| Virility Male Balance Tonic | $150.00 | $150.00 | No |
+| Male Vitality Package | $185.00 | $240.00 | Yes |
+| Super Male Vitality Package | $225.00 | $290.00 | Yes |
+| Super Female Wellness Package | $220.00 | $290.00 | Yes |
+| Male Potency Kit | $105.00 | $130.00 | Yes |
+| Feminine Balance Kit | $95.00 | $130.00 | Yes |
+| Immunity Kit | $90.00 | $140.00 | Yes |
+| Prostate Health Bundle | $140.00 | $150.00 | Yes |
+| Digestive Bundle | $85.00 | $155.00 | Yes |
+| Detox Bundle | $147.00 | $147.00 | No |
+| Queenly Tea Bundle | $99.00 | $99.00 | No |
+| Kingly Tea Bundle | $99.00 | $99.00 | No |
+| Virili-Tea | $22.00 | $33.00 | Yes |
+| Medina Tea | $16.00 | $35.00 | Yes |
+| Digestive Rescue Tea | $18.00 | $33.00 | Yes |
+| Urinary Cleanse Tea | $22.00 | $35.00 | Yes |
+| Restful Tea | $18.00 | $35.00 | Yes |
+| Moon Cycle Tea | $20.00 | $35.00 | Yes |
+| Soursop Leaves | $18.00 | $20.00 | Yes |
+| Blue Vervain | $16.00 | $20.00 | Yes |
+| St. John's Bush | $20.00 | $20.00 | No |
+| Cassia Alata | $18.00 | $20.00 | Yes |
+| Red Raspberry Leaf | $16.00 | $20.00 | Yes |
+| I Can | $40.00 | -- | Not on WC |
+| Digestive Rescue | $42.00 | -- | Not on WC |
+| Balance Moon Cycle System | $85.00 | -- | Not on WC |
+| Slim Now Powder | $48.00 | -- | Not on WC |
+| Bladderwrack Powder | $22.00 | -- | Not on WC |
+| Carpenter Bush | $18.00 | -- | Not on WC |
+| Cerasee | $15.00 | -- | Not on WC |
+| Dandelion Root | $14.00 | -- | Not on WC |
+| Patchouli | $14.00 | $115.00 (bulk/lb) | See note |
+| Stinging Nettle | $15.00 | -- | Not on WC |
+| Spanish Needle | $14.00 | -- | Not on WC |
+
+**Notes on discrepancies:**
+- Products marked "Not on WC" may be new additions or have different names on WooCommerce. Prices will be left as-is.
+- **Patchouli**: WooCommerce lists it at $115/lb (bulk). Our DB has it at $14 which appears to be a retail small-quantity price. Will update to $115 to match WooCommerce.
+- WooCommerce has products NOT yet in our database (Seamoss Soaps, Sea Capsules, The Rising of the Gods book, Herbal Manual, Priest Kailash Consultation, Gully Root products, Bay Leaf bulk, Female Wellness Package). These would need to be created separately -- flagging for your awareness.
 
 ---
 
-## 5. Bulk Category Assignment (Admin + Frontend)
-Add ability to select multiple products and assign them to a category in bulk.
+## Technical Implementation
 
-**Files:** `src/pages/AdminProducts.tsx`
-- Add checkboxes to each product card
-- Add a bulk action bar that appears when products are selected
-- Include a category dropdown and "Apply" button
-- Mutation updates `category_id` for all selected product IDs
-
----
-
-## 6. Navigation Arrows for Multiple Photos
-
-### Quick View Modal
-**Files:** `src/components/store/QuickViewModal.tsx`
-- Track `selectedImageIndex` state
-- Combine `image_url` + `additional_images` into an array
-- Add left/right ChevronLeft/ChevronRight arrow buttons over the image
-- Show image counter dots or "1/3" indicator
-
-### Product Detail Gallery
-**Files:** `src/components/store/ProductGallery.tsx`
-- Add left/right navigation arrows overlaying the main image (in addition to existing thumbnails)
-- Arrows appear on hover when multiple images exist
-
----
-
-## 7. Remove Hover Circle on Product Cards
-The "Quick View" button overlay on product cards includes a semi-transparent background. The request is to remove the circular zoom indicator that appears on hover.
-
-**Files:** `src/components/store/ProductCard.tsx`
-- The hover overlay (`bg-foreground/0 group-hover:bg-foreground/20`) with the "Quick View" button is fine to keep
-- No separate circle exists in ProductCard -- the circle is actually in `ProductGallery.tsx` (the ZoomIn icon in a white rounded-full container). But since ProductCard doesn't use ProductGallery, the "circle" is the Quick View button overlay effect. Will remove the darkening overlay background on product cards so only the button appears without the circle effect.
-
----
-
-## 8. Shipping Information Update
-Update international shipping text from current wording to "3-5 day shipping from U.S."
-
-**Files:** `src/pages/ProductDetail.tsx`
-- Line 429: Change "Ships worldwide from St. Lucia within 3-5 business days via courier." to "3-5 day shipping from U.S. for all international orders."
-
----
-
-## Technical Details
-
-### Mutations to add in `AdminProducts.tsx`:
+### Badge options (code change)
+Add to `BADGE_OPTIONS` in AdminProducts.tsx:
 ```typescript
-const updateProduct = useMutation({
-  mutationFn: async ({ id, updates }: { id: string; updates: Record<string, any> }) => {
-    const { error } = await supabase.from("products").update(updates).eq("id", id);
-    if (error) throw error;
-  },
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["admin-products"] });
-    queryClient.invalidateQueries({ queryKey: ["products"] });
-  },
-});
+{ value: "bulk", label: "Bulk" },
+{ value: "popular", label: "Popular" },
 ```
 
-### Bulk category update:
-```typescript
-const bulkUpdateCategory = useMutation({
-  mutationFn: async ({ ids, category_id }: { ids: string[]; category_id: string }) => {
-    const { error } = await supabase.from("products").update({ category_id }).in("id", ids);
-    if (error) throw error;
-  },
-});
-```
+Add to `getBadgeLabel` and `getBadgeColor` in ProductCard.tsx and QuickViewModal.tsx.
 
-### QuickView image navigation:
-- Build `allImages` array from `product.image_url` + `(product as any).additional_images`
-- Add `selectedImageIndex` state with ChevronLeft/ChevronRight arrows
-- Show arrow indicators only when `allImages.length > 1`
+### Price updates (database)
+Execute SQL UPDATE statements for each product using the slug as identifier. Each update sets both `price_usd` and `price_xcd` (USD x 2.70).
 
-### No database migrations needed -- all changes use existing schema.
+### No database migration needed
+All changes use existing columns and schema.
 
