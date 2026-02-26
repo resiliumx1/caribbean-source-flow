@@ -59,6 +59,8 @@ const PRODUCT_TYPES = [
   { value: "bundle", label: "Bundle" },
   { value: "seamoss", label: "Sea Moss" },
   { value: "soap", label: "Soap" },
+  { value: "book", label: "Book" },
+  { value: "raw_herb", label: "Raw Herb" },
   { value: "other", label: "Other" },
 ];
 
