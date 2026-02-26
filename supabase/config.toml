@@ -2,3 +2,9 @@ project_id = "mcwthjcpcajhvhwpuvvs"
 
 [functions.concierge-chat]
 verify_jwt = false
+
+[functions.woo-sync]
+verify_jwt = false
+
+[functions.woo-order]
+verify_jwt = false
