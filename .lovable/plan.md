@@ -1,61 +1,29 @@
 
-Goal: Fix WooCommerce authentication from our side so your integration uses Basic Auth headers (the method your server accepts), then verify sync works end-to-end.
 
-What I confirmed in your current code:
-1. `woo-sync` currently sends credentials in query params:
-   - `.../products?consumer_key=...&consumer_secret=...`
-2. `woo-order` also sends credentials in query params:
-   - `.../orders?consumer_key=...&consumer_secret=...`
-3. Your latest backend test still returns:
-   - `woocommerce_rest_cannot_view` (401)
-4. Database check confirms sync has not succeeded yet:
-   - `products` total: 49
-   - `woo_product_id` populated: 0
+## Fix WooCommerce Sync to Preserve Custom Images
 
-So yes — right now it is still using query-string auth in code, and that is the likely blocker.
+### Problem
+The `woo-sync` function unconditionally overwrites `image_url` and `additional_images` on every sync run. This replaced your custom-uploaded images (stored in Lovable Cloud storage) with WooCommerce stock photos.
 
-Implementation plan (on my side):
-1. Replace Woo auth mechanism in both backend functions
-   - Update `supabase/functions/woo-sync/index.ts`
-   - Update `supabase/functions/woo-order/index.ts`
-   - Build `Authorization: Basic <base64(ck_xxx:cs_xxx)>` header
-   - Remove `consumer_key` / `consumer_secret` from URLs entirely
-   - Keep HTTPS endpoint usage unchanged
+### What Will Change
 
-2. Harden URL handling to avoid formatting pitfalls
-   - Normalize `WOO_STORE_URL` before building endpoint:
-     - trim spaces
-     - remove trailing slash
-     - strip accidental `/wp-json` or `/wc/v3` suffixes if present
-   - Always derive API root internally as:
-     - `<normalized-domain>/wp-json/wc/v3`
+**One file modified: `supabase/functions/woo-sync/index.ts`**
 
-3. Improve diagnostics safely
-   - Keep debug logging without exposing secrets
-   - Log:
-     - normalized base API URL
-     - auth mode used (`basic_header`)
-     - Woo status code and response body on failure
-   - Ensure no raw key/secret is logged
+1. Update the existing product lookup (line 201) to also fetch `image_url`:
+   - Change `.select("id")` to `.select("id, image_url")`
 
-4. Verify the fix immediately after update
-   - Call `woo-sync` endpoint as admin
-   - Success criteria:
-     - no 401 from Woo
-     - response returns `synced/created/updated`
-   - Validate database outcome:
-     - `woo_product_id` is populated for synced products
-     - sample rows include name/slug/woo_product_id/image/prices
+2. When updating an existing product, check if it already has a custom image (URL contains `supabase.co`). If so, skip overwriting the image fields:
+   - Build `productData` without `image_url` and `additional_images` when a custom image exists
+   - Only set images from WooCommerce for new products or products that don't have custom images
 
-5. Validate checkout integration path after sync
-   - Run a controlled `woo-order` backend test with a valid synced product
-   - Confirm Woo order creation returns `order_id`, `order_number`, `payment_url`
-   - If needed, use a non-production test item/customer details and report exact result
+3. Add a `images_preserved` counter to the response so you can see how many products kept their custom images after each sync.
 
-Expected outcome:
-- Sync and order creation will authenticate the same way Postman does (Basic Auth header), eliminating the query-auth mismatch that is causing your current 401.
+### What This Does NOT Do
+- It cannot automatically restore the images that were already overwritten -- those database references are gone. You will need to re-upload images for affected products via the Admin Products page.
+- It does not change any frontend code or database schema.
 
-Technical notes:
-- No database schema changes required.
-- No frontend route changes required.
-- The fix is isolated to backend function request construction + URL normalization + safer logging.
+### After Implementation
+- Future syncs will update prices, descriptions, stock status, and categories without touching your custom photos.
+- Products that still have WooCommerce images (or no images) will continue to receive WooCommerce images on sync.
+- I will re-deploy and run a test sync to confirm images are preserved.
+
