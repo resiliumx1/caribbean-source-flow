@@ -83,10 +83,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    const baseApi = `${wooUrl.replace(/\/+$/, '')}/wp-json/wc/v3`;
+    // Normalize URL: trim, remove trailing slash, strip accidental /wp-json or /wc/v3 suffixes
+    const normalizedUrl = wooUrl.trim().replace(/\/+$/, '').replace(/\/wp-json(\/wc\/v3)?$/, '');
+    const baseApi = `${normalizedUrl}/wp-json/wc/v3`;
+    const basicAuth = btoa(`${wooKey}:${wooSecret}`);
 
     console.log("DEBUG woo-sync: baseApi =", baseApi);
-    console.log("DEBUG woo-sync: wooKey starts with =", wooKey.substring(0, 10));
+    console.log("DEBUG woo-sync: auth mode = basic_header");
 
     // Fetch all products from WooCommerce (paginated)
     const allWooProducts: WooProduct[] = [];
@@ -94,9 +97,15 @@ Deno.serve(async (req) => {
     let hasMore = true;
 
     while (hasMore) {
-      const url = `${baseApi}/products?consumer_key=${encodeURIComponent(wooKey)}&consumer_secret=${encodeURIComponent(wooSecret)}&per_page=100&page=${page}&status=publish`;
+      const url = `${baseApi}/products?per_page=100&page=${page}&status=publish`;
       console.log("DEBUG woo-sync: fetching page", page);
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: {
+          "Authorization": `Basic ${basicAuth}`,
+          "User-Agent": "MountKailash/1.0",
+          "Accept": "application/json",
+        },
+      });
       if (!res.ok) {
         const body = await res.text();
         console.error("DEBUG woo-sync: response status =", res.status, "body =", body);

@@ -68,6 +68,10 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Normalize URL and build Basic Auth
+    const normalizedUrl = wooUrl.trim().replace(/\/+$/, '').replace(/\/wp-json(\/wc\/v3)?$/, '');
+    const basicAuth = btoa(`${wooKey}:${wooSecret}`);
+
     // Look up woo_product_id for each item from DB
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
     const productIds = items.map((i: any) => i.product_id);
@@ -117,11 +121,16 @@ Deno.serve(async (req) => {
       customer_note: customer_note || "",
     };
 
-    const apiUrl = `${wooUrl}/wp-json/wc/v3/orders?consumer_key=${encodeURIComponent(wooKey)}&consumer_secret=${encodeURIComponent(wooSecret)}`;
+    const apiUrl = `${normalizedUrl}/wp-json/wc/v3/orders`;
 
     const wooRes = await fetch(apiUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${basicAuth}`,
+        "User-Agent": "MountKailash/1.0",
+        "Accept": "application/json",
+      },
       body: JSON.stringify(orderData),
     });
 
