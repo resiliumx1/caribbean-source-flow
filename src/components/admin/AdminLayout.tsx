@@ -44,6 +44,7 @@ export default function AdminLayout() {
               <a href="/admin/retreat-dates" className="text-sm hover:text-primary transition-colors">Retreat Dates</a>
               <a href="/admin/reviews" className="text-sm hover:text-primary transition-colors">Reviews</a>
               <a href="/admin/webinars" className="text-sm hover:text-primary transition-colors">Webinars</a>
+              <a href="/admin/analytics" className="text-sm hover:text-primary transition-colors">Analytics</a>
             </nav>
           </div>
           <div className="flex items-center gap-4">

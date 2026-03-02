@@ -9,7 +9,7 @@ import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import heroBottle from "@/assets/mkrc-the-answer-bottle.jpg";
 import tincture from "@/assets/mkrc-answer-tincture.png";
-import heroBg from "@/assets/mkrc-hero-bg.jpg";
+import heroBg from "@/assets/the-answer-hero-chronixx.jpg";
 import "./TheAnswer.css";
 
 const scrollToSection = (id: string) => {
@@ -122,15 +122,6 @@ export default function TheAnswer() {
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delay={200} className="answer-hero__bottle">
-            <div className="answer-hero__bottle-glow">
-              <img
-                src={heroBottle}
-                alt="The Answer — MKRC immune system enhancer tincture bottle"
-                className="answer-hero__bottle-img"
-              />
-            </div>
-          </ScrollReveal>
         </div>
 
         <button

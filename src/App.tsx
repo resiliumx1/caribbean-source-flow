@@ -26,6 +26,7 @@ import AdminRetreats from "./pages/AdminRetreats";
 import AdminRetreatDates from "./pages/AdminRetreatDates";
 import AdminReviews from "./pages/AdminReviews";
 import AdminWebinars from "./pages/AdminWebinars";
+import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminLayout from "./components/admin/AdminLayout";
 import TheAnswer from "./pages/TheAnswer";
 import WebinarsPage from "./pages/Webinars";
@@ -71,6 +72,7 @@ function AppContent() {
           <Route path="retreat-dates" element={<AdminRetreatDates />} />
           <Route path="reviews" element={<AdminReviews />} />
           <Route path="webinars" element={<AdminWebinars />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
         </Route>
         {/* Hidden direct-link-only pages */}
         <Route path="/goddess" element={<GoddessCard />} />
