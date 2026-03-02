@@ -451,7 +451,11 @@ export default function AdminProducts() {
                     <p className="text-sm text-muted-foreground">{product.product_categories?.name ?? "Uncategorized"}</p>
                   </div>
                   {product.image_url ? (
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 shrink-0">Has Image</Badge>
+                    product.image_url.includes('wp-content') || product.image_url.includes('mountkailashslu.com') ? (
+                      <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-500/30 shrink-0">WooCommerce Img</Badge>
+                    ) : (
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 shrink-0">Has Image</Badge>
+                    )
                   ) : (
                     <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 shrink-0">No Image</Badge>
                   )}

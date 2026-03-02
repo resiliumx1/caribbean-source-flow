@@ -30,6 +30,17 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Parse request body for mode parameter
+    let mode = "safe";
+    try {
+      const body = await req.json();
+      if (body?.mode === "full") mode = "full";
+    } catch {
+      // No body or invalid JSON — default to safe
+    }
+
+    console.log("DEBUG woo-sync: mode =", mode);
+
     // Verify admin auth
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
@@ -83,13 +94,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Normalize URL: trim, remove trailing slash, strip accidental /wp-json or /wc/v3 suffixes
     const normalizedUrl = wooUrl.trim().replace(/\/+$/, '').replace(/\/wp-json(\/wc\/v3)?$/, '');
     const baseApi = `${normalizedUrl}/wp-json/wc/v3`;
     const basicAuth = btoa(`${wooKey}:${wooSecret}`);
-
-    console.log("DEBUG woo-sync: baseApi =", baseApi);
-    console.log("DEBUG woo-sync: auth mode = basic_header");
 
     // Fetch all products from WooCommerce (paginated)
     const allWooProducts: WooProduct[] = [];
@@ -98,7 +105,6 @@ Deno.serve(async (req) => {
 
     while (hasMore) {
       const url = `${baseApi}/products?per_page=100&page=${page}&status=publish`;
-      console.log("DEBUG woo-sync: fetching page", page);
       const res = await fetch(url, {
         headers: {
           "Authorization": `Basic ${basicAuth}`,
@@ -108,7 +114,6 @@ Deno.serve(async (req) => {
       });
       if (!res.ok) {
         const body = await res.text();
-        console.error("DEBUG woo-sync: response status =", res.status, "body =", body);
         throw new Error(`WooCommerce API error [${res.status}]: ${body}`);
       }
       const products: WooProduct[] = await res.json();
@@ -125,6 +130,47 @@ Deno.serve(async (req) => {
       (existingCategories || []).map((c) => [c.slug, c.id])
     );
 
+    // Helper functions
+    const stripHtml = (html: string) => html.replace(/<[^>]*>/g, "").trim();
+
+    const resolveCategory = async (woo: WooProduct): Promise<string | null> => {
+      if (woo.categories.length === 0) return null;
+      const wooCat = woo.categories[0];
+      if (categoryMap.has(wooCat.slug)) return categoryMap.get(wooCat.slug)!;
+      const { data: newCat, error: catErr } = await adminClient
+        .from("product_categories")
+        .insert({ name: wooCat.name, slug: wooCat.slug })
+        .select("id")
+        .single();
+      if (newCat && !catErr) {
+        categoryMap.set(wooCat.slug, newCat.id);
+        return newCat.id;
+      }
+      return null;
+    };
+
+    const computePrices = (woo: WooProduct) => {
+      const priceUsd = parseFloat(woo.regular_price || woo.price) || 0;
+      const priceXcd = Math.round(priceUsd * XCD_RATE * 100) / 100;
+      const originalPriceUsd = woo.sale_price && woo.regular_price
+        ? parseFloat(woo.regular_price) || null
+        : null;
+      const originalPriceXcd = originalPriceUsd
+        ? Math.round(originalPriceUsd * XCD_RATE * 100) / 100
+        : null;
+      return {
+        price_usd: woo.sale_price ? parseFloat(woo.sale_price) : priceUsd,
+        price_xcd: woo.sale_price
+          ? Math.round(parseFloat(woo.sale_price) * XCD_RATE * 100) / 100
+          : priceXcd,
+        original_price_usd: originalPriceUsd,
+        original_price_xcd: originalPriceXcd,
+      };
+    };
+
+    const mapStockStatus = (status: string) =>
+      status === "instock" ? "in_stock" : status === "onbackorder" ? "pre_order" : "out_of_stock";
+
     // Process each WooCommerce product
     let synced = 0;
     let created = 0;
@@ -134,67 +180,8 @@ Deno.serve(async (req) => {
 
     for (const woo of allWooProducts) {
       try {
-        // Resolve category
-        let categoryId: string | null = null;
-        if (woo.categories.length > 0) {
-          const wooCat = woo.categories[0];
-          if (categoryMap.has(wooCat.slug)) {
-            categoryId = categoryMap.get(wooCat.slug)!;
-          } else {
-            // Create new category
-            const { data: newCat, error: catErr } = await adminClient
-              .from("product_categories")
-              .insert({ name: wooCat.name, slug: wooCat.slug })
-              .select("id")
-              .single();
-            if (newCat && !catErr) {
-              categoryId = newCat.id;
-              categoryMap.set(wooCat.slug, newCat.id);
-            }
-          }
-        }
-
-        const priceUsd = parseFloat(woo.regular_price || woo.price) || 0;
-        const priceXcd = Math.round(priceUsd * XCD_RATE * 100) / 100;
-        const originalPriceUsd = woo.sale_price && woo.regular_price
-          ? parseFloat(woo.regular_price) || null
-          : null;
-        const originalPriceXcd = originalPriceUsd
-          ? Math.round(originalPriceUsd * XCD_RATE * 100) / 100
-          : null;
-
-        const stockStatus =
-          woo.stock_status === "instock"
-            ? "in_stock"
-            : woo.stock_status === "onbackorder"
-            ? "pre_order"
-            : "out_of_stock";
-
-        // Strip HTML tags from descriptions
-        const stripHtml = (html: string) =>
-          html.replace(/<[^>]*>/g, "").trim();
-
-        const productData = {
-          name: woo.name,
-          slug: woo.slug,
-          woo_product_id: woo.id,
-          product_type: woo.type === "simple" ? "tincture" : woo.type,
-          category_id: categoryId,
-          price_usd: woo.sale_price ? parseFloat(woo.sale_price) : priceUsd,
-          price_xcd: woo.sale_price
-            ? Math.round(parseFloat(woo.sale_price) * XCD_RATE * 100) / 100
-            : priceXcd,
-          original_price_usd: originalPriceUsd,
-          original_price_xcd: originalPriceXcd,
-          description: stripHtml(woo.description),
-          short_description: stripHtml(woo.short_description) || null,
-          image_url: woo.images.length > 0 ? woo.images[0].src : null,
-          additional_images:
-            woo.images.length > 1 ? woo.images.slice(1).map((i) => i.src) : [],
-          stock_status: stockStatus,
-          is_active: true,
-          updated_at: new Date().toISOString(),
-        };
+        const prices = computePrices(woo);
+        const stockStatus = mapStockStatus(woo.stock_status);
 
         // Check if product exists by slug
         const { data: existing } = await adminClient
@@ -204,20 +191,60 @@ Deno.serve(async (req) => {
           .maybeSingle();
 
         if (existing) {
-          // Preserve custom images (stored in Supabase storage)
-          const hasCustomImage = existing.image_url?.includes('supabase.co');
-          if (hasCustomImage) {
-            delete productData.image_url;
-            delete productData.additional_images;
-            images_preserved++;
+          if (mode === "safe") {
+            // SAFE MODE: Only update prices, stock, and woo_product_id
+            await adminClient.from("products").update({
+              woo_product_id: woo.id,
+              ...prices,
+              stock_status: stockStatus,
+              updated_at: new Date().toISOString(),
+            }).eq("id", existing.id);
+          } else {
+            // FULL MODE: Update everything, but preserve custom images
+            const categoryId = await resolveCategory(woo);
+            const productData: Record<string, any> = {
+              name: woo.name,
+              woo_product_id: woo.id,
+              product_type: woo.type === "simple" ? "tincture" : woo.type,
+              category_id: categoryId,
+              ...prices,
+              description: stripHtml(woo.description),
+              short_description: stripHtml(woo.short_description) || null,
+              image_url: woo.images.length > 0 ? woo.images[0].src : null,
+              additional_images: woo.images.length > 1 ? woo.images.slice(1).map((i) => i.src) : [],
+              stock_status: stockStatus,
+              is_active: true,
+              updated_at: new Date().toISOString(),
+            };
+
+            // Preserve custom images stored in Supabase
+            const hasCustomImage = existing.image_url?.includes('supabase.co');
+            if (hasCustomImage) {
+              delete productData.image_url;
+              delete productData.additional_images;
+              images_preserved++;
+            }
+
+            await adminClient.from("products").update(productData).eq("id", existing.id);
           }
-          await adminClient
-            .from("products")
-            .update(productData)
-            .eq("id", existing.id);
           updated++;
         } else {
-          await adminClient.from("products").insert(productData);
+          // NEW PRODUCT: Always insert with full WooCommerce data
+          const categoryId = await resolveCategory(woo);
+          await adminClient.from("products").insert({
+            name: woo.name,
+            slug: woo.slug,
+            woo_product_id: woo.id,
+            product_type: woo.type === "simple" ? "tincture" : woo.type,
+            category_id: categoryId,
+            ...prices,
+            description: stripHtml(woo.description),
+            short_description: stripHtml(woo.short_description) || null,
+            image_url: woo.images.length > 0 ? woo.images[0].src : null,
+            additional_images: woo.images.length > 1 ? woo.images.slice(1).map((i) => i.src) : [],
+            stock_status: stockStatus,
+            is_active: true,
+          });
           created++;
         }
         synced++;
@@ -229,6 +256,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
+        mode,
         total_fetched: allWooProducts.length,
         synced,
         created,
