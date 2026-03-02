@@ -128,9 +128,9 @@ export function RetreatVideoGallery() {
                   );
                 })()}
                 {/* Play button overlay */}
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                    <Play className="w-7 h-7 text-foreground ml-1" />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="w-16 h-16 rounded-full bg-primary/85 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                    <Play className="w-7 h-7 text-primary-foreground ml-1" fill="currentColor" />
                   </div>
                 </div>
               </div>
