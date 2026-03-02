@@ -1,48 +1,83 @@
 
 
-## Fix WooCommerce Sync and Prevent Future Data Loss
+## YouTube Channel Sync and Professional Video Galleries (No API Key Required)
 
-### The Situation
-The sync overwrote names, descriptions, short descriptions, and images for 97 products. Fields like ingredients, dosage instructions, traditional use, and badges were NOT touched (they're still intact). Your 26 original products without WooCommerce matches are completely untouched.
+### Overview
+Two improvements: (1) auto-populate webinars from your YouTube channel's public RSS feed, and (2) make retreat/school video galleries look professional by hiding YouTube branding.
 
-**The overwritten data (custom names, descriptions, images) cannot be automatically restored** -- there is no database history or backup accessible to roll back to. You will need to manually re-enter custom content for affected products via the Admin panel.
+---
 
-### What This Plan Will Do
+### Part 1: YouTube Channel RSS Sync for Webinars
 
-#### 1. Make the sync safe going forward (woo-sync/index.ts)
-Restructure the sync so it ONLY updates the fields you actually want from WooCommerce:
-- **Prices** (USD and XCD with sale price logic)
-- **Stock status** (in stock, out of stock, pre-order)
-- **WooCommerce product ID** (for order mapping)
+YouTube exposes a free public RSS feed at `https://www.youtube.com/feeds/videos.xml?channel_id=CHANNEL_ID`. No API key needed. It returns the latest ~15 videos with titles, descriptions, thumbnails, and publish dates.
 
-It will NEVER overwrite:
-- Product name
-- Description or short description
-- Images (image_url, additional_images)
-- Product type
-- Category assignment
-- Any custom fields (ingredients, traditional use, etc.)
+**Step 1 -- Create `youtube-sync` edge function**
+- Fetch `https://www.youtube.com/feeds/videos.xml?channel_id=UC...` (will resolve your channel ID from `@KAILASHLEONCE`)
+- Parse the XML to extract: video ID, title, description, published date, thumbnail URL
+- Upsert into a new `webinar_videos` database table (matching on `youtube_video_id` to avoid duplicates)
+- No API key secret needed
 
-For **new products** (slug not found in DB), it will still create them with full WooCommerce data as a starting point.
+**Step 2 -- Create `webinar_videos` database table**
+```text
+webinar_videos
+- id (uuid, PK)
+- youtube_video_id (text, unique)
+- title (text)
+- description (text)
+- thumbnail_url (text)
+- published_at (timestamptz)
+- category (text, default 'general')
+- is_featured (boolean, default false)
+- display_order (integer, default 0)
+- created_at (timestamptz)
+```
+RLS: anyone can SELECT, admins can INSERT/UPDATE/DELETE.
 
-#### 2. Add a "full sync" option
-Add a request body parameter `{ "mode": "full" }` that can optionally do the old behavior (overwrite everything) -- but default to safe/prices-only mode. This way you have control.
+**Step 3 -- Update `src/pages/Webinars.tsx`**
+- Create a `useWebinarVideos` hook to fetch from the new table
+- Replace the hardcoded `WEBINARS` array in the "Past Sessions & Replays" section with real data from the database
+- Each card shows the clean YouTube thumbnail, title, description, and publish date
+- "Watch Replay" button opens a modal with the YouTube embed (same pattern as retreat videos -- no redirect to YouTube)
+- Keep the existing hero, featured section, and other page sections intact
 
-#### 3. Add an admin indicator for products needing attention
-On the Admin Products page, show a visual badge on products that currently have WooCommerce images (URL contains `mountkailashslu.com` or `wp-content`) so you can easily identify which ones need custom image re-uploads.
+**Step 4 -- Add "Sync from YouTube" button to admin**
+- Add a button on the admin panel that calls the `youtube-sync` function
+- Shows sync status/results
 
-### Technical Details
+---
 
-**File: `supabase/functions/woo-sync/index.ts`**
-- Parse request body for optional `mode` parameter (default: `"safe"`)
-- In safe mode, the `productData` for existing product updates will only contain: `woo_product_id`, `price_usd`, `price_xcd`, `original_price_usd`, `original_price_xcd`, `stock_status`, `updated_at`
-- In full mode, behave as current (with image preservation logic)
-- New products (insert path) always get full WooCommerce data
+### Part 2: Professional Video Display (No YouTube Branding)
 
-**File: `src/pages/AdminProducts.tsx`**
-- Add a small indicator icon/badge next to products whose `image_url` contains `wp-content` or `mountkailashslu.com`, making it easy to spot which ones need re-uploading
+**Problem**: When a YouTube video is added to the retreat gallery without a custom thumbnail, it shows a generic placeholder instead of using YouTube's clean thumbnail image.
 
-### What You Will Need to Do Manually
-- Re-upload custom images for the ~90 products now showing WooCommerce photos
-- Re-enter any custom names or descriptions that differ from what WooCommerce has
-- The admin indicator will help you track which products still need attention
+**Fix in `RetreatVideoGallery.tsx`**:
+- Add a helper function `getYouTubeThumbnail(url)` that extracts the video ID and returns `https://img.youtube.com/vi/{ID}/maxresdefault.jpg`
+- In the thumbnail rendering logic: if `thumbnail_url` is null AND `video_url` is a YouTube URL, auto-use the clean YouTube thumbnail instead of the generic placeholder
+- These thumbnails have NO YouTube play button or branding -- just a clean image
+- The custom play button overlay (already implemented) handles the rest
+
+**New `SchoolVideoGallery` component**:
+- Create `src/components/school/SchoolVideoGallery.tsx` using the same pattern as `RetreatVideoGallery`
+- Can reuse the same `retreat_videos` table with a new category value (e.g., "school"), or create a separate table
+- Add it to `src/pages/School.tsx`
+- Same professional thumbnail behavior -- auto-extract clean YouTube thumbnails
+
+---
+
+### Files to Create/Modify
+
+| File | Action |
+|------|--------|
+| Database migration | Create `webinar_videos` table with RLS |
+| `supabase/functions/youtube-sync/index.ts` | New edge function to fetch RSS and upsert |
+| `src/hooks/use-webinar-videos.ts` | New hook for fetching webinar videos |
+| `src/pages/Webinars.tsx` | Replace hardcoded array with DB data + modal playback |
+| `src/components/retreats/RetreatVideoGallery.tsx` | Add auto YouTube thumbnail fallback |
+| `src/components/school/SchoolVideoGallery.tsx` | New component (same pattern) |
+| `src/pages/School.tsx` | Add SchoolVideoGallery section |
+| `supabase/config.toml` | Register youtube-sync function |
+
+### Limitations
+- RSS feeds only return the latest ~15 videos. For a full archive, you would eventually need the YouTube Data API.
+- Category assignment for webinars will default to "general" on sync -- you can recategorize from the admin panel afterward.
+
