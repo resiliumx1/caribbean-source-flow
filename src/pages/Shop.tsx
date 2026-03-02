@@ -6,6 +6,7 @@ import { CategoryNav } from "@/components/store/CategoryNav";
 import { ProductCard } from "@/components/store/ProductCard";
 import { QuickViewModal } from "@/components/store/QuickViewModal";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
+import { RecentSalesPopup } from "@/components/store/RecentSalesPopup";
 import { useProducts, useCategories, type Product } from "@/hooks/use-products";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -117,6 +118,7 @@ export default function Shop() {
 
       <StoreFooter />
       <WhatsAppFloat />
+      <RecentSalesPopup />
 
       {/* Quick View Modal */}
       <QuickViewModal
