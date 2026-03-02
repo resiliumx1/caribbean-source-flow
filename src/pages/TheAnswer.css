@@ -15,15 +15,16 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  opacity: 0.12;
+  opacity: 0.45;
 }
 
 .answer-hero__gradients {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 50%, var(--mkrc-glow-green) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 30%, var(--mkrc-glow-gold) 0%, transparent 50%);
+    radial-gradient(ellipse at 20% 50%, var(--mkrc-glow-green) 0%, transparent 80%),
+    radial-gradient(ellipse at 80% 30%, var(--mkrc-glow-gold) 0%, transparent 70%);
+  opacity: 0.6;
 }
 
 .answer-hero__inner {
@@ -33,7 +34,7 @@
   margin: 0 auto;
   padding: 140px 24px 80px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   align-items: center;
   gap: 48px;
 }

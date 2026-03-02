@@ -410,16 +410,18 @@ export default function AdminProducts() {
                   <div className="flex-1 min-w-0">
                     {/* Editable Name */}
                     {editingName === product.id ? (
-                      <div className="flex items-center gap-1">
+                      <div className="space-y-1">
                         <Input
                           value={editNameValue}
                           onChange={(e) => setEditNameValue(e.target.value)}
                           onKeyDown={(e) => { if (e.key === "Enter") handleSaveName(product.id); if (e.key === "Escape") setEditingName(null); }}
-                          className="h-7 text-sm"
+                          className="w-full text-sm"
                           autoFocus
                         />
-                        <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => handleSaveName(product.id)}><Check className="w-3 h-3" /></Button>
-                        <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => setEditingName(null)}><X className="w-3 h-3" /></Button>
+                        <div className="flex items-center gap-1">
+                          <Button size="sm" variant="default" className="h-7 text-xs" onClick={() => handleSaveName(product.id)}><Check className="w-3 h-3 mr-1" />Save</Button>
+                          <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setEditingName(null)}><X className="w-3 h-3 mr-1" />Cancel</Button>
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1 group/name">

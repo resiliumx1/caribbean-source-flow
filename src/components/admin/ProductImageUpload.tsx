@@ -363,9 +363,9 @@ function ImageSlotComponent({
           </button>
         </div>
 
-        {/* Replace button in hover overlay */}
-        <label className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer bg-white/90 text-foreground text-[10px] font-medium px-2 py-1 rounded hover:bg-white z-10">
-          Replace
+        {/* Change button in hover overlay */}
+        <label className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer bg-primary text-primary-foreground text-xs font-semibold px-3 py-1.5 rounded-md shadow-lg hover:bg-primary/90 z-10">
+          Change
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
