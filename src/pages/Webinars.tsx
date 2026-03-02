@@ -4,6 +4,15 @@ import ScrollReveal from "@/components/mkrc/ScrollReveal";
 import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import webinarImg from "@/assets/mkrc-webinar-featured.jpg";
+import { useWebinarVideos, WebinarVideo } from "@/hooks/use-webinar-videos";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const CATEGORIES = ["All Topics", "Women's Health", "Men's Health", "Nutrition", "Herbal Medicine", "Detox", "Mental Wellness"];
 const CATEGORY_MAP: Record<string, string> = {
@@ -44,6 +53,10 @@ const HOST_CREDS = ["Based in Saint Lucia", "20+ Years Practice", "Thousands Gui
 export default function Webinars() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [subscribed, setSubscribed] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<WebinarVideo | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const { toast } = useToast();
+  const { data: dbVideos = [], isLoading: dbLoading } = useWebinarVideos();
 
   useEffect(() => {
     document.title = "Free Wellness Webinars | Mount Kailash Rejuvenation Centre";
@@ -51,6 +64,8 @@ export default function Webinars() {
     if (meta) meta.setAttribute("content", "Join free live webinars on herbal medicine, natural health & holistic wellness with Honorable Priest Kailash. Expert-led sessions on immunity, fertility, detox & more.");
   }, []);
 
+  // Use DB videos if available, otherwise fall back to hardcoded
+  const useDbData = dbVideos.length > 0;
   const filtered = activeFilter === "all" ? WEBINARS : WEBINARS.filter((w) => w.category === activeFilter);
 
   const handleSignup = (e: React.FormEvent) => {
@@ -152,56 +167,118 @@ export default function Webinars() {
           <p style={{ color: "#A09888" }}>Missed a live session? Catch up on any of our previous webinars at your own pace.</p>
         </ScrollReveal>
 
-        {/* Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
-          {CATEGORIES.map((cat) => {
-            const val = CATEGORY_MAP[cat];
-            const active = val === activeFilter;
-            return (
-              <button
-                key={cat}
-                onClick={() => setActiveFilter(val)}
-                className="mkrc-label text-xs px-4 py-2 rounded-full transition-all duration-200"
-                style={{
-                  fontSize: "0.7rem",
-                  backgroundColor: active ? "#C9A84C" : "transparent",
-                  color: active ? "#0D0D0D" : "#A09888",
-                  border: active ? "1px solid #C9A84C" : "1px solid rgba(201,168,76,0.25)",
-                  cursor: "pointer",
-                }}
-              >
-                {cat}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((w, i) => (
-            <ScrollReveal key={w.title} delay={i * 80}>
-              <div className="mkrc-card h-full flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="mkrc-label text-xs px-2 py-1 rounded" style={{ fontSize: "0.6rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>
-                    Replay
-                  </span>
-                  <span className="mkrc-label text-xs" style={{ fontSize: "0.6rem", color: "#C9A84C" }}>
-                    {CATEGORIES.find((c) => CATEGORY_MAP[c] === w.category)?.replace("'s Health", "") || w.category}
-                  </span>
-                </div>
-                <span className="text-3xl mb-3">{w.icon}</span>
-                <h3 className="mkrc-display text-lg mb-2 flex-grow">{w.title}</h3>
-                <p className="text-sm mb-4" style={{ color: "#A09888" }}>{w.desc}</p>
-                <div className="flex items-center justify-between mt-auto pt-4" style={{ borderTop: "1px solid rgba(201,168,76,0.12)" }}>
-                  <span className="text-xs" style={{ color: "#706858" }}>{w.duration}</span>
-                  <button className="mkrc-btn-secondary" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
-                    Watch Replay
+        {useDbData ? (
+          <>
+            {/* DB-powered video grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {dbVideos.map((video, i) => (
+                <ScrollReveal key={video.id} delay={i * 80}>
+                  <div
+                    className="mkrc-card h-full flex flex-col cursor-pointer group"
+                    onClick={() => setSelectedVideo(video)}
+                  >
+                    {/* Thumbnail */}
+                    <div className="aspect-video rounded-lg overflow-hidden mb-4 relative">
+                      {video.thumbnail_url ? (
+                        <img
+                          src={video.thumbnail_url}
+                          alt={video.title || "Webinar replay"}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center"
+                          style={{ backgroundColor: "#242420" }}
+                        >
+                          <span className="text-4xl">🎥</span>
+                        </div>
+                      )}
+                      {/* Play overlay */}
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                          <span style={{ fontSize: "1.5rem", marginLeft: 3 }}>▶</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="mkrc-label text-xs px-2 py-1 rounded" style={{ fontSize: "0.6rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>
+                        Replay
+                      </span>
+                      {video.published_at && (
+                        <span className="text-xs" style={{ color: "#706858" }}>
+                          {new Date(video.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mkrc-display text-lg mb-2 flex-grow line-clamp-2">{video.title}</h3>
+                    {video.description && (
+                      <p className="text-sm mb-4 line-clamp-2" style={{ color: "#A09888" }}>{video.description}</p>
+                    )}
+                    <div className="flex items-center justify-end mt-auto pt-4" style={{ borderTop: "1px solid rgba(201,168,76,0.12)" }}>
+                      <button className="mkrc-btn-secondary" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
+                        Watch Replay
+                      </button>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Filter (hardcoded fallback) */}
+            <div className="flex flex-wrap justify-center gap-3 mb-10">
+              {CATEGORIES.map((cat) => {
+                const val = CATEGORY_MAP[cat];
+                const active = val === activeFilter;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveFilter(val)}
+                    className="mkrc-label text-xs px-4 py-2 rounded-full transition-all duration-200"
+                    style={{
+                      fontSize: "0.7rem",
+                      backgroundColor: active ? "#C9A84C" : "transparent",
+                      color: active ? "#0D0D0D" : "#A09888",
+                      border: active ? "1px solid #C9A84C" : "1px solid rgba(201,168,76,0.25)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {cat}
                   </button>
-                </div>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
+                );
+              })}
+            </div>
+
+            {/* Cards (hardcoded fallback) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((w, i) => (
+                <ScrollReveal key={w.title} delay={i * 80}>
+                  <div className="mkrc-card h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="mkrc-label text-xs px-2 py-1 rounded" style={{ fontSize: "0.6rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>
+                        Replay
+                      </span>
+                      <span className="mkrc-label text-xs" style={{ fontSize: "0.6rem", color: "#C9A84C" }}>
+                        {CATEGORIES.find((c) => CATEGORY_MAP[c] === w.category)?.replace("'s Health", "") || w.category}
+                      </span>
+                    </div>
+                    <span className="text-3xl mb-3">{w.icon}</span>
+                    <h3 className="mkrc-display text-lg mb-2 flex-grow">{w.title}</h3>
+                    <p className="text-sm mb-4" style={{ color: "#A09888" }}>{w.desc}</p>
+                    <div className="flex items-center justify-between mt-auto pt-4" style={{ borderTop: "1px solid rgba(201,168,76,0.12)" }}>
+                      <span className="text-xs" style={{ color: "#706858" }}>{w.duration}</span>
+                      <button className="mkrc-btn-secondary" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
+                        Watch Replay
+                      </button>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       {/* ===== 4. WHY ATTEND ===== */}
@@ -323,6 +400,27 @@ export default function Webinars() {
           ))}
         </div>
       </section>
+
+      {/* Video playback modal */}
+      <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
+        <DialogContent className="sm:max-w-3xl p-0 overflow-hidden" style={{ backgroundColor: "#1A1A16", border: "1px solid rgba(201,168,76,0.2)" }}>
+          <DialogHeader className="p-4 pb-0">
+            <DialogTitle className="mkrc-display text-lg" style={{ color: "#F5F0E8" }}>
+              {selectedVideo?.title || "Webinar Replay"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="aspect-video w-full">
+            {selectedVideo && (
+              <iframe
+                src={`https://www.youtube.com/embed/${selectedVideo.youtube_video_id}?autoplay=1`}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
