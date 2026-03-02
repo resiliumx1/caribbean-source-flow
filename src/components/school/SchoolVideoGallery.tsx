@@ -24,14 +24,26 @@ function getYouTubeThumbnail(url: string): string | null {
   return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : null;
 }
 
-export function RetreatVideoGallery() {
+const SCHOOL_VIDEO_CATEGORIES = [
+  { value: "school", label: "School" },
+  { value: "lecture", label: "Lectures" },
+  { value: "other", label: "Other" },
+] as const;
+
+export function SchoolVideoGallery() {
   const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
-  const { data: videos = [], isLoading } = useRetreatVideos(activeCategory);
+  // Use retreat_videos table filtered to school-related categories
+  const { data: allVideos = [], isLoading } = useRetreatVideos(activeCategory);
   const [selectedVideo, setSelectedVideo] = useState<RetreatVideo | null>(null);
+
+  // Filter to school-related categories only
+  const videos = allVideos.filter((v) =>
+    ["school", "lecture"].includes(v.category) || activeCategory
+  );
 
   if (isLoading) {
     return (
-      <section className="py-20 bg-cream">
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <Skeleton className="h-10 w-64 mx-auto mb-4" />
@@ -48,35 +60,20 @@ export function RetreatVideoGallery() {
   }
 
   if (videos.length === 0) {
-    return (
-      <section className="py-20 bg-cream">
-        <div className="container mx-auto px-4 text-center">
-          <Video className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Videos Coming Soon
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            We're preparing beautiful videos of our retreat experience. Check back soon to see
-            our ceremonies, healing sessions, and the natural beauty of St. Lucia.
-          </p>
-        </div>
-      </section>
-    );
+    return null; // Don't render section if no school videos
   }
 
   return (
-    <section className="py-20 bg-cream">
+    <section className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
-        {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Sacred Journey Videos
+            School Videos
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Watch the transformative experiences, sacred ceremonies, and healing moments from our retreats.
+            Watch lectures, demonstrations, and student experiences from our herbal medicine programs.
           </p>
 
-          {/* Category filters */}
           <div className="flex flex-wrap justify-center gap-2">
             <Button
               variant={activeCategory === undefined ? "default" : "outline"}
@@ -86,7 +83,7 @@ export function RetreatVideoGallery() {
             >
               All
             </Button>
-            {RETREAT_VIDEO_CATEGORIES.map((cat) => (
+            {SCHOOL_VIDEO_CATEGORIES.map((cat) => (
               <Button
                 key={cat.value}
                 variant={activeCategory === cat.value ? "default" : "outline"}
@@ -100,24 +97,23 @@ export function RetreatVideoGallery() {
           </div>
         </div>
 
-        {/* Video grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map((video) => (
-            <div
-              key={video.id}
-              className="group relative overflow-hidden rounded-xl cursor-pointer bg-background shadow-md hover:shadow-xl transition-shadow duration-300"
-              onClick={() => setSelectedVideo(video)}
-            >
-              {/* Thumbnail */}
-              <div className="aspect-video relative overflow-hidden">
-                {(() => {
-                  const thumbnailSrc =
-                    video.thumbnail_url ||
-                    (isYouTubeUrl(video.video_url) ? getYouTubeThumbnail(video.video_url) : null);
-                  return thumbnailSrc ? (
+          {videos.map((video) => {
+            const thumbnailSrc =
+              video.thumbnail_url ||
+              (isYouTubeUrl(video.video_url) ? getYouTubeThumbnail(video.video_url) : null);
+
+            return (
+              <div
+                key={video.id}
+                className="group relative overflow-hidden rounded-xl cursor-pointer bg-background shadow-md hover:shadow-xl transition-shadow duration-300"
+                onClick={() => setSelectedVideo(video)}
+              >
+                <div className="aspect-video relative overflow-hidden">
+                  {thumbnailSrc ? (
                     <img
                       src={thumbnailSrc}
-                      alt={video.title || "Retreat video"}
+                      alt={video.title || "School video"}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
                     />
@@ -125,41 +121,38 @@ export function RetreatVideoGallery() {
                     <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                       <Video className="w-12 h-12 text-muted-foreground" />
                     </div>
-                  );
-                })()}
-                {/* Play button overlay */}
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                    <Play className="w-7 h-7 text-foreground ml-1" />
+                  )}
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                      <Play className="w-7 h-7 text-foreground ml-1" />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Info */}
-              {(video.title || video.description) && (
-                <div className="p-4">
-                  {video.title && (
-                    <h3 className="font-serif font-semibold text-foreground text-lg line-clamp-1">
-                      {video.title}
-                    </h3>
-                  )}
-                  {video.description && (
-                    <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
-                      {video.description}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+                {(video.title || video.description) && (
+                  <div className="p-4">
+                    {video.title && (
+                      <h3 className="font-serif font-semibold text-foreground text-lg line-clamp-1">
+                        {video.title}
+                      </h3>
+                    )}
+                    {video.description && (
+                      <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
+                        {video.description}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Video playback modal */}
       <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
         <DialogContent className="sm:max-w-3xl p-0 overflow-hidden">
           <DialogHeader className="p-4 pb-0">
-            <DialogTitle>{selectedVideo?.title || "Retreat Video"}</DialogTitle>
+            <DialogTitle>{selectedVideo?.title || "School Video"}</DialogTitle>
           </DialogHeader>
           <div className="aspect-video w-full">
             {selectedVideo && isYouTubeUrl(selectedVideo.video_url) ? (

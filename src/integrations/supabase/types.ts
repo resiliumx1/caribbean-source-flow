@@ -1028,6 +1028,45 @@ export type Database = {
         }
         Relationships: []
       }
+      webinar_videos: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          is_featured: boolean
+          published_at: string | null
+          thumbnail_url: string | null
+          title: string | null
+          youtube_video_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          published_at?: string | null
+          thumbnail_url?: string | null
+          title?: string | null
+          youtube_video_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          published_at?: string | null
+          thumbnail_url?: string | null
+          title?: string | null
+          youtube_video_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

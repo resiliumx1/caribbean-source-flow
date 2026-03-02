@@ -8,6 +8,7 @@ import { CareerOutcomes } from "@/components/school/CareerOutcomes";
 import { CourseRequirements } from "@/components/school/CourseRequirements";
 import { SchoolEnrollCTA } from "@/components/school/SchoolEnrollCTA";
 import { SchoolFAQ } from "@/components/school/SchoolFAQ";
+import { SchoolVideoGallery } from "@/components/school/SchoolVideoGallery";
 import { StoreFooter } from "@/components/store/StoreFooter";
 
 export default function School() {
@@ -20,6 +21,7 @@ export default function School() {
       <InstructorGrid />
       <AuthorityLogos />
       <CareerOutcomes />
+      <SchoolVideoGallery />
       <CourseRequirements />
       <SchoolEnrollCTA />
       <SchoolFAQ />
