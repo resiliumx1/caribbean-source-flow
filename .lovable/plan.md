@@ -1,83 +1,81 @@
 
 
-## YouTube Channel Sync and Professional Video Galleries (No API Key Required)
+## Fetch All Live Streams + Auto-Categorize by Topic
 
-### Overview
-Two improvements: (1) auto-populate webinars from your YouTube channel's public RSS feed, and (2) make retreat/school video galleries look professional by hiding YouTube branding.
+### Problem
+1. Only 15 videos are synced -- the current scraper only gets the first page of the YouTube /streams tab
+2. All videos are categorized as "general" -- no auto-categorization logic exists
+3. The page shows a flat grid with filter pills instead of organized topic sections
 
----
+### Solution
 
-### Part 1: YouTube Channel RSS Sync for Webinars
+#### 1. Expand the youtube-sync Edge Function to fetch ALL live streams
 
-YouTube exposes a free public RSS feed at `https://www.youtube.com/feeds/videos.xml?channel_id=CHANNEL_ID`. No API key needed. It returns the latest ~15 videos with titles, descriptions, thumbnails, and publish dates.
+The current scraper parses `ytInitialData` from the /streams page but only gets the first ~30 results. YouTube provides **continuation tokens** inside that same data structure. The fix:
 
-**Step 1 -- Create `youtube-sync` edge function**
-- Fetch `https://www.youtube.com/feeds/videos.xml?channel_id=UC...` (will resolve your channel ID from `@KAILASHLEONCE`)
-- Parse the XML to extract: video ID, title, description, published date, thumbnail URL
-- Upsert into a new `webinar_videos` database table (matching on `youtube_video_id` to avoid duplicates)
-- No API key secret needed
+- After parsing the initial batch, extract the `continuationCommand.token` from the `ytInitialData` JSON
+- Make follow-up POST requests to YouTube's internal `browse` endpoint (`https://www.youtube.com/youtubei/v1/browse`) with the continuation token
+- Repeat until no more continuation tokens or we hit videos older than 2 years
+- This requires no API key -- it uses the same public internal API that the YouTube website uses
 
-**Step 2 -- Create `webinar_videos` database table**
+#### 2. Auto-categorize videos by title keywords
+
+Add a `classifyByTitle(title)` function in the edge function that maps keywords to categories:
+
+| Keywords in title | Category |
+|---|---|
+| fertility, reproductive, womb, fibroids, PCOS, menstrual, hormonal, ovarian | women |
+| male reproductive, prostate, men's, manhood, testosterone | men |
+| detox, parasite, cleanse, cleansing, toxin, colon | detox |
+| herb, herbal, cupping, tincture, bush medicine, plant medicine | herbal |
+| nutrition, food, diet, blood, iron, alkaline, fasting, superfoods | nutrition |
+| stress, anxiety, mental, sleep, depression, nervous system | mental |
+| Everything else | general |
+
+This runs automatically during sync so videos are pre-categorized. Admins can still override via the admin panel.
+
+#### 3. Sectionalize the Webinars page by topic
+
+Instead of a flat grid with filter pills, reorganize the archive section into **topic sections** -- each with a heading, description, and its own row/grid of video cards:
+
 ```text
-webinar_videos
-- id (uuid, PK)
-- youtube_video_id (text, unique)
-- title (text)
-- description (text)
-- thumbnail_url (text)
-- published_at (timestamptz)
-- category (text, default 'general')
-- is_featured (boolean, default false)
-- display_order (integer, default 0)
-- created_at (timestamptz)
+-- Women's Health --
+[card] [card] [card] ...
+
+-- Men's Health --
+[card] [card] [card] ...
+
+-- Herbal Medicine --
+[card] [card] [card] ...
+
+(etc.)
 ```
-RLS: anyone can SELECT, admins can INSERT/UPDATE/DELETE.
 
-**Step 3 -- Update `src/pages/Webinars.tsx`**
-- Create a `useWebinarVideos` hook to fetch from the new table
-- Replace the hardcoded `WEBINARS` array in the "Past Sessions & Replays" section with real data from the database
-- Each card shows the clean YouTube thumbnail, title, description, and publish date
-- "Watch Replay" button opens a modal with the YouTube embed (same pattern as retreat videos -- no redirect to YouTube)
-- Keep the existing hero, featured section, and other page sections intact
+- Keep an "All" view that shows the sectionalized layout
+- Keep filter pills so users can drill into a single topic (shows flat grid for that topic)
+- Each section shows up to 6 videos with a "Show more" toggle if there are more
+- Sections with no videos are hidden
+- "New" badge still appears on videos from the last 30 days
 
-**Step 4 -- Add "Sync from YouTube" button to admin**
-- Add a button on the admin panel that calls the `youtube-sync` function
-- Shows sync status/results
+### Files to modify
 
----
+| File | Change |
+|---|---|
+| `supabase/functions/youtube-sync/index.ts` | Add continuation token pagination + `classifyByTitle()` auto-categorization |
+| `src/pages/Webinars.tsx` | Sectionalize archive by topic with section headers, keep filter pills for drill-down |
+| `src/pages/AdminWebinars.tsx` | No changes needed (admin can still override categories) |
 
-### Part 2: Professional Video Display (No YouTube Branding)
+### Technical details
 
-**Problem**: When a YouTube video is added to the retreat gallery without a custom thumbnail, it shows a generic placeholder instead of using YouTube's clean thumbnail image.
+**Continuation token pagination** in the edge function:
+- Extract `continuationEndpoint.continuationCommand.token` from `ytInitialData`
+- POST to `https://www.youtube.com/youtubei/v1/browse?prettyPrint=false` with body containing the token and a standard `context` object (client name/version)
+- Parse response for more `richItemRenderer` entries and the next continuation token
+- Loop until no more tokens or oldest video is > 2 years old
+- Estimated: should fetch 60-100+ live stream videos
 
-**Fix in `RetreatVideoGallery.tsx`**:
-- Add a helper function `getYouTubeThumbnail(url)` that extracts the video ID and returns `https://img.youtube.com/vi/{ID}/maxresdefault.jpg`
-- In the thumbnail rendering logic: if `thumbnail_url` is null AND `video_url` is a YouTube URL, auto-use the clean YouTube thumbnail instead of the generic placeholder
-- These thumbnails have NO YouTube play button or branding -- just a clean image
-- The custom play button overlay (already implemented) handles the rest
-
-**New `SchoolVideoGallery` component**:
-- Create `src/components/school/SchoolVideoGallery.tsx` using the same pattern as `RetreatVideoGallery`
-- Can reuse the same `retreat_videos` table with a new category value (e.g., "school"), or create a separate table
-- Add it to `src/pages/School.tsx`
-- Same professional thumbnail behavior -- auto-extract clean YouTube thumbnails
-
----
-
-### Files to Create/Modify
-
-| File | Action |
-|------|--------|
-| Database migration | Create `webinar_videos` table with RLS |
-| `supabase/functions/youtube-sync/index.ts` | New edge function to fetch RSS and upsert |
-| `src/hooks/use-webinar-videos.ts` | New hook for fetching webinar videos |
-| `src/pages/Webinars.tsx` | Replace hardcoded array with DB data + modal playback |
-| `src/components/retreats/RetreatVideoGallery.tsx` | Add auto YouTube thumbnail fallback |
-| `src/components/school/SchoolVideoGallery.tsx` | New component (same pattern) |
-| `src/pages/School.tsx` | Add SchoolVideoGallery section |
-| `supabase/config.toml` | Register youtube-sync function |
-
-### Limitations
-- RSS feeds only return the latest ~15 videos. For a full archive, you would eventually need the YouTube Data API.
-- Category assignment for webinars will default to "general" on sync -- you can recategorize from the admin panel afterward.
+**Sectionalized layout** on Webinars page:
+- Group `dbVideos` by category into a `Map<string, WebinarVideo[]>`
+- Render each non-empty group as a section with a heading and horizontal scroll or grid
+- When a specific filter pill is active, switch to flat grid view for just that category
 
