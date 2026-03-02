@@ -25,6 +25,18 @@ const WEBINAR_CATEGORIES = [
   { label: "General", value: "general" },
 ];
 
+const CATEGORY_META: Record<string, { emoji: string; description: string }> = {
+  women: { emoji: "🌸", description: "Fertility, hormonal balance, fibroids, PCOS, and reproductive wellness." },
+  men: { emoji: "💪", description: "Prostate health, testosterone, and men's vitality protocols." },
+  nutrition: { emoji: "🩸", description: "Blood-building, alkaline diets, fasting, and Caribbean superfoods." },
+  herbal: { emoji: "🌿", description: "Bush medicine, tinctures, cupping, and plant-based healing." },
+  detox: { emoji: "🧹", description: "Parasite cleansing, colon health, and full-body detox protocols." },
+  mental: { emoji: "🧠", description: "Stress relief, sleep, anxiety, and nervous system support." },
+  general: { emoji: "🎥", description: "General wellness topics and live Q&A sessions." },
+};
+
+const SECTION_ORDER = ["women", "men", "detox", "herbal", "nutrition", "mental", "general"];
+
 const HARDCODED_WEBINARS = [
   { category: "detox", icon: "🧹", title: "Detox & Parasite Cleansing: The Foundation of Health", desc: "Discover why cleansing your system of parasites and toxins is the essential first step to any healing protocol.", duration: "~75 min" },
   { category: "mental", icon: "🧠", title: "Herbal Medicine for Stress, Anxiety & Sleep", desc: "Natural approaches to calming the nervous system, improving sleep quality, and building long-term mental resilience.", duration: "~60 min" },
@@ -50,11 +62,96 @@ const JOURNEY_CARDS = [
 
 const HOST_CREDS = ["Based in Saint Lucia", "20+ Years Practice", "Thousands Guided", "Herbal Medicine Master"];
 
-// Consider videos published in last 30 days as "new"
 function isNew(publishedAt: string | null): boolean {
   if (!publishedAt) return false;
   const diff = Date.now() - new Date(publishedAt).getTime();
   return diff < 30 * 24 * 60 * 60 * 1000;
+}
+
+const INITIAL_SHOW = 6;
+
+// ── Video Card Component ──
+function VideoCard({ video, onClick, index }: { video: WebinarVideo; onClick: () => void; index: number }) {
+  return (
+    <ScrollReveal delay={index * 60}>
+      <div className="mkrc-card h-full flex flex-col cursor-pointer group" onClick={onClick}>
+        <div className="aspect-video rounded-lg overflow-hidden mb-4 relative">
+          {video.thumbnail_url ? (
+            <img src={video.thumbnail_url} alt={video.title || "Webinar replay"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: "#242420" }}>
+              <span className="text-4xl">🎥</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+              <span style={{ fontSize: "1.5rem", marginLeft: 3 }}>▶</span>
+            </div>
+          </div>
+          {isNew(video.published_at) && (
+            <span className="absolute top-2 right-2 mkrc-label text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#3A7D53", color: "#fff", fontSize: "0.6rem" }}>New</span>
+          )}
+        </div>
+        <div className="flex items-center justify-between mb-3">
+          <span className="mkrc-label text-xs px-2 py-1 rounded" style={{ fontSize: "0.6rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>
+            {video.category !== "general" ? WEBINAR_CATEGORIES.find(c => c.value === video.category)?.label || video.category : "Replay"}
+          </span>
+          {video.published_at && (
+            <span className="text-xs" style={{ color: "#706858" }}>
+              {new Date(video.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+            </span>
+          )}
+        </div>
+        <h3 className="mkrc-display text-lg mb-2 flex-grow line-clamp-2">{video.title}</h3>
+        {video.description && <p className="text-sm mb-4 line-clamp-2" style={{ color: "#A09888" }}>{video.description}</p>}
+        <div className="flex items-center justify-end mt-auto pt-4" style={{ borderTop: "1px solid rgba(201,168,76,0.12)" }}>
+          <button className="mkrc-btn-secondary" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>Watch Replay</button>
+        </div>
+      </div>
+    </ScrollReveal>
+  );
+}
+
+// ── Topic Section Component ──
+function TopicSection({ category, videos, onVideoClick }: { category: string; videos: WebinarVideo[]; onVideoClick: (v: WebinarVideo) => void }) {
+  const [expanded, setExpanded] = useState(false);
+  const meta = CATEGORY_META[category];
+  const catLabel = WEBINAR_CATEGORIES.find(c => c.value === category)?.label || category;
+  const shown = expanded ? videos : videos.slice(0, INITIAL_SHOW);
+  const hasMore = videos.length > INITIAL_SHOW;
+
+  return (
+    <div className="mb-16">
+      <ScrollReveal>
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-2xl">{meta?.emoji}</span>
+          <h3 className="mkrc-display text-2xl md:text-3xl">{catLabel}</h3>
+          <span className="mkrc-label text-xs px-2 py-0.5 rounded-full" style={{ fontSize: "0.6rem", border: "1px solid rgba(201,168,76,0.2)", color: "#706858" }}>
+            {videos.length} {videos.length === 1 ? "session" : "sessions"}
+          </span>
+        </div>
+        {meta?.description && (
+          <p className="text-sm mb-6" style={{ color: "#706858", maxWidth: 600 }}>{meta.description}</p>
+        )}
+      </ScrollReveal>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {shown.map((video, i) => (
+          <VideoCard key={video.id} video={video} onClick={() => onVideoClick(video)} index={i} />
+        ))}
+      </div>
+      {hasMore && (
+        <div className="text-center mt-6">
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="mkrc-btn-secondary"
+            style={{ padding: "10px 28px", fontSize: "0.8rem" }}
+          >
+            {expanded ? "Show Less" : `Show All ${videos.length} Sessions`}
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function Webinars() {
@@ -72,14 +169,20 @@ export default function Webinars() {
 
   const useDbData = dbVideos.length > 0;
 
-  // Filter DB videos by category
-  const filteredDbVideos = activeFilter === "all"
-    ? dbVideos
-    : activeFilter === "new"
-      ? dbVideos.filter((v) => isNew(v.published_at))
-      : dbVideos.filter((v) => v.category === activeFilter);
+  // Group videos by category
+  const videosByCategory = new Map<string, WebinarVideo[]>();
+  for (const video of dbVideos) {
+    const cat = video.category || "general";
+    if (!videosByCategory.has(cat)) videosByCategory.set(cat, []);
+    videosByCategory.get(cat)!.push(video);
+  }
 
-  // Filter hardcoded fallback
+  // For single-category drill-down
+  const filteredDbVideos = activeFilter === "new"
+    ? dbVideos.filter((v) => isNew(v.published_at))
+    : dbVideos.filter((v) => v.category === activeFilter);
+
+  // Hardcoded fallback
   const filteredHardcoded = activeFilter === "all" ? HARDCODED_WEBINARS : HARDCODED_WEBINARS.filter((w) => w.category === activeFilter);
 
   const handleSignup = (e: React.FormEvent) => {
@@ -87,16 +190,16 @@ export default function Webinars() {
     setSubscribed(true);
   };
 
+  const isSectionalized = activeFilter === "all";
+  const newCount = useDbData ? dbVideos.filter((v) => isNew(v.published_at)).length : 0;
+
   return (
     <div className="bg-[#0D0D0D] text-[#F5F0E8] min-h-screen" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
       {/* ===== 1. HERO ===== */}
       <section className="flex items-center justify-center text-center" style={{ minHeight: "90vh", padding: "120px 24px 80px" }}>
         <ScrollReveal>
-          <span
-            className="mkrc-label inline-block mb-6 px-4 py-2 rounded-full text-xs"
-            style={{ border: "1px solid #3A7D53", color: "#3A7D53" }}
-          >
+          <span className="mkrc-label inline-block mb-6 px-4 py-2 rounded-full text-xs" style={{ border: "1px solid #3A7D53", color: "#3A7D53" }}>
             Free Wellness Education
           </span>
           <h1 className="mkrc-display mb-6" style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)", lineHeight: 1.1, maxWidth: 800, margin: "0 auto" }}>
@@ -136,9 +239,7 @@ export default function Webinars() {
                 <span className="mkrc-label text-xs px-3 py-1 rounded-full flex items-center gap-1.5" style={{ backgroundColor: "rgba(220,50,50,0.9)", color: "#fff", fontSize: "0.65rem" }}>
                   <span className="w-2 h-2 rounded-full bg-white animate-pulse" /> Upcoming Live
                 </span>
-                <span className="mkrc-label text-xs px-3 py-1 rounded-full" style={{ backgroundColor: "#3A7D53", color: "#fff", fontSize: "0.65rem" }}>
-                  Free
-                </span>
+                <span className="mkrc-label text-xs px-3 py-1 rounded-full" style={{ backgroundColor: "#3A7D53", color: "#fff", fontSize: "0.65rem" }}>Free</span>
               </div>
             </div>
           </ScrollReveal>
@@ -152,21 +253,14 @@ export default function Webinars() {
               Your reproductive health is the foundation of your overall wellbeing. In this free live session, Honorable Priest Kailash reveals the herbal protocols and lifestyle shifts that have helped hundreds of men and women across the Caribbean restore hormonal balance, boost fertility naturally, and reclaim their vitality.
             </p>
             <ul className="mb-8 flex flex-col gap-2">
-              {[
-                "The root causes of hormonal imbalance and how nature addresses them",
-                "Caribbean herbs that support fertility, menstrual health, and reproductive function",
-                "Daily rituals to nurture your reproductive system naturally",
-                "Live Q&A with Honorable Priest Kailash",
-              ].map((item) => (
+              {["The root causes of hormonal imbalance and how nature addresses them", "Caribbean herbs that support fertility, menstrual health, and reproductive function", "Daily rituals to nurture your reproductive system naturally", "Live Q&A with Honorable Priest Kailash"].map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm" style={{ color: "#A09888" }}>
                   <span style={{ color: "#3A7D53" }}>✓</span> {item}
                 </li>
               ))}
             </ul>
             <div className="flex flex-wrap gap-4">
-              <a href="https://us06web.zoom.us/j/83340011876?pwd=vMrImiKGYGWbGbaioYt6RTEw2sbo0A.1" target="_blank" rel="noopener noreferrer" className="mkrc-btn-green">
-                Register Free on Zoom
-              </a>
+              <a href="https://us06web.zoom.us/j/83340011876?pwd=vMrImiKGYGWbGbaioYt6RTEw2sbo0A.1" target="_blank" rel="noopener noreferrer" className="mkrc-btn-green">Register Free on Zoom</a>
               <a href="#signup" className="mkrc-btn-secondary">Get Reminded</a>
             </div>
           </ScrollReveal>
@@ -185,10 +279,7 @@ export default function Webinars() {
         <div className="flex flex-wrap justify-center gap-3 mb-10">
           {WEBINAR_CATEGORIES.map((cat) => {
             const active = cat.value === activeFilter;
-            // For "new" show count badge
-            const newCount = cat.value === "new" && useDbData
-              ? dbVideos.filter((v) => isNew(v.published_at)).length
-              : null;
+            const badgeCount = cat.value === "new" && useDbData ? newCount : null;
             return (
               <button
                 key={cat.value}
@@ -203,18 +294,9 @@ export default function Webinars() {
                 }}
               >
                 {cat.label}
-                {newCount !== null && newCount > 0 && (
-                  <span
-                    className="inline-flex items-center justify-center rounded-full text-xs font-bold"
-                    style={{
-                      backgroundColor: active ? "#0D0D0D" : "#C9A84C",
-                      color: active ? "#C9A84C" : "#0D0D0D",
-                      width: 18,
-                      height: 18,
-                      fontSize: "0.55rem",
-                    }}
-                  >
-                    {newCount}
+                {badgeCount !== null && badgeCount > 0 && (
+                  <span className="inline-flex items-center justify-center rounded-full text-xs font-bold" style={{ backgroundColor: active ? "#0D0D0D" : "#C9A84C", color: active ? "#C9A84C" : "#0D0D0D", width: 18, height: 18, fontSize: "0.55rem" }}>
+                    {badgeCount}
                   </span>
                 )}
               </button>
@@ -223,97 +305,51 @@ export default function Webinars() {
         </div>
 
         {useDbData ? (
-          <>
-            {filteredDbVideos.length === 0 ? (
-              <div className="text-center py-16">
-                <p className="text-lg" style={{ color: "#706858" }}>No webinars in this category yet.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredDbVideos.map((video, i) => (
-                  <ScrollReveal key={video.id} delay={i * 80}>
-                    <div
-                      className="mkrc-card h-full flex flex-col cursor-pointer group"
-                      onClick={() => setSelectedVideo(video)}
-                    >
-                      <div className="aspect-video rounded-lg overflow-hidden mb-4 relative">
-                        {video.thumbnail_url ? (
-                          <img
-                            src={video.thumbnail_url}
-                            alt={video.title || "Webinar replay"}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: "#242420" }}>
-                            <span className="text-4xl">🎥</span>
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                            <span style={{ fontSize: "1.5rem", marginLeft: 3 }}>▶</span>
-                          </div>
-                        </div>
-                        {/* New badge */}
-                        {isNew(video.published_at) && (
-                          <span className="absolute top-2 right-2 mkrc-label text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "#3A7D53", color: "#fff", fontSize: "0.6rem" }}>
-                            New
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="mkrc-label text-xs px-2 py-1 rounded" style={{ fontSize: "0.6rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>
-                          {video.category !== "general" ? WEBINAR_CATEGORIES.find(c => c.value === video.category)?.label || video.category : "Replay"}
-                        </span>
-                        {video.published_at && (
-                          <span className="text-xs" style={{ color: "#706858" }}>
-                            {new Date(video.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="mkrc-display text-lg mb-2 flex-grow line-clamp-2">{video.title}</h3>
-                      {video.description && (
-                        <p className="text-sm mb-4 line-clamp-2" style={{ color: "#A09888" }}>{video.description}</p>
-                      )}
-                      <div className="flex items-center justify-end mt-auto pt-4" style={{ borderTop: "1px solid rgba(201,168,76,0.12)" }}>
-                        <button className="mkrc-btn-secondary" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
-                          Watch Replay
-                        </button>
-                      </div>
-                    </div>
-                  </ScrollReveal>
-                ))}
-              </div>
-            )}
-          </>
+          isSectionalized ? (
+            /* ── Sectionalized "All" view ── */
+            <>
+              {SECTION_ORDER.map((cat) => {
+                const videos = videosByCategory.get(cat);
+                if (!videos || videos.length === 0) return null;
+                return <TopicSection key={cat} category={cat} videos={videos} onVideoClick={setSelectedVideo} />;
+              })}
+            </>
+          ) : (
+            /* ── Flat grid for single category / "new" ── */
+            <>
+              {filteredDbVideos.length === 0 ? (
+                <div className="text-center py-16">
+                  <p className="text-lg" style={{ color: "#706858" }}>No webinars in this category yet.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredDbVideos.map((video, i) => (
+                    <VideoCard key={video.id} video={video} onClick={() => setSelectedVideo(video)} index={i} />
+                  ))}
+                </div>
+              )}
+            </>
+          )
         ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {(activeFilter === "all" || activeFilter === "new" ? HARDCODED_WEBINARS : filteredHardcoded).map((w, i) => (
-                <ScrollReveal key={w.title} delay={i * 80}>
-                  <div className="mkrc-card h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="mkrc-label text-xs px-2 py-1 rounded" style={{ fontSize: "0.6rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>
-                        Replay
-                      </span>
-                      <span className="mkrc-label text-xs" style={{ fontSize: "0.6rem", color: "#C9A84C" }}>
-                        {WEBINAR_CATEGORIES.find((c) => c.value === w.category)?.label || w.category}
-                      </span>
-                    </div>
-                    <span className="text-3xl mb-3">{w.icon}</span>
-                    <h3 className="mkrc-display text-lg mb-2 flex-grow">{w.title}</h3>
-                    <p className="text-sm mb-4" style={{ color: "#A09888" }}>{w.desc}</p>
-                    <div className="flex items-center justify-between mt-auto pt-4" style={{ borderTop: "1px solid rgba(201,168,76,0.12)" }}>
-                      <span className="text-xs" style={{ color: "#706858" }}>{w.duration}</span>
-                      <button className="mkrc-btn-secondary" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
-                        Watch Replay
-                      </button>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {(activeFilter === "all" || activeFilter === "new" ? HARDCODED_WEBINARS : filteredHardcoded).map((w, i) => (
+              <ScrollReveal key={w.title} delay={i * 80}>
+                <div className="mkrc-card h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="mkrc-label text-xs px-2 py-1 rounded" style={{ fontSize: "0.6rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>Replay</span>
+                    <span className="mkrc-label text-xs" style={{ fontSize: "0.6rem", color: "#C9A84C" }}>{WEBINAR_CATEGORIES.find((c) => c.value === w.category)?.label || w.category}</span>
                   </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </>
+                  <span className="text-3xl mb-3">{w.icon}</span>
+                  <h3 className="mkrc-display text-lg mb-2 flex-grow">{w.title}</h3>
+                  <p className="text-sm mb-4" style={{ color: "#A09888" }}>{w.desc}</p>
+                  <div className="flex items-center justify-between mt-auto pt-4" style={{ borderTop: "1px solid rgba(201,168,76,0.12)" }}>
+                    <span className="text-xs" style={{ color: "#706858" }}>{w.duration}</span>
+                    <button className="mkrc-btn-secondary" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>Watch Replay</button>
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
         )}
       </section>
 
@@ -355,9 +391,7 @@ export default function Webinars() {
             </p>
             <div className="flex flex-wrap gap-3">
               {HOST_CREDS.map((c) => (
-                <span key={c} className="mkrc-label text-xs px-3 py-1.5 rounded-full" style={{ fontSize: "0.65rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>
-                  {c}
-                </span>
+                <span key={c} className="mkrc-label text-xs px-3 py-1.5 rounded-full" style={{ fontSize: "0.65rem", border: "1px solid rgba(201,168,76,0.12)", color: "#706858" }}>{c}</span>
               ))}
             </div>
           </ScrollReveal>
@@ -396,9 +430,7 @@ export default function Webinars() {
         <ScrollReveal className="text-center mb-14">
           <SectionLabel text="Continue Your Journey" showLine={false} />
           <h2 className="mkrc-display text-3xl md:text-4xl mb-4">No Upcoming Webinar? Keep Exploring.</h2>
-          <p style={{ color: "#A09888" }}>
-            Your path to natural health doesn't stop here. Dive deeper with our courses, retreats, and one-on-one consultations.
-          </p>
+          <p style={{ color: "#A09888" }}>Your path to natural health doesn't stop here. Dive deeper with our courses, retreats, and one-on-one consultations.</p>
         </ScrollReveal>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {JOURNEY_CARDS.map((c, i) => (
@@ -417,9 +449,7 @@ export default function Webinars() {
       <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
         <DialogContent className="sm:max-w-3xl p-0 overflow-hidden" style={{ backgroundColor: "#1A1A16", border: "1px solid rgba(201,168,76,0.2)" }}>
           <DialogHeader className="p-4 pb-0">
-            <DialogTitle className="mkrc-display text-lg" style={{ color: "#F5F0E8" }}>
-              {selectedVideo?.title || "Webinar Replay"}
-            </DialogTitle>
+            <DialogTitle className="mkrc-display text-lg" style={{ color: "#F5F0E8" }}>{selectedVideo?.title || "Webinar Replay"}</DialogTitle>
           </DialogHeader>
           <div className="aspect-video w-full">
             {selectedVideo && (
