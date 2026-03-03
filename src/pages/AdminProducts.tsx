@@ -166,6 +166,17 @@ export default function AdminProducts() {
     },
   });
 
+  const updateCategory = useMutation({
+    mutationFn: async ({ id, category_id }: { id: string; category_id: string | null }) => {
+      const { error } = await supabase.from("products").update({ category_id }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+
   const bulkUpdateCategory = useMutation({
     mutationFn: async ({ ids, category_id }: { ids: string[]; category_id: string }) => {
       const { error } = await supabase.from("products").update({ category_id }).in("id", ids);
@@ -450,7 +461,18 @@ export default function AdminProducts() {
                       </button>
                     )}
 
-                    <p className="text-sm text-muted-foreground">{product.product_categories?.name ?? "Uncategorized"}</p>
+                    <Select
+                      value={product.category_id || "uncategorized"}
+                      onValueChange={(v) => updateCategory.mutate({ id: product.id, category_id: v === "uncategorized" ? null : v })}
+                    >
+                      <SelectTrigger className="h-7 text-xs w-full">
+                        <SelectValue placeholder="Category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="uncategorized">Uncategorized</SelectItem>
+                        {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
                   </div>
                   {product.image_url ? (
                     product.image_url.includes('wp-content') || product.image_url.includes('mountkailashslu.com') ? (
