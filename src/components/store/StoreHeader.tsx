@@ -13,11 +13,11 @@ import { Badge } from "@/components/ui/badge";
 const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "Shop", to: "/shop" },
-  { label: "The Answer", to: "/the-answer" },
+  { label: "Wholesale", to: "/wholesale" },
   { label: "Retreats", to: "/retreats" },
   { label: "School", to: "/school" },
+  { label: "The Answer", to: "/the-answer" },
   { label: "Webinars", to: "/webinars" },
-  { label: "Wholesale", to: "/wholesale" },
 ];
 
 export function StoreHeader() {
