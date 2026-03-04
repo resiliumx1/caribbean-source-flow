@@ -49,13 +49,13 @@ export function TrinityHero() {
             playsInline
             preload="metadata"
             className="w-full h-full object-cover"
-            poster="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2400"
+            poster="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=70&w=1400&fm=webp"
           >
             <source src="/videos/hero-background.mp4" type="video/mp4" />
           </video>
         ) : (
           <img
-            src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2400"
+            src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=70&w=1400&fm=webp"
             alt="Lush tropical rainforest"
             className="w-full h-full object-cover"
           />
