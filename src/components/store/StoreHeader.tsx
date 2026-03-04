@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ShoppingBag, Menu, User, MessageCircle } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ export function StoreHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { cartCount } = useCart();
   const { whatsappNumber, isLocalVisitor } = useStore();
+  const location = useLocation();
   const prevCountRef = useRef(cartCount);
   const [cartBounce, setCartBounce] = useState(false);
 
@@ -52,12 +53,11 @@ export function StoreHeader() {
 
   return (
     <header 
-      className="sticky top-0 z-50 transition-all duration-300 border-b"
-      style={{
-        background: isScrolled ? 'rgba(9,9,9,0.95)' : 'rgba(9,9,9,0.85)',
-        backdropFilter: isScrolled ? 'blur(12px)' : 'blur(4px)',
-        borderColor: isScrolled ? 'rgba(201,168,76,0.15)' : 'transparent',
-      }}
+      className={`sticky top-0 z-50 transition-all duration-300 border-b ${
+        isScrolled 
+          ? 'bg-background/95 backdrop-blur-xl border-border' 
+          : 'bg-background/80 backdrop-blur-sm border-transparent'
+      }`}
     >
       {isLocalVisitor && (
         <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
@@ -88,15 +88,23 @@ export function StoreHeader() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-5">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                to={link.to}
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = location.pathname === link.to || 
+                (link.to !== "/" && location.pathname.startsWith(link.to));
+              return (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className={`text-sm font-medium transition-colors ${
+                    isActive 
+                      ? 'text-primary border-b-2 border-primary pb-0.5' 
+                      : 'text-foreground hover:text-primary'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Actions */}
@@ -135,16 +143,22 @@ export function StoreHeader() {
               </SheetTrigger>
               <SheetContent side="right" className="w-72">
                 <nav className="flex flex-col gap-4 mt-8">
-                  {NAV_LINKS.map((link) => (
-                    <Link
-                      key={link.label}
-                      to={link.to}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {NAV_LINKS.map((link) => {
+                    const isActive = location.pathname === link.to || 
+                      (link.to !== "/" && location.pathname.startsWith(link.to));
+                    return (
+                      <Link
+                        key={link.label}
+                        to={link.to}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`text-lg font-medium transition-colors ${
+                          isActive ? 'text-primary' : 'text-foreground hover:text-primary'
+                        }`}
+                      >
+                        {isActive && "→ "}{link.label}
+                      </Link>
+                    );
+                  })}
 
                   <hr className="my-2" />
 

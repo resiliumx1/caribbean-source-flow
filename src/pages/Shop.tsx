@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ShopHero } from "@/components/store/ShopHero";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -43,18 +43,6 @@ function AnimatedGrid({ products, onQuickView, categorySlug, searchQuery }: {
   categorySlug?: string;
   searchQuery: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
   // Group products by category for section dividers (only when viewing all)
   const grouped = useMemo(() => {
     if (categorySlug || searchQuery) return null;
@@ -70,7 +58,7 @@ function AnimatedGrid({ products, onQuickView, categorySlug, searchQuery }: {
   let cardIndex = 0;
 
   return (
-    <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
       {grouped ? (
         Array.from(grouped.entries()).map(([catName, catProducts]) => {
           const elements: React.ReactNode[] = [];
@@ -83,9 +71,9 @@ function AnimatedGrid({ products, onQuickView, categorySlug, searchQuery }: {
                 product={product}
                 onQuickView={onQuickView}
                 style={{
-                  opacity: visible ? 1 : 0,
-                  transform: visible ? "translateY(0)" : "translateY(24px)",
-                  transition: `opacity 600ms ease ${idx * 80}ms, transform 600ms ease ${idx * 80}ms`,
+                  animation: `shopFadeUp 0.6s ease forwards`,
+                  animationDelay: `${idx * 80}ms`,
+                  opacity: 0,
                 }}
               />
             );
@@ -99,9 +87,9 @@ function AnimatedGrid({ products, onQuickView, categorySlug, searchQuery }: {
             product={product}
             onQuickView={onQuickView}
             style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(24px)",
-              transition: `opacity 600ms ease ${idx * 80}ms, transform 600ms ease ${idx * 80}ms`,
+              animation: `shopFadeUp 0.6s ease forwards`,
+              animationDelay: `${idx * 80}ms`,
+              opacity: 0,
             }}
           />
         ))
