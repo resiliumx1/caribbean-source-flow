@@ -232,9 +232,9 @@ export default function TheAnswer() {
               </div>
               <div className="chronixx-stat-card">
                 <div className="chronixx-section__stat-value">
-                  <CounterAnimation target={2} suffix="" />
+                  <CounterAnimation target={300} suffix="+" />
                 </div>
-                <p className="chronixx-section__stat-label">Tonight Show</p>
+                <p className="chronixx-section__stat-label">Live Shows</p>
               </div>
             </div>
             <div className="chronixx-stats-divider" />
