@@ -8,20 +8,52 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Play, Video } from "lucide-react";
+import { Play, Video, ExternalLink } from "lucide-react";
 
 function isYouTubeUrl(url: string) {
   return /youtube\.com|youtu\.be/i.test(url);
 }
 
-function getYouTubeEmbedUrl(url: string) {
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
-  return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : url;
+function isStreamableUrl(url: string) {
+  return /streamable\.com/i.test(url);
+}
+
+function isTikTokUrl(url: string) {
+  return /tiktok\.com/i.test(url);
+}
+
+function isEmbeddableUrl(url: string) {
+  return isYouTubeUrl(url) || isStreamableUrl(url);
+}
+
+function getEmbedUrl(url: string): string | null {
+  // YouTube
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`;
+
+  // Streamable
+  const streamMatch = url.match(/streamable\.com\/([a-zA-Z0-9]+)/);
+  if (streamMatch) return `https://streamable.com/e/${streamMatch[1]}?autoplay=1`;
+
+  return null;
 }
 
 function getYouTubeThumbnail(url: string): string | null {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
   return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : null;
+}
+
+function getStreamableThumbnail(url: string): string | null {
+  const match = url.match(/streamable\.com\/([a-zA-Z0-9]+)/);
+  return match ? `https://cdn-cf-east.streamable.com/image/${match[1]}.jpg` : null;
+}
+
+function getThumbnail(url: string): string | null {
+  return getYouTubeThumbnail(url) || getStreamableThumbnail(url);
+}
+
+function isDirectVideo(url: string): boolean {
+  return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);
 }
 
 export function RetreatVideoGallery() {
@@ -56,18 +88,28 @@ export function RetreatVideoGallery() {
             Videos Coming Soon
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            We're preparing beautiful videos of our retreat experience. Check back soon to see
-            our ceremonies, healing sessions, and the natural beauty of St. Lucia.
+            We're preparing beautiful videos of our retreat experience. Check back soon.
           </p>
         </div>
       </section>
     );
   }
 
+  const handleVideoClick = (video: RetreatVideo) => {
+    const embedUrl = getEmbedUrl(video.video_url);
+    const isDirect = isDirectVideo(video.video_url);
+
+    if (embedUrl || isDirect) {
+      setSelectedVideo(video);
+    } else {
+      // For non-embeddable URLs (TikTok, Jumpshare, etc.), open in new tab
+      window.open(video.video_url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <section className="py-20 bg-cream">
       <div className="container mx-auto px-4">
-        {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
             Sacred Journey Videos
@@ -76,7 +118,6 @@ export function RetreatVideoGallery() {
             Watch the transformative experiences, sacred ceremonies, and healing moments from our retreats.
           </p>
 
-          {/* Category filters */}
           <div className="flex flex-wrap justify-center gap-2">
             <Button
               variant={activeCategory === undefined ? "default" : "outline"}
@@ -100,21 +141,19 @@ export function RetreatVideoGallery() {
           </div>
         </div>
 
-        {/* Video grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map((video) => (
-            <div
-              key={video.id}
-              className="group relative overflow-hidden rounded-xl cursor-pointer bg-background shadow-md hover:shadow-xl transition-shadow duration-300"
-              onClick={() => setSelectedVideo(video)}
-            >
-              {/* Thumbnail */}
-              <div className="aspect-video relative overflow-hidden">
-                {(() => {
-                  const thumbnailSrc =
-                    video.thumbnail_url ||
-                    (isYouTubeUrl(video.video_url) ? getYouTubeThumbnail(video.video_url) : null);
-                  return thumbnailSrc ? (
+          {videos.map((video) => {
+            const thumbnailSrc = video.thumbnail_url || getThumbnail(video.video_url);
+            const canEmbed = isEmbeddableUrl(video.video_url) || isDirectVideo(video.video_url);
+
+            return (
+              <div
+                key={video.id}
+                className="group relative overflow-hidden rounded-xl cursor-pointer bg-background shadow-md hover:shadow-xl transition-shadow duration-300"
+                onClick={() => handleVideoClick(video)}
+              >
+                <div className="aspect-video relative overflow-hidden">
+                  {thumbnailSrc ? (
                     <img
                       src={thumbnailSrc}
                       alt={video.title || "Retreat video"}
@@ -125,33 +164,35 @@ export function RetreatVideoGallery() {
                     <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                       <Video className="w-12 h-12 text-muted-foreground" />
                     </div>
-                  );
-                })()}
-                {/* Play button overlay */}
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-16 h-16 rounded-full bg-primary/85 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                    <Play className="w-7 h-7 text-primary-foreground ml-1" fill="currentColor" />
+                  )}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="w-16 h-16 rounded-full bg-primary/85 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                      {canEmbed ? (
+                        <Play className="w-7 h-7 text-primary-foreground ml-1" fill="currentColor" />
+                      ) : (
+                        <ExternalLink className="w-7 h-7 text-primary-foreground" />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Info */}
-              {(video.title || video.description) && (
-                <div className="p-4">
-                  {video.title && (
-                    <h3 className="font-serif font-semibold text-foreground text-lg line-clamp-1">
-                      {video.title}
-                    </h3>
-                  )}
-                  {video.description && (
-                    <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
-                      {video.description}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+                {(video.title || video.description) && (
+                  <div className="p-4">
+                    {video.title && (
+                      <h3 className="font-serif font-semibold text-foreground text-lg line-clamp-1">
+                        {video.title}
+                      </h3>
+                    )}
+                    {video.description && (
+                      <p className="text-muted-foreground text-sm line-clamp-2 mt-1">
+                        {video.description}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -162,25 +203,34 @@ export function RetreatVideoGallery() {
             <DialogTitle>{selectedVideo?.title || "Retreat Video"}</DialogTitle>
           </DialogHeader>
           <div className="aspect-video w-full">
-            {selectedVideo && isYouTubeUrl(selectedVideo.video_url) ? (
-              <iframe
-                key={selectedVideo.id}
-                src={getYouTubeEmbedUrl(selectedVideo.video_url)}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title={selectedVideo.title || "Retreat Video"}
-              />
-            ) : selectedVideo ? (
-              <video
-                key={selectedVideo.id}
-                src={selectedVideo.video_url}
-                controls
-                autoPlay
-                playsInline
-                className="w-full h-full object-contain bg-black"
-              />
-            ) : null}
+            {selectedVideo && (() => {
+              const embedUrl = getEmbedUrl(selectedVideo.video_url);
+              if (embedUrl) {
+                return (
+                  <iframe
+                    key={selectedVideo.id}
+                    src={embedUrl}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                    allowFullScreen
+                    title={selectedVideo.title || "Retreat Video"}
+                  />
+                );
+              }
+              if (isDirectVideo(selectedVideo.video_url)) {
+                return (
+                  <video
+                    key={selectedVideo.id}
+                    src={selectedVideo.video_url}
+                    controls
+                    autoPlay
+                    playsInline
+                    className="w-full h-full object-contain bg-black"
+                  />
+                );
+              }
+              return null;
+            })()}
           </div>
         </DialogContent>
       </Dialog>

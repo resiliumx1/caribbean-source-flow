@@ -1,15 +1,65 @@
+import { useRef, useEffect, useState } from "react";
 import HeroCtas from "@/components/HeroCtas";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function TrinityHero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const isMobile = useIsMobile();
+  const [prefersReduced, setPrefersReduced] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const section = sectionRef.current;
+    if (!video || !section || prefersReduced) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [prefersReduced]);
+
   return (
-    <section className="relative min-h-screen flex flex-col pt-16">
-      {/* Background Image with Dark Overlay */}
+    <section ref={sectionRef} className="relative min-h-screen flex flex-col pt-16">
+      {/* Background Video / Fallback */}
       <div className="absolute inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2400"
-          alt="Lush tropical rainforest"
-          className="w-full h-full object-cover"
-        />
+        {!prefersReduced ? (
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover"
+            poster="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2400"
+          >
+            <source src="/videos/hero-background.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2400"
+            alt="Lush tropical rainforest"
+            className="w-full h-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/90 via-[#0a0a0a]/75 to-[#0a0a0a]/90" />
       </div>
 
