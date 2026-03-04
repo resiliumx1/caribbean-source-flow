@@ -19,7 +19,8 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
   const { addToCart, isAddingToCart } = useCart();
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
 
-  const rating = 4.7 + (parseInt(product.id.slice(-2), 16) % 4) / 10;
+  const hash = parseInt(product.id.slice(-2), 16) % 10;
+  const rating = hash === 0 ? 4.7 : 5.0;
   const reviewCount = 120 + (parseInt(product.id.slice(-4), 16) % 231);
 
   const categoryLabel =
