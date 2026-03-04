@@ -16,8 +16,7 @@ export function useProducts(categorySlug?: string) {
         .from("products")
         .select("*, product_categories!category_id(*)")
         .eq("is_active", true)
-        .order("display_order", { ascending: true })
-        .order("image_url", { ascending: false, nullsFirst: false });
+        .order("display_order", { ascending: true });
 
       if (categorySlug) {
         const { data: category } = await supabase
@@ -34,7 +33,7 @@ export function useProducts(categorySlug?: string) {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data as Product[];
+      return (data ?? []) as Product[];
     },
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,

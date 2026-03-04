@@ -83,30 +83,18 @@ export function TrinityHero() {
         <HeroCtas />
       </div>
 
-      {/* Trust Ticker Bar */}
-      <div className="relative z-10 py-4 px-4" style={{ background: '#111111' }}>
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#c9a84c' }}>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c9a84c' }} />
-              21+ Years Clinical Practice
-            </span>
-            <span className="hidden md:inline" style={{ color: 'rgba(201,168,76,0.4)' }}>·</span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c9a84c' }} />
-              Certified Processing Facility
-            </span>
-            <span className="hidden md:inline" style={{ color: 'rgba(201,168,76,0.4)' }}>·</span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c9a84c' }} />
-              Featured by St. Lucia Tourism Authority
-            </span>
-            <span className="hidden md:inline" style={{ color: 'rgba(201,168,76,0.4)' }}>·</span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c9a84c' }} />
-              Miami Warehouse (3-Day US)
-            </span>
-          </div>
+      {/* Trust Ticker Bar — infinite scroll marquee */}
+      <div className="relative z-10 py-4 overflow-hidden" style={{ background: '#111111' }}>
+        <div className="marquee-track" style={{ display: 'flex', width: 'max-content', animation: 'marquee-scroll 30s linear infinite' }}>
+          {[0, 1].map((dup) => (
+            <div key={dup} className="flex items-center gap-8 px-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#c9a84c', whiteSpace: 'nowrap' }}>
+              <span>✦ 21+ YEARS CLINICAL PRACTICE</span>
+              <span>✦ CERTIFIED PROCESSING FACILITY</span>
+              <span>✦ FEATURED BY ST. LUCIA TOURISM AUTHORITY</span>
+              <span>✦ ENDORSED BY CHRONIXX</span>
+              <span>✦ MIAMI WAREHOUSE 3-DAY US DELIVERY</span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -114,6 +102,10 @@ export function TrinityHero() {
         @keyframes shimmer {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
+        }
+        @keyframes marquee-scroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
       `}</style>
     </section>

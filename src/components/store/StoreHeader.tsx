@@ -52,11 +52,12 @@ export function StoreHeader() {
 
   return (
     <header 
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-background/98 backdrop-blur-md shadow-md border-b border-border" 
-          : "bg-background/95 backdrop-blur-sm border-b border-border/50"
-      }`}
+      className="sticky top-0 z-50 transition-all duration-300 border-b"
+      style={{
+        background: isScrolled ? 'rgba(9,9,9,0.95)' : 'rgba(9,9,9,0.85)',
+        backdropFilter: isScrolled ? 'blur(12px)' : 'blur(4px)',
+        borderColor: isScrolled ? 'rgba(201,168,76,0.15)' : 'transparent',
+      }}
     >
       {isLocalVisitor && (
         <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">

@@ -1,4 +1,7 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import wholesaleCollage from "@/assets/wholesale-collage.png";
+import schoolFaculty from "@/assets/school-faculty-ceremony.jpg";
 
 export function OriginStory() {
   return (
@@ -9,9 +12,11 @@ export function OriginStory() {
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
             <img
               src={wholesaleCollage}
-              alt="Priest Kailash inspecting herbs, harvesting, lab processing, and Miami warehouse"
+              alt="Priest Kailash Kay Leonce inspecting medicinal herbs at Mount Kailash processing facility, Saint Lucia"
               className="w-full h-auto object-cover transition-all duration-300 hover:brightness-110"
               loading="lazy"
+              width={1200}
+              height={600}
             />
           </div>
           <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: '#c9a84c' }}>
@@ -20,8 +25,7 @@ export function OriginStory() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-          {/* Content */}
+          {/* Content — Left */}
           <div className="lg:pl-8">
             <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6" style={{ background: 'rgba(201,168,76,0.1)', color: '#c9a84c' }}>
               From Volcanic Soil
@@ -64,23 +68,40 @@ export function OriginStory() {
               ))}
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Full-width Priest Kailash Quote */}
-      <div className="mt-24" style={{ background: '#0d1a0f', borderTop: '1px solid rgba(201,168,76,0.3)', borderBottom: '1px solid rgba(201,168,76,0.3)', padding: '80px 24px' }}>
-        <div className="container mx-auto max-w-3xl text-center relative">
-          {/* Large decorative quote mark */}
-          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '180px', color: '#c9a84c', opacity: 0.15, position: 'absolute', top: '-80px', left: '-20px', lineHeight: 1, pointerEvents: 'none' }}>
-            "
-          </span>
-          <blockquote style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(1.5rem, 3vw, 32px)', color: '#f2ead8', lineHeight: 1.5, marginBottom: '24px' }}>
-            "Western medicine treats symptoms. Bush medicine addresses
-            terrain — the cellular environment where disease takes root."
-          </blockquote>
-          <cite style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#c9a84c', fontStyle: 'normal' }}>
-            — Priest Kailash Kay Leonce, Master Herbalist
-          </cite>
+          {/* Right — School Photo */}
+          <div className="flex flex-col items-start">
+            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#c9a84c', marginBottom: '8px' }}>
+              MOUNT KAILASH SCHOOL OF ESOTERIC KNOWLEDGE
+            </span>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontStyle: 'italic', fontSize: '18px', color: '#f2ead8', marginBottom: '20px' }}>
+              Ancient Caribbean wisdom. Formally taught.
+            </p>
+            <div
+              className="rounded-2xl overflow-hidden w-full mb-6"
+              style={{
+                border: '1px solid rgba(201,168,76,0.3)',
+                boxShadow: '0 0 60px rgba(201,168,76,0.1)',
+              }}
+            >
+              <img
+                src={schoolFaculty}
+                alt="Priest Kailash Kay Leonce with Mount Kailash School of Esoteric Knowledge faculty in ceremonial robes, Saint Lucia"
+                className="w-full h-auto object-cover"
+                style={{ objectPosition: 'center top' }}
+                loading="lazy"
+                width={800}
+                height={533}
+              />
+            </div>
+            <Link
+              to="/school"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:bg-[#c9a84c] hover:text-[#090909]"
+              style={{ border: '1px solid #c9a84c', color: '#c9a84c', fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '14px' }}
+            >
+              Explore The School <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </section>

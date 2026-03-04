@@ -48,8 +48,7 @@ queryClient.prefetchQuery({
       .from("products")
       .select("*, product_categories!category_id(*)")
       .eq("is_active", true)
-      .order("display_order", { ascending: true })
-      .order("image_url", { ascending: false, nullsFirst: false });
+      .order("display_order", { ascending: true });
     if (error) throw error;
     return data;
   },

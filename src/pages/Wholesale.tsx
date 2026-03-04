@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Hero } from "@/components/wholesale/Hero";
 import { ProblemSolution } from "@/components/wholesale/ProblemSolution";
 import { ProductGrid } from "@/components/wholesale/ProductGrid";
@@ -10,6 +10,12 @@ import { WhatsAppButton } from "@/components/wholesale/WhatsAppButton";
 
 const Wholesale = () => {
   const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    document.title = "Caribbean Botanical Wholesale | COA Documentation | 3-Day US Delivery | Mount Kailash";
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", "Wholesale Caribbean botanicals with full COA documentation. 3-day US delivery from Miami warehouse. Volume pricing for clinics, retailers and wellness brands.");
+  }, []);
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });

@@ -127,9 +127,9 @@ export default function TheAnswer() {
   const reveal = useRevealObserver();
 
   useEffect(() => {
-    document.title = "The Answer — Nature's Immune Booster Shot | Endorsed by Chronixx | MKRC";
+    document.title = "The Answer Herbal Tincture | Endorsed by Chronixx | Mount Kailash Rejuvenation Centre";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "The Answer is MKRC's best-selling immune system enhancer — a handcrafted herbal tincture endorsed by reggae icon Chronixx. Made in Saint Lucia with Anamu, Vervain & Soursop Leaves. Oak-aged 21 days.");
+    if (meta) meta.setAttribute("content", "The Answer is MKRC's best-selling immune system enhancer — a handcrafted herbal tincture endorsed by Chronixx. Made in Saint Lucia with Anamu, Vervain & Soursop. Oak-aged 21 days.");
   }, []);
 
   return (
@@ -183,7 +183,7 @@ export default function TheAnswer() {
             <SectionLabel text="Artist Endorsement" />
             <span className="chronixx-section__watermark">Chronixx</span>
             <div className="chronixx-section__photo-placeholder">
-              <img src={chronixxPhoto} alt="Chronixx — Jamaican reggae artist and advocate for natural living" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src={chronixxPhoto} alt="Reggae artist Chronixx endorsing Mount Kailash The Answer herbal tincture, Caribbean wellness" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
           </div>
 

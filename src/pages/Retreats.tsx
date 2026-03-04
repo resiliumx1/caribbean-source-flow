@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
 import { RetreatPathSplit } from "@/components/retreats/RetreatPathSplit";
 import { ProtocolTimeline } from "@/components/retreats/ProtocolTimeline";
@@ -24,6 +25,12 @@ const GoddessWhatsApp = () => (
 );
 
 const Retreats = () => {
+  useEffect(() => {
+    document.title = "Healing Retreats in Saint Lucia | Private & Group Programs | Mount Kailash";
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", "Experience healing retreats in Saint Lucia's rainforest. Private and group wellness programs led by Priest Kailash Kay Leonce. All-inclusive with herbal protocols.");
+  }, []);
+
   return (
     <main className="min-h-screen">
       <RetreatsHero />

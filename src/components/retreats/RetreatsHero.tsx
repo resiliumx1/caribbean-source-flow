@@ -18,7 +18,7 @@ export function RetreatsHero() {
       <div className="absolute inset-0 z-0">
         <img
           src={heroImage}
-          alt="Mount Kailash rainforest retreat"
+          alt="Healing retreat in Saint Lucia rainforest, Mount Kailash Rejuvenation Centre private and group wellness programs"
           className="w-full h-full object-cover"
           style={{ filter: 'sepia(20%) saturate(120%) hue-rotate(-10deg)' }}
         />
