@@ -12,7 +12,6 @@ interface Testimonial {
   results: string | null;
 }
 
-// Placeholder avatar images for testimonials
 const avatarImages = [
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
@@ -36,91 +35,59 @@ export function TransformationStories() {
     },
   });
 
-  // Fallback testimonials if none in DB
   const displayTestimonials = testimonials.length > 0 ? testimonials : [
-    {
-      id: "1",
-      quote: "After years of trying everything, Mt. Kailash gave me clarity and a system I could finally trust.",
-      author_name: "Aisha",
-      author_title: "Toronto",
-      condition_addressed: null,
-      results: null,
-    },
-    {
-      id: "2", 
-      quote: "The transformation was deeper than I expected. I left feeling truly renewed from the inside out.",
-      author_name: "Marcus",
-      author_title: "New York",
-      condition_addressed: null,
-      results: null,
-    },
-    {
-      id: "3",
-      quote: "Priest Kailash's approach is unlike anything else. Traditional wisdom with real, measurable results.",
-      author_name: "Sophia",
-      author_title: "London",
-      condition_addressed: null,
-      results: null,
-    },
+    { id: "1", quote: "After years of trying everything, Mt. Kailash gave me clarity and a system I could finally trust.", author_name: "Aisha", author_title: "Toronto", condition_addressed: null, results: null },
+    { id: "2", quote: "The transformation was deeper than I expected. I left feeling truly renewed from the inside out.", author_name: "Marcus", author_title: "New York", condition_addressed: null, results: null },
+    { id: "3", quote: "Priest Kailash's approach is unlike anything else. Traditional wisdom with real, measurable results.", author_name: "Sophia", author_title: "London", condition_addressed: null, results: null },
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="py-24 md:py-28" style={{ background: '#0a0a0a' }}>
       <div className="container mx-auto max-w-6xl px-4">
-        {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(2rem, 4vw, 48px)', color: '#f2ead8', marginBottom: '16px' }}>
             Real Transformations
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto' }}>
             Stories from guests who experienced lasting change.
           </p>
         </div>
 
-        {/* Stories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {displayTestimonials.map((story, index) => (
             <div
               key={story.id}
-              className="bg-card rounded-2xl border border-border p-8 transition-all hover:shadow-lg"
+              className="rounded-2xl p-10 transition-all hover:scale-[1.02]"
+              style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}
             >
-              {/* Circular photo avatar */}
+              {/* Avatar + credentials at top */}
               <div className="flex items-center gap-4 mb-6">
-                <Avatar className="w-16 h-16 border-2 border-primary/20">
-                  <AvatarImage 
-                    src={avatarImages[index % avatarImages.length]} 
-                    alt={story.author_name}
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20 text-xl font-bold text-primary">
+                <Avatar className="w-14 h-14" style={{ border: '2px solid #c9a84c' }}>
+                  <AvatarImage src={avatarImages[index % avatarImages.length]} alt={story.author_name} className="object-cover" />
+                  <AvatarFallback style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', color: '#090909', fontSize: '18px', fontWeight: 700 }}>
                     {story.author_name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-semibold text-foreground">
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: '#f2ead8' }}>
                     {story.author_name}
                   </div>
                   {story.author_title && (
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <MapPin className="w-3 h-3" />
+                    <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: '#c9a84c' }}>
                       {story.author_title}
                     </div>
                   )}
-                  {/* Bright 5-star rating */}
-                  <div className="flex items-center gap-0.5 mt-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className="w-4 h-4 fill-amber-400 text-amber-400" 
-                      />
-                    ))}
-                  </div>
                 </div>
               </div>
 
-              <Quote className="w-8 h-8 text-primary/30 mb-4" />
+              {/* Stars */}
+              <div className="flex items-center gap-0.5 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#c9a84c] text-[#c9a84c]" />
+                ))}
+              </div>
 
-              <p className="text-foreground leading-relaxed italic">
+              <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: '#f2ead8', lineHeight: 1.8 }}>
                 "{story.quote}"
               </p>
             </div>

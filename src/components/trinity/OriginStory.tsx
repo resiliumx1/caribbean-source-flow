@@ -1,64 +1,57 @@
-import { useState } from "react";
-import { Play, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import herbProcessing from "@/assets/herb-processing.jpg";
 import seamossHarvest from "@/assets/seamoss-harvest.jpg";
+import heroFarm from "@/assets/hero-farm.jpg";
 
 export function OriginStory() {
-  const [videoOpen, setVideoOpen] = useState(false);
-
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="py-24 md:py-28" style={{ background: '#0f0f0d' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Images - Documentary Style */}
+          {/* Photo Mosaic - replaces video */}
           <div className="relative">
-            <div className="grid grid-cols-5 gap-4">
-              {/* Main Image */}
-              <div className="col-span-3 relative">
-                <img
-                  src={herbProcessing}
-                  alt="Traditional herb processing at Mount Kailash"
-                  className="w-full h-80 object-cover rounded-2xl shadow-lg"
-                />
-                {/* Video Play Button */}
-                <button
-                  onClick={() => setVideoOpen(true)}
-                  className="absolute inset-0 flex items-center justify-center group"
-                  aria-label="Play video"
-                >
-                  <div className="w-20 h-20 rounded-full bg-background/90 flex items-center justify-center shadow-xl group-hover:bg-accent group-hover:scale-110 transition-all">
-                    <Play className="w-8 h-8 text-foreground group-hover:text-accent-foreground ml-1" />
-                  </div>
-                </button>
-              </div>
-
-              {/* Secondary Image */}
-              <div className="col-span-2">
-                <img
-                  src={seamossHarvest}
-                  alt="Sea moss harvest in St. Lucia"
-                  className="w-full h-80 object-cover rounded-2xl shadow-lg"
-                />
+            <div className="rounded-2xl p-1" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+              <div className="grid grid-cols-5 gap-3">
+                {/* Large left image - 60% */}
+                <div className="col-span-3">
+                  <img
+                    src={herbProcessing}
+                    alt="Traditional herb processing at Mount Kailash"
+                    className="w-full h-80 object-cover rounded-2xl"
+                  />
+                </div>
+                {/* Two stacked right images - 40% */}
+                <div className="col-span-2 flex flex-col gap-3">
+                  <img
+                    src={seamossHarvest}
+                    alt="Sea moss harvest in St. Lucia"
+                    className="w-full h-[calc(50%-6px)] object-cover rounded-2xl"
+                    style={{ minHeight: '150px' }}
+                  />
+                  <img
+                    src={heroFarm}
+                    alt="Mount Kailash farm"
+                    className="w-full h-[calc(50%-6px)] object-cover rounded-2xl"
+                    style={{ minHeight: '150px' }}
+                  />
+                </div>
               </div>
             </div>
-
-            {/* Decorative Element */}
-            <div className="absolute -bottom-4 -left-4 w-24 h-24 border-4 border-accent rounded-2xl -z-10" />
+            <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: '#c9a84c' }}>
+              Wildcrafted in Saint Lucia. Processed by hand. Delivered to the world.
+            </p>
           </div>
 
           {/* Content */}
           <div className="lg:pl-8">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-semibold mb-6">
+            <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6" style={{ background: 'rgba(201,168,76,0.1)', color: '#c9a84c' }}>
               From Volcanic Soil
             </span>
 
-            <h2 className="section-header mb-6">
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 3.5vw, 40px)', color: '#f2ead8', marginBottom: '24px', lineHeight: 1.2 }}>
               Where Traditional Bush Medicine Meets Clinical Precision
             </h2>
 
-            <div className="space-y-4 text-muted-foreground leading-relaxed mb-8">
+            <div className="space-y-4 mb-8" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', lineHeight: 1.7 }}>
               <p>
                 For over two decades, Right Honourable Priest Kailash Kay Leonce
                 has cultivated the art of St. Lucian bush medicine in the shadow
@@ -73,49 +66,43 @@ export function OriginStory() {
               </p>
             </div>
 
-            {/* Proof Points */}
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="p-4 bg-muted/50 rounded-xl">
-                <div className="text-2xl font-bold text-foreground mb-1">500+</div>
-                <div className="text-sm text-muted-foreground">
-                  Herbal physicians trained
+            {/* Stats in dark cards */}
+            <div className="grid grid-cols-3 gap-4 mb-8">
+              {[
+                { value: "500+", label: "Herbal Physicians Trained" },
+                { value: "43,000+", label: "Bottles Formulated Annually" },
+                { value: "21+", label: "Years Clinical Practice" },
+              ].map((stat) => (
+                <div key={stat.label} className="p-4 rounded-xl text-center" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(1.5rem, 3vw, 56px)', color: '#c9a84c', lineHeight: 1 }}>
+                    {stat.value}
+                  </div>
+                  <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '8px' }}>
+                    {stat.label}
+                  </div>
                 </div>
-              </div>
-              <div className="p-4 bg-muted/50 rounded-xl">
-                <div className="text-2xl font-bold text-foreground mb-1">43,000+</div>
-                <div className="text-sm text-muted-foreground">
-                  Bottles formulated annually
-                </div>
-              </div>
+              ))}
             </div>
-
-            {/* Quote */}
-            <blockquote className="relative pl-6 border-l-4 border-accent">
-              <p className="text-lg italic text-foreground mb-3">
-                "Western medicine treats symptoms. Bush medicine addresses
-                terrain—the cellular environment where disease takes root."
-              </p>
-              <cite className="text-sm text-muted-foreground not-italic">
-                — Priest Kailash Kay Leonce, Master Herbalist
-              </cite>
-            </blockquote>
           </div>
         </div>
       </div>
 
-      {/* Video Dialog */}
-      <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
-        <DialogContent className="max-w-4xl p-0 bg-black border-none">
-          <DialogClose className="absolute right-4 top-4 z-50 rounded-full bg-background/80 p-2 hover:bg-background">
-            <X className="w-5 h-5" />
-          </DialogClose>
-          <div className="aspect-video bg-foreground/10 flex items-center justify-center">
-            <p className="text-muted-foreground">
-              Video content coming soon
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Full-width Priest Kailash Quote */}
+      <div className="mt-24" style={{ background: '#0d1a0f', borderTop: '1px solid rgba(201,168,76,0.3)', borderBottom: '1px solid rgba(201,168,76,0.3)', padding: '80px 24px' }}>
+        <div className="container mx-auto max-w-3xl text-center relative">
+          {/* Large decorative quote mark */}
+          <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '180px', color: '#c9a84c', opacity: 0.15, position: 'absolute', top: '-80px', left: '-20px', lineHeight: 1, pointerEvents: 'none' }}>
+            "
+          </span>
+          <blockquote style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(1.5rem, 3vw, 32px)', color: '#f2ead8', lineHeight: 1.5, marginBottom: '24px' }}>
+            "Western medicine treats symptoms. Bush medicine addresses
+            terrain — the cellular environment where disease takes root."
+          </blockquote>
+          <cite style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#c9a84c', fontStyle: 'normal' }}>
+            — Priest Kailash Kay Leonce, Master Herbalist
+          </cite>
+        </div>
+      </div>
     </section>
   );
 }

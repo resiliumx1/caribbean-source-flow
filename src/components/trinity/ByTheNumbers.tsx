@@ -1,39 +1,26 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Leaf, Users, GraduationCap, Truck, Calendar } from "lucide-react";
+import { Leaf, GraduationCap, Truck, Calendar } from "lucide-react";
 
 interface Stat {
   value: number;
   suffix: string;
   label: string;
   icon: React.ElementType;
-  colorClass: string;
-  bgClass: string;
 }
 
-// Using Tailwind classes that adapt to dark mode
 const stats: Stat[] = [
-  { value: 43000, suffix: "+", label: "Bottles formulated annually", icon: Leaf, colorClass: "text-secondary", bgClass: "bg-secondary/20" },
-  { value: 21, suffix: "", label: "Years clinical practice", icon: Calendar, colorClass: "text-accent", bgClass: "bg-accent/20" },
-  { value: 500, suffix: "+", label: "Herbal physicians trained", icon: GraduationCap, colorClass: "text-cream dark:text-cream", bgClass: "bg-cream/20 dark:bg-cream/10" },
-  { value: 3, suffix: "", label: "Days to US door", icon: Truck, colorClass: "text-ocean dark:text-ocean-light", bgClass: "bg-ocean/20 dark:bg-ocean/10" },
-  { value: 7, suffix: "", label: "Days average retreat", icon: Users, colorClass: "text-accent", bgClass: "bg-accent/20" },
+  { value: 43000, suffix: "+", label: "Bottles formulated annually", icon: Leaf },
+  { value: 21, suffix: "+", label: "Years clinical practice", icon: Calendar },
+  { value: 500, suffix: "+", label: "Herbal physicians trained", icon: GraduationCap },
+  { value: 3, suffix: "", label: "Days to US door", icon: Truck },
 ];
 
-function AnimatedCounter({
-  target,
-  suffix,
-  isVisible,
-}: {
-  target: number;
-  suffix: string;
-  isVisible: boolean;
-}) {
+function AnimatedCounter({ target, suffix, isVisible }: { target: number; suffix: string; isVisible: boolean }) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (!isVisible) return;
-
     const duration = 2000;
     const steps = 60;
     const stepDuration = duration / steps;
@@ -53,15 +40,8 @@ function AnimatedCounter({
     return () => clearInterval(timer);
   }, [target, isVisible]);
 
-  const formattedCount =
-    target >= 1000 ? count.toLocaleString() : count.toString();
-
-  return (
-    <span>
-      {formattedCount}
-      {suffix}
-    </span>
-  );
+  const formattedCount = target >= 1000 ? count.toLocaleString() : count.toString();
+  return <span>{formattedCount}{suffix}</span>;
 }
 
 export function ByTheNumbers() {
@@ -69,100 +49,46 @@ export function ByTheNumbers() {
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   return (
-    <section
-      ref={sectionRef}
-      className="py-20 md:py-28 bg-primary text-primary-foreground relative overflow-hidden"
-    >
-      {/* Organic flowing SVG background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <svg
-          className="absolute w-full h-full opacity-10"
-          viewBox="0 0 1200 400"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,200 Q300,100 600,200 T1200,200"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-accent"
-          />
-          <path
-            d="M0,250 Q400,150 800,250 T1200,250"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            className="text-secondary"
-          />
-          <path
-            d="M0,150 Q200,250 600,150 T1200,150"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            className="text-accent/50"
-          />
-        </svg>
-      </div>
-
+    <section ref={sectionRef} className="py-24 md:py-28 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
       <div className="container mx-auto max-w-6xl px-4 relative z-10">
-        {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-4 text-primary-foreground"
+          <motion.h2
+            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
           >
             Rooted in Real Results
           </motion.h2>
-          <motion.p 
-            className="text-primary-foreground/80 max-w-xl mx-auto"
+          <motion.p
+            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '560px', margin: '0 auto' }}
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Two decades of dedication to cellular wellness and traditional
-            medicine.
+            Two decades of dedication to cellular wellness and traditional medicine.
           </motion.p>
         </div>
 
-        {/* Stats in organic flowing layout */}
-        <div className="flex flex-wrap justify-center gap-6 md:gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <motion.div
                 key={stat.label}
-                className="flex flex-col items-center text-center w-36 md:w-44"
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                transition={{ 
-                  duration: 0.5, 
-                  delay: index * 0.1,
-                  type: "spring",
-                  stiffness: 100,
-                }}
+                className="rounded-xl p-8 text-center"
+                style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                {/* Icon circle with gradient */}
-                <motion.div
-                  className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-4 relative ${stat.bgClass}`}
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Icon className={`w-7 h-7 md:w-8 md:h-8 ${stat.colorClass}`} />
-                </motion.div>
-
-                {/* Number - using high contrast colors that work in dark mode */}
-                <div className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-2 ${stat.colorClass}`}>
-                  <AnimatedCounter
-                    target={stat.value}
-                    suffix={stat.suffix}
-                    isVisible={isInView}
-                  />
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(201,168,76,0.1)' }}>
+                  <Icon className="w-6 h-6" style={{ color: '#c9a84c' }} />
                 </div>
-
-                {/* Label */}
-                <div className="text-xs md:text-sm text-primary-foreground/80 leading-tight">
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 56px)', color: '#c9a84c', lineHeight: 1, marginBottom: '8px' }}>
+                  <AnimatedCounter target={stat.value} suffix={stat.suffix} isVisible={isInView} />
+                </div>
+                <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   {stat.label}
                 </div>
               </motion.div>

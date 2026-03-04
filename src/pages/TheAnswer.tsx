@@ -140,7 +140,7 @@ export default function TheAnswer() {
         <div className="answer-hero__bg" style={{ backgroundImage: `url(${heroBg})` }} />
         <div className="answer-hero__gradients" />
         <div className="answer-hero__inner">
-          <div ref={reveal} className="ta-reveal">
+          <div ref={reveal} className="ta-reveal answer-hero__text-col">
             <div className="answer-hero__badge">
               <Shield size={14} />
               <span>Endorsed by Chronixx</span>
@@ -169,6 +169,9 @@ export default function TheAnswer() {
                 <span key={c} className="answer-hero__cert-tag">{c}</span>
               ))}
             </div>
+          </div>
+          <div className="answer-hero__bottle-col">
+            <img src={heroBottle} alt="The Answer bottle by MKRC" className="answer-hero__bottle-img" />
           </div>
         </div>
         <button className="answer-hero__scroll-hint" onClick={() => scrollToSection("chronixx")} aria-label="Scroll to learn more">

@@ -4,6 +4,12 @@ import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Camera } from "lucide-react";
+import heroFarm from "@/assets/hero-farm.jpg";
+import herbProcessing from "@/assets/herb-processing.jpg";
+import seamossHarvest from "@/assets/seamoss-harvest.jpg";
+import retreatHero from "@/assets/retreat-hero-yoga.jpg";
+
+const fallbackImages = [heroFarm, herbProcessing, seamossHarvest, retreatHero];
 
 export function RetreatGallery() {
   const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
@@ -18,15 +24,15 @@ export function RetreatGallery() {
 
   if (isLoading) {
     return (
-      <section className="py-20 bg-cream">
+      <section className="py-24" style={{ background: '#0f0f0d' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <Skeleton className="h-10 w-64 mx-auto mb-4" />
             <Skeleton className="h-6 w-96 mx-auto" />
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, i) => (
-              <Skeleton key={i} className="aspect-square rounded-xl" />
+          <div className="grid grid-cols-2 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="aspect-[4/3] rounded-2xl" />
             ))}
           </div>
         </div>
@@ -34,36 +40,60 @@ export function RetreatGallery() {
     );
   }
 
-  if (images.length === 0) {
+  // Use DB images if available, otherwise show fallback gallery
+  const hasDbImages = images.length > 0;
+
+  if (!hasDbImages) {
     return (
-      <section className="py-20 bg-cream">
-        <div className="container mx-auto px-4 text-center">
-          <Camera className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Gallery Coming Soon
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            We're preparing beautiful images of our retreat experience. Check back soon to see
-            our accommodations, ceremonies, and the natural beauty of St. Lucia.
+      <section className="py-24" style={{ background: '#0f0f0d' }}>
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="text-center mb-12">
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}>
+              Experience the Journey
+            </h2>
+          </div>
+
+          {/* 2x2 fallback gallery */}
+          <div className="rounded-2xl p-1" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+            <div className="grid grid-cols-2 gap-3">
+              {fallbackImages.map((img, i) => (
+                <div key={i} className="overflow-hidden rounded-2xl cursor-pointer" onClick={() => { setLightboxIndex(i); setLightboxOpen(true); }}>
+                  <img
+                    src={img}
+                    alt="Retreat experience"
+                    className="w-full aspect-[4/3] object-cover transition-transform duration-500 hover:scale-110"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="text-center mt-6" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: '#c9a84c' }}>
+            Your healing environment awaits.
           </p>
         </div>
+        <ImageLightbox
+          images={fallbackImages}
+          initialIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          alt="Retreat gallery"
+        />
       </section>
     );
   }
 
   return (
-    <section className="py-20 bg-cream">
-      <div className="container mx-auto px-4">
-        {/* Header */}
+    <section className="py-24" style={{ background: '#0f0f0d' }}>
+      <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-12">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}>
             Experience the Journey
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto 32px' }}>
             Glimpses of transformation, healing, and connection with nature in the heart of St. Lucia.
           </p>
 
-          {/* Category filters */}
           <div className="flex flex-wrap justify-center gap-2">
             <Button
               variant={activeCategory === undefined ? "default" : "outline"}
@@ -87,44 +117,29 @@ export function RetreatGallery() {
           </div>
         </div>
 
-        {/* Masonry grid */}
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-          {images.map((image, index) => (
-            <div
-              key={image.id}
-              className="break-inside-avoid group relative overflow-hidden rounded-xl cursor-pointer"
-              onClick={() => openLightbox(index)}
-            >
-              <img
-                src={image.image_url}
-                alt={image.title || "Retreat gallery image"}
-                className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                loading="lazy"
-              />
-              {/* Overlay with caption */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                {image.title && (
-                  <h3 className="text-white font-serif font-semibold text-lg">
-                    {image.title}
-                  </h3>
-                )}
-                {image.description && (
-                  <p className="text-white/80 text-sm line-clamp-2">
-                    {image.description}
-                  </p>
-                )}
-                <span className="text-white/60 text-xs mt-1 capitalize">
-                  {image.category === "other" && (image as any).custom_category_label
-                    ? (image as any).custom_category_label
-                    : image.category}
-                </span>
+        <div className="rounded-2xl p-1" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+          <div className="grid grid-cols-2 gap-3">
+            {images.slice(0, 4).map((image, index) => (
+              <div
+                key={image.id}
+                className="overflow-hidden rounded-2xl cursor-pointer group"
+                onClick={() => openLightbox(index)}
+              >
+                <img
+                  src={image.image_url}
+                  alt={image.title || "Retreat gallery image"}
+                  className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                />
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+        <p className="text-center mt-6" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: '#c9a84c' }}>
+          Your healing environment awaits.
+        </p>
       </div>
 
-      {/* Lightbox */}
       <ImageLightbox
         images={images.map((img) => img.image_url)}
         initialIndex={lightboxIndex}
