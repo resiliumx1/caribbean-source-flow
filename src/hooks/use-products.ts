@@ -16,8 +16,8 @@ export function useProducts(categorySlug?: string) {
         .from("products")
         .select("*, product_categories!category_id(*)")
         .eq("is_active", true)
-        .order("image_url", { ascending: false, nullsFirst: false })
-        .order("display_order", { ascending: true });
+        .order("display_order", { ascending: true })
+        .order("image_url", { ascending: false, nullsFirst: false });
 
       if (categorySlug) {
         const { data: category } = await supabase

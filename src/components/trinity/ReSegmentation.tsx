@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, Building2, Mountain, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import heroFarm from "@/assets/hero-farm.jpg";
+import shopHero from "@/assets/shop-hero-flatlay.jpg";
 import wholesaleHero from "@/assets/wholesale-hero.jpg";
 import retreatHero from "@/assets/retreat-hero-yoga.jpg";
 
@@ -12,7 +12,7 @@ const paths = [
     description: "Shop our full catalog of liquid tinctures, capsules, powders, and traditional teas.",
     cta: "Browse Remedies",
     route: "/shop",
-    image: heroFarm,
+    image: shopHero,
   },
   {
     icon: Building2,
