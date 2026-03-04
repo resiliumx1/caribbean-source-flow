@@ -18,7 +18,6 @@ export const RETREAT_CATEGORIES = [
   { value: "experience", label: "Experience" },
   { value: "healing", label: "Healing" },
   { value: "food", label: "Food" },
-  { value: "other", label: "Other" },
 ] as const;
 
 export function useRetreatGallery(category?: string) {
@@ -28,6 +27,7 @@ export function useRetreatGallery(category?: string) {
       let query = supabase
         .from("retreat_gallery")
         .select("*")
+        .neq("category", "other")
         .order("display_order", { ascending: true });
 
       if (category) {

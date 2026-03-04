@@ -156,24 +156,28 @@ export function RetreatVideoGallery() {
       </div>
 
       {/* Video playback modal */}
-      <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
-        <DialogContent className="sm:max-w-3xl p-0 overflow-hidden">
+      <Dialog open={!!selectedVideo} onOpenChange={(open) => { if (!open) setSelectedVideo(null); }}>
+        <DialogContent className="sm:max-w-3xl p-0 overflow-hidden [&>button]:z-50">
           <DialogHeader className="p-4 pb-0">
             <DialogTitle>{selectedVideo?.title || "Retreat Video"}</DialogTitle>
           </DialogHeader>
           <div className="aspect-video w-full">
             {selectedVideo && isYouTubeUrl(selectedVideo.video_url) ? (
               <iframe
+                key={selectedVideo.id}
                 src={getYouTubeEmbedUrl(selectedVideo.video_url)}
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+                title={selectedVideo.title || "Retreat Video"}
               />
             ) : selectedVideo ? (
               <video
+                key={selectedVideo.id}
                 src={selectedVideo.video_url}
                 controls
                 autoPlay
+                playsInline
                 className="w-full h-full object-contain bg-black"
               />
             ) : null}
