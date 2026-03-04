@@ -1,90 +1,14 @@
 import { Link } from "react-router-dom";
-import { useEffect, useRef, useState, lazy, Suspense } from "react";
-import { Leaf, Package, ArrowRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Leaf, Package, MountainSnow, ArrowRight } from "lucide-react";
 
-const Player = lazy(() =>
-  import("@lottiefiles/react-lottie-player").then((mod) => ({ default: mod.Player }))
-);
-
-// Lottie CDN URLs
-const LOTTIE_URLS = {
-  plant: [
-    "https://assets9.lottiefiles.com/packages/lf20_touohxv0.json",
-    "https://assets3.lottiefiles.com/packages/lf20_ysas9b3a.json",
-  ],
-  package: [
-    "https://assets9.lottiefiles.com/packages/lf20_myteoh0e.json",
-    "https://assets2.lottiefiles.com/packages/lf20_n3kdpiyb.json",
-  ],
-  meditation: [
-    "https://assets4.lottiefiles.com/packages/lf20_xvmprwnb.json",
-    "https://assets9.lottiefiles.com/packages/lf20_qwz4x8tr.json",
-  ],
+const iconWrapperStyle: React.CSSProperties = {
+  background: 'rgba(201,168,76,0.1)',
+  border: '1px solid rgba(201,168,76,0.3)',
+  borderRadius: '16px',
+  padding: '16px',
+  width: 'fit-content',
 };
-
-function GradientMountainIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
-  );
-}
-
-function LottieIcon({
-  src,
-  fallback,
-  hovered,
-}: {
-  src: string[];
-  fallback: React.ReactNode;
-  hovered: boolean;
-}) {
-  const playerRef = useRef<any>(null);
-  const [urlIndex, setUrlIndex] = useState(0);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    try {
-      playerRef.current?.setPlayerSpeed?.(hovered ? 1.5 : 1);
-    } catch {}
-  }, [hovered]);
-
-  if (failed) return <>{fallback}</>;
-
-  return (
-    <div
-      className="flex items-center justify-center rounded-2xl p-2 transition-all duration-300"
-      style={{
-        width: '96px',
-        height: '96px',
-        background: hovered ? 'rgba(201,168,76,0.14)' : 'rgba(201,168,76,0.08)',
-        border: `1px solid ${hovered ? 'rgba(201,168,76,0.5)' : 'rgba(201,168,76,0.2)'}`,
-        borderRadius: '16px',
-      }}
-    >
-      <Suspense fallback={<>{fallback}</>}>
-        <Player
-          key={urlIndex}
-          ref={playerRef}
-          autoplay
-          loop
-          src={src[urlIndex]}
-          style={{ height: '80px', width: '80px' }}
-          rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
-          onEvent={(event: string) => {
-            if (event === 'error') {
-              if (urlIndex < src.length - 1) {
-                setUrlIndex((i) => i + 1);
-              } else {
-                setFailed(true);
-              }
-            }
-          }}
-        />
-      </Suspense>
-    </div>
-  );
-}
 
 export default function HeroCtas() {
   const bandRef = useRef<HTMLDivElement>(null);
@@ -118,7 +42,7 @@ export default function HeroCtas() {
         {/* Card 1 — Shop */}
         <Link
           to="/shop"
-          className="group flex-1 flex flex-col justify-between"
+          className="hero-card group flex-1 flex flex-col justify-between"
           style={{
             ...cardStyle(0),
             background: hoveredCard === 1 ? 'rgba(20,20,20,0.85)' : 'rgba(9,9,9,0.75)',
@@ -130,17 +54,9 @@ export default function HeroCtas() {
           onMouseLeave={() => setHoveredCard(null)}
         >
           <div>
-            {visible ? (
-              <div className="mb-6">
-                <LottieIcon
-                  src={LOTTIE_URLS.plant}
-                  hovered={hoveredCard === 1}
-                  fallback={<Leaf className="w-12 h-12" style={{ color: '#c9a84c' }} />}
-                />
-              </div>
-            ) : (
-              <Leaf className="w-12 h-12 mb-6" style={{ color: '#c9a84c' }} />
-            )}
+            <div className="mb-6" style={iconWrapperStyle}>
+              <Leaf width={48} height={48} className="icon-sway" style={{ color: '#4ade80' }} />
+            </div>
             <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
               Shop Natural Formulations
             </h3>
@@ -156,13 +72,12 @@ export default function HeroCtas() {
           </button>
         </Link>
 
-        {/* Divider */}
         <div className="hidden md:block" style={{ width: '1px', background: 'rgba(201,168,76,0.2)' }} />
 
         {/* Card 2 — Wholesale */}
         <Link
           to="/wholesale"
-          className="group flex-1 flex flex-col justify-between relative"
+          className="hero-card group flex-1 flex flex-col justify-between relative"
           style={{
             ...cardStyle(150),
             background: hoveredCard === 2 ? 'rgba(8,18,10,0.95)' : 'rgba(13,26,15,0.85)',
@@ -181,17 +96,9 @@ export default function HeroCtas() {
             Wholesale
           </span>
           <div>
-            {visible ? (
-              <div className="mb-6">
-                <LottieIcon
-                  src={LOTTIE_URLS.package}
-                  hovered={hoveredCard === 2}
-                  fallback={<Package className="w-12 h-12" style={{ color: '#c9a84c' }} />}
-                />
-              </div>
-            ) : (
-              <Package className="w-12 h-12 mb-6" style={{ color: '#c9a84c' }} />
-            )}
+            <div className="mb-6" style={iconWrapperStyle}>
+              <Package width={48} height={48} className="icon-float" style={{ color: '#c9a84c' }} />
+            </div>
             <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
               Wholesale &amp; Practitioners
             </h3>
@@ -210,13 +117,12 @@ export default function HeroCtas() {
           </button>
         </Link>
 
-        {/* Divider */}
         <div className="hidden md:block" style={{ width: '1px', background: 'rgba(201,168,76,0.2)' }} />
 
         {/* Card 3 — Retreats */}
         <Link
           to="/retreats"
-          className="group flex-1 flex flex-col justify-between"
+          className="hero-card group flex-1 flex flex-col justify-between"
           style={{
             ...cardStyle(300),
             background: hoveredCard === 3 ? 'rgba(20,20,20,0.85)' : 'rgba(9,9,9,0.75)',
@@ -229,17 +135,9 @@ export default function HeroCtas() {
           onMouseLeave={() => setHoveredCard(null)}
         >
           <div>
-            {visible ? (
-              <div className="mb-6">
-                <LottieIcon
-                  src={LOTTIE_URLS.meditation}
-                  hovered={hoveredCard === 3}
-                  fallback={<GradientMountainIcon style={{ color: '#c9a84c' }} />}
-                />
-              </div>
-            ) : (
-              <GradientMountainIcon className="mb-6" style={{ color: '#c9a84c' }} />
-            )}
+            <div className="mb-6" style={iconWrapperStyle}>
+              <MountainSnow width={48} height={48} className="icon-glow" style={{ color: '#67e8f9' }} />
+            </div>
             <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
               Healing Retreats in Saint Lucia
             </h3>
@@ -260,6 +158,24 @@ export default function HeroCtas() {
       </div>
 
       <style>{`
+        @keyframes sway {
+          0%, 100% { transform: rotate(-8deg); }
+          50% { transform: rotate(8deg); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-6px); }
+        }
+        @keyframes glow {
+          0%, 100% { filter: drop-shadow(0 0 4px rgba(103,232,249,0.3)); }
+          50% { filter: drop-shadow(0 0 12px rgba(103,232,249,0.7)); }
+        }
+        .icon-sway { animation: sway 3s ease-in-out infinite; }
+        .icon-float { animation: float 2.5s ease-in-out infinite; }
+        .icon-glow { animation: glow 2s ease-in-out infinite; }
+        .hero-card:hover .icon-sway { animation-duration: 0.8s; }
+        .hero-card:hover .icon-float { animation-duration: 0.8s; }
+        .hero-card:hover .icon-glow { animation-duration: 0.8s; }
         @media (max-width: 767px) {
           .flex-col > a {
             min-height: auto !important;
