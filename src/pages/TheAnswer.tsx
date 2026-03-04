@@ -10,7 +10,7 @@ import tincture from "@/assets/mkrc-answer-tincture.png";
 
 import heroBg from "@/assets/the-answer-hero-chronixx.jpg";
 import heroBottle from "@/assets/the-answer-chronixx-bottle.jpg";
-import chronixxPhoto from "@/assets/chronixx-portrait.jpg";
+import chronixxPhoto from "@/assets/chronixx-portrait-full.png";
 import "./TheAnswer.css";
 
 /* ── Scroll helpers ── */
@@ -190,15 +190,20 @@ export default function TheAnswer() {
       {/* ===== 2. CHRONIXX ===== */}
       <section id="chronixx" className="chronixx-section">
         <div className="chronixx-section__inner">
-          <div ref={reveal} className="ta-reveal relative">
-            <SectionLabel text="Artist Endorsement" />
-            <span className="chronixx-section__watermark">Chronixx</span>
-            <div className="chronixx-section__photo-placeholder">
-              <img src={chronixxPhoto} alt="Reggae artist Chronixx endorsing Mount Kailash The Answer herbal tincture, Caribbean wellness" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
+          {/* Left — photo column */}
+          <div className="chronixx-section__img-col">
+            <img
+              src={chronixxPhoto}
+              alt="Reggae artist Chronixx, Grammy-nominated advocate for natural living and Mount Kailash endorser"
+              className="chronixx-section__portrait"
+            />
+            <div className="chronixx-section__img-fade" />
           </div>
 
-          <div ref={reveal} className="ta-reveal">
+          {/* Right — text column */}
+          <div ref={reveal} className="ta-reveal chronixx-section__text-col">
+            <SectionLabel text="Artist Endorsement" />
+            <span className="chronixx-section__watermark">Chronixx</span>
             <h2 className="ta-cormorant text-3xl md:text-4xl mb-2 text-[#f2ead8] font-bold">Chronixx</h2>
             <p className="chronixx-section__title">
               Jamaican reggae icon · Grammy-nominated artist · Advocate for natural living
