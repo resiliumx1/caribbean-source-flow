@@ -14,7 +14,7 @@ export function useProducts(categorySlug?: string) {
     queryFn: async () => {
       let query = supabase
         .from("products")
-        .select("*, product_categories(*)")
+        .select("*, product_categories!category_id(*)")
         .eq("is_active", true)
         .order("image_url", { ascending: false, nullsFirst: false })
         .order("display_order", { ascending: true });
@@ -27,7 +27,8 @@ export function useProducts(categorySlug?: string) {
           .single();
 
         if (category) {
-          query = query.eq("category_id", category.id);
+          // Show products where either primary or secondary category matches
+          query = query.or(`category_id.eq.${category.id},secondary_category_id.eq.${category.id}`);
         }
       }
 
@@ -45,7 +46,7 @@ export function useProduct(slug: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, product_categories(*)")
+        .select("*, product_categories!category_id(*)")
         .eq("slug", slug)
         .eq("is_active", true)
         .single();
@@ -63,7 +64,7 @@ export function useFeaturedProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, product_categories(*)")
+        .select("*, product_categories!category_id(*)")
         .eq("is_active", true)
         .eq("is_featured", true)
         .order("display_order", { ascending: true });

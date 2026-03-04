@@ -49,7 +49,7 @@ export function useCart() {
       
       const { data, error } = await supabase
         .from("cart_items")
-        .select("*, products(*, product_categories(*))")
+        .select("*, products(*, product_categories!category_id(*))")
         .eq("user_id", userId);
 
       if (error) throw error;
@@ -71,7 +71,7 @@ export function useCart() {
       
       const { data, error } = await supabase
         .from("products")
-        .select("*, product_categories(*)")
+        .select("*, product_categories!category_id(*)")
         .in("id", localCart.map((i) => i.productId));
 
       if (error) throw error;

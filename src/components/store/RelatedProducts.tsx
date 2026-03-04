@@ -24,7 +24,7 @@ export function RelatedProducts({ productId, categoryId }: RelatedProductsProps)
       if (categoryId) {
         const { data } = await supabase
           .from("products")
-          .select("*, product_categories(*)")
+          .select("*, product_categories!category_id(*)")
           .eq("category_id", categoryId)
           .neq("id", productId)
           .eq("is_active", true)
@@ -37,7 +37,7 @@ export function RelatedProducts({ productId, categoryId }: RelatedProductsProps)
         const exclude = [productId, ...results.map((r) => r.id)];
         const { data } = await supabase
           .from("products")
-          .select("*, product_categories(*)")
+          .select("*, product_categories!category_id(*)")
           .eq("is_active", true)
           .eq("is_featured", true)
           .not("id", "in", `(${exclude.join(",")})`)

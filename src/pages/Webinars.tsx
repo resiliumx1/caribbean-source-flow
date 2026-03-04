@@ -4,6 +4,7 @@ import ScrollReveal from "@/components/mkrc/ScrollReveal";
 import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import webinarImg from "@/assets/mkrc-webinar-featured.jpg";
+import priestKailashImg from "@/assets/priest-kailash-host.jpg";
 import { useWebinarVideos, WebinarVideo } from "@/hooks/use-webinar-videos";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -68,7 +69,7 @@ function isNew(publishedAt: string | null): boolean {
   return diff < 30 * 24 * 60 * 60 * 1000;
 }
 
-const INITIAL_SHOW = 6;
+const INITIAL_SHOW = 3;
 
 // ── Video Card Component ──
 function VideoCard({ video, onClick, index }: { video: WebinarVideo; onClick: () => void; index: number }) {
@@ -380,8 +381,8 @@ export default function Webinars() {
       <section id="host" className="max-w-[1200px] mx-auto py-24 px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <ScrollReveal>
-            <div className="rounded-xl overflow-hidden flex items-center justify-center" style={{ backgroundColor: "#242420", minHeight: 400, border: "1px solid rgba(201,168,76,0.12)" }}>
-              <p className="mkrc-label text-sm" style={{ color: "#706858" }}>Host Photo</p>
+            <div className="rounded-xl overflow-hidden" style={{ minHeight: 400, border: "1px solid rgba(201,168,76,0.12)" }}>
+              <img src={priestKailashImg} alt="Honorable Priest Kailash" className="w-full h-full object-cover" />
             </div>
           </ScrollReveal>
           <ScrollReveal delay={150}>
