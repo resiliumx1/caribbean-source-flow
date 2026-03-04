@@ -27,7 +27,6 @@ export function useProducts(categorySlug?: string) {
           .single();
 
         if (category) {
-          // Show products where either primary or secondary category matches
           query = query.or(`category_id.eq.${category.id},secondary_category_id.eq.${category.id}`);
         }
       }
@@ -37,6 +36,8 @@ export function useProducts(categorySlug?: string) {
       if (error) throw error;
       return data as Product[];
     },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
   });
 }
 
@@ -87,6 +88,7 @@ export function useCategories() {
       if (error) throw error;
       return data as ProductCategory[];
     },
+    staleTime: 1000 * 60 * 10,
   });
 }
 

@@ -3,17 +3,13 @@ import HeroCtas from "@/components/HeroCtas";
 export function TrinityHero() {
   return (
     <section className="relative min-h-screen flex flex-col pt-16">
-      {/* Background Video with Dark Overlay */}
+      {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
+        <img
+          src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2400"
+          alt="Lush tropical rainforest"
           className="w-full h-full object-cover"
-        >
-          <source src="/videos/hero-background.mp4" type="video/mp4" />
-        </video>
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/90 via-[#0a0a0a]/75 to-[#0a0a0a]/90" />
       </div>
 
