@@ -73,50 +73,48 @@ const practicalTopics = [
 
 export function RetreatFAQ() {
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="py-24 md:py-28" style={{ background: '#0f0f0d' }}>
       <div className="container mx-auto max-w-6xl px-4">
-        {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-serif">
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}>
             Practical Matters
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>
             Everything you need to know before your transformative journey to Mount Kailash.
           </p>
         </div>
 
-        {/* 2-Column Card Grid */}
         <div className="grid md:grid-cols-2 gap-6 md:gap-8">
           {practicalTopics.map((topic) => (
             <div
               key={topic.id}
-              className="bg-card rounded-xl border border-border p-5 md:p-6 transition-all duration-300 hover:shadow-soft"
+              className="rounded-xl p-8 transition-all duration-300 hover:border-t-2"
+              style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.1)', borderTopColor: 'transparent' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderTopColor = '#c9a84c'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderTopColor = 'transparent'; }}
             >
-              {/* Icon + Title Row */}
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <topic.icon className="w-5 h-5 text-primary" />
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(201,168,76,0.1)' }}>
+                  <topic.icon className="w-5 h-5" style={{ color: '#c9a84c' }} />
                 </div>
-                <h3 className="text-lg md:text-xl font-semibold text-foreground font-serif">
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: '#f2ead8' }}>
                   {topic.title}
                 </h3>
               </div>
 
-              {/* Bullet List */}
               <ul className="space-y-2.5">
                 {topic.points.map((point, i) => (
                   <li key={i} className="flex items-start gap-2.5">
-                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    <span className="text-[15px] md:text-base text-foreground leading-relaxed">
+                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#c9a84c' }} />
+                    <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', lineHeight: 1.6 }}>
                       {point}
                     </span>
                   </li>
                 ))}
               </ul>
 
-              {/* Helper Text */}
               {topic.helper && (
-                <p className="mt-4 text-sm text-muted-foreground italic border-t border-border pt-4">
+                <p className="mt-4 text-sm italic pt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, color: '#8a8070', borderTop: '1px solid rgba(201,168,76,0.1)' }}>
                   {topic.helper}
                 </p>
               )}

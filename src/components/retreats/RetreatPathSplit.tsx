@@ -19,181 +19,118 @@ export function RetreatPathSplit() {
   };
 
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="py-24 md:py-28" style={{ background: '#0f0f0d' }}>
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}>
             Two Paths to Transformation
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Whether you seek community wisdom or private healing, we have a
-            protocol designed for your journey.
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto' }}>
+            Whether you seek community wisdom or private healing, we have a protocol designed for your journey.
           </p>
         </div>
 
         {/* Two Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Private Retreats */}
-          <div className="bg-card rounded-2xl border-2 border-border p-8 transition-all hover:border-accent hover:shadow-lg overflow-hidden relative">
-            {/* Aspirational background hint */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-accent/10 to-transparent rounded-bl-full" />
-            
-            <div className="flex items-center gap-4 mb-6 relative z-10">
-              <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center">
-                <User className="w-7 h-7 text-accent" />
+          <div className="rounded-2xl p-12 relative transition-all hover:scale-[1.01]" style={{ background: '#111111', borderTop: '3px solid #c9a84c', border: '1px solid rgba(201,168,76,0.15)', borderTopWidth: '3px', borderTopColor: '#c9a84c', minHeight: '500px' }}>
+            {/* MOST POPULAR badge */}
+            <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium" style={{ background: '#c9a84c', color: '#090909', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
+              MOST POPULAR
+            </span>
+
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,168,76,0.1)' }}>
+                <User className="w-7 h-7" style={{ color: '#c9a84c' }} />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-foreground">
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '28px', color: '#f2ead8' }}>
                   Private Retreats
                 </h3>
-                <span className="text-sm text-muted-foreground">
+                <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#8a8070' }}>
                   Personalized Experience
                 </span>
               </div>
             </div>
 
-            <p className="text-muted-foreground mb-6 leading-relaxed">
+            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: '#8a8070', lineHeight: 1.7, marginBottom: '24px' }}>
               A fully personalized healing experience tailored to your body and goals. Work one-on-one with Priest Kailash in a private rainforest setting.
             </p>
 
-            <div className="flex flex-wrap gap-4 mb-6">
-              <div className="px-3 py-1.5 bg-muted rounded-lg text-sm">
-                <span className="font-semibold">3-14 days</span>
-                <span className="text-muted-foreground"> (Flexible)</span>
-              </div>
-              <div className="px-3 py-1.5 bg-muted rounded-lg text-sm">
-                <span className="text-muted-foreground">Only </span>
-                <span className="font-semibold">3 private cabins</span>
-              </div>
-            </div>
-
-            {/* Inclusions */}
             <ul className="space-y-3 mb-8">
-              {(
-                soloRetreat?.includes || [
-                  "Private rainforest cabin",
-                  "All ital plant-based meals",
-                  "Daily consultation with Priest Kailash",
-                  "Custom formulation protocol",
-                  "60-day post-retreat formulation supply",
-                ]
-              )
-                .slice(0, 5)
-                .map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-3 text-[15px] text-foreground font-medium"
-                  >
-                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                      <Check className="w-4 h-4 text-primary-foreground" strokeWidth={3} />
-                    </div>
-                    {item}
-                  </li>
-                ))}
+              {(soloRetreat?.includes || [
+                "Private rainforest cabin",
+                "All ital plant-based meals",
+                "Daily consultation with Priest Kailash",
+                "Custom formulation protocol",
+                "60-day post-retreat formulation supply",
+              ]).slice(0, 5).map((item) => (
+                <li key={item} className="flex items-center gap-3" style={{ fontSize: '15px', color: '#f2ead8' }}>
+                  <Check className="w-5 h-5 flex-shrink-0" style={{ color: '#c9a84c' }} strokeWidth={3} />
+                  {item}
+                </li>
+              ))}
             </ul>
 
-            {/* Pricing */}
-            <div className="border-t border-border pt-6 mb-6">
-              <div className="text-sm text-muted-foreground mb-1">From</div>
-              <div className="text-3xl font-bold text-foreground">
-                {formatPrice(
-                  soloRetreat?.base_price_usd || 350,
-                  (soloRetreat?.base_price_usd || 350) * EXCHANGE_RATE
-                )}
-                <span className="text-lg font-normal text-muted-foreground">
-                  {" "}
-                  per night
-                </span>
-              </div>
-              <div className="text-sm text-primary mt-1">
-                Longer stays = lower nightly rate
+            <div className="pt-6 mb-6" style={{ borderTop: '1px solid rgba(201,168,76,0.15)' }}>
+              <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#8a8070', marginBottom: '4px' }}>From</div>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '48px', color: '#c9a84c', lineHeight: 1 }}>
+                {formatPrice(soloRetreat?.base_price_usd || 350, (soloRetreat?.base_price_usd || 350) * EXCHANGE_RATE)}
+                <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070' }}> per night</span>
               </div>
             </div>
 
-            <Button onClick={scrollToCalendar} className="w-full bg-[#1F3A2E] hover:bg-[#2a4d3d] text-white" size="lg">
-              Request Consultation
-              <ArrowRight className="w-4 h-4 ml-2" />
+            <Button onClick={scrollToCalendar} className="w-full rounded-full" size="lg" style={{ background: '#c9a84c', color: '#090909', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
+              Request Consultation <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
 
           {/* Group Retreats */}
-          <div className="bg-card rounded-2xl border-2 border-border p-8 transition-all hover:border-primary hover:shadow-lg overflow-hidden relative">
-            {/* Aspirational background hint */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full" />
-            
-            <div className="flex items-center gap-4 mb-6 relative z-10">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Users className="w-7 h-7 text-primary" />
+          <div className="rounded-2xl p-12 relative transition-all hover:scale-[1.01]" style={{ background: '#0f0f0d', borderTop: '3px solid #2d5a3d', border: '1px solid rgba(45,90,61,0.2)', borderTopWidth: '3px', borderTopColor: '#2d5a3d', minHeight: '500px' }}>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ background: 'rgba(45,90,61,0.15)' }}>
+                <Users className="w-7 h-7" style={{ color: '#4a9d6b' }} />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-foreground">
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '28px', color: '#f2ead8' }}>
                   Group Retreats
                 </h3>
-                <span className="text-sm text-muted-foreground">
+                <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#8a8070' }}>
                   Shared Experience
                 </span>
               </div>
             </div>
 
-            <p className="text-muted-foreground mb-6 leading-relaxed">
+            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: '#8a8070', lineHeight: 1.7, marginBottom: '24px' }}>
               Guided experiences with like-minded participants seeking restoration and clarity. Join a transformative 7-day group immersion.
             </p>
 
-            <div className="flex flex-wrap gap-4 mb-6">
-              <div className="px-3 py-1.5 bg-muted rounded-lg text-sm">
-                <span className="font-semibold">7 days</span>
-                <span className="text-muted-foreground"> (Sat-Sat)</span>
-              </div>
-              <div className="px-3 py-1.5 bg-muted rounded-lg text-sm">
-                <span className="text-muted-foreground">Max </span>
-                <span className="font-semibold">10 guests</span>
-              </div>
-            </div>
-
-            {/* Inclusions */}
             <ul className="space-y-3 mb-8">
-              {(
-                groupRetreat?.includes || [
-                  "Shared traditional accommodations",
-                  "All ital plant-based meals",
-                  "Airport transfers (UVF)",
-                  "Daily herbal workshops",
-                  "30-day post-retreat formulation supply",
-                ]
-              )
-                .slice(0, 5)
-                .map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-3 text-[15px] text-foreground font-medium"
-                  >
-                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                      <Check className="w-4 h-4 text-primary-foreground" strokeWidth={3} />
-                    </div>
-                    {item}
-                  </li>
-                ))}
+              {(groupRetreat?.includes || [
+                "Shared traditional accommodations",
+                "All ital plant-based meals",
+                "Airport transfers (UVF)",
+                "Daily herbal workshops",
+                "30-day post-retreat formulation supply",
+              ]).slice(0, 5).map((item) => (
+                <li key={item} className="flex items-center gap-3" style={{ fontSize: '15px', color: '#f2ead8' }}>
+                  <Check className="w-5 h-5 flex-shrink-0" style={{ color: '#4a9d6b' }} strokeWidth={3} />
+                  {item}
+                </li>
+              ))}
             </ul>
 
-            {/* Pricing */}
-            <div className="border-t border-border pt-6 mb-6">
-              <div className="text-sm text-muted-foreground mb-1">From</div>
-              <div className="text-3xl font-bold text-foreground">
-                {formatPrice(
-                  groupRetreat?.base_price_usd || 2400,
-                  (groupRetreat?.base_price_usd || 2400) * EXCHANGE_RATE
-                )}
-                <span className="text-lg font-normal text-muted-foreground">
-                  {" "}
-                  per person
-                </span>
+            <div className="pt-6 mb-6" style={{ borderTop: '1px solid rgba(45,90,61,0.2)' }}>
+              <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#8a8070', marginBottom: '4px' }}>From</div>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '48px', color: '#c9a84c', lineHeight: 1 }}>
+                {formatPrice(groupRetreat?.base_price_usd || 2400, (groupRetreat?.base_price_usd || 2400) * EXCHANGE_RATE)}
+                <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070' }}> per person</span>
               </div>
             </div>
 
-            <Button onClick={scrollToCalendar} className="w-full bg-[#3d6b4f] hover:bg-[#4a7d5d] text-white border-0" size="lg">
-              View 2026 Dates
-              <ArrowRight className="w-4 h-4 ml-2" />
+            <Button onClick={scrollToCalendar} className="w-full rounded-full" size="lg" style={{ background: '#2d5a3d', color: '#f2ead8', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
+              View 2026 Dates <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
         </div>

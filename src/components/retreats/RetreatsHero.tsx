@@ -12,12 +12,8 @@ export function RetreatsHero() {
     });
   };
 
-  const whatsappMessage = encodeURIComponent(
-    "Hello, I'm interested in learning more about your private retreat options. Could you share more information about availability and what's included?"
-  );
-
   return (
-    <section className="relative min-h-[70vh] flex items-center pt-20">
+    <section className="relative min-h-[80vh] flex items-center pt-20" style={{ overflow: 'visible' }}>
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img
@@ -25,38 +21,48 @@ export function RetreatsHero() {
           alt="Mount Kailash rainforest retreat"
           className="w-full h-full object-cover"
         />
-        {/* Dark gradient overlay - NO white/cream */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(150,30%,10%)]/90 via-[hsl(150,25%,15%)]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/90 via-[#0a0a0a]/70 to-transparent" />
       </div>
 
-      {/* Content - using explicit white text on dark overlay */}
+      {/* Content */}
       <div className="relative z-10 container mx-auto max-w-6xl px-4 py-20">
         <div className="max-w-2xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-tight mb-6">
-            Restore. Reset. Reconnect.
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(3rem, 6vw, 72px)', color: '#f2ead8', lineHeight: 1.05, marginBottom: '24px' }}>
+            Restore. Reset. <span style={{ borderBottom: '3px solid #c9a84c', paddingBottom: '4px' }}>Reconnect.</span>
           </h1>
 
-          <p className="text-xl text-white/90 leading-relaxed mb-8">
-            Immersive wellness retreats in Saint Lucia designed to guide deep restoration—physically, mentally, and energetically.
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '18px', color: '#f2ead8', lineHeight: 1.7, marginBottom: '32px', maxWidth: '540px' }}>
+            Private and group healing retreats in the heart of Saint Lucia. Led by Right Honourable Priest Kailash Kay Leonce — 21 years of transformational practice.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <Button
               size="lg"
               onClick={scrollToCalendar}
-              className="w-full sm:w-auto bg-[#1F3A2E] text-white hover:bg-[#2a4d3d] shadow-lg"
+              className="w-full sm:w-auto rounded-full"
+              style={{ background: '#c9a84c', color: '#090909', fontFamily: "'Jost', sans-serif", fontWeight: 500, padding: '16px 36px' }}
             >
               <MessageCircle className="w-5 h-5 mr-2" />
-              Book a Private Retreat
+              Book Private Retreat
             </Button>
             <Button
               size="lg"
               onClick={scrollToCalendar}
-              className="w-full sm:w-auto bg-[#3d6b4f] text-white hover:bg-[#4a7d5d] border-0 shadow-lg"
+              className="w-full sm:w-auto rounded-full"
+              style={{ background: 'transparent', border: '1px solid #c9a84c', color: '#c9a84c', fontFamily: "'Jost', sans-serif", fontWeight: 500, padding: '16px 36px' }}
             >
               <Calendar className="w-5 h-5 mr-2" />
-              Join a Group Retreat
+              View Group Dates
             </Button>
+          </div>
+
+          {/* Trust badges */}
+          <div className="flex flex-wrap gap-3">
+            {["🌿 All-Inclusive", "✦ Led by Priest Kailash", "🌍 Guests from 20+ Countries"].map((badge) => (
+              <span key={badge} className="px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(201,168,76,0.4)', color: '#f2ead8', fontFamily: "'Jost', sans-serif", fontWeight: 300 }}>
+                {badge}
+              </span>
+            ))}
           </div>
         </div>
       </div>
