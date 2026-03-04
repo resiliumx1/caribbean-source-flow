@@ -117,6 +117,12 @@ export default function Shop() {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  useEffect(() => {
+    document.title = "Natural Herbal Products | Mount Kailash Rejuvenation Centre — Saint Lucia";
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", "Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Handcrafted in Saint Lucia by Priest Kailash with 21+ years of clinical practice.");
+  }, []);
+
   const filteredProducts = useMemo(() => {
     if (!products) return [];
     if (!searchQuery.trim()) return products;
