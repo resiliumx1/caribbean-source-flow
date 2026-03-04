@@ -1,4 +1,4 @@
-import { Star, Quote, Package, Shield, Headphones } from "lucide-react";
+import { Star, Package, Shield, Headphones } from "lucide-react";
 
 const testimonials = [
   {
@@ -6,18 +6,21 @@ const testimonials = [
     author: "Sarah M.",
     role: "Sourcing Director",
     company: "US Supplement Brand",
+    location: "Miami, USA",
   },
   {
     quote: "The Miami warehousing changed everything. We went from 6-week lead times to 3-day deliveries.",
     author: "James T.",
     role: "Operations Manager",
     company: "UK Wellness Retailer",
+    location: "London, UK",
   },
   {
     quote: "Their documentation package is impeccable. Customs clearance has never been smoother.",
     author: "Dr. Anita R.",
     role: "Founder",
     company: "Herbal Practice",
+    location: "Toronto, Canada",
   },
 ];
 
@@ -41,12 +44,12 @@ const riskReversals = [
 
 export const SocialProof = () => {
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="py-24 md:py-28" style={{ background: "#0D0D0D", fontFamily: "'Jost', sans-serif" }}>
       <div className="container mx-auto px-4">
         {/* Testimonials */}
         <div className="text-center mb-16">
-          <h2 className="section-header mb-4">
-            What Wholesale Buyers <span className="text-gradient-gold">Say</span>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: "italic", fontSize: "clamp(2rem, 4vw, 44px)", color: "#f2ead8" }}>
+            Trusted by Wholesale Buyers Across 3 Continents
           </h2>
         </div>
         
@@ -54,54 +57,77 @@ export const SocialProof = () => {
           {testimonials.map((testimonial, index) => (
             <div 
               key={index} 
-              className="bg-card rounded-xl p-6 border border-border relative"
+              className="rounded-2xl p-10 transition-all duration-300"
+              style={{ 
+                background: "#111111", 
+                border: "1px solid rgba(201,168,76,0.2)",
+                animationDelay: `${index * 100}ms`,
+              }}
             >
-              <Quote className="absolute top-6 right-6 w-8 h-8 text-accent/30" />
+              {/* Credentials at top */}
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: "20px", color: "#f2ead8", marginBottom: "2px" }}>
+                {testimonial.author}
+              </p>
+              <p style={{ fontWeight: 400, fontSize: "13px", color: "#c9a84c", marginBottom: "16px" }}>
+                {testimonial.role}, {testimonial.company}
+              </p>
               
               {/* Stars */}
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+                  <Star key={i} className="w-4 h-4 fill-[#c9a84c]" style={{ color: "#c9a84c" }} />
                 ))}
               </div>
               
-              <blockquote className="text-foreground mb-6 font-medium">
+              {/* Quote */}
+              <blockquote style={{ fontWeight: 300, fontStyle: "italic", fontSize: "15px", color: "#f2ead8", lineHeight: 1.8, marginBottom: "20px" }}>
                 "{testimonial.quote}"
               </blockquote>
               
-              <div className="border-t border-border pt-4">
-                <p className="font-semibold text-foreground">{testimonial.author}</p>
-                <p className="text-sm text-muted-foreground">
-                  {testimonial.role}, {testimonial.company}
-                </p>
-              </div>
+              {/* Location pill */}
+              <span 
+                className="inline-block px-3 py-1 rounded-full"
+                style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", fontSize: "12px", color: "#c9a84c", fontWeight: 300 }}
+              >
+                {testimonial.location}
+              </span>
             </div>
           ))}
         </div>
         
         {/* Risk Reversals */}
-        <div className="bg-muted/30 rounded-2xl p-8 md:p-12">
-          <h3 className="text-2xl font-bold text-center mb-8 font-serif">
+        <div className="text-center mb-12">
+          <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 48px)", color: "#f2ead8" }}>
             Zero-Risk Partnership
           </h3>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {riskReversals.map((item, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                  <item.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-foreground mb-1">
-                    {item.title}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
-                </div>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-6">
+          {riskReversals.map((item, index) => (
+            <div 
+              key={index} 
+              className="rounded-2xl p-10 transition-all duration-300 hover:scale-[1.02]"
+              style={{ 
+                background: "#0f0f0d", 
+                borderTop: "3px solid #c9a84c",
+                borderLeft: "1px solid rgba(201,168,76,0.1)",
+                borderRight: "1px solid rgba(201,168,76,0.1)",
+                borderBottom: "1px solid rgba(201,168,76,0.1)",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderTopColor = "#dfc06a")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderTopColor = "#c9a84c")}
+            >
+              <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(201,168,76,0.08)" }}>
+                <item.icon className="w-12 h-12" style={{ color: "#c9a84c" }} />
               </div>
-            ))}
-          </div>
+              <h4 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "22px", color: "#f2ead8", marginBottom: "8px" }}>
+                {item.title}
+              </h4>
+              <p style={{ fontWeight: 300, fontSize: "15px", color: "#a09888", lineHeight: 1.7 }}>
+                {item.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

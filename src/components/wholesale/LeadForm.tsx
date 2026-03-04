@@ -3,16 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRight, ArrowLeft, Building2, Package, Loader2, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 
@@ -44,32 +34,9 @@ type Step1Data = z.infer<typeof step1Schema>;
 type Step2Data = z.infer<typeof step2Schema>;
 type FormData = Step1Data & Step2Data;
 
-const businessTypes = [
-  "Supplement Manufacturer",
-  "Wellness Brand",
-  "Herbal Practitioner",
-  "Spa/Wellness Center",
-  "Retail Store",
-  "Distributor",
-  "Other",
-];
-
-const roles = [
-  "Owner / Founder",
-  "Purchasing / Procurement",
-  "Product Development",
-  "Operations",
-  "Other",
-];
-
-const markets = [
-  "USA",
-  "UK / Europe",
-  "Canada",
-  "Caribbean",
-  "Multiple Markets",
-];
-
+const businessTypes = ["Supplement Manufacturer", "Wellness Brand", "Herbal Practitioner", "Spa/Wellness Center", "Retail Store", "Distributor", "Other"];
+const roles = ["Owner / Founder", "Purchasing / Procurement", "Product Development", "Operations", "Other"];
+const markets = ["USA", "UK / Europe", "Canada", "Caribbean", "Multiple Markets"];
 const productCategories = [
   { id: "seamoss", label: "Sea Moss Products (Golden, Full Spectrum, Soaps)" },
   { id: "bush", label: "Traditional Bush Medicine (Gully Root, St. John's Bush, Soursop)" },
@@ -78,30 +45,47 @@ const productCategories = [
   { id: "teas", label: "Bulk Teas & Herbal Blends" },
   { id: "consult", label: "Not sure—need consultation" },
 ];
-
-const volumeOptions = [
-  "Sampling/R&D (1-9 units)",
-  "Small scale (10-24 units)",
-  "Medium (25-49 units)",
-  "Large (50-99 units)",
-  "Commercial (100+ units)",
-  "Don't know—need guidance",
-];
-
-const timelines = [
-  "Immediate need",
-  "1-3 months",
-  "3-6 months",
-  "Future consideration",
-];
-
-const contactMethods = [
-  "Email",
-  "WhatsApp",
-  "Phone Call",
-];
+const volumeOptions = ["Sampling/R&D (1-9 units)", "Small scale (10-24 units)", "Medium (25-49 units)", "Large (50-99 units)", "Commercial (100+ units)", "Don't know—need guidance"];
+const timelines = ["Immediate need", "1-3 months", "3-6 months", "Future consideration"];
+const contactMethods = ["Email", "WhatsApp", "Phone Call"];
 
 const STORAGE_KEY = "mkrc_wholesale_form";
+
+/* Shared inline styles */
+const inputStyle: React.CSSProperties = {
+  background: "#1a1a1a",
+  border: "1px solid rgba(201,168,76,0.3)",
+  color: "#f2ead8",
+  borderRadius: "12px",
+  padding: "12px 16px",
+  width: "100%",
+  fontFamily: "'Jost', sans-serif",
+  fontWeight: 300,
+  fontSize: "15px",
+  outline: "none",
+  transition: "border-color 0.2s, box-shadow 0.2s",
+};
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: "'Jost', sans-serif",
+  fontWeight: 400,
+  fontSize: "13px",
+  color: "#c9a84c",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  marginBottom: "6px",
+  display: "block",
+};
+
+const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+  e.target.style.borderColor = "#c9a84c";
+  e.target.style.boxShadow = "0 0 0 3px rgba(201,168,76,0.1)";
+};
+
+const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+  e.target.style.borderColor = "rgba(201,168,76,0.3)";
+  e.target.style.boxShadow = "none";
+};
 
 export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [step, setStep] = useState(1);
@@ -109,14 +93,11 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
-  // Load saved data from localStorage
   const loadSavedData = (): Partial<FormData> => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
+    } catch { return {}; }
   };
 
   const savedData = loadSavedData();
@@ -145,7 +126,6 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
     },
   });
 
-  // Save to localStorage on change
   useEffect(() => {
     const subscription = step1Form.watch((data) => {
       const current = loadSavedData();
@@ -162,55 +142,36 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
     return () => subscription.unsubscribe();
   }, [step2Form.watch]);
 
-  const handleStep1Submit = async (data: Step1Data) => {
-    setStep(2);
-  };
+  const handleStep1Submit = async () => { setStep(2); };
 
   const handleStep2Submit = async (data: Step2Data) => {
     setIsSubmitting(true);
-    
-    const fullData: FormData = {
-      ...step1Form.getValues(),
-      ...data,
-    };
-
-    // Simulate form submission
+    const fullData: FormData = { ...step1Form.getValues(), ...data };
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
     console.log("Form submitted:", fullData);
-    
-    // Clear localStorage
     localStorage.removeItem(STORAGE_KEY);
-    
     setIsSubmitting(false);
     setIsSubmitted(true);
-    
-    toast({
-      title: "Request Received!",
-      description: "Our sourcing team will contact you within 4 business hours.",
-    });
+    toast({ title: "Request Received!", description: "Our sourcing team will contact you within 4 business hours." });
   };
 
   if (isSubmitted) {
     return (
-      <section ref={ref} className="py-20 md:py-28 bg-muted/50" id="quote-form">
+      <section ref={ref} className="py-24 md:py-28" style={{ background: "#0a0a0a", fontFamily: "'Jost', sans-serif" }} id="quote-form">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto form-container text-center">
-            <div className="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-10 h-10 text-success" />
+          <div className="max-w-2xl mx-auto text-center p-12 rounded-2xl" style={{ background: "#111111", border: "1px solid rgba(201,168,76,0.2)" }}>
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "rgba(201,168,76,0.1)" }}>
+              <CheckCircle2 className="w-10 h-10" style={{ color: "#c9a84c" }} />
             </div>
-            <h2 className="text-3xl font-bold text-foreground mb-4 font-serif">
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "32px", color: "#f2ead8", marginBottom: "16px" }}>
               Thank You for Your Interest!
             </h2>
-            <p className="text-muted-foreground mb-6">
-              Our Miami-based sourcing team will review your requirements and 
-              reach out within 4 business hours with custom pricing and availability.
+            <p style={{ color: "#8a8070", fontWeight: 300, marginBottom: "16px" }}>
+              Our Miami-based sourcing team will review your requirements and reach out within 4 business hours with custom pricing and availability.
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p style={{ fontSize: "14px", color: "#8a8070" }}>
               Need immediate assistance? Call us at{" "}
-              <a href="tel:+13059429407" className="text-primary font-medium hover:underline">
-                +1 (305) 942-9407
-              </a>
+              <a href="tel:+13059429407" style={{ color: "#c9a84c", fontWeight: 500 }}>+1 (305) 942-9407</a>
             </p>
           </div>
         </div>
@@ -219,340 +180,186 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
   }
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-muted/50" id="quote-form">
+    <section ref={ref} className="py-24 md:py-28" style={{ background: "#0a0a0a", fontFamily: "'Jost', sans-serif" }} id="quote-form">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="section-header">
-            Request <span className="text-gradient-gold">Custom Quote</span>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: "italic", fontSize: "clamp(2rem, 4vw, 44px)", color: "#f2ead8", marginBottom: "12px" }}>
+            Get Pricing Built Around Your Volume.
           </h2>
-          <p className="section-subheader mx-auto">
-            Tell us about your business and product needs. All pricing is customized for your volume.
+          <p style={{ fontWeight: 300, fontSize: "16px", color: "#a09888", maxWidth: "560px", margin: "0 auto" }}>
+            Tell us about your business and we'll respond within 24 hours with custom pricing for your order size.
           </p>
         </div>
         
-        <div className="max-w-2xl mx-auto form-container">
-          {/* Progress Bar */}
-          <div className="form-progress">
-            <div 
-              className="form-progress-bar" 
-              style={{ width: step === 1 ? "50%" : "100%" }}
-            />
+        <div className="max-w-2xl mx-auto p-8 md:p-12 rounded-2xl" style={{ background: "#111111", border: "1px solid rgba(201,168,76,0.2)" }}>
+          {/* Progress */}
+          <div className="h-1 rounded-full mb-8" style={{ background: "rgba(201,168,76,0.15)" }}>
+            <div className="h-full rounded-full transition-all duration-500" style={{ width: step === 1 ? "50%" : "100%", background: "#c9a84c" }} />
           </div>
           
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 1 ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
-              }`}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "#c9a84c", color: "#090909" }}>
                 <Building2 className="w-4 h-4" />
               </div>
-              <span className={`text-sm font-medium ${step >= 1 ? "text-foreground" : "text-muted-foreground"}`}>
-                Business Profile
-              </span>
+              <span style={{ fontSize: "14px", fontWeight: 400, color: "#f2ead8" }}>Business Profile</span>
             </div>
-            <div className="flex-1 h-px bg-border mx-4" />
+            <div className="flex-1 h-px mx-4" style={{ background: "rgba(201,168,76,0.2)" }} />
             <div className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 2 ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
-              }`}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: step >= 2 ? "#c9a84c" : "rgba(201,168,76,0.15)", color: step >= 2 ? "#090909" : "#8a8070" }}>
                 <Package className="w-4 h-4" />
               </div>
-              <span className={`text-sm font-medium ${step >= 2 ? "text-foreground" : "text-muted-foreground"}`}>
-                Product Needs
-              </span>
+              <span style={{ fontSize: "14px", fontWeight: 400, color: step >= 2 ? "#f2ead8" : "#8a8070" }}>Product Needs</span>
             </div>
           </div>
           
-          {/* Step 1: Business Profile */}
+          {/* Step 1 */}
           {step === 1 && (
-            <form onSubmit={step1Form.handleSubmit(handleStep1Submit)} className="form-step">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="companyName">Company Name *</Label>
-                  <Input
-                    id="companyName"
-                    placeholder="Your company name"
-                    {...step1Form.register("companyName")}
-                    className="mt-1.5"
-                  />
-                  {step1Form.formState.errors.companyName && (
-                    <p className="text-sm text-destructive mt-1">
-                      {step1Form.formState.errors.companyName.message}
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <Label htmlFor="website">Website *</Label>
-                  <Input
-                    id="website"
-                    placeholder="yourcompany.com"
-                    {...step1Form.register("website")}
-                    className="mt-1.5"
-                  />
-                  {step1Form.formState.errors.website && (
-                    <p className="text-sm text-destructive mt-1">
-                      {step1Form.formState.errors.website.message}
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <Label>Business Type *</Label>
-                  <Select
-                    value={step1Form.watch("businessType")}
-                    onValueChange={(value) => step1Form.setValue("businessType", value)}
-                  >
-                    <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select your business type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {businessTypes.map((type) => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {step1Form.formState.errors.businessType && (
-                    <p className="text-sm text-destructive mt-1">
-                      {step1Form.formState.errors.businessType.message}
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <Label>Your Role *</Label>
-                  <Select
-                    value={step1Form.watch("role")}
-                    onValueChange={(value) => step1Form.setValue("role", value)}
-                  >
-                    <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {roles.map((role) => (
-                        <SelectItem key={role} value={role}>{role}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {step1Form.formState.errors.role && (
-                    <p className="text-sm text-destructive mt-1">
-                      {step1Form.formState.errors.role.message}
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <Label>Primary Market *</Label>
-                  <Select
-                    value={step1Form.watch("primaryMarket")}
-                    onValueChange={(value) => step1Form.setValue("primaryMarket", value)}
-                  >
-                    <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select your primary market" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {markets.map((market) => (
-                        <SelectItem key={market} value={market}>{market}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {step1Form.formState.errors.primaryMarket && (
-                    <p className="text-sm text-destructive mt-1">
-                      {step1Form.formState.errors.primaryMarket.message}
-                    </p>
-                  )}
-                </div>
+            <form onSubmit={step1Form.handleSubmit(handleStep1Submit)} className="space-y-5">
+              <div>
+                <label style={labelStyle}>Company Name *</label>
+                <input placeholder="Your company name" {...step1Form.register("companyName")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
+                {step1Form.formState.errors.companyName && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "4px" }}>{step1Form.formState.errors.companyName.message}</p>}
+              </div>
+              <div>
+                <label style={labelStyle}>Website *</label>
+                <input placeholder="yourcompany.com" {...step1Form.register("website")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
+                {step1Form.formState.errors.website && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "4px" }}>{step1Form.formState.errors.website.message}</p>}
+              </div>
+              <div>
+                <label style={labelStyle}>Business Type *</label>
+                <select value={step1Form.watch("businessType")} onChange={(e) => step1Form.setValue("businessType", e.target.value)} style={{ ...inputStyle, appearance: "auto" as any }} onFocus={handleFocus as any} onBlur={handleBlur as any}>
+                  <option value="">Select your business type</option>
+                  {businessTypes.map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
+                {step1Form.formState.errors.businessType && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "4px" }}>{step1Form.formState.errors.businessType.message}</p>}
+              </div>
+              <div>
+                <label style={labelStyle}>Your Role *</label>
+                <select value={step1Form.watch("role")} onChange={(e) => step1Form.setValue("role", e.target.value)} style={{ ...inputStyle, appearance: "auto" as any }} onFocus={handleFocus as any} onBlur={handleBlur as any}>
+                  <option value="">Select your role</option>
+                  {roles.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+                {step1Form.formState.errors.role && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "4px" }}>{step1Form.formState.errors.role.message}</p>}
+              </div>
+              <div>
+                <label style={labelStyle}>Primary Market *</label>
+                <select value={step1Form.watch("primaryMarket")} onChange={(e) => step1Form.setValue("primaryMarket", e.target.value)} style={{ ...inputStyle, appearance: "auto" as any }} onFocus={handleFocus as any} onBlur={handleBlur as any}>
+                  <option value="">Select your primary market</option>
+                  {markets.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+                {step1Form.formState.errors.primaryMarket && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "4px" }}>{step1Form.formState.errors.primaryMarket.message}</p>}
               </div>
               
-              <Button type="submit" variant="submit" size="lg" className="w-full mt-8 group">
+              <button 
+                type="submit" 
+                className="w-full flex items-center justify-center gap-2 mt-8 rounded-full transition-all hover:brightness-110"
+                style={{ background: "#c9a84c", color: "#090909", fontWeight: 500, fontSize: "16px", padding: "18px" }}
+              >
                 Continue to Product Selection
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+                <ArrowRight className="w-5 h-5" />
+              </button>
             </form>
           )}
           
-          {/* Step 2: Product Needs */}
+          {/* Step 2 */}
           {step === 2 && (
-            <form onSubmit={step2Form.handleSubmit(handleStep2Submit)} className="form-step">
-              <div className="space-y-6">
-                {/* Product Categories */}
+            <form onSubmit={step2Form.handleSubmit(handleStep2Submit)} className="space-y-6">
+              <div>
+                <label style={labelStyle}>Products Interested In *</label>
+                <div className="space-y-3 mt-2">
+                  {productCategories.map((category) => (
+                    <div key={category.id} className="flex items-start gap-3">
+                      <Checkbox
+                        id={category.id}
+                        checked={step2Form.watch("productsInterested")?.includes(category.id)}
+                        onCheckedChange={(checked) => {
+                          const current = step2Form.watch("productsInterested") || [];
+                          step2Form.setValue("productsInterested", checked ? [...current, category.id] : current.filter(id => id !== category.id));
+                        }}
+                        className="mt-0.5"
+                      />
+                      <label htmlFor={category.id} className="cursor-pointer" style={{ fontSize: "14px", color: "#f2ead8", fontWeight: 300 }}>
+                        {category.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                {step2Form.formState.errors.productsInterested && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "8px" }}>{step2Form.formState.errors.productsInterested.message}</p>}
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="mb-3 block">Products Interested In *</Label>
-                  <div className="space-y-3">
-                    {productCategories.map((category) => (
-                      <div key={category.id} className="flex items-start gap-3">
-                        <Checkbox
-                          id={category.id}
-                          checked={step2Form.watch("productsInterested")?.includes(category.id)}
-                          onCheckedChange={(checked) => {
-                            const current = step2Form.watch("productsInterested") || [];
-                            if (checked) {
-                              step2Form.setValue("productsInterested", [...current, category.id]);
-                            } else {
-                              step2Form.setValue("productsInterested", current.filter(id => id !== category.id));
-                            }
-                          }}
-                          className="mt-0.5"
-                        />
-                        <Label htmlFor={category.id} className="text-sm font-normal cursor-pointer">
-                          {category.label}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                  {step2Form.formState.errors.productsInterested && (
-                    <p className="text-sm text-destructive mt-2">
-                      {step2Form.formState.errors.productsInterested.message}
-                    </p>
-                  )}
+                  <label style={labelStyle}>Estimated Monthly Volume *</label>
+                  <select value={step2Form.watch("monthlyVolume")} onChange={(e) => step2Form.setValue("monthlyVolume", e.target.value)} style={{ ...inputStyle, appearance: "auto" as any }} onFocus={handleFocus as any} onBlur={handleBlur as any}>
+                    <option value="">Select volume</option>
+                    {volumeOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+                  </select>
                 </div>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Estimated Monthly Volume *</Label>
-                    <Select
-                      value={step2Form.watch("monthlyVolume")}
-                      onValueChange={(value) => step2Form.setValue("monthlyVolume", value)}
-                    >
-                      <SelectTrigger className="mt-1.5">
-                        <SelectValue placeholder="Select volume" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {volumeOptions.map((option) => (
-                          <SelectItem key={option} value={option}>{option}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {step2Form.formState.errors.monthlyVolume && (
-                      <p className="text-sm text-destructive mt-1">
-                        {step2Form.formState.errors.monthlyVolume.message}
-                      </p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <Label>Timeline *</Label>
-                    <Select
-                      value={step2Form.watch("timeline")}
-                      onValueChange={(value) => step2Form.setValue("timeline", value)}
-                    >
-                      <SelectTrigger className="mt-1.5">
-                        <SelectValue placeholder="Select timeline" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {timelines.map((timeline) => (
-                          <SelectItem key={timeline} value={timeline}>{timeline}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {step2Form.formState.errors.timeline && (
-                      <p className="text-sm text-destructive mt-1">
-                        {step2Form.formState.errors.timeline.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                
                 <div>
-                  <Label htmlFor="email">Business Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@yourcompany.com"
-                    {...step2Form.register("email")}
-                    className="mt-1.5"
-                  />
-                  {step2Form.formState.errors.email && (
-                    <p className="text-sm text-destructive mt-1">
-                      {step2Form.formState.errors.email.message}
-                    </p>
-                  )}
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="phone">Phone Number *</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      {...step2Form.register("phone")}
-                      className="mt-1.5"
-                    />
-                    {step2Form.formState.errors.phone && (
-                      <p className="text-sm text-destructive mt-1">
-                        {step2Form.formState.errors.phone.message}
-                      </p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <Label>Preferred Contact *</Label>
-                    <Select
-                      value={step2Form.watch("preferredContact")}
-                      onValueChange={(value) => step2Form.setValue("preferredContact", value)}
-                    >
-                      <SelectTrigger className="mt-1.5">
-                        <SelectValue placeholder="Select method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {contactMethods.map((method) => (
-                          <SelectItem key={method} value={method}>{method}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {step2Form.formState.errors.preferredContact && (
-                      <p className="text-sm text-destructive mt-1">
-                        {step2Form.formState.errors.preferredContact.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Opt-in */}
-                <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
-                  <Checkbox
-                    id="optIn"
-                    checked={step2Form.watch("optInSpecSheets")}
-                    onCheckedChange={(checked) => step2Form.setValue("optInSpecSheets", !!checked)}
-                    className="mt-0.5"
-                  />
-                  <Label htmlFor="optIn" className="text-sm font-normal cursor-pointer">
-                    Send me the St. Lucian Bush Medicine Spec Sheets (PDF with detailed product information)
-                  </Label>
+                  <label style={labelStyle}>Timeline *</label>
+                  <select value={step2Form.watch("timeline")} onChange={(e) => step2Form.setValue("timeline", e.target.value)} style={{ ...inputStyle, appearance: "auto" as any }} onFocus={handleFocus as any} onBlur={handleBlur as any}>
+                    <option value="">Select timeline</option>
+                    {timelines.map((t) => <option key={t} value={t}>{t}</option>)}
+                  </select>
                 </div>
               </div>
               
+              <div>
+                <label style={labelStyle}>Business Email *</label>
+                <input type="email" placeholder="you@yourcompany.com" {...step2Form.register("email")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
+                {step2Form.formState.errors.email && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "4px" }}>{step2Form.formState.errors.email.message}</p>}
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label style={labelStyle}>Phone Number *</label>
+                  <input type="tel" placeholder="+1 (555) 123-4567" {...step2Form.register("phone")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
+                  {step2Form.formState.errors.phone && <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "4px" }}>{step2Form.formState.errors.phone.message}</p>}
+                </div>
+                <div>
+                  <label style={labelStyle}>Preferred Contact *</label>
+                  <select value={step2Form.watch("preferredContact")} onChange={(e) => step2Form.setValue("preferredContact", e.target.value)} style={{ ...inputStyle, appearance: "auto" as any }} onFocus={handleFocus as any} onBlur={handleBlur as any}>
+                    <option value="">Select method</option>
+                    {contactMethods.map((m) => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3 p-4 rounded-lg" style={{ background: "rgba(201,168,76,0.05)" }}>
+                <Checkbox
+                  id="optIn"
+                  checked={step2Form.watch("optInSpecSheets")}
+                  onCheckedChange={(checked) => step2Form.setValue("optInSpecSheets", !!checked)}
+                  className="mt-0.5"
+                />
+                <label htmlFor="optIn" className="cursor-pointer" style={{ fontSize: "14px", color: "#f2ead8", fontWeight: 300 }}>
+                  Send me the St. Lucian Bush Medicine Spec Sheets (PDF with detailed product information)
+                </label>
+              </div>
+              
               <div className="flex gap-4 mt-8">
-                <Button 
+                <button 
                   type="button" 
-                  variant="outline" 
-                  size="lg"
                   onClick={() => setStep(1)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 px-6 py-4 rounded-full transition-colors"
+                  style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#f2ead8", background: "transparent", fontWeight: 400 }}
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back
-                </Button>
-                <Button 
+                </button>
+                <button 
                   type="submit" 
-                  variant="submit" 
-                  size="lg" 
-                  className="flex-1 group"
                   disabled={isSubmitting}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-full transition-all hover:brightness-110"
+                  style={{ background: "#c9a84c", color: "#090909", fontWeight: 500, fontSize: "16px", padding: "18px", opacity: isSubmitting ? 0.7 : 1 }}
                 >
                   {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Submitting...
-                    </>
+                    <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
                   ) : (
-                    <>
-                      Request Custom Pricing & Availability
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </>
+                    <>Continue to Product Selection <ArrowRight className="w-5 h-5" /></>
                   )}
-                </Button>
+                </button>
               </div>
             </form>
           )}
