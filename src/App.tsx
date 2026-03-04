@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { StoreProvider } from "@/lib/store-context";
@@ -33,6 +34,35 @@ import WebinarsPage from "./pages/Webinars";
 import ComparePage from "./pages/ComparePage";
 
 const queryClient = new QueryClient();
+
+// Prefetch products immediately on app load for instant shop navigation
+queryClient.prefetchQuery({
+  queryKey: ["products", undefined],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, product_categories!category_id(*)")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true })
+      .order("image_url", { ascending: false, nullsFirst: false });
+    if (error) throw error;
+    return data;
+  },
+  staleTime: 1000 * 60 * 5,
+});
+
+queryClient.prefetchQuery({
+  queryKey: ["product_categories"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("product_categories")
+      .select("*")
+      .order("display_order", { ascending: true });
+    if (error) throw error;
+    return data;
+  },
+  staleTime: 1000 * 60 * 10,
+});
 
 // Toggle this to false when ready to launch
 const COMING_SOON = false;

@@ -38,15 +38,16 @@ export function RetreatsHero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <Button
-              size="lg"
-              onClick={scrollToCalendar}
-              className="w-full sm:w-auto rounded-full"
-              style={{ background: '#c9a84c', color: '#090909', fontFamily: "'Jost', sans-serif", fontWeight: 500, padding: '16px 36px' }}
+            <a
+              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hello Priest Kailash, I'd like to consult about your healing retreats.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center w-full sm:w-auto rounded-full"
+              style={{ background: '#c9a84c', color: '#090909', fontFamily: "'Jost', sans-serif", fontWeight: 500, padding: '16px 36px', fontSize: '16px' }}
             >
               <MessageCircle className="w-5 h-5 mr-2" />
-              Book Private Retreat
-            </Button>
+              Consult with Kailash
+            </a>
             <Button
               size="lg"
               onClick={scrollToCalendar}

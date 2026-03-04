@@ -3,6 +3,7 @@ import seamossHarvest from "@/assets/seamoss-harvest.jpg";
 import heroFarm from "@/assets/hero-farm.jpg";
 import priestKailash from "@/assets/priest-kailash-host.jpg";
 import answerTincture from "@/assets/mkrc-answer-tincture.png";
+import wholesaleCollage from "@/assets/wholesale-collage.png";
 
 export function OriginStory() {
   return (
@@ -42,6 +43,15 @@ export function OriginStory() {
                 </div>
               </div>
             </div>
+          </div>
+          {/* Photo above caption */}
+          <div className="mt-8 rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
+            <img
+              src={wholesaleCollage}
+              alt="Priest Kailash inspecting herbs, harvesting, lab processing, and Miami warehouse"
+              className="w-full h-auto object-cover transition-all duration-300 hover:brightness-110"
+              loading="lazy"
+            />
           </div>
           <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: '#c9a84c' }}>
             Wildcrafted in Saint Lucia. Processed by hand. Delivered to the world.
