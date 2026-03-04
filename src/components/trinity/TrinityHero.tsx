@@ -47,7 +47,7 @@ export function TrinityHero() {
             muted
             loop
             playsInline
-            preload="auto"
+            preload="metadata"
             className="w-full h-full object-cover"
             poster="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2400"
           >

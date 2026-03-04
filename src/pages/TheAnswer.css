@@ -66,10 +66,12 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 140px 24px 80px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
   width: 100%;
+  overflow: visible;
 }
 
 .answer-hero__text-col {
@@ -83,14 +85,17 @@
   align-items: flex-end;
   justify-content: center;
   overflow: visible;
+  padding-bottom: 0;
 }
 
 .answer-hero__bottle-img {
-  object-fit: contain;
-  max-height: 85vh;
+  display: block;
   width: auto;
   max-width: 100%;
-  position: relative;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  overflow: visible;
 }
 
 .answer-hero__badge {
@@ -954,7 +959,10 @@
 }
 
 @media (max-width: 900px) {
-  .answer-hero__inner,
+  .answer-hero__inner {
+    grid-template-columns: 1fr;
+  }
+
   .chronixx-section__inner,
   .howto-section__inner {
     grid-template-columns: 1fr;
@@ -972,9 +980,7 @@
   }
 
   .answer-hero__bottle-img {
-    max-height: 60vh;
-    width: 100%;
-    max-width: 400px;
+    max-width: 320px;
   }
 }
 

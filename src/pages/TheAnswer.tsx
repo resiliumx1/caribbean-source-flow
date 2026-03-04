@@ -170,7 +170,17 @@ export default function TheAnswer() {
               ))}
             </div>
           </div>
-          {/* Bottle removed — hero bg only */}
+          <div className="answer-hero__bottle-col">
+            <img
+              src={heroBottle}
+              alt="The Answer herbal tincture bottle by MKRC — full bottle view from dropper cap to base"
+              className="answer-hero__bottle-img"
+              loading="eager"
+              fetchPriority="high"
+              width={400}
+              height={600}
+            />
+          </div>
         </div>
         <button className="answer-hero__scroll-hint" onClick={() => scrollToSection("chronixx")} aria-label="Scroll to learn more">
           <ChevronDown size={20} />
