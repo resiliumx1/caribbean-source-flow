@@ -50,6 +50,7 @@ export function TrinityHero() {
             preload="metadata"
             className="w-full h-full object-cover"
             poster="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=70&w=1400&fm=webp"
+            {...{ fetchpriority: "high" } as any}
           >
             <source src="/videos/hero-background.mp4" type="video/mp4" />
           </video>
