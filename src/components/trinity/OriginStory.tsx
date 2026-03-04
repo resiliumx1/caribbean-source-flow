@@ -1,51 +1,12 @@
-import herbProcessing from "@/assets/herb-processing.jpg";
-import seamossHarvest from "@/assets/seamoss-harvest.jpg";
-import heroFarm from "@/assets/hero-farm.jpg";
-import priestKailash from "@/assets/priest-kailash-host.jpg";
-import answerTincture from "@/assets/mkrc-answer-tincture.png";
 import wholesaleCollage from "@/assets/wholesale-collage.png";
 
 export function OriginStory() {
   return (
     <section className="py-24 md:py-28" style={{ background: '#0f0f0d' }}>
       <div className="container mx-auto max-w-6xl px-4">
-        {/* 3-Panel Photo Mosaic */}
+        {/* Photo + Caption */}
         <div className="mb-16">
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
-            <div className="flex" style={{ minHeight: '400px' }}>
-              {/* Left panel - 60% */}
-              <div className="w-[60%] relative group">
-                <img
-                  src={priestKailash}
-                  alt="Priest Kailash in the St. Lucian rainforest"
-                  className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110"
-                />
-              </div>
-              {/* 2px separator */}
-              <div style={{ width: '2px', background: '#0a0a0a' }} />
-              {/* Right panels - 40% */}
-              <div className="w-[40%] flex flex-col">
-                <div className="flex-1 relative group">
-                  <img
-                    src={answerTincture}
-                    alt="The Answer tincture bottle"
-                    className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110"
-                    style={{ background: '#111' }}
-                  />
-                </div>
-                <div style={{ height: '2px', background: '#0a0a0a' }} />
-                <div className="flex-1 relative group">
-                  <img
-                    src={herbProcessing}
-                    alt="Traditional herb processing"
-                    className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Photo above caption */}
-          <div className="mt-8 rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
             <img
               src={wholesaleCollage}
               alt="Priest Kailash inspecting herbs, harvesting, lab processing, and Miami warehouse"
