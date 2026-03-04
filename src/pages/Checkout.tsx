@@ -245,11 +245,56 @@ export default function Checkout() {
                   </div>
                   <div>
                     <Label htmlFor="country">Country</Label>
-                    <Input
+                    <select
                       id="country"
                       value={form.country}
                       onChange={(e) => update("country", e.target.value)}
-                    />
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="US">United States</option>
+                      <option value="LC">Saint Lucia</option>
+                      <option disabled>──────────</option>
+                      <option value="AG">Antigua and Barbuda</option>
+                      <option value="BS">Bahamas</option>
+                      <option value="BB">Barbados</option>
+                      <option value="BZ">Belize</option>
+                      <option value="BM">Bermuda</option>
+                      <option value="CA">Canada</option>
+                      <option value="KY">Cayman Islands</option>
+                      <option value="DM">Dominica</option>
+                      <option value="DO">Dominican Republic</option>
+                      <option value="GD">Grenada</option>
+                      <option value="GY">Guyana</option>
+                      <option value="HT">Haiti</option>
+                      <option value="JM">Jamaica</option>
+                      <option value="MX">Mexico</option>
+                      <option value="KN">Saint Kitts and Nevis</option>
+                      <option value="VC">Saint Vincent and the Grenadines</option>
+                      <option value="SR">Suriname</option>
+                      <option value="TT">Trinidad and Tobago</option>
+                      <option value="TC">Turks and Caicos Islands</option>
+                      <option value="VI">U.S. Virgin Islands</option>
+                      <option disabled>──────────</option>
+                      <option value="GB">United Kingdom</option>
+                      <option value="DE">Germany</option>
+                      <option value="FR">France</option>
+                      <option value="NL">Netherlands</option>
+                      <option value="ES">Spain</option>
+                      <option value="IT">Italy</option>
+                      <option value="SE">Sweden</option>
+                      <option value="NO">Norway</option>
+                      <option value="CH">Switzerland</option>
+                      <option value="AU">Australia</option>
+                      <option value="NZ">New Zealand</option>
+                      <option value="JP">Japan</option>
+                      <option value="NG">Nigeria</option>
+                      <option value="GH">Ghana</option>
+                      <option value="ZA">South Africa</option>
+                      <option value="KE">Kenya</option>
+                      <option value="BR">Brazil</option>
+                      <option value="CO">Colombia</option>
+                      <option value="IN">India</option>
+                    </select>
                   </div>
                 </div>
               </div>

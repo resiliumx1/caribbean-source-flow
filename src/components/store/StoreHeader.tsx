@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingBag, Menu, User, MessageCircle } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
@@ -25,6 +25,18 @@ export function StoreHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { cartCount } = useCart();
   const { whatsappNumber, isLocalVisitor } = useStore();
+  const prevCountRef = useRef(cartCount);
+  const [cartBounce, setCartBounce] = useState(false);
+
+  useEffect(() => {
+    if (cartCount !== prevCountRef.current && cartCount > 0) {
+      setCartBounce(true);
+      const timeout = setTimeout(() => setCartBounce(false), 600);
+      prevCountRef.current = cartCount;
+      return () => clearTimeout(timeout);
+    }
+    prevCountRef.current = cartCount;
+  }, [cartCount]);
 
   const whatsappMessage = encodeURIComponent(
     "Hello, I'd like a consultation on which products are right for me."
@@ -94,12 +106,12 @@ export function StoreHeader() {
             <CurrencyToggle />
 
             <Link to="/cart" className="relative">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className={cartBounce ? "animate-bounce" : ""}>
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
                   <Badge
                     variant="default"
-                    className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs"
+                    className={`absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs transition-transform ${cartBounce ? "scale-125" : "scale-100"}`}
                   >
                     {cartCount}
                   </Badge>
