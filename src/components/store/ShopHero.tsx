@@ -1,15 +1,32 @@
-import { Leaf, CheckCircle, MapPin, Heart } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 const trustBadges = [
-  { icon: Leaf, label: "100% Natural" },
-  { icon: Heart, label: "Vegan" },
-  { icon: CheckCircle, label: "Non-GMO" },
-  { icon: MapPin, label: "Made in St. Lucia" },
+  { icon: "✦", label: "43,000+ Bottles Sold" },
+  { icon: "🌿", label: "All Natural" },
+  { icon: "🧪", label: "Batch Tested" },
+  { icon: "🚚", label: "3-Day US Delivery" },
 ];
 
 export function ShopHero() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    el.style.opacity = "0";
+    el.style.transform = "translateY(24px)";
+    requestAnimationFrame(() => {
+      el.style.transition = "opacity 600ms ease, transform 600ms ease";
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    });
+  }, []);
+
   return (
-    <section className="relative h-[400px] md:h-[480px] overflow-hidden pt-16">
+    <section
+      ref={sectionRef}
+      className="relative h-[440px] md:h-[520px] overflow-hidden pt-16"
+    >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
@@ -17,30 +34,57 @@ export function ShopHero() {
           alt="St. Lucian rainforest"
           className="w-full h-full object-cover"
         />
-        {/* Dark gradient overlay - works in both modes */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-black/75" />
       </div>
 
-      {/* Content - using explicit light colors for text on dark overlay */}
+      {/* Content */}
       <div className="relative z-10 container mx-auto px-4 h-full flex flex-col items-center justify-center text-center">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-white mb-4 max-w-3xl">
+        <h1
+          className="text-3xl md:text-4xl lg:text-[56px] leading-tight mb-4 max-w-3xl"
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: 700,
+            fontStyle: "italic",
+            color: "#f2ead8",
+          }}
+        >
           Premium Herbal Formulations for Daily Balance
         </h1>
-        <p className="text-lg md:text-xl text-white/90 max-w-2xl mb-4">
-          100% natural, vegan, non-GMO remedies made in Saint Lucia using traditional bush medicine and mineral-rich volcanic soil.
+
+        {/* Trust statement */}
+        <p
+          className="mb-3 max-w-2xl"
+          style={{
+            fontFamily: "'Jost', sans-serif",
+            fontWeight: 300,
+            fontSize: "15px",
+            color: "#c9a84c",
+            letterSpacing: "0.05em",
+          }}
+        >
+          Wildcrafted in Saint Lucia · Batch tested · Ships to US, UK &amp; Caribbean
         </p>
-        <p className="text-sm text-white/70 mb-8">
+
+        <p className="text-sm mb-8" style={{ color: "rgba(242,234,216,0.6)" }}>
           Crafted for consistency • Designed for integration • Rooted in tradition
         </p>
 
         {/* Trust Badges */}
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-wrap justify-center gap-4">
           {trustBadges.map((badge) => (
             <div
               key={badge.label}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white/95 dark:bg-card/95 rounded-full text-sm font-medium text-foreground shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-full"
+              style={{
+                background: "rgba(0,0,0,0.5)",
+                border: "1px solid rgba(201,168,76,0.4)",
+                fontFamily: "'Jost', sans-serif",
+                fontWeight: 300,
+                fontSize: "13px",
+                color: "#f2ead8",
+              }}
             >
-              <badge.icon className="w-4 h-4 text-primary" />
+              <span>{badge.icon}</span>
               <span>{badge.label}</span>
             </div>
           ))}

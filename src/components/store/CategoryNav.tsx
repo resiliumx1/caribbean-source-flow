@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { useCategories } from "@/hooks/use-products";
-import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function CategoryNav() {
@@ -18,33 +17,46 @@ export function CategoryNav() {
     );
   }
 
+  const tabBase: React.CSSProperties = {
+    fontFamily: "'Jost', sans-serif",
+    fontSize: "14px",
+    transition: "all 200ms ease",
+  };
+
+  const activeStyle: React.CSSProperties = {
+    ...tabBase,
+    background: "#c9a84c",
+    color: "#090909",
+    fontWeight: 500,
+    border: "1px solid #c9a84c",
+  };
+
+  const inactiveStyle: React.CSSProperties = {
+    ...tabBase,
+    background: "#111111",
+    color: "#f2ead8",
+    fontWeight: 400,
+    border: "1px solid rgba(201,168,76,0.3)",
+  };
+
   return (
-    <div className="flex flex-wrap justify-center gap-3">
+    <div className="flex flex-wrap justify-center gap-3 overflow-x-auto pb-1">
       <Link
         to="/shop"
-        className={cn(
-          "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border-2",
-          currentPath === "/shop"
-            ? "bg-primary text-primary-foreground border-primary"
-            : "bg-card border-border text-foreground hover:bg-muted hover:border-muted-foreground/30"
-        )}
+        className="px-6 py-2.5 rounded-full whitespace-nowrap hover:brightness-110 transition-all"
+        style={currentPath === "/shop" ? activeStyle : inactiveStyle}
       >
         All
       </Link>
 
       {categories?.map((category) => {
         const isActive = currentPath === `/shop/category/${category.slug}`;
-
         return (
           <Link
             key={category.id}
             to={`/shop/category/${category.slug}`}
-            className={cn(
-              "px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border-2",
-              isActive
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-card border-border text-foreground hover:bg-muted hover:border-muted-foreground/30"
-            )}
+            className="px-6 py-2.5 rounded-full whitespace-nowrap hover:brightness-110 transition-all"
+            style={isActive ? activeStyle : inactiveStyle}
           >
             {category.name}
           </Link>
