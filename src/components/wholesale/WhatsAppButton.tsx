@@ -10,7 +10,7 @@ export const WhatsAppButton = () => {
       href={`https://wa.me/13059429407?text=${whatsappMessage}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 hover:brightness-110"
+      className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 hover:brightness-110"
       style={{ background: "#c9a84c", color: "#090909" }}
       aria-label="Chat with us on WhatsApp"
     >

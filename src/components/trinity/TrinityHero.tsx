@@ -64,8 +64,8 @@ export function TrinityHero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center px-4 py-20 md:py-32">
-        <div className="container mx-auto max-w-6xl">
+      <div className="relative z-10 flex-1 flex flex-col justify-center">
+        <div className="container mx-auto max-w-6xl px-4 py-20 md:py-32">
           {/* Headlines */}
           <div className="text-center mb-12 md:mb-16 animate-fade-in">
             <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(2.5rem, 5vw, 64px)', color: '#c9a84c', marginBottom: '24px', lineHeight: 1.1, backgroundImage: 'linear-gradient(135deg, #c9a84c 0%, #e0c878 50%, #c9a84c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundSize: '200% 100%', animation: 'shimmer 3s ease-in-out infinite' }}>
@@ -77,10 +77,10 @@ export function TrinityHero() {
               wholesale supply—designed to restore balance at every level.
             </p>
           </div>
-
-          {/* Professional CTA Cards */}
-          <HeroCtas />
         </div>
+
+        {/* Full-bleed CTA Cards */}
+        <HeroCtas />
       </div>
 
       {/* Trust Ticker Bar */}

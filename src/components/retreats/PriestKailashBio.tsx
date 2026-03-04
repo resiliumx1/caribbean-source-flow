@@ -107,7 +107,7 @@ export function PriestKailashBio() {
               rel="noopener noreferrer"
             >
               <button className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-medium transition-all hover:brightness-110 hover:scale-102" style={{ background: 'transparent', border: '1px solid #c9a84c', color: '#c9a84c', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
-                Meet Priest Kailash <ArrowRight className="w-5 h-5" />
+                Book a Consultation with Priest Kailash <ArrowRight className="w-5 h-5" />
               </button>
             </a>
           </div>
