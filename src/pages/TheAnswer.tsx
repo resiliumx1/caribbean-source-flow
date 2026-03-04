@@ -9,6 +9,7 @@ import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import tincture from "@/assets/mkrc-answer-tincture.png";
 import heroBottle from "@/assets/mkrc-the-answer-bottle.jpg";
 import heroBg from "@/assets/the-answer-hero-chronixx.jpg";
+import chronixxPhoto from "@/assets/chronixx-portrait.jpg";
 import "./TheAnswer.css";
 
 /* ── Scroll helpers ── */
@@ -182,7 +183,7 @@ export default function TheAnswer() {
             <SectionLabel text="Artist Endorsement" />
             <span className="chronixx-section__watermark">Chronixx</span>
             <div className="chronixx-section__photo-placeholder">
-              <p style={{ fontSize: "0.875rem", color: "#5a5048" }}>Chronixx Photo</p>
+              <img src={chronixxPhoto} alt="Chronixx — Jamaican reggae artist and advocate for natural living" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
           </div>
 
@@ -277,10 +278,10 @@ export default function TheAnswer() {
           </div>
 
           <div ref={reveal} className="ta-reveal craft-timeline">
-            {/* Connecting line (desktop: horizontal SVG, mobile handled by CSS) */}
-            <svg className="craft-timeline__line hidden md:block" preserveAspectRatio="none">
-              <line x1="0" y1="1" x2="100%" y2="1" className="craft-timeline__line-bg" strokeWidth="2" />
-              <line x1="0" y1="1" x2="100%" y2="1" className="craft-timeline__line-progress" strokeWidth="2" />
+            {/* Connecting line */}
+            <svg className="craft-timeline__line hidden md:block" style={{ width: "100%", height: "4px", overflow: "visible" }} preserveAspectRatio="none">
+              <line x1="10%" y1="1" x2="90%" y2="1" className="craft-timeline__line-bg" strokeWidth="2" />
+              <line x1="10%" y1="1" x2="90%" y2="1" className="craft-timeline__line-progress" strokeWidth="2" />
             </svg>
 
             {CRAFT_STEPS.map((step, i) => (

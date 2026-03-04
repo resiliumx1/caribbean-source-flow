@@ -25,6 +25,11 @@
   opacity: 1;
   transform: translateY(0);
 }
+/* Hero children should always be fully opaque once revealed */
+.answer-hero .ta-reveal.ta-visible,
+.answer-hero .ta-reveal.ta-visible * {
+  opacity: 1;
+}
 
 /* Staggered children */
 .ta-stagger > * { transition-delay: calc(var(--i, 0) * 100ms); }
@@ -96,22 +101,34 @@
 
 .answer-hero__subtitle {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
   font-style: italic;
-  color: #8a8070;
+  color: #f2ead8;
+  opacity: 0.75;
   margin-bottom: 24px;
-}
-
-.answer-hero__desc {
-  color: #8a8070;
-  margin-bottom: 32px;
-  font-family: 'Jost', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
 }
 
 .answer-hero__desc strong {
   color: #c9a84c;
+}
+
+.answer-hero__desc {
+  color: #f2ead8;
+  opacity: 0.85;
+  margin-bottom: 32px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.answer-hero__subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-style: italic;
+  color: #f2ead8;
+  opacity: 0.75;
+  margin-bottom: 24px;
 }
 
 .answer-hero__ctas {
@@ -441,10 +458,11 @@
 .craft-timeline__line {
   position: absolute;
   top: 24px;
-  left: 24px;
-  right: 24px;
+  left: 0;
+  right: 0;
   height: 2px;
   z-index: 0;
+  pointer-events: none;
 }
 
 .craft-timeline__line-bg {
