@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export interface ConciergeMessage {
   role: "user" | "assistant";
@@ -6,9 +7,32 @@ export interface ConciergeMessage {
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/concierge-chat`;
+const WHATSAPP_LINK = "https://wa.me/13059429407?text=Hi%20MKRC%2C%20I%20have%20a%20question";
 
 function generateSessionId(): string {
   return `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+}
+
+function getPageGreeting(pathname: string): string {
+  if (pathname.startsWith("/wholesale")) {
+    return "Welcome! Looking for wholesale Caribbean botanicals? I can help with pricing, documentation, and our Miami warehouse. What would you like to know?";
+  }
+  if (pathname.startsWith("/retreats")) {
+    return "Welcome! Interested in a healing retreat in Saint Lucia with Priest Kailash? I can tell you about our private and group programs. What would you like to know?";
+  }
+  if (pathname.startsWith("/the-answer")) {
+    return "Welcome! The Answer is one of our most powerful formulas. Do you have questions about the ingredients, how to use it, or Chronixx's experience with it?";
+  }
+  if (pathname.startsWith("/webinars")) {
+    return "Welcome! All MKRC webinars are completely free. Are you looking for upcoming sessions or want to browse past recordings?";
+  }
+  if (pathname.startsWith("/shop")) {
+    return "Welcome! I can help you find the right herbal formulation for your wellness goals. Are you looking for something specific or would you like a recommendation?";
+  }
+  if (pathname.startsWith("/school")) {
+    return "Welcome! Interested in the Mount Kailash School of Esoteric Knowledge? I can tell you about our formal herbal medicine training programs.";
+  }
+  return "Welcome to Mount Kailash Rejuvenation Centre 🌿 I'm here to help with products, retreats, webinars, wholesale, or anything else. What can I help you with?";
 }
 
 export function useConcierge() {
@@ -16,28 +40,18 @@ export function useConcierge() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sessionIdRef = useRef<string>(generateSessionId());
+  const location = useLocation();
+  const initializedRef = useRef(false);
 
-  // Initialize with welcome message
-  useEffect(() => {
-    if (messages.length === 0) {
+  // Page-aware welcome message
+  const initWelcome = useCallback((pathname: string) => {
+    if (!initializedRef.current) {
+      initializedRef.current = true;
       setMessages([
-        {
-          role: "assistant",
-          content: `Welcome to Mount Kailash. I'm your Dispensary Guide.
-
-I can help you:
-- Find the right formulation for your wellness goals
-- Explain our bush medicine traditions
-- Check retreat availability
-- Connect you with our wholesale team
-
-**Note:** I provide information about traditional St. Lucian bush medicine. This is not medical advice. Always consult your physician.
-
-How may I assist you?`,
-        },
+        { role: "assistant", content: getPageGreeting(pathname) },
       ]);
     }
-  }, [messages.length]);
+  }, []);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return;
@@ -54,12 +68,10 @@ How may I assist you?`,
       setMessages((prev) => {
         const last = prev[prev.length - 1];
         if (last?.role === "assistant" && prev.length > 1) {
-          // Update the last assistant message
           return prev.map((m, i) =>
             i === prev.length - 1 ? { ...m, content: assistantContent } : m
           );
         }
-        // Add new assistant message
         return [...prev, { role: "assistant", content: assistantContent }];
       });
     };
@@ -87,9 +99,7 @@ How may I assist you?`,
         throw new Error(errorData.error || "Failed to get response");
       }
 
-      if (!response.body) {
-        throw new Error("No response body");
-      }
+      if (!response.body) throw new Error("No response body");
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -105,27 +115,16 @@ How may I assist you?`,
         while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
           let line = textBuffer.slice(0, newlineIndex);
           textBuffer = textBuffer.slice(newlineIndex + 1);
-
           if (line.endsWith("\r")) line = line.slice(0, -1);
           if (line.startsWith(":") || line.trim() === "") continue;
           if (!line.startsWith("data: ")) continue;
-
           const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") {
-            streamDone = true;
-            break;
-          }
-
+          if (jsonStr === "[DONE]") { streamDone = true; break; }
           try {
             const parsed = JSON.parse(jsonStr);
-            const chunkContent = parsed.choices?.[0]?.delta?.content as
-              | string
-              | undefined;
-            if (chunkContent) {
-              updateAssistantMessage(chunkContent);
-            }
+            const chunkContent = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (chunkContent) updateAssistantMessage(chunkContent);
           } catch {
-            // Incomplete JSON, put back and wait for more
             textBuffer = line + "\n" + textBuffer;
             break;
           }
@@ -143,27 +142,19 @@ How may I assist you?`,
           if (jsonStr === "[DONE]") continue;
           try {
             const parsed = JSON.parse(jsonStr);
-            const chunkContent = parsed.choices?.[0]?.delta?.content as
-              | string
-              | undefined;
-            if (chunkContent) {
-              updateAssistantMessage(chunkContent);
-            }
-          } catch {
-            /* ignore partial leftovers */
-          }
+            const chunkContent = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (chunkContent) updateAssistantMessage(chunkContent);
+          } catch { /* ignore */ }
         }
       }
     } catch (err) {
       console.error("Concierge error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
-      // Add error message
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content:
-            "I apologize, but I'm having trouble connecting right now. Please reach out directly via WhatsApp: [+1 (758) 285-5195](https://wa.me/17582855195)",
+          content: `I'm having a moment — our team can help you directly on WhatsApp right now.`,
         },
       ]);
     } finally {
@@ -173,6 +164,7 @@ How may I assist you?`,
 
   const clearHistory = useCallback(() => {
     sessionIdRef.current = generateSessionId();
+    initializedRef.current = false;
     setMessages([]);
     setError(null);
   }, []);
@@ -183,5 +175,7 @@ How may I assist you?`,
     error,
     sendMessage,
     clearHistory,
+    initWelcome,
+    whatsappLink: WHATSAPP_LINK,
   };
 }

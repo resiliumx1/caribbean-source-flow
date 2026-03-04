@@ -9,6 +9,7 @@ import { StoreProvider } from "@/lib/store-context";
 import { ComparisonProvider } from "@/lib/comparison-context";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { CompareBar } from "@/components/store/CompareBar";
+import { MKRCChatWidget } from "@/components/concierge/MKRCChatWidget";
 import ComingSoon from "@/components/ComingSoon";
 import { lazy, Suspense } from "react";
 
@@ -127,6 +128,7 @@ function AppContent() {
         </Routes>
       </Suspense>
       <CompareBar />
+      <MKRCChatWidget />
     </>
   );
 }
