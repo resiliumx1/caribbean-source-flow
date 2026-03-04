@@ -8,9 +8,18 @@ const Player = lazy(() =>
 
 // Lottie CDN URLs
 const LOTTIE_URLS = {
-  plant: "https://assets2.lottiefiles.com/packages/lf20_mDnz2m.json",
-  package: "https://assets10.lottiefiles.com/packages/lf20_wnqlfojb.json",
-  meditation: "https://assets4.lottiefiles.com/packages/lf20_szlepvdh.json",
+  plant: [
+    "https://assets9.lottiefiles.com/packages/lf20_touohxv0.json",
+    "https://assets3.lottiefiles.com/packages/lf20_ysas9b3a.json",
+  ],
+  package: [
+    "https://assets9.lottiefiles.com/packages/lf20_myteoh0e.json",
+    "https://assets2.lottiefiles.com/packages/lf20_n3kdpiyb.json",
+  ],
+  meditation: [
+    "https://assets4.lottiefiles.com/packages/lf20_xvmprwnb.json",
+    "https://assets9.lottiefiles.com/packages/lf20_qwz4x8tr.json",
+  ],
 };
 
 function GradientMountainIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
@@ -26,11 +35,12 @@ function LottieIcon({
   fallback,
   hovered,
 }: {
-  src: string;
+  src: string[];
   fallback: React.ReactNode;
   hovered: boolean;
 }) {
   const playerRef = useRef<any>(null);
+  const [urlIndex, setUrlIndex] = useState(0);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -54,14 +64,21 @@ function LottieIcon({
     >
       <Suspense fallback={<>{fallback}</>}>
         <Player
+          key={urlIndex}
           ref={playerRef}
           autoplay
           loop
-          src={src}
+          src={src[urlIndex]}
           style={{ height: '80px', width: '80px' }}
           rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
           onEvent={(event: string) => {
-            if (event === 'error') setFailed(true);
+            if (event === 'error') {
+              if (urlIndex < src.length - 1) {
+                setUrlIndex((i) => i + 1);
+              } else {
+                setFailed(true);
+              }
+            }
           }}
         />
       </Suspense>
