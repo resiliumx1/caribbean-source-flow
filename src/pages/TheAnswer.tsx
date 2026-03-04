@@ -9,6 +9,7 @@ import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import tincture from "@/assets/mkrc-answer-tincture.png";
 
 import heroBg from "@/assets/the-answer-hero-chronixx.jpg";
+import heroBottle from "@/assets/the-answer-chronixx-bottle.jpg";
 import chronixxPhoto from "@/assets/chronixx-portrait.jpg";
 import "./TheAnswer.css";
 
@@ -137,9 +138,8 @@ export default function TheAnswer() {
 
       {/* ===== 1. HERO ===== */}
       <section className="answer-hero">
-        <div className="answer-hero__bg" style={{ backgroundImage: `url(${heroBg})` }} />
-        <div className="answer-hero__gradients" />
-        <div className="answer-hero__inner">
+        {/* Left column — text */}
+        <div className="answer-hero__left">
           <div ref={reveal} className="ta-reveal answer-hero__text-col">
             <div className="answer-hero__badge">
               <Shield size={14} />
@@ -171,6 +171,17 @@ export default function TheAnswer() {
             </div>
           </div>
         </div>
+
+        {/* Right column — product image */}
+        <div className="answer-hero__right">
+          <img
+            src={heroBottle}
+            alt="The Answer herbal tincture bottle by Mount Kailash with Chronixx playing guitar in background"
+            className="answer-hero__product-img"
+          />
+          <div className="answer-hero__img-fade" />
+        </div>
+
         <button className="answer-hero__scroll-hint" onClick={() => scrollToSection("chronixx")} aria-label="Scroll to learn more">
           <ChevronDown size={20} />
         </button>
