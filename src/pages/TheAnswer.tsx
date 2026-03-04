@@ -7,7 +7,7 @@ import {
 import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import tincture from "@/assets/mkrc-answer-tincture.png";
-import heroBottle from "@/assets/mkrc-the-answer-bottle.jpg";
+
 import heroBg from "@/assets/the-answer-hero-chronixx.jpg";
 import chronixxPhoto from "@/assets/chronixx-portrait.jpg";
 import "./TheAnswer.css";
@@ -169,17 +169,6 @@ export default function TheAnswer() {
                 <span key={c} className="answer-hero__cert-tag">{c}</span>
               ))}
             </div>
-          </div>
-          <div className="answer-hero__bottle-col">
-            <img
-              src={heroBottle}
-              alt="The Answer herbal tincture bottle by MKRC — full bottle view from dropper cap to base"
-              className="answer-hero__bottle-img"
-              loading="eager"
-              fetchPriority="high"
-              width={400}
-              height={600}
-            />
           </div>
         </div>
         <button className="answer-hero__scroll-hint" onClick={() => scrollToSection("chronixx")} aria-label="Scroll to learn more">
@@ -411,7 +400,7 @@ export default function TheAnswer() {
           <h2 className="ta-cormorant text-3xl md:text-4xl mb-4 text-[#f2ead8] font-bold italic">
             Join Thousands Who've Made The Answer Their Daily Ritual.
           </h2>
-          <img src={heroBottle} alt="The Answer bottle" className="final-cta__bottle" />
+          <img src={tincture} alt="The Answer bottle" className="final-cta__bottle" />
           <div className="final-cta__badges">
             {["Vegan", "Non-GMO", "Saint Lucia"].map((b) => (
               <span key={b} className="final-cta__badge">{b}</span>

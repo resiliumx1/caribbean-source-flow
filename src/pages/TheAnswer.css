@@ -66,36 +66,16 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 140px 24px 80px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
-  overflow: visible;
 }
 
 .answer-hero__text-col {
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-
-.answer-hero__bottle-col {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  overflow: visible;
-  padding-bottom: 0;
-}
-
-.answer-hero__bottle-img {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: none;
-  object-fit: contain;
-  overflow: visible;
 }
 
 .answer-hero__badge {
