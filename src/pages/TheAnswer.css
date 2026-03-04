@@ -66,10 +66,9 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 140px 24px 80px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
 }
 

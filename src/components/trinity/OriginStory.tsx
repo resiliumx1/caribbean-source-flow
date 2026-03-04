@@ -1,45 +1,54 @@
 import herbProcessing from "@/assets/herb-processing.jpg";
 import seamossHarvest from "@/assets/seamoss-harvest.jpg";
 import heroFarm from "@/assets/hero-farm.jpg";
+import priestKailash from "@/assets/priest-kailash-host.jpg";
+import answerTincture from "@/assets/mkrc-answer-tincture.png";
 
 export function OriginStory() {
   return (
     <section className="py-24 md:py-28" style={{ background: '#0f0f0d' }}>
       <div className="container mx-auto max-w-6xl px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Photo Mosaic - replaces video */}
-          <div className="relative">
-            <div className="rounded-2xl p-1" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
-              <div className="grid grid-cols-5 gap-3">
-                {/* Large left image - 60% */}
-                <div className="col-span-3">
+        {/* 3-Panel Photo Mosaic */}
+        <div className="mb-16">
+          <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.2)' }}>
+            <div className="flex" style={{ minHeight: '400px' }}>
+              {/* Left panel - 60% */}
+              <div className="w-[60%] relative group">
+                <img
+                  src={priestKailash}
+                  alt="Priest Kailash in the St. Lucian rainforest"
+                  className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110"
+                />
+              </div>
+              {/* 2px separator */}
+              <div style={{ width: '2px', background: '#0a0a0a' }} />
+              {/* Right panels - 40% */}
+              <div className="w-[40%] flex flex-col">
+                <div className="flex-1 relative group">
                   <img
-                    src={herbProcessing}
-                    alt="Traditional herb processing at Mount Kailash"
-                    className="w-full h-80 object-cover rounded-2xl"
+                    src={answerTincture}
+                    alt="The Answer tincture bottle"
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110"
+                    style={{ background: '#111' }}
                   />
                 </div>
-                {/* Two stacked right images - 40% */}
-                <div className="col-span-2 flex flex-col gap-3">
+                <div style={{ height: '2px', background: '#0a0a0a' }} />
+                <div className="flex-1 relative group">
                   <img
-                    src={seamossHarvest}
-                    alt="Sea moss harvest in St. Lucia"
-                    className="w-full h-[calc(50%-6px)] object-cover rounded-2xl"
-                    style={{ minHeight: '150px' }}
-                  />
-                  <img
-                    src={heroFarm}
-                    alt="Mount Kailash farm"
-                    className="w-full h-[calc(50%-6px)] object-cover rounded-2xl"
-                    style={{ minHeight: '150px' }}
+                    src={herbProcessing}
+                    alt="Traditional herb processing"
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110"
                   />
                 </div>
               </div>
             </div>
-            <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: '#c9a84c' }}>
-              Wildcrafted in Saint Lucia. Processed by hand. Delivered to the world.
-            </p>
           </div>
+          <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: '#c9a84c' }}>
+            Wildcrafted in Saint Lucia. Processed by hand. Delivered to the world.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* Content */}
           <div className="lg:pl-8">

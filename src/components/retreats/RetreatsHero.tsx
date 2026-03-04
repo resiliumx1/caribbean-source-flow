@@ -20,8 +20,10 @@ export function RetreatsHero() {
           src={heroImage}
           alt="Mount Kailash rainforest retreat"
           className="w-full h-full object-cover"
+          style={{ filter: 'sepia(20%) saturate(120%) hue-rotate(-10deg)' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/90 via-[#0a0a0a]/70 to-transparent" />
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 via-transparent to-transparent" />
       </div>
 
       {/* Content */}

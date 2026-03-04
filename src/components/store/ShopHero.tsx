@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import heroFlatlay from "@/assets/shop-hero-flatlay.jpg";
 
 const trustBadges = [
   { icon: "✦", label: "43,000+ Bottles Sold" },
@@ -30,8 +31,8 @@ export function ShopHero() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2400"
-          alt="St. Lucian rainforest"
+          src={heroFlatlay}
+          alt="Caribbean herbal medicine products on volcanic stone"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-black/75" />

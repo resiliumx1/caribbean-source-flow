@@ -170,9 +170,7 @@ export default function TheAnswer() {
               ))}
             </div>
           </div>
-          <div className="answer-hero__bottle-col">
-            <img src={heroBottle} alt="The Answer bottle by MKRC" className="answer-hero__bottle-img" />
-          </div>
+          {/* Bottle removed — hero bg only */}
         </div>
         <button className="answer-hero__scroll-hint" onClick={() => scrollToSection("chronixx")} aria-label="Scroll to learn more">
           <ChevronDown size={20} />
