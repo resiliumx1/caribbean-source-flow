@@ -1,6 +1,6 @@
 import { AlertTriangle, CheckCircle2, ShieldCheck, Clock, Truck } from "lucide-react";
-import seamossImage from "@/assets/seamoss-harvest.jpg";
-import herbImage from "@/assets/herb-processing.jpg";
+import priestHarvesting from "@/assets/priest-kailash-harvesting.png";
+import labProcessing from "@/assets/lab-processing.png";
 import warehouseImage from "@/assets/miami-warehouse.jpg";
 
 const solutions = [
@@ -8,13 +8,13 @@ const solutions = [
     problem: "Inconsistent quality from aggregated suppliers",
     solution: "Single-origin St. Lucian harvesting. Meet the farmer.",
     icon: ShieldCheck,
-    image: seamossImage,
+    image: priestHarvesting,
   },
   {
     problem: "Documentation gaps cause customs delays",
     solution: "Pre-cleared COAs and import docs. FDA-compliant packaging.",
     icon: Clock,
-    image: herbImage,
+    image: labProcessing,
   },
   {
     problem: "Unpredictable 6-8 week lead times",
@@ -42,13 +42,13 @@ export const ProblemSolution = () => {
             <div 
               key={index} 
               className="rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02]"
-              style={{ background: "#111111", border: "1px solid rgba(201,168,76,0.15)", animationDelay: `${index * 100}ms` }}
+              style={{ background: "#111111", border: "1px solid rgba(201,168,76,0.15)" }}
             >
-              {/* Image */}
+              {/* Image with stronger overlay */}
               <div className="relative h-48 overflow-hidden">
                 <img src={item.image} alt={item.solution} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#111111] to-transparent" />
-                <item.icon className="absolute bottom-4 right-4 w-8 h-8" style={{ color: "#c9a84c" }} />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.75) 60%)' }} />
+                <item.icon className="absolute bottom-4 right-4" style={{ color: "#c9a84c", width: '52px', height: '52px' }} />
               </div>
               
               <div className="p-6">
