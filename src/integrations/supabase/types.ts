@@ -452,6 +452,7 @@ export type Database = {
           product_type: string
           promotion_badge: string | null
           promotion_text: string | null
+          secondary_category_id: string | null
           short_description: string | null
           size_info: string | null
           slug: string
@@ -483,6 +484,7 @@ export type Database = {
           product_type: string
           promotion_badge?: string | null
           promotion_text?: string | null
+          secondary_category_id?: string | null
           short_description?: string | null
           size_info?: string | null
           slug: string
@@ -514,6 +516,7 @@ export type Database = {
           product_type?: string
           promotion_badge?: string | null
           promotion_text?: string | null
+          secondary_category_id?: string | null
           short_description?: string | null
           size_info?: string | null
           slug?: string
@@ -526,6 +529,13 @@ export type Database = {
           {
             foreignKeyName: "products_category_id_fkey"
             columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_secondary_category_id_fkey"
+            columns: ["secondary_category_id"]
             isOneToOne: false
             referencedRelation: "product_categories"
             referencedColumns: ["id"]

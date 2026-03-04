@@ -33,7 +33,7 @@ export default function ComparePage() {
       if (items.length === 0) return [];
       const { data } = await supabase
         .from("products")
-        .select("*, product_categories(*)")
+        .select("*, product_categories!category_id(*)")
         .in("id", items);
       return (data ?? []) as Product[];
     },

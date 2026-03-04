@@ -94,7 +94,7 @@ export default function AdminProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, product_categories(*)")
+        .select("*, product_categories!category_id(*)")
         .order("display_order", { ascending: true });
       if (error) throw error;
       return data as Product[];
@@ -466,10 +466,22 @@ export default function AdminProducts() {
                       onValueChange={(v) => updateCategory.mutate({ id: product.id, category_id: v === "uncategorized" ? null : v })}
                     >
                       <SelectTrigger className="h-7 text-xs w-full">
-                        <SelectValue placeholder="Category" />
+                        <SelectValue placeholder="Primary Category" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="uncategorized">Uncategorized</SelectItem>
+                        {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={(product as any).secondary_category_id || "none"}
+                      onValueChange={(v) => updateProduct.mutate({ id: product.id, updates: { secondary_category_id: v === "none" ? null : v } })}
+                    >
+                      <SelectTrigger className="h-7 text-xs w-full">
+                        <SelectValue placeholder="2nd Category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No 2nd Category</SelectItem>
                         {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                       </SelectContent>
                     </Select>
