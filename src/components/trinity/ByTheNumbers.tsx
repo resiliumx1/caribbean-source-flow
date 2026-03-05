@@ -49,11 +49,11 @@ export function ByTheNumbers() {
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-28 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
+    <section ref={sectionRef} className="py-24 md:py-28 relative overflow-hidden" style={{ background: 'var(--site-bg-primary)' }}>
       <div className="container mx-auto max-w-6xl px-4 relative z-10">
         <div className="text-center mb-12 md:mb-16">
           <motion.h2
-            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}
+            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
@@ -61,7 +61,7 @@ export function ByTheNumbers() {
             Rooted in Real Results
           </motion.h2>
           <motion.p
-            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '560px', margin: '0 auto' }}
+            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '560px', margin: '0 auto' }}
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -77,18 +77,18 @@ export function ByTheNumbers() {
               <motion.div
                 key={stat.label}
                 className="rounded-xl p-8 text-center"
-                style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}
+                style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)' }}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(201,168,76,0.1)' }}>
-                  <Icon className="w-6 h-6" style={{ color: '#c9a84c' }} />
+                  <Icon className="w-6 h-6" style={{ color: 'var(--site-gold)' }} />
                 </div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 56px)', color: '#c9a84c', lineHeight: 1, marginBottom: '8px' }}>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 56px)', color: 'var(--site-gold)', lineHeight: 1, marginBottom: '8px' }}>
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} isVisible={isInView} />
                 </div>
-                <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   {stat.label}
                 </div>
               </motion.div>

@@ -36,7 +36,7 @@ export default function HeroCtas() {
     <div
       ref={bandRef}
       className="w-full"
-      style={{ borderTop: '1px solid rgba(201,168,76,0.3)', backdropFilter: 'blur(12px)' }}
+      style={{ borderTop: '1px solid var(--site-border)', backdropFilter: 'blur(12px)' }}
     >
       <div className="flex flex-col md:flex-row">
         {/* Card 1 — Shop */}
