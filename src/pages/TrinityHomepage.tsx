@@ -52,10 +52,10 @@ function ConsultationToast() {
   return (
     <div
       className="fixed bottom-6 left-6 z-50 flex items-start gap-3 p-4 rounded-2xl animate-fade-in max-w-sm"
-      style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.4)', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
+      style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-card-hover-border)', boxShadow: 'var(--site-shadow-card)' }}
     >
       <div className="flex-1">
-        <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '14px', color: '#f2ead8', marginBottom: '8px' }}>
+        <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '14px', color: 'var(--site-text-primary)', marginBottom: '8px' }}>
           🌿 Priest Kailash has limited consultation slots this month
         </p>
         <Link
@@ -66,7 +66,7 @@ function ConsultationToast() {
           Book Now <ArrowRight className="w-3 h-3" />
         </Link>
       </div>
-      <button onClick={() => setShow(false)} className="p-1" style={{ color: '#8a8070' }} aria-label="Dismiss">
+      <button onClick={() => setShow(false)} className="p-1" style={{ color: 'var(--site-text-muted)' }} aria-label="Dismiss">
         <X className="w-4 h-4" />
       </button>
     </div>

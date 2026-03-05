@@ -7,9 +7,9 @@ export function PriestKailashConsultation() {
     <section
       className="relative py-24 md:py-28"
       style={{
-        background: '#0d1a0f',
-        borderTop: '1px solid rgba(201,168,76,0.2)',
-        borderBottom: '1px solid rgba(201,168,76,0.2)',
+        background: 'var(--site-green-dark)',
+        borderTop: '1px solid var(--site-border)',
+        borderBottom: '1px solid var(--site-border)',
       }}
     >
       {/* Subtle grain overlay */}
@@ -22,7 +22,7 @@ export function PriestKailashConsultation() {
             <div
               className="rounded-2xl overflow-hidden"
               style={{
-                border: '1px solid rgba(201,168,76,0.3)',
+                border: '1px solid var(--site-border)',
                 boxShadow: '0 0 60px rgba(201,168,76,0.1)',
               }}
             >
@@ -40,15 +40,15 @@ export function PriestKailashConsultation() {
             <div
               className="absolute -bottom-4 left-4 right-4 md:left-6 md:right-6 flex flex-col items-center text-center px-5 py-3 rounded-full"
               style={{
-                background: 'rgba(17,17,17,0.95)',
-                border: '1px solid rgba(201,168,76,0.4)',
+                background: 'var(--site-credential-bg)',
+                border: '1px solid var(--site-card-hover-border)',
                 backdropFilter: 'blur(8px)',
               }}
             >
               <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: '#f2ead8' }}>
                 Right Honourable Priest Kailash Kay Leonce
               </span>
-              <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c9a84c' }}>
+              <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: 'var(--site-gold)' }}>
                 Master Herbalist · 21+ Years Practice
               </span>
             </div>
@@ -56,7 +56,7 @@ export function PriestKailashConsultation() {
 
           {/* Right — Content (55%) */}
           <div className="lg:col-span-7">
-            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#c9a84c', marginBottom: '12px', display: 'block' }}>
+            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold)', marginBottom: '12px', display: 'block' }}>
               PERSONAL CONSULTATIONS
             </span>
 
@@ -64,7 +64,7 @@ export function PriestKailashConsultation() {
               Heal With Guidance.
             </h2>
 
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#a09888', lineHeight: 1.8, marginBottom: '32px', maxWidth: '560px' }}>
+            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#c5bfb3', lineHeight: 1.8, marginBottom: '32px', maxWidth: '560px' }}>
               Priest Kailash offers one-on-one herbal consultations for individuals seeking personalised wellness protocols. Drawing from 21 years of clinical bush medicine practice, each session is tailored to your body, your history, and your goals.
             </p>
 
@@ -74,7 +74,7 @@ export function PriestKailashConsultation() {
                 <span
                   key={c}
                   className="px-4 py-2 rounded-full"
-                  style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.3)', fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: '#c9a84c' }}
+                  style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(201,168,76,0.3)', fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: 'var(--site-gold)' }}
                 >
                   {c}
                 </span>
@@ -99,10 +99,10 @@ export function PriestKailashConsultation() {
 
             {/* Trust notes */}
             <div className="mt-4 space-y-1">
-              <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c9a84c', fontStyle: 'italic' }}>
+              <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: 'var(--site-gold)', fontStyle: 'italic' }}>
                 ✦ Limited sessions available each month
               </p>
-              <p className="flex items-center gap-2" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: '#a09888' }}>
+              <p className="flex items-center gap-2" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c5bfb3' }}>
                 <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#4ade80' }} />
                 Accepting consultations for March 2026
               </p>

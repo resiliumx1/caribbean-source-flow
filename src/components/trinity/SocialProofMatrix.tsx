@@ -52,13 +52,13 @@ export function SocialProofMatrix() {
   if (testimonials.length === 0) return null;
 
   return (
-    <section className="py-24 md:py-28 overflow-hidden" style={{ background: '#0a0a0a' }}>
+    <section className="py-24 md:py-28 overflow-hidden" style={{ background: 'var(--site-bg-primary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-12 md:mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Trusted by People on Their Wellness Journey
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
             Real stories from practitioners, wellness seekers, and retreat guests who've experienced the Mt. Kailash difference.
           </p>
         </div>
@@ -70,18 +70,18 @@ export function SocialProofMatrix() {
                 key={testimonial.id}
                 className="flex-shrink-0 w-[85%] md:w-[45%] lg:w-[32%]"
               >
-                <div className="h-full rounded-2xl p-9" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}>
+                <div className="h-full rounded-2xl p-9" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)' }}>
                   {/* Credentials at top */}
                   <div className="flex items-center gap-4 mb-5">
                     <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', border: '2px solid #c9a84c' }}>
                       <User className="w-6 h-6" style={{ color: '#090909' }} />
                     </div>
                     <div>
-                      <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: '#f2ead8' }}>
+                      <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
                         {testimonial.author_name}
                       </div>
                       {testimonial.author_title && (
-                        <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: '#c9a84c' }}>
+                        <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: 'var(--site-gold)' }}>
                           {testimonial.author_title}
                         </div>
                       )}
@@ -96,12 +96,12 @@ export function SocialProofMatrix() {
                   </div>
 
                   {/* Quote */}
-                  <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: '#f2ead8', lineHeight: 1.8, marginBottom: '16px' }}>
+                  <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: 'var(--site-text-secondary)', lineHeight: 1.8, marginBottom: '16px' }}>
                     "{testimonial.quote}"
                   </p>
 
                   {testimonial.results && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: '#c9a84c' }}>
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold)' }}>
                       ✓ {testimonial.results}
                     </div>
                   )}

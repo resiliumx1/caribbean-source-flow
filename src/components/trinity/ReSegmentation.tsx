@@ -34,13 +34,13 @@ const paths = [
 
 export function ReSegmentation() {
   return (
-    <section className="py-24 md:py-28" style={{ background: '#0f0f0d' }}>
+    <section className="py-24 md:py-28" style={{ background: 'var(--site-bg-secondary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-12 md:mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Choose Your Path
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
             Three distinct journeys, one mission: restoring cellular wellness through traditional St. Lucian herbal medicine.
           </p>
         </div>
@@ -66,7 +66,7 @@ export function ReSegmentation() {
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
                   />
-                  {/* Dark overlay */}
+                  {/* Dark overlay — always dark for legibility over images */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/40 to-transparent group-hover:from-[#0a0a0a]/80 transition-all duration-500" />
 
                   {/* Content at bottom */}

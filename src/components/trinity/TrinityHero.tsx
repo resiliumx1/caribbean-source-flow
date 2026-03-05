@@ -61,7 +61,10 @@ export function TrinityHero() {
             className="w-full h-full object-cover"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/90 via-[#0a0a0a]/75 to-[#0a0a0a]/90" />
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(to bottom, var(--site-hero-overlay-from) 0%, var(--site-hero-overlay-to) 50%, var(--site-hero-overlay-from) 100%)` }}
+        />
       </div>
 
       {/* Content */}
@@ -69,10 +72,10 @@ export function TrinityHero() {
         <div className="container mx-auto max-w-6xl px-4 py-20 md:py-32">
           {/* Headlines */}
           <div className="text-center mb-12 md:mb-16 animate-fade-in">
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(2.5rem, 5vw, 64px)', color: '#c9a84c', marginBottom: '24px', lineHeight: 1.1, backgroundImage: 'linear-gradient(135deg, #c9a84c 0%, #e0c878 50%, #c9a84c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundSize: '200% 100%', animation: 'shimmer 3s ease-in-out infinite' }}>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(2.5rem, 5vw, 64px)', color: 'var(--site-gold)', marginBottom: '24px', lineHeight: 1.1, backgroundImage: 'linear-gradient(135deg, #c9a84c 0%, #e0c878 50%, #c9a84c 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundSize: '200% 100%', animation: 'shimmer 3s ease-in-out infinite' }}>
               Where Natural Wellness Finds Its Source
             </h1>
-            <p className="max-w-4xl mx-auto" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '18px', color: '#f2ead8', lineHeight: 1.7, opacity: 0.9 }}>
+            <p className="max-w-4xl mx-auto" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '18px', color: 'var(--site-text-primary)', lineHeight: 1.7, opacity: 0.9 }}>
               Crafted in Saint Lucia using herbs grown in mineral-rich volcanic soil, 
               Mt. Kailash delivers natural formulations, immersive retreats, and trusted 
               wholesale supply—designed to restore balance at every level.
@@ -85,10 +88,10 @@ export function TrinityHero() {
       </div>
 
       {/* Trust Ticker Bar — infinite scroll marquee */}
-      <div className="relative z-10 py-4 overflow-hidden" style={{ background: '#111111' }}>
+      <div className="relative z-10 py-4 overflow-hidden" style={{ background: 'var(--site-ticker-bg)' }}>
         <div className="marquee-track" style={{ display: 'flex', width: 'max-content', animation: 'marquee-scroll 30s linear infinite' }}>
           {[0, 1].map((dup) => (
-            <div key={dup} className="flex items-center gap-8 px-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#c9a84c', whiteSpace: 'nowrap' }}>
+            <div key={dup} className="flex items-center gap-8 px-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--site-ticker-text)', whiteSpace: 'nowrap' }}>
               <span>✦ 21+ YEARS CLINICAL PRACTICE</span>
               <span>✦ CERTIFIED PROCESSING FACILITY</span>
               <span>✦ FEATURED BY ST. LUCIA TOURISM AUTHORITY</span>
