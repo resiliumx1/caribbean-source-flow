@@ -10,12 +10,14 @@ import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 
+const SCHOOL_URL = "https://mount-kailash-school-temp.netlify.app";
+
 const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "Shop", to: "/shop" },
   { label: "Wholesale", to: "/wholesale" },
   { label: "Retreats", to: "/retreats" },
-  { label: "School", to: "/school" },
+  { label: "School", to: SCHOOL_URL, external: true },
   { label: "The Answer", to: "/the-answer" },
   { label: "Webinars", to: "/webinars" },
 ];
