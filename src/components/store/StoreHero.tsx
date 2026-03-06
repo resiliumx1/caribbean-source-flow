@@ -12,7 +12,7 @@ export function StoreHero() {
   );
 
   return (
-    <section className="relative min-h-[70vh] flex items-center overflow-hidden">
+    <section className="hero-section relative min-h-[70vh] flex items-center overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

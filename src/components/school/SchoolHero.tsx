@@ -13,7 +13,7 @@ const trustItems = [
 
 export function SchoolHero() {
   return (
-    <section className="relative min-h-[85vh] flex items-center">
+    <section className="hero-section relative min-h-[85vh] flex items-center">
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img

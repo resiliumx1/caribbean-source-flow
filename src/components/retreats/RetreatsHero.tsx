@@ -13,7 +13,7 @@ export function RetreatsHero() {
   };
 
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-20" style={{ overflow: 'visible' }}>
+    <section className="hero-section relative min-h-[80vh] flex items-center pt-20" style={{ overflow: 'visible' }}>
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img

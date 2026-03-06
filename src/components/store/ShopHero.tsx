@@ -26,7 +26,7 @@ export function ShopHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[440px] md:h-[520px] overflow-hidden pt-16"
+      className="hero-section relative h-[440px] md:h-[520px] overflow-hidden pt-16"
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
