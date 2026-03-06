@@ -27,7 +27,7 @@ export function OriginStory() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Content — Left */}
           <div className="lg:pl-8">
-            <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold)' }}>
+            <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>
               From Volcanic Soil
             </span>
 
