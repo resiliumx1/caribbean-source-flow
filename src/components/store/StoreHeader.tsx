@@ -152,7 +152,7 @@ export function StoreHeader() {
                         key={link.label}
                         to={link.to}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`text-lg font-medium transition-colors ${
+                        className={`text-lg font-medium transition-colors min-h-[44px] flex items-center ${
                           isActive ? 'text-primary' : 'text-foreground hover:text-primary'
                         }`}
                       >
