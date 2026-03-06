@@ -457,7 +457,8 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
         }}>🛍️ Visit Shop</a>
       </div>
     </div>
-  );
+  );};
+
 
   return (
     <div style={{
