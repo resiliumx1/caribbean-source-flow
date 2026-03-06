@@ -71,29 +71,29 @@ export function StoreFooter() {
             <h4 className="font-serif font-semibold mb-4">Information</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li>
-                <Link to="/" className="hover:text-gold transition-colors">
+                <Link to="/wholesale" className="hover:text-gold transition-colors">
                   Wholesale Inquiries
                 </Link>
               </li>
               <li>
-                <Link to="/shipping" className="hover:text-gold transition-colors">
+                <span className="cursor-default">
                   Shipping & Delivery
-                </Link>
+                </span>
               </li>
               <li>
-                <Link to="/returns" className="hover:text-gold transition-colors">
+                <span className="cursor-default">
                   Returns Policy
-                </Link>
+                </span>
               </li>
               <li>
-                <Link to="/privacy" className="hover:text-gold transition-colors">
+                <span className="cursor-default">
                   Privacy Policy
-                </Link>
+                </span>
               </li>
               <li>
-                <Link to="/terms" className="hover:text-gold transition-colors">
+                <span className="cursor-default">
                   Terms of Service
-                </Link>
+                </span>
               </li>
             </ul>
           </div>
