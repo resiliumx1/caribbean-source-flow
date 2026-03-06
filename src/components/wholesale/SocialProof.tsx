@@ -9,7 +9,7 @@ const testimonials = [
     location: "Miami, USA",
   },
   {
-    quote: "The Miami warehousing changed everything. We went from 6-week lead times to 3-day deliveries.",
+    quote: "The Miami warehousing changed everything. We went from 6-week lead times to quick deliveries.",
     author: "James T.",
     role: "Operations Manager",
     company: "UK Wellness Retailer",

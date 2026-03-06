@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
 import { Button } from "@/components/ui/button";
@@ -85,6 +86,12 @@ export default function AdminLogin() {
                 placeholder="••••••••"
                 required
               />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="remember" />
+              <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
+                Remember me
+              </Label>
             </div>
             <Button
               type="submit"
