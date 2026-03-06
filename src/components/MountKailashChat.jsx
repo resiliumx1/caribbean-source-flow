@@ -1,62 +1,56 @@
 import { useState, useRef, useEffect } from "react";
 
-
-// ─── Shop base & exact product URLs scraped from live shop ───────────────────
-const SHOP_BASE = "/shop";
+// ─── Full absolute product URLs ──────────────────────────────────────────────
+const SITE_BASE = "https://preview--caribbean-source-flow.lovable.app";
 
 const PRODUCT_LINKS = {
-  // Tonics
-  "The Answer":                    `${SHOP_BASE}/the-answer`,
-  "Dewormer":                      `${SHOP_BASE}/dewormer`,
-  "Fertility":                     `${SHOP_BASE}/fertility`,
-  "Pure Green":                    `${SHOP_BASE}/pure-green`,
-  "Prosperity":                    `${SHOP_BASE}/prosperity`,
-  "Virility":                      `${SHOP_BASE}/virility-herbal-virility-supplement`,
-  "Hemp Syrup":                    `${SHOP_BASE}/hemp-syrup`,
-  "Colax":                         `${SHOP_BASE}/colax`,
-  "Colax Quarterly Subscription":  `${SHOP_BASE}/colax-quarterly-subscription`,
-  "Pure Gold":                     `${SHOP_BASE}/pure-gold`,
-  "Blood Detox":                   `${SHOP_BASE}/blood-detox`,
-  "Fey Duvan Syrup":               `${SHOP_BASE}/fey-duvan-syrup`,
-  "Fey Duvan":                     `${SHOP_BASE}/fey-duvan-syrup`,
-  "Tranquility":                   `${SHOP_BASE}/tranquility`,
-  "Free Flow":                     `${SHOP_BASE}/free-flow`,
-  // Teas
-  "Urinary Cleanse Tea":           `${SHOP_BASE}/urinary-cleanse-tea`,
-  "Restful Tea":                   `${SHOP_BASE}/restful-tea`,
-  "Moon Cycle Tea":                `${SHOP_BASE}/moon-cycle-tea`,
-  "Virili-Tea":                    `${SHOP_BASE}/virili-tea`,
-  "Digestive Rescue":              `${SHOP_BASE}/digestive-rescue`,
-  "Medina Tea":                    `${SHOP_BASE}/medina-tea`,
-  "Gully Root Leaves Tea":         `${SHOP_BASE}/gully-root-leaves`,
-  // Capsules & Powders
-  "Virility Male Balance Capsules":`${SHOP_BASE}/virility-male-balance-capsules`,
-  "Nerve Tonic Capsules":          `${SHOP_BASE}/nerve-tonic-capsules`,
-  // Curated Bundles
-  "Male Potency Kit":              `${SHOP_BASE}/male-potency-kit`,
-  "Super Female Wellness Package": `${SHOP_BASE}/super-female-wellness-package`,
-  "Immunity Kit":                  `${SHOP_BASE}/immunity-kit-bundle`,
-  "Prostate Health Bundle":        `${SHOP_BASE}/prostate-health-bundle`,
-  "Digestive Bundle":              `${SHOP_BASE}/digestive-bundle`,
-  "Male Vitality Package":         `${SHOP_BASE}/male-vitality-package`,
-  "Queenly Tea Bundle":            `${SHOP_BASE}/queenly-tea-bundle`,
-  "Kingly Tea Bundle":             `${SHOP_BASE}/kingly-tea-bundle`,
-  "Detox Bundle":                  `${SHOP_BASE}/detox-bundle`,
-  "Feminine Balance Kit":          `${SHOP_BASE}/feminine-balance-kit`,
-  // Raw Herbs
-  "Soursop Leaves":                `${SHOP_BASE}/soursop-leaves`,
-  "Blue Vervain":                  `${SHOP_BASE}/blue-vervain`,
-  "St. John's Bush":               `${SHOP_BASE}/st-johns-bush`,
-  "Cassia Alata":                  `${SHOP_BASE}/cassia-alata`,
-  "Red Raspberry Leaf":            `${SHOP_BASE}/red-raspberry-leaf`,
-  // Books
-  "The NEW Herbal Manual":         `${SHOP_BASE}/the-new-herbal-manual-ebook`,
-  // Soaps
-  "Seamoss Soaps":                 `${SHOP_BASE}/handcrafted-seamoss-soaps-3-pack`,
+  "The Answer": `${SITE_BASE}/shop/the-answer`,
+  "Dewormer": `${SITE_BASE}/shop/dewormer`,
+  "Fertility": `${SITE_BASE}/shop/fertility`,
+  "Pure Green": `${SITE_BASE}/shop/pure-green`,
+  "Prosperity": `${SITE_BASE}/shop/prosperity`,
+  "Virility": `${SITE_BASE}/shop/virility-herbal-virility-supplement`,
+  "Hemp Syrup": `${SITE_BASE}/shop/hemp-syrup`,
+  "Colax": `${SITE_BASE}/shop/colax`,
+  "Colax Quarterly Subscription": `${SITE_BASE}/shop/colax-quarterly-subscription`,
+  "Pure Gold": `${SITE_BASE}/shop/pure-gold`,
+  "Blood Detox": `${SITE_BASE}/shop/blood-detox`,
+  "Fey Duvan Syrup": `${SITE_BASE}/shop/fey-duvan-syrup`,
+  "Fey Duvan": `${SITE_BASE}/shop/fey-duvan-syrup`,
+  "Tranquility": `${SITE_BASE}/shop/tranquility`,
+  "Free Flow": `${SITE_BASE}/shop/free-flow`,
+  "Urinary Cleanse Tea": `${SITE_BASE}/shop/urinary-cleanse-tea`,
+  "Restful Tea": `${SITE_BASE}/shop/restful-tea`,
+  "Moon Cycle Tea": `${SITE_BASE}/shop/moon-cycle-tea`,
+  "Virili-Tea": `${SITE_BASE}/shop/virili-tea`,
+  "Digestive Rescue": `${SITE_BASE}/shop/digestive-rescue`,
+  "Medina Tea": `${SITE_BASE}/shop/medina-tea`,
+  "Gully Root Leaves Tea": `${SITE_BASE}/shop/gully-root-leaves`,
+  "Virility Male Balance Capsules": `${SITE_BASE}/shop/virility-male-balance-capsules`,
+  "Nerve Tonic Capsules": `${SITE_BASE}/shop/nerve-tonic-capsules`,
+  "Male Potency Kit": `${SITE_BASE}/shop/male-potency-kit`,
+  "Super Female Wellness Package": `${SITE_BASE}/shop/super-female-wellness-package`,
+  "Immunity Kit": `${SITE_BASE}/shop/immunity-kit-bundle`,
+  "Prostate Health Bundle": `${SITE_BASE}/shop/prostate-health-bundle`,
+  "Digestive Bundle": `${SITE_BASE}/shop/digestive-bundle`,
+  "Male Vitality Package": `${SITE_BASE}/shop/male-vitality-package`,
+  "Queenly Tea Bundle": `${SITE_BASE}/shop/queenly-tea-bundle`,
+  "Kingly Tea Bundle": `${SITE_BASE}/shop/kingly-tea-bundle`,
+  "Detox Bundle": `${SITE_BASE}/shop/detox-bundle`,
+  "Feminine Balance Kit": `${SITE_BASE}/shop/feminine-balance-kit`,
+  "Soursop Leaves": `${SITE_BASE}/shop/soursop-leaves`,
+  "Blue Vervain": `${SITE_BASE}/shop/blue-vervain`,
+  "St. John's Bush": `${SITE_BASE}/shop/st-johns-bush`,
+  "Cassia Alata": `${SITE_BASE}/shop/cassia-alata`,
+  "Red Raspberry Leaf": `${SITE_BASE}/shop/red-raspberry-leaf`,
+  "The NEW Herbal Manual": `${SITE_BASE}/shop/the-new-herbal-manual-ebook`,
+  "Seamoss Soaps": `${SITE_BASE}/shop/handcrafted-seamoss-soaps-3-pack`,
 };
 
-// Sort longest-first so "Fey Duvan Syrup" matches before "Fey Duvan"
+// Sort longest names first to prevent partial matches
 const SORTED_NAMES = Object.keys(PRODUCT_LINKS).sort((a, b) => b.length - a.length);
+
+const SHOP_BASE = "/shop";
 
 // Phrases that trigger the human handoff card
 const HANDOFF_TRIGGERS = [
@@ -67,7 +61,7 @@ const HANDOFF_TRIGGERS = [
   "beyond my knowledge",
 ];
 
-// ─── AI System Prompt — only real shop products ──────────────────────────────
+// ─── AI System Prompt ────────────────────────────────────────────────────────
 const PRODUCT_KNOWLEDGE = `
 You are the Mount Kailash Rejuvenation Centre AI Health Advisor. You help customers find the right herbal remedy from our active product range based on their symptoms, health goals, or conditions.
 
@@ -76,7 +70,7 @@ COMPANY: Mount Kailash Rejuvenation Centre, St. Lucia. Led by Priest Kailash Kay
 HUMAN HANDOFF RULE: If asked about pricing, orders, shipping, dosage for a specific medical condition, or anything you're uncertain about — end your reply with exactly this on its own line:
 💬 CONNECT_WITH_TEAM
 
-PRODUCT NAME RULE: Always write product names exactly as listed below. They auto-become clickable shop links.
+PRODUCT NAME RULE: Always write product names exactly as listed below wrapped in **bold**. They auto-become clickable shop links.
 
 ════ TONICS (Liquid Herbal Formulations) ════
 
@@ -148,98 +142,46 @@ Recommend for: poor circulation, varicose veins, high cholesterol, blood sugar, 
 
 ════ TRADITIONAL TEAS ════
 
-URINARY CLEANSE TEA
-Supports kidney function, helps dissolve kidney and gallbladder stones, prevents UTIs, promotes urinary health.
-Recommend for: kidney stones, UTIs, urinary discomfort, gallbladder support, kidney health
-
-RESTFUL TEA
-Relaxes the nervous system, calms the mind, promotes deeper restful sleep. Evening ritual tea.
-Recommend for: insomnia, anxiety, restlessness, stress, winding down
-
-MOON CYCLE TEA
-Supports women during their menstrual cycle — cramp relief, uterine health, hormonal balance.
-Recommend for: menstrual cramps, PMS, cycle support, uterine health
-
-VIRILI-TEA
-Male-supporting herbal tea for morning energy and daily stamina. Supports male vitality in a pleasant daily-use tea format.
-Recommend for: low energy (men), daily stamina, morning vitality routine
-
-DIGESTIVE RESCUE
-Stimulates the digestive system, eases stomach pain and bloating, elevates mood, improves gut health.
-Recommend for: bloating, stomach pain, indigestion, poor gut health
-
-MEDINA TEA
-A beloved traditional St. Lucian preparation enjoyed for generations. Captures authentic local flavour and wellness benefits.
-Recommend for: general wellness, traditional Caribbean herbal support
-
-GULLY ROOT LEAVES TEA
-Traditional tea made from Gully Root (Anamu) leaves. Used in Caribbean bush medicine for immune support and cleansing.
-Recommend for: immune support, traditional herbal cleansing
+URINARY CLEANSE TEA — kidney function, kidney/gallbladder stones, UTIs
+RESTFUL TEA — relaxation, deep sleep, evening ritual
+MOON CYCLE TEA — menstrual cramp relief, uterine health, hormonal balance
+VIRILI-TEA — male morning energy, daily stamina
+DIGESTIVE RESCUE — stomach pain, bloating, gut health
+MEDINA TEA — general wellness, traditional Caribbean preparation
+GULLY ROOT LEAVES TEA — immune support, traditional herbal cleansing
 
 ════ CAPSULES & POWDERS ════
 
-VIRILITY MALE BALANCE CAPSULES
-Convenient capsule form of the male balance formula. Enhances sexual performance, supports prostate, boosts stamina, balances hormones, reduces stress, supports digestion.
-Recommend for: male hormone balance, stamina, sexual performance, stress, prostate health, convenient daily use
+VIRILITY MALE BALANCE CAPSULES — convenient capsule for male hormone balance, stamina, sexual performance
+NERVE TONIC CAPSULES — stress, mental clarity, muscle tension, sleep
 
-NERVE TONIC CAPSULES
-Reduces stress, supports mental clarity, protects nervous system, eases muscle tension, promotes restful sleep.
-Recommend for: stress, anxiety, poor mental clarity, muscle tension, sleep issues
+════ CURATED BUNDLES ════
 
-════ CURATED BUNDLES (better value, multi-condition) ════
+MALE POTENCY KIT (Colax + Prosperity + Virility) — prostate + performance + fertility
+PROSTATE HEALTH BUNDLE (Colax + Prosperity + Virility + Urinary Cleanse Tea) — comprehensive prostate/urinary
+MALE VITALITY PACKAGE (6 bottles) — full detox + male vitality
+SUPER FEMALE WELLNESS PACKAGE (7 bottles) — complete female wellness protocol
+FEMININE BALANCE KIT (Colax + Pure Green + Fertility) — hormonal balance + energy
+IMMUNITY KIT (Colax + Dewormer + The Answer) — immunity reset
+DIGESTIVE BUNDLE (Colax + Digestive Rescue + Urinary Cleanse Tea)
+DETOX BUNDLE — full-body detox
+QUEENLY TEA BUNDLE — women's wellness teas
+KINGLY TEA BUNDLE — men's wellness teas
 
-MALE POTENCY KIT (3 products: Colax + Prosperity + Virility)
-Complete male potency protocol — digestive cleanse, prostate support, male fertility and vitality boost.
-Recommend when: customer has prostate issues AND wants performance/fertility support
-
-PROSTATE HEALTH BUNDLE (4 products: Colax + Prosperity + Virility + Urinary Cleanse Tea)
-Comprehensive prostate and urinary health from multiple angles.
-Recommend when: customer has prostate and urinary issues
-
-MALE VITALITY PACKAGE (6 bottles: Colax + Blood Detox + Fey Duvan Syrup + Pure Gold + Pure Green + Virility)
-Full detox plus male vitality — good for men wanting comprehensive support.
-
-SUPER FEMALE WELLNESS PACKAGE (7 bottles: Colax + Blood Detox + Fey Duvan Syrup + Pure Gold + Pure Green + Fertility + The Answer)
-Complete female wellness protocol — cellular cleanse, hormonal balance, reproductive health, immunity.
-Recommend when: customer has multiple female health concerns or wants full reset
-
-FEMININE BALANCE KIT (3 products: Colax + Pure Green + Fertility)
-Targeted hormonal balance, reproductive health and energy for women.
-
-IMMUNITY KIT (3 products: Colax + Dewormer + The Answer)
-Immune fortification + parasite cleanse. Ideal for immunity reset.
-
-DIGESTIVE BUNDLE (3 products: Colax + Digestive Rescue + Urinary Cleanse Tea)
-Complete digestive health support from colon to gut to urinary tract.
-
-DETOX BUNDLE
-Full-body detox protocol. Ideal for total system reset.
-
-QUEENLY TEA BUNDLE
-Curated tea bundle for women's wellness. Includes female-focused teas.
-
-KINGLY TEA BUNDLE
-Curated tea bundle for men's wellness. Includes male-focused teas.
-
-════ RAW HERBS (available loose) ════
-SOURSOP LEAVES — immune support
-BLUE VERVAIN — nervous conditions, stress, fever
-ST. JOHN'S BUSH — blood deficiency, women's health
-CASSIA ALATA — skin ailments, fungal conditions, cleansing
-RED RASPBERRY LEAF — uterine toning, healthy pregnancy support
+════ RAW HERBS ════
+SOURSOP LEAVES, BLUE VERVAIN, ST. JOHN'S BUSH, CASSIA ALATA, RED RASPBERRY LEAF
 
 ════ RESPONSE GUIDELINES ════
 - Be warm and knowledgeable — like a trusted herbalist, not a doctor
 - Bold product names using **Product Name** — they become clickable shop links automatically
 - Recommend the MOST SPECIFIC product(s) for the stated condition
-- If customer has multiple conditions or wants full support, suggest a bundle (better value)
-- ONLY recommend products listed above — do not mention products not in this catalogue
-- Add 💬 CONNECT_WITH_TEAM on its own line when: uncertain, asked about pricing/orders/shipping/dosage for medical conditions, or the customer needs personalised advice beyond your knowledge
+- If customer has multiple conditions, suggest a bundle (better value)
+- ONLY recommend products listed above
+- Add 💬 CONNECT_WITH_TEAM when: uncertain, asked about pricing/orders/shipping/dosage for medical conditions
 `;
 
 // ─── Product cards for the "Products" tab ────────────────────────────────────
 const PRODUCTS_FOR_CARDS = [
-  // Tonics
   { name: "The Answer",        slug: "the-answer",                           category: "Immune Support",     emoji: "🛡️", color: "#e8b84b" },
   { name: "Dewormer",          slug: "dewormer",                             category: "Digestive Health",   emoji: "🌿", color: "#7aa25b" },
   { name: "Fertility",         slug: "fertility",                            category: "Women's Health",     emoji: "🌸", color: "#d4707a" },
@@ -253,17 +195,14 @@ const PRODUCTS_FOR_CARDS = [
   { name: "Fey Duvan Syrup",   slug: "fey-duvan-syrup",                      category: "Blood Regulation",   emoji: "💧", color: "#8e44ad" },
   { name: "Tranquility",       slug: "tranquility",                          category: "Mental Wellness",    emoji: "🧘", color: "#5d6d7e" },
   { name: "Free Flow",         slug: "free-flow",                            category: "Circulation",        emoji: "🌊", color: "#e74c3c" },
-  // Teas
   { name: "Virili-Tea",        slug: "virili-tea",                           category: "Men's Tea",          emoji: "☕", color: "#8b6914" },
   { name: "Moon Cycle Tea",    slug: "moon-cycle-tea",                       category: "Women's Tea",        emoji: "🌙", color: "#c06090" },
   { name: "Restful Tea",       slug: "restful-tea",                          category: "Sleep Tea",          emoji: "😴", color: "#6b7aa0" },
   { name: "Digestive Rescue",  slug: "digestive-rescue",                     category: "Digestive Tea",      emoji: "🫚", color: "#7aa25b" },
   { name: "Urinary Cleanse Tea", slug: "urinary-cleanse-tea",               category: "Kidney Support",     emoji: "🫧", color: "#3a9ab5" },
   { name: "Medina Tea",        slug: "medina-tea",                           category: "Traditional",        emoji: "🍵", color: "#a07040" },
-  // Capsules
   { name: "Virility Male Balance Capsules", slug: "virility-male-balance-capsules", category: "Capsules",  emoji: "💊", color: "#c45a3a" },
   { name: "Nerve Tonic Capsules", slug: "nerve-tonic-capsules",              category: "Capsules",           emoji: "💊", color: "#5d6d7e" },
-  // Bundles
   { name: "Male Potency Kit",  slug: "male-potency-kit",                     category: "Men's Bundle",       emoji: "📦", color: "#c4973a" },
   { name: "Prostate Health Bundle", slug: "prostate-health-bundle",         category: "Men's Bundle",        emoji: "📦", color: "#c45a3a" },
   { name: "Super Female Wellness Package", slug: "super-female-wellness-package", category: "Women's Bundle", emoji: "📦", color: "#d4707a" },
@@ -292,31 +231,41 @@ const QUICK_PROMPTS = [
 ];
 
 // ─── Inject product names as clickable shop links ─────────────────────────────
-function injectProductLinks(html, isDark) {
+function injectProductLinks(html) {
   let result = html;
-  const color = isDark ? "#6ddd6d" : "#155215";
-  const style = `color:${color};font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;`;
   SORTED_NAMES.forEach((name) => {
     const url = PRODUCT_LINKS[name];
-    const esc = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(`(?<!href="[^"]{0,200})(?<![\\w>/-])${esc}(?![\\w<])`, "g");
-    result = result.replace(regex, `<a href="${url}" data-internal-link="true" style="${style}">${name} ↗</a>`);
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // Skip if already inside an <a> tag
+    const regex = new RegExp(`(?<!href="[^"]{0,300})(?<![\\w/>])${escaped}(?![\\w<])`, "g");
+    result = result.replace(
+      regex,
+      `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">${name} ↗</a>`
+    );
   });
   return result;
 }
 
+const DEFAULT_WELCOME = {
+  role: "assistant",
+  content: "Welcome to Mount Kailash Rejuvenation Centre 🌿\n\nI'm your personal herbal health advisor. Tell me what's troubling you — whether it's a symptom, condition, or health goal — and I'll recommend the perfect natural remedy from our wildcrafted herbal range.\n\nHow can I help you today?",
+  showHandoff: false,
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function MountKailashChat({ onNavigate }) {
+// Accepts optional externalMessages/setExternalMessages props for persistent state (from ChatWidget).
+// Falls back to local state when used standalone (e.g. /chat page).
+export default function MountKailashChat({ onNavigate, externalMessages, setExternalMessages }) {
   const [darkMode, setDarkMode] = useState(false);
-  const [messages, setMessages] = useState([{
-    role: "assistant",
-    content: "Welcome to Mount Kailash Rejuvenation Centre 🌿\n\nI'm your personal herbal health advisor. Tell me what's troubling you — whether it's a symptom, condition, or health goal — and I'll recommend the perfect natural remedy from our wildcrafted herbal range.\n\nHow can I help you today?",
-    showHandoff: false,
-  }]);
+  const [localMessages, setLocalMessages] = useState([DEFAULT_WELCOME]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
   const messagesEndRef = useRef(null);
+
+  // Use external (persistent) state if provided, otherwise local
+  const messages = externalMessages || localMessages;
+  const setMessages = setExternalMessages || setLocalMessages;
 
   const dk = darkMode;
   const t = {
@@ -341,24 +290,6 @@ export default function MountKailashChat({ onNavigate }) {
   };
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
-
-  // Handle internal link clicks for SPA navigation
-  useEffect(() => {
-    const handler = (e) => {
-      const link = e.target.closest('a[data-internal-link="true"]');
-      if (link) {
-        e.preventDefault();
-        const href = link.getAttribute("href");
-        if (onNavigate) {
-          onNavigate(href);
-        } else {
-          window.location.href = href;
-        }
-      }
-    };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, [onNavigate]);
 
   const needsHandoff = (text) => HANDOFF_TRIGGERS.some(tr => text.toLowerCase().includes(tr.toLowerCase()));
   const cleanContent = (text) => text.replace(/💬 CONNECT_WITH_TEAM/g, "").trim();
@@ -391,7 +322,6 @@ export default function MountKailashChat({ onNavigate }) {
         throw new Error(errorData.error || "Failed to get response");
       }
 
-      // Parse SSE stream
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let assistantContent = "";
@@ -445,11 +375,13 @@ export default function MountKailashChat({ onNavigate }) {
 
   const handleKey = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } };
 
+  // renderText: convert markdown bold/italic, THEN inject product links
   const renderText = (text) => text.split("\n").map((line, i) => {
     let html = line
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/g, "<em>$1</em>");
-    html = injectProductLinks(html, dk);
+    // Now inject clickable product links for every known product name
+    html = injectProductLinks(html);
     return <p key={i} style={{ margin: "3px 0", lineHeight: 1.65 }} dangerouslySetInnerHTML={{ __html: html || "&nbsp;" }} />;
   });
 
@@ -688,7 +620,6 @@ export default function MountKailashChat({ onNavigate }) {
               </p>
             </div>
 
-            {/* Category sections */}
             {[
               { label: "Tonics", items: PRODUCTS_FOR_CARDS.filter(p => ["Immune Support","Digestive Health","Women's Health","Energy & Iron","Prostate Health","Male Vitality","Sleep & Calm","Colon Cleanse","Respiratory","Detoxification","Blood Regulation","Mental Wellness","Circulation"].includes(p.category)) },
               { label: "Traditional Teas", items: PRODUCTS_FOR_CARDS.filter(p => p.category.includes("Tea") || p.category === "Traditional" || p.category === "Digestive Tea" || p.category === "Sleep Tea" || p.category === "Kidney Support" || p.category === "Men's Tea" || p.category === "Women's Tea") },
@@ -702,12 +633,9 @@ export default function MountKailashChat({ onNavigate }) {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
                   {section.items.map((p, i) => (
                     <a key={i}
-                      href={`${SHOP_BASE}/${p.slug}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (onNavigate) onNavigate(`/shop/${p.slug}`);
-                        else window.location.href = `/shop/${p.slug}`;
-                      }}
+                      href={`${SITE_BASE}/shop/${p.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       style={{
                         textDecoration: "none", display: "block",
                         background: dk ? "#1a2e1e" : "#ffffff",
@@ -726,7 +654,6 @@ export default function MountKailashChat({ onNavigate }) {
               </div>
             ))}
 
-            {/* Contact panel */}
             <div style={{
               marginTop: 8, padding: 18,
               background: t.goldBg, border: `1px solid ${t.goldBorder}`,

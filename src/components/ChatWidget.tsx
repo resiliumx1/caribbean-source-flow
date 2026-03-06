@@ -1,17 +1,31 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
-import { X, Maximize2, Minimize2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { X, Maximize2, Minimize2, Minus } from "lucide-react";
 
 const MountKailashChat = lazy(() => import("@/components/MountKailashChat"));
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  showHandoff?: boolean;
+}
+
+const DEFAULT_WELCOME: ChatMessage = {
+  role: "assistant",
+  content: "Welcome to Mount Kailash Rejuvenation Centre 🌿\n\nI'm your personal herbal health advisor. Tell me what's troubling you — whether it's a symptom, condition, or health goal — and I'll recommend the perfect natural remedy from our wildcrafted herbal range.\n\nHow can I help you today?",
+  showHandoff: false,
+};
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
   const [bubbleDismissed, setBubbleDismissed] = useState(false);
   const bubbleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const navigate = useNavigate();
+
+  // Persistent messages state — survives page navigation since ChatWidget never unmounts
+  const [messages, setMessages] = useState<ChatMessage[]>([DEFAULT_WELCOME]);
 
   useEffect(() => {
     bubbleTimer.current = setTimeout(() => {
@@ -33,13 +47,22 @@ export default function ChatWidget() {
   const dismissBubble = () => { setShowBubble(false); setBubbleDismissed(true); };
 
   const toggleChat = () => {
-    if (!isOpen) dismissBubble();
+    if (!isOpen) {
+      dismissBubble();
+      setIsMinimized(false);
+    }
     setIsOpen((v) => !v);
   };
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
-    setIsOpen(false);
+  // Compute popup dimensions
+  const getWidth = () => {
+    if (isMaximized) return "100vw";
+    return "min(420px, calc(100vw - 32px))";
+  };
+  const getHeight = () => {
+    if (isMinimized) return "48px";
+    if (isMaximized) return "100vh";
+    return "min(85vh, calc(100vh - 32px))";
   };
 
   return (
@@ -76,7 +99,7 @@ export default function ChatWidget() {
         style={{
           background: isOpen ? "#1c4a1c" : "linear-gradient(135deg, #1c4a1c, #2e6e2e)",
           boxShadow: "0 8px 32px rgba(28,74,28,0.4)",
-          display: isOpen && isMaximized ? "none" : "flex",
+          display: isOpen && (isMaximized || !isMinimized) ? "none" : "flex",
         }}
         aria-label={isOpen ? "Close chat" : "Open health advisor chat"}
       >
@@ -100,48 +123,103 @@ export default function ChatWidget() {
           style={{
             bottom: isMaximized ? 0 : "max(16px, env(safe-area-inset-bottom, 16px))",
             right: isMaximized ? 0 : 16,
-            width: isMaximized ? "100vw" : "min(420px, calc(100vw - 32px))",
-            height: isMaximized ? "100vh" : "min(85vh, calc(100vh - 32px))",
+            width: getWidth(),
+            height: getHeight(),
             borderRadius: isMaximized ? 0 : 16,
             boxShadow: "0 24px 80px rgba(0,0,0,0.5)",
             animation: isMaximized ? "none" : "chatSlideUp 400ms cubic-bezier(0.34,1.56,0.64,1) forwards",
             background: "#0a0a0a",
-            transition: "all 0.3s ease",
+            transition: "width 0.3s ease, height 0.3s ease",
           }}
         >
-          {/* Window controls */}
-          <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
-            <button
-              onClick={() => setIsMaximized(!isMaximized)}
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-              style={{ background: "rgba(0,0,0,0.4)" }}
-              aria-label={isMaximized ? "Minimize" : "Maximize"}
-            >
-              {isMaximized ? (
-                <Minimize2 className="w-3.5 h-3.5 text-white" />
-              ) : (
-                <Maximize2 className="w-3.5 h-3.5 text-white" />
-              )}
-            </button>
-            <button
-              onClick={() => { setIsOpen(false); setIsMaximized(false); }}
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-              style={{ background: "rgba(0,0,0,0.4)" }}
-              aria-label="Close chat"
-            >
-              <X className="w-4 h-4 text-white" />
-            </button>
+          {/* ── Window control bar (always visible) ── */}
+          <div
+            style={{
+              position: "absolute", top: 0, right: 0, left: 0,
+              height: 48, zIndex: 200,
+              display: "flex", alignItems: "center", justifyContent: "flex-end",
+              padding: "0 10px",
+              pointerEvents: "none",
+            }}
+          >
+            <div style={{ display: "flex", gap: 4, pointerEvents: "auto" }}>
+              {/* Minimize */}
+              <button
+                onClick={() => setIsMinimized((v) => !v)}
+                style={{
+                  width: 30, height: 30, borderRadius: "50%",
+                  background: "rgba(0,0,0,0.45)", border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", transition: "opacity 0.15s",
+                }}
+                aria-label={isMinimized ? "Restore" : "Minimize"}
+              >
+                <Minus className="w-4 h-4 text-white" style={{ opacity: 0.85 }} />
+              </button>
+              {/* Maximize */}
+              <button
+                onClick={() => { setIsMaximized((v) => !v); setIsMinimized(false); }}
+                style={{
+                  width: 30, height: 30, borderRadius: "50%",
+                  background: "rgba(0,0,0,0.45)", border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", transition: "opacity 0.15s",
+                }}
+                aria-label={isMaximized ? "Restore size" : "Maximize"}
+              >
+                {isMaximized ? (
+                  <Minimize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} />
+                ) : (
+                  <Maximize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} />
+                )}
+              </button>
+              {/* Close */}
+              <button
+                onClick={() => { setIsOpen(false); setIsMaximized(false); setIsMinimized(false); }}
+                style={{
+                  width: 30, height: 30, borderRadius: "50%",
+                  background: "rgba(0,0,0,0.45)", border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", transition: "opacity 0.15s",
+                }}
+                aria-label="Close chat"
+              >
+                <X className="w-4 h-4 text-white" style={{ opacity: 0.85 }} />
+              </button>
+            </div>
           </div>
 
-          <div className="flex-1 overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
-            <Suspense fallback={
-              <div className="flex items-center justify-center h-full" style={{ background: "#0a0a0a" }}>
-                <span style={{ fontSize: 32 }}>🌿</span>
-              </div>
-            }>
-              <MountKailashChat onNavigate={handleNavigate} />
-            </Suspense>
-          </div>
+          {/* ── Chat content (hidden when minimized) ── */}
+          {!isMinimized && (
+            <div className="flex-1 overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
+              <Suspense fallback={
+                <div className="flex items-center justify-center h-full" style={{ background: "#0a0a0a" }}>
+                  <span style={{ fontSize: 32 }}>🌿</span>
+                </div>
+              }>
+                <MountKailashChat
+                  externalMessages={messages}
+                  setExternalMessages={setMessages}
+                />
+              </Suspense>
+            </div>
+          )}
+
+          {/* Minimized header label */}
+          {isMinimized && (
+            <div
+              onClick={() => setIsMinimized(false)}
+              style={{
+                height: 48, display: "flex", alignItems: "center",
+                padding: "0 16px", cursor: "pointer",
+                background: "#1c4a1c", color: "#e8c870",
+                fontWeight: "bold", fontSize: 13, letterSpacing: "0.5px",
+                fontFamily: "Georgia, serif",
+              }}
+            >
+              🌿 Mount Kailash Health Advisor
+            </div>
+          )}
         </div>
       )}
 
