@@ -5,7 +5,7 @@ import { PriestKailashConsultation } from "@/components/trinity/PriestKailashCon
 import { PriestKailashQuote } from "@/components/trinity/PriestKailashQuote";
 import { SocialProofMatrix } from "@/components/trinity/SocialProofMatrix";
 import { ByTheNumbers } from "@/components/trinity/ByTheNumbers";
-import { ReSegmentation } from "@/components/trinity/ReSegmentation";
+
 import { UnifiedFooter } from "@/components/trinity/UnifiedFooter";
 import { MessageCircle, ArrowRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -84,7 +84,7 @@ const TrinityHomepage = () => {
       <PriestKailashQuote />
       <SocialProofMatrix />
       <ByTheNumbers />
-      <ReSegmentation />
+      
       <UnifiedFooter />
       <GoddessWhatsApp />
       <ConsultationToast />
