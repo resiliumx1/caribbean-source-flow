@@ -71,19 +71,19 @@ export function StoreHeader() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3" aria-label="Mount Kailash home">
             <img
               src={mtKailashLogo}
               alt="Mount Kailash Rejuvenation Centre"
               className="h-10 w-10 rounded-full object-cover"
             />
             <div className="hidden sm:block">
-              <h1 className="font-serif font-bold text-foreground leading-tight">
+              <span className="font-serif font-bold text-foreground leading-tight block">
                 Mount Kailash
-              </h1>
-              <p className="text-xs text-muted-foreground">
+              </span>
+              <span className="text-xs text-muted-foreground block">
                 Rejuvenation Centre
-              </p>
+              </span>
             </div>
           </Link>
 
