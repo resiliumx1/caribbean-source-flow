@@ -300,7 +300,7 @@ function injectProductLinks(html, isDark) {
     const url = PRODUCT_LINKS[name];
     const esc = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(`(?<!href="[^"]{0,200})(?<![\\w>/-])${esc}(?![\\w<])`, "g");
-    result = result.replace(regex, `<a href="${url}" target="_blank" rel="noopener noreferrer" style="${style}">${name} ↗</a>`);
+    result = result.replace(regex, `<a href="${url}" data-internal-link="true" style="${style}">${name} ↗</a>`);
   });
   return result;
 }
