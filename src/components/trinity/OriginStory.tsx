@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import wholesaleCollage from "@/assets/wholesale-collage.png";
 import schoolFaculty from "@/assets/school-faculty-ceremony.jpg";
