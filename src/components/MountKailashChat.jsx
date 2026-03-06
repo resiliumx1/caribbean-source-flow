@@ -1,0 +1,699 @@
+import { useState, useRef, useEffect } from "react";
+
+// ─── Shop base & exact product URLs scraped from live shop ───────────────────
+const SHOP_BASE = "https://preview--caribbean-source-flow.lovable.app/shop";
+
+const PRODUCT_LINKS = {
+  // Tonics
+  "The Answer":                    `${SHOP_BASE}/the-answer`,
+  "Dewormer":                      `${SHOP_BASE}/dewormer`,
+  "Fertility":                     `${SHOP_BASE}/fertility`,
+  "Pure Green":                    `${SHOP_BASE}/pure-green`,
+  "Prosperity":                    `${SHOP_BASE}/prosperity`,
+  "Virility":                      `${SHOP_BASE}/virility-herbal-virility-supplement`,
+  "Hemp Syrup":                    `${SHOP_BASE}/hemp-syrup`,
+  "Colax":                         `${SHOP_BASE}/colax`,
+  "Colax Quarterly Subscription":  `${SHOP_BASE}/colax-quarterly-subscription`,
+  "Pure Gold":                     `${SHOP_BASE}/pure-gold`,
+  "Blood Detox":                   `${SHOP_BASE}/blood-detox`,
+  "Fey Duvan Syrup":               `${SHOP_BASE}/fey-duvan-syrup`,
+  "Fey Duvan":                     `${SHOP_BASE}/fey-duvan-syrup`,
+  "Tranquility":                   `${SHOP_BASE}/tranquility`,
+  "Free Flow":                     `${SHOP_BASE}/free-flow`,
+  // Teas
+  "Urinary Cleanse Tea":           `${SHOP_BASE}/urinary-cleanse-tea`,
+  "Restful Tea":                   `${SHOP_BASE}/restful-tea`,
+  "Moon Cycle Tea":                `${SHOP_BASE}/moon-cycle-tea`,
+  "Virili-Tea":                    `${SHOP_BASE}/virili-tea`,
+  "Digestive Rescue":              `${SHOP_BASE}/digestive-rescue`,
+  "Medina Tea":                    `${SHOP_BASE}/medina-tea`,
+  "Gully Root Leaves Tea":         `${SHOP_BASE}/gully-root-leaves`,
+  // Capsules & Powders
+  "Virility Male Balance Capsules":`${SHOP_BASE}/virility-male-balance-capsules`,
+  "Nerve Tonic Capsules":          `${SHOP_BASE}/nerve-tonic-capsules`,
+  // Curated Bundles
+  "Male Potency Kit":              `${SHOP_BASE}/male-potency-kit`,
+  "Super Female Wellness Package": `${SHOP_BASE}/super-female-wellness-package`,
+  "Immunity Kit":                  `${SHOP_BASE}/immunity-kit-bundle`,
+  "Prostate Health Bundle":        `${SHOP_BASE}/prostate-health-bundle`,
+  "Digestive Bundle":              `${SHOP_BASE}/digestive-bundle`,
+  "Male Vitality Package":         `${SHOP_BASE}/male-vitality-package`,
+  "Queenly Tea Bundle":            `${SHOP_BASE}/queenly-tea-bundle`,
+  "Kingly Tea Bundle":             `${SHOP_BASE}/kingly-tea-bundle`,
+  "Detox Bundle":                  `${SHOP_BASE}/detox-bundle`,
+  "Feminine Balance Kit":          `${SHOP_BASE}/feminine-balance-kit`,
+  // Raw Herbs
+  "Soursop Leaves":                `${SHOP_BASE}/soursop-leaves`,
+  "Blue Vervain":                  `${SHOP_BASE}/blue-vervain`,
+  "St. John's Bush":               `${SHOP_BASE}/st-johns-bush`,
+  "Cassia Alata":                  `${SHOP_BASE}/cassia-alata`,
+  "Red Raspberry Leaf":            `${SHOP_BASE}/red-raspberry-leaf`,
+  // Books
+  "The NEW Herbal Manual":         `${SHOP_BASE}/the-new-herbal-manual-ebook`,
+  // Soaps
+  "Seamoss Soaps":                 `${SHOP_BASE}/handcrafted-seamoss-soaps-3-pack`,
+};
+
+// Sort longest-first so "Fey Duvan Syrup" matches before "Fey Duvan"
+const SORTED_NAMES = Object.keys(PRODUCT_LINKS).sort((a, b) => b.length - a.length);
+
+// Phrases that trigger the human handoff card
+const HANDOFF_TRIGGERS = [
+  "💬 CONNECT_WITH_TEAM",
+  "contact our team", "speak with a human", "reach out to us",
+  "contact us directly", "our sales team", "whatsapp us",
+  "i'm not sure", "i cannot answer", "i don't have that information",
+  "beyond my knowledge",
+];
+
+// ─── AI System Prompt — only real shop products ──────────────────────────────
+const PRODUCT_KNOWLEDGE = `
+You are the Mount Kailash Rejuvenation Centre AI Health Advisor. You help customers find the right herbal remedy from our active product range based on their symptoms, health goals, or conditions.
+
+COMPANY: Mount Kailash Rejuvenation Centre, St. Lucia. Led by Priest Kailash Kay Leonce (master herbalist, 21+ years). Herbs wildcrafted from St. Lucian rainforests.
+
+HUMAN HANDOFF RULE: If asked about pricing, orders, shipping, dosage for a specific medical condition, or anything you're uncertain about — end your reply with exactly this on its own line:
+💬 CONNECT_WITH_TEAM
+
+PRODUCT NAME RULE: Always write product names exactly as listed below. They auto-become clickable shop links.
+
+════ TONICS (Liquid Herbal Formulations) ════
+
+THE ANSWER — Immune System Enhancer
+Fortifies immunity, prevents flu & communicable diseases, reduces fibroid symptoms, prevents heavy menstrual bleeding, supports cancer prevention (apoptosis in mutated cells).
+Key herbs: Soursop (Annona muricata), Anamu/Gully Root (Petiveria alliacea)
+Recommend for: low immunity, flu prevention, fibroids, heavy periods, immune support
+
+DEWORMER — Parasitic Expellant
+Eliminates intestinal parasites (pinworms, roundworms, threadworms), cleanses the digestive system, improves nutrient absorption.
+Key herbs: Wormwood, Neem, Semen Contra
+Recommend for: intestinal parasites, bloating, digestive cleansing
+
+FERTILITY — Hormonal Balancing & Womb Cleansing
+Cleanses the womb, regulates the menstrual cycle, restores hormonal balance, manages PCOS and fibroids, enhances fertility, improves female libido.
+Key herbs: St. John's Bush, Red Raspberry Leaf, Vervain
+Recommend for: irregular periods, PCOS, fibroids, fertility, PMS, menopause, low libido (women)
+
+PURE GREEN — Iron & Alkalizing Tonic
+Builds blood, boosts energy, strengthens immunity, balances pH, alleviates anaemia, reduces internal inflammation.
+Key herbs: Stinging Nettle, Vervain, Moringa
+Recommend for: anaemia, fatigue, low energy, weak immunity, inflammation
+
+PROSPERITY — Fortified Prostate Tonic
+Relieves prostate conditions, erectile dysfunction, urinary discomfort. Improves circulation and prostate health.
+Key herbs: Stinging Nettle, Bois Bande, Vervain
+Recommend for: prostate issues, erectile dysfunction, BPH, urinary discomfort
+
+VIRILITY — Male Reproductive Support Tonic
+Improves sexual function, boosts sperm count, nourishes prostate, increases stamina and overall male vitality.
+Key herbs: Sarsaparilla, Sea Moss, Stinging Nettle
+Recommend for: low libido (men), low sperm count, poor sexual performance, stamina, prostate health
+
+HEMP SYRUP — Nerve & Endocrine Support
+Relieves insomnia, reduces anxiety and stress, regulates the endocrine system, supports heart health, regulates blood pressure.
+Key herbs: Hemp (Cannabis sativa), Ital Cane Juice
+Recommend for: insomnia, anxiety, stress, high blood pressure, cardiovascular health
+
+COLAX — Colon Cleanser & Lubricant
+Gently cleanses the colon, removes toxic waste, relieves constipation, detoxifies, improves nutrient absorption, reduces colon inflammation.
+Key herbs: Senna Pods, Castor Oil, Olive Oil
+Recommend for: constipation, bloating, colon detox, poor nutrient absorption
+Also available as: Colax Quarterly Subscription (for ongoing colon maintenance)
+
+PURE GOLD — Respiratory & Circulatory Tonic
+Clears mucus, treats respiratory infections, improves circulation, modulates immunity.
+Key herbs: Parsley, Turmeric, Cayenne Pepper
+Recommend for: respiratory infections, mucus buildup, coughs, colds, poor circulation
+
+BLOOD DETOX — Blood & Organ Cleansing
+Cleanses cells, tissues, and organs of toxins and free radicals, strengthens immune system, supports liver and lymphatic system.
+Key herbs: Cassia Alata, Neem, Gully Root
+Recommend for: toxic load, weakened immunity, liver support, environmental toxin exposure
+
+FEY DUVAN SYRUP — Blood Regulator
+Regulates blood, increases mineral content, supports pancreatic function, effective against coughs, flu and respiratory issues, regulates blood sugar.
+Key herbs: Anamu, Cinnamon, Bay Leaf
+Recommend for: blood sugar regulation, cough, flu, respiratory issues, mineral deficiency
+
+TRANQUILITY — Nerve Tonic & Sedative
+Promotes relaxation, calms the mind, supports restful sleep, effective for depression, insomnia, poor concentration, and ADHD.
+Key herbs: Soursop, Vervain, Anamu
+Recommend for: insomnia, anxiety, depression, ADHD, poor focus, stress
+
+FREE FLOW — Circulation, Digestion & Nerve Support
+Improves circulation, enhances oxygen-carrying capacity, reduces vascular inflammation, manages varicose veins, regulates cholesterol and blood sugar, supports digestion.
+Key herbs: Turmeric, Bay Leaf, Cinnamon, Japana, Carpenter Bush, Cayenne Pepper
+Recommend for: poor circulation, varicose veins, high cholesterol, blood sugar, heart health, digestive issues
+
+════ TRADITIONAL TEAS ════
+
+URINARY CLEANSE TEA
+Supports kidney function, helps dissolve kidney and gallbladder stones, prevents UTIs, promotes urinary health.
+Recommend for: kidney stones, UTIs, urinary discomfort, gallbladder support, kidney health
+
+RESTFUL TEA
+Relaxes the nervous system, calms the mind, promotes deeper restful sleep. Evening ritual tea.
+Recommend for: insomnia, anxiety, restlessness, stress, winding down
+
+MOON CYCLE TEA
+Supports women during their menstrual cycle — cramp relief, uterine health, hormonal balance.
+Recommend for: menstrual cramps, PMS, cycle support, uterine health
+
+VIRILI-TEA
+Male-supporting herbal tea for morning energy and daily stamina. Supports male vitality in a pleasant daily-use tea format.
+Recommend for: low energy (men), daily stamina, morning vitality routine
+
+DIGESTIVE RESCUE
+Stimulates the digestive system, eases stomach pain and bloating, elevates mood, improves gut health.
+Recommend for: bloating, stomach pain, indigestion, poor gut health
+
+MEDINA TEA
+A beloved traditional St. Lucian preparation enjoyed for generations. Captures authentic local flavour and wellness benefits.
+Recommend for: general wellness, traditional Caribbean herbal support
+
+GULLY ROOT LEAVES TEA
+Traditional tea made from Gully Root (Anamu) leaves. Used in Caribbean bush medicine for immune support and cleansing.
+Recommend for: immune support, traditional herbal cleansing
+
+════ CAPSULES & POWDERS ════
+
+VIRILITY MALE BALANCE CAPSULES
+Convenient capsule form of the male balance formula. Enhances sexual performance, supports prostate, boosts stamina, balances hormones, reduces stress, supports digestion.
+Recommend for: male hormone balance, stamina, sexual performance, stress, prostate health, convenient daily use
+
+NERVE TONIC CAPSULES
+Reduces stress, supports mental clarity, protects nervous system, eases muscle tension, promotes restful sleep.
+Recommend for: stress, anxiety, poor mental clarity, muscle tension, sleep issues
+
+════ CURATED BUNDLES (better value, multi-condition) ════
+
+MALE POTENCY KIT (3 products: Colax + Prosperity + Virility)
+Complete male potency protocol — digestive cleanse, prostate support, male fertility and vitality boost.
+Recommend when: customer has prostate issues AND wants performance/fertility support
+
+PROSTATE HEALTH BUNDLE (4 products: Colax + Prosperity + Virility + Urinary Cleanse Tea)
+Comprehensive prostate and urinary health from multiple angles.
+Recommend when: customer has prostate and urinary issues
+
+MALE VITALITY PACKAGE (6 bottles: Colax + Blood Detox + Fey Duvan Syrup + Pure Gold + Pure Green + Virility)
+Full detox plus male vitality — good for men wanting comprehensive support.
+
+SUPER FEMALE WELLNESS PACKAGE (7 bottles: Colax + Blood Detox + Fey Duvan Syrup + Pure Gold + Pure Green + Fertility + The Answer)
+Complete female wellness protocol — cellular cleanse, hormonal balance, reproductive health, immunity.
+Recommend when: customer has multiple female health concerns or wants full reset
+
+FEMININE BALANCE KIT (3 products: Colax + Pure Green + Fertility)
+Targeted hormonal balance, reproductive health and energy for women.
+
+IMMUNITY KIT (3 products: Colax + Dewormer + The Answer)
+Immune fortification + parasite cleanse. Ideal for immunity reset.
+
+DIGESTIVE BUNDLE (3 products: Colax + Digestive Rescue + Urinary Cleanse Tea)
+Complete digestive health support from colon to gut to urinary tract.
+
+DETOX BUNDLE
+Full-body detox protocol. Ideal for total system reset.
+
+QUEENLY TEA BUNDLE
+Curated tea bundle for women's wellness. Includes female-focused teas.
+
+KINGLY TEA BUNDLE
+Curated tea bundle for men's wellness. Includes male-focused teas.
+
+════ RAW HERBS (available loose) ════
+SOURSOP LEAVES — immune support
+BLUE VERVAIN — nervous conditions, stress, fever
+ST. JOHN'S BUSH — blood deficiency, women's health
+CASSIA ALATA — skin ailments, fungal conditions, cleansing
+RED RASPBERRY LEAF — uterine toning, healthy pregnancy support
+
+════ RESPONSE GUIDELINES ════
+- Be warm and knowledgeable — like a trusted herbalist, not a doctor
+- Bold product names using **Product Name** — they become clickable shop links automatically
+- Recommend the MOST SPECIFIC product(s) for the stated condition
+- If customer has multiple conditions or wants full support, suggest a bundle (better value)
+- ONLY recommend products listed above — do not mention products not in this catalogue
+- Add 💬 CONNECT_WITH_TEAM on its own line when: uncertain, asked about pricing/orders/shipping/dosage for medical conditions, or the customer needs personalised advice beyond your knowledge
+`;
+
+// ─── Product cards for the "Products" tab ────────────────────────────────────
+const PRODUCTS_FOR_CARDS = [
+  // Tonics
+  { name: "The Answer",        slug: "the-answer",                           category: "Immune Support",     emoji: "🛡️", color: "#e8b84b" },
+  { name: "Dewormer",          slug: "dewormer",                             category: "Digestive Health",   emoji: "🌿", color: "#7aa25b" },
+  { name: "Fertility",         slug: "fertility",                            category: "Women's Health",     emoji: "🌸", color: "#d4707a" },
+  { name: "Pure Green",        slug: "pure-green",                           category: "Energy & Iron",      emoji: "💚", color: "#5a8f5a" },
+  { name: "Prosperity",        slug: "prosperity",                           category: "Prostate Health",    emoji: "⭐", color: "#c4973a" },
+  { name: "Virility",          slug: "virility-herbal-virility-supplement",  category: "Male Vitality",      emoji: "🔥", color: "#c45a3a" },
+  { name: "Hemp Syrup",        slug: "hemp-syrup",                           category: "Sleep & Calm",       emoji: "🌙", color: "#7a6b9e" },
+  { name: "Colax",             slug: "colax",                                category: "Colon Cleanse",      emoji: "🔵", color: "#3a8ab5" },
+  { name: "Pure Gold",         slug: "pure-gold",                            category: "Respiratory",        emoji: "✨", color: "#d4af37" },
+  { name: "Blood Detox",       slug: "blood-detox",                          category: "Detoxification",     emoji: "❤️", color: "#c0392b" },
+  { name: "Fey Duvan Syrup",   slug: "fey-duvan-syrup",                      category: "Blood Regulation",   emoji: "💧", color: "#8e44ad" },
+  { name: "Tranquility",       slug: "tranquility",                          category: "Mental Wellness",    emoji: "🧘", color: "#5d6d7e" },
+  { name: "Free Flow",         slug: "free-flow",                            category: "Circulation",        emoji: "🌊", color: "#e74c3c" },
+  // Teas
+  { name: "Virili-Tea",        slug: "virili-tea",                           category: "Men's Tea",          emoji: "☕", color: "#8b6914" },
+  { name: "Moon Cycle Tea",    slug: "moon-cycle-tea",                       category: "Women's Tea",        emoji: "🌙", color: "#c06090" },
+  { name: "Restful Tea",       slug: "restful-tea",                          category: "Sleep Tea",          emoji: "😴", color: "#6b7aa0" },
+  { name: "Digestive Rescue",  slug: "digestive-rescue",                     category: "Digestive Tea",      emoji: "🫚", color: "#7aa25b" },
+  { name: "Urinary Cleanse Tea", slug: "urinary-cleanse-tea",               category: "Kidney Support",     emoji: "🫧", color: "#3a9ab5" },
+  { name: "Medina Tea",        slug: "medina-tea",                           category: "Traditional",        emoji: "🍵", color: "#a07040" },
+  // Capsules
+  { name: "Virility Male Balance Capsules", slug: "virility-male-balance-capsules", category: "Capsules",  emoji: "💊", color: "#c45a3a" },
+  { name: "Nerve Tonic Capsules", slug: "nerve-tonic-capsules",              category: "Capsules",           emoji: "💊", color: "#5d6d7e" },
+  // Bundles
+  { name: "Male Potency Kit",  slug: "male-potency-kit",                     category: "Men's Bundle",       emoji: "📦", color: "#c4973a" },
+  { name: "Prostate Health Bundle", slug: "prostate-health-bundle",         category: "Men's Bundle",        emoji: "📦", color: "#c45a3a" },
+  { name: "Super Female Wellness Package", slug: "super-female-wellness-package", category: "Women's Bundle", emoji: "📦", color: "#d4707a" },
+  { name: "Feminine Balance Kit", slug: "feminine-balance-kit",             category: "Women's Bundle",      emoji: "📦", color: "#c06090" },
+  { name: "Immunity Kit",      slug: "immunity-kit-bundle",                  category: "Immunity Bundle",    emoji: "📦", color: "#e8b84b" },
+  { name: "Digestive Bundle",  slug: "digestive-bundle",                     category: "Digestive Bundle",   emoji: "📦", color: "#7aa25b" },
+  { name: "Detox Bundle",      slug: "detox-bundle",                         category: "Detox Bundle",       emoji: "📦", color: "#8e44ad" },
+  { name: "Male Vitality Package", slug: "male-vitality-package",           category: "Men's Bundle",        emoji: "📦", color: "#c45a3a" },
+  { name: "Queenly Tea Bundle", slug: "queenly-tea-bundle",                  category: "Women's Bundle",     emoji: "📦", color: "#d4707a" },
+  { name: "Kingly Tea Bundle", slug: "kingly-tea-bundle",                    category: "Men's Bundle",       emoji: "📦", color: "#8b6914" },
+];
+
+const QUICK_PROMPTS = [
+  "I have constipation",
+  "I can't sleep well",
+  "I have low energy & fatigue",
+  "I have prostate issues",
+  "I need immune support",
+  "I have irregular periods",
+  "I have anxiety & stress",
+  "I want to improve circulation",
+  "I have respiratory issues",
+  "I want a detox",
+  "I have high blood sugar",
+  "I need something for men's vitality",
+];
+
+// ─── Inject product names as clickable shop links ─────────────────────────────
+function injectProductLinks(html, isDark) {
+  let result = html;
+  const color = isDark ? "#6ddd6d" : "#155215";
+  const style = `color:${color};font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;`;
+  SORTED_NAMES.forEach((name) => {
+    const url = PRODUCT_LINKS[name];
+    const esc = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(?<!href="[^"]{0,200})(?<![\\w>/-])${esc}(?![\\w<])`, "g");
+    result = result.replace(regex, `<a href="${url}" target="_blank" rel="noopener noreferrer" style="${style}">${name} ↗</a>`);
+  });
+  return result;
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+export default function MountKailashChat() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [messages, setMessages] = useState([{
+    role: "assistant",
+    content: "Welcome to Mount Kailash Rejuvenation Centre 🌿\n\nI'm your personal herbal health advisor. Tell me what's troubling you — whether it's a symptom, condition, or health goal — and I'll recommend the perfect natural remedy from our wildcrafted herbal range.\n\nHow can I help you today?",
+    showHandoff: false,
+  }]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("chat");
+  const messagesEndRef = useRef(null);
+
+  const dk = darkMode;
+  const t = {
+    bg:             dk ? "#0f1a12" : "#f5f0e8",
+    surface:        dk ? "#1a2e1e" : "#ffffff",
+    border:         dk ? "#2d4a32" : "#d8cdb8",
+    text:           dk ? "#dff0df" : "#1a2a1a",
+    textMuted:      dk ? "#7aaa7a" : "#6b7c6b",
+    primary:        dk ? "#5aad5a" : "#2e6e2e",
+    chipBg:         dk ? "#1e3d22" : "#e8f5e8",
+    chipText:       dk ? "#a8e8a8" : "#1a4a1a",
+    chipBorder:     dk ? "#3a6a3a" : "#a8cca8",
+    aiBubble:       dk ? "#1a2e1e" : "#ffffff",
+    aiText:         dk ? "#dff0df" : "#1a2a1a",
+    inputBg:        dk ? "#162318" : "#ffffff",
+    gold:           dk ? "#d4b04a" : "#8b6914",
+    goldBg:         dk ? "#2a2410" : "#fff8e8",
+    goldBorder:     dk ? "#4a3e18" : "#d4b04a",
+    handoffBg:      dk ? "#1a301d" : "#f0faf0",
+    handoffBorder:  dk ? "#3a7a3a" : "#7aaa7a",
+    shadow:         dk ? "0 4px 20px rgba(0,0,0,0.5)" : "0 4px 16px rgba(0,0,0,0.08)",
+  };
+
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  const needsHandoff = (text) => HANDOFF_TRIGGERS.some(tr => text.toLowerCase().includes(tr.toLowerCase()));
+  const cleanContent = (text) => text.replace(/💬 CONNECT_WITH_TEAM/g, "").trim();
+
+  const sendMessage = async (text) => {
+    const userText = text || input.trim();
+    if (!userText || loading) return;
+    setInput("");
+    const newMsgs = [...messages, { role: "user", content: userText, showHandoff: false }];
+    setMessages(newMsgs);
+    setLoading(true);
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: PRODUCT_KNOWLEDGE,
+          messages: newMsgs.map(m => ({ role: m.role, content: m.content })),
+        }),
+      });
+      const data = await res.json();
+      const raw = data.content?.[0]?.text || "I'm sorry, I couldn't process that. Please try again.";
+      setMessages([...newMsgs, { role: "assistant", content: cleanContent(raw), showHandoff: needsHandoff(raw) }]);
+    } catch {
+      setMessages([...newMsgs, {
+        role: "assistant",
+        content: "I apologize — there was a connection issue. Our team is ready to help you directly.",
+        showHandoff: true,
+      }]);
+    }
+    setLoading(false);
+  };
+
+  const handleKey = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } };
+
+  const renderText = (text) => text.split("\n").map((line, i) => {
+    let html = line
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.*?)\*/g, "<em>$1</em>");
+    html = injectProductLinks(html, dk);
+    return <p key={i} style={{ margin: "3px 0", lineHeight: 1.65 }} dangerouslySetInnerHTML={{ __html: html || "&nbsp;" }} />;
+  });
+
+  const HandoffCard = () => (
+    <div style={{
+      marginTop: 10, padding: "14px 16px",
+      background: t.handoffBg, border: `1px solid ${t.handoffBorder}`,
+      borderRadius: 12, display: "flex", flexDirection: "column", gap: 10,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ fontSize: 17 }}>👋</span>
+        <span style={{ fontWeight: "bold", color: t.primary, fontSize: 14 }}>Talk to a real person</span>
+      </div>
+      <p style={{ margin: 0, color: t.aiText, fontSize: 13, lineHeight: 1.5 }}>
+        Our wellness team can help with pricing, orders, and personalised advice.
+      </p>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <a href="https://wa.me/17582855195" target="_blank" rel="noopener noreferrer" style={{
+          display: "inline-flex", alignItems: "center", gap: 5,
+          padding: "8px 15px", background: "#25d366", color: "#fff",
+          borderRadius: 20, textDecoration: "none", fontSize: 13, fontWeight: "bold",
+          boxShadow: "0 2px 8px rgba(37,211,102,0.3)",
+        }}>💬 WhatsApp Us</a>
+        <a href="mailto:goddessitopia@mountkailashslu.com" style={{
+          display: "inline-flex", alignItems: "center", gap: 5,
+          padding: "8px 15px", background: t.goldBg, color: t.gold,
+          border: `1px solid ${t.goldBorder}`,
+          borderRadius: 20, textDecoration: "none", fontSize: 13, fontWeight: "bold",
+        }}>✉️ Email Us</a>
+        <a href={SHOP_BASE} target="_blank" rel="noopener noreferrer" style={{
+          display: "inline-flex", alignItems: "center", gap: 5,
+          padding: "8px 15px", background: t.chipBg, color: t.primary,
+          border: `1px solid ${t.handoffBorder}`,
+          borderRadius: 20, textDecoration: "none", fontSize: 13, fontWeight: "bold",
+        }}>🛍️ Visit Shop</a>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{
+      minHeight: "100vh", background: t.bg,
+      display: "flex", flexDirection: "column", alignItems: "center",
+      fontFamily: "'Georgia', 'Times New Roman', serif",
+      transition: "background 0.3s",
+    }}>
+
+      {/* ══ HEADER ══ */}
+      <div style={{
+        width: "100%", background: dk ? "#0d1a10" : "#1c4a1c",
+        padding: "13px 20px", display: "flex", alignItems: "center",
+        justifyContent: "space-between",
+        boxShadow: "0 2px 20px rgba(0,0,0,0.35)",
+        position: "sticky", top: 0, zIndex: 100, boxSizing: "border-box",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{
+            width: 38, height: 38, flexShrink: 0,
+            background: "linear-gradient(135deg, #c8a84b, #e8c870)",
+            borderRadius: "50%",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 17, fontWeight: "bold", color: "#1c4a1c",
+          }}>K</div>
+          <div>
+            <div style={{ color: "#e8c870", fontSize: 13, fontWeight: "bold", letterSpacing: "1px", textTransform: "uppercase" }}>
+              Mount Kailash
+            </div>
+            <div style={{ color: "#7aaa7a", fontSize: 10 }}>
+              Nature's Answers for Optimum Health & Wellbeing
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", background: "rgba(255,255,255,0.1)", borderRadius: 20, padding: 3, gap: 2 }}>
+            {["chat", "products"].map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} style={{
+                padding: "5px 12px", borderRadius: 16, border: "none", cursor: "pointer",
+                fontSize: 11, fontFamily: "inherit", textTransform: "capitalize",
+                background: activeTab === tab ? "#2e6e2e" : "transparent",
+                color: activeTab === tab ? "#ffffff" : "#aaccaa",
+                fontWeight: activeTab === tab ? "bold" : "normal",
+                transition: "all 0.2s",
+              }}>{tab}</button>
+            ))}
+          </div>
+          <button onClick={() => setDarkMode(!dk)} style={{
+            background: dk ? "#2d4a32" : "rgba(255,255,255,0.15)", border: "none",
+            borderRadius: 20, padding: "5px 12px", cursor: "pointer",
+            color: dk ? "#e8c870" : "#ffffff", fontSize: 12,
+            display: "flex", alignItems: "center", gap: 5, transition: "all 0.2s",
+          }}>
+            {dk ? "☀️" : "🌙"} <span style={{ fontSize: 10 }}>{dk ? "Light" : "Dark"}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ══ PAGE BODY ══ */}
+      <div style={{ width: "100%", maxWidth: 820, flex: 1, padding: "0 14px 16px", boxSizing: "border-box" }}>
+
+        {/* ── CHAT TAB ── */}
+        {activeTab === "chat" && (
+          <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 66px)" }}>
+            {/* Messages */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "16px 0 8px", display: "flex", flexDirection: "column", gap: 12 }}>
+              {messages.map((msg, idx) => (
+                <div key={idx} style={{
+                  display: "flex",
+                  justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
+                  alignItems: "flex-end", gap: 8,
+                }}>
+                  {msg.role === "assistant" && (
+                    <div style={{
+                      width: 28, height: 28, minWidth: 28,
+                      background: "linear-gradient(135deg, #2e6e2e, #5aad5a)",
+                      borderRadius: "50%", fontSize: 12,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>🌿</div>
+                  )}
+                  <div style={{ maxWidth: "76%", display: "flex", flexDirection: "column" }}>
+                    <div style={{
+                      padding: "11px 14px",
+                      borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                      background: msg.role === "user" ? "linear-gradient(135deg, #2e6e2e, #1c4a1c)" : t.aiBubble,
+                      color: msg.role === "user" ? "#ffffff" : t.aiText,
+                      border: msg.role === "assistant" ? `1px solid ${t.border}` : "none",
+                      boxShadow: t.shadow, fontSize: 14, lineHeight: 1.65,
+                    }}>
+                      {renderText(msg.content)}
+                    </div>
+                    {msg.role === "assistant" && msg.showHandoff && <HandoffCard />}
+                  </div>
+                  {msg.role === "user" && (
+                    <div style={{
+                      width: 28, height: 28, minWidth: 28,
+                      background: "linear-gradient(135deg, #c8a84b, #e8c870)",
+                      borderRadius: "50%", fontSize: 12,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>👤</div>
+                  )}
+                </div>
+              ))}
+              {loading && (
+                <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
+                  <div style={{
+                    width: 28, height: 28, background: "linear-gradient(135deg, #2e6e2e, #5aad5a)",
+                    borderRadius: "50%", fontSize: 12,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>🌿</div>
+                  <div style={{
+                    padding: "12px 16px", borderRadius: "18px 18px 18px 4px",
+                    background: t.aiBubble, border: `1px solid ${t.border}`,
+                    boxShadow: t.shadow, display: "flex", gap: 5, alignItems: "center",
+                  }}>
+                    {[0,1,2].map(i => (
+                      <div key={i} style={{
+                        width: 7, height: 7, borderRadius: "50%", background: t.primary,
+                        animation: "bounce 1.4s ease-in-out infinite",
+                        animationDelay: `${i * 0.2}s`,
+                      }} />
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Quick-prompt chips */}
+            <div style={{ padding: "8px 0 4px", overflowX: "auto", display: "flex", gap: 7, flexWrap: "nowrap" }}>
+              {QUICK_PROMPTS.map((p, i) => (
+                <button key={i} onClick={() => sendMessage(p)} style={{
+                  whiteSpace: "nowrap", padding: "7px 14px", borderRadius: 20,
+                  border: `1px solid ${t.chipBorder}`,
+                  background: t.chipBg, color: t.chipText,
+                  cursor: "pointer", fontSize: 12, fontFamily: "inherit",
+                  fontWeight: "600", flexShrink: 0, lineHeight: 1.3,
+                  transition: "opacity 0.15s",
+                }}>{p}</button>
+              ))}
+            </div>
+
+            {/* Input row */}
+            <div style={{ display: "flex", gap: 10, padding: "8px 0", alignItems: "flex-end" }}>
+              <div style={{
+                flex: 1, border: `2px solid ${loading ? t.primary : t.border}`,
+                borderRadius: 24, background: t.inputBg,
+                display: "flex", alignItems: "center",
+                padding: "4px 8px 4px 16px", transition: "border-color 0.2s",
+              }}>
+                <textarea
+                  value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey}
+                  placeholder="Describe your symptoms or health concern…" rows={1}
+                  style={{
+                    flex: 1, border: "none", outline: "none", background: "transparent",
+                    resize: "none", fontFamily: "inherit", fontSize: 14, color: t.text,
+                    padding: "8px 0", lineHeight: "1.4", maxHeight: 100, overflowY: "auto",
+                  }}
+                />
+              </div>
+              <button onClick={() => sendMessage()} disabled={loading || !input.trim()} style={{
+                width: 44, height: 44, borderRadius: "50%", border: "none",
+                background: loading || !input.trim() ? t.border : "linear-gradient(135deg, #2e6e2e, #1c4a1c)",
+                color: "#fff", cursor: loading || !input.trim() ? "not-allowed" : "pointer",
+                fontSize: 16, flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "all 0.2s",
+                boxShadow: loading || !input.trim() ? "none" : "0 3px 10px rgba(46,110,46,0.4)",
+              }}>{loading ? "⏳" : "➤"}</button>
+            </div>
+
+            {/* Persistent footer */}
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 6, paddingBottom: 8 }}>
+              <span style={{ fontSize: 10, color: t.textMuted }}>Need a human?</span>
+              <a href="https://wa.me/17582855195" target="_blank" rel="noopener noreferrer"
+                style={{ fontSize: 11, color: "#25d366", textDecoration: "none", fontWeight: "bold" }}>💬 WhatsApp</a>
+              <span style={{ color: t.border, fontSize: 12 }}>·</span>
+              <a href="mailto:goddessitopia@mountkailashslu.com"
+                style={{ fontSize: 11, color: t.gold, textDecoration: "none", fontWeight: "bold" }}>✉️ Email</a>
+              <span style={{ color: t.border, fontSize: 12 }}>·</span>
+              <a href={SHOP_BASE} target="_blank" rel="noopener noreferrer"
+                style={{ fontSize: 11, color: t.primary, textDecoration: "none", fontWeight: "bold" }}>🛍️ Shop</a>
+            </div>
+          </div>
+        )}
+
+        {/* ── PRODUCTS TAB ── */}
+        {activeTab === "products" && (
+          <div style={{ paddingTop: 18 }}>
+            <div style={{
+              textAlign: "center", marginBottom: 18, padding: 18,
+              background: t.surface, borderRadius: 16, border: `1px solid ${t.border}`,
+            }}>
+              <h2 style={{ margin: "0 0 5px", color: t.primary, fontSize: 19 }}>Product Catalogue</h2>
+              <p style={{ margin: 0, color: t.textMuted, fontSize: 13 }}>
+                Wildcrafted herbal formulations from the rainforests of St. Lucia
+              </p>
+            </div>
+
+            {/* Category sections */}
+            {[
+              { label: "Tonics", items: PRODUCTS_FOR_CARDS.filter(p => ["Immune Support","Digestive Health","Women's Health","Energy & Iron","Prostate Health","Male Vitality","Sleep & Calm","Colon Cleanse","Respiratory","Detoxification","Blood Regulation","Mental Wellness","Circulation"].includes(p.category)) },
+              { label: "Traditional Teas", items: PRODUCTS_FOR_CARDS.filter(p => p.category.includes("Tea") || p.category === "Traditional" || p.category === "Digestive Tea" || p.category === "Sleep Tea" || p.category === "Kidney Support" || p.category === "Men's Tea" || p.category === "Women's Tea") },
+              { label: "Capsules & Powders", items: PRODUCTS_FOR_CARDS.filter(p => p.category === "Capsules") },
+              { label: "Curated Bundles", items: PRODUCTS_FOR_CARDS.filter(p => p.category.includes("Bundle") || p.category.includes("Kit") || p.category.includes("Package")) },
+            ].map(section => (
+              <div key={section.label} style={{ marginBottom: 24 }}>
+                <h3 style={{ color: t.textMuted, fontSize: 12, letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 10px 4px", fontFamily: "inherit" }}>
+                  {section.label}
+                </h3>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
+                  {section.items.map((p, i) => (
+                    <a key={i}
+                      href={`${SHOP_BASE}/${p.slug}`}
+                      target="_blank" rel="noopener noreferrer"
+                      style={{
+                        textDecoration: "none", display: "block",
+                        background: dk ? "#1a2e1e" : "#ffffff",
+                        border: `1px solid ${t.border}`,
+                        borderLeft: `4px solid ${p.color}`,
+                        borderRadius: 12, padding: 13,
+                        transition: "opacity 0.2s",
+                      }}>
+                      <div style={{ fontSize: 22, marginBottom: 6 }}>{p.emoji}</div>
+                      <div style={{ fontWeight: "bold", color: t.text, fontSize: 13, marginBottom: 2 }}>{p.name}</div>
+                      <div style={{ fontSize: 10, color: t.textMuted }}>{p.category}</div>
+                      <div style={{ marginTop: 7, fontSize: 10, color: t.primary, fontStyle: "italic" }}>View in shop →</div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {/* Contact panel */}
+            <div style={{
+              marginTop: 8, padding: 18,
+              background: t.goldBg, border: `1px solid ${t.goldBorder}`,
+              borderRadius: 14, textAlign: "center",
+            }}>
+              <div style={{ fontSize: 20, marginBottom: 6 }}>📞</div>
+              <div style={{ color: t.gold, fontWeight: "bold", marginBottom: 10, fontSize: 15 }}>Contact Our Team</div>
+              <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
+                <a href="https://wa.me/17582855195" target="_blank" rel="noopener noreferrer" style={{
+                  padding: "8px 15px", background: "#25d366", color: "#fff",
+                  borderRadius: 20, textDecoration: "none", fontSize: 13, fontWeight: "bold",
+                }}>💬 WhatsApp</a>
+                <a href="mailto:goddessitopia@mountkailashslu.com" style={{
+                  padding: "8px 15px", background: t.goldBg, color: t.gold,
+                  border: `1px solid ${t.goldBorder}`,
+                  borderRadius: 20, textDecoration: "none", fontSize: 12, fontWeight: "bold",
+                }}>✉️ goddessitopia@mountkailashslu.com</a>
+              </div>
+              <div style={{ color: t.textMuted, fontSize: 12, fontStyle: "italic" }}>
+                Honourable Goddess R Itopia Archer — Global Sales Manager
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes bounce {
+          0%,80%,100%{transform:translateY(0);opacity:0.5}
+          40%{transform:translateY(-5px);opacity:1}
+        }
+        *{box-sizing:border-box}
+        ::-webkit-scrollbar{width:5px;height:5px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:#3a7a3a;border-radius:3px}
+        div::-webkit-scrollbar:horizontal{height:0}
+        textarea::placeholder{color:#8aaa8a!important}
+        button:hover:not(:disabled){opacity:0.82}
+        a:hover{opacity:0.8}
+      `}</style>
+    </div>
+  );
+}
