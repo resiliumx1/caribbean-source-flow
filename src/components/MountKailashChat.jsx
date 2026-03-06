@@ -428,10 +428,11 @@ export default function MountKailashChat() {
 
   return (
     <div style={{
-      minHeight: "100vh", background: t.bg,
+      height: "100%", minHeight: "100dvh", background: t.bg,
       display: "flex", flexDirection: "column", alignItems: "center",
       fontFamily: "'Georgia', 'Times New Roman', serif",
       transition: "background 0.3s",
+      overflow: "hidden",
     }}>
 
       {/* ══ HEADER ══ */}
