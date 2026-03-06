@@ -1,5 +1,37 @@
-import HeroCtas from "@/components/HeroCtas";
+import { Link } from "react-router-dom";
+import { ShoppingBag, Building2, Mountain, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import heroForest from "@/assets/home-hero-forest.jpg";
+import shopHero from "@/assets/shop-hero-flatlay.jpg";
+import wholesaleHero from "@/assets/wholesale-hero.jpg";
+import retreatHero from "@/assets/retreat-hero-yoga.jpg";
+
+const paths = [
+  {
+    icon: ShoppingBag,
+    title: "Retail Wellness",
+    description: "Shop our full catalog of liquid tinctures, capsules, powders, and traditional teas.",
+    cta: "Browse Remedies",
+    route: "/shop",
+    image: shopHero,
+  },
+  {
+    icon: Building2,
+    title: "Professional Supply",
+    description: "Access wholesale pricing with volume discounts. Full COA documentation and bulk packaging.",
+    cta: "Access Wholesale Portal",
+    route: "/wholesale",
+    image: wholesaleHero,
+  },
+  {
+    icon: Mountain,
+    title: "Immersive Retreats",
+    description: "Experience medically-informed cellular detox at our rainforest centre in Saint Lucia.",
+    cta: "Check Availability",
+    route: "/retreats",
+    image: retreatHero,
+  },
+];
 
 export function TrinityHero() {
   return (
