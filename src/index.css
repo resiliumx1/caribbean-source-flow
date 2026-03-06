@@ -124,8 +124,8 @@
     --site-border: rgba(201,168,76,0.3);
     --site-border-subtle: rgba(201,168,76,0.15);
     --site-shadow-card: 0 4px 24px rgba(26,18,8,0.08);
-    --site-hero-overlay-from: rgba(250,247,242,0.3);
-    --site-hero-overlay-to: rgba(250,247,242,0.6);
+    --site-hero-overlay-from: rgba(0,0,0,0.35);
+    --site-hero-overlay-to: rgba(0,0,0,0.15);
     --site-card-hover-border: rgba(201,168,76,0.5);
     --site-nav-bg: rgba(250,247,242,0.95);
     --site-footer-bg: #1a3d20;
