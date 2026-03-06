@@ -160,6 +160,20 @@ export function StoreHeader() {
               <SheetContent side="right" className="w-72" aria-label="Mobile navigation">
                 <nav className="flex flex-col gap-4 mt-8">
                   {NAV_LINKS.map((link) => {
+                    if ('external' in link && link.external) {
+                      return (
+                        <a
+                          key={link.label}
+                          href={link.to}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="text-lg font-medium transition-colors min-h-[44px] flex items-center text-foreground hover:text-primary"
+                        >
+                          {link.label}
+                        </a>
+                      );
+                    }
                     const isActive = location.pathname === link.to || 
                       (link.to !== "/" && location.pathname.startsWith(link.to));
                     return (
