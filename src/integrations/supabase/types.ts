@@ -105,6 +105,36 @@ export type Database = {
           },
         ]
       }
+      chat_analytics_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          product_name: string | null
+          session_id: string | null
+          symptom: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          product_name?: string | null
+          session_id?: string | null
+          symptom?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          product_name?: string | null
+          session_id?: string | null
+          symptom?: string | null
+        }
+        Relationships: []
+      }
       concierge_conversations: {
         Row: {
           created_at: string
