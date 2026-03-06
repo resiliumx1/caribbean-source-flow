@@ -96,7 +96,7 @@ export function UnifiedFooter() {
 
       <div style={{ borderTop: '1px solid rgba(201,168,76,0.15)' }}>
         <div className="container mx-auto max-w-6xl px-4 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4" style={{ fontSize: '12px', color: 'var(--site-footer-muted)' }}>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4" style={{ fontSize: '12px', color: '#a89e90' }}>
             <p>© {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.</p>
             <p className="text-center md:text-right max-w-xl">Traditional use based on St. Lucian bush medicine practices.</p>
           </div>
