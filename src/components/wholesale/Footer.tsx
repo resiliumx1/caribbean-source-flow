@@ -49,9 +49,9 @@ export const Footer = () => {
                 { icon: Truck, label: "Shipping Info" },
               ].map((item) => (
                 <li key={item.label}>
-                  <a href="#" className="flex items-center gap-2 transition-colors hover:text-[#c9a84c]" style={{ color: "var(--site-footer-muted)", fontSize: "14px" }}>
+                  <span className="flex items-center gap-2 cursor-default" style={{ color: "var(--site-footer-muted)", fontSize: "14px" }}>
                     <item.icon className="w-4 h-4" style={{ color: "#c9a84c" }} /> {item.label}
-                  </a>
+                  </span>
                 </li>
               ))}
             </ul>
@@ -78,8 +78,8 @@ export const Footer = () => {
               © {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="transition-colors hover:text-[#c9a84c]" style={{ fontSize: "14px", color: "var(--site-footer-muted)" }}>Privacy Policy</a>
-              <a href="#" className="transition-colors hover:text-[#c9a84c]" style={{ fontSize: "14px", color: "var(--site-footer-muted)" }}>Terms of Service</a>
+              <span className="cursor-default" style={{ fontSize: "14px", color: "var(--site-footer-muted)" }}>Privacy Policy</span>
+              <span className="cursor-default" style={{ fontSize: "14px", color: "var(--site-footer-muted)" }}>Terms of Service</span>
             </div>
           </div>
         </div>

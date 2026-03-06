@@ -156,7 +156,7 @@ export default function ProductDetail() {
             {/* Category */}
             {product.product_categories && (
               <Link
-                to={`/shop/category/${product.product_categories.slug}`}
+                to="/shop"
                 className="text-sm text-muted-foreground uppercase tracking-wider hover:text-primary transition-colors"
               >
                 {product.product_categories.name}
