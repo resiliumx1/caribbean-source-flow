@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import heroFlatlay from "@/assets/shop-hero-flatlay.jpg";
+import heroFlatlay from "@/assets/shop-hero-flatlay.webp";
 
 const trustBadges = [
   { icon: "✦", label: "43,000+ Bottles Sold" },

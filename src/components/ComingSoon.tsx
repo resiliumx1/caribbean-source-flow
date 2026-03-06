@@ -1,5 +1,5 @@
 import { Mail, MessageCircle } from "lucide-react";
-import logo from "@/assets/mt-kailash-logo.jpeg";
+import logo from "@/assets/mt-kailash-logo.webp";
 
 const ComingSoon = () => {
   const whatsappNumber = "17676121219";
