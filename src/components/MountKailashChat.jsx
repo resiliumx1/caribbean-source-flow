@@ -314,10 +314,22 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
   const cleanContent = (text) => text.replace(/💬 CONNECT_WITH_TEAM/g, "").trim();
 
   const sessionIdRef = useRef(`session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`);
+  const sessionTrackedRef = useRef(false);
+
+  // Track session start once
+  useEffect(() => {
+    if (!sessionTrackedRef.current) {
+      sessionTrackedRef.current = true;
+      trackChatEvent("session_start", sessionIdRef.current);
+    }
+  }, []);
 
   const sendMessage = async (text) => {
     const userText = text || input.trim();
     if (!userText || loading) return;
+
+    // Track symptom query
+    trackChatEvent("symptom_query", sessionIdRef.current, { symptom: userText });
     setInput("");
     const newMsgs = [...messages, { role: "user", content: userText, showHandoff: false }];
     setMessages(newMsgs);
