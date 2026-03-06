@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, MessageCircle, Instagram, Facebook } from "lucide-react";
 import { useStore } from "@/lib/store-context";
-import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
+import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 
 export function StoreFooter() {
   const { storeEmail, storePhone, whatsappNumber } = useStore();

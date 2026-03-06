@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, Building2, Mountain, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import shopHero from "@/assets/shop-hero-flatlay.jpg";
-import wholesaleHero from "@/assets/wholesale-hero.jpg";
+import shopHero from "@/assets/shop-hero-flatlay.webp";
+import wholesaleHero from "@/assets/wholesale-hero.webp";
 import retreatHero from "@/assets/retreat-hero-yoga.webp";
 
 const paths = [

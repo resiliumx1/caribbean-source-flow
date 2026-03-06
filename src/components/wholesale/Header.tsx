@@ -1,6 +1,6 @@
 import { Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import mtKailashLogo from "@/assets/mt-kailash-logo.jpeg";
+import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 
 interface HeaderProps {
   onScrollToForm: () => void;
