@@ -81,7 +81,7 @@ export function SocialProofMatrix() {
                         {testimonial.author_name}
                       </div>
                       {testimonial.author_title && (
-                        <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: 'var(--site-gold)' }}>
+                        <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: 'var(--site-gold-text)' }}>
                           {testimonial.author_title}
                         </div>
                       )}
@@ -101,7 +101,7 @@ export function SocialProofMatrix() {
                   </p>
 
                   {testimonial.results && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold)' }}>
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>
                       ✓ {testimonial.results}
                     </div>
                   )}
@@ -111,15 +111,31 @@ export function SocialProofMatrix() {
           </div>
         </div>
 
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="flex justify-center gap-3 mt-8" role="tablist" aria-label="Testimonial slides">
           {testimonials.map((_, index) => (
             <button
               key={index}
+              role="tab"
+              aria-selected={index === selectedIndex}
               onClick={() => emblaApi?.scrollTo(index)}
-              className={`h-2 rounded-full transition-all duration-300 ${index === selectedIndex ? "w-8" : "w-2"}`}
-              style={{ background: index === selectedIndex ? '#c9a84c' : 'rgba(201,168,76,0.3)' }}
+              className={`rounded-full transition-all duration-300 ${index === selectedIndex ? "w-8 h-3" : "w-3 h-3"}`}
+              style={{
+                background: index === selectedIndex ? '#c9a84c' : 'rgba(201,168,76,0.3)',
+                minWidth: 24,
+                minHeight: 24,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                position: 'relative',
+              }}
               aria-label={`Go to slide ${index + 1}`}
-            />
+            >
+              <span
+                className={`block rounded-full transition-all duration-300 ${index === selectedIndex ? "w-8 h-2" : "w-2 h-2"}`}
+                style={{ background: index === selectedIndex ? '#c9a84c' : 'rgba(201,168,76,0.3)' }}
+              />
+            </button>
           ))}
         </div>
       </div>

@@ -120,6 +120,7 @@
     --site-text-muted: #574a36;
     --site-gold: #c9a84c;
     --site-gold-dark: #a07830;
+    --site-gold-text: #8b6914;
     --site-green-dark: #1a3d20;
     --site-border: rgba(201,168,76,0.3);
     --site-border-subtle: rgba(201,168,76,0.15);
@@ -194,6 +195,7 @@
     --site-text-muted: #8a8070;
     --site-gold: #c9a84c;
     --site-gold-dark: #a07830;
+    --site-gold-text: #c9a84c;
     --site-green-dark: #0d1a0f;
     --site-border: rgba(201,168,76,0.2);
     --site-border-subtle: rgba(201,168,76,0.15);
@@ -204,7 +206,7 @@
     --site-nav-bg: rgba(10,10,10,0.95);
     --site-footer-bg: #0a0a0a;
     --site-footer-text: #f2ead8;
-    --site-footer-muted: #8a8070;
+    --site-footer-muted: #a89e90;
     --site-ticker-bg: #111111;
     --site-ticker-text: #c9a84c;
     --site-credential-bg: rgba(17,17,17,0.95);
@@ -235,7 +237,7 @@
 
   /* Visible focus outlines for keyboard navigation */
   *:focus-visible {
-    outline: 2px solid hsl(var(--primary));
+    outline: 2px solid #2e6e2e;
     outline-offset: 2px;
     border-radius: 2px;
   }

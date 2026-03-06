@@ -19,7 +19,7 @@ export function OriginStory() {
               height={600}
             />
           </div>
-          <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: 'var(--site-gold)' }}>
+          <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: 'var(--site-gold-text)' }}>
             Wildcrafted in Saint Lucia. Processed by hand. Delivered to the world.
           </p>
         </div>
@@ -27,7 +27,7 @@ export function OriginStory() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Content — Left */}
           <div className="lg:pl-8">
-            <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold)' }}>
+            <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>
               From Volcanic Soil
             </span>
 
@@ -71,7 +71,7 @@ export function OriginStory() {
 
           {/* Right — School Photo */}
           <div className="flex flex-col items-start">
-            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold)', marginBottom: '8px' }}>
+            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold-text)', marginBottom: '8px' }}>
               MOUNT KAILASH SCHOOL OF ESOTERIC KNOWLEDGE
             </span>
             <p style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontStyle: 'italic', fontSize: '18px', color: 'var(--site-text-primary)', marginBottom: '20px' }}>

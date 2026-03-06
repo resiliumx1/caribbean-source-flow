@@ -39,7 +39,7 @@ export function UnifiedFooter() {
           {/* Shop Column */}
           <div>
             <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Shop</h2>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-1 text-sm">
               {[
                 { label: "All Products", href: "/shop" },
                 { label: "Liquid Tinctures", href: "/shop/category/liquid-tinctures" },
@@ -48,7 +48,7 @@ export function UnifiedFooter() {
                 { label: "Raw Herbs", href: "/shop/category/raw-herbs" },
               ].map((item) => (
                 <li key={item.label}>
-                  <Link to={item.href} style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors">
+                  <Link to={item.href} style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
                     {item.label}
                   </Link>
                 </li>
@@ -59,10 +59,10 @@ export function UnifiedFooter() {
           {/* Practitioners Column */}
           <div>
             <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Practitioners</h2>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-1 text-sm">
               {["Wholesale Portal", "Volume Pricing", "COA Documentation", "Private Labeling"].map((item) => (
                 <li key={item}>
-                  <Link to="/wholesale" style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors">
+                  <Link to="/wholesale" style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
                     {item}
                   </Link>
                 </li>
@@ -73,10 +73,10 @@ export function UnifiedFooter() {
           {/* Visit Column */}
           <div>
             <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Visit</h2>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-1 text-sm">
               {["Retreat Programs", "Group Immersions", "Solo Detox Retreats", "Book Consultation"].map((item) => (
                 <li key={item}>
-                  <Link to="/retreats" style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors">
+                  <Link to="/retreats" style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
                     {item}
                   </Link>
                 </li>
