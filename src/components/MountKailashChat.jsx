@@ -236,12 +236,17 @@ function injectProductLinks(html) {
   SORTED_NAMES.forEach((name) => {
     const url = PRODUCT_LINKS[name];
     const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    // Skip if already inside an <a> tag
-    const regex = new RegExp(`(?<!href="[^"]{0,300})(?<![\\w/>])${escaped}(?![\\w<])`, "g");
-    result = result.replace(
-      regex,
-      `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">${name} ↗</a>`
-    );
+    // Match product name but skip if already linked (check for preceding href or >)
+    const regex = new RegExp(`(?:^|(?<=>)|(?<=\\s))${escaped}(?=\\s|[.,;:!?)]|$|<)`, "g");
+    // Only replace if not already inside an anchor tag
+    result = result.replace(regex, (match) => {
+      // Check if this match position is inside an <a> tag
+      const before = result.substring(0, result.indexOf(match));
+      const lastOpenA = before.lastIndexOf("<a ");
+      const lastCloseA = before.lastIndexOf("</a>");
+      if (lastOpenA > lastCloseA) return match; // inside an <a>, skip
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">${name} ↗</a>`;
+    });
   });
   return result;
 }
