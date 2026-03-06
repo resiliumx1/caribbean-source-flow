@@ -138,11 +138,11 @@ export function StoreHeader() {
             {/* Mobile menu */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label="Open menu">
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-72">
+              <SheetContent side="right" className="w-72" aria-label="Mobile navigation">
                 <nav className="flex flex-col gap-4 mt-8">
                   {NAV_LINKS.map((link) => {
                     const isActive = location.pathname === link.to || 

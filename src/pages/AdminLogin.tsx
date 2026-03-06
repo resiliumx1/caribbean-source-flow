@@ -110,6 +110,6 @@ export default function AdminLogin() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }
