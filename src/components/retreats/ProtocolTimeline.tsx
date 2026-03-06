@@ -102,7 +102,7 @@ export function ProtocolTimeline() {
                     style={{
                       width: '56px',
                       height: '56px',
-                      background: isActive ? '#c9a84c' : '#0a0a0a',
+                      background: isActive ? '#c9a84c' : 'var(--site-bg-deep)',
                       border: '2px solid #c9a84c',
                     }}
                     whileHover={{ scale: 1.1 }}
