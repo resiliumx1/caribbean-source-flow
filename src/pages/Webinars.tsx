@@ -30,7 +30,7 @@ export default function Webinars() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: "#090909", color: "#f2ead8" }}>
+    <div style={{ backgroundColor: "var(--site-bg-primary)", color: "var(--site-text-primary)" }}>
       <WebinarHero />
       <hr className="webinar-divider" />
       <WebinarFeatured />

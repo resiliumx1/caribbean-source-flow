@@ -73,13 +73,13 @@ const practicalTopics = [
 
 export function RetreatFAQ() {
   return (
-    <section className="py-24 md:py-28" style={{ background: '#0f0f0d' }}>
+    <section className="py-24 md:py-28" style={{ background: 'var(--site-bg-secondary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-12 md:mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Practical Matters
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>
             Everything you need to know before your transformative journey to Mount Kailash.
           </p>
         </div>
@@ -89,7 +89,7 @@ export function RetreatFAQ() {
             <div
               key={topic.id}
               className="rounded-xl p-8 transition-all duration-300 hover:border-t-2"
-              style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.1)', borderTopColor: 'transparent' }}
+              style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)', borderTopColor: 'transparent' }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderTopColor = '#c9a84c'; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderTopColor = 'transparent'; }}
             >
@@ -97,7 +97,7 @@ export function RetreatFAQ() {
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(201,168,76,0.1)' }}>
                   <topic.icon className="w-5 h-5" style={{ color: '#c9a84c' }} />
                 </div>
-                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: '#f2ead8' }}>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
                   {topic.title}
                 </h3>
               </div>
@@ -106,7 +106,7 @@ export function RetreatFAQ() {
                 {topic.points.map((point, i) => (
                   <li key={i} className="flex items-start gap-2.5">
                     <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#c9a84c' }} />
-                    <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', lineHeight: 1.6 }}>
+                    <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)', lineHeight: 1.6 }}>
                       {point}
                     </span>
                   </li>
@@ -114,7 +114,7 @@ export function RetreatFAQ() {
               </ul>
 
               {topic.helper && (
-                <p className="mt-4 text-sm italic pt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, color: '#8a8070', borderTop: '1px solid rgba(201,168,76,0.1)' }}>
+                <p className="mt-4 text-sm italic pt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, color: 'var(--site-text-muted)', borderTop: '1px solid var(--site-border)' }}>
                   {topic.helper}
                 </p>
               )}

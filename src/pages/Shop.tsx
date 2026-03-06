@@ -21,11 +21,11 @@ function CategoryDivider({ name }: { name: string }) {
       <span
         className="flex items-center gap-2 px-4 py-1 rounded-full"
         style={{
-          background: "#0f0f0d",
+          background: "var(--site-bg-primary)",
           fontFamily: "'Cormorant Garamond', serif",
           fontWeight: 700,
           fontSize: "24px",
-          color: "#f2ead8",
+          color: "var(--site-text-primary)",
         }}
       >
         <span style={{ color: "#c9a84c", fontSize: "14px" }}>✦</span>
@@ -126,7 +126,7 @@ export default function Shop() {
   const currentCategory = categories?.find((c) => c.slug === categorySlug);
 
   return (
-    <div className="min-h-screen" style={{ background: "#0a0a0a", scrollBehavior: "smooth" }}>
+    <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
       <ShopHero />
 
       <main className="container mx-auto px-4" style={{ paddingTop: "80px", paddingBottom: "80px" }}>
@@ -154,16 +154,16 @@ export default function Shop() {
 
         {/* Search bar */}
         <div className="relative max-w-md mx-auto mb-8">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "rgba(242,234,216,0.4)" }} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--site-text-muted)" }} />
           <input
             placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-10 py-2.5 rounded-full outline-none"
             style={{
-              background: "#1a1a1a",
-              border: "1px solid rgba(201,168,76,0.3)",
-              color: "#f2ead8",
+              background: "var(--site-bg-card)",
+              border: "1px solid var(--site-border)",
+              color: "var(--site-text-primary)",
               fontFamily: "'Jost', sans-serif",
               fontSize: "14px",
             }}
@@ -172,7 +172,7 @@ export default function Shop() {
             <button
               onClick={() => setSearchQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2"
-              style={{ color: "rgba(242,234,216,0.5)" }}
+              style={{ color: "var(--site-text-muted)" }}
             >
               <X className="w-4 h-4" />
             </button>
@@ -208,7 +208,7 @@ export default function Shop() {
           />
         ) : (
           <div className="text-center py-16">
-            <p style={{ fontSize: "16px", color: "rgba(242,234,216,0.5)" }}>
+            <p style={{ fontSize: "16px", color: "var(--site-text-muted)" }}>
               {searchQuery ? `No products found for "${searchQuery}".` : "No products found in this category."}
             </p>
           </div>
