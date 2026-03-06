@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 
+
 // ─── Shop base & exact product URLs scraped from live shop ───────────────────
-const SHOP_BASE = "https://preview--caribbean-source-flow.lovable.app/shop";
+const SHOP_BASE = "/shop";
 
 const PRODUCT_LINKS = {
   // Tonics
@@ -299,13 +300,13 @@ function injectProductLinks(html, isDark) {
     const url = PRODUCT_LINKS[name];
     const esc = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(`(?<!href="[^"]{0,200})(?<![\\w>/-])${esc}(?![\\w<])`, "g");
-    result = result.replace(regex, `<a href="${url}" target="_blank" rel="noopener noreferrer" style="${style}">${name} ↗</a>`);
+    result = result.replace(regex, `<a href="${url}" data-internal-link="true" style="${style}">${name} ↗</a>`);
   });
   return result;
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function MountKailashChat() {
+export default function MountKailashChat({ onNavigate }) {
   const [darkMode, setDarkMode] = useState(false);
   const [messages, setMessages] = useState([{
     role: "assistant",
@@ -340,6 +341,24 @@ export default function MountKailashChat() {
   };
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  // Handle internal link clicks for SPA navigation
+  useEffect(() => {
+    const handler = (e) => {
+      const link = e.target.closest('a[data-internal-link="true"]');
+      if (link) {
+        e.preventDefault();
+        const href = link.getAttribute("href");
+        if (onNavigate) {
+          onNavigate(href);
+        } else {
+          window.location.href = href;
+        }
+      }
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [onNavigate]);
 
   const needsHandoff = (text) => HANDOFF_TRIGGERS.some(tr => text.toLowerCase().includes(tr.toLowerCase()));
   const cleanContent = (text) => text.replace(/💬 CONNECT_WITH_TEAM/g, "").trim();
@@ -684,14 +703,18 @@ export default function MountKailashChat() {
                   {section.items.map((p, i) => (
                     <a key={i}
                       href={`${SHOP_BASE}/${p.slug}`}
-                      target="_blank" rel="noopener noreferrer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (onNavigate) onNavigate(`/shop/${p.slug}`);
+                        else window.location.href = `/shop/${p.slug}`;
+                      }}
                       style={{
                         textDecoration: "none", display: "block",
                         background: dk ? "#1a2e1e" : "#ffffff",
                         border: `1px solid ${t.border}`,
                         borderLeft: `4px solid ${p.color}`,
                         borderRadius: 12, padding: 13,
-                        transition: "opacity 0.2s",
+                        transition: "opacity 0.2s", cursor: "pointer",
                       }}>
                       <div style={{ fontSize: 22, marginBottom: 6 }}>{p.emoji}</div>
                       <div style={{ fontWeight: "bold", color: t.text, fontSize: 13, marginBottom: 2 }}>{p.name}</div>
