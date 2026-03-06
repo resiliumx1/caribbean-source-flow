@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-// ─── Full absolute product URLs ──────────────────────────────────────────────
+// ─── Chat analytics helper ───
+function trackChatEvent(eventType, sessionId, extra = {}) {
+  supabase.from("chat_analytics_events").insert({
+    event_type: eventType,
+    session_id: sessionId,
+    ...extra,
+  }).then(() => {}).catch(() => {});
+}
 const SITE_BASE = "https://preview--caribbean-source-flow.lovable.app";
 
 const PRODUCT_LINKS = {
