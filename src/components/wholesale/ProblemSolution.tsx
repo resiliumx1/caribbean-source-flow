@@ -18,7 +18,7 @@ const solutions = [
   },
   {
     problem: "Unpredictable 6-8 week lead times",
-    solution: "Miami warehouse stock. 3-day US delivery available.",
+    solution: "Miami warehouse stock. Quick US delivery available.",
     icon: Truck,
     image: warehouseImage,
   },
