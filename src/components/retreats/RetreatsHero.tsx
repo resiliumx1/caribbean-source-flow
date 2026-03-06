@@ -1,6 +1,6 @@
 import { MessageCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/retreat-hero-yoga.jpg";
+import heroImage from "@/assets/retreat-hero-yoga.webp";
 
 const whatsappNumber = "+17582855195";
 

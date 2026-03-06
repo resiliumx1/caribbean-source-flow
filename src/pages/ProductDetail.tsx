@@ -463,7 +463,7 @@ export default function ProductDetail() {
         <RelatedProducts productId={product.id} categoryId={product.category_id} />
       </main>
 
-      <VideoFooter />
+      
       <StoreFooter />
       <WhatsAppFloat />
     </div>

@@ -7,7 +7,7 @@ import { Camera } from "lucide-react";
 import heroFarm from "@/assets/hero-farm.jpg";
 import herbProcessing from "@/assets/herb-processing.jpg";
 import seamossHarvest from "@/assets/seamoss-harvest.jpg";
-import retreatHero from "@/assets/retreat-hero-yoga.jpg";
+import retreatHero from "@/assets/retreat-hero-yoga.webp";
 
 const fallbackImages = [heroFarm, herbProcessing, seamossHarvest, retreatHero];
 
