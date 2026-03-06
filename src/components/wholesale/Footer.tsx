@@ -49,7 +49,7 @@ export const Footer = () => {
                 { icon: Truck, label: "Shipping Info" },
               ].map((item) => (
                 <li key={item.label}>
-                  <a href="#" className="flex items-center gap-2 transition-colors hover:text-[#c9a84c]" style={{ color: "var(--site-footer-muted)", fontSize: "14px" }}>
+                  <span className="flex items-center gap-2 cursor-default" style={{ color: "var(--site-footer-muted)", fontSize: "14px" }}>
                     <item.icon className="w-4 h-4" style={{ color: "#c9a84c" }} /> {item.label}
                   </a>
                 </li>
