@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, Building2, Mountain, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 import heroForest from "@/assets/home-hero-forest.jpg";
 import shopHero from "@/assets/shop-hero-flatlay.jpg";
 import wholesaleHero from "@/assets/wholesale-hero.jpg";
@@ -100,12 +99,10 @@ export function TrinityHero() {
         <div className="container mx-auto max-w-6xl px-4 pb-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {paths.map((path, index) => (
-              <motion.div
+              <div
                 key={path.route}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'both' }}
               >
                 <Link to={path.route} className="block group">
                   <div
@@ -132,7 +129,7 @@ export function TrinityHero() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
