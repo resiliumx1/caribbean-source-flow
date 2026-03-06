@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const NAV = [
   { label: "Shop", href: "/shop" },
   { label: "Retreats", href: "/retreats" },
-  { label: "School", href: "/school" },
+  { label: "School", href: "https://mount-kailash-school-temp.netlify.app", external: true },
   { label: "Webinars", href: "/webinars" },
 ];
 
