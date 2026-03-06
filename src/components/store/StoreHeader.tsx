@@ -96,7 +96,7 @@ export function StoreHeader() {
                 <Link
                   key={link.label}
                   to={link.to}
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-sm font-medium transition-colors min-h-[44px] flex items-center ${
                     isActive 
                       ? 'text-primary border-b-2 border-primary pb-0.5' 
                       : 'text-foreground hover:text-primary'
