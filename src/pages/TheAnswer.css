@@ -1135,7 +1135,8 @@ html:not(.dark) .benefits-section__cert,
 html:not(.dark) .howto-section__subtext,
 html:not(.dark) .howto-step__desc,
 html:not(.dark) .final-cta__badge,
-html:not(.dark) .final-cta__sub {
+html:not(.dark) .final-cta__sub,
+html:not(.dark) .testimonial-card__location {
   color: var(--site-text-muted);
 }
 
@@ -1171,4 +1172,20 @@ html:not(.dark) .howto-section__float-badge {
 
 html:not(.dark) .chronixx-section__watermark {
   color: var(--site-text-primary);
+}
+
+/* Ensure ingredients/benefits/testimonials/final-cta sections have proper bg in light mode */
+html:not(.dark) .ingredients-section,
+html:not(.dark) .benefits-section,
+html:not(.dark) .testimonials-section,
+html:not(.dark) .final-cta {
+  background-color: var(--site-bg-primary);
+}
+
+html:not(.dark) .craft-step__number {
+  color: var(--site-gold);
+}
+
+html:not(.dark) .howto-step__number {
+  color: var(--site-gold);
 }
