@@ -416,7 +416,14 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
     return <p key={i} style={{ margin: "3px 0", lineHeight: 1.65 }} dangerouslySetInnerHTML={{ __html: html || "&nbsp;" }} />;
   });
 
-  const HandoffCard = () => (
+  const handoffTrackedRef = useRef(false);
+  const HandoffCard = () => {
+    // Track handoff display once per session
+    if (!handoffTrackedRef.current) {
+      handoffTrackedRef.current = true;
+      trackChatEvent("whatsapp_handoff", sessionIdRef.current);
+    }
+    return (
     <div style={{
       marginTop: 10, padding: "14px 16px",
       background: t.handoffBg, border: `1px solid ${t.handoffBorder}`,
