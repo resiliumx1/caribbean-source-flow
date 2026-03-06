@@ -555,7 +555,7 @@ export default function MountKailashChat() {
             </div>
 
             {/* Quick-prompt chips */}
-            <div style={{ padding: "8px 0 4px", overflowX: "auto", display: "flex", gap: 7, flexWrap: "nowrap", flexShrink: 0, WebkitOverflowScrolling: "touch" }}>
+            <div style={{ padding: "8px 0 4px", overflowX: "auto", display: "flex", gap: 7, flexWrap: "nowrap", flexShrink: 0, WebkitOverflowScrolling: "touch", touchAction: "pan-x" }}>
               {QUICK_PROMPTS.map((p, i) => (
                 <button key={i} onClick={() => sendMessage(p)} style={{
                   whiteSpace: "nowrap", padding: "7px 14px", borderRadius: 20,

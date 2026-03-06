@@ -236,6 +236,18 @@
 
 @layer components {
   /* Hero section styles */
+  .hero-section {
+    background: transparent !important;
+  }
+
+  .hero-section [data-hero-bg="true"] {
+    background-color: transparent !important;
+  }
+
+  .hero-content :is(h1, h2, h3, h4, h5, h6, p) {
+    color: var(--site-hero-text-on-dark) !important;
+  }
+
   .hero-overlay {
     background: var(--gradient-overlay);
   }
