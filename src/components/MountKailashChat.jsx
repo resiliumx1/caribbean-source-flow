@@ -485,7 +485,7 @@ export default function MountKailashChat() {
       </div>
 
       {/* ══ PAGE BODY ══ */}
-      <div style={{ width: "100%", maxWidth: 820, flex: 1, padding: "0 14px 16px", boxSizing: "border-box" }}>
+      <div style={{ width: "100%", maxWidth: 820, flex: 1, padding: "0 14px 16px", boxSizing: "border-box", display: "flex", flexDirection: "column", minHeight: 0, overflow: "hidden" }}>
 
         {/* ── CHAT TAB ── */}
         {activeTab === "chat" && (
