@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 
+
 // ─── Shop base & exact product URLs scraped from live shop ───────────────────
-const SHOP_BASE = "https://preview--caribbean-source-flow.lovable.app/shop";
+const SHOP_BASE = "/shop";
 
 const PRODUCT_LINKS = {
   // Tonics
