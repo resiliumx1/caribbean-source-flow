@@ -38,6 +38,7 @@ const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
+const MountKailashChat = lazy(() => import("./components/MountKailashChat"));
 
 
 const queryClient = new QueryClient();
