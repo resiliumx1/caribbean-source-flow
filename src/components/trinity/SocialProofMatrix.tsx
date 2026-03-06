@@ -81,7 +81,7 @@ export function SocialProofMatrix() {
                         {testimonial.author_name}
                       </div>
                       {testimonial.author_title && (
-                        <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: 'var(--site-gold)' }}>
+                        <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: 'var(--site-gold-text)' }}>
                           {testimonial.author_title}
                         </div>
                       )}
