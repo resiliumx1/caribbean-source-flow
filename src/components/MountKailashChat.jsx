@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-// ─── Full absolute product URLs ──────────────────────────────────────────────
+// ─── Chat analytics helper ───
+function trackChatEvent(eventType, sessionId, extra = {}) {
+  supabase.from("chat_analytics_events").insert({
+    event_type: eventType,
+    session_id: sessionId,
+    ...extra,
+  }).then(() => {}).catch(() => {});
+}
 const SITE_BASE = "https://preview--caribbean-source-flow.lovable.app";
 
 const PRODUCT_LINKS = {
@@ -246,7 +254,7 @@ function injectProductLinks(html) {
       var lastCloseA = before.lastIndexOf("</a>");
       if (lastOpenA > lastCloseA) continue; // inside <a>, skip
       parts.push(result.substring(lastIndex, m.index));
-      parts.push('<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">' + name + ' ↗</a>');
+      parts.push('<a href="' + url + '" target="_blank" rel="noopener noreferrer" onclick="window.__trackChatProductClick && window.__trackChatProductClick(\'' + name.replace(/'/g, "\\'") + '\')" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">' + name + ' ↗</a>');
       lastIndex = m.index + m[0].length;
     }
     if (parts.length > 0) {
@@ -306,10 +314,26 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
   const cleanContent = (text) => text.replace(/💬 CONNECT_WITH_TEAM/g, "").trim();
 
   const sessionIdRef = useRef(`session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`);
+  const sessionTrackedRef = useRef(false);
+
+  // Track session start once + register global product click tracker
+  useEffect(() => {
+    if (!sessionTrackedRef.current) {
+      sessionTrackedRef.current = true;
+      trackChatEvent("session_start", sessionIdRef.current);
+    }
+    window.__trackChatProductClick = (productName) => {
+      trackChatEvent("product_click", sessionIdRef.current, { product_name: productName });
+    };
+    return () => { delete window.__trackChatProductClick; };
+  }, []);
 
   const sendMessage = async (text) => {
     const userText = text || input.trim();
     if (!userText || loading) return;
+
+    // Track symptom query
+    trackChatEvent("symptom_query", sessionIdRef.current, { symptom: userText });
     setInput("");
     const newMsgs = [...messages, { role: "user", content: userText, showHandoff: false }];
     setMessages(newMsgs);
@@ -396,7 +420,14 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
     return <p key={i} style={{ margin: "3px 0", lineHeight: 1.65 }} dangerouslySetInnerHTML={{ __html: html || "&nbsp;" }} />;
   });
 
-  const HandoffCard = () => (
+  const handoffTrackedRef = useRef(false);
+  const HandoffCard = () => {
+    // Track handoff display once per session
+    if (!handoffTrackedRef.current) {
+      handoffTrackedRef.current = true;
+      trackChatEvent("whatsapp_handoff", sessionIdRef.current);
+    }
+    return (
     <div style={{
       marginTop: 10, padding: "14px 16px",
       background: t.handoffBg, border: `1px solid ${t.handoffBorder}`,
@@ -430,7 +461,8 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
         }}>🛍️ Visit Shop</a>
       </div>
     </div>
-  );
+  );};
+
 
   return (
     <div style={{
