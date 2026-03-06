@@ -13,11 +13,9 @@
     <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://mcwthjcpcajhvhwpuvvs.supabase.co" />
 
-    <!-- Preload LCP hero poster image -->
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=70&w=1400&fm=webp" fetchpriority="high" />
+    <!-- Hero LCP image is loaded eagerly via <img fetchpriority="high"> in TrinityHero -->
 
     <!-- Preload critical fonts -->
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2" crossorigin />
