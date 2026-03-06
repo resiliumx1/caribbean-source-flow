@@ -344,6 +344,8 @@ export default function MountKailashChat() {
   const needsHandoff = (text) => HANDOFF_TRIGGERS.some(tr => text.toLowerCase().includes(tr.toLowerCase()));
   const cleanContent = (text) => text.replace(/💬 CONNECT_WITH_TEAM/g, "").trim();
 
+  const sessionIdRef = useRef(`session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`);
+
   const sendMessage = async (text) => {
     const userText = text || input.trim();
     if (!userText || loading) return;
@@ -352,24 +354,66 @@ export default function MountKailashChat() {
     setMessages(newMsgs);
     setLoading(true);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/concierge-chat`;
+      const res = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-calls": "true",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: PRODUCT_KNOWLEDGE,
           messages: newMsgs.map(m => ({ role: m.role, content: m.content })),
+          sessionId: sessionIdRef.current,
         }),
       });
-      const data = await res.json();
-      const raw = data.content?.[0]?.text || "I'm sorry, I couldn't process that. Please try again.";
-      setMessages([...newMsgs, { role: "assistant", content: cleanContent(raw), showHandoff: needsHandoff(raw) }]);
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to get response");
+      }
+
+      // Parse SSE stream
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = "";
+      let textBuffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const chunk = parsed.choices?.[0]?.delta?.content;
+            if (chunk) {
+              assistantContent += chunk;
+              setMessages([...newMsgs, {
+                role: "assistant",
+                content: cleanContent(assistantContent),
+                showHandoff: needsHandoff(assistantContent),
+              }]);
+            }
+          } catch { /* partial JSON, skip */ }
+        }
+      }
+
+      if (!assistantContent) {
+        setMessages([...newMsgs, {
+          role: "assistant",
+          content: "I'm sorry, I couldn't process that. Please try again.",
+          showHandoff: false,
+        }]);
+      }
     } catch {
       setMessages([...newMsgs, {
         role: "assistant",
