@@ -94,13 +94,15 @@ export function OriginStory() {
                 height={533}
               />
             </div>
-            <Link
-              to="/school"
+            <a
+              href="https://mount-kailash-school-temp.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:bg-[#c9a84c] hover:text-[#090909]"
               style={{ border: '1px solid var(--site-gold)', color: 'var(--site-gold)', fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '14px' }}
             >
               Explore The School <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       </div>
