@@ -233,20 +233,26 @@ const QUICK_PROMPTS = [
 // ─── Inject product names as clickable shop links ─────────────────────────────
 function injectProductLinks(html) {
   let result = html;
-  SORTED_NAMES.forEach((name) => {
-    const url = PRODUCT_LINKS[name];
-    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    // Match product name but skip if already linked (check for preceding href or >)
-    const regex = new RegExp(`(?:^|(?<=>)|(?<=\\s))${escaped}(?=\\s|[.,;:!?)]|$|<)`, "g");
-    // Only replace if not already inside an anchor tag
-    result = result.replace(regex, (match) => {
-      // Check if this match position is inside an <a> tag
-      const before = result.substring(0, result.indexOf(match));
-      const lastOpenA = before.lastIndexOf("<a ");
-      const lastCloseA = before.lastIndexOf("</a>");
-      if (lastOpenA > lastCloseA) return match; // inside an <a>, skip
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">${name} ↗</a>`;
-    });
+  SORTED_NAMES.forEach(function(name) {
+    var url = PRODUCT_LINKS[name];
+    var escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    var regex = new RegExp("\\b" + escaped + "\\b", "g");
+    var parts = [];
+    var lastIndex = 0;
+    var m;
+    while ((m = regex.exec(result)) !== null) {
+      var before = result.substring(0, m.index);
+      var lastOpenA = before.lastIndexOf("<a ");
+      var lastCloseA = before.lastIndexOf("</a>");
+      if (lastOpenA > lastCloseA) continue; // inside <a>, skip
+      parts.push(result.substring(lastIndex, m.index));
+      parts.push('<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">' + name + ' ↗</a>');
+      lastIndex = m.index + m[0].length;
+    }
+    if (parts.length > 0) {
+      parts.push(result.substring(lastIndex));
+      result = parts.join("");
+    }
   });
   return result;
 }
