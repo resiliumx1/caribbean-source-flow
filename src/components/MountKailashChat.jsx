@@ -614,7 +614,7 @@ export default function MountKailashChat() {
 
         {/* ── PRODUCTS TAB ── */}
         {activeTab === "products" && (
-          <div style={{ paddingTop: 18 }}>
+          <div style={{ paddingTop: 18, flex: 1, overflowY: "auto", minHeight: 0 }}>
             <div style={{
               textAlign: "center", marginBottom: 18, padding: 18,
               background: t.surface, borderRadius: 16, border: `1px solid ${t.border}`,
