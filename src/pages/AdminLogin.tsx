@@ -52,8 +52,8 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <main className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md" role="form">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
             <Shield className="h-6 w-6 text-primary" />
@@ -110,6 +110,6 @@ export default function AdminLogin() {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }

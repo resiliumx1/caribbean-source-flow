@@ -71,24 +71,24 @@ export function StoreHeader() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3" aria-label="Mount Kailash home">
             <img
               src={mtKailashLogo}
               alt="Mount Kailash Rejuvenation Centre"
               className="h-10 w-10 rounded-full object-cover"
             />
             <div className="hidden sm:block">
-              <h1 className="font-serif font-bold text-foreground leading-tight">
+              <span className="font-serif font-bold text-foreground leading-tight block">
                 Mount Kailash
-              </h1>
-              <p className="text-xs text-muted-foreground">
+              </span>
+              <span className="text-xs text-muted-foreground block">
                 Rejuvenation Centre
-              </p>
+              </span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-5">
+          <nav className="hidden lg:flex items-center gap-5" aria-label="Main navigation">
             {NAV_LINKS.map((link) => {
               const isActive = location.pathname === link.to || 
                 (link.to !== "/" && location.pathname.startsWith(link.to));
@@ -115,8 +115,8 @@ export function StoreHeader() {
             </div>
             <CurrencyToggle />
 
-            <Link to="/cart" className="relative">
-              <Button variant="ghost" size="icon" className={cartBounce ? "animate-bounce" : ""}>
+            <Link to="/cart" className="relative" aria-label="Shopping cart">
+              <Button variant="ghost" size="icon" aria-label="View cart" className={cartBounce ? "animate-bounce" : ""}>
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
                   <Badge
@@ -129,8 +129,8 @@ export function StoreHeader() {
               </Button>
             </Link>
 
-            <Link to="/admin/login" className="hidden sm:block">
-              <Button variant="ghost" size="icon">
+            <Link to="/admin/login" className="hidden sm:block" aria-label="Admin login">
+              <Button variant="ghost" size="icon" aria-label="Admin login">
                 <User className="w-5 h-5" />
               </Button>
             </Link>
@@ -138,11 +138,11 @@ export function StoreHeader() {
             {/* Mobile menu */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label="Open menu">
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-72">
+              <SheetContent side="right" className="w-72" aria-label="Mobile navigation">
                 <nav className="flex flex-col gap-4 mt-8">
                   {NAV_LINKS.map((link) => {
                     const isActive = location.pathname === link.to || 

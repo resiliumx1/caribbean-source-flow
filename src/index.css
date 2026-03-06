@@ -31,7 +31,7 @@
     --secondary: 75 26% 53%;
     --secondary-foreground: 0 0% 4%;
     --muted: 35 15% 90%;
-    --muted-foreground: 0 0% 23%;
+    --muted-foreground: 0 0% 29%;
     --accent: 39 55% 45%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
@@ -116,8 +116,8 @@
     --site-bg-card: #ffffff;
     --site-bg-deep: #ede8df;
     --site-text-primary: #1a1208;
-    --site-text-secondary: #3d2e1a;
-    --site-text-muted: #6b5d4a;
+    --site-text-secondary: #33280f;
+    --site-text-muted: #574a36;
     --site-gold: #c9a84c;
     --site-gold-dark: #a07830;
     --site-green-dark: #1a3d20;
@@ -231,6 +231,13 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
     @apply font-semibold tracking-tight;
+  }
+
+  /* Visible focus outlines for keyboard navigation */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 

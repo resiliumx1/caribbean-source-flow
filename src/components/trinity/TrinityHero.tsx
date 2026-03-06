@@ -117,9 +117,9 @@ export function TrinityHero() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/40 to-transparent group-hover:from-[#0a0a0a]/80 transition-all duration-500" />
                     <div className="absolute bottom-0 left-0 right-0 p-8">
-                      <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '28px', color: '#f2ead8', marginBottom: '8px' }}>
+                      <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '28px', color: '#f2ead8', marginBottom: '8px' }}>
                         {path.title}
-                      </h3>
+                      </h2>
                       <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', opacity: 0.8, marginBottom: '16px', lineHeight: 1.6 }}>
                         {path.description}
                       </p>
