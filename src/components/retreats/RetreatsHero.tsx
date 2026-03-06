@@ -20,6 +20,8 @@ export function RetreatsHero() {
           src={heroImage}
           alt="Healing retreat in Saint Lucia rainforest, Mount Kailash Rejuvenation Centre private and group wellness programs"
           className="w-full h-full object-cover"
+          width={1400}
+          height={933}
           style={{ filter: 'sepia(20%) saturate(120%) hue-rotate(-10deg)' }}
         />
         <div className="absolute inset-0 bg-black/50" />

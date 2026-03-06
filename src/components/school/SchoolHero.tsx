@@ -20,6 +20,9 @@ export function SchoolHero() {
           src={heroImage}
           alt="Herbal medicine preparation at Mount Kailash"
           className="w-full h-full object-cover"
+          width={1400}
+          height={933}
+          loading="eager"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[hsl(150,30%,8%)]/95 via-[hsl(150,25%,12%)]/80 to-[hsl(150,20%,15%)]/60" />
       </div>
