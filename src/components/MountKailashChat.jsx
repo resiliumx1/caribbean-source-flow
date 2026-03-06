@@ -306,7 +306,7 @@ function injectProductLinks(html, isDark) {
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function MountKailashChat() {
+export default function MountKailashChat({ onNavigate }) {
   const [darkMode, setDarkMode] = useState(false);
   const [messages, setMessages] = useState([{
     role: "assistant",
