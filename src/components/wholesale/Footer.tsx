@@ -51,7 +51,7 @@ export const Footer = () => {
                 <li key={item.label}>
                   <span className="flex items-center gap-2 cursor-default" style={{ color: "var(--site-footer-muted)", fontSize: "14px" }}>
                     <item.icon className="w-4 h-4" style={{ color: "#c9a84c" }} /> {item.label}
-                  </a>
+                  </span>
                 </li>
               ))}
             </ul>
