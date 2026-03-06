@@ -115,8 +115,8 @@ export function StoreHeader() {
             </div>
             <CurrencyToggle />
 
-            <Link to="/cart" className="relative">
-              <Button variant="ghost" size="icon" className={cartBounce ? "animate-bounce" : ""}>
+            <Link to="/cart" className="relative" aria-label="Shopping cart">
+              <Button variant="ghost" size="icon" aria-label="View cart" className={cartBounce ? "animate-bounce" : ""}>
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
                   <Badge
@@ -129,8 +129,8 @@ export function StoreHeader() {
               </Button>
             </Link>
 
-            <Link to="/admin/login" className="hidden sm:block">
-              <Button variant="ghost" size="icon">
+            <Link to="/admin/login" className="hidden sm:block" aria-label="Admin login">
+              <Button variant="ghost" size="icon" aria-label="Admin login">
                 <User className="w-5 h-5" />
               </Button>
             </Link>
