@@ -1,5 +1,5 @@
 import { ArrowRight, MessageCircle } from "lucide-react";
-import heroImage from "@/assets/wholesale-hero-botanical.jpg";
+import heroImage from "@/assets/wholesale-hero-botanical.webp";
 
 interface HeroProps {
   onScrollToForm: () => void;
