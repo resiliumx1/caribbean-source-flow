@@ -88,7 +88,7 @@ export function StoreHeader() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-5">
+          <nav className="hidden lg:flex items-center gap-5" aria-label="Main navigation">
             {NAV_LINKS.map((link) => {
               const isActive = location.pathname === link.to || 
                 (link.to !== "/" && location.pathname.startsWith(link.to));
