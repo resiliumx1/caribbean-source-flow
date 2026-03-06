@@ -39,7 +39,7 @@ export function ShopHero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 h-full flex flex-col items-center justify-center text-center">
+      <div className="hero-content relative z-10 container mx-auto px-4 h-full flex flex-col items-center justify-center text-center">
         <h1
           className="text-3xl md:text-4xl lg:text-[56px] leading-tight mb-4 max-w-3xl"
           style={{

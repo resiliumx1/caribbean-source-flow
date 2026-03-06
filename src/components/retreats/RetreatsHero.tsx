@@ -27,7 +27,7 @@ export function RetreatsHero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto max-w-6xl px-4 py-20">
+      <div className="hero-content relative z-10 container mx-auto max-w-6xl px-4 py-20">
         <div className="max-w-2xl">
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(3rem, 6vw, 72px)', color: '#f2ead8', lineHeight: 1.05, marginBottom: '24px' }}>
             Restore. Reset. <span style={{ borderBottom: '3px solid #c9a84c', paddingBottom: '4px' }}>Reconnect.</span>

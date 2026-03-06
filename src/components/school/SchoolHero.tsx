@@ -24,7 +24,7 @@ export function SchoolHero() {
         <div className="absolute inset-0 bg-gradient-to-r from-[hsl(150,30%,8%)]/95 via-[hsl(150,25%,12%)]/80 to-[hsl(150,20%,15%)]/60" />
       </div>
 
-      <div className="relative z-10 container mx-auto max-w-6xl px-4 py-24">
+      <div className="hero-content relative z-10 container mx-auto max-w-6xl px-4 py-24">
         <div className="max-w-2xl">
           {/* Badge */}
           <motion.div
