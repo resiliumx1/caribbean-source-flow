@@ -92,6 +92,19 @@ export function StoreHeader() {
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-5" aria-label="Main navigation">
             {NAV_LINKS.map((link) => {
+              if ('external' in link && link.external) {
+                return (
+                  <a
+                    key={link.label}
+                    href={link.to}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium transition-colors min-h-[44px] flex items-center text-foreground hover:text-primary"
+                  >
+                    {link.label}
+                  </a>
+                );
+              }
               const isActive = location.pathname === link.to || 
                 (link.to !== "/" && location.pathname.startsWith(link.to));
               return (
