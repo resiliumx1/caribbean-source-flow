@@ -19,7 +19,7 @@ export function OriginStory() {
               height={600}
             />
           </div>
-          <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: 'var(--site-gold)' }}>
+          <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: 'var(--site-gold-text)' }}>
             Wildcrafted in Saint Lucia. Processed by hand. Delivered to the world.
           </p>
         </div>
