@@ -114,10 +114,10 @@ export function ProtocolTimeline() {
                     <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '14px', color: '#c9a84c', display: 'block', marginBottom: '4px' }}>
                       0{index + 1}
                     </span>
-                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '18px', color: isActive ? '#c9a84c' : '#f2ead8', marginBottom: '8px', transition: 'color 0.3s' }}>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '18px', color: isActive ? '#c9a84c' : 'var(--site-text-primary)', marginBottom: '8px', transition: 'color 0.3s' }}>
                       {step.title}
                     </h3>
-                    <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: '#8a8070', maxWidth: '200px', lineHeight: 1.6 }}>
+                    <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: 'var(--site-text-muted)', maxWidth: '200px', lineHeight: 1.6 }}>
                       {step.description}
                     </p>
                   </div>
