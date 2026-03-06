@@ -316,12 +316,16 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
   const sessionIdRef = useRef(`session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`);
   const sessionTrackedRef = useRef(false);
 
-  // Track session start once
+  // Track session start once + register global product click tracker
   useEffect(() => {
     if (!sessionTrackedRef.current) {
       sessionTrackedRef.current = true;
       trackChatEvent("session_start", sessionIdRef.current);
     }
+    window.__trackChatProductClick = (productName) => {
+      trackChatEvent("product_click", sessionIdRef.current, { product_name: productName });
+    };
+    return () => { delete window.__trackChatProductClick; };
   }, []);
 
   const sendMessage = async (text) => {
