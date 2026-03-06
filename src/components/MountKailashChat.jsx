@@ -703,14 +703,18 @@ export default function MountKailashChat({ onNavigate }) {
                   {section.items.map((p, i) => (
                     <a key={i}
                       href={`${SHOP_BASE}/${p.slug}`}
-                      target="_blank" rel="noopener noreferrer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (onNavigate) onNavigate(`/shop/${p.slug}`);
+                        else window.location.href = `/shop/${p.slug}`;
+                      }}
                       style={{
                         textDecoration: "none", display: "block",
                         background: dk ? "#1a2e1e" : "#ffffff",
                         border: `1px solid ${t.border}`,
                         borderLeft: `4px solid ${p.color}`,
                         borderRadius: 12, padding: 13,
-                        transition: "opacity 0.2s",
+                        transition: "opacity 0.2s", cursor: "pointer",
                       }}>
                       <div style={{ fontSize: 22, marginBottom: 6 }}>{p.emoji}</div>
                       <div style={{ fontWeight: "bold", color: t.text, fontSize: 13, marginBottom: 2 }}>{p.name}</div>
