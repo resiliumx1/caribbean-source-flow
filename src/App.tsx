@@ -23,7 +23,6 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Retreats = lazy(() => import("./pages/Retreats"));
-const School = lazy(() => import("./pages/School"));
 const HerbalPhysicianCourse = lazy(() => import("./pages/HerbalPhysicianCourse"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const GoddessCard = lazy(() => import("./pages/GoddessCard"));
