@@ -71,7 +71,7 @@ export function OriginStory() {
 
           {/* Right — School Photo */}
           <div className="flex flex-col items-start">
-            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold)', marginBottom: '8px' }}>
+            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold-text)', marginBottom: '8px' }}>
               MOUNT KAILASH SCHOOL OF ESOTERIC KNOWLEDGE
             </span>
             <p style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontStyle: 'italic', fontSize: '18px', color: 'var(--site-text-primary)', marginBottom: '20px' }}>

@@ -101,7 +101,7 @@ export function SocialProofMatrix() {
                   </p>
 
                   {testimonial.results && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold)' }}>
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>
                       ✓ {testimonial.results}
                     </div>
                   )}
