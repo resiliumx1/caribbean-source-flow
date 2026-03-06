@@ -38,7 +38,7 @@ const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
-const MountKailashChat = lazy(() => import("./components/MountKailashChat"));
+
 
 const queryClient = new QueryClient();
 
@@ -110,7 +110,7 @@ function AppContent() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/compare" element={<ComparePage />} />
-          <Route path="/chat" element={<MountKailashChat />} />
+          
           <Route path="/retreats" element={<Retreats />} />
           <Route path="/school" element={<School />} />
           <Route path="/school/herbal-physician-course" element={<HerbalPhysicianCourse />} />

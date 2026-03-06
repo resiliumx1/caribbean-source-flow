@@ -12,7 +12,7 @@ export function StoreHero() {
   );
 
   return (
-    <section className="relative min-h-[70vh] flex items-center overflow-hidden">
+    <section className="hero-section relative min-h-[70vh] flex items-center overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -22,7 +22,7 @@ export function StoreHero() {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 relative z-10 py-16">
+      <div className="hero-content container mx-auto px-4 relative z-10 py-16">
         <div className="max-w-3xl">
           <h1 className="hero-title text-cream mb-6">
             Medicine from the{" "}

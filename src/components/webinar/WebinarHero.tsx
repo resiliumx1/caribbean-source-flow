@@ -46,13 +46,13 @@ export default function WebinarHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex items-center justify-center text-center min-h-screen overflow-hidden webinar-hero-gradient webinar-noise"
+      className="hero-section relative flex items-center justify-center text-center min-h-screen overflow-hidden webinar-hero-gradient webinar-noise"
     >
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/50 z-[1]" />
       <Particles />
 
-      <div className="relative z-10 px-6 py-24 max-w-3xl mx-auto">
+      <div className="hero-content relative z-10 px-6 py-24 max-w-3xl mx-auto">
         {/* Badge */}
         <div className="inline-block mb-8 px-5 py-2 rounded-full border border-[#c9a84c]/40 backdrop-blur-sm">
           <span className="font-cormorant text-sm tracking-wide" style={{ color: "#c9a84c" }}>

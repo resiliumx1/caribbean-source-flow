@@ -124,8 +124,8 @@
     --site-border: rgba(201,168,76,0.3);
     --site-border-subtle: rgba(201,168,76,0.15);
     --site-shadow-card: 0 4px 24px rgba(26,18,8,0.08);
-    --site-hero-overlay-from: rgba(250,247,242,0.3);
-    --site-hero-overlay-to: rgba(250,247,242,0.6);
+    --site-hero-overlay-from: rgba(0,0,0,0.35);
+    --site-hero-overlay-to: rgba(0,0,0,0.15);
     --site-card-hover-border: rgba(201,168,76,0.5);
     --site-nav-bg: rgba(250,247,242,0.95);
     --site-footer-bg: #1a3d20;
@@ -135,7 +135,8 @@
     --site-ticker-text: #f2ead8;
     --site-credential-bg: rgba(255,255,255,0.95);
     --site-img-bg: #ffffff;
-    --site-hero-gradient: linear-gradient(to bottom, rgba(250,247,242,0.7) 0%, rgba(250,247,242,0.5) 50%, rgba(250,247,242,0.75) 100%);
+    --site-hero-gradient: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0) 100%);
+    --site-hero-text-on-dark: #f5f0e0;
   }
 
   .dark {
@@ -197,8 +198,8 @@
     --site-border: rgba(201,168,76,0.2);
     --site-border-subtle: rgba(201,168,76,0.15);
     --site-shadow-card: 0 8px 32px rgba(0,0,0,0.4);
-    --site-hero-overlay-from: rgba(10,10,10,0.9);
-    --site-hero-overlay-to: rgba(10,10,10,0.9);
+    --site-hero-overlay-from: rgba(0,0,0,0.35);
+    --site-hero-overlay-to: rgba(0,0,0,0.15);
     --site-card-hover-border: rgba(201,168,76,0.4);
     --site-nav-bg: rgba(10,10,10,0.95);
     --site-footer-bg: #0a0a0a;
@@ -208,7 +209,8 @@
     --site-ticker-text: #c9a84c;
     --site-credential-bg: rgba(17,17,17,0.95);
     --site-img-bg: #1a1a1a;
-    --site-hero-gradient: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.75) 100%);
+    --site-hero-gradient: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0) 100%);
+    --site-hero-text-on-dark: #f5f0e0;
   }
 }
 
@@ -234,6 +236,18 @@
 
 @layer components {
   /* Hero section styles */
+  .hero-section {
+    background: transparent !important;
+  }
+
+  .hero-section [data-hero-bg="true"] {
+    background-color: transparent !important;
+  }
+
+  .hero-content :is(h1, h2, h3, h4, h5, h6, p) {
+    color: var(--site-hero-text-on-dark) !important;
+  }
+
   .hero-overlay {
     background: var(--gradient-overlay);
   }

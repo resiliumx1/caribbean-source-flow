@@ -428,7 +428,7 @@ export default function MountKailashChat() {
 
   return (
     <div style={{
-      height: "100%", minHeight: "100dvh", background: t.bg,
+      height: "100%", minHeight: 0, background: t.bg,
       display: "flex", flexDirection: "column", alignItems: "center",
       fontFamily: "'Georgia', 'Times New Roman', serif",
       transition: "background 0.3s",
@@ -491,7 +491,7 @@ export default function MountKailashChat() {
         {activeTab === "chat" && (
           <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, overflow: "hidden" }}>
             {/* Messages */}
-            <div style={{ flex: 1, overflowY: "auto", padding: "16px 0 8px", display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ flex: 1, overflowY: "auto", padding: "16px 0 8px", display: "flex", flexDirection: "column", gap: 12, minHeight: 0, WebkitOverflowScrolling: "touch" }}>
               {messages.map((msg, idx) => (
                 <div key={idx} style={{
                   display: "flex",
@@ -555,7 +555,7 @@ export default function MountKailashChat() {
             </div>
 
             {/* Quick-prompt chips */}
-            <div style={{ padding: "8px 0 4px", overflowX: "auto", display: "flex", gap: 7, flexWrap: "nowrap", flexShrink: 0, WebkitOverflowScrolling: "touch" }}>
+            <div style={{ padding: "8px 0 4px", overflowX: "auto", display: "flex", gap: 7, flexWrap: "nowrap", flexShrink: 0, WebkitOverflowScrolling: "touch", touchAction: "pan-x" }}>
               {QUICK_PROMPTS.map((p, i) => (
                 <button key={i} onClick={() => sendMessage(p)} style={{
                   whiteSpace: "nowrap", padding: "7px 14px", borderRadius: 20,
