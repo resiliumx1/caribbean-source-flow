@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
 import { Button } from "@/components/ui/button";

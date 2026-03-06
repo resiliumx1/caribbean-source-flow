@@ -110,6 +110,7 @@ function AppContent() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/compare" element={<ComparePage />} />
+          <Route path="/chat" element={<MountKailashChat />} />
           <Route path="/retreats" element={<Retreats />} />
           <Route path="/school" element={<School />} />
           <Route path="/school/herbal-physician-course" element={<HerbalPhysicianCourse />} />
