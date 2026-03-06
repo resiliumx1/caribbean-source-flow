@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, Building2, Mountain, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 import heroForest from "@/assets/home-hero-forest.jpg";
 import shopHero from "@/assets/shop-hero-flatlay.jpg";
 import wholesaleHero from "@/assets/wholesale-hero.jpg";
