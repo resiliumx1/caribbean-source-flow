@@ -15,7 +15,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://mcwthjcpcajhvhwpuvvs.supabase.co" />
 
-    <!-- Hero LCP image is loaded eagerly via <img fetchpriority="high"> in TrinityHero -->
+    <!-- Hero LCP image preload for faster discovery -->
+    <link rel="preload" as="image" href="/src/assets/home-hero-forest.jpg" type="image/jpeg" fetchpriority="high" />
 
     <!-- Preload critical fonts -->
     <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2" crossorigin />
