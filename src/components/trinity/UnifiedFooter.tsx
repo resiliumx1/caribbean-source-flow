@@ -72,7 +72,7 @@ export function UnifiedFooter() {
 
           {/* Visit Column */}
           <div>
-            <h3 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Visit</h3>
+            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Visit</h2>
             <ul className="space-y-2 text-sm">
               {["Retreat Programs", "Group Immersions", "Solo Detox Retreats", "Book Consultation"].map((item) => (
                 <li key={item}>
