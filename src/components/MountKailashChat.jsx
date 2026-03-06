@@ -491,7 +491,7 @@ export default function MountKailashChat() {
         {activeTab === "chat" && (
           <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, overflow: "hidden" }}>
             {/* Messages */}
-            <div style={{ flex: 1, overflowY: "auto", padding: "16px 0 8px", display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ flex: 1, overflowY: "auto", padding: "16px 0 8px", display: "flex", flexDirection: "column", gap: 12, minHeight: 0, WebkitOverflowScrolling: "touch" }}>
               {messages.map((msg, idx) => (
                 <div key={idx} style={{
                   display: "flex",
