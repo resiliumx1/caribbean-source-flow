@@ -17,10 +17,20 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
     >
       {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 z-0"
         data-hero-bg="true"
-        style={{ backgroundImage: `url(${heroImage})`, backgroundColor: "transparent" }}
-      />
+        style={{ background: "transparent" }}
+      >
+        <img
+          src={heroImage}
+          alt="Caribbean botanical farm with volcanic soil"
+          className="w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          width={1400}
+          height={933}
+        />
+      </div>
 
       {/* Dark Overlay */}
       <div

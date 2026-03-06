@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -6,11 +6,35 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, Package, ShoppingCart, DollarSign, Users, Star, BarChart3, MessageCircle, MousePointerClick, ArrowRightLeft, AlertTriangle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+// Lazy load recharts — only needed on this admin page
+import type { 
+  AreaChart as AreaChartType, Area as AreaType, 
+  XAxis as XAxisType, YAxis as YAxisType, 
+  CartesianGrid as CartesianGridType, Tooltip as TooltipType, 
+  ResponsiveContainer as ResponsiveContainerType,
+  BarChart as BarChartType, Bar as BarType, 
+  PieChart as PieChartType, Pie as PieType, 
+  Cell as CellType, Legend as LegendType, 
+  LineChart as LineChartType, Line as LineType,
+  FunnelChart as FunnelChartType, Funnel as FunnelType, 
+  LabelList as LabelListType,
+} from "recharts";
+
+let rechartsModule: typeof import("recharts") | null = null;
+const getRecharts = () => {
+  if (!rechartsModule) {
+    rechartsModule = null;
+  }
+  return rechartsModule;
+};
+
+// We'll use dynamic import via a wrapper
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, Legend, LineChart, Line, FunnelChart, Funnel, LabelList,
 } from "recharts";
-import { supabase } from "@/integrations/supabase/client";
 
 type Range = "7d" | "30d" | "90d" | "all";
 

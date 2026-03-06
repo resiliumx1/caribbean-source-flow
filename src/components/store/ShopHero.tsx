@@ -34,6 +34,10 @@ export function ShopHero() {
           src={heroFlatlay}
           alt="Caribbean herbal medicine products on volcanic stone"
           className="w-full h-full object-cover"
+          width={1400}
+          height={933}
+          loading="eager"
+          fetchPriority="high"
         />
         <div className="absolute inset-0" style={{ background: "var(--site-hero-gradient)" }} />
       </div>

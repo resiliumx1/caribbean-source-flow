@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, Building2, Mountain, ArrowRight } from "lucide-react";
-import heroForest from "@/assets/home-hero-forest.jpg";
+import heroForest from "@/assets/home-hero-forest.webp";
 import shopHero from "@/assets/shop-hero-flatlay.webp";
 import wholesaleHero from "@/assets/wholesale-hero.webp";
 import retreatHero from "@/assets/retreat-hero-yoga.webp";
