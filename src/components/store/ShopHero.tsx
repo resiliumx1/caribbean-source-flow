@@ -35,7 +35,7 @@ export function ShopHero() {
           alt="Caribbean herbal medicine products on volcanic stone"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-black/75" />
+        <div className="absolute inset-0" style={{ background: "var(--site-hero-gradient)" }} />
       </div>
 
       {/* Content */}
@@ -46,27 +46,26 @@ export function ShopHero() {
             fontFamily: "'Cormorant Garamond', serif",
             fontWeight: 700,
             fontStyle: "italic",
-            color: "#f2ead8",
+            color: "var(--site-text-primary)",
           }}
         >
           Premium Herbal Formulations for Daily Balance
         </h1>
 
-        {/* Trust statement */}
         <p
           className="mb-3 max-w-2xl"
           style={{
             fontFamily: "'Jost', sans-serif",
             fontWeight: 300,
             fontSize: "15px",
-            color: "#c9a84c",
+            color: "var(--site-gold)",
             letterSpacing: "0.05em",
           }}
         >
           Wildcrafted in Saint Lucia · Batch tested · Ships to US, UK &amp; Caribbean
         </p>
 
-        <p className="text-sm mb-8" style={{ color: "rgba(242,234,216,0.6)" }}>
+        <p className="text-sm mb-8" style={{ color: "var(--site-text-muted)" }}>
           Crafted for consistency • Designed for integration • Rooted in tradition
         </p>
 
@@ -77,12 +76,12 @@ export function ShopHero() {
               key={badge.label}
               className="flex items-center gap-2 px-4 py-2.5 rounded-full"
               style={{
-                background: "rgba(0,0,0,0.5)",
-                border: "1px solid rgba(201,168,76,0.4)",
+                background: "var(--site-bg-card)",
+                border: "1px solid var(--site-border)",
                 fontFamily: "'Jost', sans-serif",
                 fontWeight: 300,
                 fontSize: "13px",
-                color: "#f2ead8",
+                color: "var(--site-text-primary)",
               }}
             >
               <span>{badge.icon}</span>

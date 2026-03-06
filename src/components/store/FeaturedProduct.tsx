@@ -9,7 +9,7 @@ export function FeaturedProduct() {
 
   if (isLoading) {
     return (
-      <div className="rounded-2xl p-12" style={{ background: "#111111" }}>
+      <div className="rounded-2xl p-12" style={{ background: "var(--site-bg-card)" }}>
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-4">
             <Skeleton className="h-6 w-24" />
@@ -31,10 +31,11 @@ export function FeaturedProduct() {
     <div
       className="rounded-2xl overflow-hidden mb-12"
       style={{
-        background: "#111111",
-        border: "1px solid rgba(201,168,76,0.3)",
+        background: "var(--site-bg-card)",
+        border: "1px solid var(--site-border)",
         borderTop: "3px solid #c9a84c",
         padding: "48px",
+        boxShadow: "var(--site-shadow-card)",
       }}
     >
       <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -60,7 +61,7 @@ export function FeaturedProduct() {
               fontFamily: "'Cormorant Garamond', serif",
               fontWeight: 700,
               fontSize: "36px",
-              color: "#f2ead8",
+              color: "var(--site-text-primary)",
               lineHeight: 1.2,
             }}
           >
@@ -73,7 +74,7 @@ export function FeaturedProduct() {
               fontFamily: "'Jost', sans-serif",
               fontWeight: 300,
               fontSize: "15px",
-              color: "rgba(242,234,216,0.6)",
+              color: "var(--site-text-muted)",
               lineHeight: 1.7,
             }}
           >
@@ -105,7 +106,7 @@ export function FeaturedProduct() {
             >
               {prices.primary}
             </span>
-            <span className="ml-2" style={{ fontSize: "14px", color: "rgba(242,234,216,0.4)" }}>
+            <span className="ml-2" style={{ fontSize: "14px", color: "var(--site-text-muted)" }}>
               {prices.secondary}
             </span>
           </div>
@@ -137,9 +138,9 @@ export function FeaturedProduct() {
           ) : (
             <div
               className="w-full aspect-square rounded-xl flex items-center justify-center"
-              style={{ background: "#1a1a1a" }}
+              style={{ background: "var(--site-img-bg)" }}
             >
-              <span style={{ color: "rgba(242,234,216,0.3)" }}>No image</span>
+              <span style={{ color: "var(--site-text-muted)" }}>No image</span>
             </div>
           )}
         </div>

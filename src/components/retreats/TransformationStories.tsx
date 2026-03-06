@@ -42,13 +42,13 @@ export function TransformationStories() {
   ];
 
   return (
-    <section className="py-24 md:py-28" style={{ background: '#0a0a0a' }}>
+    <section className="py-24 md:py-28" style={{ background: 'var(--site-bg-primary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-12 md:mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(2rem, 4vw, 48px)', color: '#f2ead8', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(2rem, 4vw, 48px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Real Transformations
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
             Stories from guests who experienced lasting change.
           </p>
         </div>
@@ -58,9 +58,8 @@ export function TransformationStories() {
             <div
               key={story.id}
               className="rounded-2xl p-10 transition-all hover:scale-[1.02]"
-              style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}
+              style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)' }}
             >
-              {/* Avatar + credentials at top */}
               <div className="flex items-center gap-4 mb-6">
                 <Avatar className="w-14 h-14" style={{ border: '2px solid #c9a84c' }}>
                   <AvatarImage src={avatarImages[index % avatarImages.length]} alt={story.author_name} className="object-cover" />
@@ -69,7 +68,7 @@ export function TransformationStories() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: '#f2ead8' }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
                     {story.author_name}
                   </div>
                   {story.author_title && (
@@ -80,14 +79,13 @@ export function TransformationStories() {
                 </div>
               </div>
 
-              {/* Stars */}
               <div className="flex items-center gap-0.5 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-[#c9a84c] text-[#c9a84c]" />
                 ))}
               </div>
 
-              <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: '#f2ead8', lineHeight: 1.8 }}>
+              <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: 'var(--site-text-primary)', lineHeight: 1.8 }}>
                 "{story.quote}"
               </p>
             </div>

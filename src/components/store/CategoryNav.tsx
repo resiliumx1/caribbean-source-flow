@@ -33,10 +33,10 @@ export function CategoryNav() {
 
   const inactiveStyle: React.CSSProperties = {
     ...tabBase,
-    background: "#111111",
-    color: "#f2ead8",
+    background: "var(--site-bg-card)",
+    color: "var(--site-text-primary)",
     fontWeight: 400,
-    border: "1px solid rgba(201,168,76,0.3)",
+    border: "1px solid var(--site-border)",
   };
 
   return (

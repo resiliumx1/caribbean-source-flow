@@ -53,9 +53,9 @@ const STORAGE_KEY = "mkrc_wholesale_form";
 
 /* Shared inline styles */
 const inputStyle: React.CSSProperties = {
-  background: "#1a1a1a",
-  border: "1px solid rgba(201,168,76,0.3)",
-  color: "#f2ead8",
+  background: "var(--site-bg-card)",
+  border: "1px solid var(--site-border)",
+  color: "var(--site-text-primary)",
   borderRadius: "12px",
   padding: "12px 16px",
   width: "100%",
@@ -83,7 +83,7 @@ const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) 
 };
 
 const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-  e.target.style.borderColor = "rgba(201,168,76,0.3)";
+  e.target.style.borderColor = "";
   e.target.style.boxShadow = "none";
 };
 
@@ -157,19 +157,19 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
 
   if (isSubmitted) {
     return (
-      <section ref={ref} className="py-24 md:py-28" style={{ background: "#0a0a0a", fontFamily: "'Jost', sans-serif" }} id="quote-form">
+      <section ref={ref} className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }} id="quote-form">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center p-12 rounded-2xl" style={{ background: "#111111", border: "1px solid rgba(201,168,76,0.2)" }}>
+          <div className="max-w-2xl mx-auto text-center p-12 rounded-2xl" style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)", boxShadow: "var(--site-shadow-card)" }}>
             <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "rgba(201,168,76,0.1)" }}>
               <CheckCircle2 className="w-10 h-10" style={{ color: "#c9a84c" }} />
             </div>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "32px", color: "#f2ead8", marginBottom: "16px" }}>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "32px", color: "var(--site-text-primary)", marginBottom: "16px" }}>
               Thank You for Your Interest!
             </h2>
-            <p style={{ color: "#8a8070", fontWeight: 300, marginBottom: "16px" }}>
+            <p style={{ color: "var(--site-text-muted)", fontWeight: 300, marginBottom: "16px" }}>
               Our Miami-based sourcing team will review your requirements and reach out within 4 business hours with custom pricing and availability.
             </p>
-            <p style={{ fontSize: "14px", color: "#8a8070" }}>
+            <p style={{ fontSize: "14px", color: "var(--site-text-muted)" }}>
               Need immediate assistance? Call us at{" "}
               <a href="tel:+13059429407" style={{ color: "#c9a84c", fontWeight: 500 }}>+1 (305) 942-9407</a>
             </p>
@@ -180,18 +180,18 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
   }
 
   return (
-    <section ref={ref} className="py-24 md:py-28" style={{ background: "#0a0a0a", fontFamily: "'Jost', sans-serif" }} id="quote-form">
+    <section ref={ref} className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }} id="quote-form">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: "italic", fontSize: "clamp(2rem, 4vw, 44px)", color: "#f2ead8", marginBottom: "12px" }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: "italic", fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)", marginBottom: "12px" }}>
             Get Pricing Built Around Your Volume.
           </h2>
-          <p style={{ fontWeight: 300, fontSize: "16px", color: "#a09888", maxWidth: "560px", margin: "0 auto" }}>
+          <p style={{ fontWeight: 300, fontSize: "16px", color: "var(--site-text-muted)", maxWidth: "560px", margin: "0 auto" }}>
             Tell us about your business and we'll respond within 24 hours with custom pricing for your order size.
           </p>
         </div>
         
-        <div className="max-w-2xl mx-auto p-8 md:p-12 rounded-2xl" style={{ background: "#111111", border: "1px solid rgba(201,168,76,0.2)" }}>
+        <div className="max-w-2xl mx-auto p-8 md:p-12 rounded-2xl" style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)", boxShadow: "var(--site-shadow-card)" }}>
           {/* Progress */}
           <div className="h-1 rounded-full mb-8" style={{ background: "rgba(201,168,76,0.15)" }}>
             <div className="h-full rounded-full transition-all duration-500" style={{ width: step === 1 ? "50%" : "100%", background: "#c9a84c" }} />
@@ -202,14 +202,14 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
               <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "#c9a84c", color: "#090909" }}>
                 <Building2 className="w-4 h-4" />
               </div>
-              <span style={{ fontSize: "14px", fontWeight: 400, color: "#f2ead8" }}>Business Profile</span>
+              <span style={{ fontSize: "14px", fontWeight: 400, color: "var(--site-text-primary)" }}>Business Profile</span>
             </div>
             <div className="flex-1 h-px mx-4" style={{ background: "rgba(201,168,76,0.2)" }} />
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: step >= 2 ? "#c9a84c" : "rgba(201,168,76,0.15)", color: step >= 2 ? "#090909" : "#8a8070" }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: step >= 2 ? "#c9a84c" : "rgba(201,168,76,0.15)", color: step >= 2 ? "#090909" : "var(--site-text-muted)" }}>
                 <Package className="w-4 h-4" />
               </div>
-              <span style={{ fontSize: "14px", fontWeight: 400, color: step >= 2 ? "#f2ead8" : "#8a8070" }}>Product Needs</span>
+              <span style={{ fontSize: "14px", fontWeight: 400, color: step >= 2 ? "var(--site-text-primary)" : "var(--site-text-muted)" }}>Product Needs</span>
             </div>
           </div>
           
@@ -279,7 +279,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
                         }}
                         className="mt-0.5"
                       />
-                      <label htmlFor={category.id} className="cursor-pointer" style={{ fontSize: "14px", color: "#f2ead8", fontWeight: 300 }}>
+                      <label htmlFor={category.id} className="cursor-pointer" style={{ fontSize: "14px", color: "var(--site-text-primary)", fontWeight: 300 }}>
                         {category.label}
                       </label>
                     </div>
@@ -333,31 +333,37 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
                   onCheckedChange={(checked) => step2Form.setValue("optInSpecSheets", !!checked)}
                   className="mt-0.5"
                 />
-                <label htmlFor="optIn" className="cursor-pointer" style={{ fontSize: "14px", color: "#f2ead8", fontWeight: 300 }}>
-                  Send me the St. Lucian Bush Medicine Spec Sheets (PDF with detailed product information)
+                <label htmlFor="optIn" className="cursor-pointer" style={{ fontSize: "14px", color: "var(--site-text-primary)", fontWeight: 300 }}>
+                  Send me specification sheets and batch availability updates
                 </label>
               </div>
               
               <div className="flex gap-4 mt-8">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setStep(1)}
-                  className="flex items-center gap-2 px-6 py-4 rounded-full transition-colors"
-                  style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#f2ead8", background: "transparent", fontWeight: 400 }}
+                  className="flex items-center justify-center gap-2 px-8 py-4 rounded-full transition-all"
+                  style={{ border: "1px solid var(--site-border)", color: "var(--site-text-primary)", fontWeight: 400, fontSize: "15px" }}
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-full transition-all hover:brightness-110"
-                  style={{ background: "#c9a84c", color: "#090909", fontWeight: 500, fontSize: "16px", padding: "18px", opacity: isSubmitting ? 0.7 : 1 }}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-full transition-all hover:brightness-110 disabled:opacity-60"
+                  style={{ background: "#c9a84c", color: "#090909", fontWeight: 500, fontSize: "16px", padding: "18px" }}
                 >
                   {isSubmitting ? (
-                    <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Submitting...
+                    </>
                   ) : (
-                    <>Continue to Product Selection <ArrowRight className="w-5 h-5" /></>
+                    <>
+                      Submit Request
+                      <ArrowRight className="w-5 h-5" />
+                    </>
                   )}
                 </button>
               </div>
@@ -368,5 +374,3 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
     </section>
   );
 });
-
-LeadForm.displayName = "LeadForm";

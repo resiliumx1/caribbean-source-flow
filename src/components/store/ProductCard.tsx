@@ -52,24 +52,27 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
     <div
       className="group relative rounded-2xl overflow-hidden transition-all duration-300"
       style={{
-        background: "#111111",
-        border: "1px solid transparent",
+        background: "var(--site-bg-card)",
+        border: "1px solid var(--site-border)",
+        boxShadow: "var(--site-shadow-card)",
         ...style,
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.border = "1px solid rgba(201,168,76,0.4)";
-        e.currentTarget.style.transform = "scale(1.02)";
+        e.currentTarget.style.border = "1px solid var(--site-card-hover-border)";
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = "0 12px 40px rgba(26,18,8,0.12)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.border = "1px solid transparent";
-        e.currentTarget.style.transform = "scale(1)";
+        e.currentTarget.style.border = "1px solid var(--site-border)";
+        e.currentTarget.style.transform = "";
+        e.currentTarget.style.boxShadow = "var(--site-shadow-card)";
       }}
     >
       {/* Image Container */}
       <Link
         to={`/shop/${product.slug}`}
         className="block relative aspect-square overflow-hidden"
-        style={{ background: "#1a1a1a" }}
+        style={{ background: "var(--site-img-bg)" }}
       >
         <div className="absolute inset-0 flex items-center justify-center p-6">
           {product.image_url ? (
@@ -140,7 +143,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
               fontWeight: 600,
               fontSize: "17px",
               lineHeight: 1.3,
-              color: "#f2ead8",
+              color: "var(--site-text-primary)",
             }}
           >
             {product.name}
@@ -161,7 +164,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
               />
             ))}
           </div>
-          <span style={{ fontSize: "13px", color: "rgba(242,234,216,0.5)" }}>
+          <span style={{ fontSize: "13px", color: "var(--site-text-muted)" }}>
             ({reviewCount})
           </span>
         </div>
@@ -170,7 +173,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
         {benefits.length > 0 && (
           <div className="space-y-1.5 pt-1">
             {benefits.map((benefit, i) => (
-              <div key={i} className="flex items-start gap-2" style={{ fontSize: "14px", color: "rgba(242,234,216,0.7)" }}>
+              <div key={i} className="flex items-start gap-2" style={{ fontSize: "14px", color: "var(--site-text-secondary)" }}>
                 <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#c9a84c" }} />
                 <span className="line-clamp-1">{benefit}</span>
               </div>
@@ -192,7 +195,7 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
               >
                 {prices.primary}
               </span>
-              <span className="block" style={{ fontSize: "12px", color: "rgba(242,234,216,0.4)" }}>
+              <span className="block" style={{ fontSize: "12px", color: "var(--site-text-muted)" }}>
                 {prices.secondary}
               </span>
             </div>

@@ -1089,3 +1089,86 @@
     animation: none;
   }
 }
+
+/* ═══ LIGHT MODE OVERRIDES ═══ */
+html:not(.dark) .the-answer-page {
+  background-color: var(--site-bg-primary);
+  color: var(--site-text-primary);
+}
+
+html:not(.dark) .answer-hero__left {
+  background: var(--site-bg-deep);
+}
+
+html:not(.dark) .answer-hero__img-fade {
+  background: linear-gradient(to right, var(--site-bg-deep) 0%, transparent 100%);
+}
+
+html:not(.dark) .answer-hero__title,
+html:not(.dark) .answer-hero__subtitle,
+html:not(.dark) .answer-hero__desc,
+html:not(.dark) .ingredients-section__heading,
+html:not(.dark) .ingredient-card__name,
+html:not(.dark) .craft-step__title,
+html:not(.dark) .benefit-card__title,
+html:not(.dark) .howto-section__heading,
+html:not(.dark) .howto-step__title,
+html:not(.dark) .testimonial-card__quote,
+html:not(.dark) .testimonial-card__name,
+html:not(.dark) .chronixx-section__quote,
+html:not(.dark) .chronixx-section__stat-label {
+  color: var(--site-text-primary);
+}
+
+html:not(.dark) .answer-hero__cert-tag,
+html:not(.dark) .chronixx-section__title,
+html:not(.dark) .chronixx-section__bio,
+html:not(.dark) .chronixx-section__note,
+html:not(.dark) .ingredients-section__desc,
+html:not(.dark) .ingredient-card__alias,
+html:not(.dark) .ingredient-card__desc,
+html:not(.dark) .craft-section__desc,
+html:not(.dark) .craft-step__desc,
+html:not(.dark) .benefit-card__desc,
+html:not(.dark) .benefits-section__subtitle,
+html:not(.dark) .benefits-section__cert,
+html:not(.dark) .howto-section__subtext,
+html:not(.dark) .howto-step__desc,
+html:not(.dark) .final-cta__badge,
+html:not(.dark) .final-cta__sub {
+  color: var(--site-text-muted);
+}
+
+html:not(.dark) .chronixx-section {
+  background-color: var(--site-bg-secondary);
+}
+
+html:not(.dark) .chronixx-section__img-fade {
+  background: linear-gradient(to left, var(--site-bg-secondary) 0%, transparent 100%);
+}
+
+html:not(.dark) .chronixx-stat-card,
+html:not(.dark) .ingredient-card,
+html:not(.dark) .benefit-card,
+html:not(.dark) .testimonial-card {
+  background: var(--site-bg-card);
+  border-color: var(--site-border);
+  box-shadow: var(--site-shadow-card);
+}
+
+html:not(.dark) .craft-section,
+html:not(.dark) .howto-section {
+  background-color: var(--site-bg-secondary);
+}
+
+html:not(.dark) .craft-step__circle {
+  background: var(--site-bg-secondary);
+}
+
+html:not(.dark) .howto-section__float-badge {
+  background: var(--site-bg-card);
+}
+
+html:not(.dark) .chronixx-section__watermark {
+  color: var(--site-text-primary);
+}

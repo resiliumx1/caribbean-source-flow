@@ -26,13 +26,13 @@ const solutions = [
 
 export const ProblemSolution = () => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "#0D0D0D", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#f2ead8", marginBottom: "12px" }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)", marginBottom: "12px" }}>
             Your Sourcing Challenges, <span style={{ color: "#c9a84c" }}>Solved</span>
           </h2>
-          <p style={{ color: "#8a8070", fontWeight: 300, fontSize: "16px", maxWidth: "560px", margin: "0 auto" }}>
+          <p style={{ color: "var(--site-text-muted)", fontWeight: 300, fontSize: "16px", maxWidth: "560px", margin: "0 auto" }}>
             We understand the pain of unreliable supply chains. Here's how we're different.
           </p>
         </div>
@@ -42,9 +42,8 @@ export const ProblemSolution = () => {
             <div 
               key={index} 
               className="rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02]"
-              style={{ background: "#111111", border: "1px solid rgba(201,168,76,0.15)" }}
+              style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)", boxShadow: "var(--site-shadow-card)" }}
             >
-              {/* Image with stronger overlay */}
               <div className="relative h-48 overflow-hidden">
                 <img src={item.image} alt={item.solution} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.75) 60%)' }} />
@@ -52,21 +51,19 @@ export const ProblemSolution = () => {
               </div>
               
               <div className="p-6">
-                {/* Problem */}
                 <div className="flex items-start gap-3 mb-4">
                   <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "#ef4444" }} />
                   <div>
                     <p style={{ fontSize: "12px", fontWeight: 400, color: "#c9a84c", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>The Problem</p>
-                    <p style={{ color: "#f2ead8", fontWeight: 400, fontSize: "15px" }}>{item.problem}</p>
+                    <p style={{ color: "var(--site-text-primary)", fontWeight: 400, fontSize: "15px" }}>{item.problem}</p>
                   </div>
                 </div>
                 
-                {/* Solution */}
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "#c9a84c" }} />
                   <div>
                     <p style={{ fontSize: "12px", fontWeight: 400, color: "#c9a84c", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>Our Solution</p>
-                    <p style={{ color: "#f2ead8", fontWeight: 500, fontSize: "15px" }}>{item.solution}</p>
+                    <p style={{ color: "var(--site-text-primary)", fontWeight: 500, fontSize: "15px" }}>{item.solution}</p>
                   </div>
                 </div>
               </div>

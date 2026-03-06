@@ -134,7 +134,7 @@ export default function TheAnswer() {
   }, []);
 
   return (
-    <div className="the-answer-page bg-[#0D0D0D] text-[#f2ead8] min-h-screen">
+    <div className="the-answer-page min-h-screen" style={{ background: "var(--site-bg-primary)", color: "var(--site-text-primary)" }}>
 
       {/* ===== 1. HERO ===== */}
       <section className="answer-hero">
@@ -204,7 +204,7 @@ export default function TheAnswer() {
           <div ref={reveal} className="ta-reveal chronixx-section__text-col">
             <SectionLabel text="Artist Endorsement" />
             <span className="chronixx-section__watermark">Chronixx</span>
-            <h2 className="ta-cormorant text-3xl md:text-4xl mb-2 text-[#f2ead8] font-bold">Chronixx</h2>
+            <h2 className="ta-cormorant text-3xl md:text-4xl mb-2 font-bold" style={{ color: "var(--site-text-primary)" }}>Chronixx</h2>
             <p className="chronixx-section__title">
               Jamaican reggae icon · Grammy-nominated artist · Advocate for natural living
             </p>
@@ -285,7 +285,7 @@ export default function TheAnswer() {
         <div className="craft-section__inner">
           <div ref={reveal} className="ta-reveal craft-section__header">
             <SectionLabel text="The Craft" showLine={false} />
-            <h2 className="ta-cormorant text-3xl md:text-4xl mb-4 text-[#f2ead8] font-bold">
+            <h2 className="ta-cormorant text-3xl md:text-4xl mb-4 font-bold" style={{ color: "var(--site-text-primary)" }}>
               From Root to Remedy.
             </h2>
             <p className="craft-section__desc">
@@ -318,7 +318,7 @@ export default function TheAnswer() {
       <section className="benefits-section">
         <div ref={reveal} className="ta-reveal benefits-section__header">
           <SectionLabel text="Why The Answer" showLine={false} />
-          <h2 className="ta-cormorant text-3xl md:text-4xl mb-4 text-[#f2ead8] font-bold">
+          <h2 className="ta-cormorant text-3xl md:text-4xl mb-4 font-bold" style={{ color: "var(--site-text-primary)" }}>
             Daily Protection.<br />Total Fortification.
           </h2>
           <p className="benefits-section__subtitle">

@@ -21,7 +21,7 @@ export function ProtocolTimeline() {
   const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section ref={containerRef} className="py-24 md:py-28 overflow-hidden" style={{ background: '#0a0a0a' }}>
+    <section ref={containerRef} className="py-24 md:py-28 overflow-hidden" style={{ background: 'var(--site-bg-primary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
