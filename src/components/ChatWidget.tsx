@@ -160,7 +160,7 @@ export default function ChatWidget() {
           </button>
 
           {/* MountKailashChat rendered inline */}
-          <div className="flex-1 overflow-hidden" style={{ minHeight: 0 }}>
+          <div className="flex-1 overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
             <Suspense
               fallback={
                 <div className="flex items-center justify-center h-full" style={{ background: "#0a0a0a" }}>
