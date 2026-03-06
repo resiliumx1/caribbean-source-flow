@@ -428,10 +428,11 @@ export default function MountKailashChat() {
 
   return (
     <div style={{
-      minHeight: "100vh", background: t.bg,
+      height: "100%", minHeight: "100dvh", background: t.bg,
       display: "flex", flexDirection: "column", alignItems: "center",
       fontFamily: "'Georgia', 'Times New Roman', serif",
       transition: "background 0.3s",
+      overflow: "hidden",
     }}>
 
       {/* ══ HEADER ══ */}
@@ -484,11 +485,11 @@ export default function MountKailashChat() {
       </div>
 
       {/* ══ PAGE BODY ══ */}
-      <div style={{ width: "100%", maxWidth: 820, flex: 1, padding: "0 14px 16px", boxSizing: "border-box" }}>
+      <div style={{ width: "100%", maxWidth: 820, flex: 1, padding: "0 14px 16px", boxSizing: "border-box", display: "flex", flexDirection: "column", minHeight: 0, overflow: "hidden" }}>
 
         {/* ── CHAT TAB ── */}
         {activeTab === "chat" && (
-          <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 66px)" }}>
+          <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, overflow: "hidden" }}>
             {/* Messages */}
             <div style={{ flex: 1, overflowY: "auto", padding: "16px 0 8px", display: "flex", flexDirection: "column", gap: 12 }}>
               {messages.map((msg, idx) => (
@@ -554,7 +555,7 @@ export default function MountKailashChat() {
             </div>
 
             {/* Quick-prompt chips */}
-            <div style={{ padding: "8px 0 4px", overflowX: "auto", display: "flex", gap: 7, flexWrap: "nowrap" }}>
+            <div style={{ padding: "8px 0 4px", overflowX: "auto", display: "flex", gap: 7, flexWrap: "nowrap", flexShrink: 0, WebkitOverflowScrolling: "touch" }}>
               {QUICK_PROMPTS.map((p, i) => (
                 <button key={i} onClick={() => sendMessage(p)} style={{
                   whiteSpace: "nowrap", padding: "7px 14px", borderRadius: 20,
@@ -613,7 +614,7 @@ export default function MountKailashChat() {
 
         {/* ── PRODUCTS TAB ── */}
         {activeTab === "products" && (
-          <div style={{ paddingTop: 18 }}>
+          <div style={{ paddingTop: 18, flex: 1, overflowY: "auto", minHeight: 0 }}>
             <div style={{
               textAlign: "center", marginBottom: 18, padding: 18,
               background: t.surface, borderRadius: 16, border: `1px solid ${t.border}`,
@@ -694,7 +695,7 @@ export default function MountKailashChat() {
         ::-webkit-scrollbar{width:5px;height:5px}
         ::-webkit-scrollbar-track{background:transparent}
         ::-webkit-scrollbar-thumb{background:#3a7a3a;border-radius:3px}
-        div::-webkit-scrollbar:horizontal{height:0}
+        
         textarea::placeholder{color:#8aaa8a!important}
         button:hover:not(:disabled){opacity:0.82}
         a:hover{opacity:0.8}
