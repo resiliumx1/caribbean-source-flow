@@ -388,7 +388,7 @@ export default function TheAnswer() {
       <section className="testimonials-section">
         <div ref={reveal} className="ta-reveal" style={{ textAlign: "center", marginBottom: 48 }}>
           <SectionLabel text="What People Are Saying" showLine={false} />
-          <h2 className="ta-cormorant text-3xl md:text-4xl text-[#f2ead8] font-bold">
+          <h2 className="ta-cormorant text-3xl md:text-4xl font-bold" style={{ color: 'var(--site-text-primary)' }}>
             Real Stories. Real Results.
           </h2>
         </div>
