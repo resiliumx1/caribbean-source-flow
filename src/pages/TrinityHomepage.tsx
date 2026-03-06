@@ -84,7 +84,7 @@ const TrinityHomepage = () => {
       <PriestKailashQuote />
       <SocialProofMatrix />
       <ByTheNumbers />
-      <ReSegmentation />
+      
       <UnifiedFooter />
       <GoddessWhatsApp />
       <ConsultationToast />
