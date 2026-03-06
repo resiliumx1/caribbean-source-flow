@@ -695,7 +695,7 @@ export default function MountKailashChat() {
         ::-webkit-scrollbar{width:5px;height:5px}
         ::-webkit-scrollbar-track{background:transparent}
         ::-webkit-scrollbar-thumb{background:#3a7a3a;border-radius:3px}
-        div::-webkit-scrollbar:horizontal{height:0}
+        
         textarea::placeholder{color:#8aaa8a!important}
         button:hover:not(:disabled){opacity:0.82}
         a:hover{opacity:0.8}
