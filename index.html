@@ -10,18 +10,21 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://mountkailashslu.com" />
 
-    <!-- Hero LCP image preload — MUST be first link tag -->
-    <link rel="preload" as="image" href="/src/assets/home-hero-forest.webp" type="image/webp" fetchpriority="high" />
-
     <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://mcwthjcpcajhvhwpuvvs.supabase.co" />
     <link rel="dns-prefetch" href="https://mcwthjcpcajhvhwpuvvs.supabase.co" />
 
-    <!-- Preload critical fonts -->
-    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/jost/v15/92zPtBhPNqw79Ij1E865zBUv7myjJQVG.woff2" crossorigin />
+    <!-- Hero LCP image preload -->
+    <link rel="preload" as="image" href="/src/assets/home-hero-forest.webp" type="image/webp" fetchpriority="high" />
+
+    <!-- Critical font (homepage hero): load render-blocking -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,700&family=Jost:wght@300;400;500&display=swap" />
+
+    <!-- Non-critical fonts: load async to avoid render-blocking -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Lora&family=Space+Mono&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Lora&family=Space+Mono&display=swap" media="print" onload="this.media='all'" />
 
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/KBVCYBIRlWQKYPcd76HHSztmFF13/social-images/social-1770013953420-KHALASH LOGO.jpeg">

@@ -1,5 +1,5 @@
 /* TheAnswer Page Styles — uses MKRC theme variables */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,700&family=Jost:wght@300;400;500&display=swap');
+/* Fonts loaded via <link> in index.html to avoid render-blocking @import */
 
 /* ===== GLOBAL POLISH ===== */
 .the-answer-page {
