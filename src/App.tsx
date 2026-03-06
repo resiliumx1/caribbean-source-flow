@@ -130,7 +130,7 @@ function AppContent() {
         </Routes>
       </Suspense>
       <CompareBar />
-      <MKRCChatWidget />
+      <ChatWidget />
     </>
   );
 }
