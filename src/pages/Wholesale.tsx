@@ -12,9 +12,9 @@ const Wholesale = () => {
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.title = "Caribbean Botanical Wholesale | COA Documentation | 3-Day US Delivery | Mount Kailash";
+    document.title = "Caribbean Botanical Wholesale | COA Documentation | Quick US Delivery | Mount Kailash";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Wholesale Caribbean botanicals with full COA documentation. 3-day US delivery from Miami warehouse. Volume pricing for clinics, retailers and wellness brands.");
+    if (meta) meta.setAttribute("content", "Wholesale Caribbean botanicals with full COA documentation. Quick US delivery from Miami warehouse. Volume pricing for clinics, retailers and wellness brands.");
   }, []);
 
   const scrollToForm = () => {
