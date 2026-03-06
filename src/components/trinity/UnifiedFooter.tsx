@@ -38,7 +38,7 @@ export function UnifiedFooter() {
 
           {/* Shop Column */}
           <div>
-            <h3 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Shop</h3>
+            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Shop</h2>
             <ul className="space-y-2 text-sm">
               {[
                 { label: "All Products", href: "/shop" },
