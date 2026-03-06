@@ -87,10 +87,12 @@ function CarouselRow({ category, videos, onVideoClick }: CarouselRowProps) {
   // Determine cards per view based on container width
   useEffect(() => {
     function update() {
-      const w = containerRef.current?.offsetWidth || 1200;
-      if (w < 640) setCardsPerView(1);
-      else if (w < 1024) setCardsPerView(2);
-      else setCardsPerView(3);
+      requestAnimationFrame(() => {
+        const w = containerRef.current?.offsetWidth || 1200;
+        if (w < 640) setCardsPerView(1);
+        else if (w < 1024) setCardsPerView(2);
+        else setCardsPerView(3);
+      });
     }
     update();
     window.addEventListener("resize", update);
