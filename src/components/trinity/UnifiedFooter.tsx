@@ -42,10 +42,10 @@ export function UnifiedFooter() {
             <ul className="space-y-1 text-sm">
               {[
                 { label: "All Products", href: "/shop" },
-                { label: "Liquid Tinctures", href: "/shop/category/liquid-tinctures" },
-                { label: "Capsules & Powders", href: "/shop/category/capsules-powders" },
-                { label: "Traditional Teas", href: "/shop/category/traditional-teas" },
-                { label: "Raw Herbs", href: "/shop/category/raw-herbs" },
+                { label: "Liquid Tinctures", href: "/shop" },
+                { label: "Capsules & Powders", href: "/shop" },
+                { label: "Traditional Teas", href: "/shop" },
+                { label: "Raw Herbs", href: "/shop" },
               ].map((item) => (
                 <li key={item.label}>
                   <Link to={item.href} style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">

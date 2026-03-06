@@ -39,27 +39,27 @@ export function StoreFooter() {
                 </Link>
               </li>
               <li>
-                <Link to="/shop/category/liquid-tinctures" className="hover:text-gold transition-colors">
+                <Link to="/shop" className="hover:text-gold transition-colors">
                   Liquid Tinctures
                 </Link>
               </li>
               <li>
-                <Link to="/shop/category/capsules-powders" className="hover:text-gold transition-colors">
+                <Link to="/shop" className="hover:text-gold transition-colors">
                   Capsules & Powders
                 </Link>
               </li>
               <li>
-                <Link to="/shop/category/traditional-teas" className="hover:text-gold transition-colors">
+                <Link to="/shop" className="hover:text-gold transition-colors">
                   Traditional Teas
                 </Link>
               </li>
               <li>
-                <Link to="/shop/category/curated-bundles" className="hover:text-gold transition-colors">
+                <Link to="/shop" className="hover:text-gold transition-colors">
                   Curated Bundles
                 </Link>
               </li>
               <li>
-                <Link to="/shop/category/raw-herbs" className="hover:text-gold transition-colors">
+                <Link to="/shop" className="hover:text-gold transition-colors">
                   Raw Herbs
                 </Link>
               </li>

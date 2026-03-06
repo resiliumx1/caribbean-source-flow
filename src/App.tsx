@@ -23,9 +23,7 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Retreats = lazy(() => import("./pages/Retreats"));
-const HerbalPhysicianCourse = lazy(() => import("./pages/HerbalPhysicianCourse"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-const GoddessCard = lazy(() => import("./pages/GoddessCard"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const AdminRetreats = lazy(() => import("./pages/AdminRetreats"));
@@ -37,8 +35,6 @@ const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
-const MountKailashChat = lazy(() => import("./components/MountKailashChat"));
-
 
 const queryClient = new QueryClient();
 
@@ -74,7 +70,7 @@ queryClient.prefetchQuery({
 const COMING_SOON = false;
 
 // Pages that should NOT show the header
-const pagesWithoutHeader = ["/admin", "/goddess"];
+const pagesWithoutHeader = ["/admin"];
 
 // Loading fallback
 function PageLoader() {
@@ -105,17 +101,14 @@ function AppContent() {
           <Route path="/" element={<TrinityHomepage />} />
           <Route path="/wholesale" element={<Wholesale />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/shop/category/:categorySlug" element={<Shop />} />
           <Route path="/shop/:slug" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/compare" element={<ComparePage />} />
           
           <Route path="/retreats" element={<Retreats />} />
-          <Route path="/school/herbal-physician-course" element={<HerbalPhysicianCourse />} />
           <Route path="/the-answer" element={<TheAnswer />} />
           <Route path="/webinars" element={<WebinarsPage />} />
-          <Route path="/chat" element={<div className="min-h-screen" style={{ background: '#0a0a0a' }}><MountKailashChat /></div>} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="products" element={<AdminProducts />} />
@@ -125,7 +118,6 @@ function AppContent() {
             <Route path="webinars" element={<AdminWebinars />} />
             <Route path="analytics" element={<AdminAnalytics />} />
           </Route>
-          <Route path="/goddess" element={<GoddessCard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
