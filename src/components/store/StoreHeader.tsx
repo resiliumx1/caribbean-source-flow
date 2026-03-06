@@ -10,12 +10,14 @@ import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 
+const SCHOOL_URL = "https://mount-kailash-school-temp.netlify.app";
+
 const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "Shop", to: "/shop" },
   { label: "Wholesale", to: "/wholesale" },
   { label: "Retreats", to: "/retreats" },
-  { label: "School", to: "/school" },
+  { label: "School", to: SCHOOL_URL, external: true },
   { label: "The Answer", to: "/the-answer" },
   { label: "Webinars", to: "/webinars" },
 ];
@@ -76,6 +78,8 @@ export function StoreHeader() {
               src={mtKailashLogo}
               alt="Mount Kailash Rejuvenation Centre"
               className="h-10 w-10 rounded-full object-cover"
+              width={40}
+              height={40}
             />
             <div className="hidden sm:block">
               <span className="font-serif font-bold text-foreground leading-tight block">
@@ -90,6 +94,19 @@ export function StoreHeader() {
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-5" aria-label="Main navigation">
             {NAV_LINKS.map((link) => {
+              if ('external' in link && link.external) {
+                return (
+                  <a
+                    key={link.label}
+                    href={link.to}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium transition-colors min-h-[44px] flex items-center text-foreground hover:text-primary"
+                  >
+                    {link.label}
+                  </a>
+                );
+              }
               const isActive = location.pathname === link.to || 
                 (link.to !== "/" && location.pathname.startsWith(link.to));
               return (
@@ -145,6 +162,20 @@ export function StoreHeader() {
               <SheetContent side="right" className="w-72" aria-label="Mobile navigation">
                 <nav className="flex flex-col gap-4 mt-8">
                   {NAV_LINKS.map((link) => {
+                    if ('external' in link && link.external) {
+                      return (
+                        <a
+                          key={link.label}
+                          href={link.to}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="text-lg font-medium transition-colors min-h-[44px] flex items-center text-foreground hover:text-primary"
+                        >
+                          {link.label}
+                        </a>
+                      );
+                    }
                     const isActive = location.pathname === link.to || 
                       (link.to !== "/" && location.pathname.startsWith(link.to));
                     return (

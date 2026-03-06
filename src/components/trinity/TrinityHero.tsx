@@ -43,6 +43,8 @@ export function TrinityHero() {
           className="w-full h-full object-cover"
           loading="eager"
           fetchPriority="high"
+          width={1600}
+          height={900}
         />
         <div
           className="absolute inset-0"
@@ -114,6 +116,8 @@ export function TrinityHero() {
                       alt={path.title}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
+                      width={600}
+                      height={400}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/40 to-transparent group-hover:from-[#0a0a0a]/80 transition-all duration-500" />
                     <div className="absolute bottom-0 left-0 right-0 p-8">

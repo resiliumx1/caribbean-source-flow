@@ -15,7 +15,7 @@ export function UnifiedFooter() {
           {/* Brand Column */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <img src={mtKailashLogo} alt="Mount Kailash Rejuvenation Centre" className="w-10 h-10 rounded-full object-cover" />
+              <img src={mtKailashLogo} alt="Mount Kailash Rejuvenation Centre" className="w-10 h-10 rounded-full object-cover" width={40} height={40} />
               <div>
                 <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, color: 'var(--site-footer-text)' }}>Mount Kailash</div>
                 <div style={{ fontSize: '12px', color: 'var(--site-footer-muted)' }}>Rejuvenation Centre</div>
