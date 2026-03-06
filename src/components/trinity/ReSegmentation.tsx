@@ -3,7 +3,7 @@ import { ShoppingBag, Building2, Mountain, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import shopHero from "@/assets/shop-hero-flatlay.jpg";
 import wholesaleHero from "@/assets/wholesale-hero.jpg";
-import retreatHero from "@/assets/retreat-hero-yoga.jpg";
+import retreatHero from "@/assets/retreat-hero-yoga.webp";
 
 const paths = [
   {

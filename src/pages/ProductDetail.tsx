@@ -5,7 +5,7 @@ import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
 import { ProductGallery } from "@/components/store/ProductGallery";
 import { VariantSelector } from "@/components/store/VariantSelector";
-import { VideoFooter } from "@/components/store/VideoFooter";
+
 import { RelatedProducts } from "@/components/store/RelatedProducts";
 import { ReviewSection } from "@/components/reviews/ReviewSection";
 import { CompareButton } from "@/components/store/CompareButton";
@@ -463,7 +463,7 @@ export default function ProductDetail() {
         <RelatedProducts productId={product.id} categoryId={product.category_id} />
       </main>
 
-      <VideoFooter />
+      
       <StoreFooter />
       <WhatsAppFloat />
     </div>
