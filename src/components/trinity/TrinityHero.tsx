@@ -43,6 +43,8 @@ export function TrinityHero() {
           className="w-full h-full object-cover"
           loading="eager"
           fetchPriority="high"
+          width={1600}
+          height={900}
         />
         <div
           className="absolute inset-0"
