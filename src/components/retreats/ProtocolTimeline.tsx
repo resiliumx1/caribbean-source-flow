@@ -25,10 +25,10 @@ export function ProtocolTimeline() {
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#f2ead8', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Your Transformation Journey
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#8a8070', maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
             A guided path from assessment to lasting vitality—designed to restore balance, not overwhelm the body.
           </p>
         </div>
@@ -102,7 +102,7 @@ export function ProtocolTimeline() {
                     style={{
                       width: '56px',
                       height: '56px',
-                      background: isActive ? '#c9a84c' : '#0a0a0a',
+                      background: isActive ? '#c9a84c' : 'var(--site-bg-deep)',
                       border: '2px solid #c9a84c',
                     }}
                     whileHover={{ scale: 1.1 }}
@@ -114,10 +114,10 @@ export function ProtocolTimeline() {
                     <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '14px', color: '#c9a84c', display: 'block', marginBottom: '4px' }}>
                       0{index + 1}
                     </span>
-                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '18px', color: isActive ? '#c9a84c' : '#f2ead8', marginBottom: '8px', transition: 'color 0.3s' }}>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '18px', color: isActive ? '#c9a84c' : 'var(--site-text-primary)', marginBottom: '8px', transition: 'color 0.3s' }}>
                       {step.title}
                     </h3>
-                    <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: '#8a8070', maxWidth: '200px', lineHeight: 1.6 }}>
+                    <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: 'var(--site-text-muted)', maxWidth: '200px', lineHeight: 1.6 }}>
                       {step.description}
                     </p>
                   </div>

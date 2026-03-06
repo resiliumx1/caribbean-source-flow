@@ -38,6 +38,7 @@ const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
+const MountKailashChat = lazy(() => import("./components/MountKailashChat"));
 
 
 const queryClient = new QueryClient();
@@ -116,6 +117,7 @@ function AppContent() {
           <Route path="/school/herbal-physician-course" element={<HerbalPhysicianCourse />} />
           <Route path="/the-answer" element={<TheAnswer />} />
           <Route path="/webinars" element={<WebinarsPage />} />
+          <Route path="/chat" element={<div className="min-h-screen" style={{ background: '#0a0a0a' }}><MountKailashChat /></div>} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="products" element={<AdminProducts />} />

@@ -388,7 +388,7 @@ export default function TheAnswer() {
       <section className="testimonials-section">
         <div ref={reveal} className="ta-reveal" style={{ textAlign: "center", marginBottom: 48 }}>
           <SectionLabel text="What People Are Saying" showLine={false} />
-          <h2 className="ta-cormorant text-3xl md:text-4xl text-[#f2ead8] font-bold">
+          <h2 className="ta-cormorant text-3xl md:text-4xl font-bold" style={{ color: 'var(--site-text-primary)' }}>
             Real Stories. Real Results.
           </h2>
         </div>
@@ -413,7 +413,7 @@ export default function TheAnswer() {
       <section id="purchase" className="final-cta">
         <div ref={reveal} className="ta-reveal">
           <SectionLabel text="Your Immune System Deserves The Answer" showLine={false} />
-          <h2 className="ta-cormorant text-3xl md:text-4xl mb-4 text-[#f2ead8] font-bold italic">
+          <h2 className="ta-cormorant text-3xl md:text-4xl mb-4 font-bold italic" style={{ color: 'var(--site-text-primary)' }}>
             Join Thousands Who've Made The Answer Their Daily Ritual.
           </h2>
           <img src={tincture} alt="The Answer bottle" className="final-cta__bottle" />
