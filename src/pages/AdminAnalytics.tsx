@@ -5,10 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, Package, ShoppingCart, DollarSign, Users, Star, BarChart3 } from "lucide-react";
+import { TrendingUp, TrendingDown, Package, ShoppingCart, DollarSign, Users, Star, BarChart3, MessageCircle, MousePointerClick, ArrowRightLeft, AlertTriangle } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, PieChart, Pie, Cell, Legend, LineChart, Line,
+  BarChart, Bar, PieChart, Pie, Cell, Legend, LineChart, Line, FunnelChart, Funnel, LabelList,
 } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -18,7 +18,7 @@ function getDays(range: Range) {
   if (range === "7d") return 7;
   if (range === "30d") return 30;
   if (range === "90d") return 90;
-  return 3650; // ~10 years for "all"
+  return 3650;
 }
 
 function getStartDate(range: Range) {
@@ -45,6 +45,8 @@ const COLORS = {
   cream: "#f5f0e8",
   greenLight: "#2e6e2e",
   greenMuted: "#3a7a3a",
+  amber: "#d97706",
+  red: "#dc2626",
 };
 
 const PIE_COLORS = ["#1c4a1c", "#c8a84b", "#2e6e2e", "#8b6914", "#5aad5a", "#d4af37", "#7aa25b", "#a07040"];
@@ -146,6 +148,38 @@ export default function AdminAnalytics() {
     queryKey: ["analytics-reviews-total"],
     queryFn: async () => {
       const { count } = await supabase.from("reviews").select("*", { count: "exact", head: true });
+      return count ?? 0;
+    },
+  });
+
+  const { data: allReviews } = useQuery({
+    queryKey: ["analytics-all-reviews-ratings"],
+    queryFn: async () => {
+      const { data } = await supabase.from("reviews").select("id, rating, created_at, status");
+      return data ?? [];
+    },
+  });
+
+  // ─── Chat Analytics ───
+  const { data: chatEvents } = useQuery({
+    queryKey: ["analytics-chat-events", range],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("chat_analytics_events")
+        .select("*")
+        .gte("created_at", startDate)
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  const { data: allChatSessions } = useQuery({
+    queryKey: ["analytics-chat-sessions-all"],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("chat_analytics_events")
+        .select("*", { count: "exact", head: true })
+        .eq("event_type", "session_start");
       return count ?? 0;
     },
   });
@@ -253,6 +287,124 @@ export default function AdminAnalytics() {
     const soldIds = new Set(orderItems?.map(i => i.product_id) ?? []);
     return (products ?? []).filter(p => !soldIds.has(p.id));
   }, [products, orderItems]);
+
+  // ─── Chat Analytics Computed ───
+  const chatAnalytics = useMemo(() => {
+    const events = chatEvents ?? [];
+    const sessionStarts = events.filter(e => e.event_type === "session_start");
+    const productClicks = events.filter(e => e.event_type === "product_click");
+    const handoffs = events.filter(e => e.event_type === "whatsapp_handoff");
+
+    // Top symptoms
+    const symptomMap: Record<string, number> = {};
+    events.filter(e => e.event_type === "symptom_query" && e.symptom).forEach(e => {
+      const s = (e.symptom ?? "").toLowerCase().trim();
+      if (s) symptomMap[s] = (symptomMap[s] || 0) + 1;
+    });
+    const topSymptoms = Object.entries(symptomMap)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    const clickRate = sessionStarts.length > 0
+      ? Math.round((productClicks.length / sessionStarts.length) * 100)
+      : 0;
+
+    return {
+      periodSessions: sessionStarts.length,
+      allTimeSessions: allChatSessions ?? 0,
+      productClicks: productClicks.length,
+      handoffs: handoffs.length,
+      clickRate,
+      topSymptoms,
+    };
+  }, [chatEvents, allChatSessions]);
+
+  // ─── Review Intelligence ───
+  const reviewIntelligence = useMemo(() => {
+    const reviews = allReviews ?? [];
+    const approved = reviews.filter(r => r.status === "approved");
+    const avgRating = approved.length > 0
+      ? approved.reduce((s, r) => s + r.rating, 0) / approved.length
+      : 0;
+
+    // Rating distribution
+    const dist = [1, 2, 3, 4, 5].map(star => ({
+      star: `${star}★`,
+      count: approved.filter(r => r.rating === star).length,
+    }));
+
+    // Review velocity — last 12 weeks
+    const now = new Date();
+    const weeks: { week: string; count: number }[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - (i + 1) * 7);
+      const weekEnd = new Date(now);
+      weekEnd.setDate(now.getDate() - i * 7);
+      const label = `W${12 - i}`;
+      const count = approved.filter(r => {
+        const d = new Date(r.created_at);
+        return d >= weekStart && d < weekEnd;
+      }).length;
+      weeks.push({ week: label, count });
+    }
+
+    return { avgRating: Math.round(avgRating * 10) / 10, distribution: dist, velocity: weeks };
+  }, [allReviews]);
+
+  // ─── Revenue by Product Category (donut) ───
+  const revenueByCategoryDonut = useMemo(() => {
+    const catMap = new Map(categories?.map(c => [c.id, c.name]) ?? []);
+    const productCatMap = new Map(products?.map(p => [p.id, catMap.get(p.category_id ?? "") ?? p.product_type ?? "Other"]) ?? []);
+    const map: Record<string, number> = {};
+    orderItems?.forEach(item => {
+      const cat = productCatMap.get(item.product_id) ?? "Other";
+      map[cat] = (map[cat] || 0) + Number(item.price_usd) * item.quantity;
+    });
+    const total = Object.values(map).reduce((s, v) => s + v, 0);
+    return Object.entries(map)
+      .map(([name, value]) => ({ name, value: Math.round(value * 100) / 100, pct: total > 0 ? Math.round((value / total) * 100) : 0 }))
+      .sort((a, b) => b.value - a.value);
+  }, [orderItems, products, categories]);
+
+  // ─── Inventory & Demand Alerts ───
+  const inventoryAlerts = useMemo(() => {
+    const soldIds = new Set(orderItems?.map(i => i.product_id) ?? []);
+    // Products recommended in chat
+    const chatRecommendedMap: Record<string, number> = {};
+    (chatEvents ?? []).filter(e => e.event_type === "product_click" && e.product_name).forEach(e => {
+      const name = e.product_name ?? "";
+      chatRecommendedMap[name] = (chatRecommendedMap[name] || 0) + 1;
+    });
+
+    // Review counts per product
+    const reviewCountMap: Record<string, number> = {};
+    (currentReviews ?? []).forEach(r => {
+      reviewCountMap[r.product_id] = (reviewCountMap[r.product_id] || 0) + 1;
+    });
+
+    return (products ?? []).map(p => {
+      const noOrders = !soldIds.has(p.id);
+      const chatRecs = chatRecommendedMap[p.name] ?? 0;
+      const reviewCount = reviewCountMap[p.id] ?? 0;
+      const highDemandNoSales = noOrders && chatRecs > 0;
+      let severity: "red" | "amber" | "green" | "none" = "none";
+      if (highDemandNoSales) severity = "red";
+      else if (noOrders) severity = "amber";
+
+      return { ...p, noOrders, chatRecs, reviewCount, severity };
+    })
+      .filter(p => p.severity !== "none" || p.reviewCount > 0)
+      .sort((a, b) => {
+        if (a.severity === "red" && b.severity !== "red") return -1;
+        if (b.severity === "red" && a.severity !== "red") return 1;
+        if (a.severity === "amber" && b.severity !== "amber") return -1;
+        if (b.severity === "amber" && a.severity !== "amber") return 1;
+        return b.reviewCount - a.reviewCount;
+      })
+      .slice(0, 20);
+  }, [products, orderItems, chatEvents, currentReviews]);
 
   // ─── KPI Card ───
   const KPICard = ({ title, value, icon: Icon, change, prefix = "" }: {
@@ -420,11 +572,19 @@ export default function AdminAnalytics() {
             {ordersByGeo.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={ordersByGeo} layout="vertical">
+                  <defs>
+                    <linearGradient id="geoGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor={COLORS.green} />
+                      <stop offset="100%" stopColor={COLORS.gold} />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} className="fill-muted-foreground" width={80} />
                   <Tooltip contentStyle={CustomTooltipStyle} />
-                  <Bar dataKey="count" fill={COLORS.greenLight} radius={[0, 4, 4, 0]} name="Orders" />
+                  <Bar dataKey="count" fill="url(#geoGrad)" radius={[0, 4, 4, 0]} name="Orders">
+                    <LabelList dataKey="count" position="right" style={{ fontSize: 11, fill: COLORS.gold }} />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -520,6 +680,214 @@ export default function AdminAnalytics() {
             </div>
           ) : (
             <EmptyState message="All products have been sold in this period — great job! 🎉" />
+          )}
+        </CardContent>
+      </Card>
+
+      {/* ═══════════════════════════════════════════════════════════
+          NEW SECTIONS BELOW
+      ═══════════════════════════════════════════════════════════ */}
+
+      {/* ─── AI Chat Analytics ─── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-foreground flex items-center gap-2">
+            <MessageCircle className="h-5 w-5" style={{ color: COLORS.green }} />
+            AI Chat Analytics
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="rounded-lg p-4" style={{ background: COLORS.cream }}>
+              <p className="text-xs font-medium" style={{ color: COLORS.green }}>Sessions (All Time)</p>
+              <p className="text-2xl font-bold" style={{ color: COLORS.green }}>{chatAnalytics.allTimeSessions}</p>
+            </div>
+            <div className="rounded-lg p-4" style={{ background: COLORS.cream }}>
+              <p className="text-xs font-medium" style={{ color: COLORS.green }}>Sessions (Period)</p>
+              <p className="text-2xl font-bold" style={{ color: COLORS.green }}>{chatAnalytics.periodSessions}</p>
+            </div>
+            <div className="rounded-lg p-4" style={{ background: COLORS.cream }}>
+              <p className="text-xs font-medium flex items-center gap-1" style={{ color: COLORS.green }}>
+                <MousePointerClick className="h-3 w-3" /> Chat→Shop Rate
+              </p>
+              <p className="text-2xl font-bold" style={{ color: COLORS.gold }}>{chatAnalytics.clickRate}%</p>
+            </div>
+            <div className="rounded-lg p-4" style={{ background: COLORS.cream }}>
+              <p className="text-xs font-medium flex items-center gap-1" style={{ color: COLORS.green }}>
+                <ArrowRightLeft className="h-3 w-3" /> WhatsApp Handoffs
+              </p>
+              <p className="text-2xl font-bold" style={{ color: COLORS.green }}>{chatAnalytics.handoffs}</p>
+            </div>
+          </div>
+
+          <h4 className="text-sm font-semibold text-foreground mb-3">Top Symptoms / Conditions Asked</h4>
+          {chatAnalytics.topSymptoms.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chatAnalytics.topSymptoms} layout="vertical" margin={{ left: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} className="fill-muted-foreground" width={140} />
+                <Tooltip contentStyle={CustomTooltipStyle} />
+                <Bar dataKey="count" fill={COLORS.gold} radius={[0, 4, 4, 0]} name="Queries">
+                  <LabelList dataKey="count" position="right" style={{ fontSize: 11, fill: COLORS.gold }} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <EmptyState message="Symptom tracking data will appear as users interact with the AI chat. Events are tracked automatically." />
+          )}
+        </CardContent>
+      </Card>
+
+      {/* ─── Review Intelligence ─── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Average Rating */}
+        <Card>
+          <CardHeader><CardTitle className="text-foreground">Average Rating</CardTitle></CardHeader>
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <span className="text-5xl font-bold" style={{ color: COLORS.gold }}>
+              {reviewIntelligence.avgRating > 0 ? reviewIntelligence.avgRating : "—"}
+            </span>
+            <div className="flex items-center gap-1 mt-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} className={`h-5 w-5 ${i < Math.round(reviewIntelligence.avgRating) ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground"}`} />
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">{allReviewsCount ?? 0} total reviews</p>
+          </CardContent>
+        </Card>
+
+        {/* Rating Distribution */}
+        <Card>
+          <CardHeader><CardTitle className="text-foreground">Rating Distribution</CardTitle></CardHeader>
+          <CardContent>
+            {reviewIntelligence.distribution.some(d => d.count > 0) ? (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={reviewIntelligence.distribution} layout="vertical">
+                  <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+                  <YAxis type="category" dataKey="star" tick={{ fontSize: 12 }} className="fill-muted-foreground" width={40} />
+                  <Tooltip contentStyle={CustomTooltipStyle} />
+                  <Bar dataKey="count" fill={COLORS.gold} radius={[0, 4, 4, 0]} name="Reviews">
+                    <LabelList dataKey="count" position="right" style={{ fontSize: 11, fill: COLORS.gold }} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState message="Rating data will appear once reviews are received." />
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Review Velocity */}
+        <Card>
+          <CardHeader><CardTitle className="text-foreground">Review Velocity (12 weeks)</CardTitle></CardHeader>
+          <CardContent>
+            {reviewIntelligence.velocity.some(w => w.count > 0) ? (
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={reviewIntelligence.velocity}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="week" tick={{ fontSize: 10 }} className="fill-muted-foreground" />
+                  <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+                  <Tooltip contentStyle={CustomTooltipStyle} />
+                  <Line type="monotone" dataKey="count" stroke={COLORS.green} strokeWidth={2} dot={{ fill: COLORS.green, r: 3 }} name="Reviews" />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState message="Review velocity will appear over the next 12 weeks." />
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ─── Revenue by Product Category (Donut) ─── */}
+      <Card>
+        <CardHeader><CardTitle className="text-foreground">Revenue by Product Category</CardTitle></CardHeader>
+        <CardContent>
+          {revenueByCategoryDonut.length > 0 ? (
+            <ResponsiveContainer width="100%" height={400}>
+              <PieChart>
+                <Pie
+                  data={revenueByCategoryDonut}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={80}
+                  outerRadius={140}
+                  paddingAngle={3}
+                  dataKey="value"
+                  label={({ name, pct }) => `${name} (${pct}%)`}
+                >
+                  {revenueByCategoryDonut.map((_, i) => (
+                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={CustomTooltipStyle}
+                  formatter={(v: number, _name: string, props: any) => [
+                    `$${v.toFixed(2)} (${props.payload.pct}%)`,
+                    props.payload.name,
+                  ]}
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <EmptyState message="Revenue category breakdown will appear after your first sale." />
+          )}
+        </CardContent>
+      </Card>
+
+      {/* ─── Inventory & Demand Alerts ─── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-foreground flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5" style={{ color: COLORS.amber }} />
+            Inventory & Demand Alerts
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {inventoryAlerts.length > 0 ? (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead className="text-center">Chat Recs</TableHead>
+                    <TableHead className="text-center">Reviews</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {inventoryAlerts.map(p => (
+                    <TableRow key={p.id}>
+                      <TableCell>
+                        {p.severity === "red" && (
+                          <Badge className="text-[10px]" style={{ background: COLORS.red, color: "white" }}>High Demand / 0 Sales</Badge>
+                        )}
+                        {p.severity === "amber" && (
+                          <Badge className="text-[10px]" style={{ background: COLORS.amber, color: "white" }}>No Orders</Badge>
+                        )}
+                        {p.severity === "none" && p.reviewCount > 0 && (
+                          <Badge className="text-[10px]" style={{ background: COLORS.green, color: "white" }}>Most Reviewed</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium text-foreground">{p.name}</TableCell>
+                      <TableCell className="text-muted-foreground capitalize">{p.product_type}</TableCell>
+                      <TableCell className="text-center text-foreground">{p.chatRecs}</TableCell>
+                      <TableCell className="text-center text-foreground">{p.reviewCount}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => window.open(`/shop/${p.slug}`, "_blank")}>
+                          Promote
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <EmptyState message="Inventory alerts will appear as order and chat data accumulates." />
           )}
         </CardContent>
       </Card>
