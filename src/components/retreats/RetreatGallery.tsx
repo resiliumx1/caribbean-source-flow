@@ -132,6 +132,8 @@ export function RetreatGallery() {
                   alt={image.title || "Retreat gallery image"}
                   className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
+                  width={400}
+                  height={300}
                 />
               </div>
             ))}

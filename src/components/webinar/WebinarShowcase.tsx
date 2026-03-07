@@ -33,7 +33,7 @@ function VideoCard({ video, onClick }: VideoCardProps) {
       {/* Thumbnail */}
       <div className="relative aspect-video overflow-hidden">
         {video.thumbnail_url ? (
-          <img src={video.thumbnail_url} alt={video.title || ""} className="w-full h-full object-cover" loading="lazy" />
+          <img src={video.thumbnail_url} alt={video.title || ""} className="w-full h-full object-cover" loading="lazy" width={640} height={360} />
         ) : (
           <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: "#27272a" }}>
             <span className="text-4xl">🎥</span>

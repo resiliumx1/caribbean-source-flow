@@ -27,6 +27,9 @@ export default function WebinarHost() {
               src={priestKailashImg}
               alt="Honorable Priest Kailash"
               className="w-full h-auto object-cover"
+              width={600}
+              height={800}
+              loading="lazy"
             />
           </div>
           {/* Floating credential badge */}
