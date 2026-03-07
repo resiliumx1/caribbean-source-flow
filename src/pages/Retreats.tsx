@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import FadeInStagger from "@/components/FadeInStagger";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
 import { RetreatPathSplit } from "@/components/retreats/RetreatPathSplit";
 import { ProtocolTimeline } from "@/components/retreats/ProtocolTimeline";
