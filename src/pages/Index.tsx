@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import FadeInStagger from "@/components/FadeInStagger";
 import { Header } from "@/components/wholesale/Header";
 import { Hero } from "@/components/wholesale/Hero";
 import { ProblemSolution } from "@/components/wholesale/ProblemSolution";
@@ -19,13 +20,27 @@ const Index = () => {
   return (
     <main className="min-h-screen">
       <Header onScrollToForm={scrollToForm} />
-      <Hero onScrollToForm={scrollToForm} />
-      <ProblemSolution />
-      <ProductGrid onScrollToForm={scrollToForm} />
-      <ComplianceTrust onScrollToForm={scrollToForm} />
-      <LeadForm ref={formRef} />
-      <SocialProof />
-      <Footer />
+      <FadeInStagger delay={0.1}>
+        <Hero onScrollToForm={scrollToForm} />
+      </FadeInStagger>
+      <FadeInStagger delay={0.2}>
+        <ProblemSolution />
+      </FadeInStagger>
+      <FadeInStagger delay={0.3}>
+        <ProductGrid onScrollToForm={scrollToForm} />
+      </FadeInStagger>
+      <FadeInStagger delay={0.4}>
+        <ComplianceTrust onScrollToForm={scrollToForm} />
+      </FadeInStagger>
+      <FadeInStagger delay={0.5}>
+        <LeadForm ref={formRef} />
+      </FadeInStagger>
+      <FadeInStagger delay={0.6}>
+        <SocialProof />
+      </FadeInStagger>
+      <FadeInStagger delay={0.7}>
+        <Footer />
+      </FadeInStagger>
       <WhatsAppButton />
     </main>
   );
