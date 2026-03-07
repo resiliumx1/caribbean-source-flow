@@ -1,9 +1,6 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- LCP preload — first tag in head -->
-    <link rel="preload" as="image" href="/src/assets/home-hero-forest.webp" type="image/webp" fetchpriority="high" />
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mount Kailash Rejuvenation Centre | Natural Herbal Wellness from Saint Lucia</title>
@@ -13,22 +10,14 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://mountkailashslu.com" />
 
-    <!-- Inline critical CSS — eliminates network dependency for first paint -->
-    <style>
-      *{margin:0;box-sizing:border-box}
-      body{background:#f5f0e8;font-family:'Cormorant Garamond',Georgia,serif}
-      @font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:700;font-display:swap;src:url(https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtKky2F7g.woff2) format('woff2')}
-      @font-face{font-family:'Jost';font-style:normal;font-weight:300;font-display:swap;src:url(https://fonts.gstatic.com/s/jost/v20/92zatBhPNqw73oTd4jQmfxI.woff2) format('woff2')}
-      header,nav{position:sticky;top:0;width:100%;z-index:50;background:rgba(245,240,232,0.95);backdrop-filter:blur(8px)}
-      .hero-section{min-height:100vh;position:relative}
-      #root{min-height:100vh}
-    </style>
-
     <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://mcwthjcpcajhvhwpuvvs.supabase.co" />
     <link rel="dns-prefetch" href="https://mcwthjcpcajhvhwpuvvs.supabase.co" />
+
+    <!-- Hero LCP image preload -->
+    <link rel="preload" as="image" href="/src/assets/home-hero-forest.webp" type="image/webp" fetchpriority="high" />
 
     <!-- Preload critical font files to eliminate network chain -->
     <link rel="preload" as="font" href="https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtKky2F7g.woff2" type="font/woff2" crossorigin />
@@ -68,6 +57,6 @@
       })();
     </script>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx" defer></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -54,8 +54,6 @@ export function ProductGallery({
           src={selectedImage!}
           alt={`${productName} - Image ${selectedIndex + 1}`}
           className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
-          width={600}
-          height={600}
         />
 
         {/* Navigation arrows */}
@@ -102,9 +100,6 @@ export function ProductGallery({
                 src={url}
                 alt={`${productName} thumbnail ${index + 1}`}
                 className="w-full h-full object-cover"
-                width={80}
-                height={80}
-                loading="lazy"
               />
             </button>
           ))}

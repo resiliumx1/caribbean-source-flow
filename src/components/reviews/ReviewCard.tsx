@@ -43,8 +43,6 @@ export function ReviewCard({ review, onHelpful }: ReviewCardProps) {
               src={url as string}
               alt={`Review image ${i + 1}`}
               loading="lazy"
-              width={80}
-              height={80}
               className="w-20 h-20 rounded-lg object-cover flex-shrink-0 border border-border"
             />
           ))}

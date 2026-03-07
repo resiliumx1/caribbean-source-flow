@@ -28,9 +28,6 @@ export function PriestKailashBio() {
                 src={priestPhoto}
                 alt="Right Honourable Priest Kailash Kay Leonce"
                 className="w-full h-full object-cover"
-                width={600}
-                height={800}
-                loading="lazy"
               />
             </div>
             <div className="absolute -bottom-4 -right-4 w-32 h-32 border-4 rounded-2xl -z-10" style={{ borderColor: '#c9a84c' }} />

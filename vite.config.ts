@@ -18,21 +18,16 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  css: {
-    devSourcemap: false,
-  },
   build: {
     minify: 'esbuild',
-    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('recharts')) return 'vendor-charts';
-          if (id.includes('react-dom')) return 'vendor-react-dom';
-          if (id.includes('framer-motion')) return 'vendor-motion';
-          if (id.includes('@supabase')) return 'vendor-supabase';
-          if (id.includes('@tanstack/react-query')) return 'vendor-query';
-          if (id.includes('node_modules')) return 'vendor';
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['framer-motion', '@radix-ui/react-dialog', '@radix-ui/react-popover', '@radix-ui/react-accordion'],
+          'vendor-query': ['@tanstack/react-query'],
+          'vendor-charts': ['recharts'],
+          'vendor-supabase': ['@supabase/supabase-js'],
         },
       },
     },
