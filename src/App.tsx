@@ -12,6 +12,8 @@ import { CompareBar } from "@/components/store/CompareBar";
 import ChatWidget from "@/components/ChatWidget";
 import ComingSoon from "@/components/ComingSoon";
 import { lazy, Suspense } from "react";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "@/components/PageTransition";
 
 // Eagerly loaded (homepage)
 import TrinityHomepage from "./pages/TrinityHomepage";
