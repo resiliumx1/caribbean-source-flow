@@ -26,6 +26,9 @@ export default function WebinarFeatured() {
             src={webinarImg}
             alt="Featured MKRC Webinar"
             className="w-full h-auto object-cover"
+            width={800}
+            height={450}
+            loading="lazy"
           />
           {/* Play overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-center justify-center">

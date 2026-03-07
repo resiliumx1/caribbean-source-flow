@@ -70,6 +70,8 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
                 src={allImages[selectedImageIndex]}
                 alt={product.name}
                 className="max-w-full max-h-[350px] object-contain"
+                width={400}
+                height={400}
               />
             ) : (
               <ProductPlaceholder

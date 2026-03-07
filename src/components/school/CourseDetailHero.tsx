@@ -65,6 +65,8 @@ export function CourseDetailHero() {
                 src="https://schools.mountkailashslu.com/wp-content/uploads/2024/09/herbal-physician-course-thumbnail.jpg"
                 alt="Herbal Physician Course Level 1"
                 className="w-full h-full object-cover"
+                width={800}
+                height={450}
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
