@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import FadeInStagger from "@/components/FadeInStagger";
 import { Header } from "@/components/wholesale/Header";
 import { Hero } from "@/components/wholesale/Hero";
 import { ProblemSolution } from "@/components/wholesale/ProblemSolution";
