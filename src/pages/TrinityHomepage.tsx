@@ -5,7 +5,7 @@ import { PriestKailashConsultation } from "@/components/trinity/PriestKailashCon
 import { PriestKailashQuote } from "@/components/trinity/PriestKailashQuote";
 import { SocialProofMatrix } from "@/components/trinity/SocialProofMatrix";
 import { ByTheNumbers } from "@/components/trinity/ByTheNumbers";
-
+import FadeInStagger from "@/components/FadeInStagger";
 import { UnifiedFooter } from "@/components/trinity/UnifiedFooter";
 import { MessageCircle, ArrowRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
