@@ -76,16 +76,29 @@ function ConsultationToast() {
 const TrinityHomepage = () => {
   return (
     <main className="min-h-screen">
-      <TrinityHero />
-      <OriginStory />
-      <div id="priest-kailash-consultation">
-        <PriestKailashConsultation />
-      </div>
-      <PriestKailashQuote />
-      <SocialProofMatrix />
-      <ByTheNumbers />
-      
-      <UnifiedFooter />
+      <FadeInStagger delay={0.1}>
+        <TrinityHero />
+      </FadeInStagger>
+      <FadeInStagger delay={0.2}>
+        <OriginStory />
+      </FadeInStagger>
+      <FadeInStagger delay={0.3}>
+        <div id="priest-kailash-consultation">
+          <PriestKailashConsultation />
+        </div>
+      </FadeInStagger>
+      <FadeInStagger delay={0.4}>
+        <PriestKailashQuote />
+      </FadeInStagger>
+      <FadeInStagger delay={0.5}>
+        <SocialProofMatrix />
+      </FadeInStagger>
+      <FadeInStagger delay={0.6}>
+        <ByTheNumbers />
+      </FadeInStagger>
+      <FadeInStagger delay={0.7}>
+        <UnifiedFooter />
+      </FadeInStagger>
       <GoddessWhatsApp />
       <ConsultationToast />
     </main>

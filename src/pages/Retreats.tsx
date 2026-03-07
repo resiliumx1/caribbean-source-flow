@@ -34,17 +34,39 @@ const Retreats = () => {
 
   return (
     <main className="min-h-screen">
-      <RetreatsHero />
-      <RetreatPathSplit />
-      <ProtocolTimeline />
-      <RetreatCalendar />
-      <GroupRetreatsList />
-      <RetreatGallery />
-      <RetreatVideoGallery />
-      <TransformationStories />
-      <PriestKailashBio />
-      <RetreatFAQ />
-      <UnifiedFooter />
+      <FadeInStagger delay={0.1}>
+        <RetreatsHero />
+      </FadeInStagger>
+      <FadeInStagger delay={0.2}>
+        <RetreatPathSplit />
+      </FadeInStagger>
+      <FadeInStagger delay={0.3}>
+        <ProtocolTimeline />
+      </FadeInStagger>
+      <FadeInStagger delay={0.4}>
+        <RetreatCalendar />
+      </FadeInStagger>
+      <FadeInStagger delay={0.5}>
+        <GroupRetreatsList />
+      </FadeInStagger>
+      <FadeInStagger delay={0.6}>
+        <RetreatGallery />
+      </FadeInStagger>
+      <FadeInStagger delay={0.7}>
+        <RetreatVideoGallery />
+      </FadeInStagger>
+      <FadeInStagger delay={0.8}>
+        <TransformationStories />
+      </FadeInStagger>
+      <FadeInStagger delay={0.9}>
+        <PriestKailashBio />
+      </FadeInStagger>
+      <FadeInStagger delay={1.0}>
+        <RetreatFAQ />
+      </FadeInStagger>
+      <FadeInStagger delay={1.1}>
+        <UnifiedFooter />
+      </FadeInStagger>
       <GoddessWhatsApp />
     </main>
   );
