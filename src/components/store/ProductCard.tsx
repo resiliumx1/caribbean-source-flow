@@ -80,6 +80,9 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
               src={product.image_url}
               alt={product.name}
               className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
+              width={400}
+              height={400}
+              loading="lazy"
             />
           ) : (
             <ProductPlaceholder

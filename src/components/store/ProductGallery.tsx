@@ -102,6 +102,9 @@ export function ProductGallery({
                 src={url}
                 alt={`${productName} thumbnail ${index + 1}`}
                 className="w-full h-full object-cover"
+                width={80}
+                height={80}
+                loading="lazy"
               />
             </button>
           ))}
