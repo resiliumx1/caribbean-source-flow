@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { TrinityHero } from "@/components/trinity/TrinityHero";
 import { OriginStory } from "@/components/trinity/OriginStory";
 import { PriestKailashConsultation } from "@/components/trinity/PriestKailashConsultation";
