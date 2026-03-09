@@ -22,6 +22,7 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
   const gateLeftRef = useRef<HTMLDivElement>(null);
   const gateRightRef = useRef<HTMLDivElement>(null);
   const sealRef = useRef<HTMLDivElement>(null);
+  const cueRef = useRef<HTMLDivElement>(null);
   
   const rafRef = useRef<number>(0);
   const completedRef = useRef(false);
