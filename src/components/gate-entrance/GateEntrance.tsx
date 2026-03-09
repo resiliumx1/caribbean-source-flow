@@ -153,7 +153,22 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
         <div id="logo-seal" ref={sealRef}>
           <div id="wreath-wrap">
             <CenterWreath />
-            <div className="star-seal" />
+            <div style={{
+              width: 160,
+              height: 160,
+              backgroundColor: '#c9a96e',
+              WebkitMaskImage: "url('/star-seal-for-lovable.png')",
+              maskImage: "url('/star-seal-for-lovable.png')",
+              WebkitMaskSize: 'contain',
+              maskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center',
+              maskPosition: 'center',
+              filter: 'drop-shadow(0 0 18px rgba(201,169,110,0.4))',
+              position: 'relative',
+              zIndex: 2,
+            }} />
           </div>
         </div>
 
