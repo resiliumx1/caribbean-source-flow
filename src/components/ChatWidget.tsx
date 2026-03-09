@@ -28,27 +28,33 @@ function useIsMobile() {
 }
 
 export default function ChatWidget() {
-  const [gateComplete, setGateComplete] = useState(() => {
-    // If not on homepage, or gate already seen — show immediately
+  // Gate visibility: hidden until 55% progress on homepage first visit
+  const [visible, setVisible] = useState(() => {
     const isHome = window.location.pathname === '/' || window.location.pathname === '';
     const hasSeenGate = !!localStorage.getItem('mkrc-gate-seen');
     return !isHome || hasSeenGate;
   });
 
   useEffect(() => {
-    // Listen for the definitive gate-complete event
-    const handler = () => setGateComplete(true);
-    window.addEventListener('gate-complete', handler);
-    // Also check on route changes (navigating away from home)
-    const checkRoute = () => {
-      if (window.location.pathname !== '/') setGateComplete(true);
+    const onProgress = (e: Event) => {
+      const progress = (e as CustomEvent).detail as number;
+      if (progress >= 0.55) setVisible(true);
     };
+    const onComplete = () => setVisible(true);
+    const checkRoute = () => {
+      if (window.location.pathname !== '/') setVisible(true);
+    };
+
+    window.addEventListener('gate-progress', onProgress);
+    window.addEventListener('gate-complete', onComplete);
     window.addEventListener('popstate', checkRoute);
     return () => {
-      window.removeEventListener('gate-complete', handler);
+      window.removeEventListener('gate-progress', onProgress);
+      window.removeEventListener('gate-complete', onComplete);
       window.removeEventListener('popstate', checkRoute);
     };
   }, []);
+
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -59,7 +65,6 @@ export default function ChatWidget() {
   const autoDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMobile = useIsMobile();
 
-  // Persistent messages state — survives page navigation since ChatWidget never unmounts
   const [messages, setMessages] = useState<ChatMessage[]>([DEFAULT_WELCOME]);
 
   useEffect(() => {
@@ -90,9 +95,7 @@ export default function ChatWidget() {
     setIsOpen((v) => !v);
   };
 
-  // Compute popup dimensions
   const getPopupStyle = (): React.CSSProperties => {
-    // Minimized — just header bar
     if (isMinimized) {
       return {
         bottom: isMobile ? 80 : "max(16px, env(safe-area-inset-bottom, 16px))",
@@ -102,60 +105,29 @@ export default function ChatWidget() {
         borderRadius: 16,
       };
     }
-
-    // Mobile fullscreen
     if (isMobile && isMobileFullscreen) {
-      return {
-        top: 0, right: 0, bottom: 0, left: 0,
-        width: "100vw",
-        height: "100vh",
-        borderRadius: 0,
-      };
+      return { top: 0, right: 0, bottom: 0, left: 0, width: "100vw", height: "100vh", borderRadius: 0 };
     }
-
-    // Desktop maximized
     if (!isMobile && isMaximized) {
-      return {
-        bottom: 0, right: 0,
-        width: 600,
-        height: "92vh",
-        borderRadius: 16,
-      };
+      return { bottom: 0, right: 0, width: 600, height: "92vh", borderRadius: 16 };
     }
-
-    // Mobile default
     if (isMobile) {
-      return {
-        bottom: 80,
-        right: 8,
-        width: "92vw",
-        height: "55vh",
-        borderRadius: 16,
-      };
+      return { bottom: 80, right: 8, width: "92vw", height: "55vh", borderRadius: 16 };
     }
-
-    // Desktop default
     return {
       bottom: "max(16px, env(safe-area-inset-bottom, 16px))",
-      right: 16,
-      width: 420,
-      height: "min(82vh, calc(100vh - 32px))",
-      borderRadius: 16,
+      right: 16, width: 420, height: "min(82vh, calc(100vh - 32px))", borderRadius: 16,
     };
   };
 
   const isFullyCovering = isMobile && isMobileFullscreen;
 
-  if (!gateComplete) return null;
+  if (!visible) return null;
 
   return (
     <>
-      {/* Intro Bubble */}
       {showBubble && !isOpen && (
-        <div
-          className="fixed z-[9999] animate-fade-in"
-          style={{ bottom: 90, right: 16, width: "min(320px, calc(100vw - 40px))" }}
-        >
+        <div className="fixed z-[9999] animate-fade-in" style={{ bottom: 90, right: 16, width: "min(320px, calc(100vw - 40px))" }}>
           <div style={{
             background: "#ffffff", color: "#1c4a1c", borderRadius: 14,
             padding: "14px 16px", boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
@@ -175,7 +147,6 @@ export default function ChatWidget() {
         </div>
       )}
 
-      {/* Floating Button */}
       <button
         onClick={toggleChat}
         className="fixed bottom-6 right-6 z-[9999] w-[60px] h-[60px] rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
@@ -191,7 +162,6 @@ export default function ChatWidget() {
         ) : (
           <>
             <span style={{ fontSize: 28, lineHeight: 1 }}>🌿</span>
-            {/* Pulsing dot — show red normally, green when chat is minimized */}
             <span className="absolute top-0 right-0 w-3 h-3 rounded-full" style={{
               background: isMinimized ? "#22c55e" : "#ef4444",
               border: "2px solid #1c4a1c",
@@ -201,7 +171,6 @@ export default function ChatWidget() {
         )}
       </button>
 
-      {/* Chat Popup */}
       {isOpen && (
         <div
           className="fixed z-[9999] flex flex-col overflow-hidden"
@@ -213,87 +182,47 @@ export default function ChatWidget() {
             transition: "width 0.3s ease, height 0.3s ease, border-radius 0.3s ease",
           }}
         >
-          {/* ── Window control bar (always visible) ── */}
-          <div
-            style={{
-              position: "absolute", top: 0, right: 0, left: 0,
-              height: 48, zIndex: 200,
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "0 10px",
-              pointerEvents: "none",
-            }}
-          >
-            {/* Mobile expand/compact toggle */}
+          <div style={{
+            position: "absolute", top: 0, right: 0, left: 0, height: 48, zIndex: 200,
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "0 10px", pointerEvents: "none",
+          }}>
             <div style={{ pointerEvents: "auto", display: "flex", gap: 4 }}>
               {isMobile && !isMinimized && (
-                <button
-                  onClick={() => setIsMobileFullscreen((v) => !v)}
-                  style={{
-                    height: 26, borderRadius: 13,
-                    background: "rgba(0,0,0,0.45)", border: "none",
-                    display: "flex", alignItems: "center", gap: 4,
-                    padding: "0 10px",
-                    cursor: "pointer", color: "white", fontSize: 11,
-                    fontFamily: "Jost, sans-serif", fontWeight: 500,
-                    opacity: 0.85,
-                  }}
-                >
+                <button onClick={() => setIsMobileFullscreen((v) => !v)} style={{
+                  height: 26, borderRadius: 13, background: "rgba(0,0,0,0.45)", border: "none",
+                  display: "flex", alignItems: "center", gap: 4, padding: "0 10px",
+                  cursor: "pointer", color: "white", fontSize: 11,
+                  fontFamily: "Jost, sans-serif", fontWeight: 500, opacity: 0.85,
+                }}>
                   {isMobileFullscreen ? "⤡ Compact" : "⤢ Expand"}
                 </button>
               )}
             </div>
-
-            {/* Right controls */}
             <div style={{ display: "flex", gap: 4, pointerEvents: "auto" }}>
-              {/* Minimize */}
-              <button
-                onClick={() => setIsMinimized((v) => !v)}
-                style={{
-                  width: 30, height: 30, borderRadius: "50%",
-                  background: "rgba(0,0,0,0.45)", border: "none",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer", transition: "opacity 0.15s",
-                }}
-                aria-label={isMinimized ? "Restore" : "Minimize"}
-              >
+              <button onClick={() => setIsMinimized((v) => !v)} style={{
+                width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
+                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
+              }} aria-label={isMinimized ? "Restore" : "Minimize"}>
                 <Minus className="w-4 h-4 text-white" style={{ opacity: 0.85 }} />
               </button>
-              {/* Maximize — desktop only */}
               {!isMobile && (
-                <button
-                  onClick={() => { setIsMaximized((v) => !v); setIsMinimized(false); }}
-                  style={{
-                    width: 30, height: 30, borderRadius: "50%",
-                    background: "rgba(0,0,0,0.45)", border: "none",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    cursor: "pointer", transition: "opacity 0.15s",
-                  }}
-                  aria-label={isMaximized ? "Restore size" : "Maximize"}
-                >
-                  {isMaximized ? (
-                    <Minimize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} />
-                  ) : (
-                    <Maximize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} />
-                  )}
+                <button onClick={() => { setIsMaximized((v) => !v); setIsMinimized(false); }} style={{
+                  width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
+                }} aria-label={isMaximized ? "Restore size" : "Maximize"}>
+                  {isMaximized ? <Minimize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} /> : <Maximize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} />}
                 </button>
               )}
-              {/* Close */}
-              <button
-                onClick={() => { setIsOpen(false); setIsMaximized(false); setIsMinimized(false); setIsMobileFullscreen(false); }}
-                style={{
-                  width: 30, height: 30, borderRadius: "50%",
-                  background: "rgba(0,0,0,0.45)", border: "none",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer", transition: "opacity 0.15s",
-                }}
-                aria-label="Close chat"
-              >
+              <button onClick={() => { setIsOpen(false); setIsMaximized(false); setIsMinimized(false); setIsMobileFullscreen(false); }} style={{
+                width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
+                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
+              }} aria-label="Close chat">
                 <X className="w-4 h-4 text-white" style={{ opacity: 0.85 }} />
               </button>
             </div>
           </div>
 
-          {/* ── Chat content (hidden when minimized) ── */}
           {!isMinimized && (
             <div className="flex-1 overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
               <Suspense fallback={
@@ -301,52 +230,27 @@ export default function ChatWidget() {
                   <span style={{ fontSize: 32 }}>🌿</span>
                 </div>
               }>
-                <MountKailashChat
-                  externalMessages={messages}
-                  setExternalMessages={setMessages}
-                />
+                <MountKailashChat externalMessages={messages} setExternalMessages={setMessages} />
               </Suspense>
-
-              {/* Floating collapse pill — bottom-left of chat panel */}
-              <button
-                onClick={() => setIsMinimized(true)}
-                style={{
-                  position: "absolute",
-                  bottom: 12,
-                  left: 12,
-                  zIndex: 210,
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  background: "rgba(28,74,28,0.9)",
-                  border: "1px solid rgba(200,168,75,0.3)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                  transition: "transform 0.15s, opacity 0.15s",
-                }}
-                className="hover:scale-110 active:scale-95"
-                aria-label="Collapse chat"
-              >
+              <button onClick={() => setIsMinimized(true)} style={{
+                position: "absolute", bottom: 12, left: 12, zIndex: 210,
+                width: 36, height: 36, borderRadius: "50%",
+                background: "rgba(28,74,28,0.9)", border: "1px solid rgba(200,168,75,0.3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                transition: "transform 0.15s, opacity 0.15s",
+              }} className="hover:scale-110 active:scale-95" aria-label="Collapse chat">
                 <Minus className="w-4 h-4 text-white" />
               </button>
             </div>
           )}
 
-          {/* Minimized header label */}
           {isMinimized && (
-            <div
-              onClick={() => setIsMinimized(false)}
-              style={{
-                height: 48, display: "flex", alignItems: "center",
-                padding: "0 16px", cursor: "pointer",
-                background: "#1c4a1c", color: "#e8c870",
-                fontWeight: "bold", fontSize: 13, letterSpacing: "0.5px",
-                fontFamily: "Georgia, serif",
-              }}
-            >
+            <div onClick={() => setIsMinimized(false)} style={{
+              height: 48, display: "flex", alignItems: "center", padding: "0 16px", cursor: "pointer",
+              background: "#1c4a1c", color: "#e8c870", fontWeight: "bold", fontSize: 13,
+              letterSpacing: "0.5px", fontFamily: "Georgia, serif",
+            }}>
               🌿 Mount Kailash Health Advisor
             </div>
           )}

@@ -136,35 +136,38 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
           ))}
         </div>
 
-        {/* Left Gate */}
+        {/* Left Gate — with left half of wreath */}
         <div className="gate gate-left" ref={gateLeftRef}>
-        </div>
-
-        {/* Right Gate */}
-        <div className="gate gate-right" ref={gateRightRef}>
-        </div>
-
-        {/* Central Seal */}
-        <div id="logo-seal" ref={sealRef}>
-          <div id="wreath-wrap">
-            <CenterWreath />
-            <div className="star-seal-inner" style={{
-              width: 160,
-              height: 160,
-              backgroundColor: '#c9a96e',
-              WebkitMaskImage: "url('/star-seal-for-lovable.png')",
-              maskImage: "url('/star-seal-for-lovable.png')",
-              WebkitMaskSize: 'contain',
-              maskSize: 'contain',
-              WebkitMaskRepeat: 'no-repeat',
-              maskRepeat: 'no-repeat',
-              WebkitMaskPosition: 'center',
-              maskPosition: 'center',
-              filter: 'drop-shadow(0 0 18px rgba(201,169,110,0.4))',
-              position: 'relative',
-              zIndex: 2,
-            }} />
+          <div className="wreath-half wreath-half-left">
+            <GateWreathSVG className="wreath-half-svg" />
           </div>
+        </div>
+
+        {/* Right Gate — with right half of wreath */}
+        <div className="gate gate-right" ref={gateRightRef}>
+          <div className="wreath-half wreath-half-right">
+            <GateWreathSVG className="wreath-half-svg" />
+          </div>
+        </div>
+
+        {/* Central Seal — star only, NO wreath */}
+        <div id="logo-seal" ref={sealRef}>
+          <div className="star-seal-inner" style={{
+            width: 160,
+            height: 160,
+            backgroundColor: '#c9a96e',
+            WebkitMaskImage: "url('/star-seal-for-lovable.png')",
+            maskImage: "url('/star-seal-for-lovable.png')",
+            WebkitMaskSize: 'contain',
+            maskSize: 'contain',
+            WebkitMaskRepeat: 'no-repeat',
+            maskRepeat: 'no-repeat',
+            WebkitMaskPosition: 'center',
+            maskPosition: 'center',
+            filter: 'drop-shadow(0 0 18px rgba(201,169,110,0.4))',
+            position: 'relative',
+            zIndex: 2,
+          }} />
         </div>
 
         {/* Hero Text */}
@@ -198,10 +201,10 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
 }
 
 
-/** Center wreath SVG — verbatim from HTML source */
-function CenterWreath() {
+/** Wreath SVG used on both gate halves */
+function GateWreathSVG({ className }: { className?: string }) {
   return (
-    <svg className="gate-wreath-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none" style={{ opacity: 1, filter: "drop-shadow(0 0 8px var(--gold))" }}>
+    <svg className={className} viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none" style={{ opacity: 1, filter: "drop-shadow(0 0 8px var(--gold))" }}>
       <circle cx="260" cy="260" r="192" stroke="rgba(201,169,110,0.22)" strokeWidth="1.2" strokeDasharray="5 5"/>
       <circle cx="260" cy="260" r="207" stroke="rgba(201,169,110,0.08)" strokeWidth="0.8"/>
 

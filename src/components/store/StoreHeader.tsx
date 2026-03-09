@@ -25,24 +25,35 @@ const NAV_LINKS = [
 export function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [gateProgress, setGateProgress] = useState(0);
   const { cartCount } = useCart();
   const { whatsappNumber, isLocalVisitor } = useStore();
   const location = useLocation();
   const prevCountRef = useRef(cartCount);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
-  const [gateComplete, setGateComplete] = useState(() => {
+
+  // Gate visibility: hidden until 55% progress on homepage first visit
+  const [headerVisible, setHeaderVisible] = useState(() => {
     return !isHomepage || !!localStorage.getItem('mkrc-gate-seen');
   });
 
   useEffect(() => {
-    if (!isHomepage) { setGateComplete(true); return; }
-    if (localStorage.getItem('mkrc-gate-seen')) { setGateComplete(true); return; }
-    // Listen for the definitive gate-complete event
-    const handler = () => setGateComplete(true);
-    window.addEventListener('gate-complete', handler);
-    return () => window.removeEventListener('gate-complete', handler);
+    if (!isHomepage) { setHeaderVisible(true); return; }
+    if (localStorage.getItem('mkrc-gate-seen')) { setHeaderVisible(true); return; }
+
+    // Listen for gate-progress (fires with detail = 0..1)
+    const onProgress = (e: Event) => {
+      const progress = (e as CustomEvent).detail as number;
+      if (progress >= 0.55) setHeaderVisible(true);
+    };
+    const onComplete = () => setHeaderVisible(true);
+
+    window.addEventListener('gate-progress', onProgress);
+    window.addEventListener('gate-complete', onComplete);
+    return () => {
+      window.removeEventListener('gate-progress', onProgress);
+      window.removeEventListener('gate-complete', onComplete);
+    };
   }, [isHomepage]);
 
   useEffect(() => {
@@ -74,7 +85,9 @@ export function StoreHeader() {
         background: isScrolled ? 'var(--site-nav-bg)' : 'var(--site-nav-bg)',
         backdropFilter: isScrolled ? 'blur(16px)' : 'blur(8px)',
         borderColor: isScrolled ? 'var(--site-border-subtle)' : 'transparent',
-        display: gateComplete ? undefined : 'none',
+        opacity: headerVisible ? 1 : 0,
+        pointerEvents: headerVisible ? 'auto' : 'none',
+        transition: 'opacity 0.6s ease, backdrop-filter 0.5s ease, border-color 0.5s ease',
       }}
     >
       {isLocalVisitor && (
