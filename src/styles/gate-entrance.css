@@ -185,6 +185,12 @@
     height: 160px;
   }
 }
+@media (max-width: 767px) {
+  .star-seal-inner {
+    width: 100px !important;
+    height: 100px !important;
+  }
+}
 .gate-wreath-svg {
   position: absolute;
   inset: 0;
