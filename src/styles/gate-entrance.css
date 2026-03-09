@@ -171,6 +171,20 @@
   align-items: center;
   justify-content: center;
 }
+@media (max-width: 767px) {
+  #wreath-wrap {
+    width: 300px;
+    height: 300px;
+  }
+  #logo-seal::before {
+    width: 140px;
+    height: 140px;
+  }
+  #logo-seal::after {
+    width: 160px;
+    height: 160px;
+  }
+}
 .gate-wreath-svg {
   position: absolute;
   inset: 0;

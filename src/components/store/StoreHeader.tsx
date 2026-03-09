@@ -74,9 +74,7 @@ export function StoreHeader() {
         background: isScrolled ? 'var(--site-nav-bg)' : 'var(--site-nav-bg)',
         backdropFilter: isScrolled ? 'blur(16px)' : 'blur(8px)',
         borderColor: isScrolled ? 'var(--site-border-subtle)' : 'transparent',
-        opacity: gateComplete ? 1 : 0,
-        pointerEvents: gateComplete ? 'auto' : 'none',
-        transform: gateComplete ? 'translateY(0)' : 'translateY(-100%)',
+        display: gateComplete ? undefined : 'none',
       }}
     >
       {isLocalVisitor && (
