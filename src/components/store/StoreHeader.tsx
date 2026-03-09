@@ -32,6 +32,17 @@ export function StoreHeader() {
   const prevCountRef = useRef(cartCount);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
+  const [gateComplete, setGateComplete] = useState(!isHomepage);
+
+  useEffect(() => {
+    if (!isHomepage) { setGateComplete(true); return; }
+    const handler = (e: Event) => {
+      const progress = (e as CustomEvent).detail;
+      if (progress >= 0.95 && !gateComplete) setGateComplete(true);
+    };
+    window.addEventListener('gate-progress', handler);
+    return () => window.removeEventListener('gate-progress', handler);
+  }, [isHomepage, gateComplete]);
 
   useEffect(() => {
     if (cartCount !== prevCountRef.current && cartCount > 0) {
