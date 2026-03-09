@@ -133,7 +133,7 @@
 
 /* Seal */
 #logo-seal{
-  position:absolute;left:50%;top:50%;
+  position:absolute;left:50%;top:42%;
   transform:translate(-50%,-50%);
   z-index:20;pointer-events:none;opacity:0;
   animation:sealIn 1.4s ease forwards 0.3s
@@ -222,7 +222,7 @@
 }
 
 /* Hero copy */
-.hero-content{position:relative;z-index:5;text-align:center;padding:0 2rem;pointer-events:none}
+.hero-content{position:relative;z-index:5;text-align:center;padding:0 2rem;pointer-events:none;margin-top:12vh}
 .hero-content::before{
   content:'';position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%);
@@ -298,7 +298,7 @@
 /* ── Half-wreath on gates ──────────────────────── */
 .wreath-half{
   position:absolute;
-  top:50%;
+  top:42%;
   width:260px;
   height:520px;
   overflow:hidden;
