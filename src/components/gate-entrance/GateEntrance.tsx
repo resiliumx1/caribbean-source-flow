@@ -1,5 +1,4 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
-import { GateArtLeft, GateArtRight } from "./GateArt";
 import "@/styles/gate-entrance.css";
 
 /* ── Scroll math — verbatim from HTML source ── */
