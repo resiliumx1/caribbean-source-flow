@@ -298,7 +298,7 @@
 /* ── Half-wreath on gates ──────────────────────── */
 .wreath-half{
   position:absolute;
-  top:50%;
+  top:42%;
   width:260px;
   height:520px;
   overflow:hidden;
