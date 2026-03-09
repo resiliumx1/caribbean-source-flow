@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { TrinityHero } from "@/components/trinity/TrinityHero";
 import { OriginStory } from "@/components/trinity/OriginStory";
 import { PriestKailashConsultation } from "@/components/trinity/PriestKailashConsultation";
@@ -9,6 +9,7 @@ import FadeInStagger from "@/components/FadeInStagger";
 import { UnifiedFooter } from "@/components/trinity/UnifiedFooter";
 import { MessageCircle, ArrowRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { GateEntrance } from "@/components/gate-entrance";
 
 const GoddessWhatsApp = () => (
   <a
@@ -32,7 +33,6 @@ function ConsultationToast() {
       const section = document.getElementById("priest-kailash-consultation");
       if (!section) return;
       const rect = section.getBoundingClientRect();
-      // If section has been scrolled past
       if (rect.bottom < 0) {
         window.removeEventListener("scroll", handleScroll);
         setTimeout(() => {
@@ -74,8 +74,19 @@ function ConsultationToast() {
 }
 
 const TrinityHomepage = () => {
+  const [gateProgress, setGateProgress] = useState(0);
+
+  const handleGateProgress = useCallback((progress: number) => {
+    setGateProgress(progress);
+    // Dispatch custom event for StoreHeader to listen to
+    window.dispatchEvent(new CustomEvent('gate-progress', { detail: progress }));
+  }, []);
+
   return (
     <main className="min-h-screen">
+      {/* Gate Entrance — scroll-driven opening animation */}
+      <GateEntrance onProgressChange={handleGateProgress} />
+
       <FadeInStagger delay={0.1}>
         <TrinityHero />
       </FadeInStagger>
