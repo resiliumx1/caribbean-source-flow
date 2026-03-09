@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Menu, User, MessageCircle } from "lucide-react";
+import { ShoppingBag, Menu, User, MessageCircle, DoorOpen } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { Button } from "@/components/ui/button";
 import { CurrencyToggle } from "./CurrencyToggle";
