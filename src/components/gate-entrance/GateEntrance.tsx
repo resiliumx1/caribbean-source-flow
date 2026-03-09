@@ -57,14 +57,15 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
 
     onProgressChange?.(raw);
 
-    /* Fire completion once */
-    if (raw >= 0.95 && !completedRef.current) {
+    /* Fire completion once — when gates are fully open */
+    const gP = eio(clamp(raw / 0.52, 0, 1));
+    if (gP >= 0.999 && !completedRef.current) {
       completedRef.current = true;
       onGateComplete?.();
+      return; // Stop processing, component will unmount
     }
 
     /* Gates */
-    const gP = eio(clamp(raw / 0.52, 0, 1));
     if (gateLeftRef.current) {
       gateLeftRef.current.style.transform = `translateX(${-gP * 100}%)`;
       gateLeftRef.current.style.visibility = gP >= 0.999 ? 'hidden' : 'visible';
