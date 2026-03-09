@@ -150,6 +150,8 @@ export default function ChatWidget() {
 
   const isFullyCovering = isMobile && isMobileFullscreen;
 
+  if (!gateComplete) return null;
+
   return (
     <>
       {/* Intro Bubble */}
