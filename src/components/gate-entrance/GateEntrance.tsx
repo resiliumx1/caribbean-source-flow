@@ -205,7 +205,7 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
 /** Half-wreath SVG for the gate panels — verbatim from HTML */
 function GateHalfWreath({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <svg className={className} viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none" style={{ opacity: 0.45 }}>
       <circle cx="260" cy="260" r="224" stroke="rgba(201,169,110,0.07)" strokeWidth="1"/>
       <circle cx="260" cy="260" r="192" stroke="rgba(201,169,110,0.13)" strokeWidth="1.2" fill="none" strokeDasharray="6 4"/>
       <circle cx="260" cy="260" r="164" stroke="rgba(201,169,110,0.09)" strokeWidth="0.8" fill="none"/>
