@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { TrinityHero } from "@/components/trinity/TrinityHero";
 import { OriginStory } from "@/components/trinity/OriginStory";
 import { PriestKailashConsultation } from "@/components/trinity/PriestKailashConsultation";
@@ -75,41 +75,54 @@ function ConsultationToast() {
 
 const TrinityHomepage = () => {
   const [gateProgress, setGateProgress] = useState(0);
+  const [gateComplete, setGateComplete] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleGateProgress = useCallback((progress: number) => {
     setGateProgress(progress);
-    // Dispatch custom event for StoreHeader to listen to
     window.dispatchEvent(new CustomEvent('gate-progress', { detail: progress }));
+  }, []);
+
+  const handleGateComplete = useCallback(() => {
+    setGateComplete(true);
+    // Scroll to content and prevent scrolling back up
+    if (contentRef.current) {
+      contentRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, []);
 
   return (
     <main className="min-h-screen">
       {/* Gate Entrance — scroll-driven opening animation */}
-      <GateEntrance onProgressChange={handleGateProgress} />
+      {!gateComplete && (
+        <GateEntrance onProgressChange={handleGateProgress} onGateComplete={handleGateComplete} />
+      )}
 
-      <FadeInStagger delay={0.1}>
-        <TrinityHero />
-      </FadeInStagger>
-      <FadeInStagger delay={0.2}>
-        <OriginStory />
-      </FadeInStagger>
-      <FadeInStagger delay={0.3}>
-        <div id="priest-kailash-consultation">
-          <PriestKailashConsultation />
-        </div>
-      </FadeInStagger>
-      <FadeInStagger delay={0.4}>
-        <PriestKailashQuote />
-      </FadeInStagger>
-      <FadeInStagger delay={0.5}>
-        <SocialProofMatrix />
-      </FadeInStagger>
-      <FadeInStagger delay={0.6}>
-        <ByTheNumbers />
-      </FadeInStagger>
-      <FadeInStagger delay={0.7}>
-        <UnifiedFooter />
-      </FadeInStagger>
+      <div ref={contentRef}>
+        <FadeInStagger delay={0.1}>
+          <TrinityHero />
+        </FadeInStagger>
+        <FadeInStagger delay={0.2}>
+          <OriginStory />
+        </FadeInStagger>
+        <FadeInStagger delay={0.3}>
+          <div id="priest-kailash-consultation">
+            <PriestKailashConsultation />
+          </div>
+        </FadeInStagger>
+        <FadeInStagger delay={0.4}>
+          <PriestKailashQuote />
+        </FadeInStagger>
+        <FadeInStagger delay={0.5}>
+          <SocialProofMatrix />
+        </FadeInStagger>
+        <FadeInStagger delay={0.6}>
+          <ByTheNumbers />
+        </FadeInStagger>
+        <FadeInStagger delay={0.7}>
+          <UnifiedFooter />
+        </FadeInStagger>
+      </div>
       <GoddessWhatsApp />
       <ConsultationToast />
     </main>

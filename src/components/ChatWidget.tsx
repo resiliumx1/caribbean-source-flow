@@ -28,6 +28,31 @@ function useIsMobile() {
 }
 
 export default function ChatWidget() {
+  const [gateComplete, setGateComplete] = useState(false);
+
+  useEffect(() => {
+    // Check if we're on the homepage with a gate
+    const checkGate = () => {
+      const isHome = window.location.pathname === '/';
+      if (!isHome) { setGateComplete(true); return; }
+    };
+    checkGate();
+
+    const handler = (e: Event) => {
+      const progress = (e as CustomEvent).detail;
+      if (progress >= 0.95) setGateComplete(true);
+    };
+    window.addEventListener('gate-progress', handler);
+    // Also listen for route changes
+    const routeHandler = () => {
+      if (window.location.pathname !== '/') setGateComplete(true);
+    };
+    window.addEventListener('popstate', routeHandler);
+    return () => {
+      window.removeEventListener('gate-progress', handler);
+      window.removeEventListener('popstate', routeHandler);
+    };
+  }, []);
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -124,6 +149,8 @@ export default function ChatWidget() {
   };
 
   const isFullyCovering = isMobile && isMobileFullscreen;
+
+  if (!gateComplete) return null;
 
   return (
     <>

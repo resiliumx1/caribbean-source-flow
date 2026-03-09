@@ -14,15 +14,17 @@ function remap(v: number, a: number, b: number, c: number, d: number): number {
 
 interface GateEntranceProps {
   onProgressChange?: (progress: number) => void;
+  onGateComplete?: () => void;
 }
 
-export function GateEntrance({ onProgressChange }: GateEntranceProps) {
+export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const gateLeftRef = useRef<HTMLDivElement>(null);
   const gateRightRef = useRef<HTMLDivElement>(null);
   const sealRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
+  const completedRef = useRef(false);
 
   /* Generate particles once */
   const particles = useMemo(() => {
@@ -53,6 +55,12 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
     const raw = clamp(-rect.top / total, 0, 1);
 
     onProgressChange?.(raw);
+
+    /* Fire completion once */
+    if (raw >= 0.95 && !completedRef.current) {
+      completedRef.current = true;
+      onGateComplete?.();
+    }
 
     /* Gates */
     const gP = eio(clamp(raw / 0.52, 0, 1));
