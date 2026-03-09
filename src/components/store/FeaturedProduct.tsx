@@ -132,12 +132,22 @@ export function FeaturedProduct() {
         {/* Right side - image */}
         <div className="flex items-center justify-center">
           {product.image_url ? (
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="object-contain"
-              style={{ maxHeight: "280px" }}
-            />
+            <Link to={`/shop/${product.slug}`} className="group relative block w-full max-w-[320px] h-[280px]">
+              <img
+                src={product.image_url}
+                alt={product.name}
+                className={`absolute inset-0 w-full h-full object-contain transition-all duration-500 ${
+                  hoverImageUrl ? "opacity-100 group-hover:opacity-0 group-hover:scale-105" : "group-hover:scale-105"
+                }`}
+              />
+              {hoverImageUrl && (
+                <img
+                  src={hoverImageUrl}
+                  alt={`${product.name} alternate view`}
+                  className="absolute inset-0 w-full h-full object-contain opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-105 transition-all duration-500"
+                />
+              )}
+            </Link>
           ) : (
             <div
               className="w-full aspect-square rounded-xl flex items-center justify-center"
