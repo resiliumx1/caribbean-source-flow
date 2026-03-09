@@ -325,7 +325,7 @@ function GateHalfWreath({ className }: { className?: string }) {
 /** Center wreath SVG — verbatim from HTML source */
 function CenterWreath() {
   return (
-    <svg className="gate-wreath-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none" style={{ opacity: 0.6 }}>
+    <svg className="gate-wreath-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none" style={{ opacity: 1, filter: "drop-shadow(0 0 8px var(--gold))" }}>
       <circle cx="260" cy="260" r="192" stroke="rgba(201,169,110,0.22)" strokeWidth="1.2" strokeDasharray="5 5"/>
       <circle cx="260" cy="260" r="207" stroke="rgba(201,169,110,0.08)" strokeWidth="0.8"/>
 
