@@ -1,7 +1,6 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { GateBotanicalArt } from "./GateBotanicalArt";
 import { WreathSVG } from "./WreathSVG";
-import { StarSealFallback } from "./StarSealFallback";
 import "@/styles/gate-entrance.css";
 
 function easeInOutCubic(t: number): number {
@@ -141,7 +140,7 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
         <div id="logo-seal" ref={sealRef}>
           <div className="seal-glow" />
           <div className="seal-ring" />
-          <StarSealFallback />
+          <div className="star-seal" />
         </div>
 
         {/* Hero Text */}
