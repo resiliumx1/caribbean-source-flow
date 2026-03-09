@@ -85,8 +85,7 @@ export function StoreHeader() {
         background: isScrolled ? 'var(--site-nav-bg)' : 'var(--site-nav-bg)',
         backdropFilter: isScrolled ? 'blur(16px)' : 'blur(8px)',
         borderColor: isScrolled ? 'var(--site-border-subtle)' : 'transparent',
-        opacity: headerVisible ? 1 : 0,
-        pointerEvents: headerVisible ? 'auto' : 'none',
+        display: headerVisible ? undefined : 'none',
         transition: 'opacity 0.6s ease, backdrop-filter 0.5s ease, border-color 0.5s ease',
       }}
     >
