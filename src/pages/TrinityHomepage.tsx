@@ -98,10 +98,10 @@ const TrinityHomepage = () => {
     // Dispatch a definitive event so header + chat show immediately
     window.dispatchEvent(new CustomEvent('gate-complete'));
     window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
-    // Scroll to content and prevent scrolling back up
-    if (contentRef.current) {
-      contentRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Reset scroll to top so content starts seamlessly
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+    });
   }, []);
 
   // If gate already done (returning visitor), dispatch immediately
