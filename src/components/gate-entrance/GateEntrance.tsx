@@ -66,7 +66,6 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
     }
 
     /* Gates */
-    const gP = eio(clamp(raw / 0.52, 0, 1));
     if (gateLeftRef.current) {
       gateLeftRef.current.style.transform = `translateX(${-gP * 100}%)`;
       gateLeftRef.current.style.visibility = gP >= 0.999 ? 'hidden' : 'visible';
