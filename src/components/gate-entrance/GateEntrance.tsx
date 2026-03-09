@@ -134,7 +134,7 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
           <div className="wreath-half wreath-half-left">
             <GateHalfWreath className="wreath-half-svg wreath-svg-l" />
           </div>
-          <div className="gate-art">
+          <div className="gate-art" style={{ opacity: 0.1 }}>
             <GateArtLeft />
           </div>
         </div>
@@ -144,7 +144,7 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
           <div className="wreath-half wreath-half-right">
             <GateHalfWreath className="wreath-half-svg wreath-svg-r" />
           </div>
-          <div className="gate-art">
+          <div className="gate-art" style={{ opacity: 0.1 }}>
             <GateArtRight />
           </div>
         </div>
@@ -153,7 +153,22 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
         <div id="logo-seal" ref={sealRef}>
           <div id="wreath-wrap">
             <CenterWreath />
-            <div className="star-seal" />
+            <div style={{
+              width: 160,
+              height: 160,
+              backgroundColor: '#c9a96e',
+              WebkitMaskImage: "url('/star-seal-for-lovable.png')",
+              maskImage: "url('/star-seal-for-lovable.png')",
+              WebkitMaskSize: 'contain',
+              maskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center',
+              maskPosition: 'center',
+              filter: 'drop-shadow(0 0 18px rgba(201,169,110,0.4))',
+              position: 'relative',
+              zIndex: 2,
+            }} />
           </div>
         </div>
 
@@ -190,7 +205,7 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
 /** Half-wreath SVG for the gate panels — verbatim from HTML */
 function GateHalfWreath({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <svg className={className} viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none" style={{ opacity: 0.45 }}>
       <circle cx="260" cy="260" r="224" stroke="rgba(201,169,110,0.07)" strokeWidth="1"/>
       <circle cx="260" cy="260" r="192" stroke="rgba(201,169,110,0.13)" strokeWidth="1.2" fill="none" strokeDasharray="6 4"/>
       <circle cx="260" cy="260" r="164" stroke="rgba(201,169,110,0.09)" strokeWidth="0.8" fill="none"/>
@@ -310,7 +325,7 @@ function GateHalfWreath({ className }: { className?: string }) {
 /** Center wreath SVG — verbatim from HTML source */
 function CenterWreath() {
   return (
-    <svg className="gate-wreath-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <svg className="gate-wreath-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" fill="none" style={{ opacity: 0.45 }}>
       <circle cx="260" cy="260" r="192" stroke="rgba(201,169,110,0.22)" strokeWidth="1.2" strokeDasharray="5 5"/>
       <circle cx="260" cy="260" r="207" stroke="rgba(201,169,110,0.08)" strokeWidth="0.8"/>
 
