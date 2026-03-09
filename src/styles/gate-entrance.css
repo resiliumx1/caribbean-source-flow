@@ -9,6 +9,9 @@
 
 /* ═══ GATE INTRO ═══════════════════════════════ */
 #scroll-stage{position:relative;height:500vh}
+@media (max-width: 767px) {
+  #scroll-stage{height:350vh}
+}
 #sticky-hero{
   position:sticky;top:0;width:100%;height:100vh;
   overflow:hidden;display:flex;align-items:center;justify-content:center
@@ -167,6 +170,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+@media (max-width: 767px) {
+  #wreath-wrap {
+    width: 300px;
+    height: 300px;
+  }
+  #logo-seal::before {
+    width: 140px;
+    height: 140px;
+  }
+  #logo-seal::after {
+    width: 160px;
+    height: 160px;
+  }
+}
+@media (max-width: 767px) {
+  .star-seal-inner {
+    width: 100px !important;
+    height: 100px !important;
+  }
 }
 .gate-wreath-svg {
   position: absolute;

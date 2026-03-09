@@ -148,7 +148,7 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
         <div id="logo-seal" ref={sealRef}>
           <div id="wreath-wrap">
             <CenterWreath />
-            <div style={{
+            <div className="star-seal-inner" style={{
               width: 160,
               height: 160,
               backgroundColor: '#c9a96e',

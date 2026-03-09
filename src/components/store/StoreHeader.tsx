@@ -32,17 +32,18 @@ export function StoreHeader() {
   const prevCountRef = useRef(cartCount);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
-  const [gateComplete, setGateComplete] = useState(!isHomepage);
+  const hasSeenGate = !!localStorage.getItem('mkrc-gate-seen');
+  const [gateComplete, setGateComplete] = useState(!isHomepage || hasSeenGate);
 
   useEffect(() => {
-    if (!isHomepage) { setGateComplete(true); return; }
+    if (!isHomepage || hasSeenGate) { setGateComplete(true); return; }
     const handler = (e: Event) => {
       const progress = (e as CustomEvent).detail;
       if (progress >= 0.95 && !gateComplete) setGateComplete(true);
     };
     window.addEventListener('gate-progress', handler);
     return () => window.removeEventListener('gate-progress', handler);
-  }, [isHomepage, gateComplete]);
+  }, [isHomepage, gateComplete, hasSeenGate]);
 
   useEffect(() => {
     if (cartCount !== prevCountRef.current && cartCount > 0) {
@@ -73,9 +74,7 @@ export function StoreHeader() {
         background: isScrolled ? 'var(--site-nav-bg)' : 'var(--site-nav-bg)',
         backdropFilter: isScrolled ? 'blur(16px)' : 'blur(8px)',
         borderColor: isScrolled ? 'var(--site-border-subtle)' : 'transparent',
-        opacity: gateComplete ? 1 : 0,
-        pointerEvents: gateComplete ? 'auto' : 'none',
-        transform: gateComplete ? 'translateY(0)' : 'translateY(-100%)',
+        display: gateComplete ? undefined : 'none',
       }}
     >
       {isLocalVisitor && (

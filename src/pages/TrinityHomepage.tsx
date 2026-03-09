@@ -75,8 +75,17 @@ function ConsultationToast() {
 
 const TrinityHomepage = () => {
   const [gateProgress, setGateProgress] = useState(0);
-  const [gateComplete, setGateComplete] = useState(false);
+  // Show gate only on first visit ever (localStorage persists across sessions)
+  const isFirstVisit = !localStorage.getItem('mkrc-gate-seen');
+  const [gateComplete, setGateComplete] = useState(!isFirstVisit);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // On first visit, ensure we start at the very top of the page
+  useEffect(() => {
+    if (isFirstVisit) {
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   const handleGateProgress = useCallback((progress: number) => {
     setGateProgress(progress);
@@ -85,15 +94,23 @@ const TrinityHomepage = () => {
 
   const handleGateComplete = useCallback(() => {
     setGateComplete(true);
+    localStorage.setItem('mkrc-gate-seen', '1');
     // Scroll to content and prevent scrolling back up
     if (contentRef.current) {
       contentRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
 
+  // If gate already done, dispatch immediately so header/chat know
+  useEffect(() => {
+    if (gateComplete) {
+      window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
+    }
+  }, [gateComplete]);
+
   return (
     <main className="min-h-screen">
-      {/* Gate Entrance — scroll-driven opening animation */}
+      {/* Gate Entrance — only on first visit */}
       {!gateComplete && (
         <GateEntrance onProgressChange={handleGateProgress} onGateComplete={handleGateComplete} />
       )}
