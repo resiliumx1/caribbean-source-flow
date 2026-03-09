@@ -317,16 +317,17 @@
   height:520px;
   animation:wreathSpin 80s linear infinite;
 }
+.wreath-half-left .wreath-half-mirror{
+  position:absolute;
+  left:0;
+  width:520px;
+  height:520px;
+  transform:scaleX(-1);
+  transform-origin:center;
+}
 .wreath-half-left .wreath-half-svg{
   position:absolute;
-  right:0;
-  transform-origin:center center;
-  scale:-1 1;
-  animation:wreathSpinReverse 80s linear infinite;
-}
-@keyframes wreathSpinReverse{
-  from{transform:scaleX(-1) rotate(0deg)}
-  to{transform:scaleX(-1) rotate(360deg)}
+  left:0;
 }
 .wreath-half-right .wreath-half-svg{
   position:absolute;

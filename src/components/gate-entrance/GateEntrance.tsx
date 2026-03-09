@@ -136,10 +136,12 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
           ))}
         </div>
 
-        {/* Left Gate — with left half of wreath */}
+        {/* Left Gate — with mirrored half of wreath facing inward */}
         <div className="gate gate-left" ref={gateLeftRef}>
           <div className="wreath-half wreath-half-left">
-            <GateWreathSVG className="wreath-half-svg" />
+            <div className="wreath-half-mirror">
+              <GateWreathSVG className="wreath-half-svg" />
+            </div>
           </div>
         </div>
 
