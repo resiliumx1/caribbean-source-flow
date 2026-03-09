@@ -119,31 +119,33 @@ const TrinityHomepage = () => {
         <GateEntrance onProgressChange={handleGateProgress} onGateComplete={handleGateComplete} />
       )}
 
-      <div ref={contentRef}>
-        <FadeInStagger delay={0.1}>
-          <TrinityHero />
-        </FadeInStagger>
-        <FadeInStagger delay={0.2}>
-          <OriginStory />
-        </FadeInStagger>
-        <FadeInStagger delay={0.3}>
-          <div id="priest-kailash-consultation">
-            <PriestKailashConsultation />
-          </div>
-        </FadeInStagger>
-        <FadeInStagger delay={0.4}>
-          <PriestKailashQuote />
-        </FadeInStagger>
-        <FadeInStagger delay={0.5}>
-          <SocialProofMatrix />
-        </FadeInStagger>
-        <FadeInStagger delay={0.6}>
-          <ByTheNumbers />
-        </FadeInStagger>
-        <FadeInStagger delay={0.7}>
-          <UnifiedFooter />
-        </FadeInStagger>
-      </div>
+      {gateComplete && (
+        <div ref={contentRef}>
+          <FadeInStagger delay={0.1}>
+            <TrinityHero />
+          </FadeInStagger>
+          <FadeInStagger delay={0.2}>
+            <OriginStory />
+          </FadeInStagger>
+          <FadeInStagger delay={0.3}>
+            <div id="priest-kailash-consultation">
+              <PriestKailashConsultation />
+            </div>
+          </FadeInStagger>
+          <FadeInStagger delay={0.4}>
+            <PriestKailashQuote />
+          </FadeInStagger>
+          <FadeInStagger delay={0.5}>
+            <SocialProofMatrix />
+          </FadeInStagger>
+          <FadeInStagger delay={0.6}>
+            <ByTheNumbers />
+          </FadeInStagger>
+          <FadeInStagger delay={0.7}>
+            <UnifiedFooter />
+          </FadeInStagger>
+        </div>
+      )}
       {gateComplete && <GoddessWhatsApp />}
       <ConsultationToast />
     </main>
