@@ -140,7 +140,7 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
         <div id="logo-seal" ref={sealRef}>
           <div className="seal-glow" />
           <div className="seal-ring" />
-          <StarSealFallback />
+          <div className="star-seal" />
         </div>
 
         {/* Hero Text */}
