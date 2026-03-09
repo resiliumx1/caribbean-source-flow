@@ -8,7 +8,7 @@
 }
 
 /* ═══ GATE INTRO ═══════════════════════════════ */
-#scroll-stage{position:relative;height:500vh}
+#scroll-stage{position:relative;height:500vh;overflow-x:hidden}
 @media (max-width: 767px) {
   #scroll-stage{height:350vh}
 }
