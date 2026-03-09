@@ -56,6 +56,12 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
 
     onProgressChange?.(raw);
 
+    /* Fire completion once */
+    if (raw >= 0.95 && !completedRef.current) {
+      completedRef.current = true;
+      onGateComplete?.();
+    }
+
     /* Gates */
     const gP = eio(clamp(raw / 0.52, 0, 1));
     if (gateLeftRef.current) {

@@ -68,11 +68,14 @@ export function StoreHeader() {
 
   return (
     <header 
-      className="sticky top-0 z-50 transition-all duration-300 border-b"
+      className="sticky top-0 z-50 transition-all duration-500 border-b"
       style={{
         background: isScrolled ? 'var(--site-nav-bg)' : 'var(--site-nav-bg)',
         backdropFilter: isScrolled ? 'blur(16px)' : 'blur(8px)',
         borderColor: isScrolled ? 'var(--site-border-subtle)' : 'transparent',
+        opacity: gateComplete ? 1 : 0,
+        pointerEvents: gateComplete ? 'auto' : 'none',
+        transform: gateComplete ? 'translateY(0)' : 'translateY(-100%)',
       }}
     >
       {isLocalVisitor && (
