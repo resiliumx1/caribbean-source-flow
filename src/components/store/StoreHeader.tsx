@@ -32,18 +32,18 @@ export function StoreHeader() {
   const prevCountRef = useRef(cartCount);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
-  const hasSeenGate = !!localStorage.getItem('mkrc-gate-seen');
-  const [gateComplete, setGateComplete] = useState(!isHomepage || hasSeenGate);
+  const [gateComplete, setGateComplete] = useState(() => {
+    return !isHomepage || !!localStorage.getItem('mkrc-gate-seen');
+  });
 
   useEffect(() => {
-    if (!isHomepage || hasSeenGate) { setGateComplete(true); return; }
-    const handler = (e: Event) => {
-      const progress = (e as CustomEvent).detail;
-      if (progress >= 0.95 && !gateComplete) setGateComplete(true);
-    };
-    window.addEventListener('gate-progress', handler);
-    return () => window.removeEventListener('gate-progress', handler);
-  }, [isHomepage, gateComplete, hasSeenGate]);
+    if (!isHomepage) { setGateComplete(true); return; }
+    if (localStorage.getItem('mkrc-gate-seen')) { setGateComplete(true); return; }
+    // Listen for the definitive gate-complete event
+    const handler = () => setGateComplete(true);
+    window.addEventListener('gate-complete', handler);
+    return () => window.removeEventListener('gate-complete', handler);
+  }, [isHomepage]);
 
   useEffect(() => {
     if (cartCount !== prevCountRef.current && cartCount > 0) {
