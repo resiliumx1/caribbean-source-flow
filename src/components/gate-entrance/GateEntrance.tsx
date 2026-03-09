@@ -88,6 +88,13 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
       sealRef.current.style.visibility = sealO === 0 ? 'hidden' : 'visible';
     }
 
+    /* Cue */
+    if (cueRef.current) {
+      const cueOp = raw < 0.38 ? 1 : clamp(remap(raw, 0.40, 0.58, 1, 0), 0, 1);
+      cueRef.current.style.opacity = String(cueOp);
+      cueRef.current.style.visibility = cueOp === 0 ? 'hidden' : 'visible';
+    }
+
   }, [onProgressChange]);
 
   useEffect(() => {
