@@ -134,7 +134,7 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
           <div className="wreath-half wreath-half-left">
             <GateHalfWreath className="wreath-half-svg wreath-svg-l" />
           </div>
-          <div className="gate-art">
+          <div className="gate-art" style={{ opacity: 0.1 }}>
             <GateArtLeft />
           </div>
         </div>
@@ -144,7 +144,7 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
           <div className="wreath-half wreath-half-right">
             <GateHalfWreath className="wreath-half-svg wreath-svg-r" />
           </div>
-          <div className="gate-art">
+          <div className="gate-art" style={{ opacity: 0.1 }}>
             <GateArtRight />
           </div>
         </div>
