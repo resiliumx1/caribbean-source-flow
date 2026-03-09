@@ -22,6 +22,7 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
   const gateLeftRef = useRef<HTMLDivElement>(null);
   const gateRightRef = useRef<HTMLDivElement>(null);
   const sealRef = useRef<HTMLDivElement>(null);
+  const cueRef = useRef<HTMLDivElement>(null);
   
   const rafRef = useRef<number>(0);
   const completedRef = useRef(false);
@@ -85,6 +86,13 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
       sealRef.current.style.transform = `translate(-50%,calc(-50% + ${sealY}px)) scale(${sealS})`;
       sealRef.current.style.opacity = String(sealO);
       sealRef.current.style.visibility = sealO === 0 ? 'hidden' : 'visible';
+    }
+
+    /* Cue */
+    if (cueRef.current) {
+      const cueOp = raw < 0.38 ? 1 : clamp(remap(raw, 0.40, 0.58, 1, 0), 0, 1);
+      cueRef.current.style.opacity = String(cueOp);
+      cueRef.current.style.visibility = cueOp === 0 ? 'hidden' : 'visible';
     }
 
   }, [onProgressChange]);
@@ -178,6 +186,18 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
           </p>
         </div>
 
+        {/* Scroll to Enter Prompt */}
+        <div id="enter-cue" ref={cueRef}>
+          <div className="enter-pill">
+            <span className="enter-text">Scroll to Enter</span>
+            <div className="enter-arrow">
+              <div className="chev" />
+              <div className="chev" />
+              <div className="chev" />
+            </div>
+          </div>
+          <div className="enter-line" />
+        </div>
       </div>
     </div>
   );
