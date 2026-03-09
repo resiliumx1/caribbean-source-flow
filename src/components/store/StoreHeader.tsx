@@ -25,11 +25,13 @@ const NAV_LINKS = [
 export function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [gateProgress, setGateProgress] = useState(0);
   const { cartCount } = useCart();
   const { whatsappNumber, isLocalVisitor } = useStore();
   const location = useLocation();
   const prevCountRef = useRef(cartCount);
   const [cartBounce, setCartBounce] = useState(false);
+  const isHomepage = location.pathname === "/";
 
   useEffect(() => {
     if (cartCount !== prevCountRef.current && cartCount > 0) {
