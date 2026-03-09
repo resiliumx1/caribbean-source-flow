@@ -79,11 +79,22 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
       >
         <div className="absolute inset-0 flex items-center justify-center p-6">
           {product.image_url ? (
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
-            />
+            <div className="relative w-full h-full flex items-center justify-center">
+              <img
+                src={product.image_url}
+                alt={product.name}
+                className={`max-w-full max-h-full object-contain transition-all duration-500 ${
+                  hoverImageUrl ? "opacity-100 group-hover:opacity-0 group-hover:scale-105" : "group-hover:scale-105"
+                }`}
+              />
+              {hoverImageUrl && (
+                <img
+                  src={hoverImageUrl}
+                  alt={`${product.name} alternate view`}
+                  className="absolute max-w-full max-h-full object-contain opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-105 transition-all duration-500"
+                />
+              )}
+            </div>
           ) : (
             <ProductPlaceholder
               productType={product.product_type}
