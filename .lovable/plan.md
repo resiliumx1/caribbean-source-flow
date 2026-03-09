@@ -1,29 +1,18 @@
 
-## Summary
-The gate entrance currently has:
-1. **Two extra half-wreaths** positioned on each gate panel that rotate — these need to be removed
-2. **Botanical art (GateArtLeft/GateArtRight)** showing a vine/plant on the left gate and a bottle on the right gate — these need to be removed
 
-The only wreath/rotating element should be the **CenterWreath** behind the star seal in the center.
+## Add Per-Product Category Selector
 
-## Changes
+**What**: Add an inline category dropdown on each product card in the admin products page, similar to the existing badge selector, so admins can reassign any product's category directly.
 
-### 1. Remove half-wreaths from gate panels
-**File:** `src/components/gate-entrance/GateEntrance.tsx`
-- Delete lines 134-136 (wreath-half on left gate)
-- Delete lines 144-146 (wreath-half on right gate)
+### Implementation
 
-### 2. Remove gate art (bottle + plant)
-**File:** `src/components/gate-entrance/GateEntrance.tsx`
-- Delete lines 137-139 (GateArtLeft on left gate)
-- Delete lines 147-149 (GateArtRight on right gate)
+**File: `src/pages/AdminProducts.tsx`**
 
-After these changes, the gate divs will be empty, showing only the green gradient background with the gold seam line.
+1. Add a `updateCategory` mutation (similar to existing `updateBadge`) that updates `category_id` on the products table and invalidates the query cache.
 
-### 3. Clean up unused imports
-- Remove the `GateArtLeft, GateArtRight` import from line 2
-- Remove the `GateHalfWreath` function (lines 206-323) since it's no longer used
+2. Replace the static category text on line 453 (`<p className="text-sm text-muted-foreground">{product.product_categories?.name ?? "Uncategorized"}</p>`) with a `<Select>` dropdown populated from the existing `categories` query. Include an "Uncategorized" option that sets `category_id` to `null`.
 
-### Result
-- Gates become clean solid green panels with just the glowing center seam
-- Only one rotating wreath remains: the `CenterWreath` behind the star seal in the center
+3. Style it consistently with the badge selector already on each card -- small trigger (`h-7 text-xs`), full width.
+
+No database changes needed -- the `category_id` column and categories table already exist with proper RLS policies.
+
