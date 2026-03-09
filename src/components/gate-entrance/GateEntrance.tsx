@@ -130,22 +130,10 @@ export function GateEntrance({ onProgressChange }: GateEntranceProps) {
 
         {/* Left Gate */}
         <div className="gate gate-left" ref={gateLeftRef}>
-          <div className="wreath-half wreath-half-left">
-            <GateHalfWreath className="wreath-half-svg wreath-svg-l" />
-          </div>
-          <div className="gate-art" style={{ opacity: 0.1 }}>
-            <GateArtLeft />
-          </div>
         </div>
 
         {/* Right Gate */}
         <div className="gate gate-right" ref={gateRightRef}>
-          <div className="wreath-half wreath-half-right">
-            <GateHalfWreath className="wreath-half-svg wreath-svg-r" />
-          </div>
-          <div className="gate-art" style={{ opacity: 0.1 }}>
-            <GateArtRight />
-          </div>
         </div>
 
         {/* Central Seal */}
