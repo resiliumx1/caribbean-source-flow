@@ -26,6 +26,9 @@ export function FeaturedProduct() {
   if (!product) return null;
 
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
+  const hoverImageUrl = product.additional_images?.find(
+    (imageUrl) => !!imageUrl && imageUrl !== product.image_url
+  );
 
   return (
     <div
