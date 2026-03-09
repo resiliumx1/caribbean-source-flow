@@ -35,6 +35,9 @@ export function ProductCard({ product, onQuickView, showBestSellerBadge, style }
   };
 
   const benefits = getBenefits();
+  const hoverImageUrl = product.additional_images?.find(
+    (imageUrl) => !!imageUrl && imageUrl !== product.image_url
+  );
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
