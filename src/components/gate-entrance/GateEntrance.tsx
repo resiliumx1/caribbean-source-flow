@@ -1,7 +1,6 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { GateBotanicalArt } from "./GateBotanicalArt";
 import { WreathSVG } from "./WreathSVG";
-import { StarSealFallback } from "./StarSealFallback";
 import "@/styles/gate-entrance.css";
 
 function easeInOutCubic(t: number): number {
