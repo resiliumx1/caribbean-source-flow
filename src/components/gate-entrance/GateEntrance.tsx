@@ -178,6 +178,18 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
           </p>
         </div>
 
+        {/* Scroll to Enter Prompt */}
+        <div id="enter-cue" ref={cueRef}>
+          <div className="enter-pill">
+            <span className="enter-text">Scroll to Enter</span>
+            <div className="enter-arrow">
+              <div className="chev" />
+              <div className="chev" />
+              <div className="chev" />
+            </div>
+          </div>
+          <div className="enter-line" />
+        </div>
       </div>
     </div>
   );
