@@ -28,20 +28,27 @@ function useIsMobile() {
 }
 
 export default function ChatWidget() {
-  const hasSeenGate = !!localStorage.getItem('mkrc-gate-seen');
-  const isHome = window.location.pathname === '/';
-  const [gateComplete, setGateComplete] = useState(!isHome || hasSeenGate);
+  const [gateComplete, setGateComplete] = useState(() => {
+    // If not on homepage, or gate already seen — show immediately
+    const isHome = window.location.pathname === '/' || window.location.pathname === '';
+    const hasSeenGate = !!localStorage.getItem('mkrc-gate-seen');
+    return !isHome || hasSeenGate;
+  });
 
   useEffect(() => {
-    if (!isHome || hasSeenGate) { setGateComplete(true); return; }
-
-    const handler = (e: Event) => {
-      const progress = (e as CustomEvent).detail;
-      if (progress >= 0.95) setGateComplete(true);
+    // Listen for the definitive gate-complete event
+    const handler = () => setGateComplete(true);
+    window.addEventListener('gate-complete', handler);
+    // Also check on route changes (navigating away from home)
+    const checkRoute = () => {
+      if (window.location.pathname !== '/') setGateComplete(true);
     };
-    window.addEventListener('gate-progress', handler);
-    return () => window.removeEventListener('gate-progress', handler);
-  }, [isHome, hasSeenGate]);
+    window.addEventListener('popstate', checkRoute);
+    return () => {
+      window.removeEventListener('gate-complete', handler);
+      window.removeEventListener('popstate', checkRoute);
+    };
+  }, []);
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);

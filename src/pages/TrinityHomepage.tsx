@@ -95,15 +95,19 @@ const TrinityHomepage = () => {
   const handleGateComplete = useCallback(() => {
     setGateComplete(true);
     localStorage.setItem('mkrc-gate-seen', '1');
+    // Dispatch a definitive event so header + chat show immediately
+    window.dispatchEvent(new CustomEvent('gate-complete'));
+    window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
     // Scroll to content and prevent scrolling back up
     if (contentRef.current) {
       contentRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
 
-  // If gate already done, dispatch immediately so header/chat know
+  // If gate already done (returning visitor), dispatch immediately
   useEffect(() => {
     if (gateComplete) {
+      window.dispatchEvent(new CustomEvent('gate-complete'));
       window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
     }
   }, [gateComplete]);
