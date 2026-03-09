@@ -6,9 +6,14 @@
   --gate-deep:#0e1a0b; --gate-forest:#1a2c14; --gate-sage:#263a1e; --gate-moss:#324a28;
   --gate-cream:#f0ebe0; --gate-mist:#c4bfb2; --faint:rgba(201,169,110,0.1);
 }
+/* Force html/body green during gate */
+html:has(#scroll-stage),
+html:has(#scroll-stage) body {
+  background:#12200e !important;
+  overflow-x:hidden;
+}
 
-/* ═══ GATE INTRO ═══════════════════════════════ */
-#scroll-stage{position:relative;height:500vh;overflow:hidden;background:#12200e}
+#scroll-stage{position:relative;height:500vh;overflow:hidden;background:#12200e;width:100%}
 @media (max-width: 767px) {
   #scroll-stage{height:350vh}
 }
