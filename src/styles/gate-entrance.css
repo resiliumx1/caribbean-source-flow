@@ -1,0 +1,531 @@
+/* Gate Entrance — Always dark, immune to light/dark mode toggle */
+
+:root {
+  --gate-gold: #c9a96e;
+  --gate-gold-l: #e2c99a;
+  --gate-gold-p: #f0d89a;
+  --gate-deep: #0e1a0b;
+  --gate-forest: #1a2c14;
+  --gate-sage: #263a1e;
+  --gate-moss: #324a28;
+  --gate-cream: #f0ebe0;
+  --gate-mist: #c4bfb2;
+}
+
+/* ── Scroll Stage ────────────────────────────── */
+#scroll-stage {
+  position: relative;
+  height: 500vh;
+  overflow: visible;
+  color-scheme: dark !important;
+}
+
+#scroll-stage *,
+#scroll-stage *::before,
+#scroll-stage *::after {
+  color-scheme: dark !important;
+}
+
+.sticky-hero {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  z-index: 40;
+}
+
+/* ── Forest Background ───────────────────────── */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Gold light rays */
+    radial-gradient(ellipse 60% 80% at 50% 20%, rgba(201,169,110,0.04) 0%, transparent 70%),
+    /* Tree trunks */
+    radial-gradient(ellipse 3% 100% at 8% 50%, rgba(28,42,22,0.85) 0%, transparent 70%),
+    radial-gradient(ellipse 4% 100% at 18% 50%, rgba(30,44,24,0.82) 0%, transparent 70%),
+    radial-gradient(ellipse 3% 100% at 28% 50%, rgba(26,40,20,0.88) 0%, transparent 70%),
+    radial-gradient(ellipse 4% 100% at 38% 50%, rgba(32,46,26,0.80) 0%, transparent 70%),
+    radial-gradient(ellipse 3% 100% at 48% 50%, rgba(28,42,22,0.86) 0%, transparent 70%),
+    radial-gradient(ellipse 3% 100% at 58% 50%, rgba(30,44,24,0.83) 0%, transparent 70%),
+    radial-gradient(ellipse 4% 100% at 68% 50%, rgba(26,40,20,0.87) 0%, transparent 70%),
+    radial-gradient(ellipse 3% 100% at 78% 50%, rgba(32,46,26,0.81) 0%, transparent 70%),
+    radial-gradient(ellipse 4% 100% at 88% 50%, rgba(28,42,22,0.84) 0%, transparent 70%),
+    radial-gradient(ellipse 3% 100% at 95% 50%, rgba(30,44,24,0.82) 0%, transparent 70%),
+    /* Canopy greens */
+    radial-gradient(ellipse 20% 80% at 12% 40%, rgba(48,78,38,0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 25% 70% at 30% 35%, rgba(52,82,42,0.58) 0%, transparent 70%),
+    radial-gradient(ellipse 22% 75% at 50% 38%, rgba(48,78,38,0.56) 0%, transparent 70%),
+    radial-gradient(ellipse 20% 80% at 70% 42%, rgba(55,88,42,0.60) 0%, transparent 70%),
+    radial-gradient(ellipse 25% 70% at 88% 36%, rgba(50,80,40,0.57) 0%, transparent 70%),
+    /* Depth gradient */
+    linear-gradient(to top, rgba(18,28,14,1) 0%, rgba(34,54,28,0.7) 40%, rgba(52,80,42,0.4) 100%);
+  background-color: #12200e;
+}
+
+/* ── Particles ───────────────────────────────── */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--gate-gold);
+  animation: float-up linear infinite;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--p-opacity, 0.2);
+  }
+  90% {
+    opacity: var(--p-opacity, 0.2);
+  }
+  100% {
+    transform: translateY(-110vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* ── Gates ────────────────────────────────────── */
+.gate-left,
+.gate-right {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 10;
+  will-change: transform;
+  overflow: hidden;
+}
+
+.gate-left {
+  left: 0;
+  background: linear-gradient(to right, #162812, #1e3618);
+}
+
+.gate-right {
+  right: 0;
+  background: linear-gradient(to left, #162812, #1e3618);
+}
+
+/* Gate seam glow */
+.gate-left::after,
+.gate-right::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  opacity: var(--seam-op, 1);
+  background: linear-gradient(
+    to bottom,
+    transparent 5%,
+    rgba(201,169,110,0.3) 20%,
+    rgba(255,245,220,0.95) 50%,
+    rgba(201,169,110,0.3) 80%,
+    transparent 95%
+  );
+  box-shadow:
+    0 0 8px rgba(201,169,110,0.4),
+    0 0 16px rgba(201,169,110,0.2),
+    0 0 24px rgba(201,169,110,0.1);
+  animation: seam-pulse 2.6s ease-in-out infinite;
+}
+
+.gate-left::after {
+  right: 0;
+}
+
+.gate-right::after {
+  left: 0;
+}
+
+/* Wider ambient glow */
+.gate-left::before,
+.gate-right::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 100%;
+  opacity: var(--seam-op, 1);
+  background: linear-gradient(
+    to bottom,
+    transparent 10%,
+    rgba(201,169,110,0.08) 30%,
+    rgba(201,169,110,0.15) 50%,
+    rgba(201,169,110,0.08) 70%,
+    transparent 90%
+  );
+  filter: blur(6px);
+}
+
+.gate-left::before {
+  right: -6px;
+}
+
+.gate-right::before {
+  left: -6px;
+}
+
+@keyframes seam-pulse {
+  0%, 100% { opacity: var(--seam-op, 0.7); }
+  50% { opacity: var(--seam-op, 1); }
+}
+
+/* ── Gate Botanical Art ──────────────────────── */
+.gate-art {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.gate-left .gate-art {
+  right: 40px;
+}
+
+.gate-right .gate-art {
+  left: 40px;
+}
+
+@media (max-width: 900px) {
+  .gate-art {
+    display: none;
+  }
+}
+
+/* ── Central Seal ────────────────────────────── */
+#logo-seal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform, opacity;
+}
+
+.seal-glow {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,169,110,0.2) 0%, transparent 70%);
+  animation: seal-pulse 3s ease-in-out infinite;
+}
+
+.seal-ring {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.2);
+  animation: seal-pulse 3s ease-in-out infinite 0.5s;
+}
+
+@keyframes seal-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+.star-seal {
+  width: 160px;
+  height: 160px;
+  background-color: var(--gate-gold);
+  mask-image: url('/star-seal.png');
+  -webkit-mask-image: url('/star-seal.png');
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  filter: drop-shadow(0 0 18px rgba(201,169,110,0.4));
+  position: relative;
+  z-index: 2;
+}
+
+/* Fallback when star-seal.png isn't available */
+.star-seal-fallback {
+  width: 160px;
+  height: 160px;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 18px rgba(201,169,110,0.4));
+}
+
+/* ── Rotating Wreath ─────────────────────────── */
+.gate-wreath-svg {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  animation: rotate-wreath 80s linear infinite;
+}
+
+@keyframes rotate-wreath {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.wreath-half {
+  position: absolute;
+  top: 50%;
+  width: 260px;
+  height: 520px;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.wreath-half-left {
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.wreath-half-right {
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.wreath-half-svg {
+  width: 520px;
+  height: 520px;
+  animation: rotate-wreath-half 80s linear infinite;
+}
+
+.wreath-half-left .wreath-half-svg {
+  position: absolute;
+  right: 0;
+}
+
+.wreath-half-right .wreath-half-svg {
+  position: absolute;
+  left: -260px;
+}
+
+@keyframes rotate-wreath-half {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ── Hero Text ───────────────────────────────── */
+.gate-hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  text-align: center;
+  pointer-events: none;
+  width: 90%;
+  max-width: 700px;
+}
+
+.gate-hero-content::before {
+  content: '';
+  position: absolute;
+  inset: -60px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, transparent 70%);
+  z-index: -1;
+  border-radius: 50%;
+}
+
+.h-eyebrow {
+  font-family: 'Jost', sans-serif;
+  font-weight: 200;
+  font-size: 0.7rem;
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  color: #e2c99a !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6), 0 0 20px rgba(201,169,110,0.3);
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: gate-text-in 0.8s ease-out 0.6s forwards;
+}
+
+.h-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 7vw, 6.5rem);
+  color: #fff !important;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.7), 0 0 40px rgba(201,169,110,0.15);
+  line-height: 1.05;
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: gate-text-in 0.8s ease-out 0.9s forwards;
+}
+
+.h-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.2rem, 2.8vw, 2.4rem);
+  color: #f0d89a !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6), 0 0 16px rgba(201,169,110,0.2);
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: gate-text-in 0.8s ease-out 1.2s forwards;
+}
+
+.h-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: gate-text-in 0.8s ease-out 1.4s forwards;
+}
+
+.h-divider-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gate-gold), transparent);
+}
+
+.h-divider .diam {
+  width: 6px;
+  height: 6px;
+  background: var(--gate-gold);
+  transform: rotate(45deg);
+}
+
+.h-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.45rem;
+  font-weight: 400;
+  color: #f0ebe0 !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  line-height: 1.6;
+  max-width: 540px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: gate-text-in 0.8s ease-out 1.6s forwards;
+}
+
+@keyframes gate-text-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Scroll Prompt ───────────────────────────── */
+#enter-cue {
+  position: absolute;
+  bottom: 2.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: gate-text-in 0.8s ease-out 1.8s forwards;
+}
+
+.enter-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border: 1px solid rgba(201,169,110,0.3);
+  border-radius: 30px;
+  background: rgba(14,26,11,0.7);
+  backdrop-filter: blur(8px);
+  animation: pill-breathe 3s ease-in-out infinite;
+}
+
+@keyframes pill-breathe {
+  0%, 100% { box-shadow: 0 0 12px rgba(201,169,110,0.1); }
+  50% { box-shadow: 0 0 20px rgba(201,169,110,0.2); }
+}
+
+.enter-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--gate-gold-l) !important;
+  text-shadow: 0 0 8px rgba(201,169,110,0.3);
+}
+
+.chev-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.chev {
+  width: 10px;
+  height: 10px;
+  border-left: 1.5px solid var(--gate-gold);
+  border-bottom: 1.5px solid var(--gate-gold);
+  transform: rotate(-45deg);
+  opacity: 0.4;
+  animation: chev-bounce 1.5s ease-in-out infinite;
+}
+
+.chev:nth-child(2) { animation-delay: 0.15s; }
+.chev:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes chev-bounce {
+  0%, 100% { opacity: 0.3; transform: rotate(-45deg) translateY(0); }
+  50% { opacity: 0.8; transform: rotate(-45deg) translateY(3px); }
+}
+
+.enter-line {
+  width: 1px;
+  height: 20px;
+  background: var(--gate-gold);
+  opacity: 0.3;
+  animation: line-pulse 2s ease-in-out infinite;
+}
+
+@keyframes line-pulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.5; }
+}
+
+/* ── LIGHT MODE IMMUNITY ─────────────────────── */
+/* Force dark appearance on all gate elements regardless of theme */
+[data-mkrc-theme="light"] #scroll-stage,
+[data-mkrc-theme="light"] .sticky-hero,
+[data-mkrc-theme="light"] .hero-bg,
+[data-mkrc-theme="light"] .gate-left,
+[data-mkrc-theme="light"] .gate-right,
+[data-mkrc-theme="light"] .gate-art,
+[data-mkrc-theme="light"] .gate-hero-content,
+[data-mkrc-theme="light"] #logo-seal,
+[data-mkrc-theme="light"] #enter-cue,
+[data-mkrc-theme="light"] .particles {
+  color-scheme: dark !important;
+}
+
+.light #scroll-stage,
+.light .sticky-hero,
+.light .hero-bg,
+.light .gate-left,
+.light .gate-right {
+  color-scheme: dark !important;
+}
