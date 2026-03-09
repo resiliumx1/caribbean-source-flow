@@ -144,7 +144,7 @@ const TrinityHomepage = () => {
           <UnifiedFooter />
         </FadeInStagger>
       </div>
-      <GoddessWhatsApp />
+      {gateComplete && <GoddessWhatsApp />}
       <ConsultationToast />
     </main>
   );

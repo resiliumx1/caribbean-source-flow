@@ -320,6 +320,13 @@
 .wreath-half-left .wreath-half-svg{
   position:absolute;
   right:0;
+  transform-origin:center center;
+  scale:-1 1;
+  animation:wreathSpinReverse 80s linear infinite;
+}
+@keyframes wreathSpinReverse{
+  from{transform:scaleX(-1) rotate(0deg)}
+  to{transform:scaleX(-1) rotate(360deg)}
 }
 .wreath-half-right .wreath-half-svg{
   position:absolute;
