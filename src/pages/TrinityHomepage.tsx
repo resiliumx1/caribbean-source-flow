@@ -13,6 +13,20 @@ import { MessageCircle, ArrowRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { GateEntrance } from "@/components/gate-entrance";
 
+/** Check if gate was seen within last 7 days */
+function shouldShowGate(): boolean {
+  try {
+    const stamp = localStorage.getItem("mkrc-gate-seen");
+    if (!stamp) return true; // first visit
+    const ts = parseInt(stamp, 10);
+    if (isNaN(ts)) return true;
+    // Show gate again if it's been more than 7 days
+    return Date.now() - ts > 7 * 24 * 60 * 60 * 1000;
+  } catch {
+    return true;
+  }
+}
+
 const GoddessWhatsApp = () => (
   <a
     href={`https://wa.me/13059429407?text=${encodeURIComponent("Hello Goddess Itopia, I have a question about Mount Kailash products.")}`}
@@ -67,8 +81,8 @@ function ConsultationToast() {
 }
 
 const TrinityHomepage = () => {
-  const isFirstVisit = !localStorage.getItem('mkrc-gate-seen');
-  const [gateComplete, setGateComplete] = useState(!isFirstVisit);
+  const showGate = shouldShowGate();
+  const [gateComplete, setGateComplete] = useState(!showGate);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handleGateProgress = useCallback((progress: number) => {
@@ -91,7 +105,6 @@ const TrinityHomepage = () => {
 
   const handleGateComplete = useCallback(() => {
     setGateComplete(true);
-    localStorage.setItem('mkrc-gate-seen', '1');
     if (contentRef.current) {
       contentRef.current.style.opacity = '1';
       contentRef.current.style.transform = 'scale(1)';
