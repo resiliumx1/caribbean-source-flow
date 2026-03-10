@@ -10,7 +10,8 @@ const pillars = [
   {
     title: "Wholesale Supply",
     description: "For practitioners",
-    cta: "Access Portal",
+    cta: "Get Pricing",
+    ctaWeight: "font-medium" as const,
     route: "/wholesale",
     image: pillarWholesale,
     icon: ClipboardList,
