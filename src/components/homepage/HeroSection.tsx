@@ -73,58 +73,67 @@ export function HeroSection() {
 
             {/* 4-Pillar Grid */}
             <div className="grid grid-cols-2 gap-4">
-              {pillars.map((pillar) => {
-                const Icon = pillar.icon;
-                return (
+              {pillars.map((pillar) => (
                   <Link
                     key={pillar.route + pillar.title}
                     to={pillar.route}
-                    className="group block rounded-lg p-5 transition-all duration-300 hover:-translate-y-1"
+                    className="group block rounded-lg p-5 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
                     style={{
-                      background: "var(--site-bg-card)",
-                      border: "1px solid var(--site-border)",
-                      boxShadow: "var(--site-shadow-card)",
+                      background: "#0F281E",
+                      border: "1px solid rgba(188,138,95,0.2)",
+                      boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.borderColor = "var(--site-gold)";
+                      (e.currentTarget as HTMLElement).style.borderColor = "#BC8A5F";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.borderColor = "var(--site-border)";
+                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(188,138,95,0.2)";
                     }}
                   >
-                    <Icon className="w-5 h-5 mb-3" style={{ color: "var(--site-gold)" }} />
-                    <div
-                      style={{
-                        fontFamily: "'Jost', sans-serif",
-                        fontWeight: 600,
-                        fontSize: "16px",
-                        color: "var(--site-text-primary)",
-                        marginBottom: "4px",
-                      }}
-                    >
-                      {pillar.title}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                      {/* Text side */}
+                      <div className="flex-1 min-w-0">
+                        <div
+                          style={{
+                            fontFamily: "'Jost', sans-serif",
+                            fontWeight: 600,
+                            fontSize: "15px",
+                            color: "#F5F1E8",
+                            marginBottom: "2px",
+                          }}
+                        >
+                          {pillar.title}
+                        </div>
+                        <div
+                          style={{
+                            fontFamily: "'Jost', sans-serif",
+                            fontWeight: 300,
+                            fontSize: "13px",
+                            color: "rgba(245,241,232,0.65)",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          {pillar.description}
+                        </div>
+                        <span
+                          className="inline-flex items-center gap-1 text-sm font-medium"
+                          style={{ color: "#BC8A5F" }}
+                        >
+                          {pillar.cta}{" "}
+                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                      </div>
+                      {/* Illustration side */}
+                      <img
+                        src={pillar.image}
+                        alt={pillar.title}
+                        className="w-16 h-16 sm:w-20 sm:h-20 object-contain flex-shrink-0 self-center opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                        loading="lazy"
+                      />
                     </div>
-                    <div
-                      style={{
-                        fontFamily: "'Jost', sans-serif",
-                        fontWeight: 300,
-                        fontSize: "14px",
-                        color: "var(--site-text-secondary)",
-                        marginBottom: "12px",
-                      }}
-                    >
-                      {pillar.description}
-                    </div>
-                    <span
-                      className="inline-flex items-center gap-1 text-sm font-medium"
-                      style={{ color: "var(--site-gold)" }}
-                    >
-                      {pillar.cta}{" "}
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </span>
                   </Link>
-                );
-              })}
+                ))}
+
             </div>
           </div>
 
