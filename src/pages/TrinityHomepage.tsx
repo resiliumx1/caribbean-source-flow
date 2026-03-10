@@ -89,6 +89,10 @@ const TrinityHomepage = () => {
     localStorage.setItem('mkrc-gate-seen', '1');
     window.dispatchEvent(new CustomEvent('gate-complete'));
     window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
+    // Reset scroll to top so homepage hero is visible
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+    });
   }, []);
 
   // If gate already done (returning visitor), dispatch immediately
