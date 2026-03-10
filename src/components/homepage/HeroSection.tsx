@@ -19,7 +19,8 @@ const pillars = [
   {
     title: "The Apothecary",
     description: "For personal use",
-    cta: "Shop Remedies",
+    cta: "Shop Now",
+    ctaWeight: "font-medium" as const,
     route: "/shop",
     image: pillarApothecary,
     icon: ShoppingBag,
