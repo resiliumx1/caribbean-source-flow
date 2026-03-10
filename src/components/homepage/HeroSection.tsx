@@ -13,6 +13,7 @@ const pillars = [
     cta: "Access Portal",
     route: "/wholesale",
     image: pillarWholesale,
+    icon: ClipboardList,
   },
   {
     title: "The Apothecary",
@@ -20,6 +21,7 @@ const pillars = [
     cta: "Shop Remedies",
     route: "/shop",
     image: pillarApothecary,
+    icon: ShoppingBag,
   },
   {
     title: "The Ridge Retreat",
@@ -27,13 +29,15 @@ const pillars = [
     cta: "View Dates",
     route: "/retreats",
     image: pillarRetreat,
+    icon: Mountain,
   },
   {
     title: "School of Bush Medicine",
     description: "Clinical training",
     cta: "Explore Courses",
-    route: "/wholesale",
+    route: "/school/herbal-physician",
     image: pillarSchool,
+    icon: GraduationCap,
   },
 ];
 
