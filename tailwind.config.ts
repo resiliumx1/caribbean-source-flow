@@ -15,7 +15,7 @@ export default {
   	extend: {
   		fontFamily: {
   			serif: [
-  				'Lora',
+  				'DM Serif Display',
   				'ui-serif',
   				'Georgia',
   				'Cambria',
@@ -24,7 +24,7 @@ export default {
   				'serif'
   			],
   			sans: [
-  				'Space Grotesk',
+  				'Inter',
   				'ui-sans-serif',
   				'system-ui',
   				'sans-serif',
@@ -89,50 +89,66 @@ export default {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			},
+			'mk-forest': {
+				DEFAULT: 'hsl(var(--mk-forest))',
+				mid: 'hsl(var(--mk-forest-mid))',
+			},
+			'mk-gold': {
+				DEFAULT: 'hsl(var(--mk-gold))',
+			},
+			'mk-cream': {
+				DEFAULT: 'hsl(var(--mk-cream))',
+			},
+			'mk-surface': {
+				DEFAULT: 'hsl(var(--mk-surface))',
+			},
+			'mk-charcoal': {
+				DEFAULT: 'hsl(var(--mk-charcoal))',
+			},
 			forest: {
-  				DEFAULT: 'hsl(var(--forest))',
-  				light: 'hsl(var(--forest-light))',
-  				dark: 'hsl(var(--forest-dark))'
-  			},
-  			sage: {
-  				DEFAULT: 'hsl(var(--sage))',
-  				light: 'hsl(var(--sage-light))',
-  				dark: 'hsl(var(--sage-dark))'
-  			},
-  			ocean: {
-  				DEFAULT: 'hsl(var(--ocean))',
-  				light: 'hsl(var(--ocean-light))',
-  				dark: 'hsl(var(--ocean-dark))'
-  			},
-  			taupe: {
-  				DEFAULT: 'hsl(var(--taupe))',
-  				light: 'hsl(var(--taupe-light))',
-  				dark: 'hsl(var(--taupe-dark))'
-  			},
-  			earth: {
-  				DEFAULT: 'hsl(var(--earth))',
-  				light: 'hsl(var(--earth-light))',
-  				warm: 'hsl(var(--earth-warm))'
-  			},
-  			gold: {
-  				DEFAULT: 'hsl(var(--gold))',
-  				light: 'hsl(var(--gold-light))',
-  				dark: 'hsl(var(--gold-dark))'
-  			},
-  			cream: {
-  				DEFAULT: 'hsl(var(--cream))',
-  				warm: 'hsl(var(--warm-white))'
-  			},
-  			sand: 'hsl(var(--sand))',
-  			parchment: 'hsl(var(--parchment))',
-  			success: {
-  				DEFAULT: 'hsl(var(--success))',
-  				foreground: 'hsl(var(--success-foreground))'
-  			},
-  			warning: {
-  				DEFAULT: 'hsl(var(--warning))',
-  				foreground: 'hsl(var(--warning-foreground))'
-  			}
+				DEFAULT: 'hsl(var(--forest))',
+				light: 'hsl(var(--forest-light))',
+				dark: 'hsl(var(--forest-dark))'
+			},
+			sage: {
+				DEFAULT: 'hsl(var(--sage))',
+				light: 'hsl(var(--sage-light))',
+				dark: 'hsl(var(--sage-dark))'
+			},
+			ocean: {
+				DEFAULT: 'hsl(var(--ocean))',
+				light: 'hsl(var(--ocean-light))',
+				dark: 'hsl(var(--ocean-dark))'
+			},
+			taupe: {
+				DEFAULT: 'hsl(var(--taupe))',
+				light: 'hsl(var(--taupe-light))',
+				dark: 'hsl(var(--taupe-dark))'
+			},
+			earth: {
+				DEFAULT: 'hsl(var(--earth))',
+				light: 'hsl(var(--earth-light))',
+				warm: 'hsl(var(--earth-warm))'
+			},
+			gold: {
+				DEFAULT: 'hsl(var(--gold))',
+				light: 'hsl(var(--gold-light))',
+				dark: 'hsl(var(--gold-dark))'
+			},
+			cream: {
+				DEFAULT: 'hsl(var(--cream))',
+				warm: 'hsl(var(--warm-white))'
+			},
+			sand: 'hsl(var(--sand))',
+			parchment: 'hsl(var(--parchment))',
+			success: {
+				DEFAULT: 'hsl(var(--success))',
+				foreground: 'hsl(var(--success-foreground))'
+			},
+			warning: {
+				DEFAULT: 'hsl(var(--warning))',
+				foreground: 'hsl(var(--warning-foreground))'
+			}
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -141,48 +157,24 @@ export default {
   		},
   		keyframes: {
   			'accordion-down': {
-  				from: {
-  					height: '0'
-  				},
-  				to: {
-  					height: 'var(--radix-accordion-content-height)'
-  				}
+  				from: { height: '0' },
+  				to: { height: 'var(--radix-accordion-content-height)' }
   			},
   			'accordion-up': {
-  				from: {
-  					height: 'var(--radix-accordion-content-height)'
-  				},
-  				to: {
-  					height: '0'
-  				}
+  				from: { height: 'var(--radix-accordion-content-height)' },
+  				to: { height: '0' }
   			},
   			'fade-in': {
-  				from: {
-  					opacity: '0'
-  				},
-  				to: {
-  					opacity: '1'
-  				}
+  				from: { opacity: '0' },
+  				to: { opacity: '1' }
   			},
   			'slide-up': {
-  				from: {
-  					opacity: '0',
-  					transform: 'translateY(20px)'
-  				},
-  				to: {
-  					opacity: '1',
-  					transform: 'translateY(0)'
-  				}
+  				from: { opacity: '0', transform: 'translateY(20px)' },
+  				to: { opacity: '1', transform: 'translateY(0)' }
   			},
   			'scale-in': {
-  				from: {
-  					opacity: '0',
-  					transform: 'scale(0.95)'
-  				},
-  				to: {
-  					opacity: '1',
-  					transform: 'scale(1)'
-  				}
+  				from: { opacity: '0', transform: 'scale(0.95)' },
+  				to: { opacity: '1', transform: 'scale(1)' }
   			}
   		},
   		animation: {
