@@ -1,37 +1,9 @@
-import { useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Star } from "lucide-react";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
+import { useDragScroll } from "@/hooks/use-drag-scroll";
 import type { Product } from "@/hooks/use-products";
-
-function useDragScroll() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
-
-  const onPointerDown = useCallback((e: React.PointerEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    dragState.current = { isDown: true, startX: e.clientX, scrollLeft: el.scrollLeft, moved: false };
-    el.setPointerCapture(e.pointerId);
-  }, []);
-
-  const onPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragState.current.isDown || !ref.current) return;
-    const dx = e.clientX - dragState.current.startX;
-    if (Math.abs(dx) > 3) { dragState.current.moved = true; setIsDragging(true); }
-    ref.current.scrollLeft = dragState.current.scrollLeft - dx;
-  }, []);
-
-  const onPointerUp = useCallback((e: React.PointerEvent) => {
-    dragState.current.isDown = false;
-    ref.current?.releasePointerCapture(e.pointerId);
-    setTimeout(() => setIsDragging(false), 0);
-  }, []);
-
-  return { ref, isDragging, onPointerDown, onPointerMove, onPointerUp };
-}
 
 interface ProtocolRowProps {
   title: string;
@@ -39,7 +11,7 @@ interface ProtocolRowProps {
 }
 
 export function ProtocolRow({ title, products }: ProtocolRowProps) {
-  const { ref: scrollRef, isDragging, onPointerDown, onPointerMove, onPointerUp } = useDragScroll();
+  const { ref: scrollRef, isDragging, scrollHandlers } = useDragScroll();
   const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
 
@@ -77,10 +49,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
         ref={scrollRef}
         className="flex gap-6 overflow-x-auto pb-5 snap-x snap-mandatory scrollbar-hide select-none"
         style={{ scrollPaddingLeft: "16px", cursor: isDragging ? "grabbing" : "grab" }}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerLeave={onPointerUp}
+        {...scrollHandlers}
       >
         {products.map((product) => {
           const prices = formatPriceBoth(product.price_usd, product.price_xcd);
@@ -101,6 +70,8 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
                 to={`/shop/${product.slug}`}
                 className="block relative aspect-square overflow-hidden"
                 style={{ background: "var(--site-green-dark)" }}
+                onClick={(e) => { if (isDragging) e.preventDefault(); }}
+                draggable={false}
               >
                 <div className="absolute inset-0 flex items-center justify-center p-6">
                   {product.image_url ? (
@@ -109,6 +80,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
                       alt={product.name}
                       className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
                       style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.3))" }}
+                      draggable={false}
                     />
                   ) : (
                     <div className="w-20 h-28 rounded bg-white/10" />
@@ -129,7 +101,11 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
 
               {/* Content */}
               <div className="p-4 space-y-2">
-                <Link to={`/shop/${product.slug}`}>
+                <Link
+                  to={`/shop/${product.slug}`}
+                  onClick={(e) => { if (isDragging) e.preventDefault(); }}
+                  draggable={false}
+                >
                   <h4
                     className="line-clamp-1"
                     style={{
@@ -190,10 +166,11 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
                   {prices.primary}
                 </div>
 
-                {/* Add to Protocol — appears on hover */}
+                {/* Add to Cart — appears on hover */}
                 <button
                   onClick={(e) => {
                     e.preventDefault();
+                    if (isDragging) return;
                     addToCart({ productId: product.id, quantity: 1 });
                   }}
                   disabled={
