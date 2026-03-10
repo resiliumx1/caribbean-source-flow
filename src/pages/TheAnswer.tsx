@@ -142,16 +142,10 @@ export default function TheAnswer() {
   return (
     <div className="the-answer-page min-h-screen">
 
-      {/* ===== 1. GALLERY HERO: Bottle as Background ===== */}
-      <section
-        className="answer-hero"
-        style={{ backgroundImage: `url(${heroBottle})` }}
-      >
-        {/* Gradient veil — darkens left side for text legibility */}
-        <div className="answer-hero__veil" />
-
-        {/* Left text stack */}
-        <div className="answer-hero__story-stack">
+      {/* ===== 1. GALLERY HERO: Bottle as Sculpture ===== */}
+      <section className="answer-hero">
+        {/* Left: Story Stack */}
+        <div className="answer-hero__story-side">
           <div ref={reveal} className="ta-reveal answer-hero__story-inner">
             <h1 className="answer-hero__title">
               The <em>Answer.</em>
@@ -174,6 +168,15 @@ export default function TheAnswer() {
               Endorsed by Chronixx · 3.4M+ Monthly Listeners
             </p>
           </div>
+        </div>
+
+        {/* Right: Bottle Sculpture */}
+        <div className="answer-hero__bottle-side">
+          <img
+            src={heroBottle}
+            alt="The Answer — Oak-Aged Caribbean Immune Elixir bottle"
+            className="answer-hero__bottle-img"
+          />
         </div>
 
         <button className="answer-hero__scroll-hint" onClick={() => scrollToSection("trust-bar")} aria-label="Scroll to learn more">
