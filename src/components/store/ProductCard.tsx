@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star, Plus } from "lucide-react";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import { ProductPlaceholder } from "./ProductPlaceholder";
@@ -24,97 +24,93 @@ export function ProductCard({ product, style }: ProductCardProps) {
     addToCart({ productId: product.id, quantity: 1 });
   };
 
+  // Form type dot color
+  const formDot = product.product_type === "tincture" ? "#8B4513"
+    : product.product_type === "capsule" ? "#BC8A5F"
+    : product.product_type === "tea" ? "#2D5F2D"
+    : "#999";
+
   return (
     <div
-      className="group relative rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
+      className="group flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
       style={{
         background: "var(--site-bg-card)",
         border: "1px solid var(--site-border)",
-        boxShadow: "var(--site-shadow-card)",
         ...style,
       }}
     >
-      {/* Image */}
+      {/* Image — strict 1:1 */}
       <Link
         to={`/shop/${product.slug}`}
         className="block relative aspect-square overflow-hidden"
         style={{ background: "var(--site-green-dark)" }}
       >
-        <div className="absolute inset-0 flex items-center justify-center p-6">
+        <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
           {product.image_url ? (
             <img
               src={product.image_url}
               alt={product.name}
               className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
               style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.3))" }}
+              draggable={false}
             />
           ) : (
             <ProductPlaceholder
               productType={product.product_type}
-              className="w-32 h-44 transition-transform duration-500 group-hover:scale-105"
+              className="w-24 h-32 transition-transform duration-500 group-hover:scale-105"
             />
           )}
         </div>
 
-        {/* Stock status */}
+        {/* Stock badge */}
         {product.stock_status !== "in_stock" && (
           <div
-            className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-xs font-semibold"
+            className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[11px] font-semibold"
             style={{ background: "#dc2626", color: "#fff" }}
           >
-            {product.stock_status === "out_of_stock"
-              ? "Out of Stock"
-              : product.stock_status === "low_stock"
-              ? "Low Stock"
-              : "Pre-order"}
+            {product.stock_status === "out_of_stock" ? "Out of Stock" : "Low Stock"}
           </div>
         )}
+
+        {/* Form type dot */}
+        <div
+          className="absolute top-2 left-2 w-2.5 h-2.5 rounded-full"
+          style={{ background: formDot, border: "1px solid rgba(255,255,255,0.3)" }}
+        />
       </Link>
 
-      {/* Content */}
-      <div className="p-4 space-y-2">
+      {/* Content — flex-grow to push price to bottom */}
+      <div className="p-3 sm:p-4 flex flex-col flex-grow">
         <Link to={`/shop/${product.slug}`}>
           <h3
             className="line-clamp-2"
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 700,
-              fontSize: "14px",
+              fontSize: "13px",
               textTransform: "uppercase",
               color: "var(--site-text-primary)",
               letterSpacing: "0.02em",
               lineHeight: 1.4,
+              minHeight: "2.5rem",
             }}
           >
             {product.name}
           </h3>
         </Link>
 
-        {product.traditional_use && (
-          <p
-            className="line-clamp-1"
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "13px",
-              color: "var(--site-text-muted)",
-            }}
-          >
-            For {product.traditional_use.split(",")[0].trim().toLowerCase()}
-          </p>
-        )}
-
         {/* Stars */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 mt-1.5">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              className="w-3.5 h-3.5"
+              className="w-3 h-3"
               style={{ fill: "var(--site-gold)", color: "var(--site-gold)" }}
             />
           ))}
           <span
             style={{
-              fontSize: "12px",
+              fontSize: "11px",
               color: "var(--site-text-muted)",
               marginLeft: "4px",
             }}
@@ -123,42 +119,47 @@ export function ProductCard({ product, style }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Price */}
-        <div className="flex items-center justify-between pt-1">
+        {/* Price row — pushed to bottom */}
+        <div className="flex items-center justify-between mt-auto pt-2">
           <span
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 700,
-              fontSize: "16px",
+              fontSize: "15px",
               color: "var(--site-text-primary)",
             }}
           >
             {prices.primary}
           </span>
-          <span
+
+          {/* Desktop: small quick-add circle */}
+          <button
+            onClick={handleAddToCart}
+            disabled={isAddingToCart || product.stock_status === "out_of_stock"}
+            className="hidden sm:flex w-9 h-9 rounded-full items-center justify-center transition-all hover:scale-110 disabled:opacity-40"
             style={{
-              fontSize: "12px",
-              color: "var(--site-text-muted)",
+              background: "rgba(188,138,95,0.12)",
+              color: "var(--site-gold)",
             }}
+            aria-label="Add to cart"
           >
-            {prices.secondary}
-          </span>
+            <Plus className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Add to Protocol — hover reveal */}
+        {/* Mobile: full width Add to Cart */}
         <button
           onClick={handleAddToCart}
           disabled={isAddingToCart || product.stock_status === "out_of_stock"}
-          className="w-full py-2.5 rounded-full text-sm font-medium transition-all opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 disabled:opacity-50 flex items-center justify-center gap-2"
+          className="sm:hidden w-full mt-2 py-2.5 rounded-full text-xs font-semibold transition-all disabled:opacity-40 flex items-center justify-center gap-1.5"
           style={{
             background: "var(--site-gold)",
             color: "var(--site-green-dark)",
             fontFamily: "'Inter', sans-serif",
-            fontWeight: 600,
             minHeight: "44px",
           }}
         >
-          <ShoppingCart className="w-4 h-4" />
+          <ShoppingCart className="w-3.5 h-3.5" />
           Add to Cart
         </button>
       </div>
