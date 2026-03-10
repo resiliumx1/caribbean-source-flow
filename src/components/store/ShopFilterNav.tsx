@@ -1,4 +1,5 @@
 import { useConditions } from "@/hooks/use-conditions";
+import { useRef, useCallback, useState } from "react";
 
 const FORMS = [
   { label: "Tinctures", slug: "tinctures" },
@@ -14,6 +15,38 @@ interface ShopFilterNavProps {
   onFormChange: (form: string | null) => void;
 }
 
+function useDragScroll() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    dragState.current = { isDown: true, startX: e.clientX, scrollLeft: el.scrollLeft, moved: false };
+    el.setPointerCapture(e.pointerId);
+  }, []);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current.isDown || !ref.current) return;
+    const dx = e.clientX - dragState.current.startX;
+    if (Math.abs(dx) > 3) {
+      dragState.current.moved = true;
+      setIsDragging(true);
+    }
+    ref.current.scrollLeft = dragState.current.scrollLeft - dx;
+  }, []);
+
+  const onPointerUp = useCallback((e: React.PointerEvent) => {
+    dragState.current.isDown = false;
+    ref.current?.releasePointerCapture(e.pointerId);
+    // Small delay so click handlers can check isDragging
+    setTimeout(() => setIsDragging(false), 0);
+  }, []);
+
+  return { ref, isDragging, onPointerDown, onPointerMove, onPointerUp, onPointerLeave: onPointerUp };
+}
+
 export function ShopFilterNav({
   activeCondition,
   onConditionChange,
@@ -21,6 +54,8 @@ export function ShopFilterNav({
   onFormChange,
 }: ShopFilterNavProps) {
   const { data: conditions } = useConditions();
+  const conditionScroll = useDragScroll();
+  const formScroll = useDragScroll();
 
   return (
     <div
@@ -34,9 +69,17 @@ export function ShopFilterNav({
     >
       <div className="container mx-auto px-4 py-3">
         {/* Row 1: Conditions */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <div
+          ref={conditionScroll.ref}
+          className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide select-none"
+          style={{ cursor: conditionScroll.isDragging ? "grabbing" : "grab" }}
+          onPointerDown={conditionScroll.onPointerDown}
+          onPointerMove={conditionScroll.onPointerMove}
+          onPointerUp={conditionScroll.onPointerUp}
+          onPointerLeave={conditionScroll.onPointerLeave}
+        >
           <span
-            className="flex-shrink-0 mr-1"
+            className="flex-shrink-0 mr-1 pointer-events-none"
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: "12px",
@@ -53,9 +96,10 @@ export function ShopFilterNav({
             return (
               <button
                 key={condition.id}
-                onClick={() =>
-                  onConditionChange(isActive ? null : condition.slug)
-                }
+                onClick={() => {
+                  if (conditionScroll.isDragging) return;
+                  onConditionChange(isActive ? null : condition.slug);
+                }}
                 className="flex-shrink-0 px-4 py-1.5 rounded-full text-sm transition-all min-h-[36px]"
                 style={{
                   background: isActive
@@ -77,10 +121,18 @@ export function ShopFilterNav({
           })}
         </div>
 
-        {/* Row 2: Forms — styled with distinct borders like conditions */}
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+        {/* Row 2: Forms */}
+        <div
+          ref={formScroll.ref}
+          className="flex items-center gap-2 overflow-x-auto scrollbar-hide select-none"
+          style={{ cursor: formScroll.isDragging ? "grabbing" : "grab" }}
+          onPointerDown={formScroll.onPointerDown}
+          onPointerMove={formScroll.onPointerMove}
+          onPointerUp={formScroll.onPointerUp}
+          onPointerLeave={formScroll.onPointerLeave}
+        >
           <span
-            className="flex-shrink-0 mr-1"
+            className="flex-shrink-0 mr-1 pointer-events-none"
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: "12px",
@@ -97,9 +149,10 @@ export function ShopFilterNav({
             return (
               <button
                 key={form.slug}
-                onClick={() =>
-                  onFormChange(isActive ? null : form.slug)
-                }
+                onClick={() => {
+                  if (formScroll.isDragging) return;
+                  onFormChange(isActive ? null : form.slug);
+                }}
                 className="flex-shrink-0 px-4 py-1.5 rounded-full text-sm transition-all min-h-[36px]"
                 style={{
                   background: isActive
