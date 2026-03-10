@@ -106,20 +106,15 @@ export function ShopHero() {
         </div>
 
         {/* Trust pills */}
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-nowrap sm:flex-wrap justify-start sm:justify-center gap-3 overflow-x-auto sm:overflow-visible scrollbar-hide px-1">
           {trustPills.map((pill) => (
             <span
               key={pill}
-              className="px-4 py-1.5 rounded-full"
+              className="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wide whitespace-nowrap backdrop-blur-md"
               style={{
-                background: "rgba(245,241,232,0.08)",
-                border: "1px solid rgba(245,241,232,0.15)",
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 500,
-                fontSize: "12px",
-                color: "rgba(245,241,232,0.7)",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
+                background: "rgba(255,255,255,0.1)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                color: "#FFFFFF",
               }}
             >
               {pill}
