@@ -74,19 +74,38 @@ function ConsultationToast() {
 }
 
 const TrinityHomepage = () => {
-  const [gateProgress, setGateProgress] = useState(0);
   const isFirstVisit = !localStorage.getItem('mkrc-gate-seen');
   const [gateComplete, setGateComplete] = useState(!isFirstVisit);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handleGateProgress = useCallback((progress: number) => {
-    setGateProgress(progress);
     window.dispatchEvent(new CustomEvent('gate-progress', { detail: progress }));
+
+    // Animate main content: opacity 0→1 and scale 0.95→1 between 70-90% progress
+    if (contentRef.current) {
+      if (progress < 0.7) {
+        contentRef.current.style.opacity = '0';
+        contentRef.current.style.transform = 'scale(0.95)';
+      } else if (progress < 0.9) {
+        const t = (progress - 0.7) / 0.2; // 0→1 over 70-90%
+        contentRef.current.style.opacity = String(t);
+        contentRef.current.style.transform = `scale(${0.95 + t * 0.05})`;
+      } else {
+        contentRef.current.style.opacity = '1';
+        contentRef.current.style.transform = 'scale(1)';
+      }
+    }
   }, []);
 
   const handleGateComplete = useCallback(() => {
     setGateComplete(true);
     localStorage.setItem('mkrc-gate-seen', '1');
+    // Ensure content is fully visible
+    if (contentRef.current) {
+      contentRef.current.style.opacity = '1';
+      contentRef.current.style.transform = 'scale(1)';
+    }
+    // Dispatch gate-complete — header & chat widget listen for this
     window.dispatchEvent(new CustomEvent('gate-complete'));
     window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
     // Reset scroll to top so homepage hero is visible
@@ -110,34 +129,40 @@ const TrinityHomepage = () => {
         <GateEntrance onProgressChange={handleGateProgress} onGateComplete={handleGateComplete} />
       )}
 
-      {/* Homepage content — always in DOM but hidden behind gate overlay */}
-      {gateComplete && (
-        <div ref={contentRef}>
-          <FadeInStagger delay={0.1}>
-            <TrinityHero />
-          </FadeInStagger>
-          <FadeInStagger delay={0.2}>
-            <OriginStory />
-          </FadeInStagger>
-          <FadeInStagger delay={0.3}>
-            <div id="priest-kailash-consultation">
-              <PriestKailashConsultation />
-            </div>
-          </FadeInStagger>
-          <FadeInStagger delay={0.4}>
-            <PriestKailashQuote />
-          </FadeInStagger>
-          <FadeInStagger delay={0.5}>
-            <SocialProofMatrix />
-          </FadeInStagger>
-          <FadeInStagger delay={0.6}>
-            <ByTheNumbers />
-          </FadeInStagger>
-          <FadeInStagger delay={0.7}>
-            <UnifiedFooter />
-          </FadeInStagger>
-        </div>
-      )}
+      {/* Homepage content — always in DOM, starts hidden behind gate overlay */}
+      <div
+        ref={contentRef}
+        style={{
+          opacity: gateComplete ? 1 : 0,
+          transform: gateComplete ? 'scale(1)' : 'scale(0.95)',
+          transition: gateComplete ? 'none' : undefined,
+          willChange: gateComplete ? 'auto' : 'opacity, transform',
+        }}
+      >
+        <FadeInStagger delay={gateComplete ? 0.1 : 0}>
+          <TrinityHero />
+        </FadeInStagger>
+        <FadeInStagger delay={gateComplete ? 0.2 : 0}>
+          <OriginStory />
+        </FadeInStagger>
+        <FadeInStagger delay={gateComplete ? 0.3 : 0}>
+          <div id="priest-kailash-consultation">
+            <PriestKailashConsultation />
+          </div>
+        </FadeInStagger>
+        <FadeInStagger delay={gateComplete ? 0.4 : 0}>
+          <PriestKailashQuote />
+        </FadeInStagger>
+        <FadeInStagger delay={gateComplete ? 0.5 : 0}>
+          <SocialProofMatrix />
+        </FadeInStagger>
+        <FadeInStagger delay={gateComplete ? 0.6 : 0}>
+          <ByTheNumbers />
+        </FadeInStagger>
+        <FadeInStagger delay={gateComplete ? 0.7 : 0}>
+          <UnifiedFooter />
+        </FadeInStagger>
+      </div>
       {gateComplete && <GoddessWhatsApp />}
       <ConsultationToast />
     </main>
