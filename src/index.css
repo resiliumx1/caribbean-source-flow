@@ -174,33 +174,34 @@
     --shadow-2xl: 0 25px 50px -12px hsla(0, 0%, 100%, 0.1);
 
     /* ═══ Site-wide theme tokens (DARK) ═══ */
-    --site-bg-primary: #0a0a0a;
-    --site-bg-secondary: #0f0f0d;
-    --site-bg-card: #111111;
-    --site-bg-deep: #090909;
-    --site-text-primary: #f2ead8;
-    --site-text-secondary: #a09888;
-    --site-text-muted: #8a8070;
-    --site-gold: #c9a84c;
-    --site-gold-dark: #a07830;
-    --site-gold-text: #c9a84c;
-    --site-green-dark: #0d1a0f;
-    --site-border: rgba(201,168,76,0.2);
-    --site-border-subtle: rgba(201,168,76,0.15);
-    --site-shadow-card: 0 8px 32px rgba(0,0,0,0.4);
+    --site-bg-primary: #0F281E;
+    --site-bg-secondary: #132E22;
+    --site-bg-card: #1B4332;
+    --site-bg-deep: #0A1F15;
+    --site-text-primary: #F5F1E8;
+    --site-text-secondary: #A8B5A0;
+    --site-text-muted: #A8B5A0;
+    --site-gold: #D4A373;
+    --site-gold-dark: #BC8A5F;
+    --site-gold-text: #D4A373;
+    --site-green-dark: #0A1F15;
+    --site-green-mid: #1B4332;
+    --site-border: #2D6A4F;
+    --site-border-subtle: rgba(45,106,79,0.4);
+    --site-shadow-card: 0 4px 12px rgba(0,0,0,0.3);
     --site-hero-overlay-from: rgba(0,0,0,0.35);
     --site-hero-overlay-to: rgba(0,0,0,0.15);
-    --site-card-hover-border: rgba(201,168,76,0.4);
-    --site-nav-bg: rgba(10,10,10,0.95);
-    --site-footer-bg: #0a0a0a;
-    --site-footer-text: #f2ead8;
-    --site-footer-muted: #a89e90;
-    --site-ticker-bg: #111111;
-    --site-ticker-text: #c9a84c;
-    --site-credential-bg: rgba(17,17,17,0.95);
-    --site-img-bg: #1a1a1a;
+    --site-card-hover-border: #D4A373;
+    --site-nav-bg: rgba(15,40,30,0.95);
+    --site-footer-bg: #0F281E;
+    --site-footer-text: #F5F1E8;
+    --site-footer-muted: #A8B5A0;
+    --site-ticker-bg: #1B4332;
+    --site-ticker-text: #F5F1E8;
+    --site-credential-bg: rgba(27,67,50,0.95);
+    --site-img-bg: #1B4332;
     --site-hero-gradient: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0) 100%);
-    --site-hero-text-on-dark: #f5f0e0;
+    --site-hero-text-on-dark: #F5F1E8;
   }
 }
 
