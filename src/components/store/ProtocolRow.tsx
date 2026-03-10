@@ -39,7 +39,7 @@ interface ProtocolRowProps {
 }
 
 export function ProtocolRow({ title, products }: ProtocolRowProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const { ref: scrollRef, isDragging, onPointerDown, onPointerMove, onPointerUp } = useDragScroll();
   const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
 
