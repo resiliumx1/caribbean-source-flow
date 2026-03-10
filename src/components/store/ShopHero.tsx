@@ -88,10 +88,10 @@ export function ShopHero() {
         </p>
 
         {/* CTAs */}
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-10">
           <a
             href="#filter-nav"
-            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:brightness-110"
+            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:brightness-110 w-full sm:w-auto text-center"
             style={{
               background: "var(--site-gold)",
               color: "var(--site-green-dark)",
@@ -99,11 +99,11 @@ export function ShopHero() {
               fontWeight: 600,
             }}
           >
-            Shop by Condition
+            Shop Best Sellers →
           </a>
           <Link
             to="/shop"
-            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:bg-white/10"
+            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:bg-white/10 w-full sm:w-auto text-center"
             style={{
               border: "1px solid rgba(245,241,232,0.5)",
               color: "#F5F1E8",
@@ -111,7 +111,7 @@ export function ShopHero() {
               fontWeight: 500,
             }}
           >
-            Shop All Remedies
+            View All Products →
           </Link>
         </div>
 
