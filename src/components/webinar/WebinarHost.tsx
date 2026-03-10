@@ -1,4 +1,6 @@
 import { useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import priestKailashImg from "@/assets/priest-kailash-host.jpg";
 
 const CREDENTIALS = ["Herbal Medicine", "Nutrition", "Holistic Wellness"];
@@ -25,7 +27,7 @@ export default function WebinarHost() {
           >
             <img
               src={priestKailashImg}
-              alt="Honorable Priest Kailash"
+              alt="Honorable Priest Kailash — herbal medicine practitioner and MKRC founder"
               className="w-full h-auto object-cover"
             />
           </div>
@@ -38,7 +40,7 @@ export default function WebinarHost() {
               color: "#c9a84c",
             }}
           >
-            20 Years • Herbal Medicine • MKRC Founder
+            21 Years • Herbal Medicine • MKRC Founder
           </div>
         </div>
 
@@ -59,7 +61,7 @@ export default function WebinarHost() {
           <p className="font-jost font-light leading-relaxed mb-8" style={{ color: "#8a8070" }}>
             For over two decades, Honorable Priest Kailash has dedicated his life to the study and practice of herbal medicine
             from the volcanic mountains of Saint Lucia. He created these free webinars because he believes healing knowledge
-            belongs to everyone — not locked behind paywalls. His mission through MKRC is to make natural wellness accessible worldwide.
+            belongs to everyone — not locked behind paywalls.
           </p>
           <div className="flex flex-wrap gap-3 mb-8">
             {CREDENTIALS.map((c) => (
@@ -72,13 +74,28 @@ export default function WebinarHost() {
               </span>
             ))}
           </div>
-          <a
-            href="/"
-            className="font-jost font-medium px-7 py-3 rounded-full text-sm border transition-all duration-300 hover:brightness-110 hover:scale-[1.02] inline-block"
+
+          {/* Product bridge */}
+          <div className="rounded-xl p-4 mb-6" style={{ backgroundColor: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.15)" }}>
+            <p className="font-jost text-sm mb-2" style={{ color: "#f2ead8" }}>
+              Learn more about his signature formulation:
+            </p>
+            <Link
+              to="/the-answer"
+              className="font-jost text-sm font-medium flex items-center gap-1 transition-colors hover:brightness-125"
+              style={{ color: "#c9a84c" }}
+            >
+              Discover The Answer — Oak-Aged Immune Elixir <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <Link
+            to="/"
+            className="font-jost font-medium px-7 py-3 rounded-full text-sm border transition-all duration-300 hover:brightness-110 hover:scale-[1.02] inline-block min-h-[48px]"
             style={{ borderColor: "#c9a84c", color: "#c9a84c" }}
           >
             Learn More About MKRC →
-          </a>
+          </Link>
         </div>
       </div>
     </section>

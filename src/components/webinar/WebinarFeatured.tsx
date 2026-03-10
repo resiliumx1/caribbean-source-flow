@@ -1,8 +1,10 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { Clock, Calendar, Users } from "lucide-react";
 import webinarImg from "@/assets/mkrc-webinar-featured.jpg";
 
 export default function WebinarFeatured() {
   const ref = useRef<HTMLElement>(null);
+  const [isLive] = useState(false); // Toggle this when a live event is scheduled
 
   useEffect(() => {
     const el = ref.current;
@@ -17,26 +19,49 @@ export default function WebinarFeatured() {
       id="featured"
       ref={ref}
       className="webinar-reveal webinar-noise relative"
-      style={{ backgroundColor: "#0f0f0d", borderTop: "1px solid rgba(201,168,76,0.2)" }}
+      style={{ backgroundColor: "#0f0f0d", borderTop: "1px solid rgba(201,168,76,0.15)" }}
     >
       <div className="relative z-10 max-w-[1200px] mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-[55%_45%] gap-12 items-center">
         {/* Left: thumbnail */}
-        <div className="relative rounded-2xl overflow-hidden" style={{ boxShadow: "0 0 60px rgba(201,168,76,0.08)" }}>
+        <div className="relative rounded-2xl overflow-hidden group" style={{ boxShadow: "0 0 60px rgba(201,168,76,0.08)" }}>
           <img
             src={webinarImg}
-            alt="Featured MKRC Webinar"
-            className="w-full h-auto object-cover"
+            alt="Featured MKRC Webinar — Reproductive Wellness"
+            className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          {/* Play overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-center justify-center">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+          {/* Play button */}
+          <div className="absolute inset-0 flex items-center justify-center">
             <div
-              className="w-16 h-16 rounded-full flex items-center justify-center backdrop-blur-sm transition-transform duration-300 hover:scale-110 cursor-pointer"
-              style={{ backgroundColor: "rgba(201,168,76,0.85)" }}
+              className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:scale-110 cursor-pointer"
+              style={{ backgroundColor: "rgba(201,168,76,0.9)", boxShadow: "0 0 30px rgba(201,168,76,0.3)" }}
             >
-              <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+              <svg width="24" height="28" viewBox="0 0 22 26" fill="none">
                 <path d="M2 1.5L20.5 13L2 24.5V1.5Z" fill="#090909" stroke="#090909" strokeWidth="2" strokeLinejoin="round" />
               </svg>
             </div>
+          </div>
+
+          {/* Duration badge */}
+          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ backgroundColor: "rgba(201,168,76,0.9)" }}>
+            <Clock size={12} style={{ color: "#090909" }} />
+            <span className="font-jost font-medium text-xs" style={{ color: "#090909" }}>90 min</span>
+          </div>
+
+          {/* Status pill */}
+          <div className="absolute top-4 left-4">
+            {isLive ? (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md" style={{ backgroundColor: "rgba(220,38,38,0.8)" }}>
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                <span className="font-jost font-medium text-xs text-white">Upcoming Live Session</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md" style={{ backgroundColor: "rgba(9,9,9,0.7)", border: "1px solid rgba(201,168,76,0.3)" }}>
+                <span className="font-jost font-medium text-xs" style={{ color: "#c9a84c" }}>Featured Replay</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -46,7 +71,7 @@ export default function WebinarFeatured() {
             className="font-jost text-xs tracking-[0.2em] uppercase mb-4 block"
             style={{ color: "#c9a84c" }}
           >
-            Featured Session
+            {isLive ? "Upcoming Live Session" : "Featured Session"}
           </span>
           <h2
             className="font-cormorant font-bold mb-4"
@@ -58,31 +83,43 @@ export default function WebinarFeatured() {
             Discover Caribbean herbal protocols that have helped hundreds restore hormonal balance,
             boost fertility, and reclaim vitality — with Honorable Priest Kailash.
           </p>
-          <div className="flex flex-wrap gap-2 mb-6">
-            <span className="font-jost text-xs px-3 py-1 rounded-full" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c" }}>
-              Women's Health
+
+          {/* Metadata */}
+          <div className="flex flex-wrap gap-3 mb-6">
+            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c" }}>
+              🌸 Women's Health
             </span>
-            <span className="font-jost text-xs px-3 py-1 rounded-full" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c" }}>
-              ~90 min
+            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c" }}>
+              <Clock size={12} /> ~90 min
+            </span>
+            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c" }}>
+              <Users size={12} /> 1.2K views
             </span>
           </div>
+
+          {/* CTA */}
           <div className="flex flex-wrap gap-4">
             <a
               href="https://us06web.zoom.us/j/83340011876?pwd=vMrImiKGYGWbGbaioYt6RTEw2sbo0A.1"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-jost font-medium px-7 py-3 rounded-full text-sm transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
+              className="font-jost font-medium px-7 py-3 rounded-full text-sm transition-all duration-300 hover:brightness-110 hover:scale-[1.02] min-h-[48px] flex items-center gap-2"
               style={{ backgroundColor: "#c9a84c", color: "#090909" }}
             >
-              Watch Now
+              {isLive ? "Reserve My Seat" : "Watch Recording"}
             </a>
             <button
-              className="font-jost font-medium px-7 py-3 rounded-full text-sm border transition-all duration-300 hover:brightness-110"
-              style={{ borderColor: "#f2ead8", color: "#f2ead8" }}
+              className="font-jost font-medium px-7 py-3 rounded-full text-sm border transition-all duration-300 hover:brightness-110 min-h-[48px]"
+              style={{ borderColor: "rgba(242,234,216,0.3)", color: "#f2ead8" }}
             >
               Share Session
             </button>
           </div>
+
+          {/* Date */}
+          <p className="font-jost text-xs mt-4" style={{ color: "#8a8070" }}>
+            Originally streamed March 2025
+          </p>
         </div>
       </div>
     </section>

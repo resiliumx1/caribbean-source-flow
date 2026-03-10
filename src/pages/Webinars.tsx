@@ -4,6 +4,7 @@ import "@/styles/webinar.css";
 
 import WebinarHero from "@/components/webinar/WebinarHero";
 import WebinarFeatured from "@/components/webinar/WebinarFeatured";
+import WebinarCommunity from "@/components/webinar/WebinarCommunity";
 import WebinarShowcase from "@/components/webinar/WebinarShowcase";
 import WebinarTrust from "@/components/webinar/WebinarTrust";
 import WebinarHost from "@/components/webinar/WebinarHost";
@@ -21,24 +22,38 @@ import {
 export default function Webinars() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedVideo, setSelectedVideo] = useState<WebinarVideo | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: dbVideos = [] } = useWebinarVideos();
 
   useEffect(() => {
     document.title = "Free Herbal Medicine Webinars | Priest Kailash | Mount Kailash Rejuvenation Centre";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute("content", "Join free live webinars on herbal medicine, natural health and holistic wellness with Priest Kailash. Expert-led sessions on immunity, fertility, detox and more.");
+    // Force dark mode for this page
+    document.documentElement.classList.add("dark");
   }, []);
 
+  // Filter videos by search query
+  const filteredVideos = searchQuery.trim()
+    ? dbVideos.filter(v =>
+        (v.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (v.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (v.category || "").toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : dbVideos;
+
   return (
-    <div style={{ backgroundColor: "var(--site-bg-primary)", color: "var(--site-text-primary)" }}>
+    <div style={{ backgroundColor: "#090909", color: "#f2ead8" }}>
       <WebinarHero />
-      <hr className="webinar-divider" />
       <WebinarFeatured />
+      <WebinarCommunity onVideoClick={setSelectedVideo} />
       <WebinarShowcase
-        videos={dbVideos}
+        videos={filteredVideos}
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
         onVideoClick={setSelectedVideo}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       <WebinarTrust />
       <WebinarHost />
@@ -46,11 +61,11 @@ export default function Webinars() {
       <WebinarExplore />
       <WebinarFooter />
 
-      {/* Video playback modal */}
+      {/* Video playback lightbox */}
       <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
         <DialogContent
-          className="sm:max-w-3xl p-0 overflow-hidden"
-          style={{ backgroundColor: "#18181b", border: "1px solid rgba(201,168,76,0.2)" }}
+          className="sm:max-w-4xl p-0 overflow-hidden"
+          style={{ backgroundColor: "#111111", border: "1px solid rgba(201,168,76,0.2)" }}
         >
           <DialogHeader className="p-4 pb-0">
             <DialogTitle className="font-cormorant text-lg" style={{ color: "#f2ead8" }}>
@@ -60,6 +75,7 @@ export default function Webinars() {
           <div className="aspect-video w-full">
             {selectedVideo && (
               <iframe
+                key={selectedVideo.id}
                 src={`https://www.youtube.com/embed/${selectedVideo.youtube_video_id}?autoplay=1`}
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

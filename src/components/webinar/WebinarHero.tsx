@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 function Particles() {
-  const particles = Array.from({ length: 25 }, (_, i) => ({
+  const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     delay: `${Math.random() * 8}s`,
@@ -48,7 +48,6 @@ export default function WebinarHero() {
       ref={sectionRef}
       className="hero-section relative flex items-center justify-center text-center min-h-screen overflow-hidden webinar-hero-gradient webinar-noise"
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/50 z-[1]" />
       <Particles />
 
@@ -78,42 +77,33 @@ export default function WebinarHero() {
 
         {/* Subheadline */}
         <p
-          className="font-jost font-light max-w-xl mx-auto mb-10 leading-relaxed"
-          style={{ color: "#f2ead8cc", fontSize: "1.1rem" }}
+          className="font-jost font-light max-w-xl mx-auto mb-6 leading-relaxed"
+          style={{ color: "rgba(242,234,216,0.8)", fontSize: "1.1rem" }}
         >
-          Honorable Priest Kailash and the MKRC team share 20 years of herbal wisdom
+          Honorable Priest Kailash and the MKRC team share 21 years of herbal wisdom
           — through free, expert-led webinars you can watch anytime.
         </p>
 
-        {/* Trust trio */}
-        <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 mb-10">
-          {[
-            { icon: "🌿", text: "20 Years of Expertise" },
-            { icon: "💛", text: "Always 100% Free" },
-            { icon: "🌍", text: "1,000+ Global Attendees" },
-          ].map((item, i) => (
-            <span key={i} className="font-jost text-sm flex items-center gap-2" style={{ color: "#f2ead8" }}>
-              {i > 0 && <span className="hidden sm:inline" style={{ color: "#c9a84c" }}>·</span>}
-              <span>{item.icon}</span> {item.text}
-            </span>
-          ))}
-        </div>
+        {/* Social proof */}
+        <p className="font-jost text-sm mb-10" style={{ color: "#c9a84c" }}>
+          Join 1,000+ monthly attendees from 40+ countries
+        </p>
 
         {/* CTAs */}
         <div className="flex flex-wrap justify-center gap-4 mb-16">
           <a
             href="#featured"
-            className="font-jost font-medium px-8 py-3.5 rounded-full text-sm transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
+            className="font-jost font-medium px-8 py-3.5 rounded-full text-sm transition-all duration-300 hover:brightness-110 hover:scale-[1.02] min-h-[48px] flex items-center"
             style={{ backgroundColor: "#c9a84c", color: "#090909" }}
           >
-            Browse Upcoming Webinars
+            Browse Sessions
           </a>
           <a
             href="#archive"
-            className="font-jost font-medium px-8 py-3.5 rounded-full text-sm border transition-all duration-300 hover:brightness-110 hover:scale-[1.02]"
-            style={{ borderColor: "#f2ead8", color: "#f2ead8" }}
+            className="font-jost font-medium px-8 py-3.5 rounded-full text-sm border transition-all duration-300 hover:brightness-110 hover:scale-[1.02] min-h-[48px] flex items-center"
+            style={{ borderColor: "rgba(242,234,216,0.4)", color: "#f2ead8" }}
           >
-            Watch Past Sessions
+            Watch Past Replays
           </a>
         </div>
 
