@@ -68,7 +68,7 @@ export default function Shop() {
     const bundles = products.filter((p) => p.product_type === "bundle" || (p.product_categories as any)?.slug === "curated-bundles");
     const theAnswerProduct = products.find((p) => p.slug === "the-answer") || null;
     const bundleIds = new Set(bundles.map(b => b.id));
-    const allSingles = products.filter((p) => !bundleIds.has(p.id) && p.slug !== "the-answer");
+    const allSingles = products.filter((p) => !bundleIds.has(p.id) && p.slug !== "the-answer" && p.is_active !== false);
     return { bundles, theAnswerProduct, allSingles };
   }, [products]);
 

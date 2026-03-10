@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
+import heroImage from "@/assets/shop-hero-apothecary.png";
 
 const trustPills = [
   "3-Day US Shipping",
@@ -28,32 +29,21 @@ export function ShopHero() {
       className="relative min-h-[480px] md:min-h-[540px] overflow-hidden flex items-center"
       style={{ background: "var(--site-green-dark)" }}
     >
-      {/* Split background images */}
-      <div className="absolute inset-0 z-0 flex">
-        {/* Left: volcanic soil / raw herbs */}
-        <div
-          className="w-1/2 h-full bg-cover bg-center"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&q=80')`,
-            filter: "brightness(0.5) saturate(0.8)",
-          }}
-        />
-        {/* Right: amber dropper bottle */}
-        <div
-          className="w-1/2 h-full bg-cover bg-center"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80')`,
-            filter: "brightness(0.45) saturate(0.9) sepia(0.2)",
-          }}
-        />
-      </div>
+      {/* Background image */}
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          filter: "brightness(0.55) saturate(0.9)",
+        }}
+      />
 
-      {/* Dark gradient overlay bottom 40% */}
+      {/* Dark gradient overlay */}
       <div
         className="absolute inset-0 z-[1]"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(15,40,30,0.5) 0%, rgba(15,40,30,0.3) 60%, rgba(15,40,30,0.85) 100%)",
+            "linear-gradient(to bottom, rgba(15,40,30,0.45) 0%, rgba(15,40,30,0.3) 50%, rgba(15,40,30,0.85) 100%)",
         }}
       />
 
