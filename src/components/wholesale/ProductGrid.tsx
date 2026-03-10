@@ -9,7 +9,7 @@ const productCategories = [
     id: "ocean",
     title: "Ocean Botanicals",
     icon: Waves,
-    image: seamossImage,
+    image: oceanBotanicals,
     specs: ["Golden Seamoss & Bladderwrack", "Full Spectrum Sea Capsules", "Handcrafted Seamoss Soaps"],
   },
   {
