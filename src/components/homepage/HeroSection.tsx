@@ -37,7 +37,8 @@ const pillars = [
   {
     title: "School of Bush Medicine",
     description: "Clinical training",
-    cta: "Explore Courses",
+    cta: "Start Journey",
+    ctaWeight: "font-semibold" as const,
     route: "/school/herbal-physician",
     image: pillarSchool,
     icon: GraduationCap,
