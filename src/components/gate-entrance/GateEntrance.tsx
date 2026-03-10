@@ -116,18 +116,12 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
     };
   }, [onProgressChange, onGateComplete]);
 
-  // Once complete, fade out and hide after a short delay
+  // Cleanup ScrollTrigger on unmount
   useEffect(() => {
-    if (completedRef.current) {
-      // Allow GSAP to finish the fade, then remove from DOM
-      const timer = setTimeout(() => setVisible(false), 600);
-      return () => clearTimeout(timer);
-    }
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    };
   }, []);
-
-  if (!visible && completedRef.current) return (
-    <div ref={triggerRef} style={{ height: '300vh' }} />
-  );
 
   return (
     <>
