@@ -5,20 +5,20 @@ import warehouseImage from "@/assets/miami-warehouse.jpg";
 
 const solutions = [
   {
-    problem: "Inconsistent quality from aggregated suppliers",
-    solution: "Single-origin St. Lucian harvesting. Meet the farmer.",
+    problem: "Inconsistent Quality",
+    solution: "Single-Origin St. Lucian Harvesting. Meet your farmer, inspect your batch.",
     icon: ShieldCheck,
     image: priestHarvesting,
   },
   {
-    problem: "Documentation gaps cause customs delays",
-    solution: "Pre-cleared COAs and import docs. FDA-compliant packaging.",
+    problem: "Documentation Delays",
+    solution: "Pre-Cleared COAs & Import Docs. FDA-compliant, customs-ready.",
     icon: Clock,
     image: labProcessing,
   },
   {
-    problem: "Unpredictable 6-8 week lead times",
-    solution: "Miami warehouse stock. Quick US delivery available.",
+    problem: "Unpredictable Lead Times",
+    solution: "Miami Warehouse Stock. Order today, receive this week.",
     icon: Truck,
     image: warehouseImage,
   },
@@ -29,8 +29,14 @@ export const ProblemSolution = () => {
     <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
+          <p
+            className="mb-3"
+            style={{ fontSize: "12px", fontWeight: 400, color: "var(--site-gold)", textTransform: "uppercase", letterSpacing: "0.15em" }}
+          >
+            Why Partner With Us
+          </p>
           <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)", marginBottom: "12px" }}>
-            Your Sourcing Challenges, <span style={{ color: "#c9a84c" }}>Solved</span>
+            Your Sourcing Challenges, <span style={{ color: "var(--site-gold)" }}>Solved</span>
           </h2>
           <p style={{ color: "var(--site-text-muted)", fontWeight: 300, fontSize: "16px", maxWidth: "560px", margin: "0 auto" }}>
             We understand the pain of unreliable supply chains. Here's how we're different.
@@ -46,24 +52,24 @@ export const ProblemSolution = () => {
             >
               <div className="relative h-48 overflow-hidden">
                 <img src={item.image} alt={item.solution} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.75) 60%)' }} />
-                <item.icon className="absolute bottom-4 right-4" style={{ color: "#c9a84c", width: '52px', height: '52px' }} />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 70%)' }} />
+                <item.icon className="absolute bottom-4 right-4" style={{ color: "var(--site-gold)", width: '48px', height: '48px' }} />
               </div>
               
               <div className="p-6">
                 <div className="flex items-start gap-3 mb-4">
                   <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "#ef4444" }} />
                   <div>
-                    <p style={{ fontSize: "12px", fontWeight: 400, color: "#c9a84c", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>The Problem</p>
-                    <p style={{ color: "var(--site-text-primary)", fontWeight: 400, fontSize: "15px" }}>{item.problem}</p>
+                    <p style={{ fontSize: "12px", fontWeight: 400, color: "var(--site-gold)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>The Problem</p>
+                    <p style={{ color: "var(--site-text-primary)", fontWeight: 500, fontSize: "16px" }}>{item.problem}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "#c9a84c" }} />
+                  <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "var(--site-gold)" }} />
                   <div>
-                    <p style={{ fontSize: "12px", fontWeight: 400, color: "#c9a84c", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>Our Solution</p>
-                    <p style={{ color: "var(--site-text-primary)", fontWeight: 500, fontSize: "15px" }}>{item.solution}</p>
+                    <p style={{ fontSize: "12px", fontWeight: 400, color: "var(--site-gold)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "4px" }}>Our Solution</p>
+                    <p style={{ color: "var(--site-text-primary)", fontWeight: 400, fontSize: "15px", lineHeight: 1.6 }}>{item.solution}</p>
                   </div>
                 </div>
               </div>
