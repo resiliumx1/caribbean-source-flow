@@ -1,6 +1,6 @@
 import { ArrowRight, Download, MessageCircle } from "lucide-react";
 import priestHarvesting from "@/assets/priest-kailash-harvesting.png";
-import warehouseImage from "@/assets/miami-warehouse.jpg";
+import warehouseImage from "@/assets/wholesale-warehouse-hero.png";
 
 interface HeroProps {
   onScrollToForm: () => void;
