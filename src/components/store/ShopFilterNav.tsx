@@ -1,13 +1,4 @@
-import { useState } from "react";
-import { useCategories } from "@/hooks/use-products";
-
-const CONDITIONS = [
-  "Inflammation",
-  "Gut Health",
-  "Immune Defense",
-  "Stress & Sleep",
-  "Detox",
-];
+import { useConditions } from "@/hooks/use-conditions";
 
 const FORMS = [
   { label: "Tinctures", slug: "tinctures" },
@@ -29,6 +20,8 @@ export function ShopFilterNav({
   activeForm,
   onFormChange,
 }: ShopFilterNavProps) {
+  const { data: conditions } = useConditions();
+
   return (
     <div
       id="filter-nav"
@@ -55,13 +48,13 @@ export function ShopFilterNav({
           >
             Shop by Condition:
           </span>
-          {CONDITIONS.map((condition) => {
-            const isActive = activeCondition === condition;
+          {(conditions || []).map((condition) => {
+            const isActive = activeCondition === condition.slug;
             return (
               <button
-                key={condition}
+                key={condition.id}
                 onClick={() =>
-                  onConditionChange(isActive ? null : condition)
+                  onConditionChange(isActive ? null : condition.slug)
                 }
                 className="flex-shrink-0 px-4 py-1.5 rounded-full text-sm transition-all min-h-[36px]"
                 style={{
@@ -78,19 +71,19 @@ export function ShopFilterNav({
                     : "1px solid var(--site-border)",
                 }}
               >
-                {condition}
+                {condition.name}
               </button>
             );
           })}
         </div>
 
-        {/* Row 2: Forms */}
-        <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
+        {/* Row 2: Forms — styled with distinct borders like conditions */}
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
           <span
             className="flex-shrink-0 mr-1"
             style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: "11px",
+              fontSize: "12px",
               fontWeight: 500,
               color: "var(--site-text-muted)",
               textTransform: "uppercase",
@@ -107,17 +100,19 @@ export function ShopFilterNav({
                 onClick={() =>
                   onFormChange(isActive ? null : form.slug)
                 }
-                className="flex-shrink-0 text-sm transition-all min-h-[32px]"
+                className="flex-shrink-0 px-4 py-1.5 rounded-full text-sm transition-all min-h-[36px]"
                 style={{
+                  background: isActive
+                    ? "var(--site-gold)"
+                    : "var(--site-bg-card)",
+                  color: isActive
+                    ? "var(--site-green-dark)"
+                    : "var(--site-text-primary)",
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: isActive ? 600 : 400,
-                  color: isActive
-                    ? "var(--site-gold)"
-                    : "var(--site-text-muted)",
-                  borderBottom: isActive
-                    ? "2px solid var(--site-gold)"
-                    : "2px solid transparent",
-                  paddingBottom: "2px",
+                  border: isActive
+                    ? "1px solid var(--site-gold)"
+                    : "1px solid var(--site-border)",
                 }}
               >
                 {form.label}
