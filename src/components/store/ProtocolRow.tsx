@@ -47,8 +47,12 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
       {/* Scroll container */}
       <div
         ref={scrollRef}
-        className="flex gap-6 overflow-x-auto pb-5 snap-x snap-mandatory scrollbar-hide"
-        style={{ scrollPaddingLeft: "16px" }}
+        className="flex gap-6 overflow-x-auto pb-5 snap-x snap-mandatory scrollbar-hide select-none"
+        style={{ scrollPaddingLeft: "16px", cursor: isDragging ? "grabbing" : "grab" }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerLeave={onPointerUp}
       >
         {products.map((product) => {
           const prices = formatPriceBoth(product.price_usd, product.price_xcd);
