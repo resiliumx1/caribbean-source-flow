@@ -10,7 +10,8 @@ const pillars = [
   {
     title: "Wholesale Supply",
     description: "For practitioners",
-    cta: "Access Portal",
+    cta: "Get Pricing",
+    ctaWeight: "font-medium" as const,
     route: "/wholesale",
     image: pillarWholesale,
     icon: ClipboardList,
@@ -18,7 +19,8 @@ const pillars = [
   {
     title: "The Apothecary",
     description: "For personal use",
-    cta: "Shop Remedies",
+    cta: "Shop Now",
+    ctaWeight: "font-medium" as const,
     route: "/shop",
     image: pillarApothecary,
     icon: ShoppingBag,
@@ -26,7 +28,8 @@ const pillars = [
   {
     title: "The Ridge Retreat",
     description: "7-day immersions",
-    cta: "View Dates",
+    cta: "Apply Now",
+    ctaWeight: "font-semibold" as const,
     route: "/retreats",
     image: pillarRetreat,
     icon: Mountain,
@@ -34,7 +37,8 @@ const pillars = [
   {
     title: "School of Bush Medicine",
     description: "Clinical training",
-    cta: "Explore Courses",
+    cta: "Start Journey",
+    ctaWeight: "font-semibold" as const,
     route: "/school/herbal-physician",
     image: pillarSchool,
     icon: GraduationCap,
@@ -79,7 +83,7 @@ function PillarCard({ pillar }: { pillar: typeof pillars[number] }) {
         <div className="text-xs text-cream/70 mb-3 font-sans font-light">
           {pillar.description}
         </div>
-        <span className="inline-flex items-center gap-1 text-sm font-medium mt-auto text-gold">
+        <span className={`inline-flex items-center gap-1 text-sm ${pillar.ctaWeight} mt-auto text-gold`}>
           {pillar.cta}{" "}
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
         </span>
