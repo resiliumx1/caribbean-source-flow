@@ -51,8 +51,6 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
       trigger,
       start: "top top",
       end: "bottom top",
-      pin: overlay,
-      pinSpacing: false,
       scrub: 1,
       onUpdate: (self) => {
         const raw = self.progress; // 0 → 1
