@@ -1,11 +1,12 @@
-/* TheAnswer Page Styles — uses MKRC theme variables */
-/* Fonts loaded via <link> in index.html to avoid render-blocking @import */
+/* TheAnswer Page — "Daily Ritual Portal" — Locked Dark Mode */
 
-/* ===== GLOBAL POLISH ===== */
+/* ===== GLOBAL ===== */
 .the-answer-page {
   scroll-behavior: smooth;
   font-family: 'Jost', sans-serif;
   font-weight: 300;
+  background: #090909;
+  color: #f2ead8;
 }
 
 .the-answer-page * {
@@ -25,42 +26,24 @@
   opacity: 1;
   transform: translateY(0);
 }
-/* Hero children should always be fully opaque once revealed */
 .answer-hero .ta-reveal.ta-visible,
 .answer-hero .ta-reveal.ta-visible * {
   opacity: 1;
 }
 
-/* Staggered children */
 .ta-stagger > * { transition-delay: calc(var(--i, 0) * 100ms); }
 
-/* ===== HERO ===== */
+/* ===== SPLIT HERO ===== */
 .answer-hero {
   position: relative;
   height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
+  background: #090909;
 }
 
 .answer-hero__left {
-  position: relative;
-  z-index: 10;
-  background: #090909;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 80px 48px 48px 48px;
-  overflow-y: auto;
-}
-
-.answer-hero__text-col {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.answer-hero__right {
   position: relative;
   height: 100vh;
   overflow: hidden;
@@ -74,40 +57,88 @@
   display: block;
 }
 
-.answer-hero__img-fade {
+.answer-hero__img-fade-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  background: linear-gradient(to right, transparent 0%, rgba(9,9,9,0.8) 100%);
+  pointer-events: none;
+}
+
+.answer-hero__right {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.answer-hero__chronixx-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+
+.answer-hero__img-fade-left {
   position: absolute;
   left: 0;
   top: 0;
   width: 200px;
   height: 100%;
-  background: linear-gradient(to right, #090909 0%, transparent 100%);
+  background: linear-gradient(to left, transparent 0%, rgba(9,9,9,0.8) 100%);
   pointer-events: none;
 }
 
-/* Mobile: stack vertically */
-@media (max-width: 768px) {
-  .answer-hero {
-    height: auto;
-    grid-template-columns: 1fr;
-  }
+.answer-hero__chronixx-quote {
+  position: absolute;
+  bottom: 120px;
+  left: 40px;
+  right: 40px;
+  z-index: 5;
+}
 
-  .answer-hero__right {
-    order: -1;
-    height: 45vh;
-  }
+.answer-hero__chronixx-quote blockquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  line-height: 1.4;
+  color: #f2ead8;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+  margin-bottom: 12px;
+}
 
-  .answer-hero__product-img {
-    height: 45vh;
-    object-position: center 55%;
-  }
+.answer-hero__chronixx-quote cite {
+  font-family: 'Jost', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  color: #c9a84c;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
 
-  .answer-hero__img-fade {
-    display: none;
-  }
+/* Center floating content */
+.answer-hero__center {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 48px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(9,9,9,0.85) 0%, rgba(9,9,9,0.4) 50%, transparent 80%);
+}
 
-  .answer-hero__left {
-    padding: 32px 20px 48px;
-  }
+.answer-hero__text-col {
+  pointer-events: all;
+  text-align: center;
+  max-width: 640px;
 }
 
 .answer-hero__badge {
@@ -125,9 +156,9 @@
 
 .answer-hero__title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-size: clamp(3.5rem, 7vw, 6rem);
   line-height: 1.05;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   color: #f2ead8;
 }
 
@@ -138,20 +169,16 @@
 
 .answer-hero__subtitle {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-size: clamp(1rem, 2vw, 1.3rem);
   font-style: italic;
-  color: #f2ead8;
-  opacity: 1;
-  margin-bottom: 24px;
-}
-
-.answer-hero__desc strong {
   color: #c9a84c;
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
 }
 
 .answer-hero__desc {
   color: #f2ead8;
-  opacity: 1;
+  opacity: 0.85;
   margin-bottom: 32px;
   font-family: 'Jost', sans-serif;
   font-weight: 300;
@@ -159,14 +186,25 @@
   font-size: 16px;
 }
 
+.answer-hero__desc strong {
+  color: #c9a84c;
+}
+
 .answer-hero__ctas {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 32px;
+  justify-content: center;
+  margin-bottom: 16px;
 }
 
-/* Override global hero-content color forcing for The Answer CTA buttons */
+.answer-hero__ctas .mkrc-btn-primary {
+  min-height: 48px;
+  background: #c9a84c;
+  color: #090909;
+  font-weight: 600;
+}
+
 .answer-hero__ctas .mkrc-btn-secondary {
   color: #f2ead8 !important;
   border-color: rgba(242,234,216,0.4) !important;
@@ -181,31 +219,51 @@
   background: rgba(201,168,76,0.1) !important;
 }
 
-.answer-hero__ctas .mkrc-btn-primary {
-  min-height: 48px;
-}
-
-.answer-hero__certs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.answer-hero__cert-tag {
-  font-size: 0.75rem;
-  padding: 4px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(201,168,76,0.3);
-  color: #8a8070;
+.answer-hero__micro {
   font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  color: rgba(242,234,216,0.5);
+  letter-spacing: 0.02em;
+}
+
+/* Trust badge strip */
+.answer-hero__trust-badge {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  background: rgba(9,9,9,0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.answer-hero__trust-stat {
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #c9a84c;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.answer-hero__trust-divider {
+  color: rgba(201,168,76,0.4);
+  font-size: 14px;
 }
 
 .answer-hero__scroll-hint {
   position: absolute;
-  bottom: 32px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 15;
   background: none;
   border: none;
   color: #c9a84c;
@@ -219,133 +277,112 @@
   50% { transform: translateX(-50%) translateY(8px); }
 }
 
-/* ===== CHRONIXX SECTION ===== */
+/* Mobile hero */
+@media (max-width: 768px) {
+  .answer-hero {
+    height: auto;
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+  }
+
+  .answer-hero__left {
+    height: 35vh;
+  }
+
+  .answer-hero__product-img {
+    height: 35vh;
+    object-position: center 55%;
+  }
+
+  .answer-hero__right {
+    display: none;
+  }
+
+  .answer-hero__center {
+    position: relative;
+    background: #090909;
+    padding: 32px 20px 80px;
+  }
+
+  .answer-hero__img-fade-right {
+    display: none;
+  }
+
+  .answer-hero__trust-badge {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    bottom: 60px;
+  }
+
+  .answer-hero__scroll-hint {
+    bottom: 12px;
+  }
+}
+
+/* ===== TRUST BAR ===== */
+.answer-trust-bar {
+  background: #0d1a0f;
+  padding: 16px 0;
+  border-top: 1px solid rgba(201,168,76,0.15);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+}
+
+.answer-trust-bar__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 24px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #f2ead8;
+}
+
+.answer-trust-bar__dot {
+  color: rgba(201,168,76,0.4);
+}
+
+/* ===== CHRONIXX STATS ===== */
 .chronixx-section {
   background-color: #0a0a0a;
-  padding: 0;
+  padding: 80px 0;
   overflow: hidden;
 }
 
 .chronixx-section__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 85vh;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-.chronixx-section__img-col {
+.chronixx-section__content {
+  text-align: center;
   position: relative;
-  overflow: hidden;
 }
 
-.chronixx-section__portrait {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
-  display: block;
-}
-
-.chronixx-section__img-fade {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 200px;
-  height: 100%;
-  background: linear-gradient(to left, #0a0a0a 0%, transparent 100%);
-  pointer-events: none;
-}
-
-.chronixx-section__text-col {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 64px 48px;
-}
-
-.chronixx-section__watermark {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(4rem, 10vw, 8rem);
-  color: #f2ead8;
-  opacity: 0.06;
-  line-height: 1;
-  position: absolute;
-  top: 24px;
-  left: 0;
-  pointer-events: none;
-  user-select: none;
-}
-
-@media (max-width: 768px) {
-  .chronixx-section__inner {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
-
-  .chronixx-section__img-col {
-    height: 50vh;
-  }
-
-  .chronixx-section__portrait {
-    height: 50vh;
-    object-position: center 15%;
-  }
-
-  .chronixx-section__img-fade {
-    display: none;
-  }
-
-  .chronixx-section__text-col {
-    padding: 32px 20px 48px;
-  }
-}
-
-.chronixx-section__quote {
+.chronixx-section__context {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  font-weight: 400;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  line-height: 1.4;
-  margin-bottom: 24px;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
   color: #f2ead8;
-}
-
-.chronixx-section__title {
-  color: #8a8070;
-  font-size: 0.875rem;
-  margin-bottom: 24px;
-  font-family: 'Jost', sans-serif;
-  font-weight: 300;
-}
-
-.chronixx-section__bio {
-  color: #8a8070;
-  font-size: 0.875rem;
-  line-height: 1.7;
-  margin-bottom: 32px;
-  font-family: 'Jost', sans-serif;
-  font-weight: 300;
-}
-
-.chronixx-section__note {
-  font-size: 0.75rem;
-  color: #5a5048;
-  font-style: italic;
-  margin-bottom: 32px;
-}
-
-/* Stats dividers */
-.chronixx-stats-divider {
-  height: 1px;
-  background: rgba(201,168,76,0.2);
-  margin: 32px 0;
+  opacity: 0.8;
+  margin-bottom: 48px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
 }
 
 .chronixx-section__stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-  text-align: center;
+  gap: 24px;
 }
 
 .chronixx-stat-card {
@@ -378,7 +415,18 @@
   margin-top: 8px;
 }
 
-/* ===== INGREDIENTS SECTION ===== */
+.chronixx-section__location-stamp {
+  display: block;
+  margin-top: 40px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  color: rgba(201,168,76,0.3);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ===== INGREDIENTS / MEET THE HERBS ===== */
 .ingredients-section {
   max-width: 1200px;
   margin: 0 auto;
@@ -425,7 +473,8 @@
   border-bottom: 1px solid rgba(201,168,76,0.1);
   overflow: hidden;
   transition: border-top-color 0.3s, transform 0.3s;
-  height: 100%;
+  height: auto;
+  cursor: pointer;
 }
 
 .ingredient-card:hover {
@@ -469,7 +518,7 @@
   font-style: italic;
   text-transform: uppercase;
   color: #c9a84c;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.1em;
   margin-bottom: 4px;
 }
@@ -488,13 +537,36 @@
   font-size: 15px;
   line-height: 1.7;
   color: #a09888;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+}
+
+/* Expandable details */
+.ingredient-card__expand {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s;
+  opacity: 0;
+}
+
+.ingredient-card--expanded .ingredient-card__expand {
+  max-height: 300px;
+  opacity: 1;
+}
+
+.ingredient-card__full-desc {
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #a09888;
+  margin-bottom: 16px;
 }
 
 .ingredient-card__tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-bottom: 8px;
 }
 
 .ingredient-card__tag {
@@ -508,7 +580,26 @@
   background: rgba(201,168,76,0.06);
 }
 
-/* ===== CRAFT / TIMELINE SECTION ===== */
+.ingredient-card__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  color: #c9a84c;
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+
+.ingredient-card__chevron {
+  transition: transform 0.3s;
+}
+
+.ingredient-card__chevron--open {
+  transform: rotate(180deg);
+}
+
+/* ===== CRAFT / TIMELINE ===== */
 .craft-section {
   background-color: #0a0a0a;
   padding: 96px 0;
@@ -533,7 +624,6 @@
   font-weight: 300;
 }
 
-/* Horizontal timeline */
 .craft-timeline {
   position: relative;
   display: flex;
@@ -628,7 +718,6 @@
   line-height: 1.6;
 }
 
-/* Mobile vertical timeline */
 @media (max-width: 768px) {
   .craft-timeline {
     flex-direction: column;
@@ -666,7 +755,7 @@
   }
 }
 
-/* ===== BENEFITS SECTION ===== */
+/* ===== BENEFITS ===== */
 .benefits-section {
   max-width: 1200px;
   margin: 0 auto;
@@ -762,7 +851,7 @@
   color: #c9a84c;
 }
 
-/* ===== HOW TO USE SECTION ===== */
+/* ===== HOW TO USE / THE RITUAL ===== */
 .howto-section {
   background-color: #0a0a0a;
   padding: 96px 0;
@@ -794,8 +883,9 @@
   font-family: 'Jost', sans-serif;
   font-weight: 300;
   font-size: 18px;
-  color: #8a8070;
+  color: #c9a84c;
   margin-bottom: 48px;
+  font-style: italic;
 }
 
 .howto-section__steps {
@@ -894,7 +984,7 @@
   white-space: nowrap;
 }
 
-/* ===== TESTIMONIALS SECTION ===== */
+/* ===== TESTIMONIALS ===== */
 .testimonials-section {
   max-width: 1200px;
   margin: 0 auto;
@@ -918,14 +1008,12 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #c9a84c, #a07830);
+  background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05));
+  border: 1px solid rgba(201,168,76,0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #090909;
-  font-family: 'Jost', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
+  font-size: 22px;
   margin-bottom: 16px;
 }
 
@@ -958,14 +1046,26 @@
   font-weight: 300;
   font-size: 14px;
   color: #c9a84c;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
 }
 
-/* ===== FINAL CTA ===== */
+/* ===== FINAL CTA / THE COVENANT ===== */
 .final-cta {
   max-width: 1200px;
   margin: 0 auto;
   padding: 96px 24px;
   text-align: center;
+}
+
+.final-cta__oath {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  color: #c9a84c;
+  margin-bottom: 40px;
 }
 
 .final-cta__bottle {
@@ -997,7 +1097,7 @@
   background: #c9a84c;
   color: #090909;
   font-family: 'Jost', sans-serif;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1014,27 +1114,29 @@
   transform: scale(1.02);
 }
 
+.final-cta__risk {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: #f2ead8;
+  opacity: 0.7;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
 .final-cta__sub {
   font-family: 'Jost', sans-serif;
   font-weight: 300;
   font-size: 14px;
   color: #8a8070;
-  margin-top: 16px;
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1199px) {
-  .answer-hero__inner {
-    padding: 120px 24px 60px;
-  }
-}
-
 @media (max-width: 900px) {
-  .answer-hero__inner {
-    grid-template-columns: 1fr;
+  .chronixx-section__stats {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .chronixx-section__inner,
   .howto-section__inner {
     grid-template-columns: 1fr;
   }
@@ -1044,23 +1146,9 @@
   .testimonials-section__grid {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  .answer-hero__bottle-col {
-    order: -1;
-    justify-content: center;
-  }
-
-  .answer-hero__bottle-img {
-    max-width: 320px;
-  }
 }
 
 @media (max-width: 600px) {
-  .answer-hero__inner {
-    padding: 100px 20px 40px;
-    gap: 32px;
-  }
-
   .ingredients-section__grid,
   .benefits-section__grid,
   .testimonials-section__grid {
@@ -1083,7 +1171,6 @@
     padding: 64px 20px;
   }
 
-  .chronixx-section,
   .craft-section,
   .howto-section {
     padding: 64px 0;
@@ -1107,104 +1194,4 @@
   .answer-hero__scroll-hint {
     animation: none;
   }
-}
-
-/* ═══ LIGHT MODE OVERRIDES ═══ */
-html:not(.dark) .the-answer-page {
-  background-color: var(--site-bg-primary);
-  color: var(--site-text-primary);
-}
-
-html:not(.dark) .answer-hero__left {
-  background: var(--site-bg-deep);
-}
-
-html:not(.dark) .answer-hero__img-fade {
-  background: linear-gradient(to right, var(--site-bg-deep) 0%, transparent 100%);
-}
-
-html:not(.dark) .answer-hero__title,
-html:not(.dark) .answer-hero__subtitle,
-html:not(.dark) .answer-hero__desc,
-html:not(.dark) .ingredients-section__heading,
-html:not(.dark) .ingredient-card__name,
-html:not(.dark) .craft-step__title,
-html:not(.dark) .benefit-card__title,
-html:not(.dark) .howto-section__heading,
-html:not(.dark) .howto-step__title,
-html:not(.dark) .testimonial-card__quote,
-html:not(.dark) .testimonial-card__name,
-html:not(.dark) .chronixx-section__quote,
-html:not(.dark) .chronixx-section__stat-label {
-  color: var(--site-text-primary);
-}
-
-html:not(.dark) .answer-hero__cert-tag,
-html:not(.dark) .chronixx-section__title,
-html:not(.dark) .chronixx-section__bio,
-html:not(.dark) .chronixx-section__note,
-html:not(.dark) .ingredients-section__desc,
-html:not(.dark) .ingredient-card__alias,
-html:not(.dark) .ingredient-card__desc,
-html:not(.dark) .craft-section__desc,
-html:not(.dark) .craft-step__desc,
-html:not(.dark) .benefit-card__desc,
-html:not(.dark) .benefits-section__subtitle,
-html:not(.dark) .benefits-section__cert,
-html:not(.dark) .howto-section__subtext,
-html:not(.dark) .howto-step__desc,
-html:not(.dark) .final-cta__badge,
-html:not(.dark) .final-cta__sub,
-html:not(.dark) .testimonial-card__location {
-  color: var(--site-text-muted);
-}
-
-html:not(.dark) .chronixx-section {
-  background-color: var(--site-bg-secondary);
-}
-
-html:not(.dark) .chronixx-section__img-fade {
-  background: linear-gradient(to left, var(--site-bg-secondary) 0%, transparent 100%);
-}
-
-html:not(.dark) .chronixx-stat-card,
-html:not(.dark) .ingredient-card,
-html:not(.dark) .benefit-card,
-html:not(.dark) .testimonial-card {
-  background: var(--site-bg-card);
-  border-color: var(--site-border);
-  box-shadow: var(--site-shadow-card);
-}
-
-html:not(.dark) .craft-section,
-html:not(.dark) .howto-section {
-  background-color: var(--site-bg-secondary);
-}
-
-html:not(.dark) .craft-step__circle {
-  background: var(--site-bg-secondary);
-}
-
-html:not(.dark) .howto-section__float-badge {
-  background: var(--site-bg-card);
-}
-
-html:not(.dark) .chronixx-section__watermark {
-  color: var(--site-text-primary);
-}
-
-/* Ensure ingredients/benefits/testimonials/final-cta sections have proper bg in light mode */
-html:not(.dark) .ingredients-section,
-html:not(.dark) .benefits-section,
-html:not(.dark) .testimonials-section,
-html:not(.dark) .final-cta {
-  background-color: var(--site-bg-primary);
-}
-
-html:not(.dark) .craft-step__number {
-  color: var(--site-gold);
-}
-
-html:not(.dark) .howto-step__number {
-  color: var(--site-gold);
 }
