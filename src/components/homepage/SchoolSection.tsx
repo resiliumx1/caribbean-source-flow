@@ -112,17 +112,6 @@ export function SchoolSection() {
                 Herbal Physician Certification
               </h3>
 
-              <p
-                style={{
-                  fontFamily: "'Jost', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "1.5rem",
-                  color: "var(--site-text-primary, #0F281E)",
-                  marginBottom: "16px",
-                }}
-              >
-                From $2,075
-              </p>
 
               <ul className="space-y-3 mb-8">
                 {features.map((f) => (
