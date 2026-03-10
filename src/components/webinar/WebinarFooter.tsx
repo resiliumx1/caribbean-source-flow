@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const NAV = [
   { label: "Shop", href: "/shop" },
   { label: "Retreats", href: "/retreats" },
-  { label: "School", href: "https://mount-kailash-school-temp.netlify.app", external: true },
+  { label: "School", href: "/school/herbal-physician" },
   { label: "Webinars", href: "/webinars" },
 ];
 
@@ -16,27 +16,14 @@ export default function WebinarFooter() {
         </span>
         <nav className="flex gap-6">
           {NAV.map((n) => (
-            'external' in n && n.external ? (
-              <a
-                key={n.label}
-                href={n.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-jost font-light text-sm transition-colors duration-200 hover:brightness-125"
-                style={{ color: "#f2ead8", textDecoration: "none" }}
-              >
-                {n.label}
-              </a>
-            ) : (
-              <Link
-                key={n.label}
-                to={n.href}
-                className="font-jost font-light text-sm transition-colors duration-200 hover:brightness-125"
-                style={{ color: "#f2ead8", textDecoration: "none" }}
-              >
-                {n.label}
-              </Link>
-            )
+            <Link
+              key={n.label}
+              to={n.href}
+              className="font-jost font-light text-sm transition-colors duration-200 hover:brightness-125"
+              style={{ color: "#f2ead8", textDecoration: "none" }}
+            >
+              {n.label}
+            </Link>
           ))}
         </nav>
         <span className="font-jost font-light text-xs" style={{ color: "#8a8070" }}>

@@ -1,11 +1,11 @@
 import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Compass, Mountain } from "lucide-react";
+import { BookOpen, Compass, Droplets } from "lucide-react";
 
 const CARDS = [
-  { icon: BookOpen, title: "Browse Replays", desc: "Thousands of minutes of healing wisdom", href: "#archive" },
-  { icon: Compass, title: "Explore by Topic", desc: "Find sessions on your specific concern", href: "#archive" },
-  { icon: Mountain, title: "Visit MKRC", desc: "Learn about our full wellness ecosystem", href: "/" },
+  { icon: BookOpen, title: "Browse Replays", desc: "Thousands of minutes of healing wisdom, organized by topic", href: "#archive" },
+  { icon: Compass, title: "Explore by Topic", desc: "Find sessions on your specific concern — fertility, detox, immunity", href: "#archive" },
+  { icon: Droplets, title: "Start Your Journey", desc: "Ready to move from education to action? Try The Answer.", href: "/the-answer", isLink: true },
 ];
 
 export default function WebinarExplore() {
@@ -41,6 +41,7 @@ export default function WebinarExplore() {
                 style={{
                   backgroundColor: "#18181b",
                   border: "1px solid rgba(201,168,76,0.15)",
+                  borderTop: "2px solid #c9a84c",
                 }}
               >
                 <Icon size={28} style={{ color: "#c9a84c" }} className="mx-auto mb-4" />
@@ -49,10 +50,10 @@ export default function WebinarExplore() {
               </div>
             );
 
-            return c.href.startsWith("#") ? (
-              <a key={i} href={c.href} style={{ textDecoration: "none" }}>{inner}</a>
-            ) : (
+            return c.isLink ? (
               <Link key={i} to={c.href} style={{ textDecoration: "none" }}>{inner}</Link>
+            ) : (
+              <a key={i} href={c.href} style={{ textDecoration: "none" }}>{inner}</a>
             );
           })}
         </div>
