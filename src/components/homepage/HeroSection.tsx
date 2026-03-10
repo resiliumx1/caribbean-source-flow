@@ -83,7 +83,7 @@ function PillarCard({ pillar }: { pillar: typeof pillars[number] }) {
         <div className="text-xs text-cream/70 mb-3 font-sans font-light">
           {pillar.description}
         </div>
-        <span className="inline-flex items-center gap-1 text-sm font-medium mt-auto text-gold">
+        <span className={`inline-flex items-center gap-1 text-sm ${pillar.ctaWeight} mt-auto text-gold`}>
           {pillar.cta}{" "}
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
         </span>
