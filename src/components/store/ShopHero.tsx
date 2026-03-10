@@ -4,8 +4,8 @@ import heroImage from "@/assets/shop-hero-apothecary.png";
 
 const trustPills = [
   "3-Day US Shipping",
-  "COA Documentation",
-  "500+ Physicians",
+  "Wildcrafted in St. Lucia",
+  "30-Day Money Back Guarantee",
 ];
 
 export function ShopHero() {
@@ -61,7 +61,7 @@ export function ShopHero() {
         </h1>
 
         <p
-          className="mb-8 max-w-2xl mx-auto"
+          className="mb-8 max-w-2xl mx-auto hidden sm:block"
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 400,
@@ -70,15 +70,28 @@ export function ShopHero() {
             color: "rgba(245,241,232,0.8)",
           }}
         >
-          Hand-extracted bush medicine. 40% higher alkaloid concentration than
-          mainland Caribbean herbs.
+          Forest-grown remedies for chronic inflammation, gut repair, and deep sleep.
+          <br />
+          Backed by 21 years of clinical practice.
+        </p>
+        <p
+          className="mb-8 max-w-2xl mx-auto sm:hidden"
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 400,
+            fontSize: "16px",
+            lineHeight: 1.6,
+            color: "rgba(245,241,232,0.8)",
+          }}
+        >
+          Wild St. Lucian herbs for inflammation, sleep, and cellular repair.
         </p>
 
         {/* CTAs */}
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-10">
           <a
             href="#filter-nav"
-            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:brightness-110"
+            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:brightness-110 w-full sm:w-auto text-center"
             style={{
               background: "var(--site-gold)",
               color: "var(--site-green-dark)",
@@ -86,11 +99,11 @@ export function ShopHero() {
               fontWeight: 600,
             }}
           >
-            Shop by Condition
+            Shop Best Sellers →
           </a>
           <Link
             to="/shop"
-            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:bg-white/10"
+            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:bg-white/10 w-full sm:w-auto text-center"
             style={{
               border: "1px solid rgba(245,241,232,0.5)",
               color: "#F5F1E8",
@@ -98,7 +111,7 @@ export function ShopHero() {
               fontWeight: 500,
             }}
           >
-            Shop All Remedies
+            View All Products →
           </Link>
         </div>
 
