@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useMemo, useState } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "@/styles/gate-entrance.css";
@@ -22,7 +22,7 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
   const sealRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
   const completedRef = useRef(false);
-  const [visible, setVisible] = useState(true);
+  
 
   const particles = useMemo(() => {
     return Array.from({ length: 40 }, (_, i) => {
@@ -51,8 +51,6 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
       trigger,
       start: "top top",
       end: "bottom top",
-      pin: overlay,
-      pinSpacing: false,
       scrub: 1,
       onUpdate: (self) => {
         const raw = self.progress; // 0 → 1
@@ -118,18 +116,12 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
     };
   }, [onProgressChange, onGateComplete]);
 
-  // Once complete, fade out and hide after a short delay
+  // Cleanup ScrollTrigger on unmount
   useEffect(() => {
-    if (completedRef.current) {
-      // Allow GSAP to finish the fade, then remove from DOM
-      const timer = setTimeout(() => setVisible(false), 600);
-      return () => clearTimeout(timer);
-    }
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    };
   }, []);
-
-  if (!visible && completedRef.current) return (
-    <div ref={triggerRef} style={{ height: '300vh' }} />
-  );
 
   return (
     <>
