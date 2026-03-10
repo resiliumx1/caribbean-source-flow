@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Phone, MapPin } from "lucide-react";
+import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 
 const whatsappNumber = "+17582855195";
 const whatsappMessage = encodeURIComponent(
@@ -8,42 +9,46 @@ const whatsappMessage = encodeURIComponent(
 
 export function UnifiedFooter() {
   return (
-    <footer style={{ background: 'hsl(var(--mk-forest))', color: 'hsl(var(--mk-cream))' }}>
-      <div className="container mx-auto max-w-[1400px] px-6 py-16 md:py-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          {/* Col 1: Brand */}
-          <div>
-            <h2 className="font-serif" style={{ fontSize: '20px', marginBottom: '8px', color: 'hsl(var(--mk-cream))' }}>
-              Mount Kailash
-            </h2>
-            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px', color: 'hsl(var(--mk-cream) / 0.6)', marginBottom: '4px' }}>
-              Rejuvenation Centre
+    <footer style={{ background: 'var(--site-footer-bg)', color: 'var(--site-footer-text)' }}>
+      <div className="container mx-auto max-w-6xl px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+          {/* Brand Column */}
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-3 mb-4">
+              <img src={mtKailashLogo} alt="Mount Kailash Rejuvenation Centre" className="w-10 h-10 rounded-full object-cover" width={40} height={40} />
+              <div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, color: 'var(--site-footer-text)' }}>Mount Kailash</div>
+                <div style={{ fontSize: '12px', color: 'var(--site-footer-muted)' }}>Rejuvenation Centre</div>
+              </div>
+            </div>
+            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-footer-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
+              Traditional St. Lucian bush medicine for cellular wellness. 21+ years of clinical practice.
             </p>
-            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px', color: 'hsl(var(--mk-cream) / 0.6)', marginBottom: '4px' }}>
-              Soufrière, St. Lucia
-            </p>
-            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px', color: 'hsl(var(--mk-cream) / 0.6)' }}>
-              Established 2003
-            </p>
+            <a
+              href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-colors"
+              style={{ background: '#c9a84c', color: '#090909' }}
+            >
+              <MessageCircle className="w-4 h-4" />
+              Chat on WhatsApp
+            </a>
           </div>
 
-          {/* Col 2: Patient Resources */}
+          {/* Shop Column */}
           <div>
-            <h3 className="mk-label" style={{ color: 'hsl(var(--mk-gold))', marginBottom: '20px' }}>
-              Patient Resources
-            </h3>
-            <ul className="space-y-3" style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px' }}>
+            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Shop</h2>
+            <ul className="space-y-1 text-sm">
               {[
-                { label: "The Patient Protocol", to: "/retreats" },
-                { label: "Book Consultation", to: "/retreats" },
-                { label: "Patient Portal", to: "/shop" },
+                { label: "All Products", href: "/shop" },
+                { label: "Liquid Tinctures", href: "/shop" },
+                { label: "Capsules & Powders", href: "/shop" },
+                { label: "Traditional Teas", href: "/shop" },
+                { label: "Raw Herbs", href: "/shop" },
               ].map((item) => (
                 <li key={item.label}>
-                  <Link
-                    to={item.to}
-                    className="transition-colors hover:opacity-100"
-                    style={{ color: 'hsl(var(--mk-cream) / 0.6)' }}
-                  >
+                  <Link to={item.href} style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
                     {item.label}
                   </Link>
                 </li>
@@ -51,68 +56,49 @@ export function UnifiedFooter() {
             </ul>
           </div>
 
-          {/* Col 3: Practitioners */}
+          {/* Practitioners Column */}
           <div>
-            <h3 className="mk-label" style={{ color: 'hsl(var(--mk-gold))', marginBottom: '20px' }}>
-              Practitioners
-            </h3>
-            <ul className="space-y-3" style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px' }}>
-              {[
-                { label: "Clinical Supply", to: "/wholesale" },
-                { label: "COA Documentation", to: "/wholesale" },
-                { label: "Training Programs", to: "/wholesale" },
-              ].map((item) => (
-                <li key={item.label}>
-                  <Link
-                    to={item.to}
-                    className="transition-colors hover:opacity-100"
-                    style={{ color: 'hsl(var(--mk-cream) / 0.6)' }}
-                  >
-                    {item.label}
+            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Practitioners</h2>
+            <ul className="space-y-1 text-sm">
+              {["Wholesale Portal", "Volume Pricing", "COA Documentation", "Private Labeling"].map((item) => (
+                <li key={item}>
+                  <Link to="/wholesale" style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
+                    {item}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Col 4: Connect */}
+          {/* Visit Column */}
           <div>
-            <h3 className="mk-label" style={{ color: 'hsl(var(--mk-gold))', marginBottom: '20px' }}>
-              Connect
-            </h3>
-            <ul className="space-y-3" style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px' }}>
-              <li>
-                <Link to="/retreats" className="transition-colors hover:opacity-100" style={{ color: 'hsl(var(--mk-cream) / 0.6)' }}>
-                  The Ridge Retreat
-                </Link>
-              </li>
-              <li>
-                <Link to="/wholesale" className="transition-colors hover:opacity-100" style={{ color: 'hsl(var(--mk-cream) / 0.6)' }}>
-                  Wholesale Inquiries
-                </Link>
-              </li>
-              <li>
-                <a
-                  href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 transition-colors hover:opacity-100"
-                  style={{ color: 'hsl(var(--mk-cream) / 0.6)' }}
-                >
-                  <MessageCircle className="w-4 h-4" /> Chat on WhatsApp
-                </a>
-              </li>
+            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Visit</h2>
+            <ul className="space-y-1 text-sm">
+              {["Retreat Programs", "Group Immersions", "Solo Detox Retreats", "Book Consultation"].map((item) => (
+                <li key={item}>
+                  <Link to="/retreats" style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
+                    {item}
+                  </Link>
+                </li>
+              ))}
             </ul>
+            <div className="mt-6 space-y-2 text-sm">
+              <div className="flex items-center gap-2" style={{ color: 'var(--site-footer-muted)' }}>
+                <MapPin className="w-4 h-4" /> Soufrière, St. Lucia
+              </div>
+              <div className="flex items-center gap-2" style={{ color: 'var(--site-footer-muted)' }}>
+                <Phone className="w-4 h-4" /> +1 (758) 285-5195
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div style={{ borderTop: '1px solid hsl(var(--mk-gold) / 0.15)' }}>
-        <div className="container mx-auto max-w-[1400px] px-6 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4" style={{ fontFamily: "'Inter', sans-serif", fontSize: '12px', color: 'hsl(var(--mk-cream) / 0.4)' }}>
+      <div style={{ borderTop: '1px solid rgba(201,168,76,0.15)' }}>
+        <div className="container mx-auto max-w-6xl px-4 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4" style={{ fontSize: '12px', color: '#a89e90' }}>
             <p>© {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.</p>
-            <p>Traditional use based on St. Lucian bush medicine practices.</p>
+            <p className="text-center md:text-right max-w-xl">Traditional use based on St. Lucian bush medicine practices.</p>
           </div>
         </div>
       </div>
