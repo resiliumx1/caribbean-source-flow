@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from "react";
 import { ShopHero } from "@/components/store/ShopHero";
 import { ShopFilterNav } from "@/components/store/ShopFilterNav";
 import { FeaturedProduct } from "@/components/store/FeaturedProduct";
-import { ProtocolRow } from "@/components/store/ProtocolRow";
 import { BundlesGrid } from "@/components/store/BundlesGrid";
 import { ProductCard } from "@/components/store/ProductCard";
 import { TrustBar } from "@/components/store/TrustBar";
@@ -11,6 +10,7 @@ import { MobileStickyCtA } from "@/components/store/MobileStickyCtA";
 import { useProducts, type Product } from "@/hooks/use-products";
 import { useConditions, useProductConditionAssignments } from "@/hooks/use-conditions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Search, Leaf } from "lucide-react";
 
 // Form-to-product_type mapping
 const FORM_TYPES: Record<string, string[]> = {
@@ -20,31 +20,40 @@ const FORM_TYPES: Record<string, string[]> = {
   "raw-herbs": ["raw_herb", "powder", "bulk"],
 };
 
+function ProductSkeleton() {
+  return (
+    <div className="flex flex-col rounded-lg overflow-hidden" style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)" }}>
+      <div className="aspect-square animate-pulse" style={{ background: "var(--site-green-dark)" }} />
+      <div className="p-3 space-y-2">
+        <div className="h-4 rounded animate-pulse" style={{ background: "var(--site-border)", width: "80%" }} />
+        <div className="h-3 rounded animate-pulse" style={{ background: "var(--site-border)", width: "50%" }} />
+        <div className="h-4 rounded animate-pulse" style={{ background: "var(--site-border)", width: "30%" }} />
+      </div>
+    </div>
+  );
+}
+
 export default function Shop() {
   const { data: products, isLoading } = useProducts();
   const { data: conditions } = useConditions();
   const { data: assignments } = useProductConditionAssignments();
   const [activeCondition, setActiveCondition] = useState<string | null>(null);
   const [activeForm, setActiveForm] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState("featured");
 
   useEffect(() => {
-    document.title =
-      "The Sulphur Ridge Apothecary | Mount Kailash Rejuvenation Centre";
+    document.title = "The Sulphur Ridge Apothecary | Mount Kailash Rejuvenation Centre";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta)
-      meta.setAttribute(
-        "content",
-        "Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration."
-      );
+    if (meta) meta.setAttribute("content", "Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration.");
   }, []);
 
-  // Build a lookup: conditionSlug -> Set of product IDs
+  // Build condition → product ID lookup
   const conditionProductMap = useMemo(() => {
     if (!conditions || !assignments) return new Map<string, Set<string>>();
-    const conditionIdToSlug = new Map(conditions.map((c) => [c.id, c.slug]));
+    const idToSlug = new Map(conditions.map((c) => [c.id, c.slug]));
     const map = new Map<string, Set<string>>();
     for (const a of assignments) {
-      const slug = conditionIdToSlug.get(a.condition_id);
+      const slug = idToSlug.get(a.condition_id);
       if (!slug) continue;
       if (!map.has(slug)) map.set(slug, new Set());
       map.get(slug)!.add(a.product_id);
@@ -52,49 +61,23 @@ export default function Shop() {
     return map;
   }, [conditions, assignments]);
 
-  // Separate bundles, "The Answer", and regular products
-  const { bundles, theAnswer, regularProducts, teas } = useMemo(() => {
-    if (!products) return { bundles: [], theAnswer: null, regularProducts: [], teas: [] };
-    const bundles = products.filter((p) => p.product_type === "bundle");
-    const theAnswer = products.find((p) => p.slug === "the-answer");
-    const teas = products.filter((p) => p.product_type === "tea");
-    const regularProducts = products.filter(
-      (p) =>
-        p.product_type !== "bundle" &&
-        p.slug !== "the-answer" &&
-        p.product_type !== "tea"
-    );
-    return { bundles, theAnswer, regularProducts, teas };
+  // Separate product types
+  const { bundles, theAnswerProduct, allSingles } = useMemo(() => {
+    if (!products) return { bundles: [] as Product[], theAnswerProduct: null as Product | null, allSingles: [] as Product[] };
+    const bundles = products.filter((p) => p.product_type === "bundle" || (p.product_categories as any)?.slug === "curated-bundles");
+    const theAnswerProduct = products.find((p) => p.slug === "the-answer") || null;
+    const bundleIds = new Set(bundles.map(b => b.id));
+    const allSingles = products.filter((p) => !bundleIds.has(p.id) && p.slug !== "the-answer");
+    return { bundles, theAnswerProduct, allSingles };
   }, [products]);
 
-  // Protocol rows by condition (from DB)
-  const protocolRows = useMemo(() => {
-    if (!regularProducts.length || !conditions) return [];
-    const protocolConditions = conditions.filter((c) =>
-      ["inflammation-pain", "gut-health", "immune-defense"].includes(c.slug)
-    );
-    return protocolConditions
-      .map((condition) => {
-        const productIds = conditionProductMap.get(condition.slug) || new Set();
-        const matched = regularProducts.filter((p) => productIds.has(p.id)).slice(0, 5);
-        return {
-          title: condition.name === "Inflammation & Pain" ? "For Inflammation" :
-                 condition.name === "Gut Health & Digestion" ? "Gut Terrain Repair" :
-                 condition.name,
-          products: matched,
-        };
-      })
-      .filter((row) => row.products.length > 0);
-  }, [regularProducts, conditions, conditionProductMap]);
-
-  // Filtered products for grid view (when a filter is active)
-  const filteredProducts = useMemo(() => {
-    if (!activeCondition && !activeForm) return null;
-    let filtered = [...regularProducts, ...teas, ...bundles];
+  // Apply filters + sorting
+  const displayProducts = useMemo(() => {
+    let filtered = [...allSingles];
 
     if (activeCondition) {
-      const productIds = conditionProductMap.get(activeCondition) || new Set();
-      filtered = filtered.filter((p) => productIds.has(p.id));
+      const ids = conditionProductMap.get(activeCondition) || new Set();
+      filtered = filtered.filter((p) => ids.has(p.id));
     }
 
     if (activeForm) {
@@ -102,114 +85,105 @@ export default function Shop() {
       filtered = filtered.filter((p) => types.includes(p.product_type));
     }
 
+    // Sort
+    switch (sortBy) {
+      case "price-asc":
+        filtered.sort((a, b) => a.price_usd - b.price_usd);
+        break;
+      case "price-desc":
+        filtered.sort((a, b) => b.price_usd - a.price_usd);
+        break;
+      case "newest":
+        filtered.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+        break;
+      default:
+        // "featured" — keep display_order
+        break;
+    }
+
     return filtered;
-  }, [regularProducts, teas, bundles, activeCondition, activeForm, conditionProductMap]);
+  }, [allSingles, activeCondition, activeForm, sortBy, conditionProductMap]);
+
+  // Section products for default view (no filters)
+  const sectionRows = useMemo(() => {
+    if (activeCondition || activeForm) return [];
+    if (!conditions || !allSingles.length) return [];
+
+    return conditions
+      .filter(c => {
+        const ids = conditionProductMap.get(c.slug);
+        return ids && ids.size > 0;
+      })
+      .slice(0, 4) // Show top 4 condition sections
+      .map((condition) => {
+        const ids = conditionProductMap.get(condition.slug) || new Set();
+        const matched = allSingles.filter((p) => ids.has(p.id)).slice(0, 8);
+        return { title: condition.name, slug: condition.slug, products: matched };
+      })
+      .filter((row) => row.products.length > 0);
+  }, [allSingles, conditions, conditionProductMap, activeCondition, activeForm]);
+
+  const isFiltered = !!activeCondition || !!activeForm;
+  const showDefaultView = !isFiltered;
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: "var(--site-bg-primary)",
-        scrollBehavior: "smooth",
-      }}
-    >
+    <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
       <ShopHero />
       <ShopFilterNav
         activeCondition={activeCondition}
         onConditionChange={setActiveCondition}
         activeForm={activeForm}
         onFormChange={setActiveForm}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        totalProducts={displayProducts.length}
       />
 
-      <main className="container mx-auto px-4 pt-12 pb-20">
+      <main className="container mx-auto px-4 pt-8 sm:pt-12 pb-20">
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="space-y-4">
-                <Skeleton className="aspect-square rounded-xl" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-10 w-full rounded-full" />
-              </div>
+          /* Loading skeletons */
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            {[...Array(8)].map((_, i) => (
+              <ProductSkeleton key={i} />
             ))}
           </div>
-        ) : filteredProducts ? (
-          /* Filtered grid view */
-          <>
-            <p
-              className="mb-6"
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "14px",
-                color: "var(--site-text-muted)",
-              }}
-            >
-              {filteredProducts.length} product
-              {filteredProducts.length !== 1 ? "s" : ""} found
-            </p>
-            {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product, idx) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    style={{
-                      animation: `shopFadeUp 0.6s ease forwards`,
-                      animationDelay: `${idx * 80}ms`,
-                      opacity: 0,
-                    }}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16">
-                <p
-                  style={{
-                    fontSize: "16px",
-                    color: "var(--site-text-muted)",
-                  }}
-                >
-                  No products match the current filters.
-                </p>
-              </div>
-            )}
-          </>
-        ) : (
-          /* Default: Featured → Protocol rows → Bundles → Teas */
+        ) : showDefaultView ? (
+          /* ─── Default View: Featured → Sections → Bundles ─── */
           <>
             <FeaturedProduct />
 
-            {protocolRows.map((row) => (
-              <ProtocolRow
-                key={row.title}
-                title={row.title}
-                products={row.products}
-              />
-            ))}
-
-            {bundles.length > 0 && <BundlesGrid bundles={bundles} />}
-
-            {/* Traditional Teas */}
-            {teas.length > 0 && (
-              <section className="mb-16">
-                <h2
-                  className="mb-8"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontWeight: 600,
-                    fontSize: "24px",
-                    color: "var(--site-text-primary)",
-                  }}
-                >
-                  Traditional Teas
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-                  {teas.map((product, idx) => (
+            {sectionRows.map((row) => (
+              <section key={row.slug} className="mb-12 sm:mb-16">
+                <div className="flex items-baseline justify-between mb-4 sm:mb-6">
+                  <h2
+                    style={{
+                      fontFamily: "'Playfair Display', serif",
+                      fontWeight: 600,
+                      fontSize: "clamp(20px, 3vw, 28px)",
+                      color: "var(--site-text-primary)",
+                    }}
+                  >
+                    {row.title}
+                  </h2>
+                  <button
+                    onClick={() => setActiveCondition(row.slug)}
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: "13px",
+                      fontWeight: 500,
+                      color: "var(--site-gold)",
+                    }}
+                  >
+                    View All →
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                  {row.products.map((product, idx) => (
                     <ProductCard
                       key={product.id}
                       product={product}
                       style={{
-                        animation: `shopFadeUp 0.6s ease forwards`,
+                        animation: "shopFadeUp 0.5s ease forwards",
                         animationDelay: `${idx * 60}ms`,
                         opacity: 0,
                       }}
@@ -217,6 +191,82 @@ export default function Shop() {
                   ))}
                 </div>
               </section>
+            ))}
+
+            {bundles.length > 0 && <BundlesGrid bundles={bundles} />}
+          </>
+        ) : (
+          /* ─── Filtered View ─── */
+          <>
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: "14px",
+                  color: "var(--site-text-muted)",
+                }}
+              >
+                {displayProducts.length} product{displayProducts.length !== 1 ? "s" : ""} found
+              </p>
+            </div>
+
+            {displayProducts.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                {displayProducts.map((product, idx) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    style={{
+                      animation: "shopFadeUp 0.5s ease forwards",
+                      animationDelay: `${idx * 50}ms`,
+                      opacity: 0,
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              /* Empty state */
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+                  style={{ background: "rgba(188,138,95,0.1)" }}
+                >
+                  <Leaf className="w-7 h-7" style={{ color: "var(--site-gold)" }} />
+                </div>
+                <p
+                  style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: "20px",
+                    fontWeight: 600,
+                    color: "var(--site-text-primary)",
+                    marginBottom: "8px",
+                  }}
+                >
+                  No remedies found
+                </p>
+                <p
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: "14px",
+                    color: "var(--site-text-muted)",
+                    marginBottom: "16px",
+                  }}
+                >
+                  Try adjusting your filters to find what you're looking for.
+                </p>
+                <button
+                  onClick={() => { setActiveCondition(null); setActiveForm(null); }}
+                  className="px-6 py-2.5 rounded-full text-sm font-medium transition-all hover:brightness-110"
+                  style={{
+                    border: "1px solid var(--site-border)",
+                    color: "var(--site-text-primary)",
+                    fontFamily: "'Inter', sans-serif",
+                    minHeight: "44px",
+                  }}
+                >
+                  Clear Filters
+                </button>
+              </div>
             )}
           </>
         )}
