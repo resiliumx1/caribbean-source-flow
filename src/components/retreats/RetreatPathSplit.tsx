@@ -86,7 +86,7 @@ export function RetreatPathSplit() {
 
             <div className="pt-6 mb-6" style={{ borderTop: '1px solid var(--site-border)' }}>
               <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '40px', color: 'var(--site-gold)', lineHeight: 1 }}>
-                {formatPrice(groupRetreat?.base_price_usd || 2400, (groupRetreat?.base_price_usd || 2400) * EXCHANGE_RATE)}
+                {formatPrice(groupRetreat?.base_price_usd || 3000, (groupRetreat?.base_price_usd || 3000) * EXCHANGE_RATE)}
                 <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)' }}> per person</span>
               </div>
             </div>

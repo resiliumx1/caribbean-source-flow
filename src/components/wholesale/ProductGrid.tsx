@@ -93,10 +93,10 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
 
                 <button 
                   onClick={onScrollToForm}
-                  className="flex items-center gap-1 transition-colors hover:underline group/link w-full"
-                  style={{ color: "var(--site-gold)", fontWeight: 500, fontSize: "14px" }}
+                  className="flex items-center gap-1.5 transition-colors hover:underline group/link w-full"
+                  style={{ color: "#F5F1E8", fontWeight: 600, fontSize: "15px", letterSpacing: "0.02em" }}
                 >
-                  Request Specs
+                  Request a Quote
                   <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
                 </button>
               </div>
