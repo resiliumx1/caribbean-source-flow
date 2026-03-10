@@ -129,7 +129,7 @@ export function FeaturedProduct() {
             }}
           >
             <ShoppingCart className="w-4 h-4" />
-            Add to Protocol
+            Add to Cart
           </button>
 
           {/* Subscribe checkbox */}
