@@ -107,6 +107,7 @@ function AppContent() {
 
   return (
     <>
+      <ScrollToTop />
       {showHeader && <StoreHeader />}
       <AnimatePresence mode="wait">
         <Suspense fallback={<PageLoader />} key={location.pathname}>
