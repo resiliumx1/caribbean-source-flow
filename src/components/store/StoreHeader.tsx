@@ -32,7 +32,7 @@ export function StoreHeader() {
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
 
-  // Gate visibility: hidden until 55% progress on homepage first visit
+  // Gate visibility: hidden until gate-complete on homepage first visit
   const [headerVisible, setHeaderVisible] = useState(() => {
     return !isHomepage || !!localStorage.getItem('mkrc-gate-seen');
   });
@@ -41,17 +41,9 @@ export function StoreHeader() {
     if (!isHomepage) { setHeaderVisible(true); return; }
     if (localStorage.getItem('mkrc-gate-seen')) { setHeaderVisible(true); return; }
 
-    // Listen for gate-progress (fires with detail = 0..1)
-    const onProgress = (e: Event) => {
-      const progress = (e as CustomEvent).detail as number;
-      if (progress >= 0.55) setHeaderVisible(true);
-    };
     const onComplete = () => setHeaderVisible(true);
-
-    window.addEventListener('gate-progress', onProgress);
     window.addEventListener('gate-complete', onComplete);
     return () => {
-      window.removeEventListener('gate-progress', onProgress);
       window.removeEventListener('gate-complete', onComplete);
     };
   }, [isHomepage]);

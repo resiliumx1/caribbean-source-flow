@@ -28,7 +28,7 @@ function useIsMobile() {
 }
 
 export default function ChatWidget() {
-  // Gate visibility: hidden until 55% progress on homepage first visit
+  // Gate visibility: hidden until gate-complete on homepage first visit
   const [visible, setVisible] = useState(() => {
     const isHome = window.location.pathname === '/' || window.location.pathname === '';
     const hasSeenGate = !!localStorage.getItem('mkrc-gate-seen');
@@ -36,20 +36,14 @@ export default function ChatWidget() {
   });
 
   useEffect(() => {
-    const onProgress = (e: Event) => {
-      const progress = (e as CustomEvent).detail as number;
-      if (progress >= 0.55) setVisible(true);
-    };
     const onComplete = () => setVisible(true);
     const checkRoute = () => {
       if (window.location.pathname !== '/') setVisible(true);
     };
 
-    window.addEventListener('gate-progress', onProgress);
     window.addEventListener('gate-complete', onComplete);
     window.addEventListener('popstate', checkRoute);
     return () => {
-      window.removeEventListener('gate-progress', onProgress);
       window.removeEventListener('gate-complete', onComplete);
       window.removeEventListener('popstate', checkRoute);
     };
