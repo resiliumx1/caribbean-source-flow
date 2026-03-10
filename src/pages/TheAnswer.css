@@ -40,38 +40,215 @@
   min-height: 600px;
   overflow: hidden;
   background-color: #090909;
-  background-size: cover;
-  background-position: 70% center;
-  background-repeat: no-repeat;
+  display: flex;
 }
 
-/* Gradient veil — darkens left for text, fades to transparent on right */
-.answer-hero__veil {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    to right,
-    rgba(9,9,9,0.92) 0%,
-    rgba(9,9,9,0.78) 25%,
-    rgba(9,9,9,0.45) 45%,
-    transparent 65%
-  );
-  pointer-events: none;
-}
-
-/* Left text stack */
-.answer-hero__story-stack {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 5;
-  width: 42%;
-  max-width: 560px;
+/* Left: Story side */
+.answer-hero__story-side {
+  width: 40%;
   display: flex;
   align-items: center;
   padding: 80px 0 80px 8%;
+  position: relative;
+  z-index: 2;
+}
+
+.answer-hero__story-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 420px;
+}
+
+.answer-hero__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  line-height: 1.05;
+  margin-bottom: 12px;
+  color: #f2ead8;
+  letter-spacing: -0.01em;
+}
+
+.answer-hero__title em {
+  font-style: italic;
+  color: #c9a84c;
+}
+
+.answer-hero__subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+  font-style: italic;
+  color: #c9a84c;
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
+}
+
+.answer-hero__desc {
+  color: rgba(242,234,216,0.8);
+  margin-bottom: 32px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  line-height: 1.75;
+  font-size: 15px;
+}
+
+.answer-hero__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.answer-hero__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 14px 32px;
+  border-radius: 999px;
+  border: none;
+  background: #c9a84c;
+  color: #090909;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.3s, transform 0.3s;
+}
+
+.answer-hero__btn-primary:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+}
+
+.answer-hero__btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(201,168,76,0.35);
+  background: rgba(242,234,216,0.06);
+  color: #f2ead8;
+  font-family: 'Jost', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: border-color 0.3s, color 0.3s, background 0.3s;
+}
+
+.answer-hero__btn-secondary:hover {
+  border-color: #c9a84c;
+  color: #c9a84c;
+  background: rgba(201,168,76,0.08);
+}
+
+.answer-hero__whisper {
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(242,234,216,0.35);
+  letter-spacing: 0.06em;
+}
+
+/* Right: Bottle sculpture */
+.answer-hero__bottle-side {
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.answer-hero__bottle-img {
+  max-height: 85vh;
+  max-width: 90%;
+  object-fit: contain;
+  filter: drop-shadow(0 25px 50px rgba(0,0,0,0.5));
+  position: relative;
+  z-index: 1;
+}
+
+.answer-hero__scroll-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  background: none;
+  border: none;
+  color: #c9a84c;
+  cursor: pointer;
+  animation: answer-bounce 2s ease-in-out infinite;
+  transition: color 0.2s;
+}
+
+@keyframes answer-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* Mobile hero */
+@media (max-width: 768px) {
+  .answer-hero {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .answer-hero__bottle-side {
+    width: 100%;
+    height: 60vh;
+    order: -1;
+  }
+
+  .answer-hero__bottle-img {
+    max-height: 55vh;
+  }
+
+  .answer-hero__story-side {
+    width: 100%;
+    padding: 0 24px 80px;
+    background: linear-gradient(to top, rgba(9,9,9,1) 70%, transparent 100%);
+    margin-top: -60px;
+    position: relative;
+    z-index: 3;
+  }
+
+  .answer-hero__story-inner {
+    max-width: none;
+    text-align: center;
+    align-items: center;
+  }
+
+  .answer-hero__title {
+    font-size: clamp(2.8rem, 12vw, 4rem);
+  }
+
+  .answer-hero__desc {
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .answer-hero__ctas {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .answer-hero__whisper {
+    text-align: center;
+  }
+
+  .answer-hero__scroll-hint {
+    bottom: 12px;
+  }
 }
 
 .answer-hero__story-inner {
