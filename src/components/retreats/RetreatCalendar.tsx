@@ -134,7 +134,7 @@ export function RetreatCalendar() {
     if (selectedType === "group") {
       const retreat = getRetreatForDate(selectedRange.start);
       if (!retreat) return null;
-      const price = retreat.price_override_usd || groupRetreat?.base_price_usd || 2400;
+      const price = retreat.price_override_usd || groupRetreat?.base_price_usd || 3000;
       return {
         total: price * guestCount,
         deposit: (price * guestCount) / 2,
