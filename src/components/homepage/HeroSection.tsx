@@ -138,7 +138,7 @@ export function HeroSection() {
                       <img
                         src={pillar.image}
                         alt={pillar.title}
-                        className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain flex-shrink-0 self-center opacity-100 group-hover:scale-105 transition-transform duration-300"
+                        className="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 object-contain flex-shrink-0 self-center opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300 mix-blend-lighten"
                         loading="lazy"
                       />
                     </div>
