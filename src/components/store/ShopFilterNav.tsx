@@ -1,5 +1,7 @@
 import { useConditions } from "@/hooks/use-conditions";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
+import { useState } from "react";
+import { ChevronDown, X, SlidersHorizontal } from "lucide-react";
 
 const FORMS = [
   { label: "Tinctures", slug: "tinctures" },
@@ -8,11 +10,21 @@ const FORMS = [
   { label: "Bulk", slug: "raw-herbs" },
 ];
 
+const SORT_OPTIONS = [
+  { label: "Featured", value: "featured" },
+  { label: "Price: Low → High", value: "price-asc" },
+  { label: "Price: High → Low", value: "price-desc" },
+  { label: "Newest", value: "newest" },
+];
+
 interface ShopFilterNavProps {
   activeCondition: string | null;
   onConditionChange: (condition: string | null) => void;
   activeForm: string | null;
   onFormChange: (form: string | null) => void;
+  sortBy: string;
+  onSortChange: (sort: string) => void;
+  totalProducts: number;
 }
 
 export function ShopFilterNav({
@@ -20,122 +32,383 @@ export function ShopFilterNav({
   onConditionChange,
   activeForm,
   onFormChange,
+  sortBy,
+  onSortChange,
+  totalProducts,
 }: ShopFilterNavProps) {
   const { data: conditions } = useConditions();
   const conditionScroll = useDragScroll();
-  const formScroll = useDragScroll();
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+
+  const activeCount = (activeCondition ? 1 : 0) + (activeForm ? 1 : 0);
+  const activeConditionName = conditions?.find(c => c.slug === activeCondition)?.name;
+  const activeFormName = FORMS.find(f => f.slug === activeForm)?.label;
 
   return (
-    <div
-      id="filter-nav"
-      className="sticky top-16 z-30 border-b transition-colors duration-300"
-      style={{
-        background: "var(--site-nav-bg)",
-        backdropFilter: "blur(16px)",
-        borderColor: "rgba(188,138,95,0.2)",
-      }}
-    >
-      <div className="container mx-auto px-4 py-3">
-        {/* Row 1: Conditions */}
-        <div
-          ref={conditionScroll.ref}
-          className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide select-none"
-          style={{ cursor: conditionScroll.isDragging ? "grabbing" : "grab" }}
-          {...conditionScroll.scrollHandlers}
-        >
-          <span
-            className="flex-shrink-0 mr-1 pointer-events-none"
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "12px",
-              fontWeight: 500,
-              color: "var(--site-text-muted)",
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-            }}
-          >
-            Shop by Condition:
-          </span>
-          {(conditions || []).map((condition) => {
-            const isActive = activeCondition === condition.slug;
-            return (
+    <>
+      <div
+        id="filter-nav"
+        className="sticky top-16 z-30 border-b transition-colors duration-300"
+        style={{
+          background: "var(--site-nav-bg)",
+          backdropFilter: "blur(16px)",
+          borderColor: "var(--site-border)",
+        }}
+      >
+        {/* ─── Desktop Layout ─── */}
+        <div className="hidden md:flex container mx-auto px-4 py-3 items-center gap-3">
+          {/* Condition Pills */}
+          <div className="flex items-center gap-2 flex-1 overflow-hidden">
+            <button
+              onClick={() => { onConditionChange(null); onFormChange(null); }}
+              className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
+              style={{
+                background: !activeCondition && !activeForm ? "var(--site-green-dark)" : "transparent",
+                color: !activeCondition && !activeForm ? "var(--site-cream, #F5F1E8)" : "var(--site-text-primary)",
+                border: !activeCondition && !activeForm ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 500,
+              }}
+            >
+              All
+            </button>
+            {(conditions || []).slice(0, 6).map((condition) => {
+              const isActive = activeCondition === condition.slug;
+              return (
+                <button
+                  key={condition.id}
+                  onClick={() => onConditionChange(isActive ? null : condition.slug)}
+                  className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
+                  style={{
+                    background: isActive ? "var(--site-green-dark)" : "transparent",
+                    color: isActive ? "var(--site-cream, #F5F1E8)" : "var(--site-text-primary)",
+                    border: isActive ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: isActive ? 600 : 400,
+                  }}
+                >
+                  {condition.name}
+                </button>
+              );
+            })}
+            {(conditions || []).length > 6 && (
               <button
-                key={condition.id}
-                onClick={() => {
-                  if (conditionScroll.isDragging) return;
-                  onConditionChange(isActive ? null : condition.slug);
-                }}
-                className="flex-shrink-0 px-4 py-1.5 rounded-full text-sm transition-all min-h-[36px]"
+                onClick={() => setShowMobileFilters(true)}
+                className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all flex items-center gap-1"
                 style={{
-                  background: isActive
-                    ? "var(--site-gold)"
-                    : "var(--site-bg-card)",
-                  color: isActive
-                    ? "var(--site-green-dark)"
-                    : "var(--site-text-primary)",
+                  border: "1px solid var(--site-border)",
+                  color: "var(--site-text-muted)",
                   fontFamily: "'Inter', sans-serif",
-                  fontWeight: isActive ? 600 : 400,
-                  border: isActive
-                    ? "1px solid var(--site-gold)"
-                    : "1px solid var(--site-border)",
                 }}
               >
-                {condition.name}
+                More <ChevronDown className="w-3 h-3" />
               </button>
-            );
-          })}
+            )}
+          </div>
+
+          {/* Form filter */}
+          <div className="flex items-center gap-2 border-l pl-3" style={{ borderColor: "var(--site-border)" }}>
+            {FORMS.map((form) => {
+              const isActive = activeForm === form.slug;
+              return (
+                <button
+                  key={form.slug}
+                  onClick={() => onFormChange(isActive ? null : form.slug)}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs transition-all"
+                  style={{
+                    background: isActive ? "var(--site-gold)" : "transparent",
+                    color: isActive ? "var(--site-green-dark)" : "var(--site-text-muted)",
+                    border: isActive ? "1px solid var(--site-gold)" : "1px solid var(--site-border)",
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: isActive ? 600 : 400,
+                  }}
+                >
+                  {form.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Sort */}
+          <div className="relative flex-shrink-0">
+            <button
+              onClick={() => setShowSortDropdown(!showSortDropdown)}
+              className="px-3 py-2 rounded-lg text-xs flex items-center gap-1 transition-all"
+              style={{
+                border: "1px solid var(--site-border)",
+                color: "var(--site-text-muted)",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
+              Sort <ChevronDown className="w-3 h-3" />
+            </button>
+            {showSortDropdown && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setShowSortDropdown(false)} />
+                <div
+                  className="absolute right-0 top-full mt-1 z-50 rounded-lg shadow-xl py-1 min-w-[180px]"
+                  style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)" }}
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => { onSortChange(opt.value); setShowSortDropdown(false); }}
+                      className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-black/5"
+                      style={{
+                        color: sortBy === opt.value ? "var(--site-gold)" : "var(--site-text-primary)",
+                        fontFamily: "'Inter', sans-serif",
+                        fontWeight: sortBy === opt.value ? 600 : 400,
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Row 2: Forms */}
-        <div
-          ref={formScroll.ref}
-          className="flex items-center gap-2 overflow-x-auto scrollbar-hide select-none"
-          style={{ cursor: formScroll.isDragging ? "grabbing" : "grab" }}
-          {...formScroll.scrollHandlers}
-        >
-          <span
-            className="flex-shrink-0 mr-1 pointer-events-none"
+        {/* ─── Mobile Layout ─── */}
+        <div className="md:hidden">
+          {/* Primary: horizontal scroll condition pills */}
+          <div
+            ref={conditionScroll.ref}
+            className="flex items-center gap-2 px-4 py-3 overflow-x-auto select-none"
             style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "12px",
-              fontWeight: 500,
-              color: "var(--site-text-muted)",
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
+              cursor: conditionScroll.isDragging ? "grabbing" : "grab",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
             }}
+            {...conditionScroll.scrollHandlers}
           >
-            By Form:
-          </span>
-          {FORMS.map((form) => {
-            const isActive = activeForm === form.slug;
-            return (
+            <button
+              onClick={() => { if (conditionScroll.isDragging) return; onConditionChange(null); onFormChange(null); }}
+              className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
+              style={{
+                background: !activeCondition && !activeForm ? "var(--site-green-dark)" : "transparent",
+                color: !activeCondition && !activeForm ? "#F5F1E8" : "var(--site-text-primary)",
+                border: !activeCondition && !activeForm ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 500,
+                minHeight: "44px",
+                minWidth: "max-content",
+              }}
+            >
+              All
+            </button>
+            {(conditions || []).map((condition) => {
+              const isActive = activeCondition === condition.slug;
+              return (
+                <button
+                  key={condition.id}
+                  onClick={() => { if (conditionScroll.isDragging) return; onConditionChange(isActive ? null : condition.slug); }}
+                  className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
+                  style={{
+                    background: isActive ? "var(--site-green-dark)" : "transparent",
+                    color: isActive ? "#F5F1E8" : "var(--site-text-primary)",
+                    border: isActive ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: isActive ? 600 : 400,
+                    minHeight: "44px",
+                    minWidth: "max-content",
+                  }}
+                >
+                  {condition.name}
+                </button>
+              );
+            })}
+            {/* Filter/Sort button at end */}
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              className="flex-shrink-0 px-3 py-2 rounded-full text-sm flex items-center gap-1 transition-all relative"
+              style={{
+                border: "1px solid var(--site-border)",
+                color: "var(--site-text-muted)",
+                fontFamily: "'Inter', sans-serif",
+                minHeight: "44px",
+              }}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              {activeCount > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center"
+                  style={{ background: "var(--site-gold)", color: "var(--site-green-dark)" }}
+                >
+                  {activeCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Active filter tags */}
+          {(activeCondition || activeForm) && (
+            <div className="flex items-center gap-2 px-4 pb-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+              {activeConditionName && (
+                <span
+                  className="flex items-center gap-1 px-3 py-1 rounded-full text-xs"
+                  style={{
+                    background: "var(--site-green-dark)",
+                    color: "#F5F1E8",
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                >
+                  {activeConditionName}
+                  <X className="w-3 h-3 cursor-pointer" onClick={() => onConditionChange(null)} />
+                </span>
+              )}
+              {activeFormName && (
+                <span
+                  className="flex items-center gap-1 px-3 py-1 rounded-full text-xs"
+                  style={{
+                    background: "var(--site-gold)",
+                    color: "var(--site-green-dark)",
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                >
+                  {activeFormName}
+                  <X className="w-3 h-3 cursor-pointer" onClick={() => onFormChange(null)} />
+                </span>
+              )}
               <button
-                key={form.slug}
-                onClick={() => {
-                  if (formScroll.isDragging) return;
-                  onFormChange(isActive ? null : form.slug);
-                }}
-                className="flex-shrink-0 px-4 py-1.5 rounded-full text-sm transition-all min-h-[36px]"
-                style={{
-                  background: isActive
-                    ? "var(--site-gold)"
-                    : "var(--site-bg-card)",
-                  color: isActive
-                    ? "var(--site-green-dark)"
-                    : "var(--site-text-primary)",
-                  fontFamily: "'Inter', sans-serif",
-                  fontWeight: isActive ? 600 : 400,
-                  border: isActive
-                    ? "1px solid var(--site-gold)"
-                    : "1px solid var(--site-border)",
-                }}
+                onClick={() => { onConditionChange(null); onFormChange(null); }}
+                className="text-xs underline flex-shrink-0"
+                style={{ color: "var(--site-text-muted)", fontFamily: "'Inter', sans-serif" }}
               >
-                {form.label}
+                Clear all
               </button>
-            );
-          })}
+            </div>
+          )}
         </div>
       </div>
-    </div>
+
+      {/* ─── Mobile Filter Drawer ─── */}
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileFilters(false)} />
+          <div
+            className="absolute bottom-0 left-0 right-0 rounded-t-2xl max-h-[80vh] overflow-y-auto pb-8"
+            style={{ background: "var(--site-bg-primary)" }}
+          >
+            <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: "var(--site-border)" }}>
+              <h3
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontWeight: 600,
+                  fontSize: "18px",
+                  color: "var(--site-text-primary)",
+                }}
+              >
+                Filters & Sort
+              </h3>
+              <button onClick={() => setShowMobileFilters(false)} className="p-2">
+                <X className="w-5 h-5" style={{ color: "var(--site-text-primary)" }} />
+              </button>
+            </div>
+
+            {/* Conditions */}
+            <div className="p-4">
+              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'Inter', sans-serif" }}>
+                Condition
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {(conditions || []).map((condition) => {
+                  const isActive = activeCondition === condition.slug;
+                  return (
+                    <button
+                      key={condition.id}
+                      onClick={() => onConditionChange(isActive ? null : condition.slug)}
+                      className="px-4 py-2.5 rounded-full text-sm transition-all"
+                      style={{
+                        background: isActive ? "var(--site-green-dark)" : "transparent",
+                        color: isActive ? "#F5F1E8" : "var(--site-text-primary)",
+                        border: isActive ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
+                        fontFamily: "'Inter', sans-serif",
+                        fontWeight: isActive ? 600 : 400,
+                        minHeight: "44px",
+                      }}
+                    >
+                      {condition.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Form */}
+            <div className="p-4 pt-0">
+              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'Inter', sans-serif" }}>
+                Form
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {FORMS.map((form) => {
+                  const isActive = activeForm === form.slug;
+                  return (
+                    <button
+                      key={form.slug}
+                      onClick={() => onFormChange(isActive ? null : form.slug)}
+                      className="px-4 py-2.5 rounded-full text-sm transition-all"
+                      style={{
+                        background: isActive ? "var(--site-gold)" : "transparent",
+                        color: isActive ? "var(--site-green-dark)" : "var(--site-text-primary)",
+                        border: isActive ? "1px solid var(--site-gold)" : "1px solid var(--site-border)",
+                        fontFamily: "'Inter', sans-serif",
+                        fontWeight: isActive ? 600 : 400,
+                        minHeight: "44px",
+                      }}
+                    >
+                      {form.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Sort */}
+            <div className="p-4 pt-0">
+              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'Inter', sans-serif" }}>
+                Sort by
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {SORT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => onSortChange(opt.value)}
+                    className="px-4 py-2.5 rounded-full text-sm transition-all"
+                    style={{
+                      background: sortBy === opt.value ? "var(--site-green-dark)" : "transparent",
+                      color: sortBy === opt.value ? "#F5F1E8" : "var(--site-text-primary)",
+                      border: sortBy === opt.value ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
+                      fontFamily: "'Inter', sans-serif",
+                      fontWeight: sortBy === opt.value ? 600 : 400,
+                      minHeight: "44px",
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Apply button */}
+            <div className="px-4 pt-2">
+              <button
+                onClick={() => setShowMobileFilters(false)}
+                className="w-full py-3.5 rounded-full text-sm font-semibold transition-all"
+                style={{
+                  background: "var(--site-gold)",
+                  color: "var(--site-green-dark)",
+                  fontFamily: "'Inter', sans-serif",
+                  minHeight: "48px",
+                }}
+              >
+                Show {totalProducts} Products
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
