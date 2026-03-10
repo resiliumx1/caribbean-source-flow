@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle2, ShieldCheck, Clock, Truck } from "lucide-react";
-import priestHarvesting from "@/assets/priest-kailash-harvesting.png";
+import inconsistentQuality from "@/assets/inconsistent-quality.png";
 import labProcessing from "@/assets/lab-processing.png";
 import warehouseImage from "@/assets/miami-warehouse.jpg";
 
