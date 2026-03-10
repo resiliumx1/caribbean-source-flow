@@ -22,7 +22,7 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
   const sealRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
   const completedRef = useRef(false);
-  const [visible, setVisible] = useState(true);
+  
 
   const particles = useMemo(() => {
     return Array.from({ length: 40 }, (_, i) => {
