@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { useEffect, useRef } from "react";
 import heroImage from "@/assets/shop-hero-apothecary.png";
 
 const trustPills = [
