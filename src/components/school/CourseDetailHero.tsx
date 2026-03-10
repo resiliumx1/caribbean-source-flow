@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Users, Award, Infinity, BarChart3, MessageCircle } from "lucide-react";
+import { Users, Award, Infinity, BarChart3, MessageCircle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Breadcrumb,
@@ -42,7 +42,7 @@ export function CourseDetailHero() {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/school">School</Link>
+                <Link to="/">Home</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -77,7 +77,7 @@ export function CourseDetailHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold">
                   Level 1 (C5)
                 </span>
@@ -85,19 +85,34 @@ export function CourseDetailHero() {
                   Next Cohort: March 2026
                 </span>
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-3">
                 Herbal Physician Course
               </h1>
+              <p
+                style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400 }}
+                className="text-muted-foreground text-sm mb-4"
+              >
+                Admittance by Application Only • 50 Students Per Cohort
+              </p>
             </motion.div>
 
             {/* Stats */}
-            <div className="flex flex-wrap gap-4 mb-8">
+            <div className="flex flex-wrap gap-4 mb-6">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex items-center gap-2 text-sm text-muted-foreground">
                   <stat.icon className="w-4 h-4" />
                   <span>{stat.label}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Scarcity callout */}
+            <div className="flex items-start gap-3 bg-accent/5 border border-accent/20 rounded-lg p-4 mb-8">
+              <ShieldCheck className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-foreground/80" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}>
+                We review each application to ensure cohort quality and diverse global representation. 
+                Limited to 50 students per cohort.
+              </p>
             </div>
 
             {/* About */}
@@ -124,8 +139,12 @@ export function CourseDetailHero() {
               <div className="bg-card rounded-xl border border-border p-6 shadow-card">
                 <div className="mb-6">
                   <div className="text-sm text-muted-foreground mb-1">Full Program</div>
-                  <div className="text-3xl font-bold text-foreground">$8,300.00</div>
-                  <div className="text-sm text-muted-foreground">USD</div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold text-foreground">$7,400</span>
+                    <span className="text-lg text-muted-foreground line-through">$8,300</span>
+                  </div>
+                  <div className="text-xs text-accent font-semibold mt-1">Save $900 — Pay in Full</div>
+                  <div className="text-sm text-muted-foreground">or from $2,075/mo</div>
                 </div>
 
                 <a
@@ -134,8 +153,8 @@ export function CourseDetailHero() {
                   rel="noopener noreferrer"
                   className="block mb-3"
                 >
-                  <Button variant="hero" size="lg" className="w-full">
-                    Enroll Now
+                  <Button variant="hero" size="lg" className="w-full min-h-[48px]">
+                    Apply Now
                   </Button>
                 </a>
 
@@ -145,7 +164,7 @@ export function CourseDetailHero() {
                   rel="noopener noreferrer"
                   className="block mb-6"
                 >
-                  <Button variant="outline" size="lg" className="w-full gap-2">
+                  <Button variant="outline" size="lg" className="w-full gap-2 min-h-[48px]">
                     <MessageCircle className="w-4 h-4" />
                     Speak to Admissions
                   </Button>
@@ -178,15 +197,15 @@ export function CourseDetailHero() {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border p-4 lg:hidden">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <div className="text-lg font-bold text-foreground">$8,300</div>
-            <div className="text-xs text-muted-foreground">Full Program</div>
+            <div className="text-sm font-bold text-foreground">Starting at $2,075</div>
+            <div className="text-xs text-muted-foreground">4 payment plans available</div>
           </div>
           <a
             href="https://schools.mountkailashslu.com/hsek-application/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button variant="hero" size="lg">Enroll Now</Button>
+            <Button variant="hero" size="lg" className="min-h-[48px]">Enroll Now</Button>
           </a>
         </div>
       </div>

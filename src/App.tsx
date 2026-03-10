@@ -37,6 +37,7 @@ const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
+const HerbalPhysicianCourse = lazy(() => import("./pages/HerbalPhysicianCourse"));
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ function AppContent() {
             <Route path="/retreats" element={<PageTransition><Retreats /></PageTransition>} />
             <Route path="/the-answer" element={<PageTransition><TheAnswer /></PageTransition>} />
             <Route path="/webinars" element={<PageTransition><WebinarsPage /></PageTransition>} />
+            <Route path="/school/herbal-physician" element={<PageTransition><HerbalPhysicianCourse /></PageTransition>} />
             <Route path="/admin/login" element={<PageTransition><AdminLogin /></PageTransition>} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="products" element={<AdminProducts />} />
