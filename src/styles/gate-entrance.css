@@ -1,36 +1,47 @@
-/* ─── Gate Entrance — Verbatim from HTML source ─── */
-/* CRITICAL: Do NOT simplify or rewrite any values */
+/* ─── Gate Entrance — GSAP ScrollTrigger version ─── */
 
 :root{
   --gold:#c9a96e; --gold-l:#e2c99a; --gold-p:#f0d89a;
   --gate-deep:#0e1a0b; --gate-forest:#1a2c14; --gate-sage:#263a1e; --gate-moss:#324a28;
   --gate-cream:#f0ebe0; --gate-mist:#c4bfb2; --faint:rgba(201,169,110,0.1);
 }
-/* Force html/body green during gate */
-html:has(#scroll-stage),
-html:has(#scroll-stage) body {
-  background:#12200e !important;
-  overflow-x:hidden;
+
+/* ── Trigger spacer: gives ScrollTrigger scroll distance ── */
+.gate-trigger-spacer {
+  height: 300vh;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
 }
 
-#scroll-stage{position:relative;height:500vh;overflow:hidden;background:#12200e;width:100%}
-@media (max-width: 767px) {
-  #scroll-stage{height:350vh}
+/* ── Fixed overlay that covers viewport ── */
+.gate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 50;
+  overflow: hidden;
+  background: #12200e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: opacity;
 }
-#sticky-hero{
-  position:sticky;top:0;width:100%;height:100vh;
-  overflow:hidden;display:flex;align-items:center;justify-content:center;
-  background:#12200e
+
+/* Force html/body green during gate */
+html:has(.gate-overlay),
+html:has(.gate-overlay) body {
+  overflow-x: hidden;
 }
+
 .hero-bg{
   position:absolute;inset:0;z-index:0;
   background:
-    /* warm golden light rays filtering through */
     linear-gradient(175deg, transparent 20%, rgba(201,169,110,0.07) 42%, transparent 62%),
     linear-gradient(188deg, transparent 28%, rgba(201,169,110,0.04) 52%, transparent 72%),
-    /* canopy light bloom */
     radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,169,110,0.1) 0%, transparent 55%),
-    /* tree trunks — softer sage-green vertical columns */
     radial-gradient(ellipse 7%  88% at  6% 0%, rgba(28,42,22,0.88)  0%, transparent 75%),
     radial-gradient(ellipse 5%  75% at 15% 0%, rgba(32,48,26,0.84)  0%, transparent 72%),
     radial-gradient(ellipse 9%  92% at 24% 0%, rgba(26,40,20,0.86)  0%, transparent 78%),
@@ -41,13 +52,11 @@ html:has(#scroll-stage) body {
     radial-gradient(ellipse 6%  82% at 73% 0%, rgba(30,46,24,0.83)  0%, transparent 72%),
     radial-gradient(ellipse 7%  90% at 83% 0%, rgba(28,42,22,0.87)  0%, transparent 77%),
     radial-gradient(ellipse 5%  76% at 93% 0%, rgba(32,48,26,0.82)  0%, transparent 70%),
-    /* lush herbal canopy greens — lighter, more botanical */
     radial-gradient(ellipse 14% 52% at 10% 0%, rgba(48,78,38,0.6) 0%, transparent 60%),
     radial-gradient(ellipse 16% 55% at 28% 0%, rgba(55,88,42,0.55) 0%, transparent 58%),
     radial-gradient(ellipse 14% 50% at 48% 0%, rgba(50,82,40,0.58) 0%, transparent 56%),
     radial-gradient(ellipse 15% 52% at 67% 0%, rgba(55,88,42,0.55) 0%, transparent 58%),
     radial-gradient(ellipse 14% 50% at 87% 0%, rgba(48,78,38,0.6) 0%, transparent 60%),
-    /* depth gradient — warm sage tones */
     linear-gradient(to top,
       rgba(18,28,14,1)      0%,
       rgba(22,35,18,0.97)   8%,
@@ -98,7 +107,6 @@ html:has(#scroll-stage) body {
   filter:blur(0.5px);
   animation:seamPulse 2.6s ease-in-out infinite
 }
-/* Wider ambient glow layer */
 .gate-left::before,.gate-right::before{
   content:'';position:absolute;top:0;width:1px;height:100%;
   opacity:calc(var(--seam-op,1) * 0.35);
@@ -341,30 +349,28 @@ html:has(#scroll-stage) body {
 }
 
 /* ── LIGHT MODE IMMUNITY ─────────────────────── */
-#scroll-stage,
-#scroll-stage *,
-#scroll-stage *::before,
-#scroll-stage *::after {
+.gate-overlay,
+.gate-overlay *,
+.gate-overlay *::before,
+.gate-overlay *::after {
   color-scheme: dark !important;
 }
 
-[data-mkrc-theme="light"] #scroll-stage,
-[data-mkrc-theme="light"] #sticky-hero,
-[data-mkrc-theme="light"] .hero-bg,
-[data-mkrc-theme="light"] .gate-left,
-[data-mkrc-theme="light"] .gate-right,
-[data-mkrc-theme="light"] .gate-art,
-[data-mkrc-theme="light"] .hero-content,
-[data-mkrc-theme="light"] #logo-seal,
-[data-mkrc-theme="light"] #enter-cue,
-[data-mkrc-theme="light"] .particles {
+[data-mkrc-theme="light"] .gate-overlay,
+[data-mkrc-theme="light"] .gate-overlay .hero-bg,
+[data-mkrc-theme="light"] .gate-overlay .gate-left,
+[data-mkrc-theme="light"] .gate-overlay .gate-right,
+[data-mkrc-theme="light"] .gate-overlay .gate-art,
+[data-mkrc-theme="light"] .gate-overlay .hero-content,
+[data-mkrc-theme="light"] .gate-overlay #logo-seal,
+[data-mkrc-theme="light"] .gate-overlay #enter-cue,
+[data-mkrc-theme="light"] .gate-overlay .particles {
   color-scheme: dark !important;
 }
 
-.light #scroll-stage,
-.light #sticky-hero,
-.light .hero-bg,
-.light .gate-left,
-.light .gate-right {
+.light .gate-overlay,
+.light .gate-overlay .hero-bg,
+.light .gate-overlay .gate-left,
+.light .gate-overlay .gate-right {
   color-scheme: dark !important;
 }

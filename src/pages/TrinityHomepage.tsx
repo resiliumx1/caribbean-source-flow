@@ -75,17 +75,9 @@ function ConsultationToast() {
 
 const TrinityHomepage = () => {
   const [gateProgress, setGateProgress] = useState(0);
-  // Show gate only on first visit ever (localStorage persists across sessions)
   const isFirstVisit = !localStorage.getItem('mkrc-gate-seen');
   const [gateComplete, setGateComplete] = useState(!isFirstVisit);
   const contentRef = useRef<HTMLDivElement>(null);
-
-  // On first visit, ensure we start at the very top of the page
-  useEffect(() => {
-    if (isFirstVisit) {
-      window.scrollTo(0, 0);
-    }
-  }, []);
 
   const handleGateProgress = useCallback((progress: number) => {
     setGateProgress(progress);
@@ -95,13 +87,8 @@ const TrinityHomepage = () => {
   const handleGateComplete = useCallback(() => {
     setGateComplete(true);
     localStorage.setItem('mkrc-gate-seen', '1');
-    // Dispatch a definitive event so header + chat show immediately
     window.dispatchEvent(new CustomEvent('gate-complete'));
     window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
-    // Reset scroll to top so content starts seamlessly
-    requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
-    });
   }, []);
 
   // If gate already done (returning visitor), dispatch immediately
@@ -114,11 +101,12 @@ const TrinityHomepage = () => {
 
   return (
     <main className="min-h-screen">
-      {/* Gate Entrance — only on first visit */}
+      {/* Gate Entrance — only on first visit. Renders as fixed overlay on top. */}
       {!gateComplete && (
         <GateEntrance onProgressChange={handleGateProgress} onGateComplete={handleGateComplete} />
       )}
 
+      {/* Homepage content — always in DOM but hidden behind gate overlay */}
       {gateComplete && (
         <div ref={contentRef}>
           <FadeInStagger delay={0.1}>
