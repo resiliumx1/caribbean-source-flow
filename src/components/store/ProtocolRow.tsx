@@ -1,9 +1,37 @@
-import { useRef } from "react";
+import { useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Star } from "lucide-react";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/hooks/use-products";
+
+function useDragScroll() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    dragState.current = { isDown: true, startX: e.clientX, scrollLeft: el.scrollLeft, moved: false };
+    el.setPointerCapture(e.pointerId);
+  }, []);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current.isDown || !ref.current) return;
+    const dx = e.clientX - dragState.current.startX;
+    if (Math.abs(dx) > 3) { dragState.current.moved = true; setIsDragging(true); }
+    ref.current.scrollLeft = dragState.current.scrollLeft - dx;
+  }, []);
+
+  const onPointerUp = useCallback((e: React.PointerEvent) => {
+    dragState.current.isDown = false;
+    ref.current?.releasePointerCapture(e.pointerId);
+    setTimeout(() => setIsDragging(false), 0);
+  }, []);
+
+  return { ref, isDragging, onPointerDown, onPointerMove, onPointerUp };
+}
 
 interface ProtocolRowProps {
   title: string;
@@ -11,7 +39,7 @@ interface ProtocolRowProps {
 }
 
 export function ProtocolRow({ title, products }: ProtocolRowProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const { ref: scrollRef, isDragging, onPointerDown, onPointerMove, onPointerUp } = useDragScroll();
   const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
 
@@ -47,8 +75,12 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
       {/* Scroll container */}
       <div
         ref={scrollRef}
-        className="flex gap-6 overflow-x-auto pb-5 snap-x snap-mandatory scrollbar-hide"
-        style={{ scrollPaddingLeft: "16px" }}
+        className="flex gap-6 overflow-x-auto pb-5 snap-x snap-mandatory scrollbar-hide select-none"
+        style={{ scrollPaddingLeft: "16px", cursor: isDragging ? "grabbing" : "grab" }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerLeave={onPointerUp}
       >
         {products.map((product) => {
           const prices = formatPriceBoth(product.price_usd, product.price_xcd);
@@ -177,7 +209,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
                   }}
                 >
                   <ShoppingCart className="w-4 h-4" />
-                  Add to Protocol
+                  Add to Cart
                 </button>
               </div>
             </div>

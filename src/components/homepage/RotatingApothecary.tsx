@@ -171,7 +171,7 @@ export function RotatingApothecary() {
                       fontFamily: "'Jost', sans-serif",
                     }}
                   >
-                    Add to Protocol
+                    Add to Cart
                   </div>
                 </div>
               </Link>

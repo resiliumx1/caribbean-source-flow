@@ -150,7 +150,7 @@ export function BundlesGrid({ bundles }: BundlesGridProps) {
                   }}
                 >
                   <ShoppingCart className="w-4 h-4" />
-                  Add to Protocol
+                  Add to Cart
                 </button>
               </div>
             </div>
