@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import heroImage from "@/assets/shop-hero-apothecary.png";
 
@@ -50,86 +49,71 @@ export function ShopHero() {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20 text-center">
         <h1
-          className="text-[40px] md:text-[52px] leading-[1.1] mb-5 max-w-3xl mx-auto"
+          className="text-3xl md:text-5xl lg:text-6xl leading-[1.1] font-bold tracking-tight max-w-3xl mx-auto"
           style={{
             fontFamily: "'Playfair Display', serif",
-            fontWeight: 700,
             color: "#F5F1E8",
           }}
         >
-          The Sulphur Ridge Apothecary
+          Rejuvenation Starts Here
         </h1>
 
         <p
-          className="mb-8 max-w-2xl mx-auto hidden sm:block"
+          className="text-base md:text-xl mt-2 font-medium max-w-2xl mx-auto"
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontWeight: 400,
-            fontSize: "18px",
-            lineHeight: 1.6,
-            color: "rgba(245,241,232,0.8)",
+            color: "var(--site-gold)",
           }}
         >
-          Forest-grown remedies for chronic inflammation, gut repair, and deep sleep.
-          <br />
-          Backed by 21 years of clinical practice.
+          The Mount Kailash Apothecary — Clinical formulas from our St. Lucia practice
         </p>
+
         <p
-          className="mb-8 max-w-2xl mx-auto sm:hidden"
+          className="text-base md:text-lg mt-6 mb-8 max-w-2xl mx-auto leading-relaxed"
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontWeight: 400,
-            fontSize: "16px",
-            lineHeight: 1.6,
-            color: "rgba(245,241,232,0.8)",
+            color: "rgba(255,255,255,0.9)",
           }}
         >
-          Wild St. Lucian herbs for inflammation, sleep, and cellular repair.
+          Complete protocols for inflammation, immunity, hormonal balance, and cellular repair. From our St. Lucian clinic to your doorstep.
         </p>
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-10">
           <a
             href="#filter-nav"
-            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:brightness-110 w-full sm:w-auto text-center"
+            className="px-8 py-3 rounded-full font-semibold text-sm transition-all hover:brightness-90 w-full sm:w-auto text-center"
             style={{
               background: "var(--site-gold)",
               color: "var(--site-green-dark)",
               fontFamily: "'Inter', sans-serif",
-              fontWeight: 600,
             }}
           >
             Shop Best Sellers →
           </a>
-          <Link
-            to="/shop"
-            className="px-8 py-3 rounded-full font-medium text-sm transition-all hover:bg-white/10 w-full sm:w-auto text-center"
+          <a
+            href="#filter-nav"
+            className="px-8 py-3 rounded-full font-semibold text-sm transition-all hover:bg-white/10 w-full sm:w-auto text-center"
             style={{
-              border: "1px solid rgba(245,241,232,0.5)",
-              color: "#F5F1E8",
+              border: "2px solid rgba(255,255,255,0.3)",
+              color: "#FFFFFF",
               fontFamily: "'Inter', sans-serif",
-              fontWeight: 500,
             }}
           >
-            View All Products →
-          </Link>
+            Shop by Condition →
+          </a>
         </div>
 
         {/* Trust pills */}
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-nowrap sm:flex-wrap justify-start sm:justify-center gap-3 overflow-x-auto sm:overflow-visible scrollbar-hide px-1">
           {trustPills.map((pill) => (
             <span
               key={pill}
-              className="px-4 py-1.5 rounded-full"
+              className="px-4 py-2 rounded-full text-xs md:text-sm font-medium tracking-wide whitespace-nowrap backdrop-blur-md"
               style={{
-                background: "rgba(245,241,232,0.08)",
-                border: "1px solid rgba(245,241,232,0.15)",
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 500,
-                fontSize: "12px",
-                color: "rgba(245,241,232,0.7)",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
+                background: "rgba(255,255,255,0.1)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                color: "#FFFFFF",
               }}
             >
               {pill}
