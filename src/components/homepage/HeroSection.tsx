@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ClipboardList, ShoppingBag, Mountain, GraduationCap } from "lucide-react";
 import priestPhoto from "@/assets/priest-kailash-host.jpg";
 import pillarWholesale from "@/assets/pillar-wholesale.png";
 import pillarApothecary from "@/assets/pillar-apothecary.png";
@@ -13,6 +13,7 @@ const pillars = [
     cta: "Access Portal",
     route: "/wholesale",
     image: pillarWholesale,
+    icon: ClipboardList,
   },
   {
     title: "The Apothecary",
@@ -20,6 +21,7 @@ const pillars = [
     cta: "Shop Remedies",
     route: "/shop",
     image: pillarApothecary,
+    icon: ShoppingBag,
   },
   {
     title: "The Ridge Retreat",
@@ -27,13 +29,15 @@ const pillars = [
     cta: "View Dates",
     route: "/retreats",
     image: pillarRetreat,
+    icon: Mountain,
   },
   {
     title: "School of Bush Medicine",
     description: "Clinical training",
     cta: "Explore Courses",
-    route: "/wholesale",
+    route: "/school/herbal-physician",
     image: pillarSchool,
+    icon: GraduationCap,
   },
 ];
 
@@ -73,44 +77,51 @@ export function HeroSection() {
 
             {/* 4-Pillar Grid */}
             <div className="grid grid-cols-2 gap-4">
-              {pillars.map((pillar) => (
+              {pillars.map((pillar) => {
+                const IconComp = pillar.icon;
+                return (
                   <Link
                     key={pillar.route + pillar.title}
                     to={pillar.route}
-                    className="group block rounded-lg p-5 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                    className="group block rounded-xl p-6 transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full"
                     style={{
-                      background: "#0F281E",
-                      border: "1px solid rgba(188,138,95,0.2)",
+                      background: "rgba(15,40,30,0.5)",
+                      border: "1px solid rgba(188,138,95,0.3)",
                       boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.borderColor = "#BC8A5F";
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.borderColor = "#BC8A5F";
+                      el.style.boxShadow = "0 8px 30px rgba(188,138,95,0.15)";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(188,138,95,0.2)";
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.borderColor = "rgba(188,138,95,0.3)";
+                      el.style.boxShadow = "0 4px 20px rgba(0,0,0,0.15)";
                     }}
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 h-full">
                       {/* Text side */}
                       <div className="flex-1 min-w-0">
-                        <div
+                        <IconComp className="w-5 h-5 mb-3" style={{ color: "#BC8A5F" }} />
+                        <h3
                           style={{
-                            fontFamily: "'Jost', sans-serif",
-                            fontWeight: 600,
-                            fontSize: "15px",
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontWeight: 700,
+                            fontSize: "20px",
                             color: "#F5F1E8",
-                            marginBottom: "2px",
+                            marginBottom: "6px",
                           }}
                         >
                           {pillar.title}
-                        </div>
+                        </h3>
                         <div
                           style={{
                             fontFamily: "'Jost', sans-serif",
                             fontWeight: 300,
                             fontSize: "13px",
-                            color: "rgba(245,241,232,0.65)",
-                            marginBottom: "8px",
+                            color: "rgba(245,241,232,0.7)",
+                            marginBottom: "14px",
                           }}
                         >
                           {pillar.description}
@@ -127,13 +138,13 @@ export function HeroSection() {
                       <img
                         src={pillar.image}
                         alt={pillar.title}
-                        className="w-16 h-16 sm:w-20 sm:h-20 object-contain flex-shrink-0 self-center opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                        className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain flex-shrink-0 self-center opacity-100 group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
                     </div>
                   </Link>
-                ))}
-
+                );
+              })}
             </div>
           </div>
 

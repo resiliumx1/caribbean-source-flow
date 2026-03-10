@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import herbProcessing from "@/assets/herb-processing.jpg";
+import apothecaryDisplay from "@/assets/apothecary-display.png";
 
 export function SourceStory() {
   return (
@@ -11,7 +11,7 @@ export function SourceStory() {
           <div className="relative">
             <div className="rounded-lg overflow-hidden">
               <img
-                src={herbProcessing}
+                src={apothecaryDisplay}
                 alt="Harvesting medicinal herbs on the volcanic ridge at dawn"
                 className="w-full h-auto object-cover"
                 loading="lazy"
