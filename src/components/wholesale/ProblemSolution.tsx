@@ -8,7 +8,7 @@ const solutions = [
     problem: "Inconsistent Quality",
     solution: "Single-Origin St. Lucian Harvesting. Meet your farmer, inspect your batch.",
     icon: ShieldCheck,
-    image: priestHarvesting,
+    image: inconsistentQuality,
   },
   {
     problem: "Documentation Delays",

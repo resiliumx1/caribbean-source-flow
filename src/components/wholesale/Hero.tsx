@@ -14,24 +14,14 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
   return (
     <section className="relative min-h-[90vh] flex items-center">
       {/* Split Background */}
-      <div className="absolute inset-0 z-0 grid grid-cols-1 md:grid-cols-2">
-        <div className="relative overflow-hidden">
-          <img
-            src={priestHarvesting}
-            alt="Priest Kailash harvesting Caribbean botanicals"
-            className="w-full h-full object-cover"
-            loading="eager"
-            fetchPriority="high"
-          />
-        </div>
-        <div className="relative overflow-hidden hidden md:block">
-          <img
-            src={warehouseImage}
-            alt="Miami fulfillment warehouse"
-            className="w-full h-full object-cover"
-            loading="eager"
-          />
-        </div>
+      <div className="absolute inset-0 z-0">
+        <img
+          src={warehouseImage}
+          alt="Mount Kailash wholesale warehouse"
+          className="w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+        />
       </div>
 
       {/* Dark Overlay 60% */}
