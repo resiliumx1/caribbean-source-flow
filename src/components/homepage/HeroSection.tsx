@@ -28,7 +28,8 @@ const pillars = [
   {
     title: "The Ridge Retreat",
     description: "7-day immersions",
-    cta: "View Dates",
+    cta: "Apply Now",
+    ctaWeight: "font-semibold" as const,
     route: "/retreats",
     image: pillarRetreat,
     icon: Mountain,
