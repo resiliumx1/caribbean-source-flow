@@ -247,8 +247,34 @@
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 
+  /* Ensure hero CTAs are never invisible */
+  .hero-content a,
+  .hero-content button {
+    min-height: 48px;
+  }
+
   .hero-overlay {
     background: var(--gradient-overlay);
+  }
+
+  /* Global form field contrast */
+  input, textarea, select {
+    border-color: #D1D5DB;
+    color: var(--site-text-primary, #1A1A1A);
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #6B7280;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    outline: 2px solid var(--site-gold, #BC8A5F);
+    outline-offset: 2px;
+  }
+
+  /* Ensure muted text meets contrast */
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .hero-title {
