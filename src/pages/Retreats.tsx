@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import FadeInStagger from "@/components/FadeInStagger";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
 import { RetreatPathSplit } from "@/components/retreats/RetreatPathSplit";
-import { ProtocolTimeline } from "@/components/retreats/ProtocolTimeline";
+import { ExperienceGrid } from "@/components/retreats/ExperienceGrid";
+import { PriestKailashBio } from "@/components/retreats/PriestKailashBio";
 import { RetreatGallery } from "@/components/retreats/RetreatGallery";
 import { RetreatVideoGallery } from "@/components/retreats/RetreatVideoGallery";
 import { TransformationStories } from "@/components/retreats/TransformationStories";
-import { PriestKailashBio } from "@/components/retreats/PriestKailashBio";
 import { RetreatCalendar } from "@/components/retreats/RetreatCalendar";
 import { GroupRetreatsList } from "@/components/retreats/GroupRetreatsList";
 import { RetreatFAQ } from "@/components/retreats/RetreatFAQ";
@@ -15,11 +15,12 @@ import { MessageCircle } from "lucide-react";
 
 const GoddessWhatsApp = () => (
   <a
-    href={`https://wa.me/13059429407?text=${encodeURIComponent("Hello Goddess Itopia, I'd like to learn more about the retreats.")}`}
+    href={`https://wa.me/17582855195?text=${encodeURIComponent("Hello, I'd like to learn more about the retreats.")}`}
     target="_blank"
     rel="noopener noreferrer"
-    className="whatsapp-float group"
-    aria-label="Chat with Goddess Itopia on WhatsApp"
+    className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110"
+    style={{ background: 'var(--site-gold)', color: 'var(--site-green-dark)' }}
+    aria-label="Chat on WhatsApp"
   >
     <MessageCircle className="w-6 h-6" />
   </a>
@@ -27,46 +28,42 @@ const GoddessWhatsApp = () => (
 
 const Retreats = () => {
   useEffect(() => {
-    document.title = "Healing Retreats in Saint Lucia | Private & Group Programs | Mount Kailash";
+    document.title = "Wellness Retreats in Saint Lucia | Mount Kailash Rejuvenation Centre";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Experience healing retreats in Saint Lucia's rainforest. Private and group wellness programs led by Priest Kailash Kay Leonce. All-inclusive with herbal protocols.");
+    if (meta) meta.setAttribute("content", "Immersive wellness retreats in St. Lucia's volcanic rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal.");
   }, []);
 
   return (
     <main className="min-h-screen">
+      <RetreatsHero />
       <FadeInStagger delay={0.1}>
-        <RetreatsHero />
-      </FadeInStagger>
-      <FadeInStagger delay={0.2}>
         <RetreatPathSplit />
       </FadeInStagger>
+      <FadeInStagger delay={0.15}>
+        <ExperienceGrid />
+      </FadeInStagger>
+      <FadeInStagger delay={0.2}>
+        <PriestKailashBio />
+      </FadeInStagger>
+      <FadeInStagger delay={0.25}>
+        <RetreatGallery />
+      </FadeInStagger>
       <FadeInStagger delay={0.3}>
-        <ProtocolTimeline />
+        <RetreatVideoGallery />
+      </FadeInStagger>
+      <FadeInStagger delay={0.35}>
+        <TransformationStories />
       </FadeInStagger>
       <FadeInStagger delay={0.4}>
+        <RetreatFAQ />
+      </FadeInStagger>
+      <FadeInStagger delay={0.45}>
         <RetreatCalendar />
       </FadeInStagger>
       <FadeInStagger delay={0.5}>
         <GroupRetreatsList />
       </FadeInStagger>
-      <FadeInStagger delay={0.6}>
-        <RetreatGallery />
-      </FadeInStagger>
-      <FadeInStagger delay={0.7}>
-        <RetreatVideoGallery />
-      </FadeInStagger>
-      <FadeInStagger delay={0.8}>
-        <TransformationStories />
-      </FadeInStagger>
-      <FadeInStagger delay={0.9}>
-        <PriestKailashBio />
-      </FadeInStagger>
-      <FadeInStagger delay={1.0}>
-        <RetreatFAQ />
-      </FadeInStagger>
-      <FadeInStagger delay={1.1}>
-        <UnifiedFooter />
-      </FadeInStagger>
+      <UnifiedFooter />
       <GoddessWhatsApp />
     </main>
   );

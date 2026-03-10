@@ -1,50 +1,45 @@
 import { Calendar, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRetreatDates } from "@/hooks/use-retreats";
+import { format } from "date-fns";
 
 const whatsappNumber = "+17582855195";
 
 export function GroupRetreatsList() {
-  return (
-    <section className="py-16 bg-background">
-      <div className="container mx-auto max-w-4xl px-4">
-        <div className="text-center py-16 bg-muted/30 rounded-2xl">
-          <Calendar className="w-16 h-16 text-primary mx-auto mb-6" />
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-3">
-            Group Retreat Dates
-          </h2>
-          <p className="text-xl font-semibold text-primary mb-4">Coming Soon</p>
-          <p className="text-muted-foreground max-w-md mx-auto mb-8">
-            We're finalizing our upcoming group retreat schedule. Reach out to be the first to know when dates are announced.
-          </p>
-          <a
-            href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${encodeURIComponent("Hello, I'd like to be notified when group retreat dates are available.")}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button size="lg" className="gap-2">
-              <MessageCircle className="w-4 h-4" />
-              Inquire via WhatsApp
-            </Button>
-          </a>
-        </div>
+  const { data: retreatDates = [] } = useRetreatDates();
 
-        {/* Private retreat CTA */}
-        <div className="mt-8 text-center">
-          <p className="text-muted-foreground mb-3">
-            Prefer a private experience on your own schedule?
-          </p>
-          <a
-            href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${encodeURIComponent("Hello, I'm interested in booking a private retreat. Can you share available dates and pricing?")}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button variant="outline" size="lg">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Inquire About Private Retreats
-            </Button>
-          </a>
+  const groupDates = retreatDates.filter((rd) => {
+    const rdType = rd.retreat_types as any;
+    return rdType?.type === "group";
+  });
+
+  if (groupDates.length === 0) {
+    return (
+      <section className="py-16" style={{ background: 'var(--site-bg-primary)' }}>
+        <div className="container mx-auto max-w-4xl px-4">
+          <div className="text-center py-16 rounded-2xl" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)' }}>
+            <Calendar className="w-14 h-14 mx-auto mb-6" style={{ color: 'var(--site-gold)' }} />
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '28px', color: 'var(--site-text-primary)', marginBottom: '12px' }}>
+              Group Dates Coming Soon
+            </h2>
+            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: 'var(--site-text-muted)', maxWidth: '420px', margin: '0 auto 24px' }}>
+              We're finalizing our upcoming group retreat schedule. Reach out to be first to know.
+            </p>
+            <a
+              href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${encodeURIComponent("Hello, I'd like to be notified when group retreat dates are available.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button size="lg" className="gap-2 rounded-full" style={{ background: 'var(--site-gold)', color: 'var(--site-green-dark)' }}>
+                <MessageCircle className="w-4 h-4" />
+                Get Notified via WhatsApp
+              </Button>
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  }
+
+  return null;
 }
