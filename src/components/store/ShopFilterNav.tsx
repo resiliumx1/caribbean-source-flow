@@ -7,6 +7,7 @@ const FORMS = [
   { label: "Tinctures", slug: "tinctures" },
   { label: "Capsules", slug: "capsules" },
   { label: "Teas", slug: "teas" },
+  { label: "Books", slug: "books" },
   { label: "Bulk", slug: "raw-herbs" },
 ];
 
