@@ -1,8 +1,8 @@
 import { Waves, Leaf, FlaskConical, Coffee, ArrowRight } from "lucide-react";
-import seamossImage from "@/assets/seamoss-harvest.jpg";
+import oceanBotanicals from "@/assets/ocean-botanicals.png";
 import herbProcessing from "@/assets/herb-processing.jpg";
 import labProcessing from "@/assets/lab-processing.png";
-import priestHarvesting from "@/assets/priest-kailash-harvesting.png";
+import bushMedicineBasket from "@/assets/bush-medicine-basket.png";
 
 const productCategories = [
   {
