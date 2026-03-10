@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useMemo, useState } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "@/styles/gate-entrance.css";
