@@ -165,7 +165,7 @@ export default function Shop() {
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                     {row.products.map((product, idx) => (
-                      <ProductCard key={product.id} product={product} style={{ animation: "shopFadeUp 0.5s ease forwards", animationDelay: `${idx * 60}ms`, opacity: 0 }} />
+                      <ProductCard key={product.id} product={product} />
                     ))}
                   </div>
                 </section>
