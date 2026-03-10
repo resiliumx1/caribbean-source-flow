@@ -1,35 +1,39 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, ShoppingBag, Building2, Mountain, GraduationCap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import priestPhoto from "@/assets/priest-kailash-host.jpg";
+import pillarWholesale from "@/assets/pillar-wholesale.png";
+import pillarApothecary from "@/assets/pillar-apothecary.png";
+import pillarRetreat from "@/assets/pillar-retreat.png";
+import pillarSchool from "@/assets/pillar-school.png";
 
 const pillars = [
   {
-    icon: Building2,
     title: "Wholesale Supply",
     description: "For practitioners",
     cta: "Access Portal",
     route: "/wholesale",
+    image: pillarWholesale,
   },
   {
-    icon: ShoppingBag,
     title: "The Apothecary",
     description: "For personal use",
     cta: "Shop Remedies",
     route: "/shop",
+    image: pillarApothecary,
   },
   {
-    icon: Mountain,
     title: "The Ridge Retreat",
     description: "7-day immersions",
     cta: "View Dates",
     route: "/retreats",
+    image: pillarRetreat,
   },
   {
-    icon: GraduationCap,
     title: "School of Bush Medicine",
     description: "Clinical training",
     cta: "Explore Courses",
     route: "/wholesale",
+    image: pillarSchool,
   },
 ];
 
