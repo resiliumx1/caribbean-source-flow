@@ -411,6 +411,69 @@ export type Database = {
         }
         Relationships: []
       }
+      product_condition_assignments: {
+        Row: {
+          condition_id: string
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          condition_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          condition_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_condition_assignments_condition_id_fkey"
+            columns: ["condition_id"]
+            isOneToOne: false
+            referencedRelation: "product_conditions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_condition_assignments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_conditions: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           created_at: string

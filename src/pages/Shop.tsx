@@ -9,16 +9,8 @@ import { TrustBar } from "@/components/store/TrustBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { MobileStickyCtA } from "@/components/store/MobileStickyCtA";
 import { useProducts, type Product } from "@/hooks/use-products";
+import { useConditions, useProductConditionAssignments } from "@/hooks/use-conditions";
 import { Skeleton } from "@/components/ui/skeleton";
-
-// Condition-to-keyword mapping for grouping products
-const CONDITION_KEYWORDS: Record<string, string[]> = {
-  Inflammation: ["inflam", "pain", "joint", "vervine", "turmeric"],
-  "Gut Health": ["gut", "digest", "stomach", "bitter", "colon", "intestin"],
-  "Immune Defense": ["immune", "cold", "flu", "virus", "soursop", "fortress"],
-  "Stress & Sleep": ["stress", "sleep", "calm", "nerv", "anxiety", "relax"],
-  Detox: ["detox", "cleans", "liver", "kidney", "purif"],
-};
 
 // Form-to-product_type mapping
 const FORM_TYPES: Record<string, string[]> = {
@@ -28,22 +20,10 @@ const FORM_TYPES: Record<string, string[]> = {
   "raw-herbs": ["raw_herb", "powder", "bulk"],
 };
 
-function matchesCondition(product: Product, condition: string): boolean {
-  const keywords = CONDITION_KEYWORDS[condition] || [];
-  const searchText = [
-    product.name,
-    product.traditional_use,
-    product.short_description,
-    product.description,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-  return keywords.some((kw) => searchText.includes(kw));
-}
-
 export default function Shop() {
   const { data: products, isLoading } = useProducts();
+  const { data: conditions } = useConditions();
+  const { data: assignments } = useProductConditionAssignments();
   const [activeCondition, setActiveCondition] = useState<string | null>(null);
   const [activeForm, setActiveForm] = useState<string | null>(null);
 
@@ -57,6 +37,20 @@ export default function Shop() {
         "Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration."
       );
   }, []);
+
+  // Build a lookup: conditionSlug -> Set of product IDs
+  const conditionProductMap = useMemo(() => {
+    if (!conditions || !assignments) return new Map<string, Set<string>>();
+    const conditionIdToSlug = new Map(conditions.map((c) => [c.id, c.slug]));
+    const map = new Map<string, Set<string>>();
+    for (const a of assignments) {
+      const slug = conditionIdToSlug.get(a.condition_id);
+      if (!slug) continue;
+      if (!map.has(slug)) map.set(slug, new Set());
+      map.get(slug)!.add(a.product_id);
+    }
+    return map;
+  }, [conditions, assignments]);
 
   // Separate bundles, "The Answer", and regular products
   const { bundles, theAnswer, regularProducts, teas } = useMemo(() => {
@@ -73,32 +67,34 @@ export default function Shop() {
     return { bundles, theAnswer, regularProducts, teas };
   }, [products]);
 
-  // Protocol rows by condition
+  // Protocol rows by condition (from DB)
   const protocolRows = useMemo(() => {
-    if (!regularProducts.length) return [];
-    return [
-      {
-        title: "For Inflammation",
-        products: regularProducts.filter((p) => matchesCondition(p, "Inflammation")).slice(0, 5),
-      },
-      {
-        title: "Gut Terrain Repair",
-        products: regularProducts.filter((p) => matchesCondition(p, "Gut Health")).slice(0, 4),
-      },
-      {
-        title: "Immune Defense",
-        products: regularProducts.filter((p) => matchesCondition(p, "Immune Defense")).slice(0, 4),
-      },
-    ].filter((row) => row.products.length > 0);
-  }, [regularProducts]);
+    if (!regularProducts.length || !conditions) return [];
+    const protocolConditions = conditions.filter((c) =>
+      ["inflammation-pain", "gut-health", "immune-defense"].includes(c.slug)
+    );
+    return protocolConditions
+      .map((condition) => {
+        const productIds = conditionProductMap.get(condition.slug) || new Set();
+        const matched = regularProducts.filter((p) => productIds.has(p.id)).slice(0, 5);
+        return {
+          title: condition.name === "Inflammation & Pain" ? "For Inflammation" :
+                 condition.name === "Gut Health & Digestion" ? "Gut Terrain Repair" :
+                 condition.name,
+          products: matched,
+        };
+      })
+      .filter((row) => row.products.length > 0);
+  }, [regularProducts, conditions, conditionProductMap]);
 
   // Filtered products for grid view (when a filter is active)
   const filteredProducts = useMemo(() => {
-    if (!activeCondition && !activeForm) return null; // null = show protocol rows instead
-    let filtered = regularProducts;
+    if (!activeCondition && !activeForm) return null;
+    let filtered = [...regularProducts, ...teas, ...bundles];
 
     if (activeCondition) {
-      filtered = filtered.filter((p) => matchesCondition(p, activeCondition));
+      const productIds = conditionProductMap.get(activeCondition) || new Set();
+      filtered = filtered.filter((p) => productIds.has(p.id));
     }
 
     if (activeForm) {
@@ -107,7 +103,7 @@ export default function Shop() {
     }
 
     return filtered;
-  }, [regularProducts, activeCondition, activeForm]);
+  }, [regularProducts, teas, bundles, activeCondition, activeForm, conditionProductMap]);
 
   return (
     <div
