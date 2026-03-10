@@ -166,6 +166,25 @@
   margin-bottom: 32px;
 }
 
+/* Override global hero-content color forcing for The Answer CTA buttons */
+.answer-hero__ctas .mkrc-btn-secondary {
+  color: #f2ead8 !important;
+  border-color: rgba(242,234,216,0.4) !important;
+  background: rgba(242,234,216,0.08) !important;
+  min-height: 48px;
+  text-shadow: none;
+}
+
+.answer-hero__ctas .mkrc-btn-secondary:hover {
+  border-color: #c9a84c !important;
+  color: #c9a84c !important;
+  background: rgba(201,168,76,0.1) !important;
+}
+
+.answer-hero__ctas .mkrc-btn-primary {
+  min-height: 48px;
+}
+
 .answer-hero__certs {
   display: flex;
   flex-wrap: wrap;
