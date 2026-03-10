@@ -1,23 +1,30 @@
 import { Link } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
 import { useProduct } from "@/hooks/use-products";
 import { useStore } from "@/lib/store-context";
+import { useCart } from "@/hooks/use-cart";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
 
 export function FeaturedProduct() {
   const { data: product, isLoading } = useProduct("the-answer");
   const { formatPriceBoth } = useStore();
+  const { addToCart, isAddingToCart } = useCart();
+  const [subscribe, setSubscribe] = useState(false);
 
   if (isLoading) {
     return (
-      <div className="rounded-2xl p-12" style={{ background: "var(--site-bg-card)" }}>
+      <div
+        className="rounded-2xl p-8 md:p-12 mb-12"
+        style={{ background: "var(--site-green-dark)" }}
+      >
         <div className="grid md:grid-cols-2 gap-8">
+          <Skeleton className="aspect-square rounded-xl" />
           <div className="space-y-4">
-            <Skeleton className="h-6 w-24" />
-            <Skeleton className="h-10 w-3/4" />
-            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-24 w-full" />
             <Skeleton className="h-12 w-40" />
           </div>
-          <Skeleton className="aspect-square" />
         </div>
       </div>
     );
@@ -26,138 +33,124 @@ export function FeaturedProduct() {
   if (!product) return null;
 
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
-  const hoverImageUrl = product.additional_images?.find(
-    (imageUrl) => !!imageUrl && imageUrl !== product.image_url
-  );
+
+  const handleAddToCart = () => {
+    addToCart({ productId: product.id, quantity: 1 });
+  };
 
   return (
-    <div
-      className="rounded-2xl overflow-hidden mb-12"
+    <section
+      className="rounded-2xl overflow-hidden mb-16"
       style={{
-        background: "var(--site-bg-card)",
-        border: "1px solid var(--site-border)",
-        borderTop: "3px solid #c9a84c",
-        padding: "48px",
-        boxShadow: "var(--site-shadow-card)",
+        background: "var(--site-green-dark)",
+        border: "1px solid rgba(188,138,95,0.2)",
       }}
     >
-      <div className="grid md:grid-cols-2 gap-8 items-center">
-        {/* Left side - text */}
-        <div>
-          <span
-            className="inline-block mb-4"
-            style={{
-              fontFamily: "'Jost', sans-serif",
-              fontWeight: 300,
-              fontSize: "13px",
-              color: "#c9a84c",
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-            }}
-          >
-            ✦ STAFF PICK
-          </span>
+      <div className="grid md:grid-cols-2 gap-0">
+        {/* Image — 50% */}
+        <Link
+          to={`/shop/${product.slug}`}
+          className="relative flex items-center justify-center p-8 md:p-12 min-h-[360px]"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(188,138,95,0.12) 0%, transparent 70%)",
+          }}
+        >
+          {product.image_url ? (
+            <img
+              src={product.image_url}
+              alt={product.name}
+              className="max-w-full max-h-[320px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
+            />
+          ) : (
+            <div className="w-48 h-48 rounded-xl bg-white/5 flex items-center justify-center">
+              <span className="text-white/40">No image</span>
+            </div>
+          )}
+        </Link>
 
+        {/* Content — 50% */}
+        <div className="flex flex-col justify-center p-8 md:p-12">
           <h2
             className="mb-4"
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'Playfair Display', serif",
               fontWeight: 700,
               fontSize: "36px",
-              color: "var(--site-text-primary)",
-              lineHeight: 1.2,
+              color: "#F5F1E8",
+              lineHeight: 1.15,
             }}
           >
             {product.name}
           </h2>
 
           <p
-            className="mb-4 max-w-md"
+            className="mb-6 max-w-md"
             style={{
-              fontFamily: "'Jost', sans-serif",
-              fontWeight: 300,
-              fontSize: "15px",
-              color: "var(--site-text-muted)",
-              lineHeight: 1.7,
-            }}
-          >
-            {product.short_description || product.description?.slice(0, 150)}
-          </p>
-
-          <span
-            className="inline-block px-3 py-1 rounded-full mb-6"
-            style={{
-              background: "rgba(201,168,76,0.15)",
-              color: "#c9a84c",
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'Inter', sans-serif",
               fontWeight: 400,
-              fontSize: "12px",
-              border: "1px solid rgba(201,168,76,0.3)",
+              fontSize: "16px",
+              lineHeight: 1.6,
+              color: "rgba(245,241,232,0.7)",
             }}
           >
-            Bestseller
-          </span>
+            Our foundational anti-inflammatory protocol. Wildcrafted Vervine
+            extracted within 6 hours of harvest for maximum alkaloid retention.
+          </p>
 
           <div className="mb-6">
             <span
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Playfair Display', serif",
                 fontWeight: 700,
                 fontSize: "28px",
-                color: "#c9a84c",
+                color: "var(--site-gold)",
               }}
             >
               {prices.primary}
             </span>
-            <span className="ml-2" style={{ fontSize: "14px", color: "var(--site-text-muted)" }}>
+            <span
+              className="ml-3"
+              style={{ fontSize: "14px", color: "rgba(245,241,232,0.5)" }}
+            >
               {prices.secondary}
             </span>
           </div>
 
-          <Link
-            to={`/shop/${product.slug}`}
-            className="inline-block px-8 py-3 rounded-full transition-all hover:brightness-110"
+          <button
+            onClick={handleAddToCart}
+            disabled={isAddingToCart}
+            className="w-full max-w-xs py-3 rounded-full font-medium text-sm transition-all hover:brightness-110 disabled:opacity-50 flex items-center justify-center gap-2 mb-4"
             style={{
-              background: "#c9a84c",
-              color: "#090909",
-              fontFamily: "'Jost', sans-serif",
-              fontWeight: 500,
-              fontSize: "14px",
+              background: "var(--site-gold)",
+              color: "var(--site-green-dark)",
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
             }}
           >
-            Shop Now →
-          </Link>
-        </div>
+            <ShoppingCart className="w-4 h-4" />
+            Add to Protocol
+          </button>
 
-        {/* Right side - image */}
-        <div className="flex items-center justify-center">
-          {product.image_url ? (
-            <Link to={`/shop/${product.slug}`} className="group relative block w-full max-w-[320px] h-[280px]">
-              <img
-                src={product.image_url}
-                alt={product.name}
-                className={`absolute inset-0 w-full h-full object-contain transition-all duration-500 ${
-                  hoverImageUrl ? "opacity-100 group-hover:opacity-0 group-hover:scale-105" : "group-hover:scale-105"
-                }`}
-              />
-              {hoverImageUrl && (
-                <img
-                  src={hoverImageUrl}
-                  alt={`${product.name} alternate view`}
-                  className="absolute inset-0 w-full h-full object-contain opacity-0 group-hover:opacity-100 scale-100 group-hover:scale-105 transition-all duration-500"
-                />
-              )}
-            </Link>
-          ) : (
-            <div
-              className="w-full aspect-square rounded-xl flex items-center justify-center"
-              style={{ background: "var(--site-img-bg)" }}
-            >
-              <span style={{ color: "var(--site-text-muted)" }}>No image</span>
-            </div>
-          )}
+          {/* Subscribe checkbox */}
+          <label
+            className="flex items-center gap-2 cursor-pointer max-w-xs"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "13px",
+              color: "rgba(245,241,232,0.6)",
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={subscribe}
+              onChange={(e) => setSubscribe(e.target.checked)}
+              className="w-4 h-4 rounded accent-[var(--site-gold)]"
+            />
+            Subscribe &amp; Save 15%
+          </label>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

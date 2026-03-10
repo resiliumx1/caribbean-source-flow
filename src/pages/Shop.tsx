@@ -1,230 +1,234 @@
 import { useState, useMemo, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { ShopHero } from "@/components/store/ShopHero";
-import { StoreFooter } from "@/components/store/StoreFooter";
-import { CategoryNav } from "@/components/store/CategoryNav";
-import { ProductCard } from "@/components/store/ProductCard";
+import { ShopFilterNav } from "@/components/store/ShopFilterNav";
 import { FeaturedProduct } from "@/components/store/FeaturedProduct";
+import { ProtocolRow } from "@/components/store/ProtocolRow";
+import { BundlesGrid } from "@/components/store/BundlesGrid";
+import { ProductCard } from "@/components/store/ProductCard";
 import { TrustBar } from "@/components/store/TrustBar";
-import { QuickViewModal } from "@/components/store/QuickViewModal";
-import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
-import { RecentSalesPopup } from "@/components/store/RecentSalesPopup";
-import { useProducts, useCategories, type Product } from "@/hooks/use-products";
+import { StoreFooter } from "@/components/store/StoreFooter";
+import { MobileStickyCtA } from "@/components/store/MobileStickyCtA";
+import { useProducts, type Product } from "@/hooks/use-products";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
-import { Search, X } from "lucide-react";
 
-function CategoryDivider({ name }: { name: string }) {
-  return (
-    <div className="col-span-full flex items-center gap-4 py-6">
-      <div className="flex-1 h-px" style={{ background: "rgba(201,168,76,0.2)" }} />
-      <span
-        className="flex items-center gap-2 px-4 py-1 rounded-full"
-        style={{
-          background: "var(--site-bg-primary)",
-          fontFamily: "'Cormorant Garamond', serif",
-          fontWeight: 700,
-          fontSize: "24px",
-          color: "var(--site-text-primary)",
-        }}
-      >
-        <span style={{ color: "#c9a84c", fontSize: "14px" }}>✦</span>
-        {name}
-        <span style={{ color: "#c9a84c", fontSize: "14px" }}>✦</span>
-      </span>
-      <div className="flex-1 h-px" style={{ background: "rgba(201,168,76,0.2)" }} />
-    </div>
-  );
-}
+// Condition-to-keyword mapping for grouping products
+const CONDITION_KEYWORDS: Record<string, string[]> = {
+  Inflammation: ["inflam", "pain", "joint", "vervine", "turmeric"],
+  "Gut Health": ["gut", "digest", "stomach", "bitter", "colon", "intestin"],
+  "Immune Defense": ["immune", "cold", "flu", "virus", "soursop", "fortress"],
+  "Stress & Sleep": ["stress", "sleep", "calm", "nerv", "anxiety", "relax"],
+  Detox: ["detox", "cleans", "liver", "kidney", "purif"],
+};
 
-function AnimatedGrid({ products, onQuickView, categorySlug, searchQuery }: {
-  products: Product[];
-  onQuickView: (p: Product) => void;
-  categorySlug?: string;
-  searchQuery: string;
-}) {
-  // Group products by category for section dividers (only when viewing all)
-  const grouped = useMemo(() => {
-    if (categorySlug || searchQuery) return null;
-    const map = new Map<string, Product[]>();
-    products.forEach((p) => {
-      const cat = p.product_categories?.name || "Other";
-      if (!map.has(cat)) map.set(cat, []);
-      map.get(cat)!.push(p);
-    });
-    return map;
-  }, [products, categorySlug, searchQuery]);
+// Form-to-product_type mapping
+const FORM_TYPES: Record<string, string[]> = {
+  tinctures: ["tincture"],
+  capsules: ["capsule"],
+  teas: ["tea"],
+  "raw-herbs": ["raw_herb", "powder", "bulk"],
+};
 
-  let cardIndex = 0;
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-      {grouped ? (
-        Array.from(grouped.entries()).map(([catName, catProducts]) => {
-          const elements: React.ReactNode[] = [];
-          elements.push(<CategoryDivider key={`div-${catName}`} name={catName} />);
-          catProducts.forEach((product) => {
-            const idx = cardIndex++;
-            elements.push(
-              <ProductCard
-                key={product.id}
-                product={product}
-                onQuickView={onQuickView}
-                style={{
-                  animation: `shopFadeUp 0.6s ease forwards`,
-                  animationDelay: `${idx * 80}ms`,
-                  opacity: 0,
-                }}
-              />
-            );
-          });
-          return elements;
-        })
-      ) : (
-        products.map((product, idx) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onQuickView={onQuickView}
-            style={{
-              animation: `shopFadeUp 0.6s ease forwards`,
-              animationDelay: `${idx * 80}ms`,
-              opacity: 0,
-            }}
-          />
-        ))
-      )}
-    </div>
-  );
+function matchesCondition(product: Product, condition: string): boolean {
+  const keywords = CONDITION_KEYWORDS[condition] || [];
+  const searchText = [
+    product.name,
+    product.traditional_use,
+    product.short_description,
+    product.description,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return keywords.some((kw) => searchText.includes(kw));
 }
 
 export default function Shop() {
-  const { categorySlug } = useParams();
-  const { data: products, isLoading } = useProducts(categorySlug);
-  const { data: categories } = useCategories();
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { data: products, isLoading } = useProducts();
+  const [activeCondition, setActiveCondition] = useState<string | null>(null);
+  const [activeForm, setActiveForm] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = "Natural Herbal Products | Mount Kailash Rejuvenation Centre — Saint Lucia";
+    document.title =
+      "The Sulphur Ridge Apothecary | Mount Kailash Rejuvenation Centre";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Handcrafted in Saint Lucia by Priest Kailash with 21+ years of clinical practice.");
+    if (meta)
+      meta.setAttribute(
+        "content",
+        "Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration."
+      );
   }, []);
 
-  const filteredProducts = useMemo(() => {
-    if (!products) return [];
-    if (!searchQuery.trim()) return products;
-    const q = searchQuery.toLowerCase();
-    return products.filter(
+  // Separate bundles, "The Answer", and regular products
+  const { bundles, theAnswer, regularProducts, teas } = useMemo(() => {
+    if (!products) return { bundles: [], theAnswer: null, regularProducts: [], teas: [] };
+    const bundles = products.filter((p) => p.product_type === "bundle");
+    const theAnswer = products.find((p) => p.slug === "the-answer");
+    const teas = products.filter((p) => p.product_type === "tea");
+    const regularProducts = products.filter(
       (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.short_description?.toLowerCase().includes(q) ||
-        p.description?.toLowerCase().includes(q)
+        p.product_type !== "bundle" &&
+        p.slug !== "the-answer" &&
+        p.product_type !== "tea"
     );
-  }, [products, searchQuery]);
+    return { bundles, theAnswer, regularProducts, teas };
+  }, [products]);
 
-  const currentCategory = categories?.find((c) => c.slug === categorySlug);
+  // Protocol rows by condition
+  const protocolRows = useMemo(() => {
+    if (!regularProducts.length) return [];
+    return [
+      {
+        title: "For Inflammation",
+        products: regularProducts.filter((p) => matchesCondition(p, "Inflammation")).slice(0, 5),
+      },
+      {
+        title: "Gut Terrain Repair",
+        products: regularProducts.filter((p) => matchesCondition(p, "Gut Health")).slice(0, 4),
+      },
+      {
+        title: "Immune Defense",
+        products: regularProducts.filter((p) => matchesCondition(p, "Immune Defense")).slice(0, 4),
+      },
+    ].filter((row) => row.products.length > 0);
+  }, [regularProducts]);
+
+  // Filtered products for grid view (when a filter is active)
+  const filteredProducts = useMemo(() => {
+    if (!activeCondition && !activeForm) return null; // null = show protocol rows instead
+    let filtered = regularProducts;
+
+    if (activeCondition) {
+      filtered = filtered.filter((p) => matchesCondition(p, activeCondition));
+    }
+
+    if (activeForm) {
+      const types = FORM_TYPES[activeForm] || [];
+      filtered = filtered.filter((p) => types.includes(p.product_type));
+    }
+
+    return filtered;
+  }, [regularProducts, activeCondition, activeForm]);
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
+    <div
+      className="min-h-screen"
+      style={{
+        background: "var(--site-bg-primary)",
+        scrollBehavior: "smooth",
+      }}
+    >
       <ShopHero />
+      <ShopFilterNav
+        activeCondition={activeCondition}
+        onConditionChange={setActiveCondition}
+        activeForm={activeForm}
+        onFormChange={setActiveForm}
+      />
 
-      <main className="container mx-auto px-4" style={{ paddingTop: "80px", paddingBottom: "80px" }}>
-        {/* Category header */}
-        {categorySlug && currentCategory && (
-          <div className="text-center mb-10">
-            <h2
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 700,
-                fontSize: "36px",
-                color: "#f2ead8",
-                marginBottom: "12px",
-              }}
-            >
-              {currentCategory.name}
-            </h2>
-            {currentCategory.description && (
-              <p style={{ color: "rgba(242,234,216,0.5)", maxWidth: "640px", margin: "0 auto" }}>
-                {currentCategory.description}
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* Search bar */}
-        <div className="relative max-w-md mx-auto mb-8">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--site-text-muted)" }} />
-          <input
-            placeholder="Search products..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-10 py-2.5 rounded-full outline-none"
-            style={{
-              background: "var(--site-bg-card)",
-              border: "1px solid var(--site-border)",
-              color: "var(--site-text-primary)",
-              fontFamily: "'Jost', sans-serif",
-              fontSize: "14px",
-            }}
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2"
-              style={{ color: "var(--site-text-muted)" }}
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Category navigation */}
-        <div className="mb-12">
-          <CategoryNav />
-        </div>
-
-        {/* Featured product banner (only on "All" view) */}
-        {!categorySlug && !searchQuery && <FeaturedProduct />}
-
-        {/* Product grid */}
+      <main className="container mx-auto px-4 pt-12 pb-20">
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="space-y-4">
-                <Skeleton className="aspect-square rounded-2xl" />
+                <Skeleton className="aspect-square rounded-xl" />
                 <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-10 w-full rounded-full" />
               </div>
             ))}
           </div>
-        ) : filteredProducts.length > 0 ? (
-          <AnimatedGrid
-            products={filteredProducts}
-            onQuickView={setQuickViewProduct}
-            categorySlug={categorySlug}
-            searchQuery={searchQuery}
-          />
-        ) : (
-          <div className="text-center py-16">
-            <p style={{ fontSize: "16px", color: "var(--site-text-muted)" }}>
-              {searchQuery ? `No products found for "${searchQuery}".` : "No products found in this category."}
+        ) : filteredProducts ? (
+          /* Filtered grid view */
+          <>
+            <p
+              className="mb-6"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: "14px",
+                color: "var(--site-text-muted)",
+              }}
+            >
+              {filteredProducts.length} product
+              {filteredProducts.length !== 1 ? "s" : ""} found
             </p>
-          </div>
+            {filteredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProducts.map((product, idx) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    style={{
+                      animation: `shopFadeUp 0.6s ease forwards`,
+                      animationDelay: `${idx * 80}ms`,
+                      opacity: 0,
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p
+                  style={{
+                    fontSize: "16px",
+                    color: "var(--site-text-muted)",
+                  }}
+                >
+                  No products match the current filters.
+                </p>
+              </div>
+            )}
+          </>
+        ) : (
+          /* Default: Featured → Protocol rows → Bundles → Teas */
+          <>
+            <FeaturedProduct />
+
+            {protocolRows.map((row) => (
+              <ProtocolRow
+                key={row.title}
+                title={row.title}
+                products={row.products}
+              />
+            ))}
+
+            {bundles.length > 0 && <BundlesGrid bundles={bundles} />}
+
+            {/* Traditional Teas */}
+            {teas.length > 0 && (
+              <section className="mb-16">
+                <h2
+                  className="mb-8"
+                  style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontWeight: 600,
+                    fontSize: "24px",
+                    color: "var(--site-text-primary)",
+                  }}
+                >
+                  Traditional Teas
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+                  {teas.map((product, idx) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      style={{
+                        animation: `shopFadeUp 0.6s ease forwards`,
+                        animationDelay: `${idx * 60}ms`,
+                        opacity: 0,
+                      }}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
       </main>
 
       <TrustBar />
       <StoreFooter />
-      <WhatsAppFloat />
-      <RecentSalesPopup />
-
-      <QuickViewModal
-        product={quickViewProduct}
-        open={!!quickViewProduct}
-        onOpenChange={(open) => !open && setQuickViewProduct(null)}
-      />
+      <MobileStickyCtA />
     </div>
   );
 }
