@@ -1,33 +1,37 @@
 import { Waves, Leaf, FlaskConical, Coffee, ArrowRight } from "lucide-react";
+import seamossImage from "@/assets/seamoss-harvest.jpg";
+import herbProcessing from "@/assets/herb-processing.jpg";
+import labProcessing from "@/assets/lab-processing.png";
+import priestHarvesting from "@/assets/priest-kailash-harvesting.png";
 
 const productCategories = [
   {
     id: "ocean",
     title: "Ocean Botanicals",
-    description: "Premium sea moss and ocean-derived healing minerals",
     icon: Waves,
-    products: ["Golden Seamoss", "Sea Capsules", "Seamoss Full Spectrum", "Bladderwrack (Whole & Powder)", "Handcrafted Seamoss Soaps"],
+    image: seamossImage,
+    specs: ["Golden Seamoss & Bladderwrack", "Full Spectrum Sea Capsules", "Handcrafted Seamoss Soaps"],
   },
   {
     id: "bush",
     title: "Traditional Bush Medicine",
-    description: "Authentic Caribbean healing herbs wildcrafted from St. Lucia",
     icon: Leaf,
-    products: ["Soursop Leaves", "Gully Root (Anamu) - Roots & Leaves", "St. John's Bush (Justicia secunda)", "Blue Vervaine", "Cassia Alata (King of the Forest)", "Carpenter Bush"],
+    image: priestHarvesting,
+    specs: ["Soursop Leaves (Whole & Powder)", "Guinea Hen Weed (Anamu)", "Gully Root, Blue Vervaine, Cassia"],
   },
   {
     id: "clinical",
     title: "Clinical Formulations",
-    description: "Professionally formulated herbal compounds for targeted support",
     icon: FlaskConical,
-    products: ["The Answer (Immune Booster)", "Prosperity (Men's Vitality)", "Fertility (Women's Balance)", "Dewormer", "Pure Green", "Nerve Tonic"],
+    image: labProcessing,
+    specs: ["The Answer (Immune Protocol)", "Prosperity (Men's Vitality)", "Fertility, Dewormer, Nerve Tonic"],
   },
   {
     id: "teas",
     title: "Single Herbs & Teas",
-    description: "Curated herbal blends for daily wellness rituals",
     icon: Coffee,
-    products: ["Red Raspberry Leaf", "Patchouli", "Bay Leaf (Whole & Powder)", "Medina Tea", "Moon Cycle Tea", "Virili-Tea", "Digestive Rescue Tea", "Urinary Cleanse Tea", "Restful Tea"],
+    image: herbProcessing,
+    specs: ["Vervine & Bitter Melon", "Red Raspberry Leaf, Patchouli", "Curated Wellness Tea Blends"],
   },
 ];
 
@@ -37,77 +41,67 @@ interface ProductGridProps {
 
 export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-secondary)", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'Jost', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="mb-4" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: "italic", fontSize: "clamp(2rem, 4vw, 48px)", color: "var(--site-text-primary)" }}>
+          <p
+            className="mb-3"
+            style={{ fontSize: "12px", fontWeight: 400, color: "var(--site-gold)", textTransform: "uppercase", letterSpacing: "0.15em" }}
+          >
+            Product Categories
+          </p>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8" }}>
             Caribbean Botanicals, Sourced at Origin
           </h2>
-          <p className="max-w-2xl mx-auto leading-relaxed" style={{ color: "var(--site-text-muted)", fontWeight: 300, fontSize: "16px" }}>
-            Single-origin St. Lucian herbs, naturally harvested and processed with full documentation for every batch.
+          <p className="mt-3" style={{ color: "#A8B5A0", fontWeight: 300, fontSize: "16px", maxWidth: "560px", margin: "12px auto 0" }}>
+            Single-origin St. Lucian herbs, naturally harvested with full documentation for every batch.
           </p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {productCategories.map((category, i) => (
+          {productCategories.map((category) => (
             <div 
               key={category.id} 
-              className="rounded-2xl p-9 transition-all duration-300 hover:scale-[1.02]"
-              style={{ 
-                background: "var(--site-bg-card)", 
-                border: "1px solid var(--site-border)",
-                boxShadow: "var(--site-shadow-card)",
-                animationDelay: `${i * 100}ms`,
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--site-card-hover-border)")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--site-border)")}
+              className="rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] group"
+              style={{ background: "#1B4332", border: "1px solid #2D6A4F" }}
             >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(201,168,76,0.1)" }}>
-                <category.icon className="w-8 h-8" style={{ color: "#c9a84c" }} />
+              <div className="relative h-44 overflow-hidden">
+                <img
+                  src={category.image}
+                  alt={category.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  style={{ filter: "brightness(1.1)" }}
+                />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(27,67,50,0.9) 100%)" }} />
+                <div className="absolute bottom-3 left-4 flex items-center gap-2">
+                  <category.icon className="w-5 h-5" style={{ color: "var(--site-gold)" }} />
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "20px", color: "#F5F1E8" }}>
+                    {category.title}
+                  </h3>
+                </div>
               </div>
               
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "24px", color: "var(--site-text-primary)", marginBottom: "4px" }}>
-                {category.title}
-              </h3>
-              <p style={{ fontWeight: 300, fontSize: "14px", color: "#c9a84c", fontStyle: "italic", marginBottom: "16px" }}>
-                {category.description}
-              </p>
-              
-              <div style={{ height: "1px", background: "var(--site-border)", marginBottom: "16px" }} />
-              
-              <ul className="space-y-2 mb-6">
-                {category.products.map((product) => (
-                  <li key={product} className="flex items-start gap-2" style={{ fontSize: "14px", color: "var(--site-text-primary)", fontWeight: 300 }}>
-                    <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style={{ background: "#c9a84c" }} />
-                    {product}
-                  </li>
-                ))}
-              </ul>
+              <div className="p-5">
+                <ul className="space-y-2.5 mb-5">
+                  {category.specs.map((spec) => (
+                    <li key={spec} className="flex items-start gap-2" style={{ fontSize: "14px", color: "#F5F1E8", fontWeight: 300 }}>
+                      <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: "var(--site-gold)" }} />
+                      {spec}
+                    </li>
+                  ))}
+                </ul>
 
-              <button 
-                onClick={onScrollToForm}
-                className="flex items-center gap-1 transition-colors hover:underline group"
-                style={{ color: "#c9a84c", fontWeight: 400, fontSize: "14px" }}
-              >
-                Request Pricing
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </button>
+                <button 
+                  onClick={onScrollToForm}
+                  className="flex items-center gap-1 transition-colors hover:underline group/link w-full"
+                  style={{ color: "var(--site-gold)", fontWeight: 500, fontSize: "14px" }}
+                >
+                  Request Specs
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
+                </button>
+              </div>
             </div>
           ))}
-        </div>
-        
-        <div className="text-center">
-          <button 
-            onClick={onScrollToForm}
-            className="inline-flex items-center gap-2 px-10 py-4 rounded-full transition-all hover:brightness-110 hover:scale-[1.02]"
-            style={{ background: "#c9a84c", color: "#090909", fontWeight: 500, fontSize: "16px" }}
-          >
-            Request Custom Pricing & Availability
-            <ArrowRight className="w-5 h-5" />
-          </button>
-          <p className="mt-4" style={{ color: "var(--site-text-muted)", fontSize: "14px", fontWeight: 300 }}>
-            No pricing displayed. All quotes customized for your volume.
-          </p>
         </div>
       </div>
     </section>
