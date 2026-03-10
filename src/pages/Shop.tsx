@@ -152,46 +152,36 @@ export default function Shop() {
           <>
             <FeaturedProduct />
 
-            {sectionRows.map((row) => (
-              <section key={row.slug} className="mb-12 sm:mb-16">
-                <div className="flex items-baseline justify-between mb-4 sm:mb-6">
-                  <h2
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontWeight: 600,
-                      fontSize: "clamp(20px, 3vw, 28px)",
-                      color: "var(--site-text-primary)",
-                    }}
-                  >
-                    {row.title}
-                  </h2>
-                  <button
-                    onClick={() => setActiveCondition(row.slug)}
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: "13px",
-                      fontWeight: 500,
-                      color: "var(--site-gold)",
-                    }}
-                  >
-                    View All →
-                  </button>
-                </div>
+            {sectionRows.length > 0 ? (
+              sectionRows.map((row) => (
+                <section key={row.slug} className="mb-12 sm:mb-16">
+                  <div className="flex items-baseline justify-between mb-4 sm:mb-6">
+                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: "clamp(20px, 3vw, 28px)", color: "var(--site-text-primary)" }}>
+                      {row.title}
+                    </h2>
+                    <button onClick={() => setActiveCondition(row.slug)} style={{ fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 500, color: "var(--site-gold)" }}>
+                      View All →
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                    {row.products.map((product, idx) => (
+                      <ProductCard key={product.id} product={product} style={{ animation: "shopFadeUp 0.5s ease forwards", animationDelay: `${idx * 60}ms`, opacity: 0 }} />
+                    ))}
+                  </div>
+                </section>
+              ))
+            ) : allSingles.length > 0 ? (
+              <section className="mb-12 sm:mb-16">
+                <h2 className="mb-4 sm:mb-6" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: "clamp(20px, 3vw, 28px)", color: "var(--site-text-primary)" }}>
+                  All Remedies
+                </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-                  {row.products.map((product, idx) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      style={{
-                        animation: "shopFadeUp 0.5s ease forwards",
-                        animationDelay: `${idx * 60}ms`,
-                        opacity: 0,
-                      }}
-                    />
+                  {allSingles.map((product, idx) => (
+                    <ProductCard key={product.id} product={product} style={{ animation: "shopFadeUp 0.5s ease forwards", animationDelay: `${Math.min(idx, 12) * 50}ms`, opacity: 0 }} />
                   ))}
                 </div>
               </section>
-            ))}
+            ) : null}
 
             {bundles.length > 0 && <BundlesGrid bundles={bundles} />}
           </>
