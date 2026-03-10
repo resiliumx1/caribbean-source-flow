@@ -57,9 +57,9 @@ export function FeaturedProduct() {
               "radial-gradient(ellipse at center, rgba(188,138,95,0.12) 0%, transparent 70%)",
           }}
         >
-          {product.image_url ? (
+          {(
             <img
-              src={product.image_url}
+              src={theAnswerImg}
               alt={product.name}
               className="max-w-full max-h-[320px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
             />
