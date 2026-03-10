@@ -1,15 +1,12 @@
-import { useEffect, useRef, useCallback, useMemo } from "react";
+import { useEffect, useRef, useCallback, useMemo, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "@/styles/gate-entrance.css";
 
-/* ── Scroll math — verbatim from HTML source ── */
-function eio(t: number): number {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
+gsap.registerPlugin(ScrollTrigger);
+
 function clamp(v: number, a: number, b: number): number {
   return Math.max(a, Math.min(b, v));
-}
-function remap(v: number, a: number, b: number, c: number, d: number): number {
-  return c + (d - c) * clamp((v - a) / (b - a), 0, 1);
 }
 
 interface GateEntranceProps {
@@ -18,16 +15,15 @@ interface GateEntranceProps {
 }
 
 export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceProps) {
-  const stageRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const gateLeftRef = useRef<HTMLDivElement>(null);
   const gateRightRef = useRef<HTMLDivElement>(null);
   const sealRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
-  
-  const rafRef = useRef<number>(0);
   const completedRef = useRef(false);
+  const [visible, setVisible] = useState(true);
 
-  /* Generate particles once */
   const particles = useMemo(() => {
     return Array.from({ length: 40 }, (_, i) => {
       const s = 1 + Math.random() * 2;
@@ -46,74 +42,105 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
     });
   }, []);
 
-  const handleScroll = useCallback(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const rect = stage.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const total = stage.offsetHeight - vh;
-    const raw = clamp(-rect.top / total, 0, 1);
-
-    onProgressChange?.(raw);
-
-    /* Fire completion once — when gates are fully open */
-    const gP = eio(clamp(raw / 0.52, 0, 1));
-    if (gP >= 0.999 && !completedRef.current) {
-      completedRef.current = true;
-      onGateComplete?.();
-      return; // Stop processing, component will unmount
-    }
-
-    /* Gates */
-    if (gateLeftRef.current) {
-      gateLeftRef.current.style.transform = `translateX(${-gP * 100}%)`;
-      gateLeftRef.current.style.visibility = gP >= 0.999 ? 'hidden' : 'visible';
-    }
-    if (gateRightRef.current) {
-      gateRightRef.current.style.transform = `translateX(${gP * 100}%)`;
-      gateRightRef.current.style.visibility = gP >= 0.999 ? 'hidden' : 'visible';
-    }
-    const seamOp = clamp(remap(raw, 0.30, 0.50, 1, 0), 0, 1);
-    gateLeftRef.current?.style.setProperty('--seam-op', String(seamOp));
-    gateRightRef.current?.style.setProperty('--seam-op', String(seamOp));
-
-    /* Seal rises + fades — starts immediately on scroll */
-    if (sealRef.current) {
-      const riseP = eio(clamp(remap(raw, 0.0, 0.42, 0, 1), 0, 1));
-      const sealY = -(vh * 0.48) * riseP;
-      const sealS = 1 - riseP * 0.5;
-      const sealO = clamp(1 - riseP * 1.8, 0, 1);
-      sealRef.current.style.transform = `translate(-50%,calc(-50% + ${sealY}px)) scale(${sealS})`;
-      sealRef.current.style.opacity = String(sealO);
-      sealRef.current.style.visibility = sealO === 0 ? 'hidden' : 'visible';
-    }
-
-    /* Cue */
-    if (cueRef.current) {
-      const cueOp = raw < 0.38 ? 1 : clamp(remap(raw, 0.40, 0.58, 1, 0), 0, 1);
-      cueRef.current.style.opacity = String(cueOp);
-      cueRef.current.style.visibility = cueOp === 0 ? 'hidden' : 'visible';
-    }
-
-  }, [onProgressChange]);
-
   useEffect(() => {
-    const onScroll = () => {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(handleScroll);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    handleScroll();
+    const trigger = triggerRef.current;
+    const overlay = overlayRef.current;
+    if (!trigger || !overlay) return;
+
+    const st = ScrollTrigger.create({
+      trigger,
+      start: "top top",
+      end: "bottom top",
+      pin: overlay,
+      pinSpacing: false,
+      scrub: 1,
+      onUpdate: (self) => {
+        const raw = self.progress; // 0 → 1
+
+        onProgressChange?.(raw);
+
+        // Gate opening: eased, complete by ~55% scroll
+        const gateRaw = clamp(raw / 0.55, 0, 1);
+        const gP = gateRaw * gateRaw * (3 - 2 * gateRaw); // smoothstep
+
+        if (gateLeftRef.current) {
+          gateLeftRef.current.style.transform = `translateX(${-gP * 100}%)`;
+          gateLeftRef.current.style.visibility = gP >= 0.999 ? 'hidden' : 'visible';
+        }
+        if (gateRightRef.current) {
+          gateRightRef.current.style.transform = `translateX(${gP * 100}%)`;
+          gateRightRef.current.style.visibility = gP >= 0.999 ? 'hidden' : 'visible';
+        }
+
+        // Seam opacity
+        const seamOp = clamp(1 - gateRaw * 2.5, 0, 1);
+        gateLeftRef.current?.style.setProperty('--seam-op', String(seamOp));
+        gateRightRef.current?.style.setProperty('--seam-op', String(seamOp));
+
+        // Seal: rises and fades
+        if (sealRef.current) {
+          const riseP = clamp(raw / 0.4, 0, 1);
+          const eased = riseP * riseP * (3 - 2 * riseP);
+          const vh = window.innerHeight;
+          const sealY = -(vh * 0.48) * eased;
+          const sealS = 1 - eased * 0.5;
+          const sealO = clamp(1 - eased * 1.8, 0, 1);
+          sealRef.current.style.transform = `translate(-50%,calc(-50% + ${sealY}px)) scale(${sealS})`;
+          sealRef.current.style.opacity = String(sealO);
+          sealRef.current.style.visibility = sealO <= 0 ? 'hidden' : 'visible';
+        }
+
+        // Cue: fades out early
+        if (cueRef.current) {
+          const cueOp = raw < 0.05 ? 1 : clamp(1 - (raw - 0.05) / 0.15, 0, 1);
+          cueRef.current.style.opacity = String(cueOp);
+          cueRef.current.style.visibility = cueOp <= 0 ? 'hidden' : 'visible';
+        }
+
+        // Overlay fade out at 80-100%
+        if (raw >= 0.8) {
+          const fadeP = clamp((raw - 0.8) / 0.2, 0, 1);
+          overlay.style.opacity = String(1 - fadeP);
+        } else {
+          overlay.style.opacity = '1';
+        }
+
+        // Completion
+        if (raw >= 0.95 && !completedRef.current) {
+          completedRef.current = true;
+          onGateComplete?.();
+        }
+      },
+    });
+
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(rafRef.current);
+      st.kill();
     };
-  }, [handleScroll]);
+  }, [onProgressChange, onGateComplete]);
+
+  // Once complete, fade out and hide after a short delay
+  useEffect(() => {
+    if (completedRef.current) {
+      // Allow GSAP to finish the fade, then remove from DOM
+      const timer = setTimeout(() => setVisible(false), 600);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  if (!visible && completedRef.current) return (
+    <div ref={triggerRef} style={{ height: '300vh' }} />
+  );
 
   return (
-    <div id="scroll-stage" ref={stageRef}>
-      <div id="sticky-hero">
+    <>
+      {/* Spacer that ScrollTrigger uses for pin distance */}
+      <div ref={triggerRef} className="gate-trigger-spacer" />
+
+      {/* Fixed overlay */}
+      <div
+        ref={overlayRef}
+        className="gate-overlay"
+      >
         {/* Forest background */}
         <div className="hero-bg" />
 
@@ -139,7 +166,7 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
           ))}
         </div>
 
-        {/* Left Gate — with mirrored half of wreath facing inward */}
+        {/* Left Gate */}
         <div className="gate gate-left" ref={gateLeftRef}>
           <div className="wreath-half wreath-half-left">
             <div className="wreath-half-mirror">
@@ -148,14 +175,14 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
           </div>
         </div>
 
-        {/* Right Gate — with right half of wreath */}
+        {/* Right Gate */}
         <div className="gate gate-right" ref={gateRightRef}>
           <div className="wreath-half wreath-half-right">
             <GateWreathSVG className="wreath-half-svg" />
           </div>
         </div>
 
-        {/* Central Seal — star only, NO wreath */}
+        {/* Central Seal */}
         <div id="logo-seal" ref={sealRef}>
           <div className="star-seal-inner" style={{
             width: 160,
@@ -200,7 +227,7 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
           <div className="enter-line" />
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
