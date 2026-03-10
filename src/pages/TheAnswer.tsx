@@ -8,7 +8,7 @@ import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import tincture from "@/assets/mkrc-answer-tincture.png";
 import heroBottle from "@/assets/the-answer-chronixx-bottle.jpg";
-import chronixxPhoto from "@/assets/chronixx-portrait-full.png";
+// chronixxPhoto removed — hero now uses bottle as full background
 import "./TheAnswer.css";
 
 /* ── Scroll helpers ── */
@@ -142,27 +142,17 @@ export default function TheAnswer() {
   return (
     <div className="the-answer-page min-h-screen">
 
-      {/* ===== 1. SPLIT HERO: Bottle + Chronixx ===== */}
-      <section className="answer-hero">
-        {/* Left — Bottle */}
-        <div className="answer-hero__left">
-          <img
-            src={heroBottle}
-            alt="The Answer herbal tincture bottle by Mount Kailash — oak-aged 21 days"
-            className="answer-hero__product-img"
-          />
-          <div className="answer-hero__img-fade-right" />
-        </div>
+      {/* ===== 1. GALLERY HERO: Bottle as Background ===== */}
+      <section
+        className="answer-hero"
+        style={{ backgroundImage: `url(${heroBottle})` }}
+      >
+        {/* Gradient veil — darkens left side for text legibility */}
+        <div className="answer-hero__veil" />
 
-        {/* Center content overlay */}
-        <div className="answer-hero__center">
-          <div ref={reveal} className="ta-reveal answer-hero__text-col">
-            <div className="answer-hero__badge">
-              <Shield size={14} />
-              <span>Endorsed by Chronixx</span>
-              <span>·</span>
-              <span>Oak-Aged 21 Days</span>
-            </div>
+        {/* Left text stack */}
+        <div className="answer-hero__story-stack">
+          <div ref={reveal} className="ta-reveal answer-hero__story-inner">
             <h1 className="answer-hero__title">
               The <em>Answer.</em>
             </h1>
@@ -170,45 +160,20 @@ export default function TheAnswer() {
               The Caribbean Immune Elixir — 21 Days Oak-Aged
             </p>
             <p className="answer-hero__desc">
-              Daily defense, steeped in oak &amp; roots. Trusted by thousands across the Caribbean and endorsed by <strong>Chronixx</strong> — nature's most potent immune-fortifying herbs delivered straight to your cells.
+              Daily defense, steeped in oak &amp; roots. A centuries-old Caribbean wellness secret — nature's most potent immune-fortifying herbs, hand-selected and oak-aged to perfection.
             </p>
             <div className="answer-hero__ctas">
-              <Link to="/shop/the-answer" className="mkrc-btn-primary">
+              <Link to="/shop/the-answer" className="answer-hero__btn-primary">
                 Start Your 21-Day Ritual <ArrowRight size={16} />
               </Link>
-              <button onClick={() => scrollToSection("meet-the-herbs")} className="mkrc-btn-secondary">
+              <button onClick={() => scrollToSection("meet-the-herbs")} className="answer-hero__btn-secondary">
                 Meet the Herbs <ChevronDown size={16} />
               </button>
             </div>
-            <p className="answer-hero__micro">
-              Join 10,000+ daily practitioners. Ships within 24 hours.
+            <p className="answer-hero__whisper">
+              Endorsed by Chronixx · 3.4M+ Monthly Listeners
             </p>
           </div>
-        </div>
-
-        {/* Right — Chronixx */}
-        <div className="answer-hero__right">
-          <img
-            src={chronixxPhoto}
-            alt="Chronixx — Grammy-nominated reggae artist and daily Answer practitioner"
-            className="answer-hero__chronixx-img"
-          />
-          <div className="answer-hero__img-fade-left" />
-          <div className="answer-hero__chronixx-quote">
-            <blockquote>
-              "The Answer is part of my daily ritual. Nature provides everything we need — this is real medicine from real roots."
-            </blockquote>
-            <cite>— Chronixx</cite>
-          </div>
-        </div>
-
-        {/* Trust badge between columns */}
-        <div className="answer-hero__trust-badge">
-          <span className="answer-hero__trust-stat">3.4M+ Monthly Listeners</span>
-          <span className="answer-hero__trust-divider">·</span>
-          <span className="answer-hero__trust-stat">Grammy Nominated</span>
-          <span className="answer-hero__trust-divider">·</span>
-          <span className="answer-hero__trust-stat">#1 Billboard Reggae</span>
         </div>
 
         <button className="answer-hero__scroll-hint" onClick={() => scrollToSection("trust-bar")} aria-label="Scroll to learn more">
