@@ -5,6 +5,7 @@ import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
+import theAnswerImg from "@/assets/the-answer-chronixx-studio.png";
 
 export function FeaturedProduct() {
   const { data: product, isLoading } = useProduct("the-answer");
@@ -56,17 +57,11 @@ export function FeaturedProduct() {
               "radial-gradient(ellipse at center, rgba(188,138,95,0.12) 0%, transparent 70%)",
           }}
         >
-          {product.image_url ? (
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="max-w-full max-h-[320px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
-            />
-          ) : (
-            <div className="w-48 h-48 rounded-xl bg-white/5 flex items-center justify-center">
-              <span className="text-white/40">No image</span>
-            </div>
-          )}
+          <img
+            src={theAnswerImg}
+            alt={product.name}
+            className="max-w-full max-h-[320px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
+          />
         </Link>
 
         {/* Content — 50% */}
