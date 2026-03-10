@@ -1,126 +1,67 @@
-import { MapPin, Backpack, Utensils, Stethoscope, Plane, Calendar, Check } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
-const practicalTopics = [
+const faqs = [
   {
-    id: "location",
-    icon: MapPin,
-    title: "Location & Getting There",
-    points: [
-      "Located in Soufrière, St. Lucia, near the Pitons",
-      "Airport transfers from Hewanorra (UVF) included",
-      "Scenic 90-minute drive through the island's beauty",
-      "Private transportation arranged for all guests",
-    ],
+    q: "What's Included?",
+    a: "Everything you need for a seamless experience: lodging, all plant-based meals, airport transfers, daily workshops, herbal materials, guided excursions, and a personal wellness consultation with Priest Kailash.",
   },
   {
-    id: "packing",
-    icon: Backpack,
-    title: "What to Pack",
-    points: [
-      "Comfortable hiking shoes for nature walks",
-      "Natural toiletries (no synthetic fragrances)",
-      "Lightweight clothing for tropical weather",
-      "Journal for reflection and insights",
-    ],
-    helper: "We provide linens, towels, rain ponchos, and all herbal products.",
+    q: "Where Is It?",
+    a: "Our retreat centre is located in Soufrière, on the southwest coast of St. Lucia — nestled between the iconic Pitons and the volcanic rainforest. It's a 90-minute scenic drive from Hewanorra International Airport (UVF).",
   },
   {
-    id: "dietary",
-    icon: Utensils,
-    title: "Dietary Information",
-    points: [
-      "All meals are strictly ital (plant-based)",
-      "No meat, dairy, or processed foods",
-      "Ingredients sourced from our volcanic soil gardens",
-      "Gluten-free options available upon request",
-    ],
-    helper: "Please inform us of any allergies during your pre-arrival assessment.",
+    q: "What Should I Bring?",
+    a: "Comfortable clothes for warm weather and nature walks, sturdy shoes, a journal for reflection, and an open heart. We provide linens, towels, rain ponchos, and all herbal products.",
   },
   {
-    id: "medical",
-    icon: Stethoscope,
-    title: "Medical Considerations",
-    points: [
-      "Each case evaluated individually",
-      "Disclose all medications during pre-arrival assessment",
-      "Some pharmaceuticals may require adjustment",
-      "We work alongside your physician for safety",
-    ],
+    q: "Dietary Accommodations?",
+    a: "All meals are 100% plant-based, prepared with ingredients from our volcanic soil gardens. We can accommodate most allergies and sensitivities — just let us know during booking.",
   },
   {
-    id: "travel",
-    icon: Plane,
-    title: "Travel Requirements",
-    points: [
-      "Valid passport required for all international guests",
-      "Travel insurance with medical evacuation required",
-      "No visa needed for most nationalities (90 days)",
-      "Recommended providers available upon request",
-    ],
+    q: "Is This Right For Me?",
+    a: "Absolutely. Our retreats are open to all wellness levels. No prior experience with herbal medicine or wellness practices is needed. Whether you're new to this or well-versed, we meet you where you are.",
   },
   {
-    id: "cancellation",
-    icon: Calendar,
-    title: "Cancellation Policy",
-    points: [
-      "Group: 100% refund 30+ days before arrival",
-      "Group: 50% refund 15-29 days before arrival",
-      "Solo: 100% refund 14+ days before arrival",
-      "Full credit toward future dates for any cancellation",
-    ],
+    q: "Cancellation Policy?",
+    a: "Group retreats: Full refund 30+ days before arrival, 50% refund 15–29 days before. Private retreats: Full refund 14+ days before. All cancellations receive full credit toward future dates.",
   },
 ];
 
 export function RetreatFAQ() {
   return (
     <section className="py-24 md:py-28" style={{ background: 'var(--site-bg-secondary)' }}>
-      <div className="container mx-auto max-w-6xl px-4">
-        <div className="text-center mb-12 md:mb-16">
+      <div className="container mx-auto max-w-3xl px-4">
+        <div className="text-center mb-14">
           <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
-            Practical Matters
+            Everything You Need to Know
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.7 }}>
-            Everything you need to know before your transformative journey to Mount Kailash.
-          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-          {practicalTopics.map((topic) => (
-            <div
-              key={topic.id}
-              className="rounded-xl p-8 transition-all duration-300 hover:border-t-2"
-              style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)', borderTopColor: 'transparent' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderTopColor = '#c9a84c'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderTopColor = 'transparent'; }}
+        <Accordion type="single" collapsible className="space-y-3">
+          {faqs.map((faq, i) => (
+            <AccordionItem
+              key={i}
+              value={`faq-${i}`}
+              className="rounded-xl px-6 border-none"
+              style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)' }}
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(201,168,76,0.1)' }}>
-                  <topic.icon className="w-5 h-5" style={{ color: '#c9a84c' }} />
-                </div>
-                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
-                  {topic.title}
-                </h3>
-              </div>
-
-              <ul className="space-y-2.5">
-                {topic.points.map((point, i) => (
-                  <li key={i} className="flex items-start gap-2.5">
-                    <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#c9a84c' }} />
-                    <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)', lineHeight: 1.6 }}>
-                      {point}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {topic.helper && (
-                <p className="mt-4 text-sm italic pt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, color: 'var(--site-text-muted)', borderTop: '1px solid var(--site-border)' }}>
-                  {topic.helper}
-                </p>
-              )}
-            </div>
+              <AccordionTrigger
+                className="hover:no-underline py-5"
+                style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '18px', color: 'var(--site-text-primary)' }}
+              >
+                {faq.q}
+              </AccordionTrigger>
+              <AccordionContent style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: 'var(--site-text-muted)', lineHeight: 1.7 }}>
+                {faq.a}
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </section>
   );
