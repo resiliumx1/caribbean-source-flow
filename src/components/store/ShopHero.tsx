@@ -4,8 +4,8 @@ import heroImage from "@/assets/shop-hero-apothecary.png";
 
 const trustPills = [
   "3-Day US Shipping",
-  "COA Documentation",
-  "500+ Physicians",
+  "Wildcrafted in St. Lucia",
+  "30-Day Money Back Guarantee",
 ];
 
 export function ShopHero() {
