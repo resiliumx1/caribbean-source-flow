@@ -61,7 +61,7 @@ export function ShopHero() {
         </h1>
 
         <p
-          className="mb-8 max-w-2xl mx-auto"
+          className="mb-8 max-w-2xl mx-auto hidden sm:block"
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 400,
@@ -70,8 +70,21 @@ export function ShopHero() {
             color: "rgba(245,241,232,0.8)",
           }}
         >
-          Hand-extracted bush medicine. 40% higher alkaloid concentration than
-          mainland Caribbean herbs.
+          Forest-grown remedies for chronic inflammation, gut repair, and deep sleep.
+          <br />
+          Backed by 21 years of clinical practice.
+        </p>
+        <p
+          className="mb-8 max-w-2xl mx-auto sm:hidden"
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 400,
+            fontSize: "16px",
+            lineHeight: 1.6,
+            color: "rgba(245,241,232,0.8)",
+          }}
+        >
+          Wild St. Lucian herbs for inflammation, sleep, and cellular repair.
         </p>
 
         {/* CTAs */}
