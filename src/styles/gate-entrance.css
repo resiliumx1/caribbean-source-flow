@@ -1,4 +1,4 @@
-/* ─── Gate Entrance — GSAP ScrollTrigger version ─── */
+/* ─── Gate Entrance — Continuous Scroll Descent ─── */
 
 :root{
   --gold:#c9a96e; --gold-l:#e2c99a; --gold-p:#f0d89a;
@@ -36,6 +36,7 @@ html:has(.gate-overlay) body {
   overflow-x: hidden;
 }
 
+/* ── Background ── */
 .hero-bg{
   position:absolute;inset:0;z-index:0;
   background:
@@ -72,6 +73,8 @@ html:has(.gate-overlay) body {
   content:'';position:absolute;inset:0;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")
 }
+
+/* ── Particles ── */
 .particles{position:absolute;inset:0;z-index:2;pointer-events:none}
 .particle{
   position:absolute;border-radius:50%;opacity:0;
@@ -82,7 +85,8 @@ html:has(.gate-overlay) body {
   30%,70%{opacity:var(--op)}
   99%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.2)}
 }
-/* Gates */
+
+/* ── Gates ── */
 .gate{position:absolute;top:0;width:50%;height:100%;z-index:10;will-change:transform}
 .gate-left {left:0; background:linear-gradient(to right,#162812 60%,#1e3618)}
 .gate-right{right:0;background:linear-gradient(to left, #162812 60%,#1e3618)}
@@ -145,7 +149,7 @@ html:has(.gate-overlay) body {
   .gate-art { display: none; }
 }
 
-/* Seal */
+/* ── Seal ── */
 #logo-seal{
   position:absolute;left:50%;top:42%;
   transform:translate(-50%,-50%);
@@ -176,7 +180,8 @@ html:has(.gate-overlay) body {
   0%,100%{opacity:0.5;transform:translate(-50%,-50%) scale(0.94);box-shadow:0 0 12px 2px rgba(201,169,110,0.12),inset 0 0 12px 2px rgba(201,169,110,0.06)}
   50%    {opacity:1;  transform:translate(-50%,-50%) scale(1.06);box-shadow:0 0 32px 8px rgba(201,169,110,0.28),inset 0 0 20px 4px rgba(201,169,110,0.12)}
 }
-/* ── WREATH & STAR CONTAINER ──────────────────────── */
+
+/* ── Wreath & Star Container ── */
 #wreath-wrap {
   position: relative;
   width: 520px;
@@ -235,8 +240,11 @@ html:has(.gate-overlay) body {
   to{transform:rotate(360deg)}
 }
 
-/* Hero copy */
-.hero-content{position:relative;z-index:5;text-align:center;padding:0 2rem;pointer-events:none;margin-top:12vh}
+/* ── Hero copy ── */
+.hero-content{
+  position:relative;z-index:5;text-align:center;padding:0 2rem;pointer-events:none;margin-top:12vh;
+  transition: none;
+}
 .hero-content::before{
   content:'';position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%);
@@ -252,64 +260,86 @@ html:has(.gate-overlay) body {
 .h-divider::after {content:'';flex:1;height:1px;background:linear-gradient(to left, transparent,var(--gold-l))}
 .diam{width:5px;height:5px;background:var(--gold-l);transform:rotate(45deg);flex-shrink:0}
 .h-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,1.9vw,1.45rem);font-weight:300;color:var(--gate-cream) !important;line-height:1.8;max-width:540px;margin:0 auto;text-shadow:0 1px 5px rgba(0,0,0,0.6);opacity:0;transform:translateY(14px);animation:fadeUp 1.4s ease forwards 1.8s}
-#enter-cue{
-  position:absolute;bottom:2.8rem;left:50%;transform:translateX(-50%);
-  z-index:20;display:flex;flex-direction:column;align-items:center;gap:1rem;
-  opacity:0;animation:fadeIn 1s ease forwards 3s;pointer-events:none
-}
-/* Pill button container */
-.enter-pill{
-  display:flex;align-items:center;gap:0.75rem;
-  padding:0.7rem 1.8rem 0.7rem 1.4rem;
-  border:1px solid rgba(201,169,110,0.55);
-  background:rgba(8,15,6,0.65);
-  backdrop-filter:blur(6px);
-  box-shadow:0 0 22px 4px rgba(201,169,110,0.18), inset 0 0 12px rgba(201,169,110,0.06);
-  animation:pillGlow 2.8s ease-in-out infinite;
-}
-@keyframes pillGlow{
-  0%,100%{box-shadow:0 0 18px 3px rgba(201,169,110,0.14),inset 0 0 10px rgba(201,169,110,0.05)}
-  50%    {box-shadow:0 0 36px 8px rgba(201,169,110,0.32),inset 0 0 18px rgba(201,169,110,0.12)}
-}
-.enter-text{
-  font-family:'Cinzel',serif;
-  font-size:0.72rem;letter-spacing:0.5em;
-  text-transform:uppercase;
-  color:var(--gold-p) !important;
-  font-weight:400;
-  text-shadow:0 0 14px rgba(201,169,110,0.6),0 1px 3px rgba(0,0,0,0.5)
-}
-/* Animated chevron arrow inside pill */
-.enter-arrow{
-  display:flex;flex-direction:column;align-items:center;gap:2px;margin-left:0.2rem
-}
-.chev{
-  width:8px;height:6px;
-  border-left:1.5px solid var(--gold-l);
-  border-bottom:1.5px solid var(--gold-l);
-  transform:rotate(-45deg);opacity:0;
-  animation:chevDrop 1.7s ease-in-out infinite;
-  filter:drop-shadow(0 0 3px rgba(201,169,110,0.7))
-}
-.chev:nth-child(1){animation-delay:0s}
-.chev:nth-child(2){animation-delay:0.2s}
-.chev:nth-child(3){animation-delay:0.4s}
-/* Thin line below pill */
-.enter-line{
-  width:1px;height:36px;
-  background:linear-gradient(to bottom,rgba(201,169,110,0.5),transparent);
-  animation:lineBreath 2.8s ease-in-out infinite
-}
-@keyframes lineBreath{
-  0%,100%{opacity:0.4;transform:scaleY(0.85)}
-  50%    {opacity:1;  transform:scaleY(1)}
-}
-.chevrons{display:none}
-@keyframes chevDrop{0%,100%{opacity:0;transform:rotate(-45deg) translate(-2px,-2px)}50%{opacity:0.75;transform:rotate(-45deg) translate(2px,2px)}}
-@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{to{opacity:1}}
 
-/* ── Half-wreath on gates ──────────────────────── */
+/* ── Scroll Hint (replaces old enter-cue) ── */
+.gate-scroll-hint {
+  position: absolute;
+  bottom: 2.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.5s;
+  pointer-events: none;
+}
+.gate-scroll-hint__arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.gate-scroll-hint__chev {
+  width: 10px;
+  height: 8px;
+  border-left: 1.5px solid var(--gold-l);
+  border-bottom: 1.5px solid var(--gold-l);
+  transform: rotate(-45deg);
+  opacity: 0;
+  animation: chevDrop 1.7s ease-in-out infinite;
+  filter: drop-shadow(0 0 3px rgba(201,169,110,0.7));
+}
+.gate-scroll-hint__chev:nth-child(1) { animation-delay: 0s; }
+.gate-scroll-hint__chev:nth-child(2) { animation-delay: 0.2s; }
+.gate-scroll-hint__chev:nth-child(3) { animation-delay: 0.4s; }
+
+/* ── Skip Intro Button (returning visitors) ── */
+.gate-skip-btn {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 25;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-l);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards 0.1s;
+  transition: opacity 0.3s ease, color 0.2s ease;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.gate-skip-btn:hover {
+  color: var(--gold-p);
+}
+
+/* ── Color Bridge — gradient corridor ── */
+.gate-color-bridge {
+  position: relative;
+  z-index: 0;
+  height: 300px;
+  background: linear-gradient(
+    to bottom,
+    #12200e 0%,
+    #1e3018 15%,
+    #2a3d1e 30%,
+    #3d4a28 45%,
+    #5a5232 55%,
+    #7a6a3e 65%,
+    #a08a52 75%,
+    #c4b080 85%,
+    var(--gate-cream, #f0ebe0) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Half-wreath on gates ── */
 .wreath-half{
   position:absolute;
   top:42%;
@@ -348,7 +378,42 @@ html:has(.gate-overlay) body {
   left:-260px;
 }
 
-/* ── LIGHT MODE IMMUNITY ─────────────────────── */
+/* ── Mobile Adaptation ── */
+@media (max-width: 767px) {
+  .gate-trigger-spacer {
+    height: 250vh; /* shorter scroll on mobile */
+  }
+  
+  /* Simplify wreath — static on mobile, no heavy JS rotation */
+  .wreath-half-svg {
+    animation: none !important;
+  }
+  
+  .gate-wreath-svg {
+    animation: none !important;
+  }
+  
+  /* Reduce particles on mobile */
+  .particle:nth-child(n+20) {
+    display: none;
+  }
+  
+  .gate-color-bridge {
+    height: 200px;
+  }
+  
+  .gate-skip-btn {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+@keyframes chevDrop{0%,100%{opacity:0;transform:rotate(-45deg) translate(-2px,-2px)}50%{opacity:0.75;transform:rotate(-45deg) translate(2px,2px)}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{to{opacity:1}}
+
+/* ── LIGHT MODE IMMUNITY ── */
 .gate-overlay,
 .gate-overlay *,
 .gate-overlay *::before,
@@ -363,7 +428,6 @@ html:has(.gate-overlay) body {
 [data-mkrc-theme="light"] .gate-overlay .gate-art,
 [data-mkrc-theme="light"] .gate-overlay .hero-content,
 [data-mkrc-theme="light"] .gate-overlay #logo-seal,
-[data-mkrc-theme="light"] .gate-overlay #enter-cue,
 [data-mkrc-theme="light"] .gate-overlay .particles {
   color-scheme: dark !important;
 }
