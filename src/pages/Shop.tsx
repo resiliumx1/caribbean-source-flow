@@ -177,7 +177,7 @@ export default function Shop() {
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                   {allSingles.map((product, idx) => (
-                    <ProductCard key={product.id} product={product} style={{ animation: "shopFadeUp 0.5s ease forwards", animationDelay: `${Math.min(idx, 12) * 50}ms`, opacity: 0 }} />
+                    <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
               </section>
