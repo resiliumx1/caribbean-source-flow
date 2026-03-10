@@ -43,51 +43,52 @@ const pillars = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center" style={{ background: 'var(--site-bg-primary)' }}>
-      <div className="container mx-auto max-w-6xl px-4 py-20 md:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-center">
-          {/* Left Column — 60% */}
-          <div className="lg:col-span-3">
-            <h1
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 700,
-                fontSize: "clamp(2.5rem, 5vw, 64px)",
-                lineHeight: 1.08,
-                color: "var(--site-text-primary)",
-                marginBottom: "24px",
-              }}
-            >
-              Clinical Bush Medicine from Sulphur Ridge
-            </h1>
-            <p
-              style={{
-                fontFamily: "'Jost', sans-serif",
-                fontWeight: 300,
-                fontSize: "20px",
-                lineHeight: 1.6,
-                color: "var(--site-text-secondary)",
-                marginBottom: "40px",
-                maxWidth: "560px",
-              }}
-            >
-              Hand-harvested formulations, practitioner training, and immersive
-              retreats—backed by 21 years of clinical documentation.
-            </p>
+    <section className="relative min-h-screen flex flex-col justify-center" style={{ background: '#0F281E' }}>
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-12 lg:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Left Column — 7 cols */}
+          <div className="lg:col-span-7">
+            {/* Header */}
+            <div className="mb-8">
+              <h1
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontWeight: 700,
+                  fontSize: "clamp(2.5rem, 5vw, 64px)",
+                  lineHeight: 1.08,
+                  color: "#F5F1E8",
+                  marginBottom: "24px",
+                }}
+              >
+                Clinical Bush Medicine from Sulphur Ridge
+              </h1>
+              <p
+                style={{
+                  fontFamily: "'Jost', sans-serif",
+                  fontWeight: 300,
+                  fontSize: "20px",
+                  lineHeight: 1.6,
+                  color: "rgba(245,241,232,0.7)",
+                  maxWidth: "560px",
+                }}
+              >
+                Hand-harvested formulations, practitioner training, and immersive
+                retreats—backed by 21 years of clinical documentation.
+              </p>
+            </div>
 
             {/* 4-Pillar Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {pillars.map((pillar) => {
                 const IconComp = pillar.icon;
                 return (
                   <Link
                     key={pillar.route + pillar.title}
                     to={pillar.route}
-                    className="group block rounded-xl p-6 transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full"
+                    className="group relative overflow-hidden rounded-2xl h-64 block transition-all duration-300 hover:-translate-y-1"
                     style={{
-                      background: "rgba(15,40,30,0.5)",
-                      border: "1px solid rgba(188,138,95,0.3)",
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                      background: "rgba(15,40,30,0.8)",
+                      border: "1px solid rgba(188,138,95,0.2)",
                     }}
                     onMouseEnter={(e) => {
                       const el = e.currentTarget as HTMLElement;
@@ -96,51 +97,60 @@ export function HeroSection() {
                     }}
                     onMouseLeave={(e) => {
                       const el = e.currentTarget as HTMLElement;
-                      el.style.borderColor = "rgba(188,138,95,0.3)";
-                      el.style.boxShadow = "0 4px 20px rgba(0,0,0,0.15)";
+                      el.style.borderColor = "rgba(188,138,95,0.2)";
+                      el.style.boxShadow = "none";
                     }}
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 h-full">
-                      {/* Text side */}
-                      <div className="flex-1 min-w-0">
-                        <IconComp className="w-5 h-5 mb-3" style={{ color: "#BC8A5F" }} />
-                        <h3
-                          style={{
-                            fontFamily: "'Cormorant Garamond', serif",
-                            fontWeight: 700,
-                            fontSize: "20px",
-                            color: "#F5F1E8",
-                            marginBottom: "6px",
-                          }}
-                        >
-                          {pillar.title}
-                        </h3>
-                        <div
-                          style={{
-                            fontFamily: "'Jost', sans-serif",
-                            fontWeight: 300,
-                            fontSize: "13px",
-                            color: "rgba(245,241,232,0.7)",
-                            marginBottom: "14px",
-                          }}
-                        >
-                          {pillar.description}
-                        </div>
-                        <span
-                          className="inline-flex items-center gap-1 text-sm font-medium"
-                          style={{ color: "#BC8A5F" }}
-                        >
-                          {pillar.cta}{" "}
-                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                        </span>
+                    {/* Background Illustration — right side */}
+                    <img
+                      src={pillar.image}
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 h-[85%] w-1/2 object-contain object-right pr-4 opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                      style={{ filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3))" }}
+                      loading="lazy"
+                    />
+
+                    {/* Gradient overlay for text readability */}
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: "linear-gradient(to right, #0F281E 40%, rgba(15,40,30,0.85) 60%, transparent 100%)",
+                      }}
+                    />
+
+                    {/* Text Content */}
+                    <div className="relative z-10 w-3/5 h-full flex flex-col justify-center p-6">
+                      <IconComp className="w-5 h-5 mb-3" style={{ color: "#BC8A5F" }} />
+                      <h3
+                        style={{
+                          fontFamily: "'Cormorant Garamond', serif",
+                          fontWeight: 700,
+                          fontSize: "20px",
+                          color: "#F5F1E8",
+                          marginBottom: "6px",
+                        }}
+                      >
+                        {pillar.title}
+                      </h3>
+                      <div
+                        style={{
+                          fontFamily: "'Jost', sans-serif",
+                          fontWeight: 300,
+                          fontSize: "13px",
+                          color: "rgba(245,241,232,0.7)",
+                          marginBottom: "16px",
+                        }}
+                      >
+                        {pillar.description}
                       </div>
-                      {/* Illustration side */}
-                      <img
-                        src={pillar.image}
-                        alt={pillar.title}
-                        className="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 object-contain flex-shrink-0 self-center opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300 mix-blend-lighten"
-                        loading="lazy"
-                      />
+                      <span
+                        className="inline-flex items-center gap-1 text-sm font-medium mt-auto"
+                        style={{ color: "#BC8A5F" }}
+                      >
+                        {pillar.cta}{" "}
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </span>
                     </div>
                   </Link>
                 );
@@ -148,19 +158,21 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Right Column — 40% */}
-          <div className="lg:col-span-2">
-            <div className="rounded-lg overflow-hidden" style={{ boxShadow: "var(--site-shadow-card)" }}>
-              <img
-                src={priestPhoto}
-                alt="Priest Kailash Leyonce at the volcanic ridge in Saint Lucia"
-                className="w-full h-auto object-cover"
-                style={{ minHeight: "480px", objectPosition: "center top" }}
-                loading="eager"
-                fetchPriority="high"
-                width={600}
-                height={800}
-              />
+          {/* Right Column — 5 cols */}
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-24">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img
+                  src={priestPhoto}
+                  alt="Priest Kailash Leyonce at the volcanic ridge in Saint Lucia"
+                  className="w-full object-cover"
+                  style={{ height: "600px", objectPosition: "center top" }}
+                  loading="eager"
+                  fetchPriority="high"
+                  width={600}
+                  height={800}
+                />
+              </div>
             </div>
           </div>
         </div>
