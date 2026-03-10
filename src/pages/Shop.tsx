@@ -17,6 +17,7 @@ const FORM_TYPES: Record<string, string[]> = {
   tinctures: ["tincture"],
   capsules: ["capsule"],
   teas: ["tea"],
+  books: ["book"],
   "raw-herbs": ["raw_herb", "powder", "bulk"],
 };
 
