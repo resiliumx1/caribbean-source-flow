@@ -1,5 +1,5 @@
 import { useConditions } from "@/hooks/use-conditions";
-import { useRef, useCallback, useState } from "react";
+import { useDragScroll } from "@/hooks/use-drag-scroll";
 
 const FORMS = [
   { label: "Tinctures", slug: "tinctures" },
@@ -13,38 +13,6 @@ interface ShopFilterNavProps {
   onConditionChange: (condition: string | null) => void;
   activeForm: string | null;
   onFormChange: (form: string | null) => void;
-}
-
-function useDragScroll() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, moved: false });
-
-  const onPointerDown = useCallback((e: React.PointerEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    dragState.current = { isDown: true, startX: e.clientX, scrollLeft: el.scrollLeft, moved: false };
-    el.setPointerCapture(e.pointerId);
-  }, []);
-
-  const onPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragState.current.isDown || !ref.current) return;
-    const dx = e.clientX - dragState.current.startX;
-    if (Math.abs(dx) > 3) {
-      dragState.current.moved = true;
-      setIsDragging(true);
-    }
-    ref.current.scrollLeft = dragState.current.scrollLeft - dx;
-  }, []);
-
-  const onPointerUp = useCallback((e: React.PointerEvent) => {
-    dragState.current.isDown = false;
-    ref.current?.releasePointerCapture(e.pointerId);
-    // Small delay so click handlers can check isDragging
-    setTimeout(() => setIsDragging(false), 0);
-  }, []);
-
-  return { ref, isDragging, onPointerDown, onPointerMove, onPointerUp, onPointerLeave: onPointerUp };
 }
 
 export function ShopFilterNav({
@@ -73,10 +41,7 @@ export function ShopFilterNav({
           ref={conditionScroll.ref}
           className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide select-none"
           style={{ cursor: conditionScroll.isDragging ? "grabbing" : "grab" }}
-          onPointerDown={conditionScroll.onPointerDown}
-          onPointerMove={conditionScroll.onPointerMove}
-          onPointerUp={conditionScroll.onPointerUp}
-          onPointerLeave={conditionScroll.onPointerLeave}
+          {...conditionScroll.scrollHandlers}
         >
           <span
             className="flex-shrink-0 mr-1 pointer-events-none"
@@ -126,10 +91,7 @@ export function ShopFilterNav({
           ref={formScroll.ref}
           className="flex items-center gap-2 overflow-x-auto scrollbar-hide select-none"
           style={{ cursor: formScroll.isDragging ? "grabbing" : "grab" }}
-          onPointerDown={formScroll.onPointerDown}
-          onPointerMove={formScroll.onPointerMove}
-          onPointerUp={formScroll.onPointerUp}
-          onPointerLeave={formScroll.onPointerLeave}
+          {...formScroll.scrollHandlers}
         >
           <span
             className="flex-shrink-0 mr-1 pointer-events-none"
