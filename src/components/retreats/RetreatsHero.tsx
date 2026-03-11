@@ -54,7 +54,7 @@ export function RetreatsHero() {
             maxWidth: '640px',
           }}
         >
-          Immersive wellness retreats in the heart of St. Lucia's volcanic rainforest. 7 days of traditional bush medicine, nourishment, and renewal.
+          For those running on empty. Seven days of cellular restoration to repair your nervous system and reclaim your vital force.
         </p>
 
         {/* CTAs */}
