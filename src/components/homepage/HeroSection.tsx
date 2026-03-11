@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, ClipboardList, ShoppingBag, Mountain, GraduationCap } from "lucide-react";
 import priestPhoto from "@/assets/priest-kailash-host.webp";
-import pillarWholesale from "@/assets/pillar-wholesale.png";
-import pillarApothecary from "@/assets/pillar-apothecary.png";
-import pillarRetreat from "@/assets/pillar-retreat.png";
-import pillarSchool from "@/assets/pillar-school.png";
+import pillarWholesale from "@/assets/pillar-wholesale.webp";
+import pillarApothecary from "@/assets/pillar-apothecary.webp";
+import pillarRetreat from "@/assets/pillar-retreat.webp";
+import pillarSchool from "@/assets/pillar-school.webp";
 
 const pillars = [
   {
