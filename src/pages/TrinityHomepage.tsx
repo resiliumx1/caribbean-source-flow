@@ -89,30 +89,46 @@ const TrinityHomepage = () => {
       </Helmet>
 
       <HeroSection />
-      <Suspense fallback={<SectionFallback />}>
-        <SourceStory />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <RotatingApothecary />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <WholesaleAuthority />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <RidgeRetreat />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <SchoolSection />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <ConsultationCTA />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <SocialProofMatrix />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <HomepageFooter />
-      </Suspense>
+      <div className="below-fold-section">
+        <Suspense fallback={<SectionFallback />}>
+          <SourceStory />
+        </Suspense>
+      </div>
+      <div className="below-fold-section">
+        <Suspense fallback={<SectionFallback />}>
+          <RotatingApothecary />
+        </Suspense>
+      </div>
+      <div className="below-fold-section">
+        <Suspense fallback={<SectionFallback />}>
+          <WholesaleAuthority />
+        </Suspense>
+      </div>
+      <div className="below-fold-section">
+        <Suspense fallback={<SectionFallback />}>
+          <RidgeRetreat />
+        </Suspense>
+      </div>
+      <div className="below-fold-section">
+        <Suspense fallback={<SectionFallback />}>
+          <SchoolSection />
+        </Suspense>
+      </div>
+      <div className="below-fold-section">
+        <Suspense fallback={<SectionFallback />}>
+          <ConsultationCTA />
+        </Suspense>
+      </div>
+      <div className="below-fold-section">
+        <Suspense fallback={<SectionFallback />}>
+          <SocialProofMatrix />
+        </Suspense>
+      </div>
+      <div className="below-fold-section">
+        <Suspense fallback={<SectionFallback />}>
+          <HomepageFooter />
+        </Suspense>
+      </div>
 
       <GoddessWhatsApp />
       <ConsultationToast />
