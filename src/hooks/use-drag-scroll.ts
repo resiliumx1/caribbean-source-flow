@@ -48,17 +48,4 @@ export function useDragScroll() {
     },
   };
 
-  return {
-    ref,
-    isDragging,
-    scrollHandlers: {
-      onMouseDown,
-      onMouseMove,
-      onMouseUp,
-      onMouseLeave,
-      onTouchStart,
-      onTouchMove,
-      onTouchEnd,
-    },
-  };
 }
