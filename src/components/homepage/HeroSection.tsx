@@ -101,14 +101,32 @@ export function HeroSection() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             {/* Left Column — 7 cols */}
             <div className="lg:col-span-7 flex flex-col">
-              {/* Compact Header — horizontal on desktop */}
-              <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-3 mb-5">
-                <h1 className="font-serif font-bold text-cream leading-[1.08] text-3xl lg:text-[clamp(2rem,3.5vw,3rem)]">
-                  Clinical Bush Medicine<br className="hidden lg:block" /> from Sulphur Ridge
+              {/* Headline Block — static, no animation */}
+              <div className="max-w-[600px] mb-16 md:mb-20">
+                <h1
+                  className="font-serif font-bold text-[32px] sm:text-[36px] lg:text-[46px] leading-[1.1]"
+                  style={{ color: '#F5F5DC' }}
+                >
+                  Come back to yourself.
                 </h1>
-                <p className="text-sm lg:text-base text-cream/70 font-sans font-light lg:text-right lg:max-w-[280px] leading-relaxed">
-                  Hand-harvested formulations, practitioner training, and immersive
-                  retreats—backed by 21 years of clinical documentation.
+                <p
+                  className="font-serif italic text-[20px] sm:text-[22px] lg:text-[28px] mt-2"
+                  style={{ color: '#D4AF37' }}
+                >
+                  At Mount Kailash.
+                </p>
+                <p
+                  className="font-sans uppercase tracking-[0.1em] text-[14px] sm:text-[16px] lg:text-[18px] font-medium mt-8"
+                  style={{ color: '#D4AF37' }}
+                >
+                  Clinical Bush Medicine. Proven Results.
+                  <span className="block mt-2 h-px w-[40%]" style={{ background: '#D4AF37' }} />
+                </p>
+                <p
+                  className="font-serif italic text-[14px] sm:text-[15px] lg:text-[16px] font-light mt-4"
+                  style={{ color: 'rgba(245, 245, 220, 0.8)' }}
+                >
+                  21 years restoring what modern life took away.
                 </p>
               </div>
 
