@@ -45,8 +45,9 @@ const pillars = [
   },
 ];
 
-function PillarCard({ pillar }: { pillar: typeof pillars[number] }) {
+function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: number }) {
   const IconComp = pillar.icon;
+  const isAboveFold = index === 0;
   return (
     <Link
       to={pillar.route}
@@ -62,7 +63,10 @@ function PillarCard({ pillar }: { pillar: typeof pillars[number] }) {
           filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))",
           transform: "scale(1.1)",
         }}
-        loading="lazy"
+        loading={isAboveFold ? "eager" : "lazy"}
+        {...(isAboveFold ? { fetchPriority: "high" as const } : {})}
+        width={643}
+        height={388}
       />
 
       {/* Gradient overlay for text readability */}
@@ -131,8 +135,8 @@ export function HeroSection() {
 
               {/* 4-Pillar Grid — fills remaining height */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
-                {pillars.map((pillar) => (
-                  <PillarCard key={pillar.route} pillar={pillar} />
+                {pillars.map((pillar, i) => (
+                  <PillarCard key={pillar.route} pillar={pillar} index={i} />
                 ))}
               </div>
             </div>
