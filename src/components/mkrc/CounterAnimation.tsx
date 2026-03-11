@@ -15,7 +15,7 @@ export default function CounterAnimation({
   decimals = 0,
   duration = 1500,
 }: CounterAnimationProps) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(target);
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
 
