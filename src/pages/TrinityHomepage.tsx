@@ -1,26 +1,26 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, lazy, Suspense } from "react";
 import { HeroSection } from "@/components/homepage/HeroSection";
-import { SourceStory } from "@/components/homepage/SourceStory";
-import { RotatingApothecary } from "@/components/homepage/RotatingApothecary";
-import { WholesaleAuthority } from "@/components/homepage/WholesaleAuthority";
-import { RidgeRetreat } from "@/components/homepage/RidgeRetreat";
-import { SchoolSection } from "@/components/homepage/SchoolSection";
-import { ConsultationCTA } from "@/components/homepage/ConsultationCTA";
-import { HomepageFooter } from "@/components/homepage/HomepageFooter";
-import { SocialProofMatrix } from "@/components/trinity/SocialProofMatrix";
-import FadeInStagger from "@/components/FadeInStagger";
 import { MessageCircle, ArrowRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { GateEntrance } from "@/components/gate-entrance";
+
+// Lazy load below-fold sections
+const SourceStory = lazy(() => import("@/components/homepage/SourceStory").then(m => ({ default: m.SourceStory })));
+const RotatingApothecary = lazy(() => import("@/components/homepage/RotatingApothecary").then(m => ({ default: m.RotatingApothecary })));
+const WholesaleAuthority = lazy(() => import("@/components/homepage/WholesaleAuthority").then(m => ({ default: m.WholesaleAuthority })));
+const RidgeRetreat = lazy(() => import("@/components/homepage/RidgeRetreat").then(m => ({ default: m.RidgeRetreat })));
+const SchoolSection = lazy(() => import("@/components/homepage/SchoolSection").then(m => ({ default: m.SchoolSection })));
+const ConsultationCTA = lazy(() => import("@/components/homepage/ConsultationCTA").then(m => ({ default: m.ConsultationCTA })));
+const HomepageFooter = lazy(() => import("@/components/homepage/HomepageFooter").then(m => ({ default: m.HomepageFooter })));
+const SocialProofMatrix = lazy(() => import("@/components/trinity/SocialProofMatrix").then(m => ({ default: m.SocialProofMatrix })));
+const GateEntrance = lazy(() => import("@/components/gate-entrance").then(m => ({ default: m.GateEntrance })));
 
 /** Check if gate was seen within last 7 days */
 function shouldShowGate(): boolean {
   try {
     const stamp = localStorage.getItem("mkrc-gate-seen");
-    if (!stamp) return true; // first visit
+    if (!stamp) return true;
     const ts = parseInt(stamp, 10);
     if (isNaN(ts)) return true;
-    // Show gate again if it's been more than 7 days
     return Date.now() - ts > 7 * 24 * 60 * 60 * 1000;
   } catch {
     return true;
@@ -80,6 +80,11 @@ function ConsultationToast() {
   );
 }
 
+/** Minimal placeholder for lazy sections */
+function SectionFallback() {
+  return <div className="min-h-[200px]" />;
+}
+
 const TrinityHomepage = () => {
   const showGate = shouldShowGate();
   const [gateComplete, setGateComplete] = useState(!showGate);
@@ -126,7 +131,9 @@ const TrinityHomepage = () => {
   return (
     <main className="min-h-screen">
       {!gateComplete && (
-        <GateEntrance onProgressChange={handleGateProgress} onGateComplete={handleGateComplete} />
+        <Suspense fallback={<div className="h-[300vh]" />}>
+          <GateEntrance onProgressChange={handleGateProgress} onGateComplete={handleGateComplete} />
+        </Suspense>
       )}
 
       <div
@@ -139,28 +146,30 @@ const TrinityHomepage = () => {
         }}
       >
         <HeroSection />
-        <FadeInStagger delay={0.1}>
+        <Suspense fallback={<SectionFallback />}>
           <SourceStory />
-        </FadeInStagger>
-        <FadeInStagger delay={0.1}>
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
           <RotatingApothecary />
-        </FadeInStagger>
-        <FadeInStagger delay={0.1}>
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
           <WholesaleAuthority />
-        </FadeInStagger>
-        <FadeInStagger delay={0.1}>
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
           <RidgeRetreat />
-        </FadeInStagger>
-        <FadeInStagger delay={0.1}>
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
           <SchoolSection />
-        </FadeInStagger>
-        <FadeInStagger delay={0.1}>
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
           <ConsultationCTA />
-        </FadeInStagger>
-        <FadeInStagger delay={0.1}>
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
           <SocialProofMatrix />
-        </FadeInStagger>
-        <HomepageFooter />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <HomepageFooter />
+        </Suspense>
       </div>
       {gateComplete && <GoddessWhatsApp />}
       <ConsultationToast />
