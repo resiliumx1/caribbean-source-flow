@@ -98,7 +98,7 @@ export function RetreatsHero() {
 
         {/* Trust pills */}
         <div className="flex flex-wrap justify-center gap-3">
-          {["🌿 All-Inclusive", "🍃 Plant-Based Cuisine", "👥 Small Groups (8–12)", "✦ 21 Years of Practice"].map((badge) => (
+          {["📅 7-Day Protocols", "🌿 Master Herbalist Guided", "💧 Cellular Detox", "✦ All-Inclusive"].map((badge) => (
             <span
               key={badge}
               className="px-4 py-2 rounded-full"
