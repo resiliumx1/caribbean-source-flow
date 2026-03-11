@@ -27,10 +27,9 @@ export default function Webinars() {
   const { data: dbVideos = [] } = useWebinarVideos();
 
   useEffect(() => {
-    document.title = "Free Herbal Medicine Webinars | Priest Kailash | Mount Kailash Rejuvenation Centre";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Join free live webinars on herbal medicine, natural health and holistic wellness with Priest Kailash. Expert-led sessions on immunity, fertility, detox and more.");
     // Force dark mode for this page
+    document.documentElement.classList.add("dark");
+  }, []);
     document.documentElement.classList.add("dark");
   }, []);
 

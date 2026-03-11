@@ -1,3 +1,4 @@
+import { SEOHead } from "@/components/SEOHead";
 import { SchoolStickyHeader } from "@/components/school/SchoolStickyHeader";
 import { CourseDetailHero } from "@/components/school/CourseDetailHero";
 import { TransformationPromise } from "@/components/school/TransformationPromise";

@@ -28,11 +28,7 @@ const GoddessWhatsApp = () => (
 );
 
 const Retreats = () => {
-  useEffect(() => {
-    document.title = "Wellness Retreats in Saint Lucia | Mount Kailash Rejuvenation Centre";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Immersive wellness retreats in St. Lucia's volcanic rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal.");
-  }, []);
+  // SEOHead handles meta tags now
 
   return (
     <main className="min-h-screen">

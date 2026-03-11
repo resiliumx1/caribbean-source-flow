@@ -17,11 +17,7 @@ import { StickyMobileCTA } from "@/components/wholesale/StickyMobileCTA";
 const Wholesale = () => {
   const formRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    document.title = "Caribbean Botanical Wholesale | COA Documentation | Quick US Delivery | Mount Kailash";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Wholesale Caribbean botanicals with full COA documentation. Quick US delivery from Miami warehouse. Custom solutions for clinics, retailers and wellness brands.");
-  }, []);
+  // SEOHead handles meta tags now
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });

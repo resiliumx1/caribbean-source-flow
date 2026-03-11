@@ -43,11 +43,7 @@ export default function Shop() {
   const [activeForm, setActiveForm] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("featured");
 
-  useEffect(() => {
-    document.title = "The Sulphur Ridge Apothecary | Mount Kailash Rejuvenation Centre";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration.");
-  }, []);
+  // SEOHead handles meta tags now
 
   // Build condition → product ID lookup
   const conditionProductMap = useMemo(() => {
