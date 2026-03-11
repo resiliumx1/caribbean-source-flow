@@ -35,29 +35,18 @@ export function useDragScroll() {
     setIsDragging(false);
   }, []);
 
-  // Touch support for mobile
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    state.current = { isDown: true, startX: e.touches[0].pageX, scrollLeft: el.scrollLeft, moved: false };
-  }, []);
+  // No custom touch handlers — rely on native CSS overflow-x scroll for smooth mobile UX
 
-  const onTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!state.current.isDown || !ref.current) return;
-    const dx = e.touches[0].pageX - state.current.startX;
-    if (Math.abs(dx) > 5) {
-      state.current.moved = true;
-      setIsDragging(true);
-    }
-    ref.current.scrollLeft = state.current.scrollLeft - dx;
-  }, []);
-
-  const onTouchEnd = useCallback(() => {
-    state.current.isDown = false;
-    if (state.current.moved) {
-      requestAnimationFrame(() => setIsDragging(false));
-    }
-  }, []);
+  return {
+    ref,
+    isDragging,
+    scrollHandlers: {
+      onMouseDown,
+      onMouseMove,
+      onMouseUp,
+      onMouseLeave,
+    },
+  };
 
   return {
     ref,
