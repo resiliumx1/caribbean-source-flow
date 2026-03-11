@@ -150,6 +150,7 @@ const App = () => {
   }
 
   return (
+    <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
         attribute="class"
