@@ -176,11 +176,9 @@ export function ShopFilterNav({
           {/* Primary: horizontal scroll condition pills */}
           <div
             ref={conditionScroll.ref}
-            className="flex items-center gap-2 px-4 py-3 overflow-x-auto select-none"
+            className="flex items-center gap-2 px-4 py-3 overflow-x-auto scrollbar-hide select-none"
             style={{
               cursor: conditionScroll.isDragging ? "grabbing" : "grab",
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
             }}
             {...conditionScroll.scrollHandlers}
           >
