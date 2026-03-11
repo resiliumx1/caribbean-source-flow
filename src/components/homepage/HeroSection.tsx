@@ -9,7 +9,7 @@ import pillarSchool from "@/assets/pillar-school.png";
 const pillars = [
   {
     title: "Professional Supply",
-    description: "Clinical formulations for practitioners, retailers & apothecaries",
+    description: "Clinical formulations for practitioners & retailers",
     cta: "Partner With Us →",
     ctaWeight: "font-medium" as const,
     route: "/wholesale",
@@ -18,8 +18,8 @@ const pillars = [
   },
   {
     title: "The Apothecary",
-    description: "Hand-crafted remedies for personal transformation",
-    cta: "Explore Remedies →",
+    description: "Hand-crafted remedies for personal use",
+    cta: "Shop Remedies →",
     ctaWeight: "font-medium" as const,
     route: "/shop",
     image: pillarApothecary,
@@ -27,16 +27,16 @@ const pillars = [
   },
   {
     title: "Sacred Immersions",
-    description: "Seven-day sanctuary to repair what stress destroyed",
-    cta: "Begin Your Journey →",
+    description: "Seven-day stress recovery retreats",
+    cta: "Reserve Dates →",
     ctaWeight: "font-semibold" as const,
     route: "/retreats",
     image: pillarRetreat,
     icon: Mountain,
   },
   {
-    title: "Mount Kailash Herbal Physician School",
-    description: "Master-level clinical certification in Caribbean bush medicine",
+    title: "Herbal Physician School",
+    description: "Master-level clinical certification",
     cta: "Start Training →",
     ctaWeight: "font-semibold" as const,
     route: "/school/herbal-physician",
