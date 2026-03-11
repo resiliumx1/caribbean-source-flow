@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import FadeInStagger from "@/components/FadeInStagger";
 import { Hero } from "@/components/wholesale/Hero";
 import { ProblemSolution } from "@/components/wholesale/ProblemSolution";
