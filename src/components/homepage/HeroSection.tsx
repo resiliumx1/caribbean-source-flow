@@ -9,7 +9,7 @@ import pillarSchool from "@/assets/pillar-school.png";
 const pillars = [
   {
     title: "Professional Supply",
-    description: "Clinical formulations for practitioners, retailers & apothecaries",
+    description: "Clinical formulations for practitioners & retailers",
     cta: "Partner With Us →",
     ctaWeight: "font-medium" as const,
     route: "/wholesale",
@@ -18,8 +18,8 @@ const pillars = [
   },
   {
     title: "The Apothecary",
-    description: "Hand-crafted remedies for personal transformation",
-    cta: "Explore Remedies →",
+    description: "Hand-crafted remedies for personal use",
+    cta: "Shop Remedies →",
     ctaWeight: "font-medium" as const,
     route: "/shop",
     image: pillarApothecary,
@@ -27,16 +27,16 @@ const pillars = [
   },
   {
     title: "Sacred Immersions",
-    description: "Seven-day sanctuary to repair what stress destroyed",
-    cta: "Begin Your Journey →",
+    description: "Seven-day stress recovery retreats",
+    cta: "Reserve Dates →",
     ctaWeight: "font-semibold" as const,
     route: "/retreats",
     image: pillarRetreat,
     icon: Mountain,
   },
   {
-    title: "Mount Kailash Herbal Physician School",
-    description: "Master-level clinical certification in Caribbean bush medicine",
+    title: "Herbal Physician School",
+    description: "Master-level clinical certification",
     cta: "Start Training →",
     ctaWeight: "font-semibold" as const,
     route: "/school/herbal-physician",
@@ -78,17 +78,16 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
       />
 
       {/* Text Content */}
-      <div className="relative z-10 w-3/5 h-full flex flex-col justify-center p-5">
-        <IconComp className="w-5 h-5 mb-2 text-gold" />
-        <h3 className="font-serif text-lg font-bold text-cream mb-1">
+      <div className="relative z-10 w-3/5 h-full flex flex-col justify-center p-3 lg:p-4">
+        <IconComp className="w-4 h-4 mb-1.5 text-gold" />
+        <h3 className="font-serif text-base lg:text-lg font-bold text-cream mb-0.5 leading-tight line-clamp-2">
           {pillar.title}
         </h3>
-        <div className="text-xs text-cream/70 mb-3 font-sans font-light">
+        <div className="text-xs text-cream/70 mb-2 font-sans font-light truncate">
           {pillar.description}
         </div>
         <span className={`inline-flex items-center gap-1 text-sm ${pillar.ctaWeight} mt-auto text-gold`}>
-          {pillar.cta}{" "}
-          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          {pillar.cta}
         </span>
       </div>
     </Link>
