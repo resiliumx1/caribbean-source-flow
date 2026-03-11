@@ -17,10 +17,11 @@ const stats: Stat[] = [
 ];
 
 function AnimatedCounter({ target, suffix, isVisible }: { target: number; suffix: string; isVisible: boolean }) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(target);
 
   useEffect(() => {
     if (!isVisible) return;
+    setCount(0); // reset to 0 then animate up
     const duration = 2000;
     const steps = 60;
     const stepDuration = duration / steps;
@@ -85,7 +86,7 @@ export function ByTheNumbers() {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(201,168,76,0.1)' }}>
                   <Icon className="w-6 h-6" style={{ color: 'var(--site-gold)' }} />
                 </div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 56px)', color: 'var(--site-gold)', lineHeight: 1, marginBottom: '8px' }}>
+                <div className="stat-number" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 56px)', color: 'var(--site-gold)', lineHeight: 1, marginBottom: '8px' }}>
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} isVisible={isInView} />
                 </div>
                 <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>

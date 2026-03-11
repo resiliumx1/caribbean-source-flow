@@ -56,8 +56,7 @@ function PillarCard({ pillar }: { pillar: typeof pillars[number] }) {
       {/* Illustration — right side, large & fully opaque */}
       <img
         src={pillar.image}
-        alt=""
-        aria-hidden="true"
+        alt={`${pillar.title} — ${pillar.description}`}
         className="absolute right-0 top-0 h-full w-3/4 object-contain object-right opacity-100 group-hover:scale-110 transition-transform duration-500"
         style={{
           filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))",
