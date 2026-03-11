@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, MessageCircle, Leaf, FlaskConical, Truck, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/lib/store-context";
-import heroImage from "@/assets/hero-farm.jpg";
+import heroImage from "@/assets/hero-farm.webp";
 
 export function StoreHero() {
   const { whatsappNumber } = useStore();

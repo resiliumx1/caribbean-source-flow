@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Download, Users, Award, Infinity, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/herb-processing.jpg";
+import heroImage from "@/assets/herb-processing.webp";
 
 const trustItems = [
   { icon: Users, label: "14+ Students Enrolled" },

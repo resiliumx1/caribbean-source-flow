@@ -3,9 +3,9 @@ import { useRetreatGallery, RETREAT_CATEGORIES } from "@/hooks/use-retreat-galle
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import heroFarm from "@/assets/hero-farm.jpg";
-import herbProcessing from "@/assets/herb-processing.jpg";
-import seamossHarvest from "@/assets/seamoss-harvest.jpg";
+import heroFarm from "@/assets/hero-farm.webp";
+import herbProcessing from "@/assets/herb-processing.webp";
+import seamossHarvest from "@/assets/seamoss-harvest.webp";
 import retreatHero from "@/assets/retreat-hero-yoga.webp";
 
 const fallbackImages = [heroFarm, herbProcessing, seamossHarvest, retreatHero];

@@ -7,7 +7,7 @@ import {
 import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import tincture from "@/assets/mkrc-answer-tincture.png";
-import heroBottle from "@/assets/the-answer-chronixx-bottle.jpg";
+import heroBottle from "@/assets/the-answer-chronixx-bottle.webp";
 // chronixxPhoto removed — hero now uses bottle as full background
 import "./TheAnswer.css";
 

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { Clock, Calendar, Users } from "lucide-react";
-import webinarImg from "@/assets/mkrc-webinar-featured.jpg";
+import webinarImg from "@/assets/mkrc-webinar-featured.webp";
 
 export default function WebinarFeatured() {
   const ref = useRef<HTMLElement>(null);

@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import priestKailashImg from "@/assets/priest-kailash-host.jpg";
+import priestKailashImg from "@/assets/priest-kailash-host.webp";
 
 const CREDENTIALS = ["Herbal Medicine", "Nutrition", "Holistic Wellness"];
 
