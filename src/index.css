@@ -526,3 +526,12 @@ html:not(.dark) select option {
   border-color: #D4AF37;
   box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
 }
+
+/* CLS prevention for animated stat counters */
+.stat-container {
+  min-height: 60px;
+}
+.stat-number {
+  min-width: 100px;
+  display: inline-block;
+}
