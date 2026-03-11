@@ -37,6 +37,7 @@ export function RetreatsHero() {
             fontSize: 'clamp(3rem, 7vw, 80px)',
             color: '#F5F1E8',
             lineHeight: 1.05,
+            textShadow: '2px 2px 20px rgba(0,0,0,0.6)',
           }}
         >
           Restore. Reset. Reconnect.
@@ -47,11 +48,12 @@ export function RetreatsHero() {
           style={{
             fontFamily: "'Jost', sans-serif",
             fontWeight: 300,
-            fontSize: 'clamp(16px, 2vw, 20px)',
+            fontSize: 'clamp(18px, 2.2vw, 20px)',
             color: '#F5F1E8',
             opacity: 0.9,
             lineHeight: 1.7,
-            maxWidth: '640px',
+            maxWidth: '600px',
+            textShadow: '0 2px 8px rgba(0,0,0,0.4)',
           }}
         >
           For those running on empty. Seven days of cellular restoration to repair your nervous system and reclaim your vital force.
@@ -71,7 +73,7 @@ export function RetreatsHero() {
             }}
           >
             <Calendar className="w-5 h-5 mr-2" />
-            View Group Dates
+            Reserve Group Dates →
           </Button>
           <a
             href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hello, I'd like to inquire about a private retreat at Mount Kailash.")}`}
@@ -91,7 +93,7 @@ export function RetreatsHero() {
               }}
             >
               <MessageCircle className="w-5 h-5 mr-2" />
-              Inquire About Private Retreat
+              Design Private Retreat →
             </Button>
           </a>
         </div>
