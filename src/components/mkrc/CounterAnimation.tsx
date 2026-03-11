@@ -33,6 +33,7 @@ export default function CounterAnimation({
       ([entry]) => {
         if (entry.isIntersecting && !started.current) {
           started.current = true;
+          setCount(0); // reset to 0 then animate up
           const start = performance.now();
           const animate = (now: number) => {
             const elapsed = now - start;
