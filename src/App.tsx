@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "next-themes";
+import { HelmetProvider } from "react-helmet-async";
 import { StoreProvider } from "@/lib/store-context";
 import { ComparisonProvider } from "@/lib/comparison-context";
 import { StoreHeader } from "@/components/store/StoreHeader";
