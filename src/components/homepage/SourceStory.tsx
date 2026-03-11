@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import apothecaryDisplay from "@/assets/apothecary-display.png";
+import apothecaryDisplay from "@/assets/apothecary-display.webp";
 
 export function SourceStory() {
   return (
