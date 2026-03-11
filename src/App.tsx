@@ -4,17 +4,16 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "next-themes";
 import { StoreProvider } from "@/lib/store-context";
 import { ComparisonProvider } from "@/lib/comparison-context";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { CompareBar } from "@/components/store/CompareBar";
-import ChatWidget from "@/components/ChatWidget";
 import ComingSoon from "@/components/ComingSoon";
-import { lazy, Suspense } from "react";
-import { AnimatePresence } from "framer-motion";
-import PageTransition from "@/components/PageTransition";
+
+// Lazy load non-critical global components
+const ChatWidget = lazy(() => import("@/components/ChatWidget"));
 
 // Eagerly loaded (homepage)
 import TrinityHomepage from "./pages/TrinityHomepage";
@@ -109,36 +108,35 @@ function AppContent() {
     <>
       <ScrollToTop />
       {showHeader && <StoreHeader />}
-      <AnimatePresence mode="wait">
-        <Suspense fallback={<PageLoader />} key={location.pathname}>
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<PageTransition><TrinityHomepage /></PageTransition>} />
-            <Route path="/wholesale" element={<PageTransition><Wholesale /></PageTransition>} />
-            <Route path="/shop" element={<PageTransition><Shop /></PageTransition>} />
-            <Route path="/shop/:slug" element={<PageTransition><ProductDetail /></PageTransition>} />
-            <Route path="/cart" element={<PageTransition><Cart /></PageTransition>} />
-            <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
-            <Route path="/compare" element={<PageTransition><ComparePage /></PageTransition>} />
-            
-            <Route path="/retreats" element={<PageTransition><Retreats /></PageTransition>} />
-            <Route path="/the-answer" element={<PageTransition><TheAnswer /></PageTransition>} />
-            <Route path="/webinars" element={<PageTransition><WebinarsPage /></PageTransition>} />
-            <Route path="/school/herbal-physician" element={<PageTransition><HerbalPhysicianCourse /></PageTransition>} />
-            <Route path="/admin/login" element={<PageTransition><AdminLogin /></PageTransition>} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="retreats" element={<AdminRetreats />} />
-              <Route path="retreat-dates" element={<AdminRetreatDates />} />
-              <Route path="reviews" element={<AdminReviews />} />
-              <Route path="webinars" element={<AdminWebinars />} />
-              <Route path="analytics" element={<AdminAnalytics />} />
-            </Route>
-            <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-          </Routes>
-        </Suspense>
-      </AnimatePresence>
+      <Suspense fallback={<PageLoader />}>
+        <Routes location={location}>
+          <Route path="/" element={<TrinityHomepage />} />
+          <Route path="/wholesale" element={<Wholesale />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/shop/:slug" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/compare" element={<ComparePage />} />
+          <Route path="/retreats" element={<Retreats />} />
+          <Route path="/the-answer" element={<TheAnswer />} />
+          <Route path="/webinars" element={<WebinarsPage />} />
+          <Route path="/school/herbal-physician" element={<HerbalPhysicianCourse />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="retreats" element={<AdminRetreats />} />
+            <Route path="retreat-dates" element={<AdminRetreatDates />} />
+            <Route path="reviews" element={<AdminReviews />} />
+            <Route path="webinars" element={<AdminWebinars />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
       <CompareBar />
-      <ChatWidget />
+      <Suspense fallback={null}>
+        <ChatWidget />
+      </Suspense>
     </>
   );
 }
