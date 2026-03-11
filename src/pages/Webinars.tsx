@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { useWebinarVideos, WebinarVideo } from "@/hooks/use-webinar-videos";
 import "@/styles/webinar.css";
 
