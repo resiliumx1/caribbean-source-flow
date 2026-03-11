@@ -130,14 +130,8 @@ export default function TheAnswer() {
   const [expandedHerb, setExpandedHerb] = useState<number | null>(null);
 
   useEffect(() => {
-    document.title = "The Answer — Caribbean Immune Elixir | Oak-Aged 21 Days | Mount Kailash";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "The Answer is MKRC's best-selling immune system enhancer — a handcrafted herbal tincture endorsed by Chronixx. Made in Saint Lucia with Anamu, Vervain & Soursop. Oak-aged 21 days.");
-    // Force dark mode on this page
     document.documentElement.classList.add("dark");
-    return () => {
-      // Don't remove dark class on unmount — let the toggle handle it
-    };
+    return () => {};
   }, []);
 
   return (
