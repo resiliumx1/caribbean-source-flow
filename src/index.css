@@ -535,3 +535,9 @@ html:not(.dark) select option {
   min-width: 100px;
   display: inline-block;
 }
+
+/* Speed Index: defer rendering of off-screen sections */
+.below-fold-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
