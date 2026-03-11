@@ -21,6 +21,7 @@ function AnimatedCounter({ target, suffix, isVisible }: { target: number; suffix
 
   useEffect(() => {
     if (!isVisible) return;
+    setCount(0); // reset to 0 then animate up
     const duration = 2000;
     const steps = 60;
     const stepDuration = duration / steps;
