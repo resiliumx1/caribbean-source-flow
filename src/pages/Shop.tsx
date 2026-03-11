@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { ShopHero } from "@/components/store/ShopHero";
 import { ShopFilterNav } from "@/components/store/ShopFilterNav";
 import { FeaturedProduct } from "@/components/store/FeaturedProduct";
