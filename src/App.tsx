@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "next-themes";
+import { HelmetProvider } from "react-helmet-async";
 import { StoreProvider } from "@/lib/store-context";
 import { ComparisonProvider } from "@/lib/comparison-context";
 import { StoreHeader } from "@/components/store/StoreHeader";
@@ -38,6 +39,7 @@ const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
 const HerbalPhysicianCourse = lazy(() => import("./pages/HerbalPhysicianCourse"));
+const GateEntrancePage = lazy(() => import("./pages/GateEntrancePage"));
 
 const queryClient = new QueryClient();
 
@@ -121,6 +123,7 @@ function AppContent() {
           <Route path="/the-answer" element={<TheAnswer />} />
           <Route path="/webinars" element={<WebinarsPage />} />
           <Route path="/school/herbal-physician" element={<HerbalPhysicianCourse />} />
+          <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="products" element={<AdminProducts />} />
@@ -147,6 +150,7 @@ const App = () => {
   }
 
   return (
+    <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
         attribute="class"
@@ -168,6 +172,7 @@ const App = () => {
         </StoreProvider>
       </ThemeProvider>
     </QueryClientProvider>
+    </HelmetProvider>
   );
 };
 

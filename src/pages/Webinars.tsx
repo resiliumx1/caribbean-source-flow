@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { useWebinarVideos, WebinarVideo } from "@/hooks/use-webinar-videos";
 import "@/styles/webinar.css";
 
@@ -26,9 +27,6 @@ export default function Webinars() {
   const { data: dbVideos = [] } = useWebinarVideos();
 
   useEffect(() => {
-    document.title = "Free Herbal Medicine Webinars | Priest Kailash | Mount Kailash Rejuvenation Centre";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Join free live webinars on herbal medicine, natural health and holistic wellness with Priest Kailash. Expert-led sessions on immunity, fertility, detox and more.");
     // Force dark mode for this page
     document.documentElement.classList.add("dark");
   }, []);
@@ -44,6 +42,7 @@ export default function Webinars() {
 
   return (
     <div style={{ backgroundColor: "#090909", color: "#f2ead8" }}>
+      <SEOHead title="Free Herbal Medicine Webinars | Priest Kailash | Mount Kailash" description="Join free live webinars on herbal medicine, natural health and holistic wellness with Priest Kailash. Expert-led sessions on immunity, fertility, detox and more." path="/webinars" />
       <WebinarHero />
       <WebinarFeatured />
       <WebinarCommunity onVideoClick={setSelectedVideo} />

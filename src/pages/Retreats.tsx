@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import FadeInStagger from "@/components/FadeInStagger";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
 import { RetreatPathSplit } from "@/components/retreats/RetreatPathSplit";
@@ -27,14 +28,11 @@ const GoddessWhatsApp = () => (
 );
 
 const Retreats = () => {
-  useEffect(() => {
-    document.title = "Wellness Retreats in Saint Lucia | Mount Kailash Rejuvenation Centre";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Immersive wellness retreats in St. Lucia's volcanic rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal.");
-  }, []);
+  // SEOHead handles meta tags now
 
   return (
     <main className="min-h-screen">
+      <SEOHead title="Wellness Retreats in Saint Lucia | Mount Kailash" description="Immersive wellness retreats in St. Lucia's volcanic rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal." path="/retreats" />
       <RetreatsHero />
       <FadeInStagger delay={0.1}>
         <RetreatPathSplit />

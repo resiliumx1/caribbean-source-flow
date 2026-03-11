@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { SEOHead } from "@/components/SEOHead";
 import { ShopHero } from "@/components/store/ShopHero";
 import { ShopFilterNav } from "@/components/store/ShopFilterNav";
 import { FeaturedProduct } from "@/components/store/FeaturedProduct";
@@ -42,11 +43,7 @@ export default function Shop() {
   const [activeForm, setActiveForm] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("featured");
 
-  useEffect(() => {
-    document.title = "The Sulphur Ridge Apothecary | Mount Kailash Rejuvenation Centre";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration.");
-  }, []);
+  // SEOHead handles meta tags now
 
   // Build condition → product ID lookup
   const conditionProductMap = useMemo(() => {
@@ -129,6 +126,7 @@ export default function Shop() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
+      <SEOHead title="Natural Herbal Products | The Sulphur Ridge Apothecary | Mount Kailash" description="Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration." path="/shop" />
       <ShopHero />
       <ShopFilterNav
         activeCondition={activeCondition}

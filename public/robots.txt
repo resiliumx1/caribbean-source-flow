@@ -40,4 +40,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://mountkailashslu.com/sitemap.xml
+Sitemap: https://caribbean-source-flow.lovable.app/sitemap.xml
