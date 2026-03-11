@@ -88,7 +88,7 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
   }, []);
 
   const particles = useMemo(() => {
-    return Array.from({ length: 40 }, (_, i) => {
+    return Array.from({ length: 15 }, (_, i) => {
       const s = 1 + Math.random() * 2;
       return {
         id: i,
