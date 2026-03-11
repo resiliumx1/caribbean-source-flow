@@ -135,8 +135,8 @@ export function HeroSection() {
 
               {/* 4-Pillar Grid — fills remaining height */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
-                {pillars.map((pillar) => (
-                  <PillarCard key={pillar.route} pillar={pillar} />
+                {pillars.map((pillar, i) => (
+                  <PillarCard key={pillar.route} pillar={pillar} index={i} />
                 ))}
               </div>
             </div>
