@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, ClipboardList, ShoppingBag, Mountain, GraduationCap } from "lucide-react";
-import priestPhoto from "@/assets/priest-kailash-host.jpg";
+import priestPhoto from "@/assets/priest-kailash-host.webp";
 import pillarWholesale from "@/assets/pillar-wholesale.png";
 import pillarApothecary from "@/assets/pillar-apothecary.png";
 import pillarRetreat from "@/assets/pillar-retreat.png";

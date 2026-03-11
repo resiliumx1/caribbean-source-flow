@@ -1,5 +1,5 @@
 import { Leaf, ArrowRight } from "lucide-react";
-import priestPhoto from "@/assets/priest-kailash-host.jpg";
+import priestPhoto from "@/assets/priest-kailash-host.webp";
 
 export function PriestKailashBio() {
   return (

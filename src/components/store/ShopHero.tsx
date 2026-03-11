@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import heroImage from "@/assets/shop-hero-apothecary.png";
+import heroImage from "@/assets/shop-hero-apothecary.webp";
 
 const trustPills = [
   "3-Day US Shipping",
