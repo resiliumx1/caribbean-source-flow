@@ -172,6 +172,7 @@ const App = () => {
         </StoreProvider>
       </ThemeProvider>
     </QueryClientProvider>
+    </HelmetProvider>
   );
 };
 
