@@ -32,6 +32,7 @@ const Retreats = () => {
 
   return (
     <main className="min-h-screen">
+      <SEOHead title="Wellness Retreats in Saint Lucia | Mount Kailash" description="Immersive wellness retreats in St. Lucia's volcanic rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal." path="/retreats" />
       <RetreatsHero />
       <FadeInStagger delay={0.1}>
         <RetreatPathSplit />

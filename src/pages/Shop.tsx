@@ -126,6 +126,7 @@ export default function Shop() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
+      <SEOHead title="Natural Herbal Products | The Sulphur Ridge Apothecary | Mount Kailash" description="Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration." path="/shop" />
       <ShopHero />
       <ShopFilterNav
         activeCondition={activeCondition}

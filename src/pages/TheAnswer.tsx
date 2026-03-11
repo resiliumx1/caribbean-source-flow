@@ -136,6 +136,7 @@ export default function TheAnswer() {
 
   return (
     <div className="the-answer-page min-h-screen">
+      <SEOHead title="The Answer — Caribbean Immune Elixir | Endorsed by Chronixx | Mount Kailash" description="The Answer is MKRC's best-selling immune system enhancer — a handcrafted herbal tincture endorsed by Chronixx. Made in Saint Lucia with Anamu, Vervain & Soursop. Oak-aged 21 days." path="/the-answer" />
 
       {/* ===== 1. GALLERY HERO: Bottle as Sculpture ===== */}
       <section className="answer-hero">
