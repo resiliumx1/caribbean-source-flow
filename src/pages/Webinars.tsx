@@ -30,8 +30,6 @@ export default function Webinars() {
     // Force dark mode for this page
     document.documentElement.classList.add("dark");
   }, []);
-    document.documentElement.classList.add("dark");
-  }, []);
 
   // Filter videos by search query
   const filteredVideos = searchQuery.trim()
