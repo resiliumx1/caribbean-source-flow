@@ -17,7 +17,7 @@ const stats: Stat[] = [
 ];
 
 function AnimatedCounter({ target, suffix, isVisible }: { target: number; suffix: string; isVisible: boolean }) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(target);
 
   useEffect(() => {
     if (!isVisible) return;
