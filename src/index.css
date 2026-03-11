@@ -504,3 +504,25 @@ html:not(.dark) select option {
   background: var(--site-bg-card);
   color: var(--site-text-primary);
 }
+
+/* ═══ Wholesale form inputs ═══ */
+.wholesale-form-input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #c8ccc8;
+  background: #fff;
+  color: #0a1f0a;
+  padding: 14px 16px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.wholesale-form-input::placeholder {
+  color: #9CA3AF;
+}
+.wholesale-form-input:focus {
+  border-color: #D4AF37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
