@@ -123,6 +123,7 @@ function AppContent() {
           <Route path="/the-answer" element={<TheAnswer />} />
           <Route path="/webinars" element={<WebinarsPage />} />
           <Route path="/school/herbal-physician" element={<HerbalPhysicianCourse />} />
+          <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="products" element={<AdminProducts />} />
