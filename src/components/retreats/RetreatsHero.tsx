@@ -24,7 +24,7 @@ export function RetreatsHero() {
           height={933}
           style={{ filter: 'saturate(110%) brightness(105%)' }}
         />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(15,40,30,0.45) 0%, rgba(15,40,30,0.25) 40%, rgba(15,40,30,0.6) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(15,40,30,0.5) 0%, rgba(15,40,30,0.3) 30%, rgba(15,40,30,0.7) 60%, rgba(15,40,30,0.85) 100%)' }} />
       </div>
 
       {/* Content - Centered */}
