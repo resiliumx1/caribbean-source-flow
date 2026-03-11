@@ -4,9 +4,9 @@ import retreatHero from "@/assets/retreat-hero-yoga.webp";
 
 const features = [
 "Daily one-on-one consultations",
-"Harvest-to-bottle workshops",
+"Complete daily workshops",
 "90-day post-retreat protocol included",
-"Next cohort: March 2026"];
+"All inclusive amenities"];
 
 
 export function RidgeRetreat() {
