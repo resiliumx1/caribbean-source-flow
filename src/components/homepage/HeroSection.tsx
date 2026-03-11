@@ -78,17 +78,16 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
       />
 
       {/* Text Content */}
-      <div className="relative z-10 w-3/5 h-full flex flex-col justify-center p-5">
-        <IconComp className="w-5 h-5 mb-2 text-gold" />
-        <h3 className="font-serif text-lg font-bold text-cream mb-1">
+      <div className="relative z-10 w-3/5 h-full flex flex-col justify-center p-3 lg:p-4">
+        <IconComp className="w-4 h-4 mb-1.5 text-gold" />
+        <h3 className="font-serif text-base lg:text-lg font-bold text-cream mb-0.5 leading-tight line-clamp-2">
           {pillar.title}
         </h3>
-        <div className="text-xs text-cream/70 mb-3 font-sans font-light">
+        <div className="text-xs text-cream/70 mb-2 font-sans font-light truncate">
           {pillar.description}
         </div>
         <span className={`inline-flex items-center gap-1 text-sm ${pillar.ctaWeight} mt-auto text-gold`}>
-          {pillar.cta}{" "}
-          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          {pillar.cta}
         </span>
       </div>
     </Link>
