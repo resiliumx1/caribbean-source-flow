@@ -112,8 +112,8 @@ export function ConsultationCTA() {
             to="/retreats"
             className="group inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:brightness-110 w-full sm:w-auto justify-center"
             style={{
-              background: "var(--site-gold)",
-              color: "#FFFFFF",
+              background: "var(--site-gold, #BC8A5F)",
+              color: "#0F281E",
               fontFamily: "'Jost', sans-serif",
               fontSize: "16px",
             }}

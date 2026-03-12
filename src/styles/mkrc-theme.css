@@ -1,46 +1,46 @@
 /* MKRC Theme System — scoped via [data-mkrc-theme] attribute */
-/* Aligned with organic green palette */
+/* Does NOT conflict with existing Tailwind dark/light mode */
 
 [data-mkrc-theme="dark"] {
-  --mkrc-bg-primary: #0F1A15;
-  --mkrc-bg-secondary: #141F1A;
-  --mkrc-bg-surface: #1A2F24;
-  --mkrc-bg-elevated: #243D30;
-  --mkrc-bg-card: #1E3228;
-  --mkrc-accent-gold: #4A8B6F;
-  --mkrc-accent-gold-bright: #5CA382;
-  --mkrc-accent-gold-dim: #3D7A54;
+  --mkrc-bg-primary: #0D0D0D;
+  --mkrc-bg-secondary: #141410;
+  --mkrc-bg-surface: #1A1A16;
+  --mkrc-bg-elevated: #242420;
+  --mkrc-bg-card: #1E1E1A;
+  --mkrc-accent-gold: #C9A84C;
+  --mkrc-accent-gold-bright: #D4AF37;
+  --mkrc-accent-gold-dim: #A68A3E;
   --mkrc-accent-green: #3A7D53;
   --mkrc-accent-green-deep: #2D5A3D;
-  --mkrc-text-primary: #F5F5F0;
-  --mkrc-text-secondary: #B8C4B8;
-  --mkrc-text-tertiary: #6B8B6B;
-  --mkrc-text-inverse: #0F1A15;
-  --mkrc-border-subtle: rgba(74,139,111,0.12);
-  --mkrc-border-medium: rgba(74,139,111,0.25);
-  --mkrc-glow-gold: rgba(74,139,111,0.15);
+  --mkrc-text-primary: #F5F0E8;
+  --mkrc-text-secondary: #A09888;
+  --mkrc-text-tertiary: #706858;
+  --mkrc-text-inverse: #0D0D0D;
+  --mkrc-border-subtle: rgba(201,168,76,0.12);
+  --mkrc-border-medium: rgba(201,168,76,0.25);
+  --mkrc-glow-gold: rgba(201,168,76,0.15);
   --mkrc-glow-green: rgba(58,125,83,0.12);
   --mkrc-shadow-card: 0 8px 32px rgba(0,0,0,0.4);
 }
 
 [data-mkrc-theme="light"] {
-  --mkrc-bg-primary: #F5F8F5;
-  --mkrc-bg-secondary: #E8F0E9;
+  --mkrc-bg-primary: #FAF7F2;
+  --mkrc-bg-secondary: #F5F0E8;
   --mkrc-bg-surface: #FFFFFF;
-  --mkrc-bg-elevated: #F0F5F1;
+  --mkrc-bg-elevated: #FBF9F5;
   --mkrc-bg-card: #FFFFFF;
-  --mkrc-accent-gold: #2D5A3F;
-  --mkrc-accent-gold-bright: #3D7A54;
-  --mkrc-accent-gold-dim: #1E3D2A;
+  --mkrc-accent-gold: #B8942F;
+  --mkrc-accent-gold-bright: #C9A84C;
+  --mkrc-accent-gold-dim: #A68A3E;
   --mkrc-accent-green: #2D5A3D;
   --mkrc-accent-green-deep: #1E3D2A;
-  --mkrc-text-primary: #1A1A1A;
-  --mkrc-text-secondary: #4A5D4F;
-  --mkrc-text-tertiary: #7D9B76;
-  --mkrc-text-inverse: #F5F5F0;
-  --mkrc-border-subtle: rgba(26,26,26,0.08);
-  --mkrc-border-medium: rgba(26,26,26,0.15);
-  --mkrc-glow-gold: rgba(45,90,63,0.08);
+  --mkrc-text-primary: #1A1512;
+  --mkrc-text-secondary: #5C5347;
+  --mkrc-text-tertiary: #8A7F72;
+  --mkrc-text-inverse: #F5F0E8;
+  --mkrc-border-subtle: rgba(26,21,18,0.08);
+  --mkrc-border-medium: rgba(26,21,18,0.15);
+  --mkrc-glow-gold: rgba(201,168,76,0.08);
   --mkrc-glow-green: rgba(45,90,61,0.06);
   --mkrc-shadow-card: 0 4px 24px rgba(0,0,0,0.06);
 }

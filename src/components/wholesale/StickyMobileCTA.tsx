@@ -13,9 +13,9 @@ export const StickyMobileCTA = () => {
       className="fixed bottom-0 left-0 right-0 z-40 md:hidden flex items-center justify-center gap-2"
       style={{
         height: "64px",
-        background: "var(--site-green-dark)",
+        background: "#0F281E",
         borderTop: "1px solid var(--site-gold)",
-        color: "var(--site-footer-text)",
+        color: "#F5F1E8",
         fontFamily: "'Jost', sans-serif",
         fontWeight: 500,
         fontSize: "15px",

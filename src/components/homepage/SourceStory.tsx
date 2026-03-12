@@ -141,7 +141,7 @@ export function SourceStory() {
               className="inline-flex items-center gap-2 px-8 py-4 rounded-md font-medium transition-all hover:brightness-110"
               style={{
                 background: "var(--site-gold)",
-                color: "#FFFFFF",
+                color: "#0F281E",
                 fontFamily: "'Jost', sans-serif",
                 fontWeight: 500,
                 fontSize: "15px",

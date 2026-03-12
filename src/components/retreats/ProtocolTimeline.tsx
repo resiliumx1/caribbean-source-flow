@@ -45,7 +45,7 @@ export function ProtocolTimeline() {
               y1="2"
               x2="90%"
               y2="2"
-              stroke="var(--site-gold)"
+              stroke="#c9a84c"
               strokeWidth="2"
               strokeDasharray="8 6"
               style={{ pathLength }}
@@ -56,7 +56,7 @@ export function ProtocolTimeline() {
               y1="2"
               x2="90%"
               y2="2"
-              stroke="var(--site-border-subtle)"
+              stroke="rgba(201,168,76,0.15)"
               strokeWidth="2"
               strokeDasharray="8 6"
             />
@@ -72,7 +72,7 @@ export function ProtocolTimeline() {
               y1="30"
               x2="2"
               y2="95%"
-              stroke="var(--site-gold)"
+              stroke="#c9a84c"
               strokeWidth="2"
               strokeDasharray="8 6"
               style={{ pathLength }}
@@ -102,19 +102,19 @@ export function ProtocolTimeline() {
                     style={{
                       width: '56px',
                       height: '56px',
-                      background: isActive ? 'var(--site-gold)' : 'var(--site-bg-deep)',
-                      border: '2px solid var(--site-gold)',
+                      background: isActive ? '#c9a84c' : 'var(--site-bg-deep)',
+                      border: '2px solid #c9a84c',
                     }}
                     whileHover={{ scale: 1.1 }}
                   >
-                    <Icon className="w-6 h-6 transition-colors" style={{ color: isActive ? '#FFFFFF' : 'var(--site-gold)' }} />
+                    <Icon className="w-6 h-6 transition-colors" style={{ color: isActive ? '#090909' : '#c9a84c' }} />
                   </motion.div>
 
                   <div className="md:mt-2">
-                    <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '14px', color: 'var(--site-gold)', display: 'block', marginBottom: '4px' }}>
+                    <span style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '14px', color: '#c9a84c', display: 'block', marginBottom: '4px' }}>
                       0{index + 1}
                     </span>
-                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '18px', color: isActive ? 'var(--site-gold)' : 'var(--site-text-primary)', marginBottom: '8px', transition: 'color 0.3s' }}>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '18px', color: isActive ? '#c9a84c' : 'var(--site-text-primary)', marginBottom: '8px', transition: 'color 0.3s' }}>
                       {step.title}
                     </h3>
                     <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: 'var(--site-text-muted)', maxWidth: '200px', lineHeight: 1.6 }}>

@@ -73,8 +73,8 @@ export function SocialProofMatrix() {
                 <div className="h-full rounded-2xl p-9" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)' }}>
                   {/* Credentials at top */}
                   <div className="flex items-center gap-4 mb-5">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'var(--site-gold)', border: '2px solid var(--site-gold)' }}>
-                      <User className="w-6 h-6" style={{ color: '#FFFFFF' }} />
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', border: '2px solid #c9a84c' }}>
+                      <User className="w-6 h-6" style={{ color: '#090909' }} />
                     </div>
                     <div>
                       <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
@@ -91,7 +91,7 @@ export function SocialProofMatrix() {
                   {/* Stars */}
                   <div className="flex gap-0.5 mb-4">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4" style={{ fill: 'var(--site-gold)', color: 'var(--site-gold)' }} />
+                      <Star key={i} className="w-4 h-4 fill-[#c9a84c] text-[#c9a84c]" />
                     ))}
                   </div>
 
@@ -101,7 +101,7 @@ export function SocialProofMatrix() {
                   </p>
 
                   {testimonial.results && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(45,90,63,0.1)', color: 'var(--site-gold-text)' }}>
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>
                       ✓ {testimonial.results}
                     </div>
                   )}
@@ -120,7 +120,7 @@ export function SocialProofMatrix() {
               onClick={() => emblaApi?.scrollTo(index)}
               className={`rounded-full transition-all duration-300 ${index === selectedIndex ? "w-8 h-3" : "w-3 h-3"}`}
               style={{
-                background: index === selectedIndex ? 'var(--site-gold)' : 'var(--site-border-subtle)',
+                background: index === selectedIndex ? '#c9a84c' : 'rgba(201,168,76,0.3)',
                 minWidth: 24,
                 minHeight: 24,
                 display: 'flex',
@@ -133,7 +133,7 @@ export function SocialProofMatrix() {
             >
               <span
                 className={`block rounded-full transition-all duration-300 ${index === selectedIndex ? "w-8 h-2" : "w-2 h-2"}`}
-                style={{ background: index === selectedIndex ? 'var(--site-gold)' : 'var(--site-border-subtle)' }}
+                style={{ background: index === selectedIndex ? '#c9a84c' : 'rgba(201,168,76,0.3)' }}
               />
             </button>
           ))}
