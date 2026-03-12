@@ -28,26 +28,8 @@ function useIsMobile() {
 }
 
 export default function ChatWidget() {
-  // Gate visibility: hidden until gate-complete on homepage first visit
-  const [visible, setVisible] = useState(() => {
-    const isHome = window.location.pathname === '/' || window.location.pathname === '';
-    const hasSeenGate = !!localStorage.getItem('mkrc-gate-seen');
-    return !isHome || hasSeenGate;
-  });
-
-  useEffect(() => {
-    const onComplete = () => setVisible(true);
-    const checkRoute = () => {
-      if (window.location.pathname !== '/') setVisible(true);
-    };
-
-    window.addEventListener('gate-complete', onComplete);
-    window.addEventListener('popstate', checkRoute);
-    return () => {
-      window.removeEventListener('gate-complete', onComplete);
-      window.removeEventListener('popstate', checkRoute);
-    };
-  }, []);
+  // Always visible — gate entrance is handled separately
+  const visible = true;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
