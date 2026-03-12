@@ -52,7 +52,7 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
     <Link
       to={pillar.route}
       className="group relative overflow-hidden rounded-2xl block transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(188,138,95,0.15)] border border-gold/20 hover:border-gold"
-      style={{ background: "hsl(150 35% 12% / 0.8)" }}
+      style={{ background: "hsl(152 48% 20% / 0.9)" }}
     >
       {/* Illustration — right side, large & fully opaque */}
       <img
@@ -73,17 +73,17 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(to right, hsl(150 35% 12%) 35%, hsl(150 35% 12% / 0.85) 55%, transparent 100%)",
+          background: "linear-gradient(to right, hsl(152 48% 20%) 40%, hsl(152 48% 20% / 0.9) 60%, transparent 100%)",
         }}
       />
 
       {/* Text Content */}
       <div className="relative z-10 w-3/5 h-full flex flex-col justify-center p-3 lg:p-4">
         <IconComp className="w-4 h-4 mb-1.5 text-gold" />
-        <h3 className="font-serif text-base lg:text-lg font-bold text-cream mb-0.5 leading-tight line-clamp-2">
+        <h3 className="font-serif text-base lg:text-lg font-bold text-cream mb-0.5 leading-tight">
           {pillar.title}
         </h3>
-        <div className="text-xs text-cream/70 mb-2 font-sans font-light truncate">
+        <div className="text-xs text-cream/70 mb-2 font-sans font-light leading-snug">
           {pillar.description}
         </div>
         <span className={`inline-flex items-center gap-1 text-sm ${pillar.ctaWeight} mt-auto text-gold`}>
