@@ -44,7 +44,7 @@ export function FeaturedProduct() {
       className="rounded-2xl overflow-hidden mb-16"
       style={{
         background: "var(--site-green-dark)",
-        border: "1px solid rgba(188,138,95,0.2)",
+        border: "1px solid var(--site-border-subtle)",
       }}
     >
       <div className="grid md:grid-cols-2 gap-0">
@@ -72,7 +72,7 @@ export function FeaturedProduct() {
               fontFamily: "'Playfair Display', serif",
               fontWeight: 700,
               fontSize: "36px",
-              color: "#F5F1E8",
+              color: "var(--site-footer-text)",
               lineHeight: 1.15,
             }}
           >
@@ -118,7 +118,7 @@ export function FeaturedProduct() {
             className="w-full max-w-xs py-3 rounded-full font-medium text-sm transition-all hover:brightness-110 disabled:opacity-50 flex items-center justify-center gap-2 mb-4"
             style={{
               background: "var(--site-gold)",
-              color: "var(--site-green-dark)",
+              color: "#FFFFFF",
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
             }}
