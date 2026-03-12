@@ -72,13 +72,15 @@ export function StoreHeader() {
 
   return (
     <header 
-      className="sticky top-0 z-50 transition-all duration-500 border-b"
+      className="fixed top-0 left-0 right-0 transition-all duration-500 border-b shadow-md"
       style={{
-        background: isScrolled ? 'var(--site-nav-bg)' : 'var(--site-nav-bg)',
-        backdropFilter: isScrolled ? 'blur(16px)' : 'blur(8px)',
-        borderColor: isScrolled ? 'var(--site-border-subtle)' : 'transparent',
+        zIndex: 9999,
+        background: 'var(--site-header-bg)',
+        backdropFilter: 'blur(16px)',
+        borderColor: 'var(--site-header-border)',
         display: headerVisible ? undefined : 'none',
         transition: 'opacity 0.6s ease, backdrop-filter 0.5s ease, border-color 0.5s ease',
+        width: '100%',
       }}
     >
       {isLocalVisitor && (

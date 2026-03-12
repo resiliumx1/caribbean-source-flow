@@ -24,7 +24,7 @@ export function RetreatsHero() {
           height={933}
           style={{ filter: 'saturate(110%) brightness(105%)' }}
         />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(15,40,30,0.5) 0%, rgba(15,40,30,0.3) 30%, rgba(15,40,30,0.7) 60%, rgba(15,40,30,0.85) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.75) 100%)' }} />
       </div>
 
       {/* Content - Centered */}
@@ -37,7 +37,7 @@ export function RetreatsHero() {
             fontSize: 'clamp(3rem, 7vw, 80px)',
             color: '#F5F1E8',
             lineHeight: 1.05,
-            textShadow: '2px 2px 20px rgba(0,0,0,0.6)',
+            textShadow: '0 2px 8px rgba(0,0,0,0.7), 0 4px 20px rgba(0,0,0,0.5)',
           }}
         >
           Restore. Reset. Reconnect.
@@ -53,7 +53,7 @@ export function RetreatsHero() {
             opacity: 0.9,
             lineHeight: 1.7,
             maxWidth: '600px',
-            textShadow: '0 2px 8px rgba(0,0,0,0.4)',
+            textShadow: '0 2px 6px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4)',
           }}
         >
           For those running on empty. Seven days of cellular restoration to repair your nervous system and reclaim your vital force.
