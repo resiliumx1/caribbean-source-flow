@@ -44,7 +44,7 @@ export function FeaturedProduct() {
       className="rounded-2xl overflow-hidden mb-16"
       style={{
         background: "var(--site-green-dark)",
-        border: "1px solid rgba(188,138,95,0.2)",
+        border: "1px solid var(--site-border-subtle)",
       }}
     >
       <div className="grid md:grid-cols-2 gap-0">

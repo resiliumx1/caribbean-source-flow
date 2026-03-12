@@ -59,7 +59,7 @@ export const PrivateLabel = ({ onScrollToForm }: PrivateLabelProps) => {
             <button
               onClick={onScrollToForm}
               className="inline-flex items-center gap-2 px-10 py-4 rounded-full transition-all hover:brightness-110 hover:scale-[1.02]"
-              style={{ background: "var(--site-gold)", color: "#0F281E", fontWeight: 600, fontSize: "16px" }}
+              style={{ background: "var(--site-gold)", color: "#FFFFFF", fontWeight: 600, fontSize: "16px" }}
             >
               Discuss Custom Manufacturing
               <ArrowRight className="w-5 h-5" />
