@@ -268,7 +268,7 @@
   }
 
   input:focus, textarea:focus, select:focus {
-    outline: 2px solid var(--site-gold, #BC8A5F);
+    outline: 2px solid var(--site-gold, #2D5A3F);
     outline-offset: 2px;
   }
 
