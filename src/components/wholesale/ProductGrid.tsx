@@ -41,7 +41,7 @@ interface ProductGridProps {
 
 export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "var(--site-green-dark)", fontFamily: "'Jost', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <p
@@ -50,10 +50,10 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
           >
             Product Categories
           </p>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8" }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-footer-text)" }}>
             Caribbean Botanicals, Sourced at Origin
           </h2>
-          <p className="mt-3" style={{ color: "#A8B5A0", fontWeight: 300, fontSize: "16px", maxWidth: "560px", margin: "12px auto 0" }}>
+          <p className="mt-3" style={{ color: "var(--site-footer-muted)", fontWeight: 300, fontSize: "16px", maxWidth: "560px", margin: "12px auto 0" }}>
             Single-origin St. Lucian herbs, naturally harvested with full documentation for every batch.
           </p>
         </div>
@@ -63,7 +63,7 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
             <div 
               key={category.id} 
               className="rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] group"
-              style={{ background: "#1B4332", border: "1px solid #2D6A4F" }}
+              style={{ background: "var(--site-green-mid)", border: "1px solid var(--site-border)" }}
             >
               <div className="relative h-44 overflow-hidden">
                 <img
@@ -72,10 +72,10 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   style={{ filter: "brightness(1.1)" }}
                 />
-                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(27,67,50,0.9) 100%)" }} />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(15,26,21,0.9) 100%)" }} />
                 <div className="absolute bottom-3 left-4 flex items-center gap-2">
                   <category.icon className="w-5 h-5" style={{ color: "var(--site-gold)" }} />
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "20px", color: "#F5F1E8" }}>
+                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "20px", color: "var(--site-footer-text)" }}>
                     {category.title}
                   </h3>
                 </div>
@@ -84,7 +84,7 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
               <div className="p-5">
                 <ul className="space-y-2.5 mb-5">
                   {category.specs.map((spec) => (
-                    <li key={spec} className="flex items-start gap-2" style={{ fontSize: "14px", color: "#F5F1E8", fontWeight: 300 }}>
+                    <li key={spec} className="flex items-start gap-2" style={{ fontSize: "14px", color: "var(--site-footer-text)", fontWeight: 300 }}>
                       <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: "var(--site-gold)" }} />
                       {spec}
                     </li>
@@ -94,7 +94,7 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
                 <button 
                   onClick={onScrollToForm}
                   className="flex items-center gap-1.5 transition-colors hover:underline group/link w-full"
-                  style={{ color: "#F5F1E8", fontWeight: 600, fontSize: "15px", letterSpacing: "0.02em" }}
+                  style={{ color: "var(--site-footer-text)", fontWeight: 600, fontSize: "15px", letterSpacing: "0.02em" }}
                 >
                   Request a Quote
                   <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />

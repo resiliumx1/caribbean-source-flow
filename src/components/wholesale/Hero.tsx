@@ -25,7 +25,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
       </div>
 
       {/* Dark Overlay 60% */}
-      <div className="absolute inset-0 z-[1]" style={{ background: "rgba(15,40,30,0.6)" }} />
+      <div className="absolute inset-0 z-[1]" style={{ background: "rgba(15,26,21,0.6)" }} />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-24 md:py-32">
@@ -66,7 +66,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
                 style={{
                   color: "var(--site-hero-text-on-dark)",
                   background: "rgba(0,0,0,0.45)",
-                  border: "1px solid rgba(188,138,95,0.35)",
+                  border: "1px solid var(--site-border-subtle)",
                   fontFamily: "'Jost', sans-serif",
                   fontWeight: 400,
                   fontSize: "12px",
@@ -89,7 +89,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
               className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full font-medium transition-all hover:brightness-110 hover:scale-[1.02]"
               style={{
                 background: "var(--site-gold)",
-                color: "#0F281E",
+                color: "#FFFFFF",
                 fontFamily: "'Jost', sans-serif",
                 fontWeight: 600,
                 fontSize: "16px",
@@ -119,8 +119,8 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce z-10">
-        <div className="w-6 h-10 rounded-full border-2 flex justify-center pt-2" style={{ borderColor: "rgba(245,240,224,0.5)" }}>
-          <div className="w-1.5 h-3 rounded-full" style={{ background: "rgba(245,240,224,0.7)" }} />
+        <div className="w-6 h-10 rounded-full border-2 flex justify-center pt-2" style={{ borderColor: "rgba(245,245,240,0.5)" }}>
+          <div className="w-1.5 h-3 rounded-full" style={{ background: "rgba(245,245,240,0.7)" }} />
         </div>
       </div>
     </section>

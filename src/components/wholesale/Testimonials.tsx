@@ -20,7 +20,7 @@ const testimonials = [
 
 export const Testimonials = () => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "var(--site-green-dark)", fontFamily: "'Jost', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <p
@@ -29,7 +29,7 @@ export const Testimonials = () => {
           >
             Partner Testimonials
           </p>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8" }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-footer-text)" }}>
             Trusted Across 3 Continents
           </h2>
         </div>
@@ -39,7 +39,7 @@ export const Testimonials = () => {
             <div
               key={i}
               className="rounded-2xl p-8"
-              style={{ background: "rgba(27,67,50,0.6)", border: "1px solid rgba(188,138,95,0.2)" }}
+              style={{ background: "rgba(26,47,36,0.6)", border: "1px solid var(--site-border-subtle)" }}
             >
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, j) => (
@@ -48,12 +48,12 @@ export const Testimonials = () => {
               </div>
               <blockquote
                 className="mb-6"
-                style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontStyle: "italic", fontSize: "18px", color: "#F5F1E8", lineHeight: 1.6 }}
+                style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontStyle: "italic", fontSize: "18px", color: "var(--site-footer-text)", lineHeight: 1.6 }}
               >
                 "{t.quote}"
               </blockquote>
-              <p style={{ fontWeight: 500, fontSize: "15px", color: "#F5F1E8" }}>{t.author}</p>
-              <p style={{ fontWeight: 300, fontSize: "13px", color: "#A8B5A0" }}>{t.role}</p>
+              <p style={{ fontWeight: 500, fontSize: "15px", color: "var(--site-footer-text)" }}>{t.author}</p>
+              <p style={{ fontWeight: 300, fontSize: "13px", color: "var(--site-footer-muted)" }}>{t.role}</p>
             </div>
           ))}
         </div>
