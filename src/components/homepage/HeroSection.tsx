@@ -96,7 +96,7 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex flex-col bg-forest-dark">
+    <section className="relative min-h-screen flex flex-col bg-forest-dark pt-24">
       {/* Main content — vertically centered */}
       <div className="flex-1 flex items-center">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-8">
