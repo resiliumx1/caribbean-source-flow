@@ -117,6 +117,8 @@
     --site-hero-overlay-to: rgba(0,0,0,0.15);
     --site-card-hover-border: #BC8A5F;
     --site-nav-bg: rgba(245,241,232,0.95);
+    --site-header-bg: rgba(255,255,255,0.98);
+    --site-header-border: #E5E7EB;
     --site-footer-bg: #0F281E;
     --site-footer-text: #F5F1E8;
     --site-footer-muted: #A8B5A0;
