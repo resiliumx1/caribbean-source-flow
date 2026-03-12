@@ -176,10 +176,10 @@
     --shadow-2xl: 0 25px 50px -12px hsla(0, 0%, 100%, 0.1);
 
     /* ═══ Site-wide theme tokens (DARK) ═══ */
-    --site-bg-primary: #0F281E;
-    --site-bg-secondary: #132E22;
-    --site-bg-card: #1B4332;
-    --site-bg-deep: #0A1F15;
+    --site-bg-primary: #1B4D2E;
+    --site-bg-secondary: #1F5433;
+    --site-bg-card: #2E5C3F;
+    --site-bg-deep: #153D24;
     --site-text-primary: #F5F1E8;
     --site-text-secondary: #A8B5A0;
     --site-text-muted: #A8B5A0;
