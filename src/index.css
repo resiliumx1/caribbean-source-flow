@@ -523,8 +523,8 @@ html:not(.dark) select option {
   color: #9CA3AF;
 }
 .wholesale-form-input:focus {
-  border-color: #D4AF37;
-  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+  border-color: #2D5A3F;
+  box-shadow: 0 0 0 2px rgba(45, 90, 63, 0.2);
 }
 
 /* CLS prevention for animated stat counters */
