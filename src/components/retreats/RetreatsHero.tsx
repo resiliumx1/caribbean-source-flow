@@ -53,7 +53,7 @@ export function RetreatsHero() {
             opacity: 0.9,
             lineHeight: 1.7,
             maxWidth: '600px',
-            textShadow: '0 2px 8px rgba(0,0,0,0.4)',
+            textShadow: '0 2px 6px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4)',
           }}
         >
           For those running on empty. Seven days of cellular restoration to repair your nervous system and reclaim your vital force.

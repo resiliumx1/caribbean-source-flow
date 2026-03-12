@@ -195,6 +195,8 @@
     --site-hero-overlay-to: rgba(0,0,0,0.15);
     --site-card-hover-border: #D4A373;
     --site-nav-bg: rgba(15,40,30,0.95);
+    --site-header-bg: rgba(26,47,36,0.98);
+    --site-header-border: #2D5A3F;
     --site-footer-bg: #0F281E;
     --site-footer-text: #F5F1E8;
     --site-footer-muted: #A8B5A0;
