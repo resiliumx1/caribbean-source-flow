@@ -72,7 +72,7 @@ export function FeaturedProduct() {
               fontFamily: "'Playfair Display', serif",
               fontWeight: 700,
               fontSize: "36px",
-              color: "#F5F1E8",
+              color: "var(--site-footer-text)",
               lineHeight: 1.15,
             }}
           >
