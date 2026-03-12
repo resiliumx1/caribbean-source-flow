@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, ClipboardList, ShoppingBag, Mountain, GraduationCap } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import priestPhoto from "@/assets/priest-kailash-host.webp";
 import pillarWholesale from "@/assets/pillar-wholesale.png";
 import pillarApothecary from "@/assets/pillar-apothecary.png";
@@ -10,7 +11,7 @@ const pillars = [
   {
     title: "Professional Supply",
     description: "Clinical formulations for practitioners & retailers",
-    cta: "Partner With Us →",
+    cta: "Partner With Us",
     ctaWeight: "font-medium" as const,
     route: "/wholesale",
     image: pillarWholesale,
@@ -19,7 +20,7 @@ const pillars = [
   {
     title: "The Apothecary",
     description: "Hand-crafted remedies for personal use",
-    cta: "Shop Remedies →",
+    cta: "Shop Remedies",
     ctaWeight: "font-medium" as const,
     route: "/shop",
     image: pillarApothecary,
@@ -28,7 +29,7 @@ const pillars = [
   {
     title: "Sacred Immersions",
     description: "Seven-day stress recovery retreats",
-    cta: "Reserve Dates →",
+    cta: "Reserve Dates",
     ctaWeight: "font-semibold" as const,
     route: "/retreats",
     image: pillarRetreat,
@@ -37,7 +38,7 @@ const pillars = [
   {
     title: "Herbal Physician School",
     description: "Master-level clinical certification",
-    cta: "Start Training →",
+    cta: "Start Training",
     ctaWeight: "font-semibold" as const,
     route: "/school/herbal-physician",
     image: pillarSchool,
@@ -48,13 +49,35 @@ const pillars = [
 function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: number }) {
   const IconComp = pillar.icon;
   const isAboveFold = index === 0;
+  const cardRef = useRef<HTMLAnchorElement>(null);
+  const [drawn, setDrawn] = useState(false);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setDrawn(true); obs.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <Link
+      ref={cardRef}
       to={pillar.route}
-      className="group relative overflow-hidden rounded-2xl block transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(188,138,95,0.15)] border border-gold/20 hover:border-gold"
-      style={{ background: "hsl(152 48% 20% / 0.9)" }}
+      className="pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500"
+      style={{
+        background: "hsl(152 48% 20% / 0.9)",
+        animationDelay: `${index * 200}ms`,
+      }}
+      data-drawn={drawn}
     >
-      {/* Illustration — right side, large & fully opaque */}
+      {/* Animated border wrapper */}
+      <div className="pillar-border-glow absolute inset-0 rounded-2xl pointer-events-none z-20" />
+
+      {/* Illustration */}
       <img
         src={pillar.image}
         alt={`${pillar.title} — ${pillar.description}`}
@@ -69,7 +92,7 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
         height={388}
       />
 
-      {/* Gradient overlay for text readability */}
+      {/* Gradient overlay */}
       <div
         className="absolute inset-0"
         style={{
@@ -86,8 +109,9 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
         <div className="text-xs text-cream/70 mb-2 font-sans font-light leading-snug">
           {pillar.description}
         </div>
-        <span className={`inline-flex items-center gap-1 text-sm ${pillar.ctaWeight} mt-auto text-gold`}>
+        <span className={`inline-flex items-center gap-1.5 text-sm ${pillar.ctaWeight} mt-auto text-gold`}>
           {pillar.cta}
+          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
         </span>
       </div>
     </Link>
@@ -96,58 +120,58 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex flex-col bg-forest-dark pt-24">
+    <section className="relative flex flex-col bg-forest-dark hero-viewport-fit">
       {/* Main content — vertically centered */}
       <div className="flex-1 flex items-center">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-4 lg:py-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-stretch">
             {/* Left Column — 7 cols */}
             <div className="lg:col-span-7 flex flex-col">
-              {/* Headline Block — static, no animation */}
-              <div className="max-w-[600px] mb-16 md:mb-20">
+              {/* Headline Block */}
+              <div className="max-w-[600px] mb-6 lg:mb-10">
                 <h1
-                  className="font-serif font-bold text-[32px] sm:text-[36px] lg:text-[46px] leading-[1.1]"
+                  className="font-serif font-bold text-[28px] sm:text-[34px] lg:text-[44px] leading-[1.1]"
                   style={{ color: '#F5F5DC' }}
                 >
                   Come back to yourself.
                 </h1>
                 <p
-                  className="font-serif italic text-[20px] sm:text-[22px] lg:text-[28px] mt-2"
+                  className="font-serif italic text-[18px] sm:text-[22px] lg:text-[26px] mt-1.5"
                   style={{ color: '#D4AF37' }}
                 >
                   At Mount Kailash.
                 </p>
                 <p
-                  className="font-sans uppercase tracking-[0.1em] text-[14px] sm:text-[16px] lg:text-[18px] font-medium mt-8"
+                  className="font-sans uppercase tracking-[0.1em] text-[13px] sm:text-[15px] lg:text-[17px] font-medium mt-5 lg:mt-6"
                   style={{ color: '#D4AF37' }}
                 >
                   Clinical Bush Medicine. Proven Results.
                   <span className="block mt-2 h-px w-[40%]" style={{ background: '#D4AF37' }} />
                 </p>
                 <p
-                  className="font-serif italic text-[14px] sm:text-[15px] lg:text-[16px] font-light mt-4"
+                  className="font-serif italic text-[13px] sm:text-[14px] lg:text-[15px] font-light mt-3"
                   style={{ color: 'rgba(245, 245, 220, 0.8)' }}
                 >
                   21 years restoring what modern life took away.
                 </p>
               </div>
 
-              {/* 4-Pillar Grid — fills remaining height */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
+              {/* 4-Pillar Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 flex-1">
                 {pillars.map((pillar, i) => (
                   <PillarCard key={pillar.route} pillar={pillar} index={i} />
                 ))}
               </div>
             </div>
 
-            {/* Right Column — 5 cols, matched height */}
+            {/* Right Column — 5 cols */}
             <div className="lg:col-span-5 flex">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl w-full">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl w-full z-[1]">
                 <img
                   src={priestPhoto}
                   alt="Priest Kailash Leyonce at the volcanic ridge in Saint Lucia"
                   className="w-full h-full object-cover"
-                  style={{ objectPosition: "center top", minHeight: "480px" }}
+                  style={{ objectPosition: "center top", minHeight: "400px" }}
                   loading="eager"
                   fetchPriority="high"
                   width={600}
@@ -159,10 +183,10 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Trust Micro-Bar — pinned to bottom */}
+      {/* Trust Micro-Bar */}
       <div
-        className="overflow-hidden bg-forest-light"
-        style={{ height: "48px", display: "flex", alignItems: "center" }}
+        className="overflow-hidden bg-forest-light shrink-0"
+        style={{ height: "44px", display: "flex", alignItems: "center" }}
       >
         <div
           style={{
@@ -187,9 +211,153 @@ export function HeroSection() {
       </div>
 
       <style>{`
+        /* Hero viewport fitting */
+        .hero-viewport-fit {
+          min-height: 100vh;
+          padding-top: 80px;
+          box-sizing: border-box;
+          overflow: hidden;
+        }
+        @media (max-height: 800px) and (min-width: 1024px) {
+          .hero-viewport-fit {
+            padding-top: 64px;
+          }
+        }
+        @media (max-width: 1023px) {
+          .hero-viewport-fit {
+            min-height: auto;
+            padding-top: 80px;
+            overflow: visible;
+          }
+        }
+
         @keyframes marquee-scroll {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
+        }
+
+        /* === Pillar Card Premium Borders === */
+
+        /* Shimmer gradient border (idle — slow 20s loop) */
+        .pillar-card {
+          position: relative;
+          border: 1.5px solid rgba(212, 175, 55, 0.35);
+          border-radius: 16px;
+        }
+
+        .pillar-border-glow {
+          border: 1.5px solid transparent;
+          border-radius: 16px;
+          transition: box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.5s ease;
+        }
+
+        /* Shimmer overlay via pseudo-element */
+        .pillar-card::before {
+          content: '';
+          position: absolute;
+          inset: -1.5px;
+          border-radius: 17px;
+          padding: 1.5px;
+          background: linear-gradient(
+            var(--shimmer-angle, 0deg),
+            rgba(212, 175, 55, 0.1) 0%,
+            rgba(212, 175, 55, 0.6) 25%,
+            rgba(245, 245, 220, 0.4) 50%,
+            rgba(212, 175, 55, 0.6) 75%,
+            rgba(212, 175, 55, 0.1) 100%
+          );
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          z-index: 21;
+          opacity: 0;
+          animation: shimmer-rotate 20s linear infinite;
+          pointer-events: none;
+        }
+
+        /* Draw-in on scroll — uses stroke-like reveal */
+        .pillar-card[data-drawn="false"]::before {
+          opacity: 0;
+        }
+        .pillar-card[data-drawn="true"]::before {
+          animation: border-draw-in 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                     shimmer-rotate 20s linear 1.2s infinite;
+        }
+
+        @keyframes border-draw-in {
+          0% {
+            opacity: 0;
+            clip-path: inset(0 100% 100% 0);
+          }
+          50% {
+            opacity: 0.8;
+            clip-path: inset(0 0 50% 0);
+          }
+          100% {
+            opacity: 1;
+            clip-path: inset(0 0 0 0);
+          }
+        }
+
+        @keyframes shimmer-rotate {
+          0% { --shimmer-angle: 0deg; }
+          100% { --shimmer-angle: 360deg; }
+        }
+
+        /* Fallback for browsers without @property */
+        @supports not (background: paint(something)) {
+          @keyframes shimmer-rotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(0deg); }
+          }
+          .pillar-card::before {
+            background: linear-gradient(
+              135deg,
+              rgba(212, 175, 55, 0.15) 0%,
+              rgba(212, 175, 55, 0.5) 50%,
+              rgba(212, 175, 55, 0.15) 100%
+            );
+            background-size: 300% 300%;
+            animation: shimmer-slide 8s ease-in-out infinite;
+          }
+          .pillar-card[data-drawn="true"]::before {
+            animation: border-draw-in 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                       shimmer-slide 8s ease-in-out 1.2s infinite;
+          }
+        }
+
+        @keyframes shimmer-slide {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+
+        /* Hover: glow pulse + lift + border brighten */
+        .pillar-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(212, 175, 55, 0.7);
+          box-shadow:
+            0 0 20px rgba(212, 175, 55, 0.25),
+            0 8px 32px rgba(0, 0, 0, 0.3);
+          background: hsl(152 48% 21% / 0.95) !important;
+        }
+
+        .pillar-card:hover::before {
+          opacity: 1;
+          animation-duration: 4s;
+        }
+
+        .pillar-card:hover .pillar-border-glow {
+          box-shadow: 0 0 24px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Staggered draw-in delay per card */
+        .pillar-card:nth-child(1) { --draw-delay: 0ms; }
+        .pillar-card:nth-child(2) { --draw-delay: 200ms; }
+        .pillar-card:nth-child(3) { --draw-delay: 400ms; }
+        .pillar-card:nth-child(4) { --draw-delay: 600ms; }
+
+        .pillar-card[data-drawn="true"]::before {
+          animation-delay: var(--draw-delay), calc(var(--draw-delay) + 1.2s);
         }
       `}</style>
     </section>
