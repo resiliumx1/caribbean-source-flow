@@ -118,7 +118,7 @@ export function FeaturedProduct() {
             className="w-full max-w-xs py-3 rounded-full font-medium text-sm transition-all hover:brightness-110 disabled:opacity-50 flex items-center justify-center gap-2 mb-4"
             style={{
               background: "var(--site-gold)",
-              color: "var(--site-green-dark)",
+              color: "#FFFFFF",
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
             }}
