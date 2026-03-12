@@ -8,45 +8,45 @@ import pillarRetreat from "@/assets/pillar-retreat.png";
 import pillarSchool from "@/assets/pillar-school.png";
 
 const pillars = [
-  {
-    title: "Professional Supply",
-    description: "Clinical formulations for practitioners & retailers",
-    cta: "Partner With Us",
-    ctaWeight: "font-medium" as const,
-    route: "/wholesale",
-    image: pillarWholesale,
-    icon: ClipboardList,
-  },
-  {
-    title: "The Apothecary",
-    description: "Hand-crafted remedies for personal use",
-    cta: "Shop Remedies",
-    ctaWeight: "font-medium" as const,
-    route: "/shop",
-    image: pillarApothecary,
-    icon: ShoppingBag,
-  },
-  {
-    title: "Sacred Immersions",
-    description: "Seven-day stress recovery retreats",
-    cta: "Reserve Dates",
-    ctaWeight: "font-semibold" as const,
-    route: "/retreats",
-    image: pillarRetreat,
-    icon: Mountain,
-  },
-  {
-    title: "Herbal Physician School",
-    description: "Master-level clinical certification",
-    cta: "Start Training",
-    ctaWeight: "font-semibold" as const,
-    route: "/school/herbal-physician",
-    image: pillarSchool,
-    icon: GraduationCap,
-  },
-];
+{
+  title: "Professional Supply",
+  description: "Clinical formulations for practitioners & retailers",
+  cta: "Partner With Us",
+  ctaWeight: "font-medium" as const,
+  route: "/wholesale",
+  image: pillarWholesale,
+  icon: ClipboardList
+},
+{
+  title: "The Apothecary",
+  description: "Hand-crafted remedies for personal use",
+  cta: "Shop Remedies",
+  ctaWeight: "font-medium" as const,
+  route: "/shop",
+  image: pillarApothecary,
+  icon: ShoppingBag
+},
+{
+  title: "Sacred Immersions",
+  description: "Seven-day stress recovery retreats",
+  cta: "Reserve Dates",
+  ctaWeight: "font-semibold" as const,
+  route: "/retreats",
+  image: pillarRetreat,
+  icon: Mountain
+},
+{
+  title: "Herbal Physician School",
+  description: "Master-level clinical certification",
+  cta: "Start Training",
+  ctaWeight: "font-semibold" as const,
+  route: "/school/herbal-physician",
+  image: pillarSchool,
+  icon: GraduationCap
+}];
 
-function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: number }) {
+
+function PillarCard({ pillar, index }: {pillar: typeof pillars[number];index: number;}) {
   const IconComp = pillar.icon;
   const isAboveFold = index === 0;
   const cardRef = useRef<HTMLAnchorElement>(null);
@@ -56,7 +56,7 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
     const el = cardRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setDrawn(true); obs.disconnect(); } },
+      ([entry]) => {if (entry.isIntersecting) {setDrawn(true);obs.disconnect();}},
       { threshold: 0.3 }
     );
     obs.observe(el);
@@ -70,10 +70,10 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
       className="pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500"
       style={{
         background: "hsl(152 48% 20% / 0.9)",
-        animationDelay: `${index * 200}ms`,
+        animationDelay: `${index * 200}ms`
       }}
-      data-drawn={drawn}
-    >
+      data-drawn={drawn}>
+      
       {/* Animated border wrapper */}
       <div className="pillar-border-glow absolute inset-0 rounded-2xl pointer-events-none z-20" />
 
@@ -84,21 +84,21 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
         className="absolute right-0 top-0 h-full w-3/4 object-contain object-right opacity-100 group-hover:scale-110 transition-transform duration-500"
         style={{
           filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))",
-          transform: "scale(1.1)",
+          transform: "scale(1.1)"
         }}
         loading={isAboveFold ? "eager" : "lazy"}
-        {...(isAboveFold ? { fetchPriority: "high" as const } : {})}
+        {...isAboveFold ? { fetchPriority: "high" as const } : {}}
         width={643}
-        height={388}
-      />
+        height={388} />
+      
 
       {/* Gradient overlay */}
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(to right, hsl(152 48% 20%) 40%, hsl(152 48% 20% / 0.9) 60%, transparent 100%)",
-        }}
-      />
+          background: "linear-gradient(to right, hsl(152 48% 20%) 40%, hsl(152 48% 20% / 0.9) 60%, transparent 100%)"
+        }} />
+      
 
       {/* Text Content */}
       <div className="relative z-10 w-3/5 h-full flex flex-col justify-center p-3 lg:p-4">
@@ -114,8 +114,8 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[number]; index: 
           <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
         </span>
       </div>
-    </Link>
-  );
+    </Link>);
+
 }
 
 export function HeroSection() {
@@ -131,36 +131,36 @@ export function HeroSection() {
               <div className="max-w-[600px] mb-6 lg:mb-10">
                 <h1
                   className="font-serif font-bold text-[28px] sm:text-[34px] lg:text-[44px] leading-[1.1]"
-                  style={{ color: '#F5F5DC' }}
-                >
+                  style={{ color: '#F5F5DC' }}>
+                  
                   Come back to yourself.
                 </h1>
                 <p
                   className="font-serif italic text-[18px] sm:text-[22px] lg:text-[26px] mt-1.5"
-                  style={{ color: '#D4AF37' }}
-                >
+                  style={{ color: '#D4AF37' }}>
+                  
                   At Mount Kailash.
                 </p>
                 <p
                   className="font-sans uppercase tracking-[0.1em] text-[13px] sm:text-[15px] lg:text-[17px] font-medium mt-5 lg:mt-6"
-                  style={{ color: '#D4AF37' }}
-                >
-                  Clinical Bush Medicine. Proven Results.
+                  style={{ color: '#D4AF37' }}>CLINICAL HERBAL MEDICINE. PROVEN RESULTS.
+
+
                   <span className="block mt-2 h-px w-[40%]" style={{ background: '#D4AF37' }} />
                 </p>
                 <p
                   className="font-serif italic text-[13px] sm:text-[14px] lg:text-[15px] font-light mt-3"
-                  style={{ color: 'rgba(245, 245, 220, 0.8)' }}
-                >
+                  style={{ color: 'rgba(245, 245, 220, 0.8)' }}>
+                  
                   21 years restoring what modern life took away.
                 </p>
               </div>
 
               {/* 4-Pillar Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 flex-1">
-                {pillars.map((pillar, i) => (
-                  <PillarCard key={pillar.route} pillar={pillar} index={i} />
-                ))}
+                {pillars.map((pillar, i) =>
+                <PillarCard key={pillar.route} pillar={pillar} index={i} />
+                )}
               </div>
             </div>
 
@@ -175,8 +175,8 @@ export function HeroSection() {
                   loading="eager"
                   fetchPriority="high"
                   width={600}
-                  height={800}
-                />
+                  height={800} />
+                
               </div>
             </div>
           </div>
@@ -186,27 +186,27 @@ export function HeroSection() {
       {/* Trust Micro-Bar */}
       <div
         className="overflow-hidden bg-forest-light shrink-0"
-        style={{ height: "44px", display: "flex", alignItems: "center" }}
-      >
+        style={{ height: "44px", display: "flex", alignItems: "center" }}>
+        
         <div
           style={{
             display: "flex",
             width: "max-content",
-            animation: "marquee-scroll 30s linear infinite",
-          }}
-        >
-          {[0, 1].map((dup) => (
-            <div
-              key={dup}
-              className="flex items-center gap-8 px-4 font-sans text-xs uppercase tracking-widest text-cream whitespace-nowrap"
-            >
+            animation: "marquee-scroll 30s linear infinite"
+          }}>
+          
+          {[0, 1].map((dup) =>
+          <div
+            key={dup}
+            className="flex items-center gap-8 px-4 font-sans text-xs uppercase tracking-widest text-cream whitespace-nowrap">
+            
               <span>✦ FEATURED BY ST. LUCIA TOURISM</span>
               <span>✦ 3-DAY US DELIVERY</span>
               <span>✦ COA DOCUMENTATION</span>
               <span>✦ 500+ PHYSICIANS TRAINED</span>
               <span>✦ 21+ YEARS CLINICAL PRACTICE</span>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
@@ -360,6 +360,6 @@ export function HeroSection() {
           animation-delay: var(--draw-delay), calc(var(--draw-delay) + 1.2s);
         }
       `}</style>
-    </section>
-  );
+    </section>);
+
 }
