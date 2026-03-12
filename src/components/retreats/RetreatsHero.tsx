@@ -37,7 +37,7 @@ export function RetreatsHero() {
             fontSize: 'clamp(3rem, 7vw, 80px)',
             color: '#F5F1E8',
             lineHeight: 1.05,
-            textShadow: '2px 2px 20px rgba(0,0,0,0.6)',
+            textShadow: '0 2px 8px rgba(0,0,0,0.7), 0 4px 20px rgba(0,0,0,0.5)',
           }}
         >
           Restore. Reset. Reconnect.
