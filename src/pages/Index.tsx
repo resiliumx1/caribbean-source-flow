@@ -28,16 +28,8 @@ const Index = () => {
       {/* Gate Entrance — auto-playing animation overlay */}
       {!gateComplete && <GateEntrance onGateComplete={handleGateComplete} />}
 
-      {/* Header fades in after gates open */}
-      <div
-        style={{
-          opacity: navOpacity,
-          pointerEvents: navOpacity > 0.5 ? "auto" : "none",
-          transition: "opacity 0.3s ease",
-        }}
-      >
-        <Header onScrollToForm={scrollToForm} />
-      </div>
+      {/* Header */}
+      <Header onScrollToForm={scrollToForm} />
 
       {/* Main site content after the gate */}
       <FadeInStagger delay={0.1}>
