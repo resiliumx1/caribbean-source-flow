@@ -36,6 +36,52 @@ function ProductSkeleton() {
   );
 }
 
+function ProductReel({ products }: { products: Product[] }) {
+  const reelItems = products.filter(p => p.image_url).slice(0, 12);
+  if (reelItems.length < 3) return null;
+  const doubled = [...reelItems, ...reelItems];
+
+  return (
+    <div style={{ background: 'var(--site-bg-secondary)', borderTop: '1px solid var(--site-border)', borderBottom: '1px solid var(--site-border)', padding: '16px 0' }}>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '11px', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--site-gold)', textAlign: 'center', marginBottom: '12px' }}>
+        Our Formulas
+      </p>
+      <div style={{ overflow: 'hidden' }}>
+        <div style={{ display: 'flex', width: 'max-content', animation: 'reel-scroll 30s linear infinite', gap: '0px' }}>
+          {doubled.map((p, i) => (
+            <Link
+              key={`${p.id}-${i}`}
+              to={`/shop/${p.slug}`}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '0 20px',
+                textDecoration: 'none',
+                flexShrink: 0,
+              }}
+            >
+              <div className="rounded-full overflow-hidden flex items-center justify-center" style={{ width: '72px', height: '72px', background: 'var(--site-green-dark)' }}>
+                <img src={p.image_url!} alt={p.name} className="w-[56px] h-[56px] object-contain" draggable={false} />
+              </div>
+              <span className="line-clamp-2 text-center" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '11px', fontWeight: 400, color: 'var(--site-text-primary)', lineHeight: 1.3, maxWidth: '80px' }}>
+                {p.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+      <style>{`
+        @keyframes reel-scroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function Shop() {
   const { data: products, isLoading } = useProducts();
   const { data: conditions } = useConditions();
