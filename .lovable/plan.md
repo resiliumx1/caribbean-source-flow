@@ -1,18 +1,51 @@
 
 
-## Add Per-Product Category Selector
+## Plan: Dark Mode Fix, Typography Consolidation & Webinar Brand Alignment
 
-**What**: Add an inline category dropdown on each product card in the admin products page, similar to the existing badge selector, so admins can reassign any product's category directly.
+### Prompt 1 — Fix Dark Mode Leak
 
-### Implementation
+**Files:** `src/pages/Webinars.tsx`, `src/pages/TheAnswer.tsx`
 
-**File: `src/pages/AdminProducts.tsx`**
+Add cleanup `return () => document.documentElement.classList.remove("dark")` to the `useEffect` in both files. TheAnswer already has an empty `return () => {}` — replace it with the real cleanup.
 
-1. Add a `updateCategory` mutation (similar to existing `updateBadge`) that updates `category_id` on the products table and invalidates the query cache.
+---
 
-2. Replace the static category text on line 453 (`<p className="text-sm text-muted-foreground">{product.product_categories?.name ?? "Uncategorized"}</p>`) with a `<Select>` dropdown populated from the existing `categories` query. Include an "Uncategorized" option that sets `category_id` to `null`.
+### Prompt 2 — Typography Consolidation to DM Sans
 
-3. Style it consistently with the badge selector already on each card -- small trigger (`h-7 text-xs`), full width.
+**Scope:** ~58 component/page files with inline `fontFamily` styles + 3 CSS files with `font-family` rules. All get replaced with `'DM Sans', sans-serif`.
 
-No database changes needed -- the `category_id` column and categories table already exist with proper RLS policies.
+**CSS files (3):**
+- `src/styles/webinar.css` — `.font-cormorant` and `.font-jost` classes
+- `src/styles/mkrc-theme.css` — `.mkrc-display`, `.mkrc-body`, `.mkrc-label`, `.mkrc-page`, button classes
+- `src/styles/gate-entrance.css` — `.h-eyebrow`, `.h-sub`, `.h-tagline`, sidebar font
+
+**Component/Page files (~58):** Every inline `fontFamily` reference to Cormorant Garamond, Playfair Display, Jost, Inter, Plus Jakarta Sans, Space Grotesk, or DM Serif Display gets replaced with `'DM Sans', sans-serif`. Font weights, sizes, line heights, letter spacing, and colors remain untouched.
+
+**index.css:** `--font-serif` variable kept as fallback but unused. Body/heading rules already reference DM Sans — confirmed.
+
+---
+
+### Prompt 3 — Webinar Page Brand Alignment
+
+**`src/pages/Webinars.tsx`:**
+- Outer div: replace hardcoded `backgroundColor: "#090909"` / `color: "#f2ead8"` with `var(--site-bg-primary)` / `var(--site-text-primary)`
+- Dialog: replace `#111111` bg and `#f2ead8` text with site tokens
+
+**`src/styles/webinar.css`:**
+- Replace `#090909` → `var(--site-bg-primary)`
+- Replace `#0d1a0f` → `var(--site-bg-secondary)`
+- Replace `#0f0a00` → `var(--site-bg-deep)`
+- Replace `#f2ead8` → `var(--site-text-primary)`
+- Replace `#c9a84c` → `var(--site-gold)`
+- Replace `#0F281E` → `var(--site-green-dark)`
+
+**Webinar component files (9 files in `src/components/webinar/`):**
+- Same hex-to-variable replacements across WebinarHero, WebinarSignup, WebinarShowcase, WebinarCommunity, WebinarTrust, WebinarHost, WebinarExplore, WebinarFeatured, WebinarFooter
+
+---
+
+### Technical Notes
+- No layout, animation, sizing, or structural changes
+- Font weight values preserved (just family swapped)
+- CSS class names like `.font-cormorant` and `.font-jost` kept but their underlying family changed to DM Sans — this avoids breaking class references in JSX
 
