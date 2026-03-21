@@ -19,16 +19,16 @@ export default function WebinarTrust() {
   }, []);
 
   return (
-    <section ref={ref} className="webinar-reveal webinar-noise relative" style={{ backgroundColor: "#0f0f0d" }}>
+    <section ref={ref} className="webinar-reveal webinar-noise relative" style={{ backgroundColor: "var(--site-bg-secondary)" }}>
       <hr className="webinar-divider" />
       <div className="relative z-10 max-w-[1200px] mx-auto px-6 py-24 text-center">
         <h2
           className="font-cormorant font-bold italic mb-4"
-          style={{ color: "#f2ead8", fontSize: "clamp(1.8rem, 3.5vw, 2.75rem)" }}
+          style={{ color: "var(--site-text-primary)", fontSize: "clamp(1.8rem, 3.5vw, 2.75rem)" }}
         >
           Ancient Wisdom. Zero Cost. Real Results.
         </h2>
-        <p className="font-jost font-light max-w-lg mx-auto mb-14" style={{ color: "#8a8070" }}>
+        <p className="font-jost font-light max-w-lg mx-auto mb-14" style={{ color: "var(--site-text-secondary)" }}>
           Honorable Priest Kailash believes healing knowledge belongs to everyone.
           These sessions are our gift to you.
         </p>
@@ -38,14 +38,14 @@ export default function WebinarTrust() {
               key={c.title}
               className="rounded-xl p-6 transition-all duration-300 hover:scale-[1.02]"
               style={{
-                backgroundColor: "#18181b",
+                backgroundColor: "var(--site-bg-deep)",
                 borderTop: "2px solid #c9a84c",
                 animationDelay: `${i * 80}ms`,
               }}
             >
               <span className="text-3xl mb-3 block">{c.icon}</span>
-              <h3 className="font-cormorant font-semibold text-lg mb-2" style={{ color: "#f2ead8" }}>{c.title}</h3>
-              <p className="font-jost font-light text-sm" style={{ color: "#8a8070" }}>{c.desc}</p>
+              <h3 className="font-cormorant font-semibold text-lg mb-2" style={{ color: "var(--site-text-primary)" }}>{c.title}</h3>
+              <p className="font-jost font-light text-sm" style={{ color: "var(--site-text-secondary)" }}>{c.desc}</p>
             </div>
           ))}
         </div>
