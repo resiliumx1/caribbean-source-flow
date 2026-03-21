@@ -1,4 +1,4 @@
-/* Webinar Page — Cormorant Garamond + Jost */
+/* Webinar Page — DM Sans */
 /* Fonts loaded via <link> in index.html to avoid render-blocking @import */
 
 /* ── Animated gradient background ── */
@@ -9,7 +9,7 @@
 }
 
 .webinar-hero-gradient {
-  background: linear-gradient(135deg, #0F281E 0%, #0d1a0f 33%, #0f0a00 66%, #0F281E 100%);
+  background: linear-gradient(135deg, var(--site-green-dark) 0%, var(--site-bg-secondary) 33%, var(--site-bg-deep) 66%, var(--site-green-dark) 100%);
   background-size: 400% 400%;
   animation: webinar-gradient 8s ease infinite;
 }
@@ -27,7 +27,7 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #c9a84c;
+  background: var(--site-gold);
   opacity: 0;
   pointer-events: none;
   animation: particle-float linear infinite;
@@ -40,7 +40,7 @@
 }
 
 .webinar-shimmer {
-  background: linear-gradient(90deg, #c9a84c 0%, #f5e6b8 25%, #c9a84c 50%, #a07830 75%, #c9a84c 100%);
+  background: linear-gradient(90deg, var(--site-gold) 0%, #f5e6b8 25%, var(--site-gold) 50%, #a07830 75%, var(--site-gold) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -101,11 +101,11 @@
 
 /* ── Font helpers ── */
 .font-cormorant {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .font-jost {
-  font-family: 'Jost', sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 /* ── Card hover glow ── */

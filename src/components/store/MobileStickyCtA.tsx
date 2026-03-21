@@ -18,7 +18,7 @@ export function MobileStickyCtA() {
         onClick={handleClick}
         className="w-full flex items-center justify-center gap-2 py-4 px-6 transition-all hover:bg-white/5"
         style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'DM Sans', sans-serif",
           fontSize: "14px",
           fontWeight: 500,
           color: "#F5F1E8",

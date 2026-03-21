@@ -31,7 +31,7 @@ export function SourceStory() {
             >
               <div
                 style={{
-                  fontFamily: "'Cormorant Garamond', serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 700,
                   fontSize: "36px",
                   color: "var(--site-gold)",
@@ -42,7 +42,7 @@ export function SourceStory() {
               </div>
               <div
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 400,
                   fontSize: "13px",
                   color: "var(--site-text-secondary)",
@@ -59,7 +59,7 @@ export function SourceStory() {
             <span
               className="inline-block mb-4"
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: "12px",
                 textTransform: "uppercase",
@@ -72,7 +72,7 @@ export function SourceStory() {
 
             <h2
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 700,
                 fontSize: "clamp(2rem, 3.5vw, 40px)",
                 color: "var(--site-text-primary)",
@@ -86,7 +86,7 @@ export function SourceStory() {
             <div
               className="space-y-4 mb-10"
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: "16px",
                 color: "var(--site-text-secondary)",
@@ -111,7 +111,7 @@ export function SourceStory() {
             >
               <blockquote
                 style={{
-                  fontFamily: "'Cormorant Garamond', serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 600,
                   fontStyle: "italic",
                   fontSize: "20px",
@@ -125,7 +125,7 @@ export function SourceStory() {
               </blockquote>
               <cite
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 400,
                   fontSize: "14px",
                   color: "var(--site-gold)",
@@ -142,7 +142,7 @@ export function SourceStory() {
               style={{
                 background: "var(--site-gold)",
                 color: "#0F281E",
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: "15px",
               }}

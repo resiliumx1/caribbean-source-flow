@@ -23,7 +23,7 @@ export function HomepageFooter() {
                 height={40}
               />
               <div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, color: "#F5F1E8" }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, color: "#F5F1E8" }}>
                   Mount Kailash
                 </div>
                 <div style={{ fontSize: "12px", color: "#A8B5A0" }}>
@@ -33,7 +33,7 @@ export function HomepageFooter() {
             </div>
             <p
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: "14px",
                 color: "#A8B5A0",
@@ -58,7 +58,7 @@ export function HomepageFooter() {
 
           {/* Shop */}
           <div>
-            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: "#F5F1E8", marginBottom: "16px" }}>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: "#F5F1E8", marginBottom: "16px" }}>
               Shop
             </h2>
             <ul className="space-y-1 text-sm">
@@ -72,7 +72,7 @@ export function HomepageFooter() {
                 <li key={item.label}>
                   <Link
                     to={item.href}
-                    style={{ color: "#A8B5A0", fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+                    style={{ color: "#A8B5A0", fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
                     className="hover:text-[#D4A373] transition-colors inline-block py-2"
                   >
                     {item.label}
@@ -84,7 +84,7 @@ export function HomepageFooter() {
 
           {/* Education */}
           <div>
-            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: "#F5F1E8", marginBottom: "16px" }}>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: "#F5F1E8", marginBottom: "16px" }}>
               Education
             </h2>
             <ul className="space-y-1 text-sm">
@@ -93,7 +93,7 @@ export function HomepageFooter() {
                   <li key={item}>
                     <Link
                       to="/webinars"
-                      style={{ color: "#A8B5A0", fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+                      style={{ color: "#A8B5A0", fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
                       className="hover:text-[#D4A373] transition-colors inline-block py-2"
                     >
                       {item}
@@ -106,7 +106,7 @@ export function HomepageFooter() {
 
           {/* Wholesale */}
           <div>
-            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: "#F5F1E8", marginBottom: "16px" }}>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: "#F5F1E8", marginBottom: "16px" }}>
               Wholesale
             </h2>
             <ul className="space-y-1 text-sm">
@@ -115,7 +115,7 @@ export function HomepageFooter() {
                   <li key={item}>
                     <Link
                       to="/wholesale"
-                      style={{ color: "#A8B5A0", fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+                      style={{ color: "#A8B5A0", fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
                       className="hover:text-[#D4A373] transition-colors inline-block py-2"
                     >
                       {item}

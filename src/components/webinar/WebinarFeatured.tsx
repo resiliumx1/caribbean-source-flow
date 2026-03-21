@@ -19,7 +19,7 @@ export default function WebinarFeatured() {
       id="featured"
       ref={ref}
       className="webinar-reveal webinar-noise relative"
-      style={{ backgroundColor: "#0f0f0d", borderTop: "1px solid rgba(201,168,76,0.15)" }}
+      style={{ backgroundColor: "var(--site-bg-secondary)", borderTop: "1px solid rgba(201,168,76,0.15)" }}
     >
       <div className="relative z-10 max-w-[1200px] mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-[55%_45%] gap-12 items-center">
         {/* Left: thumbnail */}
@@ -59,7 +59,7 @@ export default function WebinarFeatured() {
               </div>
             ) : (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md" style={{ backgroundColor: "rgba(9,9,9,0.7)", border: "1px solid rgba(201,168,76,0.3)" }}>
-                <span className="font-jost font-medium text-xs" style={{ color: "#c9a84c" }}>Featured Replay</span>
+                <span className="font-jost font-medium text-xs" style={{ color: "var(--site-gold)" }}>Featured Replay</span>
               </div>
             )}
           </div>
@@ -69,30 +69,30 @@ export default function WebinarFeatured() {
         <div>
           <span
             className="font-jost text-xs tracking-[0.2em] uppercase mb-4 block"
-            style={{ color: "#c9a84c" }}
+            style={{ color: "var(--site-gold)" }}
           >
             {isLive ? "Upcoming Live Session" : "Featured Session"}
           </span>
           <h2
             className="font-cormorant font-bold mb-4"
-            style={{ color: "#f2ead8", fontSize: "clamp(1.5rem, 3vw, 2.25rem)", lineHeight: 1.2 }}
+            style={{ color: "var(--site-text-primary)", fontSize: "clamp(1.5rem, 3vw, 2.25rem)", lineHeight: 1.2 }}
           >
             Reproductive Wellness: Nature's Approach to Fertility, Hormonal Balance & Vitality
           </h2>
-          <p className="font-jost font-light mb-6 leading-relaxed" style={{ color: "#8a8070" }}>
+          <p className="font-jost font-light mb-6 leading-relaxed" style={{ color: "var(--site-text-secondary)" }}>
             Discover Caribbean herbal protocols that have helped hundreds restore hormonal balance,
             boost fertility, and reclaim vitality — with Honorable Priest Kailash.
           </p>
 
           {/* Metadata */}
           <div className="flex flex-wrap gap-3 mb-6">
-            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c" }}>
+            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "var(--site-gold)" }}>
               🌸 Women's Health
             </span>
-            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c" }}>
+            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "var(--site-gold)" }}>
               <Clock size={12} /> ~90 min
             </span>
-            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "#c9a84c" }}>
+            <span className="font-jost text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5" style={{ border: "1px solid rgba(201,168,76,0.3)", color: "var(--site-gold)" }}>
               <Users size={12} /> 1.2K views
             </span>
           </div>
@@ -110,14 +110,14 @@ export default function WebinarFeatured() {
             </a>
             <button
               className="font-jost font-medium px-7 py-3 rounded-full text-sm border transition-all duration-300 hover:brightness-110 min-h-[48px]"
-              style={{ borderColor: "rgba(242,234,216,0.3)", color: "#f2ead8" }}
+              style={{ borderColor: "rgba(242,234,216,0.3)", color: "var(--site-text-primary)" }}
             >
               Share Session
             </button>
           </div>
 
           {/* Date */}
-          <p className="font-jost text-xs mt-4" style={{ color: "#8a8070" }}>
+          <p className="font-jost text-xs mt-4" style={{ color: "var(--site-text-secondary)" }}>
             Originally streamed March 2025
           </p>
         </div>

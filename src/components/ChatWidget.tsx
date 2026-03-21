@@ -107,7 +107,7 @@ export default function ChatWidget() {
           <div style={{
             background: "#ffffff", color: "#1c4a1c", borderRadius: 14,
             padding: "14px 16px", boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-            fontFamily: "Jost, sans-serif", fontSize: 14, lineHeight: 1.5, position: "relative",
+            fontFamily: "'DM Sans', sans-serif", fontSize: 14, lineHeight: 1.5, position: "relative",
           }}>
             <button onClick={dismissBubble} style={{
               position: "absolute", top: 6, right: 8, background: "none", border: "none",
@@ -169,7 +169,7 @@ export default function ChatWidget() {
                   height: 26, borderRadius: 13, background: "rgba(0,0,0,0.45)", border: "none",
                   display: "flex", alignItems: "center", gap: 4, padding: "0 10px",
                   cursor: "pointer", color: "white", fontSize: 11,
-                  fontFamily: "Jost, sans-serif", fontWeight: 500, opacity: 0.85,
+                  fontFamily: "'DM Sans', sans-serif", fontWeight: 500, opacity: 0.85,
                 }}>
                   {isMobileFullscreen ? "⤡ Compact" : "⤢ Expand"}
                 </button>

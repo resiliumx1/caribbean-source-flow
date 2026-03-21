@@ -2,12 +2,12 @@ import { Phone, Mail, MapPin, FileText, Package, Truck } from "lucide-react";
 
 export const Footer = () => {
   return (
-    <footer className="py-16" style={{ background: "var(--site-footer-bg)", borderTop: "1px solid rgba(201,168,76,0.15)", fontFamily: "'Jost', sans-serif" }}>
+    <footer className="py-16" style={{ background: "var(--site-footer-bg)", borderTop: "1px solid rgba(201,168,76,0.15)", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-1">
-            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "20px", color: "var(--site-footer-text)", marginBottom: "16px" }}>
+            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "20px", color: "var(--site-footer-text)", marginBottom: "16px" }}>
               Mount Kailash
             </h3>
             <p style={{ color: "var(--site-footer-muted)", fontSize: "14px", fontWeight: 300, marginBottom: "16px", lineHeight: 1.7 }}>

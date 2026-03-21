@@ -71,7 +71,7 @@ export function BundlesGrid({ bundles }: BundlesGridProps) {
             <h3
               className="line-clamp-1"
               style={{
-                fontFamily: "'Playfair Display', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600,
                 fontSize: "16px",
                 color: "#F5F1E8",
@@ -86,7 +86,7 @@ export function BundlesGrid({ bundles }: BundlesGridProps) {
             <p
               className="line-clamp-2"
               style={{
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontSize: "13px",
                 color: "rgba(245,241,232,0.6)",
                 lineHeight: 1.5,
@@ -102,7 +102,7 @@ export function BundlesGrid({ bundles }: BundlesGridProps) {
                 {originalPrices.primary}
               </span>
             )}
-            <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: "18px", color: "var(--site-gold)" }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "18px", color: "var(--site-gold)" }}>
               {prices.primary}
             </span>
           </div>
@@ -114,7 +114,7 @@ export function BundlesGrid({ bundles }: BundlesGridProps) {
             style={{
               background: "var(--site-gold)",
               color: "var(--site-green-dark)",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               minHeight: "48px",
             }}
           >
@@ -131,7 +131,7 @@ export function BundlesGrid({ bundles }: BundlesGridProps) {
       <div className="flex items-center justify-between mb-6">
         <h2
           style={{
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 700,
             fontSize: "24px",
             color: "var(--site-text-primary)",

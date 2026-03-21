@@ -19,10 +19,10 @@ export function GroupRetreatsList() {
         <div className="container mx-auto max-w-4xl px-4">
           <div className="text-center py-16 rounded-2xl" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)' }}>
             <Calendar className="w-14 h-14 mx-auto mb-6" style={{ color: 'var(--site-gold)' }} />
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '28px', color: 'var(--site-text-primary)', marginBottom: '12px' }}>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '28px', color: 'var(--site-text-primary)', marginBottom: '12px' }}>
               Group Dates Coming Soon
             </h2>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: 'var(--site-text-muted)', maxWidth: '420px', margin: '0 auto 24px' }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '15px', color: 'var(--site-text-muted)', maxWidth: '420px', margin: '0 auto 24px' }}>
               We're finalizing our upcoming group retreat schedule. Reach out to be first to know.
             </p>
             <a

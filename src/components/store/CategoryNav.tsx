@@ -18,7 +18,7 @@ export function CategoryNav() {
   }
 
   const tabBase: React.CSSProperties = {
-    fontFamily: "'Jost', sans-serif",
+    fontFamily: "'DM Sans', sans-serif",
     fontSize: "14px",
     transition: "all 200ms ease",
   };

@@ -47,15 +47,18 @@
 
 /* Typography classes */
 .mkrc-display {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
 }
 
 .mkrc-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
 }
 
 .mkrc-label {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.25em;
 }
@@ -70,7 +73,7 @@
 .mkrc-page {
   background-color: var(--mkrc-bg-primary);
   color: var(--mkrc-text-primary);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
 }
 
@@ -79,7 +82,7 @@
   background-color: var(--mkrc-accent-gold);
   color: var(--mkrc-text-inverse);
   padding: 16px 40px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -105,7 +108,7 @@
   color: var(--mkrc-text-primary);
   border: 1px solid var(--mkrc-border-medium);
   padding: 16px 40px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -129,7 +132,7 @@
   background-color: var(--mkrc-accent-green);
   color: #FFFFFF;
   padding: 16px 40px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;

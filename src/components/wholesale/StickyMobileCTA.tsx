@@ -16,7 +16,7 @@ export const StickyMobileCTA = () => {
         background: "#0F281E",
         borderTop: "1px solid var(--site-gold)",
         color: "#F5F1E8",
-        fontFamily: "'Jost', sans-serif",
+        fontFamily: "'DM Sans', sans-serif",
         fontWeight: 500,
         fontSize: "15px",
       }}

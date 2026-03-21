@@ -68,13 +68,13 @@ export function PaymentCalculator() {
       <div className="container mx-auto max-w-3xl px-4">
         <div className="text-center mb-12">
           <h2
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
             className="text-3xl md:text-4xl font-bold text-foreground mb-4"
           >
             Investment & Payment Plans
           </h2>
           <p
-            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
             className="text-lg text-muted-foreground"
           >
             Choose the plan that works for you. No credit check required.
@@ -107,7 +107,7 @@ export function PaymentCalculator() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span
-                    style={{ fontFamily: "'Jost', sans-serif", fontWeight: 600 }}
+                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}
                     className="text-foreground"
                   >
                     {p.label}
@@ -118,7 +118,7 @@ export function PaymentCalculator() {
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground mt-0.5" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}>
+                <p className="text-sm text-muted-foreground mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
                   {p.schedule}
                 </p>
               </div>
@@ -150,13 +150,13 @@ export function PaymentCalculator() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-card rounded-xl border border-border p-5 text-center mb-6"
         >
-          <p className="text-sm text-muted-foreground mb-1" style={{ fontFamily: "'Jost', sans-serif" }}>
+          <p className="text-sm text-muted-foreground mb-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             Total program cost
           </p>
           <p className="text-3xl font-bold text-foreground">
             ${plan.total.toLocaleString()}
           </p>
-          <p className="text-sm text-muted-foreground mt-1" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}>
+          <p className="text-sm text-muted-foreground mt-1" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
             {plan.schedule}
           </p>
         </motion.div>
@@ -171,7 +171,7 @@ export function PaymentCalculator() {
               Enroll Now — ${plan.perPayment.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}{plan.payments > 1 ? "/mo" : ""}
             </Button>
           </a>
-          <p className="text-xs text-muted-foreground mt-3" style={{ fontFamily: "'Jost', sans-serif" }}>
+          <p className="text-xs text-muted-foreground mt-3" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             Payment plans available for all options. No credit check required.
           </p>
         </div>

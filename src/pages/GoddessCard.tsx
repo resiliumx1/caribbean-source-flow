@@ -304,7 +304,7 @@ export default function GoddessCard() {
   const mutedText = isDark ? "text-white/60" : "text-[#1a1a2e]/60";
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${bg}`} style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className={`min-h-screen transition-colors duration-300 ${bg}`} style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {lightboxOpen && <Lightbox src={goddessPhoto} onClose={() => setLightboxOpen(false)} />}
       {qrLightboxOpen && <QRLightbox onClose={() => setQrLightboxOpen(false)} />}
 
@@ -360,7 +360,7 @@ export default function GoddessCard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
             className="text-[26px] font-bold text-center leading-tight mb-1"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
             Goddess R Itopia Archer
           </motion.h1>
@@ -416,7 +416,7 @@ export default function GoddessCard() {
         >
           <div
             className="space-y-5 text-[17px] leading-[1.85] font-light"
-            style={{ fontFamily: "'Cormorant Garamond', 'Georgia', serif", letterSpacing: "0.01em" }}
+            style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.01em" }}
           >
             <p>
               Goddess R. Itopia Archer is a <strong className="font-semibold">Sovereign Matriarch</strong> — a visionary leader devoted to community

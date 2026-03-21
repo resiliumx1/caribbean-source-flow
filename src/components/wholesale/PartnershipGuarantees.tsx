@@ -20,7 +20,7 @@ const guarantees = [
 
 export const PartnershipGuarantees = () => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <p
@@ -29,7 +29,7 @@ export const PartnershipGuarantees = () => {
           >
             Our Commitment
           </p>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)" }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)" }}>
             Zero-Risk Partnership
           </h2>
         </div>
@@ -51,7 +51,7 @@ export const PartnershipGuarantees = () => {
               <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style={{ background: "rgba(188,138,95,0.08)" }}>
                 <g.icon className="w-8 h-8" style={{ color: "var(--site-gold)" }} />
               </div>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "22px", color: "var(--site-text-primary)", marginBottom: "8px" }}>
+              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "22px", color: "var(--site-text-primary)", marginBottom: "8px" }}>
                 {g.title}
               </h3>
               <p style={{ fontWeight: 300, fontSize: "15px", color: "var(--site-text-muted)", lineHeight: 1.7 }}>

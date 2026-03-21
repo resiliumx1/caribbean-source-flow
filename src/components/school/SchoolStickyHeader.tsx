@@ -27,13 +27,13 @@ export function SchoolStickyHeader() {
       <div className="container mx-auto max-w-6xl px-4 h-full flex items-center justify-between">
         <div>
           <p
-            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700 }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700 }}
             className="text-[#F5F1E8] text-sm md:text-base"
           >
             Herbal Physician Certification
           </p>
           <p
-            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
             className="text-[#A8B5A0] text-xs"
           >
             Cohort starts March 2026 • 12 spots left

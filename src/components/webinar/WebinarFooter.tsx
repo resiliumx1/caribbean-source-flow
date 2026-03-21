@@ -9,9 +9,9 @@ const NAV = [
 
 export default function WebinarFooter() {
   return (
-    <footer style={{ backgroundColor: "#090909", borderTop: "1px solid rgba(201,168,76,0.2)" }}>
+    <footer style={{ backgroundColor: "var(--site-bg-primary)", borderTop: "1px solid rgba(201,168,76,0.2)" }}>
       <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span className="font-cormorant font-semibold text-lg" style={{ color: "#f2ead8" }}>
+        <span className="font-cormorant font-semibold text-lg" style={{ color: "var(--site-text-primary)" }}>
           MKRC
         </span>
         <nav className="flex gap-6">
@@ -20,13 +20,13 @@ export default function WebinarFooter() {
               key={n.label}
               to={n.href}
               className="font-jost font-light text-sm transition-colors duration-200 hover:brightness-125"
-              style={{ color: "#f2ead8", textDecoration: "none" }}
+              style={{ color: "var(--site-text-primary)", textDecoration: "none" }}
             >
               {n.label}
             </Link>
           ))}
         </nav>
-        <span className="font-jost font-light text-xs" style={{ color: "#8a8070" }}>
+        <span className="font-jost font-light text-xs" style={{ color: "var(--site-text-secondary)" }}>
           © Mount Kailash Rejuvenation Centre
         </span>
       </div>

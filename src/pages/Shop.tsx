@@ -155,10 +155,10 @@ export default function Shop() {
               sectionRows.map((row) => (
                 <section key={row.slug} className="mb-12 sm:mb-16">
                   <div className="flex items-baseline justify-between mb-4 sm:mb-6">
-                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: "clamp(20px, 3vw, 28px)", color: "var(--site-text-primary)" }}>
+                    <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "clamp(20px, 3vw, 28px)", color: "var(--site-text-primary)" }}>
                       {row.title}
                     </h2>
-                    <button onClick={() => setActiveCondition(row.slug)} style={{ fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 500, color: "var(--site-gold)" }}>
+                    <button onClick={() => setActiveCondition(row.slug)} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 500, color: "var(--site-gold)" }}>
                       View All →
                     </button>
                   </div>
@@ -171,7 +171,7 @@ export default function Shop() {
               ))
             ) : allSingles.length > 0 ? (
               <section className="mb-12 sm:mb-16">
-                <h2 className="mb-4 sm:mb-6" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: "clamp(20px, 3vw, 28px)", color: "var(--site-text-primary)" }}>
+                <h2 className="mb-4 sm:mb-6" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "clamp(20px, 3vw, 28px)", color: "var(--site-text-primary)" }}>
                   All Remedies
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
@@ -190,7 +190,7 @@ export default function Shop() {
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <p
                 style={{
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontSize: "14px",
                   color: "var(--site-text-muted)",
                 }}
@@ -216,7 +216,7 @@ export default function Shop() {
                 </div>
                 <p
                   style={{
-                    fontFamily: "'Playfair Display', serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontSize: "20px",
                     fontWeight: 600,
                     color: "var(--site-text-primary)",
@@ -227,7 +227,7 @@ export default function Shop() {
                 </p>
                 <p
                   style={{
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontSize: "14px",
                     color: "var(--site-text-muted)",
                     marginBottom: "16px",
@@ -241,7 +241,7 @@ export default function Shop() {
                   style={{
                     border: "1px solid var(--site-border)",
                     color: "var(--site-text-primary)",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     minHeight: "44px",
                   }}
                 >

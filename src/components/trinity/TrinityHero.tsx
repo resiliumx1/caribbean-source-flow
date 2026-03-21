@@ -68,7 +68,7 @@ export function TrinityHero() {
           <div className="text-center mb-12 md:mb-16 animate-fade-in">
             <h1
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 700,
                 fontStyle: "italic",
                 fontSize: "clamp(2.5rem, 5vw, 64px)",
@@ -82,7 +82,7 @@ export function TrinityHero() {
             <p
               className="max-w-4xl mx-auto"
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: "18px",
                 color: "var(--site-hero-text-on-dark)",
@@ -121,13 +121,13 @@ export function TrinityHero() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/40 to-transparent group-hover:from-[#0a0a0a]/80 transition-all duration-500" />
                     <div className="absolute bottom-0 left-0 right-0 p-8">
-                      <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '28px', color: '#f2ead8', marginBottom: '8px' }}>
+                      <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '28px', color: '#f2ead8', marginBottom: '8px' }}>
                         {path.title}
                       </h2>
-                      <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', opacity: 0.8, marginBottom: '16px', lineHeight: 1.6 }}>
+                      <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', opacity: 0.8, marginBottom: '16px', lineHeight: 1.6 }}>
                         {path.description}
                       </p>
-                      <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300" style={{ border: '1px solid #c9a84c', color: '#c9a84c', background: 'transparent', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
+                      <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300" style={{ border: '1px solid #c9a84c', color: '#c9a84c', background: 'transparent', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
                         {path.cta} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </span>
                     </div>
@@ -147,7 +147,7 @@ export function TrinityHero() {
               key={dup}
               className="flex items-center gap-8 px-4"
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 400,
                 fontSize: "13px",
                 textTransform: "uppercase",

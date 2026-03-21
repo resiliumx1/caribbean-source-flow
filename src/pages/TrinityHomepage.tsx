@@ -50,13 +50,13 @@ function ConsultationToast() {
       style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-card-hover-border)', boxShadow: 'var(--site-shadow-card)' }}
     >
       <div className="flex-1">
-        <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '14px', color: 'var(--site-text-primary)', marginBottom: '8px' }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: '14px', color: 'var(--site-text-primary)', marginBottom: '8px' }}>
           🌿 Priest Kailash has limited consultation slots this month
         </p>
         <Link
           to="/retreats"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm"
-          style={{ background: 'var(--site-gold)', color: '#0F281E', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}
+          style={{ background: 'var(--site-gold)', color: '#0F281E', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}
         >
           Book Now <ArrowRight className="w-3 h-3" />
         </Link>

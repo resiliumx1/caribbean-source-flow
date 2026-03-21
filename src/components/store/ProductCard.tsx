@@ -85,7 +85,7 @@ export function ProductCard({ product, style }: ProductCardProps) {
           <h3
             className="line-clamp-2"
             style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 700,
               fontSize: "13px",
               textTransform: "uppercase",
@@ -123,7 +123,7 @@ export function ProductCard({ product, style }: ProductCardProps) {
         <div className="flex items-center justify-between mt-auto pt-2">
           <span
             style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 700,
               fontSize: "15px",
               color: "var(--site-text-primary)",
@@ -155,7 +155,7 @@ export function ProductCard({ product, style }: ProductCardProps) {
           style={{
             background: "var(--site-gold)",
             color: "var(--site-green-dark)",
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             minHeight: "44px",
           }}
         >

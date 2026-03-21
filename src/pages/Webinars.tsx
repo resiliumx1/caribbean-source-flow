@@ -27,8 +27,8 @@ export default function Webinars() {
   const { data: dbVideos = [] } = useWebinarVideos();
 
   useEffect(() => {
-    // Force dark mode for this page
     document.documentElement.classList.add("dark");
+    return () => document.documentElement.classList.remove("dark");
   }, []);
 
   // Filter videos by search query
@@ -41,7 +41,7 @@ export default function Webinars() {
     : dbVideos;
 
   return (
-    <div style={{ backgroundColor: "#090909", color: "#f2ead8" }}>
+    <div style={{ backgroundColor: "var(--site-bg-primary)", color: "var(--site-text-primary)" }}>
       <SEOHead title="Free Herbal Medicine Webinars | Priest Kailash | Mount Kailash" description="Join free live webinars on herbal medicine, natural health and holistic wellness with Priest Kailash. Expert-led sessions on immunity, fertility, detox and more." path="/webinars" />
       <WebinarHero />
       <WebinarFeatured />
@@ -64,10 +64,10 @@ export default function Webinars() {
       <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
         <DialogContent
           className="sm:max-w-4xl p-0 overflow-hidden"
-          style={{ backgroundColor: "#111111", border: "1px solid rgba(201,168,76,0.2)" }}
+          style={{ backgroundColor: "var(--site-bg-secondary)", border: "1px solid rgba(201,168,76,0.2)" }}
         >
           <DialogHeader className="p-4 pb-0">
-            <DialogTitle className="font-cormorant text-lg" style={{ color: "#f2ead8" }}>
+            <DialogTitle className="font-cormorant text-lg" style={{ color: "var(--site-text-primary)" }}>
               {selectedVideo?.title || "Webinar Replay"}
             </DialogTitle>
           </DialogHeader>

@@ -32,13 +32,13 @@ export function StudentWorkSamples() {
       <div className="container mx-auto max-w-5xl px-4">
         <div className="text-center mb-12 md:mb-16">
           <h2
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
             className="text-3xl md:text-4xl font-bold text-foreground mb-4"
           >
             What You'll Create
           </h2>
           <p
-            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
             className="text-lg text-muted-foreground max-w-xl mx-auto"
           >
             Real deliverables from real students. Here's a preview of the work you'll produce during the program.
@@ -57,7 +57,7 @@ export function StudentWorkSamples() {
             >
               <span
                 className="inline-block px-2.5 py-1 rounded-full bg-accent/10 text-accent text-[11px] font-semibold mb-4"
-                style={{ fontFamily: "'Jost', sans-serif" }}
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
               >
                 {sample.tag}
               </span>
@@ -65,13 +65,13 @@ export function StudentWorkSamples() {
                 <sample.icon className="w-6 h-6 text-accent" />
               </div>
               <h3
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
                 className="text-lg font-bold text-foreground mb-2"
               >
                 {sample.title}
               </h3>
               <p
-                style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
                 className="text-sm text-muted-foreground leading-relaxed"
               >
                 {sample.description}

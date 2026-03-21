@@ -30,7 +30,7 @@ export function ConsultationCTA() {
         {/* Heading */}
         <h2
           style={{
-            fontFamily: "'Cormorant Garamond', serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 700,
             fontSize: "clamp(1.875rem, 4vw, 2.5rem)",
             color: "var(--site-text-primary, #0F281E)",
@@ -42,7 +42,7 @@ export function ConsultationCTA() {
 
         <h3
           style={{
-            fontFamily: "'Jost', sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 400,
             fontSize: "18px",
             color: "var(--site-gold, #9A6B3F)",
@@ -56,7 +56,7 @@ export function ConsultationCTA() {
         <p
           className="px-4 sm:px-6"
           style={{
-            fontFamily: "'Jost', sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 300,
             fontSize: "16px",
             color: "var(--site-text-secondary, #4A4A4A)",
@@ -85,7 +85,7 @@ export function ConsultationCTA() {
             />
             <span
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: "14px",
                 color: "var(--site-text-primary, #0F281E)",
@@ -96,7 +96,7 @@ export function ConsultationCTA() {
           </span>
           <span
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
               fontSize: "12px",
               color: "var(--site-text-secondary, #4A4A4A)",
@@ -114,7 +114,7 @@ export function ConsultationCTA() {
             style={{
               background: "var(--site-gold, #BC8A5F)",
               color: "#0F281E",
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontSize: "16px",
             }}
           >
@@ -129,7 +129,7 @@ export function ConsultationCTA() {
           className="inline-flex items-center gap-1 text-sm transition-colors hover:underline underline-offset-4"
           style={{
             color: "var(--site-gold, #9A6B3F)",
-            fontFamily: "'Jost', sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 400,
           }}
         >

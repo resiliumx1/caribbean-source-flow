@@ -35,13 +35,13 @@ export function CareerOutcomes() {
       <div className="container mx-auto max-w-5xl px-4">
         <div className="text-center mb-12 md:mb-16">
           <h2
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
             className="text-3xl md:text-4xl font-bold text-foreground mb-4"
           >
             Career Outcomes & Income Potential
           </h2>
           <p
-            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
             className="text-lg text-muted-foreground max-w-2xl mx-auto"
           >
             A Level 1 Herbal Physician certification opens doors across wellness, education, 
@@ -68,7 +68,7 @@ export function CareerOutcomes() {
                 {tier.years}
               </div>
               <h3
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
                 className="text-xl font-bold text-foreground mb-2"
               >
                 {tier.level}
@@ -78,7 +78,7 @@ export function CareerOutcomes() {
                 <span className="text-sm text-muted-foreground">{tier.perYear}</span>
               </div>
               <p
-                style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
                 className="text-sm text-muted-foreground leading-relaxed"
               >
                 {tier.description}
@@ -88,10 +88,10 @@ export function CareerOutcomes() {
         </div>
 
         <div className="text-center mt-8 space-y-1">
-          <p className="text-xs text-muted-foreground" style={{ fontFamily: "'Jost', sans-serif" }}>
+          <p className="text-xs text-muted-foreground" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             Based on 2024 graduate survey of 500+ alumni
           </p>
-          <p className="text-xs text-muted-foreground/60" style={{ fontFamily: "'Jost', sans-serif" }}>
+          <p className="text-xs text-muted-foreground/60" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             Results vary by location, dedication, and market conditions.
           </p>
         </div>

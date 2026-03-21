@@ -131,7 +131,7 @@ export default function TheAnswer() {
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
-    return () => {};
+    return () => document.documentElement.classList.remove("dark");
   }, []);
 
   return (

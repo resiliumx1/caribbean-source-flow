@@ -45,19 +45,19 @@ export default function WebinarCommunity({ onVideoClick }: Props) {
   }, []);
 
   return (
-    <section ref={ref} className="webinar-reveal" style={{ backgroundColor: "#090909" }}>
+    <section ref={ref} className="webinar-reveal" style={{ backgroundColor: "var(--site-bg-primary)" }}>
       <div className="max-w-[1200px] mx-auto px-6 py-20">
         <div className="text-center mb-12">
-          <span className="font-jost text-xs tracking-[0.2em] uppercase mb-3 block" style={{ color: "#c9a84c" }}>
+          <span className="font-jost text-xs tracking-[0.2em] uppercase mb-3 block" style={{ color: "var(--site-gold)" }}>
             Community Wisdom
           </span>
           <h2
             className="font-cormorant font-bold italic mb-3"
-            style={{ color: "#f2ead8", fontSize: "clamp(1.6rem, 3vw, 2.5rem)" }}
+            style={{ color: "var(--site-text-primary)", fontSize: "clamp(1.6rem, 3vw, 2.5rem)" }}
           >
             Stories From the Sessions
           </h2>
-          <p className="font-jost font-light max-w-lg mx-auto" style={{ color: "#8a8070" }}>
+          <p className="font-jost font-light max-w-lg mx-auto" style={{ color: "var(--site-text-secondary)" }}>
             Real transformations from real attendees. These webinars change lives.
           </p>
         </div>
@@ -68,7 +68,7 @@ export default function WebinarCommunity({ onVideoClick }: Props) {
               key={i}
               className="rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02]"
               style={{
-                backgroundColor: "#111111",
+                backgroundColor: "var(--site-bg-secondary)",
                 border: "1px solid rgba(201,168,76,0.15)",
                 borderTop: "3px solid #c9a84c",
               }}
@@ -82,8 +82,8 @@ export default function WebinarCommunity({ onVideoClick }: Props) {
                   {t.flag}
                 </div>
                 <div>
-                  <p className="font-jost font-medium text-sm" style={{ color: "#f2ead8" }}>{t.name}</p>
-                  <p className="font-jost text-xs flex items-center gap-1" style={{ color: "#c9a84c" }}>
+                  <p className="font-jost font-medium text-sm" style={{ color: "var(--site-text-primary)" }}>{t.name}</p>
+                  <p className="font-jost text-xs flex items-center gap-1" style={{ color: "var(--site-gold)" }}>
                     <MapPin size={10} /> {t.location}
                   </p>
                 </div>
@@ -98,7 +98,7 @@ export default function WebinarCommunity({ onVideoClick }: Props) {
               <a
                 href="#archive"
                 className="font-jost text-xs flex items-center gap-1 transition-colors hover:brightness-125"
-                style={{ color: "#c9a84c" }}
+                style={{ color: "var(--site-gold)" }}
               >
                 Watch the session that helped {t.name} <ArrowRight size={12} />
               </a>

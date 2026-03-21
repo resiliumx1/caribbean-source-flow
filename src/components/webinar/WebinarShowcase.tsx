@@ -35,7 +35,7 @@ function VideoCard({ video, onClick }: { video: WebinarVideo; onClick: () => voi
       onClick={onClick}
       className="flex-shrink-0 cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.03] webinar-card-glow group"
       style={{
-        backgroundColor: "#18181b",
+        backgroundColor: "var(--site-bg-deep)",
         border: "1px solid rgba(201,168,76,0.15)",
         width: "100%",
       }}
@@ -46,7 +46,7 @@ function VideoCard({ video, onClick }: { video: WebinarVideo; onClick: () => voi
           <img src={video.thumbnail_url} alt={cleanTitle} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
         ) : (
           <div className="w-full h-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #0f0f0d 100%)" }}>
-            <span className="font-cormorant font-bold text-xl text-center px-6" style={{ color: "#f2ead8" }}>{cleanTitle}</span>
+            <span className="font-cormorant font-bold text-xl text-center px-6" style={{ color: "var(--site-text-primary)" }}>{cleanTitle}</span>
           </div>
         )}
 
@@ -74,14 +74,14 @@ function VideoCard({ video, onClick }: { video: WebinarVideo; onClick: () => voi
 
         {/* Category tag on thumbnail */}
         {categoryMeta && (
-          <div className="absolute bottom-3 left-3 px-2 py-1 rounded-full text-xs font-jost backdrop-blur-sm" style={{ backgroundColor: "rgba(9,9,9,0.7)", color: "#c9a84c", border: "1px solid rgba(201,168,76,0.2)" }}>
+          <div className="absolute bottom-3 left-3 px-2 py-1 rounded-full text-xs font-jost backdrop-blur-sm" style={{ backgroundColor: "rgba(9,9,9,0.7)", color: "var(--site-gold)", border: "1px solid rgba(201,168,76,0.2)" }}>
             {categoryMeta.emoji} {categoryMeta.label}
           </div>
         )}
 
         {/* Date badge */}
         {formattedDate && (
-          <div className="absolute bottom-3 right-3 px-2 py-1 rounded text-xs font-jost" style={{ backgroundColor: "rgba(9,9,9,0.7)", color: "#8a8070" }}>
+          <div className="absolute bottom-3 right-3 px-2 py-1 rounded text-xs font-jost" style={{ backgroundColor: "rgba(9,9,9,0.7)", color: "var(--site-text-secondary)" }}>
             {formattedDate}
           </div>
         )}
@@ -89,15 +89,15 @@ function VideoCard({ video, onClick }: { video: WebinarVideo; onClick: () => voi
 
       {/* Body */}
       <div className="p-4">
-        <h4 className="font-cormorant font-semibold text-lg mb-1 line-clamp-2" style={{ color: "#f2ead8" }}>
+        <h4 className="font-cormorant font-semibold text-lg mb-1 line-clamp-2" style={{ color: "var(--site-text-primary)" }}>
           {cleanTitle}
         </h4>
         {video.description && (
-          <p className="font-jost font-light text-sm line-clamp-2 mb-3" style={{ color: "#8a8070" }}>
+          <p className="font-jost font-light text-sm line-clamp-2 mb-3" style={{ color: "var(--site-text-secondary)" }}>
             {video.description}
           </p>
         )}
-        <span className="font-jost text-sm font-medium" style={{ color: "#c9a84c" }}>
+        <span className="font-jost text-sm font-medium" style={{ color: "var(--site-gold)" }}>
           Watch Now →
         </span>
       </div>
@@ -195,23 +195,23 @@ function CarouselRow({ category, videos, onVideoClick }: { category: string; vid
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#c9a84c" }} />
-          <h3 className="font-cormorant font-semibold text-xl md:text-2xl" style={{ color: "#f2ead8" }}>
+          <h3 className="font-cormorant font-semibold text-xl md:text-2xl" style={{ color: "var(--site-text-primary)" }}>
             {meta?.label || category}
           </h3>
-          <span className="font-jost text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#c9a84c" }}>
+          <span className="font-jost text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "var(--site-gold)" }}>
             {realCount} sessions
           </span>
         </div>
         <button
           onClick={() => setShowAll(!showAll)}
           className="font-jost text-sm font-medium cursor-pointer transition-colors hover:brightness-125"
-          style={{ color: "#c9a84c", background: "none", border: "none" }}
+          style={{ color: "var(--site-gold)", background: "none", border: "none" }}
         >
           {showAll ? "Show Carousel ←" : "View All →"}
         </button>
       </div>
       {meta?.description && (
-        <p className="font-jost font-light text-sm mb-5" style={{ color: "#8a8070" }}>
+        <p className="font-jost font-light text-sm mb-5" style={{ color: "var(--site-text-secondary)" }}>
           {meta.description}
         </p>
       )}
@@ -257,7 +257,7 @@ function CarouselRow({ category, videos, onVideoClick }: { category: string; vid
             style={{ backgroundColor: "rgba(9,9,9,0.8)", border: "1px solid rgba(201,168,76,0.4)" }}
             aria-label="Previous"
           >
-            <ChevronLeft size={18} style={{ color: "#c9a84c" }} />
+            <ChevronLeft size={18} style={{ color: "var(--site-gold)" }} />
           </button>
           <button
             onClick={() => setCurrentIndex((p) => p + 1)}
@@ -265,7 +265,7 @@ function CarouselRow({ category, videos, onVideoClick }: { category: string; vid
             style={{ backgroundColor: "rgba(9,9,9,0.8)", border: "1px solid rgba(201,168,76,0.4)" }}
             aria-label="Next"
           >
-            <ChevronRight size={18} style={{ color: "#c9a84c" }} />
+            <ChevronRight size={18} style={{ color: "var(--site-gold)" }} />
           </button>
         </div>
       )}
@@ -348,18 +348,18 @@ export default function WebinarShowcase({ videos, activeFilter, onFilterChange, 
       id="archive"
       ref={sectionRef}
       className="webinar-reveal webinar-noise relative"
-      style={{ backgroundColor: "#090909" }}
+      style={{ backgroundColor: "var(--site-bg-primary)" }}
     >
       <div className="relative z-10 max-w-[1200px] mx-auto px-6 py-24">
         {/* Heading */}
         <div className="text-center mb-8">
           <h2
             className="font-cormorant font-bold italic mb-3"
-            style={{ color: "#f2ead8", fontSize: "clamp(1.8rem, 3.5vw, 2.75rem)" }}
+            style={{ color: "var(--site-text-primary)", fontSize: "clamp(1.8rem, 3.5vw, 2.75rem)" }}
           >
             Past Sessions & Replays
           </h2>
-          <p className="font-jost font-light" style={{ color: "#8a8070" }}>
+          <p className="font-jost font-light" style={{ color: "var(--site-text-secondary)" }}>
             Explore every topic, watch at your own pace.
           </p>
         </div>
@@ -367,7 +367,7 @@ export default function WebinarShowcase({ videos, activeFilter, onFilterChange, 
         {/* Search bar */}
         <div className="max-w-md mx-auto mb-10">
           <div className="relative">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "#8a8070" }} />
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--site-text-secondary)" }} />
             <input
               type="text"
               value={searchQuery}
@@ -375,9 +375,9 @@ export default function WebinarShowcase({ videos, activeFilter, onFilterChange, 
               placeholder="Search by concern: fertility, detox, blood pressure..."
               className="w-full rounded-full pl-10 pr-5 py-3 text-sm font-jost outline-none transition-all duration-200"
               style={{
-                backgroundColor: "#18181b",
+                backgroundColor: "var(--site-bg-deep)",
                 border: "1px solid rgba(201,168,76,0.2)",
-                color: "#f2ead8",
+                color: "var(--site-text-primary)",
               }}
             />
           </div>
@@ -426,7 +426,7 @@ export default function WebinarShowcase({ videos, activeFilter, onFilterChange, 
             if (!catVideos || catVideos.length === 0) {
               return (
                 <div className="text-center py-16">
-                  <p className="font-jost" style={{ color: "#8a8070" }}>No webinars in this category yet.</p>
+                  <p className="font-jost" style={{ color: "var(--site-text-secondary)" }}>No webinars in this category yet.</p>
                 </div>
               );
             }
@@ -442,15 +442,15 @@ export default function WebinarShowcase({ videos, activeFilter, onFilterChange, 
 
         {videos.length === 0 && !searchQuery && (
           <div className="text-center py-16">
-            <p className="font-jost text-lg" style={{ color: "#8a8070" }}>No webinar videos yet.</p>
-            <p className="font-jost text-sm mt-2" style={{ color: "#8a8070" }}>Check back soon for new sessions.</p>
+            <p className="font-jost text-lg" style={{ color: "var(--site-text-secondary)" }}>No webinar videos yet.</p>
+            <p className="font-jost text-sm mt-2" style={{ color: "var(--site-text-secondary)" }}>Check back soon for new sessions.</p>
           </div>
         )}
 
         {videos.length === 0 && searchQuery && (
           <div className="text-center py-16">
-            <p className="font-jost text-lg mb-2" style={{ color: "#f2ead8" }}>No results for "{searchQuery}"</p>
-            <p className="font-jost text-sm" style={{ color: "#8a8070" }}>Try searching for a different topic or browse categories above.</p>
+            <p className="font-jost text-lg mb-2" style={{ color: "var(--site-text-primary)" }}>No results for "{searchQuery}"</p>
+            <p className="font-jost text-sm" style={{ color: "var(--site-text-secondary)" }}>Try searching for a different topic or browse categories above.</p>
           </div>
         )}
       </div>

@@ -29,7 +29,7 @@ export function WholesaleAuthority() {
       <div
         className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
         style={{
-          fontFamily: "'Cormorant Garamond', serif",
+          fontFamily: "'DM Sans', sans-serif",
           fontWeight: 700,
           fontSize: "clamp(200px, 30vw, 400px)",
           color: "rgba(245,241,232,0.03)",
@@ -43,7 +43,7 @@ export function WholesaleAuthority() {
         <div className="text-center mb-16">
           <h2
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 700,
               fontSize: "clamp(2rem, 4vw, 44px)",
               color: "#F5F1E8",
@@ -54,7 +54,7 @@ export function WholesaleAuthority() {
           </h2>
           <p
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
               fontSize: "18px",
               color: "#A8B5A0",
@@ -85,7 +85,7 @@ export function WholesaleAuthority() {
                 </div>
                 <h3
                   style={{
-                    fontFamily: "'Jost', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 600,
                     fontSize: "18px",
                     color: "#F5F1E8",
@@ -96,7 +96,7 @@ export function WholesaleAuthority() {
                 </h3>
                 <p
                   style={{
-                    fontFamily: "'Jost', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 300,
                     fontSize: "14px",
                     color: "#A8B5A0",
@@ -117,7 +117,7 @@ export function WholesaleAuthority() {
         >
           <blockquote
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,
               fontStyle: "italic",
               fontSize: "18px",
@@ -132,7 +132,7 @@ export function WholesaleAuthority() {
           </blockquote>
           <cite
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 400,
               fontSize: "14px",
               color: "#D4A373",
@@ -151,7 +151,7 @@ export function WholesaleAuthority() {
             style={{
               background: "#D4A373",
               color: "#0F281E",
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,
               fontSize: "15px",
             }}
@@ -164,7 +164,7 @@ export function WholesaleAuthority() {
               background: "transparent",
               border: "1px solid #2D6A4F",
               color: "#A8B5A0",
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 400,
               fontSize: "14px",
             }}

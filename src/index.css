@@ -283,7 +283,7 @@
 
   .hero-title {
     @apply text-4xl md:text-5xl lg:text-6xl font-bold leading-tight;
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Sans', sans-serif;
     text-shadow: 0 2px 20px hsla(0, 0%, 0%, 0.3);
   }
 

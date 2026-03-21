@@ -14,7 +14,7 @@ const features = [
 
 export const PrivateLabel = ({ onScrollToForm }: PrivateLabelProps) => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           {/* Image */}
@@ -37,7 +37,7 @@ export const PrivateLabel = ({ onScrollToForm }: PrivateLabelProps) => {
             </p>
             <h2
               className="mb-4"
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(28px, 4vw, 40px)", color: "var(--site-text-primary)", lineHeight: 1.15 }}
+              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(28px, 4vw, 40px)", color: "var(--site-text-primary)", lineHeight: 1.15 }}
             >
               Your Formulations,{" "}
               <span style={{ color: "var(--site-gold)" }}>Our Infrastructure</span>

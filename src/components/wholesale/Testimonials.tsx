@@ -20,7 +20,7 @@ const testimonials = [
 
 export const Testimonials = () => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <p
@@ -29,7 +29,7 @@ export const Testimonials = () => {
           >
             Partner Testimonials
           </p>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8" }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8" }}>
             Trusted Across 3 Continents
           </h2>
         </div>
@@ -48,7 +48,7 @@ export const Testimonials = () => {
               </div>
               <blockquote
                 className="mb-6"
-                style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400, fontStyle: "italic", fontSize: "18px", color: "#F5F1E8", lineHeight: 1.6 }}
+                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontStyle: "italic", fontSize: "18px", color: "#F5F1E8", lineHeight: 1.6 }}
               >
                 "{t.quote}"
               </blockquote>

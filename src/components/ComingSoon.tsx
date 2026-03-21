@@ -23,7 +23,7 @@ const ComingSoon = () => {
         </h2>
 
         {/* Coming Soon Headline */}
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-[#F7F3EE] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-[#F7F3EE] mb-6" style={{ fontFamily: "'DM Sans', sans-serif" }}>
           Coming Soon
         </h1>
 

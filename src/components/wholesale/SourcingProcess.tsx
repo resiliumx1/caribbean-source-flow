@@ -29,7 +29,7 @@ const steps = [
 
 export const SourcingProcess = () => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <p
@@ -38,7 +38,7 @@ export const SourcingProcess = () => {
           >
             How It Works
           </p>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)" }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)" }}>
             From First Call to First Delivery
           </h2>
         </div>
@@ -66,7 +66,7 @@ export const SourcingProcess = () => {
                   Step {item.step}
                 </span>
 
-                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "22px", color: "var(--site-text-primary)", marginBottom: "8px" }}>
+                <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "22px", color: "var(--site-text-primary)", marginBottom: "8px" }}>
                   {item.title}
                 </h3>
                 <p style={{ fontWeight: 300, fontSize: "14px", color: "var(--site-text-muted)", lineHeight: 1.7 }}>
