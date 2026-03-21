@@ -27,8 +27,8 @@ export default function Webinars() {
   const { data: dbVideos = [] } = useWebinarVideos();
 
   useEffect(() => {
-    // Force dark mode for this page
     document.documentElement.classList.add("dark");
+    return () => document.documentElement.classList.remove("dark");
   }, []);
 
   // Filter videos by search query
