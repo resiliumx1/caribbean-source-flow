@@ -393,9 +393,9 @@ export default function WebinarShowcase({ videos, activeFilter, onFilterChange, 
                 onClick={() => onFilterChange(cat.value)}
                 className="font-jost text-sm px-5 py-2 rounded-full transition-all duration-200"
                 style={{
-                  backgroundColor: active ? "#c9a84c" : "transparent",
+                  backgroundColor: active ? "var(--site-gold)" : "transparent",
                   color: active ? "#090909" : "#8a8070",
-                  border: `1px solid ${active ? "#c9a84c" : "rgba(201,168,76,0.25)"}`,
+                  border: `1px solid ${active ? "var(--site-gold)" : "rgba(201,168,76,0.25)"}`,
                   fontWeight: active ? 500 : 300,
                   cursor: "pointer",
                 }}
