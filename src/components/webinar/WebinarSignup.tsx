@@ -51,7 +51,7 @@ export default function WebinarSignup() {
               type="email"
               placeholder="Your email address"
               required
-              className="flex-1 rounded-full px-5 py-3 text-sm outline-none font-jost transition-all duration-200 focus:ring-2 focus:ring-[#c9a84c]/50"
+              className="flex-1 rounded-full px-5 py-3 text-sm outline-none font-jost transition-all duration-200 focus:ring-2"
               style={{
                 backgroundColor: "var(--site-bg-deep)",
                 border: "1px solid rgba(242,234,216,0.2)",
@@ -61,7 +61,7 @@ export default function WebinarSignup() {
             <button
               type="submit"
               className="font-jost font-medium px-7 py-3 rounded-full text-sm transition-all duration-300 hover:brightness-110 hover:scale-[1.02] whitespace-nowrap min-h-[48px]"
-              style={{ backgroundColor: "#c9a84c", color: "#090909" }}
+              style={{ backgroundColor: "var(--site-gold)", color: "#090909" }}
             >
               Notify Me
             </button>

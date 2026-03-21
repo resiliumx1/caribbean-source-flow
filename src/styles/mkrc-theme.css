@@ -2,47 +2,47 @@
 /* Does NOT conflict with existing Tailwind dark/light mode */
 
 [data-mkrc-theme="dark"] {
-  --mkrc-bg-primary: #0D0D0D;
-  --mkrc-bg-secondary: #141410;
+  --mkrc-bg-primary: var(--site-bg-primary);
+  --mkrc-bg-secondary: var(--site-bg-secondary);
   --mkrc-bg-surface: #1A1A16;
   --mkrc-bg-elevated: #242420;
-  --mkrc-bg-card: #1E1E1A;
-  --mkrc-accent-gold: #C9A84C;
-  --mkrc-accent-gold-bright: #D4AF37;
+  --mkrc-bg-card: var(--site-bg-card);
+  --mkrc-accent-gold: var(--site-gold, #BC8A5F);
+  --mkrc-accent-gold-bright: var(--site-gold, #D4A373);
   --mkrc-accent-gold-dim: #A68A3E;
-  --mkrc-accent-green: #3A7D53;
-  --mkrc-accent-green-deep: #2D5A3D;
-  --mkrc-text-primary: #F5F0E8;
-  --mkrc-text-secondary: #A09888;
+  --mkrc-accent-green: var(--site-green-mid);
+  --mkrc-accent-green-deep: var(--site-green-dark);
+  --mkrc-text-primary: var(--site-text-primary);
+  --mkrc-text-secondary: var(--site-text-secondary);
   --mkrc-text-tertiary: #706858;
   --mkrc-text-inverse: #0D0D0D;
-  --mkrc-border-subtle: rgba(201,168,76,0.12);
+  --mkrc-border-subtle: var(--site-border-subtle);
   --mkrc-border-medium: rgba(201,168,76,0.25);
   --mkrc-glow-gold: rgba(201,168,76,0.15);
   --mkrc-glow-green: rgba(58,125,83,0.12);
-  --mkrc-shadow-card: 0 8px 32px rgba(0,0,0,0.4);
+  --mkrc-shadow-card: var(--site-shadow-card);
 }
 
 [data-mkrc-theme="light"] {
-  --mkrc-bg-primary: #FAF7F2;
-  --mkrc-bg-secondary: #F5F0E8;
+  --mkrc-bg-primary: var(--site-bg-primary);
+  --mkrc-bg-secondary: var(--site-bg-secondary);
   --mkrc-bg-surface: #FFFFFF;
   --mkrc-bg-elevated: #FBF9F5;
-  --mkrc-bg-card: #FFFFFF;
-  --mkrc-accent-gold: #B8942F;
-  --mkrc-accent-gold-bright: #C9A84C;
+  --mkrc-bg-card: var(--site-bg-card);
+  --mkrc-accent-gold: var(--site-gold, #BC8A5F);
+  --mkrc-accent-gold-bright: var(--site-gold, #D4A373);
   --mkrc-accent-gold-dim: #A68A3E;
-  --mkrc-accent-green: #2D5A3D;
-  --mkrc-accent-green-deep: #1E3D2A;
-  --mkrc-text-primary: #1A1512;
-  --mkrc-text-secondary: #5C5347;
+  --mkrc-accent-green: var(--site-green-mid);
+  --mkrc-accent-green-deep: var(--site-green-dark);
+  --mkrc-text-primary: var(--site-text-primary);
+  --mkrc-text-secondary: var(--site-text-secondary);
   --mkrc-text-tertiary: #8A7F72;
   --mkrc-text-inverse: #F5F0E8;
-  --mkrc-border-subtle: rgba(26,21,18,0.08);
+  --mkrc-border-subtle: var(--site-border-subtle);
   --mkrc-border-medium: rgba(26,21,18,0.15);
   --mkrc-glow-gold: rgba(201,168,76,0.08);
   --mkrc-glow-green: rgba(45,90,61,0.06);
-  --mkrc-shadow-card: 0 4px 24px rgba(0,0,0,0.06);
+  --mkrc-shadow-card: var(--site-shadow-card);
 }
 
 /* Typography classes */

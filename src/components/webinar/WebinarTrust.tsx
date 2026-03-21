@@ -39,7 +39,7 @@ export default function WebinarTrust() {
               className="rounded-xl p-6 transition-all duration-300 hover:scale-[1.02]"
               style={{
                 backgroundColor: "var(--site-bg-deep)",
-                borderTop: "2px solid #c9a84c",
+                borderTop: "2px solid var(--site-gold)",
                 animationDelay: `${i * 80}ms`,
               }}
             >

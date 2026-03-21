@@ -83,8 +83,8 @@ const TrinityHomepage = () => {
   return (
     <main className="min-h-screen">
       <Helmet>
-        <title>Clinical Bush Medicine & Wellness Retreats | Mount Kailash</title>
-        <meta name="description" content="Caribbean clinical bush medicine from St. Lucia. 21+ years practitioner training, wholesale formulations, and cellular detox retreats led by Priest Kailash Kay Leonce." />
+        <title>Mount Kailash Rejuvenation Centre | Caribbean Bush Medicine & Wellness</title>
+        <meta name="description" content="Mount Kailash Rejuvenation Centre — 21+ years of Caribbean clinical bush medicine from Saint Lucia. Shop herbal tinctures, book a 7-day volcanic highlands retreat, or train as a certified herbal physician under Priest Kailash Kay Leonce." />
         <link rel="canonical" href="https://caribbean-source-flow.lovable.app/" />
       </Helmet>
 

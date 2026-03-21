@@ -41,7 +41,7 @@ export default function WebinarExplore() {
                 style={{
                   backgroundColor: "var(--site-bg-deep)",
                   border: "1px solid rgba(201,168,76,0.15)",
-                  borderTop: "2px solid #c9a84c",
+                  borderTop: "2px solid var(--site-gold)",
                 }}
               >
                 <Icon size={28} style={{ color: "var(--site-gold)" }} className="mx-auto mb-4" />

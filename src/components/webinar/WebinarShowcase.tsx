@@ -67,7 +67,7 @@ function VideoCard({ video, onClick }: { video: WebinarVideo; onClick: () => voi
 
         {/* New badge */}
         {isNew && (
-          <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-xs font-jost font-medium" style={{ backgroundColor: "#c9a84c", color: "#090909" }}>
+          <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-xs font-jost font-medium" style={{ backgroundColor: "var(--site-gold)", color: "#090909" }}>
             New
           </div>
         )}
@@ -194,7 +194,7 @@ function CarouselRow({ category, videos, onVideoClick }: { category: string; vid
       {/* Row header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#c9a84c" }} />
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "var(--site-gold)" }} />
           <h3 className="font-cormorant font-semibold text-xl md:text-2xl" style={{ color: "var(--site-text-primary)" }}>
             {meta?.label || category}
           </h3>
@@ -279,7 +279,7 @@ function CarouselRow({ category, videos, onVideoClick }: { category: string; vid
               onClick={() => setCurrentIndex(i)}
               className="w-2 h-2 rounded-full transition-all duration-200"
               style={{
-                backgroundColor: i === activeDot ? "#c9a84c" : "rgba(201,168,76,0.25)",
+                backgroundColor: i === activeDot ? "var(--site-gold)" : "rgba(201,168,76,0.25)",
                 transform: i === activeDot ? "scale(1.5)" : "scale(1)",
               }}
               aria-label={`Slide ${i + 1}`}
@@ -393,9 +393,9 @@ export default function WebinarShowcase({ videos, activeFilter, onFilterChange, 
                 onClick={() => onFilterChange(cat.value)}
                 className="font-jost text-sm px-5 py-2 rounded-full transition-all duration-200"
                 style={{
-                  backgroundColor: active ? "#c9a84c" : "transparent",
+                  backgroundColor: active ? "var(--site-gold)" : "transparent",
                   color: active ? "#090909" : "#8a8070",
-                  border: `1px solid ${active ? "#c9a84c" : "rgba(201,168,76,0.25)"}`,
+                  border: `1px solid ${active ? "var(--site-gold)" : "rgba(201,168,76,0.25)"}`,
                   fontWeight: active ? 500 : 300,
                   cursor: "pointer",
                 }}
