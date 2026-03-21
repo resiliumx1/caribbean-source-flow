@@ -51,7 +51,7 @@ export default function WebinarSignup() {
               type="email"
               placeholder="Your email address"
               required
-              className="flex-1 rounded-full px-5 py-3 text-sm outline-none font-jost transition-all duration-200 focus:ring-2 focus:ring-[#c9a84c]/50"
+              className="flex-1 rounded-full px-5 py-3 text-sm outline-none font-jost transition-all duration-200 focus:ring-2"
               style={{
                 backgroundColor: "var(--site-bg-deep)",
                 border: "1px solid rgba(242,234,216,0.2)",
