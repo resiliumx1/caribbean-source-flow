@@ -41,7 +41,7 @@ export default function Webinars() {
     : dbVideos;
 
   return (
-    <div style={{ backgroundColor: "#090909", color: "#f2ead8" }}>
+    <div style={{ backgroundColor: "var(--site-bg-primary)", color: "var(--site-text-primary)" }}>
       <SEOHead title="Free Herbal Medicine Webinars | Priest Kailash | Mount Kailash" description="Join free live webinars on herbal medicine, natural health and holistic wellness with Priest Kailash. Expert-led sessions on immunity, fertility, detox and more." path="/webinars" />
       <WebinarHero />
       <WebinarFeatured />
