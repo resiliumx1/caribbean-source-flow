@@ -128,6 +128,86 @@ export default function Shop() {
     <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
       <SEOHead title="Natural Herbal Products | The Sulphur Ridge Apothecary | Mount Kailash" description="Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration." path="/shop" />
       <ShopHero />
+
+      {/* OUR FORMULAS marquee strip */}
+      {(() => {
+        const previewProducts = (products ?? []).filter(p => p.image_url && p.is_active !== false).slice(0, 10);
+        if (previewProducts.length < 3) return null;
+        const doubled = [...previewProducts, ...previewProducts];
+        return (
+          <section
+            style={{
+              background: "var(--site-bg-secondary)",
+              borderTop: "1px solid var(--site-border)",
+              borderBottom: "1px solid var(--site-border)",
+              padding: "16px 0",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: "var(--site-gold)",
+                textAlign: "center",
+                marginBottom: "12px",
+              }}
+            >
+              Our Formulas
+            </p>
+            <div style={{ overflow: "hidden" }}>
+              <div
+                style={{
+                  display: "flex",
+                  width: "max-content",
+                  animation: "marquee-scroll 30s linear infinite",
+                  gap: "24px",
+                }}
+              >
+                {doubled.map((p, i) => (
+                  <Link
+                    key={`${p.id}-${i}`}
+                    to={`/shop/${p.slug}`}
+                    className="flex flex-col items-center shrink-0"
+                    style={{ width: "80px", textDecoration: "none" }}
+                  >
+                    <div
+                      className="rounded-full overflow-hidden flex items-center justify-center"
+                      style={{
+                        width: "72px",
+                        height: "72px",
+                        background: "var(--site-green-dark)",
+                      }}
+                    >
+                      <img
+                        src={p.image_url!}
+                        alt={p.name}
+                        className="w-[56px] h-[56px] object-contain"
+                        draggable={false}
+                      />
+                    </div>
+                    <span
+                      className="line-clamp-2 text-center mt-1.5"
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "11px",
+                        fontWeight: 400,
+                        color: "var(--site-text-primary)",
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {p.name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
       <ShopFilterNav
         activeCondition={activeCondition}
         onConditionChange={setActiveCondition}
