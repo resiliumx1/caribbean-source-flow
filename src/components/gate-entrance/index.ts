@@ -1,1 +1,1 @@
-export { GateEntrance } from "./GateEntrance";
+export { GateEntrance, isReturningVisitor } from "./GateEntrance";
