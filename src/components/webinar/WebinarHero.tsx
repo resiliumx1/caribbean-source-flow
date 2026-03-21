@@ -53,7 +53,7 @@ export default function WebinarHero() {
 
       <div className="hero-content relative z-10 px-6 py-24 max-w-3xl mx-auto">
         {/* Badge */}
-        <div className="inline-block mb-8 px-5 py-2 rounded-full border border-[#c9a84c]/40 backdrop-blur-sm">
+        <div className="inline-block mb-8 px-5 py-2 rounded-full border backdrop-blur-sm" style={{ borderColor: "rgba(188,138,95,0.4)" }}>
           <span className="font-cormorant text-sm tracking-wide" style={{ color: "var(--site-gold)" }}>
             ✦ Free Wellness Education by MKRC
           </span>
