@@ -151,7 +151,7 @@ html:has(.gate-overlay) body {
 
 /* ── Seal ── */
 #logo-seal{
-  position:absolute;left:50%;top:42%;
+  position:absolute;left:50%;top:50%;
   transform:translate(-50%,-50%);
   z-index:20;pointer-events:none;opacity:0;
   animation:sealIn 1.4s ease forwards 0.3s
