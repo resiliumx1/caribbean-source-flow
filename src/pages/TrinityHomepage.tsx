@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/homepage/HeroSection";
 import { MessageCircle, ArrowRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { GateEntrance, isReturningVisitor } from "@/components/gate-entrance";
 
 // Lazy load below-fold sections
 const SourceStory = lazy(() => import("@/components/homepage/SourceStory").then(m => ({ default: m.SourceStory })));
@@ -74,14 +75,28 @@ function SectionFallback() {
 }
 
 const TrinityHomepage = () => {
+  const [showGate, setShowGate] = useState(() => !isReturningVisitor());
+
   // Dispatch gate-complete immediately so header/chat show
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent('gate-complete'));
-    window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
-  }, []);
+    if (!showGate) {
+      window.dispatchEvent(new CustomEvent('gate-complete'));
+      window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
+    }
+  }, [showGate]);
 
   return (
     <main className="min-h-screen">
+      {showGate && (
+        <GateEntrance
+          onGateComplete={() => {
+            setShowGate(false);
+            window.dispatchEvent(new CustomEvent('gate-complete'));
+            window.dispatchEvent(new CustomEvent('gate-progress', { detail: 1 }));
+          }}
+        />
+      )}
+
       <Helmet>
         <title>Mount Kailash Rejuvenation Centre | Caribbean Bush Medicine & Wellness</title>
         <meta name="description" content="Mount Kailash Rejuvenation Centre — 21+ years of Caribbean clinical bush medicine from Saint Lucia. Shop herbal tinctures, book a 7-day volcanic highlands retreat, or train as a certified herbal physician under Priest Kailash Kay Leonce." />
