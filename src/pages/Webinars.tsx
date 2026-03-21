@@ -64,7 +64,7 @@ export default function Webinars() {
       <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
         <DialogContent
           className="sm:max-w-4xl p-0 overflow-hidden"
-          style={{ backgroundColor: "#111111", border: "1px solid rgba(201,168,76,0.2)" }}
+          style={{ backgroundColor: "var(--site-bg-secondary)", border: "1px solid rgba(201,168,76,0.2)" }}
         >
           <DialogHeader className="p-4 pb-0">
             <DialogTitle className="font-cormorant text-lg" style={{ color: "#f2ead8" }}>
