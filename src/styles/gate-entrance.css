@@ -342,7 +342,7 @@ html:has(.gate-overlay) body {
 /* ── Half-wreath on gates ── */
 .wreath-half{
   position:absolute;
-  top:42%;
+  top:50%;
   width:260px;
   height:520px;
   overflow:hidden;
