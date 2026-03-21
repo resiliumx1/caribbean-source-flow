@@ -67,7 +67,7 @@ function VideoCard({ video, onClick }: { video: WebinarVideo; onClick: () => voi
 
         {/* New badge */}
         {isNew && (
-          <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-xs font-jost font-medium" style={{ backgroundColor: "#c9a84c", color: "#090909" }}>
+          <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-xs font-jost font-medium" style={{ backgroundColor: "var(--site-gold)", color: "#090909" }}>
             New
           </div>
         )}
