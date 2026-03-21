@@ -130,28 +130,19 @@ export function HeroSection() {
               {/* Headline Block */}
               <div className="max-w-[600px] mb-6 lg:mb-10">
                 <h1
-                  className="font-serif font-bold text-[28px] sm:text-[34px] lg:text-[44px] leading-[1.1]"
-                  style={{ color: '#F5F5DC' }}>
-                  
-                  Come back to yourself.
+                  className="font-bold text-[28px] sm:text-[34px] lg:text-[44px] leading-[1.1]"
+                  style={{ color: '#F4EFEA' }}>
+                  Reclaim Your Balance.{' '}
+                  <span className="block">Reconnect with your essence.</span>
                 </h1>
                 <p
-                  className="font-serif italic text-[18px] sm:text-[22px] lg:text-[26px] mt-1.5"
+                  className="italic text-[18px] sm:text-[22px] lg:text-[26px] mt-3"
                   style={{ color: '#D4AF37' }}>
-                  
-                  At Mount Kailash.
-                </p>
-                <p
-                  className="font-sans uppercase tracking-[0.1em] text-[13px] sm:text-[15px] lg:text-[17px] font-medium mt-5 lg:mt-6"
-                  style={{ color: '#D4AF37' }}>CLINICAL HERBAL MEDICINE. PROVEN RESULTS.
-
-
-                  <span className="block mt-2 h-px w-[40%]" style={{ background: '#D4AF37' }} />
+                  Welcome to Mount Kailash.
                 </p>
                 <p
                   className="font-serif italic text-[13px] sm:text-[14px] lg:text-[15px] font-light mt-3"
-                  style={{ color: 'rgba(245, 245, 220, 0.8)' }}>
-                  
+                  style={{ color: 'rgba(244, 239, 234, 0.8)' }}>
                   21 years restoring what modern life took away.
                 </p>
               </div>
