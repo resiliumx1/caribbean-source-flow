@@ -22,7 +22,7 @@ const GateEntrancePage = () => {
   return (
     <main className="min-h-screen">
       <Suspense fallback={<div className="h-[300vh]" />}>
-        <GateEntrance onProgressChange={handleGateProgress} onGateComplete={handleGateComplete} />
+        <GateEntrance onGateComplete={handleGateComplete} />
       </Suspense>
       {complete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: '#0a0a0a' }}>

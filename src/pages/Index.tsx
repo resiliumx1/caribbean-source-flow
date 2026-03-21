@@ -13,23 +13,20 @@ import { GateEntrance } from "@/components/gate-entrance";
 
 const Index = () => {
   const formRef = useRef<HTMLDivElement>(null);
-  const [gateProgress, setGateProgress] = useState(0);
+  const [gateComplete, setGateComplete] = useState(false);
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const handleGateProgress = useCallback((progress: number) => {
-    setGateProgress(progress);
+  const handleGateComplete = useCallback(() => {
+    setGateComplete(true);
   }, []);
-
-  // Nav becomes visible after gates open (~55% scroll progress)
-  const navOpacity = gateProgress < 0.5 ? 0 : Math.min(1, (gateProgress - 0.5) / 0.1);
 
   return (
     <main className="min-h-screen">
-      {/* Gate Entrance — scroll-driven opening animation */}
-      <GateEntrance onProgressChange={handleGateProgress} />
+      {/* Gate Entrance — auto-playing animation overlay */}
+      {!gateComplete && <GateEntrance onGateComplete={handleGateComplete} />}
 
       {/* Header fades in after gates open */}
       <div
