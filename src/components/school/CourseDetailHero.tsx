@@ -89,7 +89,7 @@ export function CourseDetailHero() {
                 Herbal Physician Course
               </h1>
               <p
-                style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400 }}
+                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}
                 className="text-muted-foreground text-sm mb-4"
               >
                 Admittance by Application Only • 50 Students Per Cohort
@@ -109,7 +109,7 @@ export function CourseDetailHero() {
             {/* Scarcity callout */}
             <div className="flex items-start gap-3 bg-accent/5 border border-accent/20 rounded-lg p-4 mb-8">
               <ShieldCheck className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-foreground/80" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}>
+              <p className="text-sm text-foreground/80" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
                 We review each application to ensure cohort quality and diverse global representation. 
                 Limited to 50 students per cohort.
               </p>

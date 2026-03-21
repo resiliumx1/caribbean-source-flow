@@ -33,7 +33,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
           <h1
             className="mb-6"
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 700,
               fontSize: "clamp(36px, 5vw, 56px)",
               lineHeight: 1.1,
@@ -46,7 +46,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
           <p
             className="mb-8 max-w-xl"
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
               fontSize: "18px",
               lineHeight: 1.7,
@@ -67,7 +67,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
                   color: "var(--site-hero-text-on-dark)",
                   background: "rgba(0,0,0,0.45)",
                   border: "1px solid rgba(188,138,95,0.35)",
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 400,
                   fontSize: "12px",
                   textTransform: "uppercase" as const,
@@ -90,7 +90,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
               style={{
                 background: "var(--site-gold)",
                 color: "#0F281E",
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600,
                 fontSize: "16px",
               }}
@@ -105,7 +105,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
               style={{
                 borderColor: "var(--site-hero-text-on-dark)",
                 color: "var(--site-hero-text-on-dark)",
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: "16px",
               }}

@@ -51,7 +51,7 @@ export function ShopHero() {
         <h1
           className="text-3xl md:text-5xl lg:text-6xl leading-[1.1] font-bold tracking-tight max-w-3xl mx-auto"
           style={{
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "'DM Sans', sans-serif",
             color: "#F5F1E8",
           }}
         >
@@ -61,7 +61,7 @@ export function ShopHero() {
         <p
           className="text-base md:text-xl mt-2 font-medium max-w-2xl mx-auto"
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             color: "var(--site-gold)",
           }}
         >
@@ -71,7 +71,7 @@ export function ShopHero() {
         <p
           className="text-base md:text-lg mt-6 mb-8 max-w-2xl mx-auto leading-relaxed"
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             color: "rgba(255,255,255,0.9)",
           }}
         >
@@ -86,7 +86,7 @@ export function ShopHero() {
             style={{
               background: "var(--site-gold)",
               color: "var(--site-green-dark)",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
             }}
           >
             Shop Best Sellers →
@@ -97,7 +97,7 @@ export function ShopHero() {
             style={{
               border: "2px solid rgba(255,255,255,0.3)",
               color: "#FFFFFF",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
             }}
           >
             Shop by Condition →

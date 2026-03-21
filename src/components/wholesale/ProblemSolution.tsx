@@ -26,7 +26,7 @@ const solutions = [
 
 export const ProblemSolution = () => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <p
@@ -35,7 +35,7 @@ export const ProblemSolution = () => {
           >
             Why Partner With Us
           </p>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)", marginBottom: "12px" }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)", marginBottom: "12px" }}>
             Your Sourcing Challenges, <span style={{ color: "var(--site-gold)" }}>Solved</span>
           </h2>
           <p style={{ color: "var(--site-text-muted)", fontWeight: 300, fontSize: "16px", maxWidth: "560px", margin: "0 auto" }}>

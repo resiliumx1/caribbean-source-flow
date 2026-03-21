@@ -58,7 +58,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
             </div>
             <h2
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 700,
                 fontSize: "30px",
                 color: "#0a1f0a",
@@ -70,7 +70,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
             <p
               style={{
                 color: "#0a1f0a",
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: "16px",
                 lineHeight: 1.7,
@@ -97,7 +97,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="max-w-[600px] mx-auto text-center mb-10 md:mb-14">
           <h2
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 700,
               fontSize: "clamp(32px, 5vw, 42px)",
               color: "#D4AF37",
@@ -109,7 +109,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
           <p
             className="mt-4"
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
               fontSize: "clamp(16px, 2.5vw, 20px)",
               color: "#F5F5DC",
@@ -121,7 +121,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
           <p
             className="mt-3"
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
               fontStyle: "italic",
               fontSize: "16px",
@@ -148,7 +148,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
             <div>
               <label
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
                   fontSize: "12px",
                   color: "#0a1f0a",
@@ -173,7 +173,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
             <div>
               <label
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
                   fontSize: "12px",
                   color: "#0a1f0a",
@@ -195,7 +195,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
               />
               <p
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontSize: "13px",
                   color: "#6B7280",
                   marginTop: "4px",
@@ -210,7 +210,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
             <div>
               <label
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
                   fontSize: "12px",
                   color: "#0a1f0a",
@@ -242,7 +242,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
             <div>
               <label
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
                   fontSize: "12px",
                   color: "#0a1f0a",
@@ -274,7 +274,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
             style={{
               background: "#D4AF37",
               color: "#0a1f0a",
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,
               fontSize: "16px",
               letterSpacing: "0.05em",
@@ -297,7 +297,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
           <p
             className="mt-6 text-center"
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
               fontStyle: "italic",
               fontSize: "14px",

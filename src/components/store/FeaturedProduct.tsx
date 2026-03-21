@@ -69,7 +69,7 @@ export function FeaturedProduct() {
           <h2
             className="mb-4"
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 700,
               fontSize: "36px",
               color: "#F5F1E8",
@@ -82,7 +82,7 @@ export function FeaturedProduct() {
           <p
             className="mb-6 max-w-md"
             style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 400,
               fontSize: "16px",
               lineHeight: 1.6,
@@ -96,7 +96,7 @@ export function FeaturedProduct() {
           <div className="mb-6">
             <span
               style={{
-                fontFamily: "'Playfair Display', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 700,
                 fontSize: "28px",
                 color: "var(--site-gold)",
@@ -119,7 +119,7 @@ export function FeaturedProduct() {
             style={{
               background: "var(--site-gold)",
               color: "var(--site-green-dark)",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,
             }}
           >
@@ -131,7 +131,7 @@ export function FeaturedProduct() {
           <label
             className="flex items-center gap-2 cursor-pointer max-w-xs"
             style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontSize: "13px",
               color: "rgba(245,241,232,0.6)",
             }}

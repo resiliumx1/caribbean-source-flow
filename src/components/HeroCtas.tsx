@@ -57,16 +57,16 @@ export default function HeroCtas() {
             <div className="mb-6" style={iconWrapperStyle}>
               <Leaf width={48} height={48} className="icon-sway" style={{ color: '#4ade80' }} />
             </div>
-            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
+            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
               Shop Natural Formulations
             </h3>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: '#8a8070', lineHeight: 1.7 }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '15px', color: '#8a8070', lineHeight: 1.7 }}>
               Daily remedies crafted for balance, vitality, and long-term wellness.
             </p>
           </div>
           <button
             className="mt-8 w-full flex items-center justify-center gap-2 rounded-full transition-all hover:brightness-110"
-            style={{ background: '#c9a84c', color: '#0a0a0a', fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '15px', padding: '14px' }}
+            style={{ background: '#c9a84c', color: '#0a0a0a', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '15px', padding: '14px' }}
           >
             Explore Products <ArrowRight className="w-4 h-4" />
           </button>
@@ -91,7 +91,7 @@ export default function HeroCtas() {
         >
           <span
             className="absolute top-4 right-4 rounded-full px-3 py-1"
-            style={{ border: '1px solid #c9a84c', fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c9a84c', background: 'rgba(0,0,0,0.5)' }}
+            style={{ border: '1px solid #c9a84c', fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c9a84c', background: 'rgba(0,0,0,0.5)' }}
           >
             Wholesale
           </span>
@@ -99,19 +99,19 @@ export default function HeroCtas() {
             <div className="mb-6" style={iconWrapperStyle}>
               <Package width={48} height={48} className="icon-float" style={{ color: '#c9a84c' }} />
             </div>
-            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
+            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
               Wholesale &amp; Practitioners
             </h3>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: '#8a8070', lineHeight: 1.7 }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '15px', color: '#8a8070', lineHeight: 1.7 }}>
               Bulk herbs and formulations trusted by clinics, retailers, and wellness brands.
             </p>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c9a84c', fontStyle: 'italic', marginTop: '12px' }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c9a84c', fontStyle: 'italic', marginTop: '12px' }}>
               COA documentation · Miami warehouse · Custom pricing
             </p>
           </div>
           <button
             className="mt-8 w-full flex items-center justify-center gap-2 rounded-full transition-all hover:bg-[#c9a84c] hover:text-[#0a0a0a]"
-            style={{ background: 'transparent', border: '1px solid #c9a84c', color: '#c9a84c', fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '15px', padding: '14px' }}
+            style={{ background: 'transparent', border: '1px solid #c9a84c', color: '#c9a84c', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '15px', padding: '14px' }}
           >
             Access Wholesale <ArrowRight className="w-4 h-4" />
           </button>
@@ -138,19 +138,19 @@ export default function HeroCtas() {
             <div className="mb-6" style={iconWrapperStyle}>
               <MountainSnow width={48} height={48} className="icon-glow" style={{ color: '#67e8f9' }} />
             </div>
-            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
+            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '32px', color: '#f2ead8', lineHeight: 1.15, marginBottom: '16px' }}>
               Healing Retreats in Saint Lucia
             </h3>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: '#8a8070', lineHeight: 1.7 }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '15px', color: '#8a8070', lineHeight: 1.7 }}>
               Immersive experiences designed for deep restoration and clarity.
             </p>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c9a84c', fontStyle: 'italic', marginTop: '12px' }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c9a84c', fontStyle: 'italic', marginTop: '12px' }}>
               Private &amp; group programs · Led by Priest Kailash
             </p>
           </div>
           <button
             className="mt-8 w-full flex items-center justify-center gap-2 rounded-full transition-all hover:brightness-110"
-            style={{ background: '#c9a84c', color: '#0a0a0a', fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '15px', padding: '14px' }}
+            style={{ background: '#c9a84c', color: '#0a0a0a', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '15px', padding: '14px' }}
           >
             View Retreats <ArrowRight className="w-4 h-4" />
           </button>

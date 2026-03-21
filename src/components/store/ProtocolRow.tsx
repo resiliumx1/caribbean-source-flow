@@ -23,7 +23,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
       <div className="flex items-center justify-between mb-5">
         <h3
           style={{
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 600,
             fontSize: "24px",
             color: "var(--site-text-primary)",
@@ -34,7 +34,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
         <Link
           to="/shop"
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontSize: "14px",
             fontWeight: 500,
             color: "var(--site-gold)",
@@ -109,7 +109,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
                   <h4
                     className="line-clamp-1"
                     style={{
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "'DM Sans', sans-serif",
                       fontWeight: 700,
                       fontSize: "14px",
                       textTransform: "uppercase",
@@ -125,7 +125,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
                   <p
                     className="line-clamp-1"
                     style={{
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "'DM Sans', sans-serif",
                       fontSize: "13px",
                       color: "var(--site-text-muted)",
                     }}
@@ -157,7 +157,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
                 {/* Price */}
                 <div
                   style={{
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 700,
                     fontSize: "16px",
                     color: "var(--site-text-primary)",
@@ -180,7 +180,7 @@ export function ProtocolRow({ title, products }: ProtocolRowProps) {
                   style={{
                     background: "var(--site-gold)",
                     color: "var(--site-green-dark)",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 600,
                     minHeight: "44px",
                   }}

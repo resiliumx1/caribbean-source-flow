@@ -13,7 +13,7 @@ interface ComplianceTrustProps {
 
 export const ComplianceTrust = ({ onScrollToForm }: ComplianceTrustProps) => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
@@ -23,7 +23,7 @@ export const ComplianceTrust = ({ onScrollToForm }: ComplianceTrustProps) => {
             >
               Compliance & Trust
             </p>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8", marginBottom: "16px" }}>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8", marginBottom: "16px" }}>
               Documentation That Satisfies US & UK Customs
             </h2>
             <p style={{ fontSize: "16px", color: "#A8B5A0", fontWeight: 300, maxWidth: "640px", margin: "0 auto" }}>
@@ -61,7 +61,7 @@ export const ComplianceTrust = ({ onScrollToForm }: ComplianceTrustProps) => {
               <span className="inline-block mb-3" style={{ fontWeight: 400, fontSize: "12px", color: "var(--site-gold)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
                 FREE RESOURCE
               </span>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "28px", color: "#F5F1E8", marginBottom: "8px" }}>
+              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "28px", color: "#F5F1E8", marginBottom: "8px" }}>
                 Caribbean Import Compliance Checklist
               </h3>
               <p style={{ fontWeight: 300, fontSize: "15px", color: "#A8B5A0", maxWidth: "480px", lineHeight: 1.7 }}>

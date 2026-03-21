@@ -44,13 +44,13 @@ export function SchoolFAQ() {
       <div className="container mx-auto max-w-3xl px-4">
         <div className="text-center mb-12 md:mb-16">
           <h2
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
             className="text-3xl md:text-4xl font-bold text-foreground mb-4"
           >
             Frequently Asked Questions
           </h2>
           <p
-            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
             className="text-lg text-muted-foreground"
           >
             Everything you need to know before applying.
@@ -74,7 +74,7 @@ export function SchoolFAQ() {
                   aria-expanded={isOpen}
                 >
                   <span
-                    style={{ fontFamily: "'Jost', sans-serif", fontWeight: 600 }}
+                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}
                     className="text-base text-foreground pr-4"
                   >
                     {faq.question}
@@ -97,7 +97,7 @@ export function SchoolFAQ() {
                 >
                   <div className="px-5 md:px-6 pb-5">
                     <p
-                      style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300 }}
+                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}
                       className="text-foreground/80 leading-relaxed text-[15px]"
                     >
                       {faq.answer}

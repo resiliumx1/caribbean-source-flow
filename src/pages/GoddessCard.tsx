@@ -304,7 +304,7 @@ export default function GoddessCard() {
   const mutedText = isDark ? "text-white/60" : "text-[#1a1a2e]/60";
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${bg}`} style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className={`min-h-screen transition-colors duration-300 ${bg}`} style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {lightboxOpen && <Lightbox src={goddessPhoto} onClose={() => setLightboxOpen(false)} />}
       {qrLightboxOpen && <QRLightbox onClose={() => setQrLightboxOpen(false)} />}
 
@@ -360,7 +360,7 @@ export default function GoddessCard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
             className="text-[26px] font-bold text-center leading-tight mb-1"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
             Goddess R Itopia Archer
           </motion.h1>

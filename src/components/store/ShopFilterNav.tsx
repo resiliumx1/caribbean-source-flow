@@ -68,7 +68,7 @@ export function ShopFilterNav({
                 background: !activeCondition && !activeForm ? "var(--site-green-dark)" : "transparent",
                 color: !activeCondition && !activeForm ? "var(--site-cream, #F5F1E8)" : "var(--site-text-primary)",
                 border: !activeCondition && !activeForm ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
               }}
             >
@@ -85,7 +85,7 @@ export function ShopFilterNav({
                     background: isActive ? "var(--site-green-dark)" : "transparent",
                     color: isActive ? "var(--site-cream, #F5F1E8)" : "var(--site-text-primary)",
                     border: isActive ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: isActive ? 600 : 400,
                   }}
                 >
@@ -100,7 +100,7 @@ export function ShopFilterNav({
                 style={{
                   border: "1px solid var(--site-border)",
                   color: "var(--site-text-muted)",
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                 }}
               >
                 More <ChevronDown className="w-3 h-3" />
@@ -121,7 +121,7 @@ export function ShopFilterNav({
                     background: isActive ? "var(--site-gold)" : "transparent",
                     color: isActive ? "var(--site-green-dark)" : "var(--site-text-muted)",
                     border: isActive ? "1px solid var(--site-gold)" : "1px solid var(--site-border)",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: isActive ? 600 : 400,
                   }}
                 >
@@ -139,7 +139,7 @@ export function ShopFilterNav({
               style={{
                 border: "1px solid var(--site-border)",
                 color: "var(--site-text-muted)",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
               }}
             >
               Sort <ChevronDown className="w-3 h-3" />
@@ -158,7 +158,7 @@ export function ShopFilterNav({
                       className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-black/5"
                       style={{
                         color: sortBy === opt.value ? "var(--site-gold)" : "var(--site-text-primary)",
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: "'DM Sans', sans-serif",
                         fontWeight: sortBy === opt.value ? 600 : 400,
                       }}
                     >
@@ -189,7 +189,7 @@ export function ShopFilterNav({
                 background: !activeCondition && !activeForm ? "var(--site-green-dark)" : "transparent",
                 color: !activeCondition && !activeForm ? "#F5F1E8" : "var(--site-text-primary)",
                 border: !activeCondition && !activeForm ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 minHeight: "44px",
                 minWidth: "max-content",
@@ -208,7 +208,7 @@ export function ShopFilterNav({
                     background: isActive ? "var(--site-green-dark)" : "transparent",
                     color: isActive ? "#F5F1E8" : "var(--site-text-primary)",
                     border: isActive ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: isActive ? 600 : 400,
                     minHeight: "44px",
                     minWidth: "max-content",
@@ -225,7 +225,7 @@ export function ShopFilterNav({
               style={{
                 border: "1px solid var(--site-border)",
                 color: "var(--site-text-muted)",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 minHeight: "44px",
               }}
             >
@@ -250,7 +250,7 @@ export function ShopFilterNav({
                   style={{
                     background: "var(--site-green-dark)",
                     color: "#F5F1E8",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                   }}
                 >
                   {activeConditionName}
@@ -263,7 +263,7 @@ export function ShopFilterNav({
                   style={{
                     background: "var(--site-gold)",
                     color: "var(--site-green-dark)",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                   }}
                 >
                   {activeFormName}
@@ -273,7 +273,7 @@ export function ShopFilterNav({
               <button
                 onClick={() => { onConditionChange(null); onFormChange(null); }}
                 className="text-xs underline flex-shrink-0"
-                style={{ color: "var(--site-text-muted)", fontFamily: "'Inter', sans-serif" }}
+                style={{ color: "var(--site-text-muted)", fontFamily: "'DM Sans', sans-serif" }}
               >
                 Clear all
               </button>
@@ -293,7 +293,7 @@ export function ShopFilterNav({
             <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: "var(--site-border)" }}>
               <h3
                 style={{
-                  fontFamily: "'Playfair Display', serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 600,
                   fontSize: "18px",
                   color: "var(--site-text-primary)",
@@ -308,7 +308,7 @@ export function ShopFilterNav({
 
             {/* Conditions */}
             <div className="p-4">
-              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'Inter', sans-serif" }}>
+              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'DM Sans', sans-serif" }}>
                 Condition
               </p>
               <div className="flex flex-wrap gap-2">
@@ -323,7 +323,7 @@ export function ShopFilterNav({
                         background: isActive ? "var(--site-green-dark)" : "transparent",
                         color: isActive ? "#F5F1E8" : "var(--site-text-primary)",
                         border: isActive ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: "'DM Sans', sans-serif",
                         fontWeight: isActive ? 600 : 400,
                         minHeight: "44px",
                       }}
@@ -337,7 +337,7 @@ export function ShopFilterNav({
 
             {/* Form */}
             <div className="p-4 pt-0">
-              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'Inter', sans-serif" }}>
+              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'DM Sans', sans-serif" }}>
                 Form
               </p>
               <div className="flex flex-wrap gap-2">
@@ -352,7 +352,7 @@ export function ShopFilterNav({
                         background: isActive ? "var(--site-gold)" : "transparent",
                         color: isActive ? "var(--site-green-dark)" : "var(--site-text-primary)",
                         border: isActive ? "1px solid var(--site-gold)" : "1px solid var(--site-border)",
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: "'DM Sans', sans-serif",
                         fontWeight: isActive ? 600 : 400,
                         minHeight: "44px",
                       }}
@@ -366,7 +366,7 @@ export function ShopFilterNav({
 
             {/* Sort */}
             <div className="p-4 pt-0">
-              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'Inter', sans-serif" }}>
+              <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: "var(--site-text-muted)", fontFamily: "'DM Sans', sans-serif" }}>
                 Sort by
               </p>
               <div className="flex flex-wrap gap-2">
@@ -379,7 +379,7 @@ export function ShopFilterNav({
                       background: sortBy === opt.value ? "var(--site-green-dark)" : "transparent",
                       color: sortBy === opt.value ? "#F5F1E8" : "var(--site-text-primary)",
                       border: sortBy === opt.value ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "'DM Sans', sans-serif",
                       fontWeight: sortBy === opt.value ? 600 : 400,
                       minHeight: "44px",
                     }}
@@ -398,7 +398,7 @@ export function ShopFilterNav({
                 style={{
                   background: "var(--site-gold)",
                   color: "var(--site-green-dark)",
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   minHeight: "48px",
                 }}
               >

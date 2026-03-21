@@ -35,7 +35,7 @@ export function RotatingApothecary() {
           <div>
             <h2
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 700,
                 fontSize: "clamp(1.8rem, 3vw, 36px)",
                 color: "var(--site-text-primary)",
@@ -46,7 +46,7 @@ export function RotatingApothecary() {
             </h2>
             <p
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: "14px",
                 color: "var(--site-text-secondary)",
@@ -58,7 +58,7 @@ export function RotatingApothecary() {
           <Link
             to="/shop"
             className="hidden sm:inline-flex items-center gap-1 text-sm font-medium"
-            style={{ color: "var(--site-gold)", fontFamily: "'Jost', sans-serif" }}
+            style={{ color: "var(--site-gold)", fontFamily: "'DM Sans', sans-serif" }}
           >
             View All Remedies <ArrowRight className="w-4 h-4" />
           </Link>
@@ -129,7 +129,7 @@ export function RotatingApothecary() {
                   <h3
                     className="truncate"
                     style={{
-                      fontFamily: "'Jost', sans-serif",
+                      fontFamily: "'DM Sans', sans-serif",
                       fontWeight: 600,
                       fontSize: "18px",
                       color: "var(--site-text-primary)",
@@ -142,7 +142,7 @@ export function RotatingApothecary() {
                     <p
                       className="truncate"
                       style={{
-                        fontFamily: "'Jost', sans-serif",
+                        fontFamily: "'DM Sans', sans-serif",
                         fontWeight: 300,
                         fontSize: "14px",
                         color: "var(--site-text-secondary)",
@@ -154,7 +154,7 @@ export function RotatingApothecary() {
                   )}
                   <div
                     style={{
-                      fontFamily: "'Jost', sans-serif",
+                      fontFamily: "'DM Sans', sans-serif",
                       fontWeight: 600,
                       fontSize: "16px",
                       color: "var(--site-text-primary)",
@@ -168,7 +168,7 @@ export function RotatingApothecary() {
                     style={{
                       background: "var(--site-gold)",
                       color: "#0F281E",
-                      fontFamily: "'Jost', sans-serif",
+                      fontFamily: "'DM Sans', sans-serif",
                     }}
                   >
                     Add to Cart
@@ -185,7 +185,7 @@ export function RotatingApothecary() {
         <Link
           to="/shop"
           className="inline-flex items-center gap-1 text-sm font-medium"
-          style={{ color: "var(--site-gold)", fontFamily: "'Jost', sans-serif" }}
+          style={{ color: "var(--site-gold)", fontFamily: "'DM Sans', sans-serif" }}
         >
           View All Remedies <ArrowRight className="w-4 h-4" />
         </Link>

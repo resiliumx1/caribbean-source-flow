@@ -44,10 +44,10 @@ export function ExperienceGrid() {
     <section className="py-24 md:py-28" style={{ background: 'var(--site-bg-primary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-14">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Your Transformation Journey
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '560px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '560px', margin: '0 auto' }}>
             Every day is designed to nourish your body, expand your knowledge, and renew your spirit.
           </p>
         </div>
@@ -68,13 +68,13 @@ export function ExperienceGrid() {
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ background: 'rgba(188,138,95,0.1)' }}>
                   <Icon className="w-6 h-6" style={{ color: 'var(--site-gold)' }} />
                 </div>
-                <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 600, fontSize: '12px', color: 'var(--site-gold)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '6px' }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: '12px', color: 'var(--site-gold)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '6px' }}>
                   {exp.title}
                 </div>
-                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '22px', color: 'var(--site-text-primary)', marginBottom: '10px' }}>
+                <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '22px', color: 'var(--site-text-primary)', marginBottom: '10px' }}>
                   {exp.subtitle}
                 </h3>
-                <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-muted)', lineHeight: 1.7 }}>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-muted)', lineHeight: 1.7 }}>
                   {exp.description}
                 </p>
               </div>

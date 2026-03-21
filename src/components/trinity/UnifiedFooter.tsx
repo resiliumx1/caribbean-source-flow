@@ -17,11 +17,11 @@ export function UnifiedFooter() {
             <div className="flex items-center gap-3 mb-4">
               <img src={mtKailashLogo} alt="Mount Kailash Rejuvenation Centre" className="w-10 h-10 rounded-full object-cover" width={40} height={40} />
               <div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, color: 'var(--site-footer-text)' }}>Mount Kailash</div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, color: 'var(--site-footer-text)' }}>Mount Kailash</div>
                 <div style={{ fontSize: '12px', color: 'var(--site-footer-muted)' }}>Rejuvenation Centre</div>
               </div>
             </div>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-footer-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-footer-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
               Traditional St. Lucian bush medicine for cellular wellness. 21+ years of clinical practice.
             </p>
             <a
@@ -38,7 +38,7 @@ export function UnifiedFooter() {
 
           {/* Shop Column */}
           <div>
-            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Shop</h2>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Shop</h2>
             <ul className="space-y-1 text-sm">
               {[
                 { label: "All Products", href: "/shop" },
@@ -48,7 +48,7 @@ export function UnifiedFooter() {
                 { label: "Raw Herbs", href: "/shop" },
               ].map((item) => (
                 <li key={item.label}>
-                  <Link to={item.href} style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
+                  <Link to={item.href} style={{ color: 'var(--site-footer-muted)', fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
                     {item.label}
                   </Link>
                 </li>
@@ -58,11 +58,11 @@ export function UnifiedFooter() {
 
           {/* Practitioners Column */}
           <div>
-            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Practitioners</h2>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Practitioners</h2>
             <ul className="space-y-1 text-sm">
               {["Wholesale Portal", "Volume Pricing", "COA Documentation", "Private Labeling"].map((item) => (
                 <li key={item}>
-                  <Link to="/wholesale" style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
+                  <Link to="/wholesale" style={{ color: 'var(--site-footer-muted)', fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
                     {item}
                   </Link>
                 </li>
@@ -72,11 +72,11 @@ export function UnifiedFooter() {
 
           {/* Visit Column */}
           <div>
-            <h2 style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Visit</h2>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Visit</h2>
             <ul className="space-y-1 text-sm">
               {["Retreat Programs", "Group Immersions", "Solo Detox Retreats", "Book Consultation"].map((item) => (
                 <li key={item}>
-                  <Link to="/retreats" style={{ color: 'var(--site-footer-muted)', fontFamily: "'Jost', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
+                  <Link to="/retreats" style={{ color: 'var(--site-footer-muted)', fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }} className="hover:text-[#c9a84c] transition-colors inline-block py-2">
                     {item}
                   </Link>
                 </li>

@@ -21,7 +21,7 @@ export function TrustBar() {
                 <item.Icon className="w-7 h-7" style={{ color: "#c9a84c" }} />
                 <span
                   style={{
-                    fontFamily: "'Jost', sans-serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 500,
                     fontSize: "14px",
                     color: "#f2ead8",

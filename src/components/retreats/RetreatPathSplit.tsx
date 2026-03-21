@@ -47,10 +47,10 @@ export function RetreatPathSplit() {
     <section className="py-24 md:py-28" style={{ background: 'var(--site-bg-secondary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-14">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Choose Your Path
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '560px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '560px', margin: '0 auto' }}>
             Whether you seek community connection or private renewal, there's a retreat designed for you.
           </p>
         </div>
@@ -58,20 +58,20 @@ export function RetreatPathSplit() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Group Retreat */}
           <div className="rounded-2xl p-10 md:p-12 relative transition-all hover:scale-[1.01]" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', borderTop: '3px solid var(--site-gold)', boxShadow: 'var(--site-shadow-card)' }}>
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-medium mb-6" style={{ background: 'rgba(188,138,95,0.12)', color: 'var(--site-gold)', fontFamily: "'Jost', sans-serif", fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-medium mb-6" style={{ background: 'rgba(188,138,95,0.12)', color: 'var(--site-gold)', fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Group Experience
             </span>
 
             {nextGroupLabel && (
-              <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium" style={{ background: 'var(--site-gold)', color: 'var(--site-green-dark)', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
+              <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium" style={{ background: 'var(--site-gold)', color: 'var(--site-green-dark)', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
                 {nextGroupLabel}
               </span>
             )}
 
-            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '32px', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
+            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '32px', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
               The 7-Day Immersion
             </h3>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: 'var(--site-text-muted)', lineHeight: 1.7, marginBottom: '24px' }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '15px', color: 'var(--site-text-muted)', lineHeight: 1.7, marginBottom: '24px' }}>
               Join a curated group of wellness seekers for guided healing, learning, and connection. Fixed dates with full programming.
             </p>
 
@@ -79,33 +79,33 @@ export function RetreatPathSplit() {
               {groupIncludes.map((item) => (
                 <li key={item} className="flex items-center gap-3">
                   <Check className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--site-gold)' }} strokeWidth={3} />
-                  <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)' }}>{item}</span>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)' }}>{item}</span>
                 </li>
               ))}
             </ul>
 
             <div className="pt-6 mb-6" style={{ borderTop: '1px solid var(--site-border)' }}>
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '40px', color: 'var(--site-gold)', lineHeight: 1 }}>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '40px', color: 'var(--site-gold)', lineHeight: 1 }}>
                 {formatPrice(groupRetreat?.base_price_usd || 3000, (groupRetreat?.base_price_usd || 3000) * EXCHANGE_RATE)}
-                <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)' }}> per person</span>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)' }}> per person</span>
               </div>
             </div>
 
-            <Button onClick={scrollToCalendar} className="w-full rounded-full" size="lg" style={{ background: 'var(--site-gold)', color: 'var(--site-green-dark)', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
+            <Button onClick={scrollToCalendar} className="w-full rounded-full" size="lg" style={{ background: 'var(--site-gold)', color: 'var(--site-green-dark)', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
               See Available Dates <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
 
           {/* Private Retreat */}
           <div className="rounded-2xl p-10 md:p-12 relative transition-all hover:scale-[1.01]" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', borderTop: '3px solid var(--site-green-mid)', boxShadow: 'var(--site-shadow-card)' }}>
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-medium mb-6" style={{ background: 'rgba(27,67,50,0.1)', color: 'var(--site-green-mid)', fontFamily: "'Jost', sans-serif", fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-medium mb-6" style={{ background: 'rgba(27,67,50,0.1)', color: 'var(--site-green-mid)', fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Private Experience
             </span>
 
-            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '32px', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
+            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '32px', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
               Your Personal Sanctuary
             </h3>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '15px', color: 'var(--site-text-muted)', lineHeight: 1.7, marginBottom: '24px' }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '15px', color: 'var(--site-text-muted)', lineHeight: 1.7, marginBottom: '24px' }}>
               Custom dates and personalized attention. Ideal for couples, friends, or solo travelers seeking privacy and flexibility.
             </p>
 
@@ -113,16 +113,16 @@ export function RetreatPathSplit() {
               {privateIncludes.map((item) => (
                 <li key={item} className="flex items-center gap-3">
                   <Check className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--site-green-mid)' }} strokeWidth={3} />
-                  <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)' }}>{item}</span>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)' }}>{item}</span>
                 </li>
               ))}
             </ul>
 
             <div className="pt-6 mb-6" style={{ borderTop: '1px solid var(--site-border)' }}>
-              <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-muted)', marginBottom: '4px' }}>From</div>
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '40px', color: 'var(--site-gold)', lineHeight: 1 }}>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-muted)', marginBottom: '4px' }}>From</div>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '40px', color: 'var(--site-gold)', lineHeight: 1 }}>
                 {formatPrice(soloRetreat?.base_price_usd || 500, (soloRetreat?.base_price_usd || 500) * EXCHANGE_RATE)}
-                <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)' }}> per night · 5-night min</span>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)' }}> per night · 5-night min</span>
               </div>
             </div>
 
@@ -132,7 +132,7 @@ export function RetreatPathSplit() {
               rel="noopener noreferrer"
               className="block"
             >
-              <Button className="w-full rounded-full" size="lg" style={{ background: 'var(--site-green-mid)', color: '#F5F1E8', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
+              <Button className="w-full rounded-full" size="lg" style={{ background: 'var(--site-green-mid)', color: '#F5F1E8', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
                 Check Private Availability <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </a>

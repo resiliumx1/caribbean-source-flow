@@ -37,10 +37,10 @@ export function ReSegmentation() {
     <section className="py-24 md:py-28" style={{ background: 'var(--site-bg-secondary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-12 md:mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Choose Your Path
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
             Three distinct journeys, one mission: restoring cellular wellness through traditional St. Lucian herbal medicine.
           </p>
         </div>
@@ -73,13 +73,13 @@ export function ReSegmentation() {
 
                   {/* Content at bottom */}
                   <div className="absolute bottom-0 left-0 right-0 p-8">
-                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: '28px', color: '#f2ead8', marginBottom: '8px' }}>
+                    <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '28px', color: '#f2ead8', marginBottom: '8px' }}>
                       {path.title}
                     </h3>
-                    <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', opacity: 0.8, marginBottom: '16px', lineHeight: 1.6 }}>
+                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: '#f2ead8', opacity: 0.8, marginBottom: '16px', lineHeight: 1.6 }}>
                       {path.description}
                     </p>
-                    <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300" style={{ border: '1px solid #c9a84c', color: '#c9a84c', background: 'transparent', fontFamily: "'Jost', sans-serif", fontWeight: 500 }}>
+                    <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300" style={{ border: '1px solid #c9a84c', color: '#c9a84c', background: 'transparent', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
                       {path.cta} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>

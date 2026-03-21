@@ -54,7 +54,7 @@ export function ByTheNumbers() {
       <div className="container mx-auto max-w-6xl px-4 relative z-10">
         <div className="text-center mb-12 md:mb-16">
           <motion.h2
-            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
@@ -62,7 +62,7 @@ export function ByTheNumbers() {
             Rooted in Real Results
           </motion.h2>
           <motion.p
-            style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '560px', margin: '0 auto' }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '560px', margin: '0 auto' }}
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -86,10 +86,10 @@ export function ByTheNumbers() {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(201,168,76,0.1)' }}>
                   <Icon className="w-6 h-6" style={{ color: 'var(--site-gold)' }} />
                 </div>
-                <div className="stat-number" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 56px)', color: 'var(--site-gold)', lineHeight: 1, marginBottom: '8px' }}>
+                <div className="stat-number" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 56px)', color: 'var(--site-gold)', lineHeight: 1, marginBottom: '8px' }}>
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} isVisible={isInView} />
                 </div>
-                <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   {stat.label}
                 </div>
               </motion.div>

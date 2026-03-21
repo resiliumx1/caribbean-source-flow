@@ -45,10 +45,10 @@ export function TransformationStories() {
     <section className="py-24 md:py-28" style={{ background: 'var(--site-bg-card)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-14">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Guest Stories
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '500px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '500px', margin: '0 auto' }}>
             Renewal, learning, and connection — in their own words.
           </p>
         </div>
@@ -66,7 +66,7 @@ export function TransformationStories() {
                 ))}
               </div>
 
-              <p className="mb-6" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: 'var(--site-text-primary)', lineHeight: 1.8 }}>
+              <p className="mb-6" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: 'var(--site-text-primary)', lineHeight: 1.8 }}>
                 "{story.quote}"
               </p>
 
@@ -78,11 +78,11 @@ export function TransformationStories() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '16px', color: 'var(--site-text-primary)' }}>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: '16px', color: 'var(--site-text-primary)' }}>
                     {story.author_name}
                   </div>
                   {story.author_title && (
-                    <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: 'var(--site-gold)' }}>
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '13px', color: 'var(--site-gold)' }}>
                       {story.author_title}
                     </div>
                   )}

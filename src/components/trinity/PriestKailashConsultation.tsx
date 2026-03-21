@@ -45,10 +45,10 @@ export function PriestKailashConsultation() {
                 backdropFilter: 'blur(8px)',
               }}
             >
-              <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: '#f2ead8' }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: '13px', color: '#f2ead8' }}>
                 Right Honourable Priest Kailash Kay Leonce
               </span>
-              <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: 'var(--site-gold)' }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '12px', color: 'var(--site-gold)' }}>
                 Master Herbalist · 21+ Years Practice
               </span>
             </div>
@@ -56,15 +56,15 @@ export function PriestKailashConsultation() {
 
           {/* Right — Content (55%) */}
           <div className="lg:col-span-7">
-            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold)', marginBottom: '12px', display: 'block' }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold)', marginBottom: '12px', display: 'block' }}>
               PERSONAL CONSULTATIONS
             </span>
 
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(2rem, 4vw, 48px)', color: '#f2ead8', marginBottom: '24px', lineHeight: 1.15 }}>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(2rem, 4vw, 48px)', color: '#f2ead8', marginBottom: '24px', lineHeight: 1.15 }}>
               Heal With Guidance.
             </h2>
 
-            <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: '#c5bfb3', lineHeight: 1.8, marginBottom: '32px', maxWidth: '560px' }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: '#c5bfb3', lineHeight: 1.8, marginBottom: '32px', maxWidth: '560px' }}>
               Priest Kailash offers one-on-one herbal consultations for individuals seeking personalised wellness protocols. Drawing from 21 years of clinical bush medicine practice, each session is tailored to your body, your history, and your goals.
             </p>
 
@@ -74,7 +74,7 @@ export function PriestKailashConsultation() {
                 <span
                   key={c}
                   className="px-4 py-2 rounded-full"
-                  style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(201,168,76,0.3)', fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '13px', color: 'var(--site-gold)' }}
+                  style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(201,168,76,0.3)', fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '13px', color: 'var(--site-gold)' }}
                 >
                   {c}
                 </span>
@@ -88,7 +88,7 @@ export function PriestKailashConsultation() {
               style={{
                 background: '#c9a84c',
                 color: '#090909',
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: '16px',
                 padding: '18px 40px',
@@ -99,10 +99,10 @@ export function PriestKailashConsultation() {
 
             {/* Trust notes */}
             <div className="mt-4 space-y-1">
-              <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: 'var(--site-gold)', fontStyle: 'italic' }}>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '12px', color: 'var(--site-gold)', fontStyle: 'italic' }}>
                 ✦ Limited sessions available each month
               </p>
-              <p className="flex items-center gap-2" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c5bfb3' }}>
+              <p className="flex items-center gap-2" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '12px', color: '#c5bfb3' }}>
                 <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#4ade80' }} />
                 Accepting consultations for March 2026
               </p>

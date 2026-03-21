@@ -32,7 +32,7 @@ export function RetreatsHero() {
         <h1
           className="mb-6"
           style={{
-            fontFamily: "'Cormorant Garamond', serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 700,
             fontSize: 'clamp(3rem, 7vw, 80px)',
             color: '#F5F1E8',
@@ -46,7 +46,7 @@ export function RetreatsHero() {
         <p
           className="mx-auto mb-10"
           style={{
-            fontFamily: "'Jost', sans-serif",
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 300,
             fontSize: 'clamp(18px, 2.2vw, 20px)',
             color: '#F5F1E8',
@@ -68,7 +68,7 @@ export function RetreatsHero() {
             style={{
               background: 'var(--site-gold)',
               color: 'var(--site-green-dark)',
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 500,
             }}
           >
@@ -88,7 +88,7 @@ export function RetreatsHero() {
                 background: 'transparent',
                 border: '1px solid #F5F1E8',
                 color: '#F5F1E8',
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
               }}
             >
@@ -109,7 +109,7 @@ export function RetreatsHero() {
                 backdropFilter: 'blur(8px)',
                 border: '1px solid rgba(245,241,232,0.2)',
                 color: '#F5F1E8',
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: '13px',
                 letterSpacing: '0.02em',

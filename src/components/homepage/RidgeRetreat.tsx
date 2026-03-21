@@ -30,7 +30,7 @@ export function RidgeRetreat() {
               style={{
                 background: "#BC8A5F",
                 color: "#0F281E",
-                fontFamily: "'Jost', sans-serif"
+                fontFamily: "'DM Sans', sans-serif"
               }}>
               
               25 Guests Maximum
@@ -42,7 +42,7 @@ export function RidgeRetreat() {
             <span
               className="inline-block mb-2"
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600,
                 fontSize: "13px",
                 textTransform: "uppercase",
@@ -55,7 +55,7 @@ export function RidgeRetreat() {
 
             <h2
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 700,
                 fontSize: "clamp(2rem, 4vw, 48px)",
                 color: "#F5F1E8",
@@ -67,7 +67,7 @@ export function RidgeRetreat() {
             </h2>
             <h3
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 400,
                 fontSize: "20px",
                 color: "rgba(245,241,232,0.9)",
@@ -79,7 +79,7 @@ export function RidgeRetreat() {
 
             <p
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 300,
                 fontSize: "16px",
                 color: "rgba(245,241,232,0.8)",
@@ -99,7 +99,7 @@ export function RidgeRetreat() {
                 key={f}
                 className="flex items-center gap-3"
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 400,
                   fontSize: "15px",
                   color: "#F5F1E8"
@@ -117,7 +117,7 @@ export function RidgeRetreat() {
             <p
               className="mb-6"
               style={{
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 500,
                 fontSize: "14px",
                 color: "#BC8A5F"
@@ -132,7 +132,7 @@ export function RidgeRetreat() {
               style={{
                 background: "#BC8A5F",
                 color: "#0F281E",
-                fontFamily: "'Jost', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontSize: "15px"
               }}>
               
@@ -147,7 +147,7 @@ export function RidgeRetreat() {
               <p
                 className="mb-3"
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 400,
                   fontSize: "14px",
                   color: "rgba(245,241,232,0.7)"
@@ -162,7 +162,7 @@ export function RidgeRetreat() {
                   background: "transparent",
                   border: "2px solid #BC8A5F",
                   color: "#BC8A5F",
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontSize: "15px"
                 }}
                 onMouseEnter={(e) => {
@@ -179,7 +179,7 @@ export function RidgeRetreat() {
               <p
                 className="mt-2"
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 300,
                   fontSize: "12px",
                   color: "rgba(245,241,232,0.5)",

@@ -55,10 +55,10 @@ export function SocialProofMatrix() {
     <section className="py-24 md:py-28 overflow-hidden" style={{ background: 'var(--site-bg-primary)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-12 md:mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '16px' }}>
             Trusted by People on Their Wellness Journey
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
             Real stories from practitioners, wellness seekers, and retreat guests who've experienced the Mt. Kailash difference.
           </p>
         </div>
@@ -77,11 +77,11 @@ export function SocialProofMatrix() {
                       <User className="w-6 h-6" style={{ color: '#090909' }} />
                     </div>
                     <div>
-                      <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
+                      <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
                         {testimonial.author_name}
                       </div>
                       {testimonial.author_title && (
-                        <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 400, fontSize: '13px', color: 'var(--site-gold-text)' }}>
+                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: '13px', color: 'var(--site-gold-text)' }}>
                           {testimonial.author_title}
                         </div>
                       )}
@@ -96,7 +96,7 @@ export function SocialProofMatrix() {
                   </div>
 
                   {/* Quote */}
-                  <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: 'var(--site-text-secondary)', lineHeight: 1.8, marginBottom: '16px' }}>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: 'var(--site-text-secondary)', lineHeight: 1.8, marginBottom: '16px' }}>
                     "{testimonial.quote}"
                   </p>
 

@@ -27,7 +27,7 @@ export function SchoolSection() {
           <span
             className="inline-block mb-2"
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,
               fontSize: "13px",
               textTransform: "uppercase",
@@ -39,7 +39,7 @@ export function SchoolSection() {
           </span>
           <h2
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 700,
               fontSize: "clamp(1.875rem, 4vw, 2.5rem)",
               color: "var(--site-text-primary, #0F281E)",
@@ -50,7 +50,7 @@ export function SchoolSection() {
           </h2>
           <p
             style={{
-              fontFamily: "'Jost', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
               fontSize: "16px",
               color: "var(--site-text-secondary, #4A4A4A)",
@@ -91,7 +91,7 @@ export function SchoolSection() {
                 style={{
                   background: "rgba(188,138,95,0.12)",
                   color: "var(--site-gold, #9A6B3F)",
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
                   fontSize: "12px",
                   letterSpacing: "0.05em",
@@ -102,7 +102,7 @@ export function SchoolSection() {
 
               <h3
                 style={{
-                  fontFamily: "'Cormorant Garamond', serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 700,
                   fontSize: "clamp(1.5rem, 3vw, 1.75rem)",
                   color: "var(--site-text-primary, #0F281E)",
@@ -122,7 +122,7 @@ export function SchoolSection() {
                     />
                     <span
                       style={{
-                        fontFamily: "'Jost', sans-serif",
+                        fontFamily: "'DM Sans', sans-serif",
                         fontWeight: 400,
                         fontSize: "15px",
                         color: "var(--site-text-secondary, #4A4A4A)",
@@ -140,7 +140,7 @@ export function SchoolSection() {
                 style={{
                   background: "var(--site-gold, #BC8A5F)",
                   color: "#0F281E",
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontSize: "16px",
                 }}
               >
@@ -151,7 +151,7 @@ export function SchoolSection() {
               <p
                 className="mt-3"
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 300,
                   fontSize: "12px",
                   color: "var(--site-text-secondary, #4A4A4A)",
@@ -174,7 +174,7 @@ export function SchoolSection() {
               />
               <span
                 style={{
-                  fontFamily: "'Jost', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
                   fontSize: "13px",
                   color: "var(--site-text-secondary, #4A4A4A)",

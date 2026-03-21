@@ -41,7 +41,7 @@ interface ProductGridProps {
 
 export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "#0F281E", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <p
@@ -50,7 +50,7 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
           >
             Product Categories
           </p>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8" }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 44px)", color: "#F5F1E8" }}>
             Caribbean Botanicals, Sourced at Origin
           </h2>
           <p className="mt-3" style={{ color: "#A8B5A0", fontWeight: 300, fontSize: "16px", maxWidth: "560px", margin: "12px auto 0" }}>
@@ -75,7 +75,7 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(27,67,50,0.9) 100%)" }} />
                 <div className="absolute bottom-3 left-4 flex items-center gap-2">
                   <category.icon className="w-5 h-5" style={{ color: "var(--site-gold)" }} />
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "20px", color: "#F5F1E8" }}>
+                  <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "20px", color: "#F5F1E8" }}>
                     {category.title}
                   </h3>
                 </div>

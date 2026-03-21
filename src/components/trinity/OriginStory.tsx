@@ -18,7 +18,7 @@ export function OriginStory() {
               height={600}
             />
           </div>
-          <p className="text-center mt-4" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: 'var(--site-gold-text)' }}>
+          <p className="text-center mt-4" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '14px', color: 'var(--site-gold-text)' }}>
             Wildcrafted in Saint Lucia. Processed by hand. Delivered to the world.
           </p>
         </div>
@@ -30,11 +30,11 @@ export function OriginStory() {
               From Volcanic Soil
             </span>
 
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 3.5vw, 40px)', color: 'var(--site-text-primary)', marginBottom: '24px', lineHeight: 1.2 }}>
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 3.5vw, 40px)', color: 'var(--site-text-primary)', marginBottom: '24px', lineHeight: 1.2 }}>
               Where Traditional Bush Medicine Meets Clinical Precision
             </h2>
 
-            <div className="space-y-4 mb-8" style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', lineHeight: 1.7 }}>
+            <div className="space-y-4 mb-8" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', lineHeight: 1.7 }}>
               <p>
                 For over two decades, Right Honourable Priest Kailash Kay Leonce
                 has cultivated the art of St. Lucian bush medicine in the shadow
@@ -57,10 +57,10 @@ export function OriginStory() {
                 { value: "21+", label: "Years Clinical Practice" },
               ].map((stat) => (
                 <div key={stat.label} className="p-4 rounded-xl text-center" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)' }}>
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(1.5rem, 3vw, 56px)', color: 'var(--site-gold)', lineHeight: 1 }}>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(1.5rem, 3vw, 56px)', color: 'var(--site-gold)', lineHeight: 1 }}>
                     {stat.value}
                   </div>
-                  <div style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '8px' }}>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '8px' }}>
                     {stat.label}
                   </div>
                 </div>
@@ -70,10 +70,10 @@ export function OriginStory() {
 
           {/* Right — School Photo */}
           <div className="flex flex-col items-start">
-            <span style={{ fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold-text)', marginBottom: '8px' }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--site-gold-text)', marginBottom: '8px' }}>
               MOUNT KAILASH SCHOOL OF ESOTERIC KNOWLEDGE
             </span>
-            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontStyle: 'italic', fontSize: '18px', color: 'var(--site-text-primary)', marginBottom: '20px' }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '18px', color: 'var(--site-text-primary)', marginBottom: '20px' }}>
               Ancient Caribbean wisdom. Formally taught.
             </p>
             <div
@@ -98,7 +98,7 @@ export function OriginStory() {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:bg-[#c9a84c] hover:text-[#090909]"
-              style={{ border: '1px solid var(--site-gold)', color: 'var(--site-gold)', fontFamily: "'Jost', sans-serif", fontWeight: 500, fontSize: '14px' }}
+              style={{ border: '1px solid var(--site-gold)', color: 'var(--site-gold)', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '14px' }}
             >
               Explore The School <ArrowRight className="w-4 h-4" />
             </a>

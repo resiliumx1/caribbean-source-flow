@@ -52,10 +52,10 @@ export function RetreatGallery() {
     <section className="py-24" style={{ background: 'var(--site-green-dark)' }}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="text-center mb-12">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#F5F1E8', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: '#F5F1E8', marginBottom: '16px' }}>
             Life at the Retreat
           </h2>
-          <p style={{ fontFamily: "'Jost', sans-serif", fontWeight: 300, fontSize: '16px', color: 'rgba(245,241,232,0.7)', maxWidth: '500px', margin: '0 auto 28px' }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'rgba(245,241,232,0.7)', maxWidth: '500px', margin: '0 auto 28px' }}>
             Glimpses of connection, healing, food, and nature in St. Lucia.
           </p>
 

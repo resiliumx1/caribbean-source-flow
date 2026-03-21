@@ -32,10 +32,10 @@ const riskReversals = [
 
 export const SocialProof = () => {
   return (
-    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'Jost', sans-serif" }}>
+    <section className="py-24 md:py-28" style={{ background: "var(--site-bg-primary)", fontFamily: "'DM Sans', sans-serif" }}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontStyle: "italic", fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)" }}>
+          <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontStyle: "italic", fontSize: "clamp(2rem, 4vw, 44px)", color: "var(--site-text-primary)" }}>
             Trusted by Wholesale Buyers Across 3 Continents
           </h2>
         </div>
@@ -47,7 +47,7 @@ export const SocialProof = () => {
               className="rounded-2xl p-10 transition-all duration-300"
               style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)", boxShadow: "var(--site-shadow-card)" }}
             >
-              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: "20px", color: "var(--site-text-primary)", marginBottom: "2px" }}>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "20px", color: "var(--site-text-primary)", marginBottom: "2px" }}>
                 {testimonial.author}
               </p>
               <p style={{ fontWeight: 400, fontSize: "13px", color: "#c9a84c", marginBottom: "16px" }}>
@@ -72,7 +72,7 @@ export const SocialProof = () => {
         </div>
         
         <div className="text-center mb-12">
-          <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 48px)", color: "var(--site-text-primary)" }}>
+          <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 48px)", color: "var(--site-text-primary)" }}>
             Zero-Risk Partnership
           </h3>
         </div>
@@ -96,7 +96,7 @@ export const SocialProof = () => {
               <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(201,168,76,0.08)" }}>
                 <item.icon className="w-12 h-12" style={{ color: "#c9a84c" }} />
               </div>
-              <h4 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: "22px", color: "var(--site-text-primary)", marginBottom: "8px" }}>
+              <h4 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: "22px", color: "var(--site-text-primary)", marginBottom: "8px" }}>
                 {item.title}
               </h4>
               <p style={{ fontWeight: 300, fontSize: "15px", color: "var(--site-text-muted)", lineHeight: 1.7 }}>
