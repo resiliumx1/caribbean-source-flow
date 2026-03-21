@@ -1,16 +1,9 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "@/styles/gate-entrance.css";
 
-gsap.registerPlugin(ScrollTrigger);
-
-function clamp(v: number, a: number, b: number): number {
-  return Math.max(a, Math.min(b, v));
-}
-
 /** Check if gate was seen within last 7 days */
-function isReturningVisitor(): boolean {
+export function isReturningVisitor(): boolean {
   try {
     const stamp = localStorage.getItem("mkrc-gate-seen");
     if (!stamp) return false;
@@ -29,63 +22,17 @@ function markGateSeen() {
 }
 
 interface GateEntranceProps {
-  onProgressChange?: (progress: number) => void;
   onGateComplete?: () => void;
 }
 
-export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceProps) {
-  const triggerRef = useRef<HTMLDivElement>(null);
+export function GateEntrance({ onGateComplete }: GateEntranceProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const gateLeftRef = useRef<HTMLDivElement>(null);
   const gateRightRef = useRef<HTMLDivElement>(null);
   const sealRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
-  const skipRef = useRef<HTMLButtonElement>(null);
-  const completedRef = useRef(false);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
   const [showSkip, setShowSkip] = useState(false);
-  const returning = useMemo(() => isReturningVisitor(), []);
-
-  // Show "Skip intro" for returning visitors after 2s
-  useEffect(() => {
-    if (!returning) return;
-    const t = setTimeout(() => setShowSkip(true), 2000);
-    return () => clearTimeout(t);
-  }, [returning]);
-
-  // Mobile auto-advance after 5s if user hasn't scrolled
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const isMobile = window.innerWidth < 768;
-    if (!isMobile) return;
-
-    let scrolled = false;
-    const onScroll = () => { scrolled = true; };
-    window.addEventListener("scroll", onScroll, { passive: true, once: true });
-
-    const t = setTimeout(() => {
-      if (!scrolled && !completedRef.current) {
-        // Auto-scroll to end of gate
-        const trigger = triggerRef.current;
-        if (trigger) {
-          const endY = trigger.offsetTop + trigger.offsetHeight;
-          window.scrollTo({ top: endY, behavior: "smooth" });
-        }
-      }
-    }, 5000);
-
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
-  const handleSkip = useCallback(() => {
-    const trigger = triggerRef.current;
-    if (trigger) {
-      const endY = trigger.offsetTop + trigger.offsetHeight;
-      window.scrollTo({ top: endY, behavior: "smooth" });
-    }
-  }, []);
 
   const particles = useMemo(() => {
     return Array.from({ length: 15 }, (_, i) => {
@@ -105,233 +52,179 @@ export function GateEntrance({ onProgressChange, onGateComplete }: GateEntranceP
     });
   }, []);
 
+  // Show skip button after 1s for all visitors
   useEffect(() => {
-    const trigger = triggerRef.current;
-    const overlay = overlayRef.current;
-    if (!trigger || !overlay) return;
+    const t = setTimeout(() => setShowSkip(true), 1000);
+    return () => clearTimeout(t);
+  }, []);
 
-    const st = ScrollTrigger.create({
-      trigger,
-      start: "top top",
-      end: "bottom top",
-      scrub: 1,
-      onUpdate: (self) => {
-        const raw = self.progress; // 0 → 1
+  // Auto-playing timeline
+  useEffect(() => {
+    // Skip for crawlers
+    const ua = navigator.userAgent.toLowerCase();
+    const isCrawler = /googlebot|bingbot|lighthouse|pagespeed|chrome-lighthouse|headlesschrome|prerender/.test(ua);
+    if (isCrawler || isReturningVisitor()) {
+      markGateSeen();
+      onGateComplete?.();
+      return;
+    }
 
-        onProgressChange?.(raw);
+    const tl = gsap.timeline({
+      onComplete: () => {
+        markGateSeen();
+        onGateComplete?.();
+      }
+    });
+    tlRef.current = tl;
 
-        // Gate opening: eased, complete by ~55% scroll
-        const gateRaw = clamp(raw / 0.55, 0, 1);
-        const gP = gateRaw * gateRaw * (3 - 2 * gateRaw); // smoothstep
+    // Phase 1 (0–1.2s): Seal and text fade in — handled by CSS animations
+    // Phase 2 (1.8s): Gates slide open
+    tl.to(gateLeftRef.current, {
+      x: '-100%',
+      duration: 1.4,
+      ease: 'power3.inOut',
+    }, 1.8)
+    .to(gateRightRef.current, {
+      x: '100%',
+      duration: 1.4,
+      ease: 'power3.inOut',
+    }, 1.8)
+    // Phase 3 (2.8s): Seal and text fade out
+    .to(sealRef.current, {
+      opacity: 0,
+      scale: 0.85,
+      duration: 0.6,
+      ease: 'power2.in',
+    }, 2.8)
+    .to(heroContentRef.current, {
+      opacity: 0,
+      y: -20,
+      duration: 0.6,
+      ease: 'power2.in',
+    }, 2.8)
+    // Phase 4 (3.2s): Full overlay fades out, revealing homepage
+    .to(overlayRef.current, {
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        if (overlayRef.current) overlayRef.current.style.pointerEvents = 'none';
+      }
+    }, 3.2);
 
-        if (gateLeftRef.current) {
-          gateLeftRef.current.style.transform = `translateX(${-gP * 100}%)`;
-          gateLeftRef.current.style.visibility = gP >= 0.999 ? "hidden" : "visible";
-        }
-        if (gateRightRef.current) {
-          gateRightRef.current.style.transform = `translateX(${gP * 100}%)`;
-          gateRightRef.current.style.visibility = gP >= 0.999 ? "hidden" : "visible";
-        }
+    return () => { tl.kill(); };
+  }, [onGateComplete]);
 
-        // Seam opacity
-        const seamOp = clamp(1 - gateRaw * 2.5, 0, 1);
-        gateLeftRef.current?.style.setProperty("--seam-op", String(seamOp));
-        gateRightRef.current?.style.setProperty("--seam-op", String(seamOp));
-
-        // Seal: rises and fades — PARALLAX (moves slower than scroll)
-        if (sealRef.current) {
-          const riseP = clamp(raw / 0.4, 0, 1);
-          const eased = riseP * riseP * (3 - 2 * riseP);
-          const vh = window.innerHeight;
-          // Parallax: seal moves at 60% of scroll speed
-          const sealY = -(vh * 0.48) * eased * 0.6;
-          const sealS = 1 - eased * 0.5;
-          const sealO = clamp(1 - eased * 1.8, 0, 1);
-          sealRef.current.style.transform = `translate(-50%,calc(-50% + ${sealY}px)) scale(${sealS})`;
-          sealRef.current.style.opacity = String(sealO);
-          sealRef.current.style.visibility = sealO <= 0 ? "hidden" : "visible";
-        }
-
-        // Hero content: at 50%, title locks and becomes watermark
-        if (heroContentRef.current) {
-          if (raw < 0.3) {
-            // Normal scroll — text moves with parallax (slower than scroll)
-            heroContentRef.current.style.opacity = "1";
-            heroContentRef.current.style.transform = `translateY(${raw * -80}px)`;
-          } else if (raw < 0.6) {
-            // Lock in place, start fading to watermark
-            const fadeP = clamp((raw - 0.3) / 0.3, 0, 1);
-            heroContentRef.current.style.opacity = String(1 - fadeP * 0.85);
-            heroContentRef.current.style.transform = `translateY(-24px) scale(${1 + fadeP * 0.15})`;
-            heroContentRef.current.style.filter = `blur(${fadeP * 2}px)`;
-          } else {
-            heroContentRef.current.style.opacity = "0.15";
-            heroContentRef.current.style.transform = "translateY(-24px) scale(1.15)";
-            heroContentRef.current.style.filter = "blur(2px)";
-          }
-        }
-
-        // Background darkens as user scrolls (continuous descent feeling)
-        if (raw > 0.4) {
-          const darken = clamp((raw - 0.4) / 0.4, 0, 1);
-          overlay.style.background = `linear-gradient(to bottom, 
-            rgba(14,26,11,${1 - darken * 0.3}) 0%, 
-            rgba(18,32,14,${1 - darken * 0.5}) 50%,
-            rgba(30,42,24,${1 - darken * 0.7}) 100%)`;
-        }
-
-        // Hide skip button once scrolling past 20%
-        if (skipRef.current) {
-          skipRef.current.style.opacity = raw > 0.15 ? "0" : "1";
-          skipRef.current.style.pointerEvents = raw > 0.15 ? "none" : "auto";
-        }
-
-        // Overlay fade out at 80-100%
-        if (raw >= 0.8) {
-          const fadeP = clamp((raw - 0.8) / 0.2, 0, 1);
-          overlay.style.opacity = String(1 - fadeP);
-          if (fadeP >= 0.99) {
-            overlay.style.pointerEvents = "none";
-          }
-        } else {
-          overlay.style.opacity = "1";
-          overlay.style.pointerEvents = "auto";
-        }
-
-        // Completion
-        if (raw >= 0.95 && !completedRef.current) {
-          completedRef.current = true;
+  const handleSkip = useCallback(() => {
+    if (tlRef.current) tlRef.current.kill();
+    gsap.killTweensOf([gateLeftRef.current, gateRightRef.current, sealRef.current, heroContentRef.current, overlayRef.current]);
+    if (overlayRef.current) {
+      gsap.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.4,
+        onComplete: () => {
+          if (overlayRef.current) overlayRef.current.style.pointerEvents = 'none';
           markGateSeen();
           onGateComplete?.();
         }
-      },
-    });
-
-    return () => {
-      st.kill();
-    };
-  }, [onProgressChange, onGateComplete]);
-
-  // Cleanup ScrollTrigger on unmount
-  useEffect(() => {
-    return () => {
-      ScrollTrigger.getAll().forEach((st) => st.kill());
-    };
-  }, []);
+      });
+    }
+  }, [onGateComplete]);
 
   return (
-    <>
-      {/* Spacer that ScrollTrigger uses for scroll distance */}
-      <div ref={triggerRef} className="gate-trigger-spacer" />
+    <div ref={overlayRef} className="gate-overlay">
+      {/* Forest background */}
+      <div className="hero-bg" />
 
-      {/* Fixed overlay */}
-      <div ref={overlayRef} className="gate-overlay">
-        {/* Forest background */}
-        <div className="hero-bg" />
+      {/* Gold particles */}
+      <div className="particles">
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            className="particle"
+            style={
+              {
+                left: p.left,
+                top: p.top,
+                width: p.width,
+                height: p.height,
+                background: "var(--gold)",
+                "--dur": p.dur,
+                "--del": p.del,
+                "--op": p.op,
+                "--dx": p.dx,
+                "--dy": p.dy,
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </div>
 
-        {/* Gold particles */}
-        <div className="particles">
-          {particles.map((p) => (
-            <div
-              key={p.id}
-              className="particle"
-              style={
-                {
-                  left: p.left,
-                  top: p.top,
-                  width: p.width,
-                  height: p.height,
-                  background: "var(--gold)",
-                  "--dur": p.dur,
-                  "--del": p.del,
-                  "--op": p.op,
-                  "--dx": p.dx,
-                  "--dy": p.dy,
-                } as React.CSSProperties
-              }
-            />
-          ))}
-        </div>
-
-        {/* Left Gate */}
-        <div className="gate gate-left" ref={gateLeftRef}>
-          <div className="wreath-half wreath-half-left">
-            <div className="wreath-half-mirror">
-              <GateWreathSVG className="wreath-half-svg" />
-            </div>
-          </div>
-        </div>
-
-        {/* Right Gate */}
-        <div className="gate gate-right" ref={gateRightRef}>
-          <div className="wreath-half wreath-half-right">
+      {/* Left Gate */}
+      <div className="gate gate-left" ref={gateLeftRef}>
+        <div className="wreath-half wreath-half-left">
+          <div className="wreath-half-mirror">
             <GateWreathSVG className="wreath-half-svg" />
           </div>
         </div>
-
-        {/* Central Seal */}
-        <div id="logo-seal" ref={sealRef}>
-          <div
-            className="star-seal-inner"
-            style={{
-              width: 160,
-              height: 160,
-              backgroundColor: "#c9a96e",
-              WebkitMaskImage: "url('/star-seal-for-lovable.png')",
-              maskImage: "url('/star-seal-for-lovable.png')",
-              WebkitMaskSize: "contain",
-              maskSize: "contain",
-              WebkitMaskRepeat: "no-repeat",
-              maskRepeat: "no-repeat",
-              WebkitMaskPosition: "center",
-              maskPosition: "center",
-              filter: "drop-shadow(0 0 18px rgba(201,169,110,0.4))",
-              position: "relative",
-              zIndex: 2,
-            }}
-          />
-        </div>
-
-        {/* Hero Text — continuous scroll, becomes watermark */}
-        <div className="hero-content" ref={heroContentRef} style={{ willChange: "opacity, transform, filter" }}>
-          <span className="h-eyebrow">Welcome to</span>
-          <h1 className="h-title">Mount Kailash</h1>
-          <p className="h-sub">Rejuvenation Centre</p>
-          <div className="h-divider">
-            <div className="diam" />
-          </div>
-          <p className="h-tagline">
-            Nature's answer for optimum health and well being.
-            <br />
-            Ancient botanical wisdom, Caribbean roots, whole-body renewal.
-          </p>
-        </div>
-
-        {/* Scroll hint — replaces old click-to-enter */}
-        <div className="gate-scroll-hint">
-          <div className="gate-scroll-hint__arrows">
-            <div className="gate-scroll-hint__chev" />
-            <div className="gate-scroll-hint__chev" />
-            <div className="gate-scroll-hint__chev" />
-          </div>
-        </div>
-
-        {/* Skip intro — returning visitors only */}
-        {showSkip && (
-          <button
-            ref={skipRef}
-            onClick={handleSkip}
-            className="gate-skip-btn"
-            aria-label="Skip intro"
-          >
-            Skip intro
-          </button>
-        )}
       </div>
 
-      {/* Color Bridge — gradient corridor between gate and homepage */}
-      <div className="gate-color-bridge" aria-hidden="true" />
-    </>
+      {/* Right Gate */}
+      <div className="gate gate-right" ref={gateRightRef}>
+        <div className="wreath-half wreath-half-right">
+          <GateWreathSVG className="wreath-half-svg" />
+        </div>
+      </div>
+
+      {/* Central Seal */}
+      <div id="logo-seal" ref={sealRef}>
+        <div
+          className="star-seal-inner"
+          style={{
+            width: 160,
+            height: 160,
+            backgroundColor: "#c9a96e",
+            WebkitMaskImage: "url('/star-seal-for-lovable.png')",
+            maskImage: "url('/star-seal-for-lovable.png')",
+            WebkitMaskSize: "contain",
+            maskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            maskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskPosition: "center",
+            filter: "drop-shadow(0 0 18px rgba(201,169,110,0.4))",
+            position: "relative",
+            zIndex: 2,
+          }}
+        />
+      </div>
+
+      {/* Hero Text */}
+      <div className="hero-content" ref={heroContentRef}>
+        <span className="h-eyebrow">Welcome to</span>
+        <h1 className="h-title">Mount Kailash</h1>
+        <p className="h-sub">Rejuvenation Centre</p>
+        <div className="h-divider">
+          <div className="diam" />
+        </div>
+        <p className="h-tagline">
+          Nature's answer for optimum health and well being.
+          <br />
+          Ancient botanical wisdom, Caribbean roots, whole-body renewal.
+        </p>
+      </div>
+
+      {/* Skip intro — all visitors */}
+      {showSkip && (
+        <button
+          onClick={handleSkip}
+          className="gate-skip-btn"
+          aria-label="Skip intro"
+        >
+          Skip intro
+        </button>
+      )}
+    </div>
   );
 }
 

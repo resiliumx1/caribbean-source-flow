@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/homepage/HeroSection";
 import { MessageCircle, ArrowRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { GateEntrance, isReturningVisitor } from "@/components/gate-entrance";
 
 // Lazy load below-fold sections
 const SourceStory = lazy(() => import("@/components/homepage/SourceStory").then(m => ({ default: m.SourceStory })));
