@@ -416,7 +416,7 @@ export default function GoddessCard() {
         >
           <div
             className="space-y-5 text-[17px] leading-[1.85] font-light"
-            style={{ fontFamily: "'Cormorant Garamond', 'Georgia', serif", letterSpacing: "0.01em" }}
+            style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.01em" }}
           >
             <p>
               Goddess R. Itopia Archer is a <strong className="font-semibold">Sovereign Matriarch</strong> — a visionary leader devoted to community

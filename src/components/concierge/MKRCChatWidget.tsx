@@ -138,7 +138,7 @@ export function MKRCChatWidget() {
                 <span style={{ color: '#c9a84c', fontSize: 16 }}>✦</span>
               </div>
               <div>
-                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 700, fontSize: 18, color: '#f2ead8' }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 18, color: '#f2ead8' }}>
                   MKRC Assistant
                 </div>
                 <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 11, color: 'rgba(242,234,216,0.5)' }}>
@@ -159,7 +159,7 @@ export function MKRCChatWidget() {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(201,168,76,0.1)' }}>
                   <span style={{ fontSize: 24, color: '#c9a84c' }}>✦</span>
                 </div>
-                <div style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 700, fontStyle: 'italic', fontSize: 24, color: '#f2ead8', marginBottom: 8 }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontStyle: 'italic', fontSize: 24, color: '#f2ead8', marginBottom: 8 }}>
                   How can I help you?
                 </div>
                 <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: 'rgba(242,234,216,0.5)', maxWidth: 260, lineHeight: 1.5 }}>

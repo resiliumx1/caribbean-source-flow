@@ -13,7 +13,7 @@
   font-size: max(inherit, 14px);
 }
 
-.ta-cormorant { font-family: 'Cormorant Garamond', serif; }
+.ta-cormorant { font-family: 'DM Sans', sans-serif; }
 .ta-jost { font-family: 'Jost', sans-serif; }
 
 /* Scroll-triggered fade-up */
@@ -61,7 +61,7 @@
 }
 
 .answer-hero__title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: clamp(3rem, 6vw, 5.5rem);
   line-height: 1.05;
   margin-bottom: 12px;
@@ -75,7 +75,7 @@
 }
 
 .answer-hero__subtitle {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: clamp(0.95rem, 1.8vw, 1.25rem);
   font-style: italic;
   color: #c9a84c;
@@ -300,7 +300,7 @@
 }
 
 .chronixx-section__context {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-style: italic;
   font-size: clamp(1.2rem, 2.5vw, 1.6rem);
   color: #f2ead8;
@@ -330,7 +330,7 @@
 }
 
 .chronixx-section__stat-value {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-size: 64px;
   color: #c9a84c;
@@ -372,7 +372,7 @@
 }
 
 .ingredients-section__heading {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-style: italic;
   font-size: clamp(2.5rem, 4vw, 52px);
@@ -438,7 +438,7 @@
 }
 
 .ingredient-card__name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-size: 28px;
   color: #f2ead8;
@@ -629,7 +629,7 @@
 }
 
 .craft-step__title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   font-size: 18px;
   color: #f2ead8;
@@ -746,7 +746,7 @@
 }
 
 .benefit-card__title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   font-size: 20px;
   color: #f2ead8;
@@ -805,7 +805,7 @@
 }
 
 .howto-section__heading {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-size: clamp(2.5rem, 5vw, 64px);
   color: #f2ead8;
@@ -847,7 +847,7 @@
 }
 
 .howto-step__number {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 700;
   font-size: 48px;
   color: #c9a84c;
@@ -857,7 +857,7 @@
 }
 
 .howto-step__title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   font-size: 24px;
   color: #f2ead8;
@@ -994,7 +994,7 @@
 }
 
 .final-cta__oath {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-style: italic;
   font-size: clamp(1.2rem, 2vw, 1.5rem);
   color: #c9a84c;
@@ -1048,7 +1048,7 @@
 }
 
 .final-cta__risk {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Sans', sans-serif;
   font-style: italic;
   font-size: 16px;
   color: #f2ead8;
