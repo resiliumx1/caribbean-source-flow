@@ -94,7 +94,7 @@ export default function WebinarHero() {
           <a
             href="#featured"
             className="font-jost font-medium px-8 py-3.5 rounded-full text-sm transition-all duration-300 hover:brightness-110 hover:scale-[1.02] min-h-[48px] flex items-center"
-            style={{ backgroundColor: "#c9a84c", color: "#090909" }}
+            style={{ backgroundColor: "var(--site-gold)", color: "#090909" }}
           >
             Browse Sessions
           </a>

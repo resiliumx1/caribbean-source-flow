@@ -70,7 +70,7 @@ export default function WebinarCommunity({ onVideoClick }: Props) {
               style={{
                 backgroundColor: "var(--site-bg-secondary)",
                 border: "1px solid rgba(201,168,76,0.15)",
-                borderTop: "3px solid #c9a84c",
+                borderTop: "3px solid var(--site-gold)",
               }}
             >
               {/* Avatar */}

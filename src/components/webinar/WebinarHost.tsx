@@ -92,7 +92,7 @@ export default function WebinarHost() {
           <Link
             to="/"
             className="font-jost font-medium px-7 py-3 rounded-full text-sm border transition-all duration-300 hover:brightness-110 hover:scale-[1.02] inline-block min-h-[48px]"
-            style={{ borderColor: "#c9a84c", color: "var(--site-gold)" }}
+            style={{ borderColor: "var(--site-gold)", color: "var(--site-gold)" }}
           >
             Learn More About MKRC →
           </Link>

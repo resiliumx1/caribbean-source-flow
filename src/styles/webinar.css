@@ -40,7 +40,7 @@
 }
 
 .webinar-shimmer {
-  background: linear-gradient(90deg, var(--site-gold) 0%, #f5e6b8 25%, var(--site-gold) 50%, #a07830 75%, var(--site-gold) 100%);
+  background: linear-gradient(90deg, var(--site-gold) 0%, #f5e6b8 25%, var(--site-gold) 50%, var(--site-gold-dark) 75%, var(--site-gold) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;

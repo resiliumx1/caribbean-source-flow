@@ -279,7 +279,7 @@ function CarouselRow({ category, videos, onVideoClick }: { category: string; vid
               onClick={() => setCurrentIndex(i)}
               className="w-2 h-2 rounded-full transition-all duration-200"
               style={{
-                backgroundColor: i === activeDot ? "#c9a84c" : "rgba(201,168,76,0.25)",
+                backgroundColor: i === activeDot ? "var(--site-gold)" : "rgba(201,168,76,0.25)",
                 transform: i === activeDot ? "scale(1.5)" : "scale(1)",
               }}
               aria-label={`Slide ${i + 1}`}
