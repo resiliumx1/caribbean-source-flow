@@ -194,7 +194,7 @@ function CarouselRow({ category, videos, onVideoClick }: { category: string; vid
       {/* Row header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#c9a84c" }} />
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "var(--site-gold)" }} />
           <h3 className="font-cormorant font-semibold text-xl md:text-2xl" style={{ color: "var(--site-text-primary)" }}>
             {meta?.label || category}
           </h3>
