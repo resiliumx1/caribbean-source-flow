@@ -1,51 +1,88 @@
 
 
-## Plan: Dark Mode Fix, Typography Consolidation & Webinar Brand Alignment
+## Plan: Build Error Fix + Prompts 4–8
 
-### Prompt 1 — Fix Dark Mode Leak
+### 0. Critical Build Fix — MKRCChatWidget.tsx Smart Quotes
 
-**Files:** `src/pages/Webinars.tsx`, `src/pages/TheAnswer.tsx`
+The file `src/components/concierge/MKRCChatWidget.tsx` has **curly/typographic quotes** (`'` and `'`) inside `fontFamily` strings instead of straight single quotes (`'`). This causes TS1005 errors on lines 92, 144, 165, 210, 245, 267, 311, and 350.
 
-Add cleanup `return () => document.documentElement.classList.remove("dark")` to the `useEffect` in both files. TheAnswer already has an empty `return () => {}` — replace it with the real cleanup.
-
----
-
-### Prompt 2 — Typography Consolidation to DM Sans
-
-**Scope:** ~58 component/page files with inline `fontFamily` styles + 3 CSS files with `font-family` rules. All get replaced with `'DM Sans', sans-serif`.
-
-**CSS files (3):**
-- `src/styles/webinar.css` — `.font-cormorant` and `.font-jost` classes
-- `src/styles/mkrc-theme.css` — `.mkrc-display`, `.mkrc-body`, `.mkrc-label`, `.mkrc-page`, button classes
-- `src/styles/gate-entrance.css` — `.h-eyebrow`, `.h-sub`, `.h-tagline`, sidebar font
-
-**Component/Page files (~58):** Every inline `fontFamily` reference to Cormorant Garamond, Playfair Display, Jost, Inter, Plus Jakarta Sans, Space Grotesk, or DM Serif Display gets replaced with `'DM Sans', sans-serif`. Font weights, sizes, line heights, letter spacing, and colors remain untouched.
-
-**index.css:** `--font-serif` variable kept as fallback but unused. Body/heading rules already reference DM Sans — confirmed.
+**Fix:** Replace all instances of `'DM Sans'` (smart quotes) with `'DM Sans'` (straight quotes) across the file (~8 occurrences).
 
 ---
 
-### Prompt 3 — Webinar Page Brand Alignment
+### Prompt 4 — Shop Hero Font Fix
 
-**`src/pages/Webinars.tsx`:**
-- Outer div: replace hardcoded `backgroundColor: "#090909"` / `color: "#f2ead8"` with `var(--site-bg-primary)` / `var(--site-text-primary)`
-- Dialog: replace `#111111` bg and `#f2ead8` text with site tokens
+**File:** `src/components/store/ShopHero.tsx`
 
-**`src/styles/webinar.css`:**
-- Replace `#090909` → `var(--site-bg-primary)`
-- Replace `#0d1a0f` → `var(--site-bg-secondary)`
-- Replace `#0f0a00` → `var(--site-bg-deep)`
-- Replace `#f2ead8` → `var(--site-text-primary)`
-- Replace `#c9a84c` → `var(--site-gold)`
-- Replace `#0F281E` → `var(--site-green-dark)`
-
-**Webinar component files (9 files in `src/components/webinar/`):**
-- Same hex-to-variable replacements across WebinarHero, WebinarSignup, WebinarShowcase, WebinarCommunity, WebinarTrust, WebinarHost, WebinarExplore, WebinarFeatured, WebinarFooter
+Already done — the file already uses `fontFamily: "'DM Sans', sans-serif"` on all elements (h1 and both p tags). No changes needed.
 
 ---
 
-### Technical Notes
-- No layout, animation, sizing, or structural changes
-- Font weight values preserved (just family swapped)
-- CSS class names like `.font-cormorant` and `.font-jost` kept but their underlying family changed to DM Sans — this avoids breaking class references in JSX
+### Prompt 5 — Standardise Gold Colour Token
+
+**`src/index.css`:** Gold tokens already set correctly (`--site-gold: #BC8A5F` light / `#D4A373` dark). No changes needed there.
+
+**`src/styles/mkrc-theme.css`:**
+- `--mkrc-accent-gold: #C9A84C` → `var(--site-gold, #BC8A5F)`
+- `--mkrc-accent-gold-bright: #D4AF37` → `var(--site-gold, #D4A373)`
+- Same for light mode block: `--mkrc-accent-gold: #B8942F` → `var(--site-gold, #BC8A5F)`, `--mkrc-accent-gold-bright: #C9A84C` → `var(--site-gold, #D4A373)`
+
+**`src/styles/webinar.css`:** Replace `#a07830` with `var(--site-gold-dark)` (line 43 shimmer gradient).
+
+**Webinar components (6 files):** Replace all hardcoded `#c9a84c` with `var(--site-gold)`:
+- `WebinarSignup.tsx` — 2 instances
+- `WebinarFeatured.tsx` — 1 instance
+- `WebinarHero.tsx` — 2 instances (border class + backgroundColor)
+- `WebinarExplore.tsx` — 1 instance
+- `WebinarTrust.tsx` — 1 instance
+- `WebinarHost.tsx` — 1 instance
+- `WebinarCommunity.tsx` — 1 instance
+- `WebinarShowcase.tsx` — 6 instances
+
+Keep `rgba(201,168,76,...)` values as-is (too complex for CSS variable replacement) — will flag these as remaining hardcoded.
+
+---
+
+### Prompt 6 — mkrc-theme.css Cleanup
+
+Update both `[data-mkrc-theme="dark"]` and `[data-mkrc-theme="light"]` blocks to reference `--site-*` tokens for the 10 properties listed. Keep `--mkrc-bg-elevated`, `--mkrc-bg-surface`, `--mkrc-text-tertiary`, `--mkrc-text-inverse`, `--mkrc-glow-gold`, `--mkrc-glow-green`, `--mkrc-border-medium`, `--mkrc-accent-gold-dim` as standalone values.
+
+---
+
+### Prompt 7 — Hero Typography Refinement
+
+**File:** `src/components/homepage/HeroSection.tsx`
+
+- H1 (line 133): Add inline `style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, color: '#F4EFEA' }}`
+- "Welcome to Mount Kailash" paragraph (line 138-142): Change `italic` class to normal, add `fontWeight: 300, letterSpacing: '0.05em', fontStyle: 'normal'`
+- "21 years restoring..." paragraph (line 143-147): Remove `italic` and `font-serif` classes, add `fontWeight: 300, letterSpacing: '0.04em'`
+
+---
+
+### Prompt 8 — SEO Meta Update
+
+**File:** `src/pages/TrinityHomepage.tsx` (lines 85-88)
+
+- Title → `"Mount Kailash Rejuvenation Centre | Caribbean Bush Medicine & Wellness"`
+- Meta description → the provided 200-char description about shop, retreats, school
+
+---
+
+### Files Modified (Total: ~12)
+1. `src/components/concierge/MKRCChatWidget.tsx` — smart quote fix
+2. `src/styles/mkrc-theme.css` — gold tokens + site token references
+3. `src/styles/webinar.css` — gold standardization
+4. `src/components/webinar/WebinarSignup.tsx`
+5. `src/components/webinar/WebinarFeatured.tsx`
+6. `src/components/webinar/WebinarHero.tsx`
+7. `src/components/webinar/WebinarExplore.tsx`
+8. `src/components/webinar/WebinarTrust.tsx`
+9. `src/components/webinar/WebinarHost.tsx`
+10. `src/components/webinar/WebinarCommunity.tsx`
+11. `src/components/webinar/WebinarShowcase.tsx`
+12. `src/components/homepage/HeroSection.tsx` — typography refinement
+13. `src/pages/TrinityHomepage.tsx` — SEO update
+
+### Flagged: Remaining Hardcoded Gold
+`rgba(201,168,76,...)` values in webinar components and `TheAnswer.css` will remain as-is — CSS variables can't be used inside `rgba()` without `color-mix()` which has limited browser support.
 
