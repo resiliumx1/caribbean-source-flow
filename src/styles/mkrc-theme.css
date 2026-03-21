@@ -73,7 +73,7 @@
 .mkrc-page {
   background-color: var(--mkrc-bg-primary);
   color: var(--mkrc-text-primary);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
 }
 
