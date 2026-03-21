@@ -89,7 +89,7 @@ export function MKRCChatWidget() {
           {/* Tooltip */}
           <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
             <div className="px-3 py-1.5 rounded-full text-xs whitespace-nowrap" 
-              style={{ background: '#1a1a1a', color: '#f2ead8', fontFamily: ''DM Sans', sans-serif', fontWeight: 300, fontSize: 12 }}>
+              style={{ background: '#1a1a1a', color: '#f2ead8', fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 12 }}>
               Ask MKRC AI
             </div>
           </div>
@@ -141,7 +141,7 @@ export function MKRCChatWidget() {
                 <div style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 700, fontSize: 18, color: '#f2ead8' }}>
                   MKRC Assistant
                 </div>
-                <div style={{ fontFamily: ''DM Sans', sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(242,234,216,0.5)' }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 11, color: 'rgba(242,234,216,0.5)' }}>
                   🟢 Online · Powered by Lovable AI
                 </div>
               </div>
@@ -162,7 +162,7 @@ export function MKRCChatWidget() {
                 <div style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 700, fontStyle: 'italic', fontSize: 24, color: '#f2ead8', marginBottom: 8 }}>
                   How can I help you?
                 </div>
-                <div style={{ fontFamily: ''DM Sans', sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(242,234,216,0.5)', maxWidth: 260, lineHeight: 1.5 }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: 'rgba(242,234,216,0.5)', maxWidth: 260, lineHeight: 1.5 }}>
                   Ask me about our products, retreats, webinars, wholesale, or Priest Kailash.
                 </div>
               </div>
@@ -207,7 +207,7 @@ export function MKRCChatWidget() {
                       background: 'rgba(255,255,255,0.03)',
                       border: '1px solid rgba(201,168,76,0.3)',
                       color: '#f2ead8',
-                      fontFamily: ''DM Sans', sans-serif',
+                      fontFamily: "'DM Sans', sans-serif",
                       fontWeight: 300,
                       fontSize: 13,
                     }}
@@ -242,7 +242,7 @@ export function MKRCChatWidget() {
                   background: 'transparent',
                   border: 'none',
                   color: '#f2ead8',
-                  fontFamily: ''DM Sans', sans-serif',
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 300,
                   fontSize: 14,
                   lineHeight: 1.5,
@@ -264,7 +264,7 @@ export function MKRCChatWidget() {
             </div>
             {/* Footer */}
             <div className="text-center mt-2 pb-1" style={{
-              fontFamily: ''DM Sans', sans-serif',
+              fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
               fontSize: 10,
               color: 'rgba(201,168,76,0.4)',
@@ -308,7 +308,7 @@ function ChatBubble({ message }: { message: ConciergeMessage }) {
         style={{
           background: isUser ? '#c9a84c' : '#1a1a1a',
           color: isUser ? '#090909' : '#f2ead8',
-          fontFamily: ''DM Sans', sans-serif',
+          fontFamily: "'DM Sans', sans-serif",
           fontWeight: isUser ? 400 : 300,
           fontSize: 14,
           lineHeight: isUser ? 1.5 : 1.6,
@@ -347,7 +347,7 @@ function ChatBubble({ message }: { message: ConciergeMessage }) {
         >
           <Phone className="w-3 h-3" style={{ color: '#25D366' }} />
           <span style={{
-            fontFamily: ''DM Sans', sans-serif',
+            fontFamily: "'DM Sans', sans-serif",
             fontWeight: 300,
             fontSize: 11,
             color: 'rgba(201,168,76,0.7)',
