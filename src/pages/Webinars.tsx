@@ -67,7 +67,7 @@ export default function Webinars() {
           style={{ backgroundColor: "var(--site-bg-secondary)", border: "1px solid rgba(201,168,76,0.2)" }}
         >
           <DialogHeader className="p-4 pb-0">
-            <DialogTitle className="font-cormorant text-lg" style={{ color: "#f2ead8" }}>
+            <DialogTitle className="font-cormorant text-lg" style={{ color: "var(--site-text-primary)" }}>
               {selectedVideo?.title || "Webinar Replay"}
             </DialogTitle>
           </DialogHeader>
