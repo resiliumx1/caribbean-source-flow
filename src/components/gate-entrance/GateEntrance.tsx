@@ -77,33 +77,32 @@ export function GateEntrance({ onGateComplete }: GateEntranceProps) {
     });
     tlRef.current = tl;
 
-    // Phase 1 (0.8s): Gates slide open + star fades simultaneously
+    // Phase 1 (0–1.2s): Seal and text fade in — handled by CSS animations
+    // Phase 2 (1.8s): Gates slide open
     tl.to(gateLeftRef.current, {
       x: '-100%',
       duration: 1.4,
       ease: 'power3.inOut',
-    }, 0.8)
+    }, 1.8)
     .to(gateRightRef.current, {
       x: '100%',
       duration: 1.4,
       ease: 'power3.inOut',
-    }, 0.8)
+    }, 1.8)
+    // Phase 3 (2.8s): Seal and text fade out
     .to(sealRef.current, {
       opacity: 0,
-      scale: 0.7,
-      duration: 0.8,
+      scale: 0.85,
+      duration: 0.6,
       ease: 'power2.in',
-    }, 0.8)
-
-    // Phase 2 (2.4s): Hero text rises into view — user reads it
+    }, 2.8)
     .to(heroContentRef.current, {
-      opacity: 1,
-      y: 0,
-      duration: 0.9,
-      ease: 'power2.out',
-    }, 2.4)
-
-    // Phase 3 (4.5s): Fade out overlay — total runtime ~5.3s
+      opacity: 0,
+      y: -20,
+      duration: 0.6,
+      ease: 'power2.in',
+    }, 2.8)
+    // Phase 4 (3.2s): Full overlay fades out, revealing homepage
     .to(overlayRef.current, {
       opacity: 0,
       duration: 0.8,
@@ -111,7 +110,7 @@ export function GateEntrance({ onGateComplete }: GateEntranceProps) {
       onComplete: () => {
         if (overlayRef.current) overlayRef.current.style.pointerEvents = 'none';
       }
-    }, 4.5);
+    }, 3.2);
 
     return () => { tl.kill(); };
   }, [onGateComplete]);
