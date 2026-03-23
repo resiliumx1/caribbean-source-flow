@@ -10,7 +10,6 @@ export function FeaturedProduct() {
   const { data: product, isLoading } = useProduct("the-answer");
   const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
-  const [subscribe, setSubscribe] = useState(false);
 
   if (isLoading) {
     return (
