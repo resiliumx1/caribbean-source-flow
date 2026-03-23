@@ -57,9 +57,9 @@ export default function AdminLayout() {
               ].map((link) => {
                 const isActive = location.pathname.startsWith(link.href);
                 return (
-                  <a key={link.href} href={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
+                  <Link key={link.href} to={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
                     {link.label}
-                  </a>
+                  </Link>
                 );
               })}
             </nav>
