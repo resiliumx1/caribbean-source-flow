@@ -604,12 +604,13 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
                 padding: "4px 8px 4px 16px", transition: "border-color 0.2s",
               }}>
                 <textarea
-                  value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey}
-                  placeholder="Describe your symptoms or health concern…" rows={1}
+                  ref={textareaRef}
+                  value={input} onChange={e => { setInput(e.target.value); const el = e.target; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }} onKeyDown={handleKey}
+                  placeholder="Describe your symptoms or health concern…" rows={2}
                   style={{
                     flex: 1, border: "none", outline: "none", background: "transparent",
                     resize: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: t.text,
-                    padding: "8px 0", lineHeight: "1.4", maxHeight: 100, overflowY: "auto",
+                    padding: "10px 0", lineHeight: "1.5", maxHeight: 120, minHeight: 52, overflowY: "auto",
                   }}
                 />
               </div>
