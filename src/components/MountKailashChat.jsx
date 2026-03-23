@@ -9,7 +9,7 @@ function trackChatEvent(eventType, sessionId, extra = {}) {
     ...extra,
   }).then(() => {}).catch(() => {});
 }
-const SITE_BASE = "https://preview--caribbean-source-flow.lovable.app";
+const SITE_BASE = "";
 
 const PRODUCT_LINKS = {
   "The Answer": `${SITE_BASE}/shop/the-answer`,
