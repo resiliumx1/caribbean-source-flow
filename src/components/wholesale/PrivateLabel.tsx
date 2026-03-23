@@ -22,7 +22,8 @@ export const PrivateLabel = ({ onScrollToForm }: PrivateLabelProps) => {
             <img
               src={labProcessing}
               alt="Processing facility for custom formulations"
-              className="w-full h-full object-cover"
+               className="w-full h-full object-cover"
+               loading="lazy"
             />
             <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(15,40,30,0.5) 0%, transparent 50%)" }} />
           </div>
