@@ -65,6 +65,9 @@ export default function AdminLayout() {
             </nav>
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-xs text-muted-foreground hidden lg:inline truncate max-w-[140px]">{user.email}</span>
+              <Button variant="outline" size="sm" className="h-8 w-8 p-0" aria-label="Toggle theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                {theme === 'dark' ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              </Button>
               <Link to="/"><Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs"><Home className="h-3 w-3" /><span className="hidden sm:inline">Site</span></Button></Link>
               <button onClick={() => signOut()} className="text-xs text-destructive hover:underline">Sign Out</button>
             </div>
