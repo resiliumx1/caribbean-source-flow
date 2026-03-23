@@ -274,6 +274,8 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
   const messagesEndRef = useRef(null);
+  const messagesTopRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const messages = externalMessages || localMessages;
   const setMessages = setExternalMessages || setLocalMessages;
@@ -301,6 +303,11 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
   };
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  // Scroll to top of welcome message on initial mount
+  useEffect(() => {
+    setTimeout(() => { messagesTopRef.current?.scrollIntoView({ behavior: "auto" }); }, 100);
+  }, []);
 
   const needsHandoff = (text) => HANDOFF_TRIGGERS.some(tr => text.toLowerCase().includes(tr.toLowerCase()));
   const cleanContent = (text) => text.replace(/💬 CONNECT_WITH_TEAM/g, "").trim();
@@ -517,6 +524,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
           <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, overflow: "hidden" }}>
             {/* Messages */}
             <div style={{ flex: 1, overflowY: "auto", padding: "16px 0 8px", display: "flex", flexDirection: "column", gap: 12, minHeight: 0, WebkitOverflowScrolling: "touch" }}>
+              <div ref={messagesTopRef} />
               {messages.map((msg, idx) => (
                 <div key={idx} style={{
                   display: "flex",
@@ -602,12 +610,13 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
                 padding: "4px 8px 4px 16px", transition: "border-color 0.2s",
               }}>
                 <textarea
-                  value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey}
-                  placeholder="Describe your symptoms or health concern…" rows={1}
+                  ref={textareaRef}
+                  value={input} onChange={e => { setInput(e.target.value); const el = e.target; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }} onKeyDown={handleKey}
+                  placeholder="Describe your symptoms or health concern…" rows={2}
                   style={{
                     flex: 1, border: "none", outline: "none", background: "transparent",
                     resize: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: t.text,
-                    padding: "8px 0", lineHeight: "1.4", maxHeight: 100, overflowY: "auto",
+                    padding: "10px 0", lineHeight: "1.5", maxHeight: 120, minHeight: 52, overflowY: "auto",
                   }}
                 />
               </div>
