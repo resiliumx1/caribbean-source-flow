@@ -68,6 +68,7 @@ export default function ChatWidget() {
       dismissBubble();
       setIsMinimized(false);
       setIsMobileFullscreen(false);
+      setShowOptions(messages.length <= 1);
     }
     setIsOpen((v) => !v);
   };
