@@ -3,6 +3,27 @@ import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { useState } from "react";
 import { ChevronDown, X, SlidersHorizontal } from "lucide-react";
 
+const CONDITION_EMOJI_MAP: Record<string, string> = {
+  immunity: '🛡️',
+  sleep: '😴',
+  "women-s-health": '🌸',
+  "women's-health": '🌸',
+  "mens-health": '💪',
+  "men-s-health": '💪',
+  digestion: '🫁',
+  detox: '🌿',
+  circulation: '❤️',
+  stress: '🧘',
+  pain: '🩹',
+  skin: '✨',
+  respiratory: '🫁',
+  energy: '⚡',
+};
+
+function getConditionEmoji(slug: string): string {
+  return CONDITION_EMOJI_MAP[slug] || '🌱';
+}
+
 const FORMS = [
   { label: "Tinctures", slug: "tinctures" },
   { label: "Capsules", slug: "capsules" },
