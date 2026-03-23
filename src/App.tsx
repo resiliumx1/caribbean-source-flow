@@ -126,6 +126,7 @@ function AppContent() {
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="/admin/products" replace />} />
             <Route path="products" element={<AdminProducts />} />
             <Route path="retreats" element={<AdminRetreats />} />
             <Route path="retreat-dates" element={<AdminRetreatDates />} />
