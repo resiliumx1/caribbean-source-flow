@@ -250,7 +250,7 @@ function injectProductLinks(html) {
       var lastCloseA = before.lastIndexOf("</a>");
       if (lastOpenA > lastCloseA) continue;
       parts.push(result.substring(lastIndex, m.index));
-      parts.push('<a href="' + url + '" target="_blank" rel="noopener noreferrer" onclick="window.__trackChatProductClick && window.__trackChatProductClick(\'' + name.replace(/'/g, "\\'") + '\')" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">' + name + ' ↗</a>');
+      parts.push('<a href="' + url + '" onclick="window.__trackChatProductClick && window.__trackChatProductClick(\'' + name.replace(/'/g, "\\'") + '\')" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">' + name + '</a>');
       lastIndex = m.index + m[0].length;
     }
     if (parts.length > 0) {
