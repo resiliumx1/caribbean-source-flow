@@ -46,7 +46,7 @@ export default function WebinarHero() {
   return (
     <section
       ref={sectionRef}
-      className="hero-section relative flex items-center justify-center text-center min-h-screen overflow-hidden webinar-hero-gradient webinar-noise"
+      className="webinar-hero-gradient webinar-noise relative flex items-center justify-center text-center min-h-screen overflow-hidden"
     >
       <div className="absolute inset-0 bg-black/50 z-[1]" />
       <Particles />

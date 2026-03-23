@@ -85,7 +85,7 @@ export default function ChatWidget() {
       return { top: 0, right: 0, bottom: 0, left: 0, width: "100vw", height: "100vh", borderRadius: 0 };
     }
     if (!isMobile && isMaximized) {
-      return { bottom: 0, right: 0, width: 600, height: "92vh", borderRadius: 16 };
+      return { bottom: 16, right: 16, width: 600, height: "calc(100vh - 88px)", borderRadius: 16, top: "auto" };
     }
     if (isMobile) {
       return { bottom: 80, right: 8, width: "92vw", height: "55vh", borderRadius: 16 };
@@ -149,7 +149,7 @@ export default function ChatWidget() {
 
       {isOpen && (
         <div
-          className="fixed z-[9999] flex flex-col overflow-hidden"
+          className="fixed z-[9000] flex flex-col overflow-hidden"
           style={{
             ...getPopupStyle(),
             boxShadow: "0 24px 80px rgba(0,0,0,0.5)",
@@ -208,16 +208,10 @@ export default function ChatWidget() {
               }>
                 <MountKailashChat externalMessages={messages} setExternalMessages={setMessages} />
               </Suspense>
-              <button onClick={() => setIsMinimized(true)} style={{
+              <img src="/star-seal.svg" alt="Mount Kailash" style={{
                 position: "absolute", bottom: 12, left: 12, zIndex: 210,
-                width: 36, height: 36, borderRadius: "50%",
-                background: "rgba(28,74,28,0.9)", border: "1px solid rgba(200,168,75,0.3)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                transition: "transform 0.15s, opacity 0.15s",
-              }} className="hover:scale-110 active:scale-95" aria-label="Collapse chat">
-                <Minus className="w-4 h-4 text-white" />
-              </button>
+                width: 36, height: 36, pointerEvents: "none", opacity: 0.7,
+              }} />
             </div>
           )}
 

@@ -9,6 +9,11 @@ interface ReviewCardProps {
   onHelpful: (reviewId: string) => void;
 }
 
+function getAvatarUrl(name: string) {
+  const seed = encodeURIComponent(name.trim().toLowerCase());
+  return `https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&radius=50`;
+}
+
 export function ReviewCard({ review, onHelpful }: ReviewCardProps) {
   const date = new Date(review.created_at).toLocaleDateString("en-US", {
     year: "numeric",
@@ -50,7 +55,13 @@ export function ReviewCard({ review, onHelpful }: ReviewCardProps) {
       )}
 
       <div className="flex items-center justify-between text-sm text-muted-foreground pt-1">
-        <span>
+        <span className="flex items-center gap-2">
+          <img
+            src={getAvatarUrl(review.user_name)}
+            alt={review.user_name}
+            className="w-7 h-7 rounded-full"
+            loading="lazy"
+          />
           {review.user_name} · {date}
         </span>
         <Button
