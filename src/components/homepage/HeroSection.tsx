@@ -155,8 +155,8 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Right Column — 5 cols */}
-            <div className="lg:col-span-5 flex">
+            {/* Right Column — 5 cols (hidden on mobile) */}
+            <div className="hidden lg:flex lg:col-span-5">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl w-full z-[1]">
                 <img
                   src={priestPhoto}
