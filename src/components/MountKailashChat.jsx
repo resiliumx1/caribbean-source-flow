@@ -274,6 +274,8 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
   const messagesEndRef = useRef(null);
+  const messagesTopRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const messages = externalMessages || localMessages;
   const setMessages = setExternalMessages || setLocalMessages;
