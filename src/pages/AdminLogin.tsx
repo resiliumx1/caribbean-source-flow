@@ -17,6 +17,11 @@ export default function AdminLogin() {
   const { user, isAdmin, isLoading, signIn } = useAdmin();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme("light");
+  }, [setTheme]);
 
   useEffect(() => {
     if (!isLoading && user && isAdmin) {
