@@ -1,13 +1,15 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
-import { Loader2, Home } from "lucide-react";
+import { Loader2, Home, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     if (!isLoading) {
@@ -55,14 +57,17 @@ export default function AdminLayout() {
               ].map((link) => {
                 const isActive = location.pathname.startsWith(link.href);
                 return (
-                  <a key={link.href} href={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
+                  <Link key={link.href} to={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
                     {link.label}
-                  </a>
+                  </Link>
                 );
               })}
             </nav>
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-xs text-muted-foreground hidden lg:inline truncate max-w-[140px]">{user.email}</span>
+              <Button variant="outline" size="sm" className="h-8 w-8 p-0" aria-label="Toggle theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                {theme === 'dark' ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              </Button>
               <Link to="/"><Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs"><Home className="h-3 w-3" /><span className="hidden sm:inline">Site</span></Button></Link>
               <button onClick={() => signOut()} className="text-xs text-destructive hover:underline">Sign Out</button>
             </div>
