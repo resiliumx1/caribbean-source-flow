@@ -60,9 +60,14 @@ export function ShopFilterNav({
         {/* ─── Desktop Layout ─── */}
         <div className="hidden md:flex container mx-auto px-4 py-3 items-center gap-3">
           {/* Condition Pills */}
-          <div className="flex items-center gap-2 flex-1 overflow-hidden">
+          <div
+            ref={conditionScroll.ref}
+            className="flex items-center gap-2 flex-1 overflow-x-auto condition-pills-scroll"
+            style={{ scrollbarWidth: 'none', cursor: conditionScroll.isDragging ? 'grabbing' : 'grab' }}
+            {...conditionScroll.scrollHandlers}
+          >
             <button
-              onClick={() => { onConditionChange(null); onFormChange(null); }}
+              onClick={() => { if (conditionScroll.isDragging) return; onConditionChange(null); onFormChange(null); }}
               className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
               style={{
                 background: !activeCondition && !activeForm ? "var(--site-green-dark)" : "transparent",
@@ -74,12 +79,12 @@ export function ShopFilterNav({
             >
               All
             </button>
-            {(conditions || []).slice(0, 6).map((condition) => {
+            {(conditions || []).map((condition) => {
               const isActive = activeCondition === condition.slug;
               return (
                 <button
                   key={condition.id}
-                  onClick={() => onConditionChange(isActive ? null : condition.slug)}
+                  onClick={() => { if (conditionScroll.isDragging) return; onConditionChange(isActive ? null : condition.slug); }}
                   className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
                   style={{
                     background: isActive ? "var(--site-green-dark)" : "transparent",
@@ -93,20 +98,8 @@ export function ShopFilterNav({
                 </button>
               );
             })}
-            {(conditions || []).length > 6 && (
-              <button
-                onClick={() => setShowMobileFilters(true)}
-                className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all flex items-center gap-1"
-                style={{
-                  border: "1px solid var(--site-border)",
-                  color: "var(--site-text-muted)",
-                  fontFamily: "'DM Sans', sans-serif",
-                }}
-              >
-                More <ChevronDown className="w-3 h-3" />
-              </button>
-            )}
           </div>
+          <style>{`.condition-pills-scroll::-webkit-scrollbar { display: none; }`}</style>
 
           {/* Form filter */}
           <div className="flex items-center gap-2 border-l pl-3" style={{ borderColor: "var(--site-border)" }}>

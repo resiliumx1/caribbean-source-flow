@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
-import { X, Maximize2, Minimize2, Minus, Plus } from "lucide-react";
+import { X, Maximize2, Minimize2, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const MountKailashChat = lazy(() => import("@/components/MountKailashChat"));
 
@@ -28,7 +29,6 @@ function useIsMobile() {
 }
 
 export default function ChatWidget() {
-  // Always visible — gate entrance is handled separately
   const visible = true;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -37,9 +37,11 @@ export default function ChatWidget() {
   const [isMobileFullscreen, setIsMobileFullscreen] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
   const [bubbleDismissed, setBubbleDismissed] = useState(false);
+  const [showOptions, setShowOptions] = useState(true);
   const bubbleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   const [messages, setMessages] = useState<ChatMessage[]>([DEFAULT_WELCOME]);
 
@@ -67,6 +69,7 @@ export default function ChatWidget() {
       dismissBubble();
       setIsMinimized(false);
       setIsMobileFullscreen(false);
+      setShowOptions(messages.length <= 1);
     }
     setIsOpen((v) => !v);
   };
@@ -180,7 +183,7 @@ export default function ChatWidget() {
                 width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
                 display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
               }} aria-label={isMinimized ? "Restore" : "Minimize"}>
-                <Minus className="w-4 h-4 text-white" style={{ opacity: 0.85 }} />
+                <span className="text-white text-sm" style={{ opacity: 0.85, lineHeight: 1 }}>—</span>
               </button>
               {!isMobile && (
                 <button onClick={() => { setIsMaximized((v) => !v); setIsMinimized(false); }} style={{
@@ -201,6 +204,41 @@ export default function ChatWidget() {
 
           {!isMinimized && (
             <div className="flex-1 overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
+              {showOptions && (
+                <div style={{ position: 'absolute', inset: 0, zIndex: 205, background: '#0a0a0a', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                  <div style={{ textAlign: 'center', padding: '48px 20px 16px', flexShrink: 0 }}>
+                    <img src="/star-seal.svg" alt="Mount Kailash" style={{ width: 44, height: 44, margin: '0 auto 12px', opacity: 0.85 }} />
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 16, color: '#F4EFEA', marginBottom: 4 }}>Mount Kailash Health Advisor</div>
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: 'rgba(244,238,234,0.6)' }}>How can we help you today?</div>
+                  </div>
+                  <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px 16px' }}>
+                    {[
+                      { icon: '🌿', label: 'Personal Health Advice', sub: 'Find the right remedy for your condition', action: 'health' },
+                      { icon: '🧴', label: 'Shop the Apothecary', sub: 'Browse tinctures, teas & bundles', action: 'shop' },
+                      { icon: '🏔️', label: 'Book a Retreat', sub: '7-day healing immersion in St. Lucia', action: 'retreat' },
+                      { icon: '📞', label: 'Book a Consultation', sub: 'Speak directly with Priest Kailash', action: 'consult' },
+                      { icon: '📦', label: 'Wholesale / Practitioner', sub: 'Bulk orders, COA docs, partner pricing', action: 'wholesale' },
+                      { icon: '🎓', label: 'Free Health Webinars', sub: 'Watch educational sessions with Priest Kailash', action: 'webinars' },
+                    ].map((opt) => (
+                      <button key={opt.action} onClick={() => {
+                        if (opt.action === 'shop') { navigate('/shop'); setIsOpen(false); return; }
+                        if (opt.action === 'retreat') { navigate('/retreats'); setIsOpen(false); return; }
+                        if (opt.action === 'wholesale') { navigate('/wholesale'); setIsOpen(false); return; }
+                        if (opt.action === 'webinars') { navigate('/webinars'); setIsOpen(false); return; }
+                        if (opt.action === 'consult') { window.open('https://wa.me/13059429407?text=' + encodeURIComponent('Hello, I would like to book a consultation with Priest Kailash.'), '_blank'); return; }
+                        setShowOptions(false);
+                      }} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: 12, padding: '12px 14px', marginBottom: 8, cursor: 'pointer', textAlign: 'left', width: '100%' }} onMouseEnter={e => (e.currentTarget.style.background = 'rgba(201,168,76,0.1)')} onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}>
+                        <span style={{ fontSize: 24, flexShrink: 0 }}>{opt.icon}</span>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: '#F4EFEA' }}>{opt.label}</div>
+                          <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 12, color: 'rgba(244,238,234,0.5)' }}>{opt.sub}</div>
+                        </div>
+                        <span style={{ color: 'rgba(201,168,76,0.6)', fontSize: 18, flexShrink: 0 }}>›</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <Suspense fallback={
                 <div className="flex items-center justify-center h-full" style={{ background: "#0a0a0a" }}>
                   <span style={{ fontSize: 32 }}>🌿</span>
@@ -212,6 +250,11 @@ export default function ChatWidget() {
                 position: "absolute", bottom: 12, left: 12, zIndex: 210,
                 width: 36, height: 36, pointerEvents: "none", opacity: 0.7,
               }} />
+              {!showOptions && (
+                <button onClick={() => setShowOptions(true)} style={{ position: 'absolute', bottom: 12, right: 12, zIndex: 210, background: 'rgba(28,74,28,0.85)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 20, padding: '5px 12px', color: 'rgba(201,168,76,0.9)', fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }} aria-label="Back to menu">
+                  ← Menu
+                </button>
+              )}
             </div>
           )}
 
