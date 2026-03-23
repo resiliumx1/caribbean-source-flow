@@ -9,7 +9,14 @@
 }
 
 .webinar-hero-gradient {
-  background: linear-gradient(135deg, #0F281E 0%, #0d1a0f 33%, #0a0800 66%, #0F281E 100%);
+  background: linear-gradient(135deg, #193325 0%, #0d1a0f 40%, #1a2e1a 70%, #193325 100%);
+  background-size: 400% 400%;
+  animation: webinar-gradient 8s ease infinite;
+}
+
+/* Light mode: slightly lighter green tones, still clearly green not grey */
+:root:not(.dark) .webinar-hero-gradient {
+  background: linear-gradient(135deg, #1e3d2a 0%, #243d24 40%, #2a4a2a 70%, #1e3d2a 100%);
   background-size: 400% 400%;
   animation: webinar-gradient 8s ease infinite;
 }

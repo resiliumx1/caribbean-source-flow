@@ -55,12 +55,10 @@ const PRODUCT_LINKS = {
   "Seamoss Soaps": `${SITE_BASE}/shop/handcrafted-seamoss-soaps-3-pack`,
 };
 
-// Sort longest names first to prevent partial matches
 const SORTED_NAMES = Object.keys(PRODUCT_LINKS).sort((a, b) => b.length - a.length);
 
 const SHOP_BASE = "/shop";
 
-// Phrases that trigger the human handoff card
 const HANDOFF_TRIGGERS = [
   "💬 CONNECT_WITH_TEAM",
   "contact our team", "speak with a human", "reach out to us",
@@ -188,7 +186,6 @@ SOURSOP LEAVES, BLUE VERVAIN, ST. JOHN'S BUSH, CASSIA ALATA, RED RASPBERRY LEAF
 - Add 💬 CONNECT_WITH_TEAM when: uncertain, asked about pricing/orders/shipping/dosage for medical conditions
 `;
 
-// ─── Product cards for the "Products" tab ────────────────────────────────────
 const PRODUCTS_FOR_CARDS = [
   { name: "The Answer",        slug: "the-answer",                           category: "Immune Support",     emoji: "🛡️", color: "#e8b84b" },
   { name: "Dewormer",          slug: "dewormer",                             category: "Digestive Health",   emoji: "🌿", color: "#7aa25b" },
@@ -238,7 +235,6 @@ const QUICK_PROMPTS = [
   "I need something for men's vitality",
 ];
 
-// ─── Inject product names as clickable shop links ─────────────────────────────
 function injectProductLinks(html) {
   let result = html;
   SORTED_NAMES.forEach(function(name) {
@@ -252,7 +248,7 @@ function injectProductLinks(html) {
       var before = result.substring(0, m.index);
       var lastOpenA = before.lastIndexOf("<a ");
       var lastCloseA = before.lastIndexOf("</a>");
-      if (lastOpenA > lastCloseA) continue; // inside <a>, skip
+      if (lastOpenA > lastCloseA) continue;
       parts.push(result.substring(lastIndex, m.index));
       parts.push('<a href="' + url + '" target="_blank" rel="noopener noreferrer" onclick="window.__trackChatProductClick && window.__trackChatProductClick(\'' + name.replace(/'/g, "\\'") + '\')" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">' + name + ' ↗</a>');
       lastIndex = m.index + m[0].length;
@@ -271,9 +267,6 @@ const DEFAULT_WELCOME = {
   showHandoff: false,
 };
 
-// ─── Main Component ───────────────────────────────────────────────────────────
-// Accepts optional externalMessages/setExternalMessages props for persistent state (from ChatWidget).
-// Falls back to local state when used standalone (e.g. /chat page).
 export default function MountKailashChat({ onNavigate, externalMessages, setExternalMessages }) {
   const [darkMode, setDarkMode] = useState(false);
   const [localMessages, setLocalMessages] = useState([DEFAULT_WELCOME]);
@@ -282,7 +275,6 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
   const [activeTab, setActiveTab] = useState("chat");
   const messagesEndRef = useRef(null);
 
-  // Use external (persistent) state if provided, otherwise local
   const messages = externalMessages || localMessages;
   const setMessages = setExternalMessages || setLocalMessages;
 
@@ -316,7 +308,6 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
   const sessionIdRef = useRef(`session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`);
   const sessionTrackedRef = useRef(false);
 
-  // Track session start once + register global product click tracker
   useEffect(() => {
     if (!sessionTrackedRef.current) {
       sessionTrackedRef.current = true;
@@ -332,7 +323,6 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
     const userText = text || input.trim();
     if (!userText || loading) return;
 
-    // Track symptom query
     trackChatEvent("symptom_query", sessionIdRef.current, { symptom: userText });
     setInput("");
     const newMsgs = [...messages, { role: "user", content: userText, showHandoff: false }];
@@ -410,19 +400,16 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
 
   const handleKey = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } };
 
-  // renderText: convert markdown bold/italic, THEN inject product links
   const renderText = (text) => text.split("\n").map((line, i) => {
     let html = line
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/g, "<em>$1</em>");
-    // Now inject clickable product links for every known product name
     html = injectProductLinks(html);
     return <p key={i} style={{ margin: "3px 0", lineHeight: 1.65 }} dangerouslySetInnerHTML={{ __html: html || "&nbsp;" }} />;
   });
 
   const handoffTrackedRef = useRef(false);
   const HandoffCard = () => {
-    // Track handoff display once per session
     if (!handoffTrackedRef.current) {
       handoffTrackedRef.current = true;
       trackChatEvent("whatsapp_handoff", sessionIdRef.current);
@@ -468,32 +455,31 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
     <div style={{
       height: "100%", minHeight: 0, background: t.bg,
       display: "flex", flexDirection: "column", alignItems: "center",
-      fontFamily: "'Georgia', 'Times New Roman', serif",
+      fontFamily: "'DM Sans', sans-serif",
       transition: "background 0.3s",
       overflow: "hidden",
     }}>
 
       {/* ══ HEADER ══ */}
       <div style={{
-        width: "100%", background: dk ? "#0d1a10" : "#1c4a1c",
+        width: "100%",
+        background: dk ? "rgba(15, 30, 15, 0.85)" : "rgba(28, 74, 28, 0.9)",
+        backdropFilter: "blur(8px)",
         padding: "13px 20px", display: "flex", alignItems: "center",
         justifyContent: "space-between",
         boxShadow: "0 2px 20px rgba(0,0,0,0.35)",
         position: "sticky", top: 0, zIndex: 100, boxSizing: "border-box",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{
-            width: 38, height: 38, flexShrink: 0,
-            background: "linear-gradient(135deg, #c8a84b, #e8c870)",
-            borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 17, fontWeight: "bold", color: "#1c4a1c",
-          }}>K</div>
+          <img src="/star-seal-for-lovable.png" alt="Mount Kailash" style={{
+            width: 38, height: 38, flexShrink: 0, borderRadius: "50%",
+            filter: 'brightness(0) invert(1)', opacity: 0.9,
+          }} />
           <div>
-            <div style={{ color: "#e8c870", fontSize: 13, fontWeight: "bold", letterSpacing: "1px", textTransform: "uppercase" }}>
+            <div style={{ color: "#e8c870", fontSize: 13, fontWeight: "bold", letterSpacing: "1px", textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif" }}>
               Mount Kailash
             </div>
-            <div style={{ color: "#7aaa7a", fontSize: 10 }}>
+            <div style={{ color: "#7aaa7a", fontSize: 10, fontFamily: "'DM Sans', sans-serif" }}>
               Nature's Answers for Optimum Health & Wellbeing
             </div>
           </div>
@@ -503,7 +489,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
             {["chat", "products"].map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} style={{
                 padding: "5px 12px", borderRadius: 16, border: "none", cursor: "pointer",
-                fontSize: 11, fontFamily: "inherit", textTransform: "capitalize",
+                fontSize: 11, fontFamily: "'DM Sans', sans-serif", textTransform: "capitalize",
                 background: activeTab === tab ? "#2e6e2e" : "transparent",
                 color: activeTab === tab ? "#ffffff" : "#aaccaa",
                 fontWeight: activeTab === tab ? "bold" : "normal",
@@ -516,6 +502,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
             borderRadius: 20, padding: "5px 12px", cursor: "pointer",
             color: dk ? "#e8c870" : "#ffffff", fontSize: 12,
             display: "flex", alignItems: "center", gap: 5, transition: "all 0.2s",
+            fontFamily: "'DM Sans', sans-serif",
           }}>
             {dk ? "☀️" : "🌙"} <span style={{ fontSize: 10 }}>{dk ? "Light" : "Dark"}</span>
           </button>
@@ -596,10 +583,10 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
             <div style={{ padding: "8px 0 4px", overflowX: "auto", display: "flex", gap: 7, flexWrap: "nowrap", flexShrink: 0, WebkitOverflowScrolling: "touch", touchAction: "pan-x" }}>
               {QUICK_PROMPTS.map((p, i) => (
                 <button key={i} onClick={() => sendMessage(p)} style={{
-                  whiteSpace: "nowrap", padding: "7px 14px", borderRadius: 20,
+                  whiteSpace: "nowrap", padding: "9px 16px", borderRadius: 20,
                   border: `1px solid ${t.chipBorder}`,
                   background: t.chipBg, color: t.chipText,
-                  cursor: "pointer", fontSize: 12, fontFamily: "inherit",
+                  cursor: "pointer", fontSize: 12, fontFamily: "'DM Sans', sans-serif",
                   fontWeight: "600", flexShrink: 0, lineHeight: 1.3,
                   transition: "opacity 0.15s",
                 }}>{p}</button>
@@ -619,13 +606,13 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
                   placeholder="Describe your symptoms or health concern…" rows={1}
                   style={{
                     flex: 1, border: "none", outline: "none", background: "transparent",
-                    resize: "none", fontFamily: "inherit", fontSize: 14, color: t.text,
+                    resize: "none", fontFamily: "'DM Sans', sans-serif", fontSize: 15, color: t.text,
                     padding: "8px 0", lineHeight: "1.4", maxHeight: 100, overflowY: "auto",
                   }}
                 />
               </div>
               <button onClick={() => sendMessage()} disabled={loading || !input.trim()} style={{
-                width: 44, height: 44, borderRadius: "50%", border: "none",
+                width: 48, height: 48, borderRadius: "50%", border: "none",
                 background: loading || !input.trim() ? t.border : "linear-gradient(135deg, #2e6e2e, #1c4a1c)",
                 color: "#fff", cursor: loading || !input.trim() ? "not-allowed" : "pointer",
                 fontSize: 16, flexShrink: 0,
@@ -633,19 +620,6 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
                 transition: "all 0.2s",
                 boxShadow: loading || !input.trim() ? "none" : "0 3px 10px rgba(46,110,46,0.4)",
               }}>{loading ? "⏳" : "➤"}</button>
-            </div>
-
-            {/* Persistent footer */}
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 6, paddingBottom: 8 }}>
-              <span style={{ fontSize: 10, color: t.textMuted }}>Need a human?</span>
-              <a href="https://wa.me/17582855195" target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: 11, color: "#25d366", textDecoration: "none", fontWeight: "bold" }}>💬 WhatsApp</a>
-              <span style={{ color: t.border, fontSize: 12 }}>·</span>
-              <a href="mailto:goddessitopia@mountkailashslu.com"
-                style={{ fontSize: 11, color: t.gold, textDecoration: "none", fontWeight: "bold" }}>✉️ Email</a>
-              <span style={{ color: t.border, fontSize: 12 }}>·</span>
-              <a href={SHOP_BASE} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: 11, color: t.primary, textDecoration: "none", fontWeight: "bold" }}>🛍️ Shop</a>
             </div>
           </div>
         )}
@@ -657,8 +631,8 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
               textAlign: "center", marginBottom: 18, padding: 18,
               background: t.surface, borderRadius: 16, border: `1px solid ${t.border}`,
             }}>
-              <h2 style={{ margin: "0 0 5px", color: t.primary, fontSize: 19 }}>Product Catalogue</h2>
-              <p style={{ margin: 0, color: t.textMuted, fontSize: 13 }}>
+              <h2 style={{ margin: "0 0 5px", color: t.primary, fontSize: 19, fontFamily: "'DM Sans', sans-serif" }}>Product Catalogue</h2>
+              <p style={{ margin: 0, color: t.textMuted, fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
                 Wildcrafted herbal formulations from the rainforests of St. Lucia
               </p>
             </div>
@@ -670,7 +644,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
               { label: "Curated Bundles", items: PRODUCTS_FOR_CARDS.filter(p => p.category.includes("Bundle") || p.category.includes("Kit") || p.category.includes("Package")) },
             ].map(section => (
               <div key={section.label} style={{ marginBottom: 24 }}>
-                <h3 style={{ color: t.textMuted, fontSize: 12, letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 10px 4px", fontFamily: "inherit" }}>
+                <h3 style={{ color: t.textMuted, fontSize: 12, letterSpacing: "1.5px", textTransform: "uppercase", margin: "0 0 10px 4px", fontFamily: "'DM Sans', sans-serif" }}>
                   {section.label}
                 </h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
@@ -688,9 +662,9 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
                         transition: "opacity 0.2s", cursor: "pointer",
                       }}>
                       <div style={{ fontSize: 22, marginBottom: 6 }}>{p.emoji}</div>
-                      <div style={{ fontWeight: "bold", color: t.text, fontSize: 13, marginBottom: 2 }}>{p.name}</div>
-                      <div style={{ fontSize: 10, color: t.textMuted }}>{p.category}</div>
-                      <div style={{ marginTop: 7, fontSize: 10, color: t.primary, fontStyle: "italic" }}>View in shop →</div>
+                      <div style={{ fontWeight: "bold", color: t.text, fontSize: 13, marginBottom: 2, fontFamily: "'DM Sans', sans-serif" }}>{p.name}</div>
+                      <div style={{ fontSize: 10, color: t.textMuted, fontFamily: "'DM Sans', sans-serif" }}>{p.category}</div>
+                      <div style={{ marginTop: 7, fontSize: 10, color: t.primary, fontStyle: "italic", fontFamily: "'DM Sans', sans-serif" }}>View in shop →</div>
                     </a>
                   ))}
                 </div>
@@ -703,7 +677,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
               borderRadius: 14, textAlign: "center",
             }}>
               <div style={{ fontSize: 20, marginBottom: 6 }}>📞</div>
-              <div style={{ color: t.gold, fontWeight: "bold", marginBottom: 10, fontSize: 15 }}>Contact Our Team</div>
+              <div style={{ color: t.gold, fontWeight: "bold", marginBottom: 10, fontSize: 15, fontFamily: "'DM Sans', sans-serif" }}>Contact Our Team</div>
               <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
                 <a href="https://wa.me/17582855195" target="_blank" rel="noopener noreferrer" style={{
                   padding: "8px 15px", background: "#25d366", color: "#fff",
@@ -715,7 +689,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
                   borderRadius: 20, textDecoration: "none", fontSize: 12, fontWeight: "bold",
                 }}>✉️ goddessitopia@mountkailashslu.com</a>
               </div>
-              <div style={{ color: t.textMuted, fontSize: 12, fontStyle: "italic" }}>
+              <div style={{ color: t.textMuted, fontSize: 12, fontStyle: "italic", fontFamily: "'DM Sans', sans-serif" }}>
                 Honourable Goddess R Itopia Archer — Global Sales Manager
               </div>
             </div>

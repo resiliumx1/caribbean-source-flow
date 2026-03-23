@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
-import { X, Maximize2, Minimize2, Plus } from "lucide-react";
+import { X, Maximize2, Minimize2 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const MountKailashChat = lazy(() => import("@/components/MountKailashChat"));
 
@@ -15,25 +16,12 @@ const DEFAULT_WELCOME: ChatMessage = {
   showHandoff: false,
 };
 
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mql = window.matchMedia("(max-width: 767px)");
-    const onChange = () => setIsMobile(mql.matches);
-    onChange();
-    mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
-  }, []);
-  return isMobile;
-}
-
 export default function ChatWidget() {
   const visible = true;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [isMobileFullscreen, setIsMobileFullscreen] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
   const [bubbleDismissed, setBubbleDismissed] = useState(false);
   const bubbleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -65,7 +53,6 @@ export default function ChatWidget() {
     if (!isOpen) {
       dismissBubble();
       setIsMinimized(false);
-      setIsMobileFullscreen(false);
     }
     setIsOpen((v) => !v);
   };
@@ -80,22 +67,17 @@ export default function ChatWidget() {
         borderRadius: 16,
       };
     }
-    if (isMobile && isMobileFullscreen) {
-      return { top: 0, right: 0, bottom: 0, left: 0, width: "100vw", height: "100vh", borderRadius: 0 };
-    }
     if (!isMobile && isMaximized) {
       return { bottom: 16, right: 16, width: 600, height: "calc(100vh - 88px)", borderRadius: 16, top: "auto" };
     }
     if (isMobile) {
-      return { bottom: 80, right: 8, width: "92vw", height: "55vh", borderRadius: 16 };
+      return { bottom: 0, right: 0, left: 0, width: '100vw', height: '70vh', borderRadius: '20px 20px 0 0' };
     }
     return {
       bottom: "max(16px, env(safe-area-inset-bottom, 16px))",
       right: 16, width: 420, height: "min(82vh, calc(100vh - 32px))", borderRadius: 16,
     };
   };
-
-  const isFullyCovering = isMobile && isMobileFullscreen;
 
   if (!visible) return null;
 
@@ -128,21 +110,17 @@ export default function ChatWidget() {
         style={{
           background: isOpen ? "#1c4a1c" : "linear-gradient(135deg, #1c4a1c, #2e6e2e)",
           boxShadow: "0 8px 32px rgba(28,74,28,0.4)",
-          display: isOpen && !isMinimized ? "none" : "flex",
+          display: "flex",
         }}
         aria-label={isOpen ? "Close chat" : "Open health advisor chat"}
       >
-        {isOpen && isMinimized ? (
-          <Plus className="w-6 h-6 text-white" />
-        ) : (
-          <>
-            <img src="/star-seal-for-lovable.png" alt="Mount Kailash" style={{ width: 34, height: 34, filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
-            <span className="absolute top-0 right-0 w-3 h-3 rounded-full" style={{
-              background: isMinimized ? "#22c55e" : "#ef4444",
-              border: "2px solid #1c4a1c",
-              animation: "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite",
-            }} />
-          </>
+        <img src="/star-seal-for-lovable.png" alt="Mount Kailash" style={{ width: 34, height: 34, filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
+        {!isOpen && (
+          <span className="absolute top-0 right-0 w-3 h-3 rounded-full" style={{
+            background: "#ef4444",
+            border: "2px solid #1c4a1c",
+            animation: "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite",
+          }} />
         )}
       </button>
 
@@ -152,35 +130,25 @@ export default function ChatWidget() {
           style={{
             ...getPopupStyle(),
             boxShadow: "0 24px 80px rgba(0,0,0,0.5)",
-            animation: isFullyCovering ? "none" : "chatSlideUp 400ms cubic-bezier(0.34,1.56,0.64,1) forwards",
+            animation: "chatSlideUp 400ms cubic-bezier(0.34,1.56,0.64,1) forwards",
             background: "#0a0a0a",
             transition: "width 0.3s ease, height 0.3s ease, border-radius 0.3s ease",
           }}
         >
           <div style={{
             position: "absolute", top: 0, right: 0, left: 0, height: 48, zIndex: 200,
-            display: "flex", alignItems: "center", justifyContent: "space-between",
+            display: "flex", alignItems: "center", justifyContent: "flex-end",
             padding: "0 10px", pointerEvents: "none",
           }}>
-            <div style={{ pointerEvents: "auto", display: "flex", gap: 4 }}>
-              {isMobile && !isMinimized && (
-                <button onClick={() => setIsMobileFullscreen((v) => !v)} style={{
-                  height: 26, borderRadius: 13, background: "rgba(0,0,0,0.45)", border: "none",
-                  display: "flex", alignItems: "center", gap: 4, padding: "0 10px",
-                  cursor: "pointer", color: "white", fontSize: 11,
-                  fontFamily: "'DM Sans', sans-serif", fontWeight: 500, opacity: 0.85,
-                }}>
-                  {isMobileFullscreen ? "⤡ Compact" : "⤢ Expand"}
+            <div style={{ display: "flex", gap: 4, pointerEvents: "auto" }}>
+              {!isMobile && (
+                <button onClick={() => setIsMinimized((v) => !v)} style={{
+                  width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
+                }} aria-label={isMinimized ? "Restore" : "Minimize"}>
+                  <span className="text-white text-sm" style={{ opacity: 0.85, lineHeight: 1 }}>—</span>
                 </button>
               )}
-            </div>
-            <div style={{ display: "flex", gap: 4, pointerEvents: "auto" }}>
-              <button onClick={() => setIsMinimized((v) => !v)} style={{
-                width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
-                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
-              }} aria-label={isMinimized ? "Restore" : "Minimize"}>
-                <span className="text-white text-sm" style={{ opacity: 0.85, lineHeight: 1 }}>—</span>
-              </button>
               {!isMobile && (
                 <button onClick={() => { setIsMaximized((v) => !v); setIsMinimized(false); }} style={{
                   width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
@@ -189,7 +157,7 @@ export default function ChatWidget() {
                   {isMaximized ? <Minimize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} /> : <Maximize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} />}
                 </button>
               )}
-              <button onClick={() => { setIsOpen(false); setIsMaximized(false); setIsMinimized(false); setIsMobileFullscreen(false); }} style={{
+              <button onClick={() => { setIsOpen(false); setIsMaximized(false); setIsMinimized(false); }} style={{
                 width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
                 display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
               }} aria-label="Close chat">
@@ -200,10 +168,6 @@ export default function ChatWidget() {
 
           {!isMinimized && (
             <div className="flex-1 overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 48, zIndex: 201, display: 'flex', alignItems: 'center', paddingLeft: 14, gap: 8, background: 'linear-gradient(to bottom, rgba(10,20,10,0.95) 0%, transparent 100%)', pointerEvents: 'none' }}>
-                <img src="/star-seal-for-lovable.png" alt="" style={{ width: 22, height: 22, filter: 'brightness(0) invert(1)', opacity: 0.7 }} />
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 13, color: 'rgba(201,168,76,0.9)', letterSpacing: '0.03em' }}>Mount Kailash AI Assistant</span>
-              </div>
               <Suspense fallback={
                 <div className="flex items-center justify-center h-full" style={{ background: "#0a0a0a" }}>
                   <span style={{ fontSize: 32 }}>🌿</span>
