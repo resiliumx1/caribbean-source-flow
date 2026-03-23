@@ -40,6 +40,7 @@ const WebinarsPage = lazy(() => import("./pages/Webinars"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
 const HerbalPhysicianCourse = lazy(() => import("./pages/HerbalPhysicianCourse"));
 const GateEntrancePage = lazy(() => import("./pages/GateEntrancePage"));
+const GoddessCard = lazy(() => import("./pages/GoddessCard"));
 
 const queryClient = new QueryClient();
 
