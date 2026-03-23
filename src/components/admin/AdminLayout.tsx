@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
-import { Loader2, Home } from "lucide-react";
+import { Loader2, Home, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
