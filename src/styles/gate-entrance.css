@@ -153,10 +153,8 @@ html:has(.gate-overlay) body {
 #logo-seal{
   position:absolute;left:50%;top:50%;
   transform:translate(-50%,-50%);
-  z-index:20;pointer-events:none;opacity:0;
-  animation:sealIn 1.4s ease forwards 0.3s
+  z-index:20;pointer-events:none;opacity:1;
 }
-@keyframes sealIn{to{opacity:1}}
 #logo-seal::before{
   content:'';position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%);
