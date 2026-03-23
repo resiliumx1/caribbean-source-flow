@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!isLoading) {
