@@ -85,7 +85,7 @@ export default function ChatWidget() {
       return { top: 0, right: 0, bottom: 0, left: 0, width: "100vw", height: "100vh", borderRadius: 0 };
     }
     if (!isMobile && isMaximized) {
-      return { bottom: 0, right: 0, width: 600, height: "92vh", borderRadius: 16 };
+      return { bottom: 16, right: 16, width: 600, height: "calc(100vh - 88px)", borderRadius: 16, top: "auto" };
     }
     if (isMobile) {
       return { bottom: 80, right: 8, width: "92vw", height: "55vh", borderRadius: 16 };
