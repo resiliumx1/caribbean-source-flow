@@ -4,14 +4,12 @@ import { useProduct } from "@/hooks/use-products";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
 import theAnswerImg from "@/assets/the-answer-chronixx-studio.png";
 
 export function FeaturedProduct() {
   const { data: product, isLoading } = useProduct("the-answer");
   const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
-  const [subscribe, setSubscribe] = useState(false);
 
   if (isLoading) {
     return (
@@ -127,23 +125,6 @@ export function FeaturedProduct() {
             Add to Cart
           </button>
 
-          {/* Subscribe checkbox */}
-          <label
-            className="flex items-center gap-2 cursor-pointer max-w-xs"
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "13px",
-              color: "rgba(245,241,232,0.6)",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={subscribe}
-              onChange={(e) => setSubscribe(e.target.checked)}
-              className="w-4 h-4 rounded accent-[var(--site-gold)]"
-            />
-            Subscribe &amp; Save 15%
-          </label>
         </div>
       </div>
     </section>

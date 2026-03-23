@@ -39,6 +39,7 @@ export function ShopFilterNav({
 }: ShopFilterNavProps) {
   const { data: conditions } = useConditions();
   const conditionScroll = useDragScroll();
+  const desktopConditionScroll = useDragScroll();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
@@ -59,10 +60,20 @@ export function ShopFilterNav({
       >
         {/* ─── Desktop Layout ─── */}
         <div className="hidden md:flex container mx-auto px-4 py-3 items-center gap-3">
-          {/* Condition Pills */}
-          <div className="flex items-center gap-2 flex-1 overflow-hidden">
+          {/* Condition Pills — fully scrollable */}
+          <div
+            ref={desktopConditionScroll.ref}
+            className="flex items-center gap-2 flex-1 overflow-x-auto select-none"
+            style={{
+              cursor: desktopConditionScroll.isDragging ? "grabbing" : "grab",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+            {...desktopConditionScroll.scrollHandlers}
+          >
+            <style>{`.desktop-condition-scroll::-webkit-scrollbar { display: none; }`}</style>
             <button
-              onClick={() => { onConditionChange(null); onFormChange(null); }}
+              onClick={() => { if (desktopConditionScroll.isDragging) return; onConditionChange(null); onFormChange(null); }}
               className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
               style={{
                 background: !activeCondition && !activeForm ? "var(--site-green-dark)" : "transparent",
@@ -74,12 +85,12 @@ export function ShopFilterNav({
             >
               All
             </button>
-            {(conditions || []).slice(0, 6).map((condition) => {
+            {(conditions || []).map((condition) => {
               const isActive = activeCondition === condition.slug;
               return (
                 <button
                   key={condition.id}
-                  onClick={() => onConditionChange(isActive ? null : condition.slug)}
+                  onClick={() => { if (desktopConditionScroll.isDragging) return; onConditionChange(isActive ? null : condition.slug); }}
                   className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
                   style={{
                     background: isActive ? "var(--site-green-dark)" : "transparent",
@@ -93,19 +104,6 @@ export function ShopFilterNav({
                 </button>
               );
             })}
-            {(conditions || []).length > 6 && (
-              <button
-                onClick={() => setShowMobileFilters(true)}
-                className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all flex items-center gap-1"
-                style={{
-                  border: "1px solid var(--site-border)",
-                  color: "var(--site-text-muted)",
-                  fontFamily: "'DM Sans', sans-serif",
-                }}
-              >
-                More <ChevronDown className="w-3 h-3" />
-              </button>
-            )}
           </div>
 
           {/* Form filter */}
