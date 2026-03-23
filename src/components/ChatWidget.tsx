@@ -208,16 +208,10 @@ export default function ChatWidget() {
               }>
                 <MountKailashChat externalMessages={messages} setExternalMessages={setMessages} />
               </Suspense>
-              <button onClick={() => setIsMinimized(true)} style={{
+              <img src="/star-seal.svg" alt="Mount Kailash" style={{
                 position: "absolute", bottom: 12, left: 12, zIndex: 210,
-                width: 36, height: 36, borderRadius: "50%",
-                background: "rgba(28,74,28,0.9)", border: "1px solid rgba(200,168,75,0.3)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                transition: "transform 0.15s, opacity 0.15s",
-              }} className="hover:scale-110 active:scale-95" aria-label="Collapse chat">
-                <Minus className="w-4 h-4 text-white" />
-              </button>
+                width: 36, height: 36, pointerEvents: "none", opacity: 0.7,
+              }} />
             </div>
           )}
 

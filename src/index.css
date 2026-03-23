@@ -241,6 +241,10 @@
   .hero-section {
     background: transparent !important;
   }
+  /* Webinar hero has its own gradient — do not override */
+  .webinar-hero-gradient.hero-section {
+    background: unset !important;
+  }
 
   .hero-section [data-hero-bg="true"] {
     background-color: transparent !important;

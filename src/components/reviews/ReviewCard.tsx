@@ -55,7 +55,13 @@ export function ReviewCard({ review, onHelpful }: ReviewCardProps) {
       )}
 
       <div className="flex items-center justify-between text-sm text-muted-foreground pt-1">
-        <span>
+        <span className="flex items-center gap-2">
+          <img
+            src={getAvatarUrl(review.user_name)}
+            alt={review.user_name}
+            className="w-7 h-7 rounded-full"
+            loading="lazy"
+          />
           {review.user_name} · {date}
         </span>
         <Button
