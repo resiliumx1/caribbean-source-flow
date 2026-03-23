@@ -78,63 +78,67 @@ export function ShopFilterNav({
           borderColor: "var(--site-border)",
         }}
       >
-        {/* ─── Desktop Layout ─── */}
+        {/* ─── Desktop Layout: Three Zones ─── */}
         <div className="hidden md:flex container mx-auto px-4 py-3 items-center gap-3">
-          {/* Condition Pills */}
-          <div
-            ref={conditionScroll.ref}
-            className="flex items-center gap-2 flex-1 overflow-x-auto condition-pills-scroll"
-            style={{ scrollbarWidth: 'none', cursor: conditionScroll.isDragging ? 'grabbing' : 'grab' }}
-            {...conditionScroll.scrollHandlers}
-          >
-            <button
-              onClick={() => { if (conditionScroll.isDragging) return; onConditionChange(null); onFormChange(null); }}
-              className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
-              style={{
-                background: !activeCondition && !activeForm ? "var(--site-green-dark)" : "transparent",
-                color: !activeCondition && !activeForm ? "var(--site-cream, #F5F1E8)" : "var(--site-text-primary)",
-                border: !activeCondition && !activeForm ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 500,
-              }}
+          {/* Zone 1 — Shop by Goal */}
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--site-text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>Shop by Goal</span>
+            <div
+              ref={conditionScroll.ref}
+              className="flex items-center gap-2 overflow-x-auto condition-pills-scroll"
+              style={{ scrollbarWidth: 'none', cursor: conditionScroll.isDragging ? 'grabbing' : 'grab' }}
+              {...conditionScroll.scrollHandlers}
             >
-              All
-            </button>
-            {(conditions || []).map((condition) => {
-              const isActive = activeCondition === condition.slug;
-              return (
-                <button
-                  key={condition.id}
-                  onClick={() => { if (conditionScroll.isDragging) return; onConditionChange(isActive ? null : condition.slug); }}
-                  className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
-                  style={{
-                    background: isActive ? "var(--site-green-dark)" : "transparent",
-                    color: isActive ? "var(--site-cream, #F5F1E8)" : "var(--site-text-primary)",
-                    border: isActive ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: isActive ? 600 : 400,
-                  }}
-                >
-                  {condition.name}
-                </button>
-              );
-            })}
+              <button
+                onClick={() => { if (conditionScroll.isDragging) return; onConditionChange(null); onFormChange(null); }}
+                className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
+                style={{
+                  background: !activeCondition && !activeForm ? "var(--site-green-dark)" : "transparent",
+                  color: !activeCondition && !activeForm ? "var(--site-cream, #F5F1E8)" : "var(--site-text-primary)",
+                  border: !activeCondition && !activeForm ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                }}
+              >
+                All
+              </button>
+              {(conditions || []).map((condition) => {
+                const isActive = activeCondition === condition.slug;
+                return (
+                  <button
+                    key={condition.id}
+                    onClick={() => { if (conditionScroll.isDragging) return; onConditionChange(isActive ? null : condition.slug); }}
+                    className="flex-shrink-0 px-4 py-2 rounded-full text-sm transition-all"
+                    style={{
+                      background: isActive ? "var(--site-green-dark)" : "transparent",
+                      color: isActive ? "var(--site-cream, #F5F1E8)" : "var(--site-text-primary)",
+                      border: isActive ? "1px solid var(--site-green-dark)" : "1px solid var(--site-border)",
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontWeight: isActive ? 600 : 400,
+                    }}
+                  >
+                    {getConditionEmoji(condition.slug)} {condition.name}
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <style>{`.condition-pills-scroll::-webkit-scrollbar { display: none; }`}</style>
 
-          {/* Form filter */}
-          <div className="flex items-center gap-2 border-l pl-3" style={{ borderColor: "var(--site-border)" }}>
+          {/* Zone 2 — Form tabs */}
+          <div className="flex items-center gap-2 border-l pl-3 flex-shrink-0" style={{ borderColor: "var(--site-border)" }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--site-text-muted)', whiteSpace: 'nowrap' }}>Form:</span>
             {FORMS.map((form) => {
               const isActive = activeForm === form.slug;
               return (
                 <button
                   key={form.slug}
                   onClick={() => onFormChange(isActive ? null : form.slug)}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs transition-all"
+                  className="flex-shrink-0 px-3 py-1.5 rounded-md text-xs transition-all"
                   style={{
-                    background: isActive ? "var(--site-gold)" : "transparent",
+                    background: isActive ? "var(--site-gold)" : "var(--site-bg-secondary, rgba(0,0,0,0.04))",
                     color: isActive ? "var(--site-green-dark)" : "var(--site-text-muted)",
-                    border: isActive ? "1px solid var(--site-gold)" : "1px solid var(--site-border)",
+                    border: isActive ? "1px solid var(--site-gold)" : "1px solid transparent",
                     fontFamily: "'DM Sans', sans-serif",
                     fontWeight: isActive ? 600 : 400,
                   }}
@@ -145,43 +149,48 @@ export function ShopFilterNav({
             })}
           </div>
 
-          {/* Sort */}
-          <div className="relative flex-shrink-0">
-            <button
-              onClick={() => setShowSortDropdown(!showSortDropdown)}
-              className="px-3 py-2 rounded-lg text-xs flex items-center gap-1 transition-all"
-              style={{
-                border: "1px solid var(--site-border)",
-                color: "var(--site-text-muted)",
-                fontFamily: "'DM Sans', sans-serif",
-              }}
-            >
-              Sort <ChevronDown className="w-3 h-3" />
-            </button>
-            {showSortDropdown && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setShowSortDropdown(false)} />
-                <div
-                  className="absolute right-0 top-full mt-1 z-50 rounded-lg shadow-xl py-1 min-w-[180px]"
-                  style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)" }}
-                >
-                  {SORT_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      onClick={() => { onSortChange(opt.value); setShowSortDropdown(false); }}
-                      className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-black/5"
-                      style={{
-                        color: sortBy === opt.value ? "var(--site-gold)" : "var(--site-text-primary)",
-                        fontFamily: "'DM Sans', sans-serif",
-                        fontWeight: sortBy === opt.value ? 600 : 400,
-                      }}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
+          {/* Zone 3 — Sort + Count */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className="px-2.5 py-1 rounded-full text-[11px]" style={{ background: 'var(--site-bg-secondary, rgba(0,0,0,0.04))', color: 'var(--site-text-muted)', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, whiteSpace: 'nowrap' }}>
+              {totalProducts} products
+            </span>
+            <div className="relative">
+              <button
+                onClick={() => setShowSortDropdown(!showSortDropdown)}
+                className="px-3 py-2 rounded-lg text-xs flex items-center gap-1 transition-all"
+                style={{
+                  border: "1px solid var(--site-border)",
+                  color: "var(--site-text-muted)",
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              >
+                Sort <ChevronDown className="w-3 h-3" />
+              </button>
+              {showSortDropdown && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowSortDropdown(false)} />
+                  <div
+                    className="absolute right-0 top-full mt-1 z-50 rounded-lg shadow-xl py-1 min-w-[180px]"
+                    style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)" }}
+                  >
+                    {SORT_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => { onSortChange(opt.value); setShowSortDropdown(false); }}
+                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-black/5"
+                        style={{
+                          color: sortBy === opt.value ? "var(--site-gold)" : "var(--site-text-primary)",
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontWeight: sortBy === opt.value ? 600 : 400,
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
