@@ -39,6 +39,7 @@ export function ShopFilterNav({
 }: ShopFilterNavProps) {
   const { data: conditions } = useConditions();
   const conditionScroll = useDragScroll();
+  const desktopConditionScroll = useDragScroll();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
