@@ -17,7 +17,16 @@ const DEFAULT_WELCOME: ChatMessage = {
 };
 
 export default function ChatWidget() {
-  const visible = true;
+  const [visible, setVisible] = useState(() => {
+    return !!localStorage.getItem('mkrc-gate-seen');
+  });
+
+  useEffect(() => {
+    if (visible) return;
+    const onComplete = () => setVisible(true);
+    window.addEventListener('gate-complete', onComplete);
+    return () => window.removeEventListener('gate-complete', onComplete);
+  }, [visible]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);

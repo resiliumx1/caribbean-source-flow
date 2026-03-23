@@ -78,7 +78,8 @@ export function StoreHeader() {
         background: 'var(--site-header-bg)',
         backdropFilter: 'blur(16px)',
         borderColor: 'var(--site-header-border)',
-        display: headerVisible ? undefined : 'none',
+        opacity: headerVisible ? 1 : 0,
+        pointerEvents: headerVisible ? 'auto' : 'none',
         transition: 'opacity 0.6s ease, backdrop-filter 0.5s ease, border-color 0.5s ease',
         width: '100%',
       }}
