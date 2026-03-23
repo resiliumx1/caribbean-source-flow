@@ -149,7 +149,7 @@ export default function ChatWidget() {
 
       {isOpen && (
         <div
-          className="fixed z-[9999] flex flex-col overflow-hidden"
+          className="fixed z-[9000] flex flex-col overflow-hidden"
           style={{
             ...getPopupStyle(),
             boxShadow: "0 24px 80px rgba(0,0,0,0.5)",
