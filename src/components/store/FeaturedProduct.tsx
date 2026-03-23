@@ -4,14 +4,12 @@ import { useProduct } from "@/hooks/use-products";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
 import theAnswerImg from "@/assets/the-answer-chronixx-studio.png";
 
 export function FeaturedProduct() {
   const { data: product, isLoading } = useProduct("the-answer");
   const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
-  const [subscribe, setSubscribe] = useState(false);
 
   if (isLoading) {
     return (
