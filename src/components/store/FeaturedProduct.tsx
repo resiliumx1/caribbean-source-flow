@@ -125,23 +125,6 @@ export function FeaturedProduct() {
             Add to Cart
           </button>
 
-          {/* Subscribe checkbox */}
-          <label
-            className="flex items-center gap-2 cursor-pointer max-w-xs"
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "13px",
-              color: "rgba(245,241,232,0.6)",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={subscribe}
-              onChange={(e) => setSubscribe(e.target.checked)}
-              className="w-4 h-4 rounded accent-[var(--site-gold)]"
-            />
-            Subscribe &amp; Save 15%
-          </label>
         </div>
       </div>
     </section>

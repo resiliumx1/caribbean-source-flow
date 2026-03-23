@@ -203,6 +203,69 @@ export default function ChatWidget() {
 
           {!isMinimized && (
             <div className="flex-1 overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
+              {showOptions && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 100,
+                  background: '#0a0a0a',
+                  display: 'flex', flexDirection: 'column',
+                  overflowY: 'auto',
+                }}>
+                  <div style={{ padding: '48px 20px 16px', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 8 }}>
+                      <img src="/star-seal.svg" alt="" style={{ width: 28, height: 28, opacity: 0.8 }} />
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 15, color: '#e8c870', letterSpacing: '0.03em' }}>
+                        Mount Kailash Health Advisor
+                      </span>
+                    </div>
+                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'rgba(245,241,232,0.6)', fontWeight: 400 }}>
+                      How can we help you today?
+                    </p>
+                  </div>
+
+                  <div style={{ padding: '0 16px 20px', flex: 1 }}>
+                    {[
+                      { icon: '🌿', label: 'Personal Health Advice', sub: 'Find the right remedy for your condition', action: 'health' },
+                      { icon: '🧴', label: 'Shop the Apothecary', sub: 'Browse tinctures, teas & bundles', action: 'shop' },
+                      { icon: '🏔️', label: 'Book a Retreat', sub: '7-day healing immersion in St. Lucia', action: 'retreat' },
+                      { icon: '📞', label: 'Book a Consultation', sub: 'Speak directly with Priest Kailash', action: 'consult' },
+                      { icon: '📦', label: 'Wholesale / Practitioner', sub: 'Bulk orders, COA docs, partner pricing', action: 'wholesale' },
+                      { icon: '🎓', label: 'Free Health Webinars', sub: 'Watch educational sessions with Priest Kailash', action: 'webinars' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.action}
+                        onClick={() => {
+                          if (opt.action === 'shop') { window.location.href = '/shop'; return; }
+                          if (opt.action === 'retreat') { window.location.href = '/retreats'; return; }
+                          if (opt.action === 'wholesale') { window.location.href = '/wholesale'; return; }
+                          if (opt.action === 'webinars') { window.location.href = '/webinars'; return; }
+                          if (opt.action === 'consult') {
+                            window.open('https://wa.me/13059429407?text=' + encodeURIComponent('Hello, I would like to book a consultation with Priest Kailash.'), '_blank');
+                            return;
+                          }
+                          setShowOptions(false);
+                        }}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 12,
+                          background: 'rgba(255,255,255,0.04)',
+                          border: '1px solid rgba(201,168,76,0.2)',
+                          borderRadius: 12, padding: '12px 14px', marginBottom: 8,
+                          cursor: 'pointer', textAlign: 'left', width: '100%',
+                          transition: 'background 0.2s, border-color 0.2s',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(201,168,76,0.1)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                      >
+                        <span style={{ fontSize: 22 }}>{opt.icon}</span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 13, color: '#F5F1E8' }}>{opt.label}</div>
+                          <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 11, color: 'rgba(245,241,232,0.5)', marginTop: 2 }}>{opt.sub}</div>
+                        </div>
+                        <span style={{ color: 'rgba(201,168,76,0.5)', fontSize: 18 }}>›</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <Suspense fallback={
                 <div className="flex items-center justify-center h-full" style={{ background: "#0a0a0a" }}>
                   <span style={{ fontSize: 32 }}>🌿</span>
