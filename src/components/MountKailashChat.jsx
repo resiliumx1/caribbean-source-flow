@@ -304,6 +304,11 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
+  // Scroll to top of welcome message on initial mount
+  useEffect(() => {
+    setTimeout(() => { messagesTopRef.current?.scrollIntoView({ behavior: "auto" }); }, 100);
+  }, []);
+
   const needsHandoff = (text) => HANDOFF_TRIGGERS.some(tr => text.toLowerCase().includes(tr.toLowerCase()));
   const cleanContent = (text) => text.replace(/💬 CONNECT_WITH_TEAM/g, "").trim();
 
