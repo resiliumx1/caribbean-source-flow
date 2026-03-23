@@ -63,7 +63,7 @@ export default function WebinarHero() {
         <h1 className="mb-6">
           <span
             className="block font-cormorant font-light"
-            style={{ color: "var(--site-text-primary)", fontSize: "clamp(2rem, 4.5vw, 3.6rem)", lineHeight: 1.15 }}
+            style={{ color: "#f2ead8", fontSize: "clamp(2rem, 4.5vw, 3.6rem)", lineHeight: 1.15 }}
           >
             Your Healing Journey Starts With
           </span>

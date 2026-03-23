@@ -98,6 +98,12 @@ export function SocialProofMatrix() {
                     "{testimonial.quote}"
                   </p>
 
+                  {testimonial.condition_addressed && (
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--site-green-dark)', border: '1px solid var(--site-green-mid)', color: '#F4EFEA', borderRadius: 20, padding: '4px 12px', fontSize: 11, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '0.04em', marginBottom: 8 }}>
+                      🌿 {testimonial.condition_addressed}
+                    </div>
+                  )}
+
                   {testimonial.results && (
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>
                       ✓ {testimonial.results}

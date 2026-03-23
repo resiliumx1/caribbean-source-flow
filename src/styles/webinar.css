@@ -9,7 +9,7 @@
 }
 
 .webinar-hero-gradient {
-  background: linear-gradient(135deg, var(--site-green-dark) 0%, var(--site-bg-secondary) 33%, var(--site-bg-deep) 66%, var(--site-green-dark) 100%);
+  background: linear-gradient(135deg, #0F281E 0%, #0d1a0f 33%, #0a0800 66%, #0F281E 100%);
   background-size: 400% 400%;
   animation: webinar-gradient 8s ease infinite;
 }
