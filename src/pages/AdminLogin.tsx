@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -16,6 +17,11 @@ export default function AdminLogin() {
   const { user, isAdmin, isLoading, signIn } = useAdmin();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme("light");
+  }, [setTheme]);
 
   useEffect(() => {
     if (!isLoading && user && isAdmin) {
