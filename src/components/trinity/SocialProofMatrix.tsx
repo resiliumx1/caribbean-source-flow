@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Quote, User, Star } from "lucide-react";
+import { Quote, Star } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -73,9 +73,7 @@ export function SocialProofMatrix() {
                 <div className="h-full rounded-2xl p-9" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)' }}>
                   {/* Credentials at top */}
                   <div className="flex items-center gap-4 mb-5">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', border: '2px solid #c9a84c' }}>
-                      <User className="w-6 h-6" style={{ color: '#090909' }} />
-                    </div>
+                    <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(testimonial.author_name.toLowerCase())}&backgroundColor=b6e3f4,c0aede,ffdfbf&radius=50`} alt={testimonial.author_name} width={48} height={48} style={{ borderRadius: '50%', border: '2px solid var(--site-gold)', flexShrink: 0 }} loading="lazy" />
                     <div>
                       <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
                         {testimonial.author_name}
@@ -99,6 +97,12 @@ export function SocialProofMatrix() {
                   <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '15px', color: 'var(--site-text-secondary)', lineHeight: 1.8, marginBottom: '16px' }}>
                     "{testimonial.quote}"
                   </p>
+
+                  {testimonial.condition_addressed && (
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--site-green-dark)', border: '1px solid var(--site-green-mid)', color: '#F4EFEA', borderRadius: 20, padding: '4px 12px', fontSize: 11, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, letterSpacing: '0.04em', marginBottom: 8 }}>
+                      🌿 {testimonial.condition_addressed}
+                    </div>
+                  )}
 
                   {testimonial.results && (
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Shield } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -55,12 +55,12 @@ export default function AdminLogin() {
     <main className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
       <Card className="w-full max-w-md" role="form">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Shield className="h-6 w-6 text-primary" />
+          <div className="mx-auto mb-4 flex justify-center">
+            <img src="/star-seal-for-lovable.png" alt="Mount Kailash" width={70} height={70} style={{ filter: 'invert(20%) sepia(40%) saturate(500%) hue-rotate(100deg) brightness(85%)' }} />
           </div>
-          <CardTitle className="text-2xl">Admin Login</CardTitle>
+          <CardTitle className="text-2xl">Mount Kailash Admin</CardTitle>
           <CardDescription>
-            Sign in to access the admin dashboard
+            Sign in to manage your store
           </CardDescription>
         </CardHeader>
         <CardContent>

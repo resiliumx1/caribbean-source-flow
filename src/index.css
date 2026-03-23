@@ -255,6 +255,11 @@
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 
+  .webinar-hero-gradient .hero-content :is(h1, h2, h3, h4, h5, h6, p) {
+    color: inherit !important;
+    text-shadow: inherit !important;
+  }
+
   /* Ensure hero CTAs are never invisible */
   .hero-content a,
   .hero-content button {
