@@ -32,6 +32,7 @@ export default function ChatWidget() {
   const visible = true;
 
   const [isOpen, setIsOpen] = useState(false);
+  const [showOptions, setShowOptions] = useState(true);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMobileFullscreen, setIsMobileFullscreen] = useState(false);
