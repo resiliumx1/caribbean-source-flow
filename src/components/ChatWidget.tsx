@@ -17,7 +17,16 @@ const DEFAULT_WELCOME: ChatMessage = {
 };
 
 export default function ChatWidget() {
-  const visible = true;
+  const [visible, setVisible] = useState(() => {
+    return !!localStorage.getItem('mkrc-gate-seen');
+  });
+
+  useEffect(() => {
+    if (visible) return;
+    const onComplete = () => setVisible(true);
+    window.addEventListener('gate-complete', onComplete);
+    return () => window.removeEventListener('gate-complete', onComplete);
+  }, [visible]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
@@ -111,6 +120,8 @@ export default function ChatWidget() {
           background: isOpen ? "#1c4a1c" : "linear-gradient(135deg, #1c4a1c, #2e6e2e)",
           boxShadow: "0 8px 32px rgba(28,74,28,0.4)",
           display: "flex",
+          opacity: visible ? 1 : 0,
+          transition: "opacity 0.5s ease 0.3s",
         }}
         aria-label={isOpen ? "Close chat" : "Open health advisor chat"}
       >
