@@ -1,25 +1,53 @@
 
 
-## Plan: Product Image Sizing + Shop Formula Strip
+## Plan: Webinar Hero Fix, Review Avatars, Chat z-index & Seal
 
-### 1. ProductCard Image Fix
-**File:** `src/components/store/ProductCard.tsx` (line 53)
+### Prompt 1 — Webinar Hero Grey Fix
 
-Change `className` from `"max-w-full max-h-full object-contain..."` to `"w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105"`. One line change.
+**`src/index.css`** (after line 243): Add exception rule:
+```css
+.webinar-hero-gradient.hero-section {
+  background: unset !important;
+}
+```
 
-### 2. Product Preview Strip in Shop
-**File:** `src/pages/Shop.tsx`
+**`src/components/webinar/WebinarHero.tsx`** (line 49): Remove `hero-section` from className, keeping `webinar-hero-gradient webinar-noise relative flex items-center justify-center text-center min-h-screen overflow-hidden`.
 
-Insert a new `<section>` between `<ShopHero />` and `<ShopFilterNav />`:
+---
 
-- Filter `products` to first 10 with `image_url`, only render if ≥3 match
-- "OUR FORMULAS" label: small caps, `var(--site-gold)`, centered, `DM Sans` 11px weight 600, `letter-spacing: 0.15em`
-- Marquee container: `overflow: hidden`, `var(--site-bg-secondary)` background, `py-4`, top/bottom border `var(--site-border)`
-- Inner track: `display: flex`, `width: max-content`, `animation: marquee-scroll 30s linear infinite` (reuses existing keyframe)
-- Items duplicated 2× for seamless loop
-- Each item: `<Link to={/shop/${slug}}>` containing a 72×72 circle (`rounded-full`, `var(--site-green-dark)` bg) with `object-contain` image, product name below in 11px DM Sans
+### Prompt 2 — Review Avatars
 
-### Files Changed
-1. `src/components/store/ProductCard.tsx` — 1 line
-2. `src/pages/Shop.tsx` — ~30 lines inserted
+**`src/components/reviews/ReviewCard.tsx`**:
+- Add `getAvatarUrl` helper using DiceBear notionists style
+- Replace the plain `{review.user_name} · {date}` span (line 53-54) with a flex row containing a 28x28 avatar image + the text
+
+---
+
+### Prompt 3 — Chat z-index Fix
+
+**`src/components/ChatWidget.tsx`**:
+- Line 87-88: Change maximized style to `{ bottom: 16, right: 16, width: 600, height: 'calc(100vh - 88px)', borderRadius: 16, top: 'auto' }`
+- Line 152: Change `z-[9999]` to `z-[9000]`
+
+---
+
+### Prompt 4 — Replace Bottom-Left Minimize with Star Seal
+
+**`src/components/ChatWidget.tsx`** (lines 211-220): Replace the `<button>` with `<Minus>` icon with a star seal SVG image:
+```tsx
+<img src="/star-seal.svg" alt="Mount Kailash" style={{
+  position: "absolute", bottom: 12, left: 12, zIndex: 210,
+  width: 36, height: 36, pointerEvents: "none", opacity: 0.7,
+}} />
+```
+
+Check if `Minus` is still used elsewhere in the file (line 183 header minimize button) — yes it is, so keep the import.
+
+---
+
+### Files Changed (4)
+1. `src/index.css` — 3 lines added
+2. `src/components/webinar/WebinarHero.tsx` — 1 line className change
+3. `src/components/reviews/ReviewCard.tsx` — avatar helper + JSX update
+4. `src/components/ChatWidget.tsx` — z-index, maximized style, seal replacement
 
