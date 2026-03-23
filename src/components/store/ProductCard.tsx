@@ -151,7 +151,7 @@ export function ProductCard({ product, style }: ProductCardProps) {
         <button
           onClick={handleAddToCart}
           disabled={isAddingToCart || product.stock_status === "out_of_stock"}
-          className="sm:hidden w-full mt-2 py-2.5 rounded-full text-xs font-semibold transition-all disabled:opacity-40 flex items-center justify-center gap-1.5"
+          className="sm:hidden w-full mt-2 py-3.5 rounded-full text-xs font-semibold transition-all disabled:opacity-40 flex items-center justify-center gap-1.5"
           style={{
             background: "var(--site-gold)",
             color: "var(--site-green-dark)",

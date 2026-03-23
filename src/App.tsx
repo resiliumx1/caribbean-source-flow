@@ -125,6 +125,8 @@ function AppContent() {
           <Route path="/webinars" element={<WebinarsPage />} />
           <Route path="/school/herbal-physician" element={<HerbalPhysicianCourse />} />
           <Route path="/gate" element={<GateEntrancePage />} />
+          <Route path="/goddess" element={<GoddessCard />} />
+          <Route path="/index" element={<Navigate to="/" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="/admin/products" replace />} />

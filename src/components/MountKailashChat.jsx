@@ -659,9 +659,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
                   {section.items.map((p, i) => (
                     <a key={i}
-                      href={`${SITE_BASE}/shop/${p.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`/shop/${p.slug}`}
                       style={{
                         textDecoration: "none", display: "block",
                         background: dk ? "#1a2e1e" : "#ffffff",
