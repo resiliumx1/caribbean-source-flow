@@ -51,7 +51,7 @@ export const ProblemSolution = () => {
               style={{ background: "var(--site-bg-card)", border: "1px solid var(--site-border)", boxShadow: "var(--site-shadow-card)" }}
             >
               <div className="relative h-48 overflow-hidden">
-                <img src={item.image} alt={item.solution} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                <img src={item.image} alt={item.solution} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" />
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 70%)' }} />
                 <item.icon className="absolute bottom-4 right-4" style={{ color: "var(--site-gold)", width: '48px', height: '48px' }} />
               </div>

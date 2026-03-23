@@ -9,7 +9,7 @@ function trackChatEvent(eventType, sessionId, extra = {}) {
     ...extra,
   }).then(() => {}).catch(() => {});
 }
-const SITE_BASE = "https://preview--caribbean-source-flow.lovable.app";
+const SITE_BASE = "";
 
 const PRODUCT_LINKS = {
   "The Answer": `${SITE_BASE}/shop/the-answer`,
@@ -250,7 +250,7 @@ function injectProductLinks(html) {
       var lastCloseA = before.lastIndexOf("</a>");
       if (lastOpenA > lastCloseA) continue;
       parts.push(result.substring(lastIndex, m.index));
-      parts.push('<a href="' + url + '" target="_blank" rel="noopener noreferrer" onclick="window.__trackChatProductClick && window.__trackChatProductClick(\'' + name.replace(/'/g, "\\'") + '\')" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">' + name + ' ↗</a>');
+      parts.push('<a href="' + url + '" onclick="window.__trackChatProductClick && window.__trackChatProductClick(\'' + name.replace(/'/g, "\\'") + '\')" style="color:#2e6e2e;font-weight:bold;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;">' + name + '</a>');
       lastIndex = m.index + m[0].length;
     }
     if (parts.length > 0) {
@@ -447,7 +447,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
           border: `1px solid ${t.goldBorder}`,
           borderRadius: 20, textDecoration: "none", fontSize: 13, fontWeight: "bold",
         }}>✉️ Email Us</a>
-        <a href={SHOP_BASE} target="_blank" rel="noopener noreferrer" style={{
+        <a href={SHOP_BASE} style={{
           display: "inline-flex", alignItems: "center", gap: 5,
           padding: "8px 15px", background: t.chipBg, color: t.primary,
           border: `1px solid ${t.handoffBorder}`,
@@ -659,9 +659,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
                   {section.items.map((p, i) => (
                     <a key={i}
-                      href={`${SITE_BASE}/shop/${p.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`/shop/${p.slug}`}
                       style={{
                         textDecoration: "none", display: "block",
                         background: dk ? "#1a2e1e" : "#ffffff",

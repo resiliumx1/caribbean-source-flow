@@ -234,6 +234,12 @@
     outline-offset: 2px;
     border-radius: 2px;
   }
+
+  @media (max-width: 767px) {
+    button, a, [role="button"] {
+      min-height: 44px;
+    }
+  }
 }
 
 @layer components {

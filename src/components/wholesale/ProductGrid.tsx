@@ -70,6 +70,7 @@ export const ProductGrid = ({ onScrollToForm }: ProductGridProps) => {
                   src={category.image}
                   alt={category.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
                   style={{ filter: "brightness(1.1)" }}
                 />
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(27,67,50,0.9) 100%)" }} />

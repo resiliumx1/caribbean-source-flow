@@ -29,6 +29,7 @@ export default function WebinarHost() {
               src={priestKailashImg}
               alt="Honorable Priest Kailash — herbal medicine practitioner and MKRC founder"
               className="w-full h-auto object-cover"
+              loading="lazy"
             />
           </div>
           {/* Floating credential badge */}

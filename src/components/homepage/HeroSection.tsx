@@ -148,15 +148,15 @@ export function HeroSection() {
               </div>
 
               {/* 4-Pillar Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 flex-1">
+              <div className="grid grid-cols-2 gap-3 lg:gap-4 flex-1">
                 {pillars.map((pillar, i) =>
                 <PillarCard key={pillar.route} pillar={pillar} index={i} />
                 )}
               </div>
             </div>
 
-            {/* Right Column — 5 cols */}
-            <div className="lg:col-span-5 flex">
+            {/* Right Column — 5 cols (hidden on mobile) */}
+            <div className="hidden lg:flex lg:col-span-5">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl w-full z-[1]">
                 <img
                   src={priestPhoto}
