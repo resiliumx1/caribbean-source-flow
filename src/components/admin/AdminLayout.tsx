@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useNavigate, Outlet, Link } from "react-router-dom";
+import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
-import { Loader2, Shield, Home } from "lucide-react";
+import { Loader2, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminLayout() {
