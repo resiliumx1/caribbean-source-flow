@@ -9,6 +9,7 @@ export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     if (!isLoading) {
