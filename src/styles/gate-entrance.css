@@ -239,13 +239,13 @@ html:has(.gate-overlay) body {
 }
 
 /* ── Hero copy ── */
-.hero-content{
+.gate-overlay .hero-content{
   position:relative;z-index:5;text-align:center;padding:0 2rem;pointer-events:none;margin-top:0;
   transition: none;
   opacity: 0;
   transform: translateY(20px);
 }
-.hero-content::before{
+.gate-overlay .hero-content::before{
   content:'';position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%);
   width:140%;height:160%;
