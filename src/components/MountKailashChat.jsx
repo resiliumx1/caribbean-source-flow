@@ -447,7 +447,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
           border: `1px solid ${t.goldBorder}`,
           borderRadius: 20, textDecoration: "none", fontSize: 13, fontWeight: "bold",
         }}>✉️ Email Us</a>
-        <a href={SHOP_BASE} target="_blank" rel="noopener noreferrer" style={{
+        <a href={SHOP_BASE} style={{
           display: "inline-flex", alignItems: "center", gap: 5,
           padding: "8px 15px", background: t.chipBg, color: t.primary,
           border: `1px solid ${t.handoffBorder}`,
