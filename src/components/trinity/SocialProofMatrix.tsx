@@ -73,9 +73,7 @@ export function SocialProofMatrix() {
                 <div className="h-full rounded-2xl p-9" style={{ background: 'var(--site-bg-card)', border: '1px solid var(--site-border)', boxShadow: 'var(--site-shadow-card)' }}>
                   {/* Credentials at top */}
                   <div className="flex items-center gap-4 mb-5">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #c9a84c, #a07830)', border: '2px solid #c9a84c' }}>
-                      <User className="w-6 h-6" style={{ color: '#090909' }} />
-                    </div>
+                    <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(testimonial.author_name.toLowerCase())}&backgroundColor=b6e3f4,c0aede,ffdfbf&radius=50`} alt={testimonial.author_name} width={48} height={48} style={{ borderRadius: '50%', border: '2px solid var(--site-gold)', flexShrink: 0 }} loading="lazy" />
                     <div>
                       <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: '20px', color: 'var(--site-text-primary)' }}>
                         {testimonial.author_name}
