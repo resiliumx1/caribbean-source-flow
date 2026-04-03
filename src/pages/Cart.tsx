@@ -85,17 +85,19 @@ export default function Cart() {
                   className="flex gap-4 p-4 bg-card rounded-xl border border-border"
                 >
                   {/* Image */}
-                  <Link to={`/shop/${item.product.slug}`} className="shrink-0">
+                  <Link to={`/shop/${item.product.slug}`} className="shrink-0 w-20 h-20 rounded-lg overflow-hidden" style={{ aspectRatio: '1/1', background: '#fafafa' }}>
                     {item.product.image_url ? (
                       <img
                         src={item.product.image_url}
-                        alt={item.product.name}
-                        className="w-24 h-24 object-cover rounded-lg"
+                        alt={`${item.product.name} | Mount Kailash Rejuvenation Centre`}
+                        className="w-full h-full object-contain p-1"
+                        loading="lazy"
+                        decoding="async"
                       />
                     ) : (
                       <ProductPlaceholder
                         productType={item.product.product_type}
-                        className="w-24 h-24 rounded-lg"
+                        className="w-full h-full"
                       />
                     )}
                   </Link>

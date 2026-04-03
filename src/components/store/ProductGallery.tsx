@@ -52,7 +52,7 @@ export function ProductGallery({
       >
         <img
           src={selectedImage!}
-          alt={`${productName} by Mount Kailash Rejuvenation Centre`}
+          alt={`${productName} | Mount Kailash Rejuvenation Centre`}
           className="transition-transform duration-300 group-hover:scale-105"
           decoding="async"
         />
@@ -99,8 +99,11 @@ export function ProductGallery({
             >
               <img
                 src={url}
-                alt={`${productName} thumbnail ${index + 1}`}
-                className="w-full h-full object-cover"
+                alt={`${productName} - view ${index + 1} | Mount Kailash Rejuvenation Centre`}
+                className="w-full h-full object-contain"
+                style={{ padding: '6%', backgroundColor: 'hsl(var(--site-green-dark, 152 33% 12%))' }}
+                loading="lazy"
+                decoding="async"
               />
             </button>
           ))}
