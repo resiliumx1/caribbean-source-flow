@@ -570,3 +570,21 @@ html:not(.dark) select option {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Reusable product image container — enforces 1:1 square with contained images */
+.product-image-container {
+  aspect-ratio: 1 / 1;
+  background-color: hsl(var(--site-green-dark, 152 33% 12%));
+  border-radius: 0.75rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8%;
+}

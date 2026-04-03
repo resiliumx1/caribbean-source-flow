@@ -47,13 +47,14 @@ export function ProductGallery({
     <div className="sticky top-24 space-y-4">
       {/* Main Image - clickable for zoom */}
       <div
-        className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 relative cursor-zoom-in group"
+        className="product-image-container relative cursor-zoom-in group rounded-2xl"
         onClick={handleImageClick}
       >
         <img
           src={selectedImage!}
-          alt={`${productName} - Image ${selectedIndex + 1}`}
-          className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+          alt={`${productName} by Mount Kailash Rejuvenation Centre`}
+          className="transition-transform duration-300 group-hover:scale-105"
+          decoding="async"
         />
 
         {/* Navigation arrows */}

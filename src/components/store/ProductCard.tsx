@@ -42,25 +42,24 @@ export function ProductCard({ product, style }: ProductCardProps) {
       {/* Image — strict 1:1 */}
       <Link
         to={`/shop/${product.slug}`}
-        className="block relative aspect-square overflow-hidden"
-        style={{ background: "var(--site-green-dark)" }}
+        className="block relative product-image-container"
       >
-        <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
-          {product.image_url ? (
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105"
-              style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.3))" }}
-              draggable={false}
-            />
-          ) : (
-            <ProductPlaceholder
-              productType={product.product_type}
-              className="w-24 h-32 transition-transform duration-500 group-hover:scale-105"
-            />
-          )}
-        </div>
+        {product.image_url ? (
+          <img
+            src={product.image_url}
+            alt={`${product.name} by Mount Kailash Rejuvenation Centre`}
+            className="transition-transform duration-500 group-hover:scale-105"
+            style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.3))" }}
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+          />
+        ) : (
+          <ProductPlaceholder
+            productType={product.product_type}
+            className="w-24 h-32 transition-transform duration-500 group-hover:scale-105"
+          />
+        )}
 
         {/* Stock badge */}
         {product.stock_status !== "in_stock" && (
