@@ -64,13 +64,14 @@ export function RelatedProducts({ productId, categoryId }: RelatedProductsProps)
               to={`/shop/${product.slug}`}
               className="group bg-card rounded-xl overflow-hidden border border-border hover:shadow-elevated transition-all duration-300"
             >
-              <div className="aspect-square bg-muted/20 relative overflow-hidden flex items-center justify-center p-4">
+              <div className="product-image-container relative">
                 {product.image_url ? (
                   <img
                     src={product.image_url}
-                    alt={product.name}
+                    alt={`${product.name}${product.product_categories?.name ? ` - ${product.product_categories.name}` : ''} | Mount Kailash Rejuvenation Centre`}
                     loading="lazy"
-                    className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    decoding="async"
+                    className="transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
                   <ProductPlaceholder productType={product.product_type} className="w-24 h-32" />

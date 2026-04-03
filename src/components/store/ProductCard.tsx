@@ -47,9 +47,8 @@ export function ProductCard({ product, style }: ProductCardProps) {
         {product.image_url ? (
           <img
             src={product.image_url}
-            alt={`${product.name} by Mount Kailash Rejuvenation Centre`}
+            alt={`${product.name} | Mount Kailash Rejuvenation Centre`}
             className="transition-transform duration-500 group-hover:scale-105"
-            style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.3))" }}
             loading="lazy"
             decoding="async"
             draggable={false}

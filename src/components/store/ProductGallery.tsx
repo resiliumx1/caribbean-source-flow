@@ -52,7 +52,7 @@ export function ProductGallery({
       >
         <img
           src={selectedImage!}
-          alt={`${productName} by Mount Kailash Rejuvenation Centre`}
+          alt={`${productName} | Mount Kailash Rejuvenation Centre`}
           className="transition-transform duration-300 group-hover:scale-105"
           decoding="async"
         />
