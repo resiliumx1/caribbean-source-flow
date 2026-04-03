@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom"; // product detail page
 import { ArrowLeft, ShoppingBag, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles, MessageCircle, Check } from "lucide-react";
 import { useState, useEffect, useLayoutEffect } from "react";
 import { StoreFooter } from "@/components/store/StoreFooter";
