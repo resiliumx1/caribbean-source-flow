@@ -57,7 +57,7 @@ export function FeaturedProduct() {
         >
           <img
             src={theAnswerImg}
-            alt={product.name}
+            alt={`${product.name} - Herbal Tincture | Mount Kailash Rejuvenation Centre`}
             className="max-w-full max-h-[320px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
           />
         </Link>
