@@ -189,7 +189,7 @@ export default function Shop() {
 
     if (activeForm) {
       const types = FORM_TYPES[activeForm] || [];
-      filtered = filtered.filter((p) => types.includes(p.product_type));
+      filtered = filtered.filter((p) => types.some(t => t.toLowerCase() === p.product_type?.toLowerCase()));
     }
 
     // Sort
