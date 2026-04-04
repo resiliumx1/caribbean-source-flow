@@ -556,7 +556,7 @@ export function ShopFilterNav({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMobileSheet("goal")}
-              className="flex-1 flex items-center justify-center gap-1.5 rounded-full text-[13px]"
+              className="filter-btn-goal flex-1 flex items-center justify-center gap-1.5 rounded-full text-[13px]"
               style={{ ...pillBtn(!!activeCondition), minHeight: 44 }}
             >
               {activeCondition ? (
