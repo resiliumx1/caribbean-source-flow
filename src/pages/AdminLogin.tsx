@@ -58,7 +58,14 @@ export default function AdminLogin() {
   }
 
   return (
-    <main className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-muted/30 flex items-center justify-center p-4 relative">
+      <Link
+        to="/"
+        className="absolute top-6 left-6 flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to site
+      </Link>
       <Card className="w-full max-w-md" role="form">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex justify-center">
