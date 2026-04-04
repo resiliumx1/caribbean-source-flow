@@ -11,6 +11,7 @@ const NAV = [
 export default function WebinarFooter() {
   return (
     <footer style={{ backgroundColor: "var(--site-bg-primary)", borderTop: "1px solid rgba(201,168,76,0.2)" }}>
+      <FooterVine />
       <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <span className="font-cormorant font-semibold text-lg" style={{ color: "var(--site-text-primary)" }}>
           MKRC

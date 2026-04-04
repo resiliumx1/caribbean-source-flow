@@ -11,6 +11,7 @@ const whatsappMessage = encodeURIComponent(
 export function HomepageFooter() {
   return (
     <footer style={{ background: "#0F281E", color: "#F5F1E8" }}>
+      <FooterVine />
       <div className="container mx-auto max-w-6xl px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}

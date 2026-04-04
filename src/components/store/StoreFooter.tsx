@@ -9,6 +9,7 @@ export function StoreFooter() {
 
   return (
     <footer className="bg-primary text-primary-foreground">
+      <FooterVine />
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-4 gap-12">
           {/* Brand */}
