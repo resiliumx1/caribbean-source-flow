@@ -49,6 +49,7 @@ export default function AdminLayout() {
             <nav className="hidden md:flex items-center gap-0.5 flex-1 justify-center">
               {[
                 { label: 'Products', href: '/admin/products' },
+                { label: 'Orders', href: '/admin/orders' },
                 { label: 'Retreats', href: '/admin/retreats' },
                 { label: 'Retreat Dates', href: '/admin/retreat-dates' },
                 { label: 'Reviews', href: '/admin/reviews' },

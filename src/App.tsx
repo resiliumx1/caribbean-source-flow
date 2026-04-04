@@ -137,6 +137,7 @@ function AppContent() {
             <Route path="reviews" element={<AdminReviews />} />
             <Route path="webinars" element={<AdminWebinars />} />
             <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="orders" element={<AdminOrders />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
