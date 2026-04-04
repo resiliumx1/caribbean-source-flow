@@ -181,7 +181,7 @@ export function ShopFilterNav({
     }, [pRef]);
     return (
       <div
-        className="fixed z-[9990] min-w-[260px]"
+        className="fixed z-[9990] min-w-[260px] max-w-[280px]"
         style={{
           top: pos.top,
           left: pos.left,
