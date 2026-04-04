@@ -4,7 +4,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { ShopHero } from "@/components/store/ShopHero";
 import { ShopFilterNav } from "@/components/store/ShopFilterNav";
 import { FeaturedProduct } from "@/components/store/FeaturedProduct";
-import { BundlesGrid } from "@/components/store/BundlesGrid";
+
 import { ProductCard } from "@/components/store/ProductCard";
 import { TrustBar } from "@/components/store/TrustBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
