@@ -235,6 +235,13 @@ export function StoreHeader() {
 
                   <hr className="my-2" />
 
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); setPortalOpen(true); }}
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left min-h-[44px] flex items-center gap-2"
+                  >
+                    <UserCircle className="w-5 h-5" /> My Account
+                  </button>
+
                   <Link
                     to="/admin/login"
                     onClick={() => setMobileMenuOpen(false)}
