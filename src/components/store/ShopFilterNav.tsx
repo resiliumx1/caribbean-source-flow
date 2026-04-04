@@ -1,5 +1,7 @@
 import { useConditions } from "@/hooks/use-conditions";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { SearchDropdown } from "./SearchDropdown";
+import type { Product } from "@/hooks/use-products";
 import {
   ChevronDown, X, SlidersHorizontal, Search, Check,
   LayoutGrid, Flame, Apple, Moon, ShieldCheck, Dumbbell, Heart, Package,
