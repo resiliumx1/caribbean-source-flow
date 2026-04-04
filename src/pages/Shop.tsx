@@ -4,7 +4,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { ShopHero } from "@/components/store/ShopHero";
 import { ShopFilterNav } from "@/components/store/ShopFilterNav";
 import { FeaturedProduct } from "@/components/store/FeaturedProduct";
-import { BundlesGrid } from "@/components/store/BundlesGrid";
+
 import { ProductCard } from "@/components/store/ProductCard";
 import { TrustBar } from "@/components/store/TrustBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -164,7 +164,7 @@ export default function Shop() {
     const bundles = products.filter((p) => p.product_type === "bundle" || (p.product_categories as any)?.slug === "curated-bundles");
     const theAnswerProduct = products.find((p) => p.slug === "the-answer") || null;
     const bundleIds = new Set(bundles.map(b => b.id));
-    const allSingles = products.filter((p) => !bundleIds.has(p.id) && p.slug !== "the-answer" && p.is_active !== false);
+    const allSingles = products.filter((p) => p.slug !== "the-answer" && p.is_active !== false);
     return { bundles, theAnswerProduct, allSingles };
   }, [products]);
 
@@ -336,7 +336,7 @@ export default function Shop() {
               </section>
             ) : null}
 
-            {bundles.length > 0 && <BundlesGrid bundles={bundles} />}
+            
           </>
         ) : (
           <>
