@@ -30,7 +30,7 @@ export default function ProductDetail() {
 
   // Scroll to top on page load
   useLayoutEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, [slug]);
 
   // Set default variant when variants load
@@ -102,22 +102,16 @@ export default function ProductDetail() {
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
         {/* Back Button */}
-        <button
-          onClick={() => {
-            if (window.history.length > 1) {
-              window.history.back();
-            } else {
-              window.location.href = '/shop';
-            }
-          }}
-          className="inline-flex items-center gap-2 transition-colors mb-6 w-full md:w-auto md:border-0 border-b border-border pb-3 md:pb-0"
-          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: '#1b4332', background: 'none', border: 'none', cursor: 'pointer', padding: '6px 12px', borderRadius: 8 }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = '#f5f0e8'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+        <Link
+          to="/shop"
+          className="inline-flex items-center gap-2 transition-colors mb-6 text-sm font-medium hover:underline"
+          style={{ color: '#1b4332', fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500 }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#d4a373'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = '#1b4332'; }}
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4" />
           Back to Shop
-        </button>
+        </Link>
 
         {/* Main grid - 60/40 split for larger images */}
         <div className="grid lg:grid-cols-[1fr_450px] gap-8 lg:gap-12">

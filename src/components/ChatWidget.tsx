@@ -76,11 +76,11 @@ export default function ChatWidget() {
         borderRadius: 16,
       };
     }
-    if (!isMobile && isMaximized) {
-      return { bottom: 16, right: 16, width: 600, height: "calc(100vh - 88px)", borderRadius: 16, top: "auto" };
-    }
     if (isMobile) {
-      return { bottom: 0, right: 0, left: 0, width: '100vw', height: '70vh', borderRadius: '20px 20px 0 0' };
+      return { bottom: 0, right: 0, left: 0, width: '100vw', height: '95vh', borderRadius: '20px 20px 0 0' };
+    }
+    if (isMaximized) {
+      return { bottom: 16, right: 16, width: 600, height: "calc(100vh - 88px)", borderRadius: 16, top: "auto" };
     }
     return {
       bottom: "max(16px, env(safe-area-inset-bottom, 16px))",
@@ -92,6 +92,7 @@ export default function ChatWidget() {
 
   return (
     <>
+      {/* Speech bubble - only when chat closed */}
       {showBubble && !isOpen && (
         <div className="fixed z-[9999] animate-fade-in" style={{ bottom: 90, right: 16, width: "min(320px, calc(100vw - 40px))" }}>
           <div style={{
@@ -113,28 +114,29 @@ export default function ChatWidget() {
         </div>
       )}
 
-      <button
-        onClick={toggleChat}
-        className="fixed bottom-6 right-6 z-[9999] w-[60px] h-[60px] rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
-        style={{
-          background: isOpen ? "#1c4a1c" : "linear-gradient(135deg, #1c4a1c, #2e6e2e)",
-          boxShadow: "0 8px 32px rgba(28,74,28,0.4)",
-          display: "flex",
-          opacity: visible ? 1 : 0,
-          transition: "opacity 0.5s ease 0.3s",
-        }}
-        aria-label={isOpen ? "Close chat" : "Open health advisor chat"}
-      >
-        <img src="/star-seal-for-lovable.png" alt="Mount Kailash" style={{ width: 34, height: 34, filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
-        {!isOpen && (
+      {/* Star icon FAB - HIDDEN when chat is open */}
+      {!isOpen && (
+        <button
+          onClick={toggleChat}
+          className="fixed bottom-6 right-6 z-[9999] w-[60px] h-[60px] rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+          style={{
+            background: "linear-gradient(135deg, #1c4a1c, #2e6e2e)",
+            boxShadow: "0 8px 32px rgba(28,74,28,0.4)",
+            opacity: visible ? 1 : 0,
+            transition: "opacity 0.5s ease 0.3s",
+          }}
+          aria-label="Open health advisor chat"
+        >
+          <img src="/star-seal-for-lovable.png" alt="Mount Kailash" style={{ width: 34, height: 34, filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
           <span className="absolute top-0 right-0 w-3 h-3 rounded-full" style={{
             background: "#ef4444",
             border: "2px solid #1c4a1c",
             animation: "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite",
           }} />
-        )}
-      </button>
+        </button>
+      )}
 
+      {/* Chat panel */}
       {isOpen && (
         <div
           className="fixed z-[9000] flex flex-col overflow-hidden"
@@ -146,37 +148,44 @@ export default function ChatWidget() {
             transition: "width 0.3s ease, height 0.3s ease, border-radius 0.3s ease",
           }}
         >
+          {/* Header Row 1: Title + controls */}
           <div style={{
-            position: "absolute", top: 0, right: 0, left: 0, height: 48, zIndex: 200,
-            display: "flex", alignItems: "center", justifyContent: "flex-end",
-            padding: "0 10px", pointerEvents: "none",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "10px 12px 4px 14px", flexShrink: 0,
           }}>
-            <div style={{ display: "flex", gap: 4, pointerEvents: "auto" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <img src="/star-seal-for-lovable.png" alt="" style={{ width: 22, height: 22, filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', color: '#e8c870', textTransform: 'uppercase' }}>
+                Mount Kailash
+              </span>
+            </div>
+            <div style={{ display: "flex", gap: 4 }}>
               {!isMobile && (
                 <button onClick={() => setIsMinimized((v) => !v)} style={{
-                  width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
+                  width: 30, height: 30, borderRadius: "50%", background: "rgba(255,255,255,0.1)", border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
                 }} aria-label={isMinimized ? "Restore" : "Minimize"}>
                   <span className="text-white text-sm" style={{ opacity: 0.85, lineHeight: 1 }}>—</span>
                 </button>
               )}
               {!isMobile && (
                 <button onClick={() => { setIsMaximized((v) => !v); setIsMinimized(false); }} style={{
-                  width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
+                  width: 30, height: 30, borderRadius: "50%", background: "rgba(255,255,255,0.1)", border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
                 }} aria-label={isMaximized ? "Restore size" : "Maximize"}>
                   {isMaximized ? <Minimize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} /> : <Maximize2 className="w-3.5 h-3.5 text-white" style={{ opacity: 0.85 }} />}
                 </button>
               )}
               <button onClick={() => { setIsOpen(false); setIsMaximized(false); setIsMinimized(false); }} style={{
-                width: 30, height: 30, borderRadius: "50%", background: "rgba(0,0,0,0.45)", border: "none",
-                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.15s",
+                width: 30, height: 30, borderRadius: "50%", background: "rgba(255,255,255,0.1)", border: "none",
+                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
               }} aria-label="Close chat">
                 <X className="w-4 h-4 text-white" style={{ opacity: 0.85 }} />
               </button>
             </div>
           </div>
 
+          {/* Chat content */}
           {!isMinimized && (
             <div className="flex-1 overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
               <Suspense fallback={
@@ -186,11 +195,6 @@ export default function ChatWidget() {
               }>
                 <MountKailashChat externalMessages={messages} setExternalMessages={setMessages} />
               </Suspense>
-              <img src="/star-seal-for-lovable.png" alt="Mount Kailash" style={{
-                position: "absolute", bottom: 12, left: 12, zIndex: 210,
-                width: 36, height: 36, pointerEvents: "none", opacity: 0.7,
-                filter: 'brightness(0) invert(1)',
-              }} />
             </div>
           )}
 
