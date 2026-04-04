@@ -38,7 +38,7 @@ export function OriginStory() {
               <p>
                 For over two decades, Rt Hon Priest Kailash K Leonce
                 has cultivated the art of St. Lucian bush medicine in the shadow
-                of the Pitons—where volcanic soil yields herbs of extraordinary
+                where organically mineral rich soil yields herbs of extraordinary
                 potency.
               </p>
               <p>
