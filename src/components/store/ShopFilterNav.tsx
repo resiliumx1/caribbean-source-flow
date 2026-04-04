@@ -419,8 +419,8 @@ export function ShopFilterNav({
                 </button>
                 {showSortDropdown && (
                   <>
-                    <div className="fixed inset-0 z-40" onClick={() => setShowSortDropdown(false)} />
-                    <div className="absolute right-0 top-full mt-1 z-50 rounded-lg shadow-xl py-1 min-w-[180px]" style={{ background: '#ffffff', border: '1px solid #d4d0c8' }}>
+                    <div className="fixed inset-0 z-[9989]" onClick={() => setShowSortDropdown(false)} />
+                    <div className="fixed z-[9990] rounded-lg shadow-xl py-1 min-w-[180px]" style={{ background: '#ffffff', border: '1px solid #d4d0c8', top: (navRef.current?.getBoundingClientRect().bottom || 0) + 4, right: 24 }}>
                       {SORT_OPTIONS.map(opt => (
                         <button
                           key={opt.value}
