@@ -156,9 +156,11 @@ export function StoreHeader() {
             </div>
             <CurrencyToggle />
 
-            <Button variant="ghost" size="icon" aria-label="My Account" onClick={() => setPortalOpen(true)}>
-              <UserCircle className="w-5 h-5" style={{ color: "#1b4332" }} />
-            </Button>
+            <Link to="/account" aria-label="My Account">
+              <Button variant="ghost" size="icon" aria-label="My Account">
+                <UserCircle className="w-5 h-5" style={{ color: "#1b4332" }} />
+              </Button>
+            </Link>
 
             <Link to="/cart" className="relative" aria-label="Shopping cart">
               <Button variant="ghost" size="icon" aria-label="View cart" className={cartBounce ? "animate-bounce" : ""}>
