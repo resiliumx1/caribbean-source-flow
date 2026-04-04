@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export default function AdminLogin() {
