@@ -579,7 +579,7 @@ export function ShopFilterNav({
                   <X className="w-3.5 h-3.5" onClick={(e) => { e.stopPropagation(); onFormChange(null); }} />
                 </>
               ) : (
-                <><FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3.5 h-3.5" /></>
+                <><FlaskConical className="w-4 h-4 filter-icon-form" style={{ color: '#3D715D' }} /> Form <ChevronDown className="w-3.5 h-3.5" /></>
               )}
             </button>
             <button
