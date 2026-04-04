@@ -464,7 +464,7 @@ export function ShopFilterNav({
                 </button>
               ) : (
                 <button onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
-                  🎯 Goal <ChevronDown className="w-3 h-3" />
+                  <Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Goal <ChevronDown className="w-3 h-3" />
                 </button>
               )}
               {goalOpen && (
