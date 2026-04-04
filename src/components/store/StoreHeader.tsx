@@ -9,7 +9,6 @@ import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-import { CustomerPortal } from "./CustomerPortal";
 
 const SCHOOL_URL = "https://mount-kailash-school-temp.netlify.app";
 
@@ -32,7 +31,6 @@ export function StoreHeader() {
   const prevCountRef = useRef(cartCount);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
-  const [portalOpen, setPortalOpen] = useState(false);
 
   // Gate visibility: hidden until gate-complete on homepage first visit
   const [headerVisible, setHeaderVisible] = useState(() => {
@@ -158,9 +156,11 @@ export function StoreHeader() {
             </div>
             <CurrencyToggle />
 
-            <Button variant="ghost" size="icon" aria-label="My Account" onClick={() => setPortalOpen(true)}>
-              <UserCircle className="w-5 h-5" style={{ color: "#1b4332" }} />
-            </Button>
+            <Link to="/account" aria-label="My Account">
+              <Button variant="ghost" size="icon" aria-label="My Account">
+                <UserCircle className="w-5 h-5" style={{ color: "#1b4332" }} />
+              </Button>
+            </Link>
 
             <Link to="/cart" className="relative" aria-label="Shopping cart">
               <Button variant="ghost" size="icon" aria-label="View cart" className={cartBounce ? "animate-bounce" : ""}>
@@ -224,12 +224,13 @@ export function StoreHeader() {
 
                   <hr className="my-2" />
 
-                  <button
-                    onClick={() => { setMobileMenuOpen(false); setPortalOpen(true); }}
+                  <Link
+                    to="/account"
+                    onClick={() => setMobileMenuOpen(false)}
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left min-h-[44px] flex items-center gap-2"
                   >
                     <UserCircle className="w-5 h-5" /> My Account
-                  </button>
+                  </Link>
 
                   <Link
                     to="/admin/login"
@@ -263,7 +264,7 @@ export function StoreHeader() {
           </div>
         </div>
       </div>
-      <CustomerPortal open={portalOpen} onClose={() => setPortalOpen(false)} />
+      
     </header>
   );
 }

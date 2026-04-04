@@ -42,6 +42,7 @@ const ComparePage = lazy(() => import("./pages/ComparePage"));
 const HerbalPhysicianCourse = lazy(() => import("./pages/HerbalPhysicianCourse"));
 const GateEntrancePage = lazy(() => import("./pages/GateEntrancePage"));
 const GoddessCard = lazy(() => import("./pages/GoddessCard"));
+const CustomerAccountPage = lazy(() => import("./pages/CustomerAccountPage"));
 
 const queryClient = new QueryClient();
 
@@ -127,6 +128,7 @@ function AppContent() {
           <Route path="/school/herbal-physician" element={<HerbalPhysicianCourse />} />
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/goddess" element={<GoddessCard />} />
+          <Route path="/account" element={<CustomerAccountPage />} />
           <Route path="/index" element={<Navigate to="/" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>

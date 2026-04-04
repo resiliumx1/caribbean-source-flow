@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
 import FadeInStagger from "@/components/FadeInStagger";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
@@ -29,7 +30,15 @@ const GoddessWhatsApp = () => (
 );
 
 const Retreats = () => {
-  // SEOHead handles meta tags now
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === '#calendar') {
+      setTimeout(() => {
+        document.getElementById('retreat-calendar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 500);
+    }
+  }, [location.hash]);
 
   return (
     <main className="min-h-screen">

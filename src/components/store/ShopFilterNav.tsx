@@ -279,10 +279,10 @@ export function ShopFilterNav({
               ) : (
                 <button
                   onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
+                  className="filter-btn-goal flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(false)}
                 >
-                  <Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Shop by Goal <ChevronDown className="w-3.5 h-3.5" />
+                  <Compass className="w-4 h-4 filter-icon-goal" style={{ color: '#3D715D' }} /> Shop by Goal <ChevronDown className="w-3.5 h-3.5" />
                 </button>
               )}
               {goalOpen && (
@@ -327,10 +327,10 @@ export function ShopFilterNav({
               ) : (
                 <button
                   onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
+                  className="filter-btn-form flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(false)}
                 >
-                  <FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3.5 h-3.5" />
+                  <FlaskConical className="w-4 h-4 filter-icon-form" style={{ color: '#3D715D' }} /> Form <ChevronDown className="w-3.5 h-3.5" />
                 </button>
               )}
               {formOpen && (
@@ -463,8 +463,8 @@ export function ShopFilterNav({
                   <X className="w-3 h-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); onConditionChange(null); }} />
                 </button>
               ) : (
-                <button onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
-                  <Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Goal <ChevronDown className="w-3 h-3" />
+                <button onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }} className="filter-btn-goal flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
+                  <Compass className="w-4 h-4 filter-icon-goal" style={{ color: '#3D715D' }} /> Goal <ChevronDown className="w-3 h-3" />
                 </button>
               )}
               {goalOpen && (
@@ -485,8 +485,8 @@ export function ShopFilterNav({
                   <X className="w-3 h-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); onFormChange(null); }} />
                 </button>
               ) : (
-                <button onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
-                  <FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3 h-3" />
+                <button onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }} className="filter-btn-form flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
+                  <FlaskConical className="w-4 h-4 filter-icon-form" style={{ color: '#3D715D' }} /> Form <ChevronDown className="w-3 h-3" />
                 </button>
               )}
               {formOpen && (
@@ -556,7 +556,7 @@ export function ShopFilterNav({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMobileSheet("goal")}
-              className="flex-1 flex items-center justify-center gap-1.5 rounded-full text-[13px]"
+              className="filter-btn-goal flex-1 flex items-center justify-center gap-1.5 rounded-full text-[13px]"
               style={{ ...pillBtn(!!activeCondition), minHeight: 44 }}
             >
               {activeCondition ? (
@@ -565,12 +565,12 @@ export function ShopFilterNav({
                   <X className="w-3.5 h-3.5" onClick={(e) => { e.stopPropagation(); onConditionChange(null); }} />
                 </>
               ) : (
-                <><Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Goal <ChevronDown className="w-3.5 h-3.5" /></>
+                <><Compass className="w-4 h-4 filter-icon-goal" style={{ color: '#3D715D' }} /> Goal <ChevronDown className="w-3.5 h-3.5" /></>
               )}
             </button>
             <button
               onClick={() => setMobileSheet("form")}
-              className="flex-1 flex items-center justify-center gap-1.5 rounded-full text-[13px]"
+              className="filter-btn-form flex-1 flex items-center justify-center gap-1.5 rounded-full text-[13px]"
               style={{ ...pillBtn(!!activeForm), minHeight: 44 }}
             >
               {activeForm ? (
@@ -579,7 +579,7 @@ export function ShopFilterNav({
                   <X className="w-3.5 h-3.5" onClick={(e) => { e.stopPropagation(); onFormChange(null); }} />
                 </>
               ) : (
-                <><FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3.5 h-3.5" /></>
+                <><FlaskConical className="w-4 h-4 filter-icon-form" style={{ color: '#3D715D' }} /> Form <ChevronDown className="w-3.5 h-3.5" /></>
               )}
             </button>
             <button
@@ -637,16 +637,25 @@ export function ShopFilterNav({
           from { opacity: 0; transform: translateY(-4px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes gentleSpin {
+        @keyframes compassWobble {
           0% { transform: rotate(0deg); }
-          25% { transform: rotate(15deg); }
-          50% { transform: rotate(0deg); }
-          75% { transform: rotate(-15deg); }
+          20% { transform: rotate(20deg); }
+          40% { transform: rotate(-15deg); }
+          60% { transform: rotate(10deg); }
+          80% { transform: rotate(-5deg); }
           100% { transform: rotate(0deg); }
         }
-        @keyframes gentleBubble {
-          0%, 100% { transform: translateY(0) scale(1); }
+        .filter-btn-goal:hover .filter-icon-goal {
+          animation: compassWobble 0.6s ease-in-out;
+        }
+        @keyframes flaskBubble {
+          0% { transform: translateY(0) scale(1); }
+          30% { transform: translateY(-4px) scale(1.1); }
           50% { transform: translateY(-2px) scale(1.05); }
+          100% { transform: translateY(0) scale(1); }
+        }
+        .filter-btn-form:hover .filter-icon-form {
+          animation: flaskBubble 0.5s ease-out;
         }
       `}</style>
     </>
