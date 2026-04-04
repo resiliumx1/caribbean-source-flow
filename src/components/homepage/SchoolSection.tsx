@@ -63,8 +63,10 @@ export function SchoolSection() {
         </div>
 
         {/* Single Featured Card */}
-        <Link
-          to="/school/herbal-physician"
+        <a
+          href="https://mount-kailash-school-temp.netlify.app"
+          target="_blank"
+          rel="noopener noreferrer"
           className="group block rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
           style={{
             background: "var(--site-bg-card, #FFFFFF)",
