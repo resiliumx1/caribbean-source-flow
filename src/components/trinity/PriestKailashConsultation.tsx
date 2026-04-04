@@ -28,7 +28,7 @@ export function PriestKailashConsultation() {
             >
               <img
                 src={priestPhoto}
-                alt="Right Honourable Priest Kailash Kay Leonce, Master Herbalist with 21+ years clinical practice in Saint Lucia"
+                alt="Rt Hon Priest Kailash K Leonce, Master Herbalist with 21+ years clinical practice in Saint Lucia"
                 className="w-full h-auto object-cover"
                 style={{ objectPosition: 'center top', minHeight: '400px' }}
                 loading="lazy"
