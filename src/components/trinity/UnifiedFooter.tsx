@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { MessageCircle, Phone, MapPin } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
+import { FooterVine } from "@/components/decorative/BotanicalVine";
 
 const whatsappNumber = "+17582855195";
 const whatsappMessage = encodeURIComponent(
