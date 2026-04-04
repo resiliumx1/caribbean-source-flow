@@ -9,7 +9,6 @@ import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-import { CustomerPortal } from "./CustomerPortal";
 
 const SCHOOL_URL = "https://mount-kailash-school-temp.netlify.app";
 
