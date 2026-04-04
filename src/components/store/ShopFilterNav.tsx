@@ -360,23 +360,30 @@ export function ShopFilterNav({
             </div>
 
             {/* Search */}
-            <div className="relative flex-shrink-0" style={{ width: 220 }}>
+            <div ref={searchContainerRef} className="relative flex-shrink-0" style={{ width: 220 }}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#999' }} />
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
+                onChange={(e) => { onSearchChange(e.target.value); setShowSearchDropdown(e.target.value.length > 0); }}
                 placeholder="Search products..."
                 className="w-full h-9 pl-9 pr-8 rounded-full text-[13px] outline-none"
                 style={{ background: '#ffffff', border: '1px solid #d4d0c8', fontFamily: "'DM Sans', sans-serif", color: '#333' }}
-                onFocus={e => { e.currentTarget.style.borderColor = '#1b4332'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(27,67,50,0.15)'; }}
+                onFocus={e => { e.currentTarget.style.borderColor = '#1b4332'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(27,67,50,0.15)'; if (searchQuery) setShowSearchDropdown(true); }}
                 onBlur={e => { e.currentTarget.style.borderColor = '#d4d0c8'; e.currentTarget.style.boxShadow = 'none'; }}
               />
               {searchQuery && (
-                <button onClick={() => onSearchChange('')} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                <button onClick={() => { onSearchChange(''); setShowSearchDropdown(false); }} className="absolute right-2.5 top-1/2 -translate-y-1/2">
                   <X className="w-4 h-4" style={{ color: '#999' }} />
                 </button>
               )}
+              <SearchDropdown
+                query={searchQuery}
+                products={allProducts || []}
+                isOpen={showSearchDropdown}
+                onClose={() => setShowSearchDropdown(false)}
+                onViewAll={(q) => { onSearchChange(q); setShowSearchDropdown(false); }}
+              />
             </div>
 
             {/* Count + Sort */}
