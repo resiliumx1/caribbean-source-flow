@@ -336,7 +336,7 @@ export default function Shop() {
               </section>
             ) : null}
 
-            {bundles.length > 0 && <BundlesGrid bundles={bundles} />}
+            
           </>
         ) : (
           <>
