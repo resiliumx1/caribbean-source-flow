@@ -1,5 +1,7 @@
 import { useConditions } from "@/hooks/use-conditions";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { SearchDropdown } from "./SearchDropdown";
+import type { Product } from "@/hooks/use-products";
 import {
   ChevronDown, X, SlidersHorizontal, Search, Check,
   LayoutGrid, Flame, Apple, Moon, ShieldCheck, Dumbbell, Heart, Package,
@@ -71,6 +73,7 @@ interface ShopFilterNavProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   conditionCounts?: Map<string, number>;
+  allProducts?: Product[];
 }
 
 export function ShopFilterNav({
@@ -85,6 +88,7 @@ export function ShopFilterNav({
   searchQuery,
   onSearchChange,
   conditionCounts,
+  allProducts,
 }: ShopFilterNavProps) {
   const { data: conditions } = useConditions();
   const [goalOpen, setGoalOpen] = useState(false);
@@ -96,6 +100,8 @@ export function ShopFilterNav({
   const sentinelRef = useRef<HTMLDivElement>(null);
   const goalRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
   const activeCount = (activeCondition ? 1 : 0) + (activeForm ? 1 : 0);
   const activeConditionName = conditions?.find(c => c.slug === activeCondition)?.name;
@@ -119,10 +125,11 @@ export function ShopFilterNav({
     const handler = (e: MouseEvent) => {
       if (goalOpen && goalRef.current && !goalRef.current.contains(e.target as Node)) setGoalOpen(false);
       if (formOpen && formRef.current && !formRef.current.contains(e.target as Node)) setFormOpen(false);
+      if (showSearchDropdown && searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) setShowSearchDropdown(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [goalOpen, formOpen]);
+  }, [goalOpen, formOpen, showSearchDropdown]);
 
   const productCountLabel = () => {
     if (searchQuery) return `${totalProducts} result${totalProducts !== 1 ? 's' : ''}`;
@@ -353,23 +360,30 @@ export function ShopFilterNav({
             </div>
 
             {/* Search */}
-            <div className="relative flex-shrink-0" style={{ width: 220 }}>
+            <div ref={searchContainerRef} className="relative flex-shrink-0" style={{ width: 220 }}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#999' }} />
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
+                onChange={(e) => { onSearchChange(e.target.value); setShowSearchDropdown(e.target.value.length > 0); }}
                 placeholder="Search products..."
                 className="w-full h-9 pl-9 pr-8 rounded-full text-[13px] outline-none"
                 style={{ background: '#ffffff', border: '1px solid #d4d0c8', fontFamily: "'DM Sans', sans-serif", color: '#333' }}
-                onFocus={e => { e.currentTarget.style.borderColor = '#1b4332'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(27,67,50,0.15)'; }}
+                onFocus={e => { e.currentTarget.style.borderColor = '#1b4332'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(27,67,50,0.15)'; if (searchQuery) setShowSearchDropdown(true); }}
                 onBlur={e => { e.currentTarget.style.borderColor = '#d4d0c8'; e.currentTarget.style.boxShadow = 'none'; }}
               />
               {searchQuery && (
-                <button onClick={() => onSearchChange('')} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                <button onClick={() => { onSearchChange(''); setShowSearchDropdown(false); }} className="absolute right-2.5 top-1/2 -translate-y-1/2">
                   <X className="w-4 h-4" style={{ color: '#999' }} />
                 </button>
               )}
+              <SearchDropdown
+                query={searchQuery}
+                products={allProducts || []}
+                isOpen={showSearchDropdown}
+                onClose={() => setShowSearchDropdown(false)}
+                onViewAll={(q) => { onSearchChange(q); setShowSearchDropdown(false); }}
+              />
             </div>
 
             {/* Count + Sort */}
@@ -418,16 +432,24 @@ export function ShopFilterNav({
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e) => { onSearchChange(e.target.value); setShowSearchDropdown(e.target.value.length > 0); }}
               placeholder="Search products..."
               className="w-full h-9 pl-9 pr-8 rounded-full text-[13px] outline-none"
               style={{ background: '#ffffff', border: '1px solid #d4d0c8', fontFamily: "'DM Sans', sans-serif", color: '#333' }}
+              onFocus={() => { if (searchQuery) setShowSearchDropdown(true); }}
             />
             {searchQuery && (
-              <button onClick={() => onSearchChange('')} className="absolute right-2.5 top-1/2 -translate-y-1/2">
+              <button onClick={() => { onSearchChange(''); setShowSearchDropdown(false); }} className="absolute right-2.5 top-1/2 -translate-y-1/2">
                 <X className="w-4 h-4" style={{ color: '#999' }} />
               </button>
             )}
+            <SearchDropdown
+              query={searchQuery}
+              products={allProducts || []}
+              isOpen={showSearchDropdown}
+              onClose={() => setShowSearchDropdown(false)}
+              onViewAll={(q) => { onSearchChange(q); setShowSearchDropdown(false); }}
+            />
           </div>
 
           {/* Row 2: Filter dropdowns + Count + Sort */}
@@ -509,16 +531,24 @@ export function ShopFilterNav({
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e) => { onSearchChange(e.target.value); setShowSearchDropdown(e.target.value.length > 0); }}
               placeholder="Search products..."
               className="w-full rounded-full text-[13px] outline-none"
               style={{ height: 44, paddingLeft: 36, paddingRight: 36, background: '#ffffff', border: '1px solid #d4d0c8', fontFamily: "'DM Sans', sans-serif", color: '#333' }}
+              onFocus={() => { if (searchQuery) setShowSearchDropdown(true); }}
             />
             {searchQuery && (
-              <button onClick={() => onSearchChange('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+              <button onClick={() => { onSearchChange(''); setShowSearchDropdown(false); }} className="absolute right-3 top-1/2 -translate-y-1/2">
                 <X className="w-4 h-4" style={{ color: '#999' }} />
               </button>
             )}
+            <SearchDropdown
+              query={searchQuery}
+              products={allProducts || []}
+              isOpen={showSearchDropdown}
+              onClose={() => setShowSearchDropdown(false)}
+              onViewAll={(q) => { onSearchChange(q); setShowSearchDropdown(false); }}
+            />
           </div>
 
           {/* Row 2: Filter buttons + Sort */}

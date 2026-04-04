@@ -166,7 +166,9 @@ export default function Shop() {
 
   // Apply filters + sorting + search
   const displayProducts = useMemo(() => {
-    let filtered = [...allSingles];
+    let filtered = debouncedSearch
+      ? [...(products || [])].filter(p => p.is_active !== false)
+      : [...allSingles];
 
     // Search filter
     if (debouncedSearch) {
@@ -174,7 +176,9 @@ export default function Shop() {
       filtered = filtered.filter((p) =>
         p.name.toLowerCase().includes(q) ||
         (p.description && p.description.toLowerCase().includes(q)) ||
-        (p.short_description && p.short_description.toLowerCase().includes(q))
+        (p.short_description && p.short_description.toLowerCase().includes(q)) ||
+        p.product_type.toLowerCase().includes(q) ||
+        p.slug.toLowerCase().includes(q)
       );
     }
 
@@ -264,6 +268,7 @@ export default function Shop() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         conditionCounts={conditionCounts}
+        allProducts={products || []}
       />
 
       <main className="container mx-auto px-4 pt-8 sm:pt-12 pb-20">
