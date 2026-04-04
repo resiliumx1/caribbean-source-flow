@@ -12,7 +12,7 @@ export function SourceStory() {
             <div className="rounded-lg overflow-hidden">
               <img
                 src={apothecaryDisplay}
-                alt="Harvesting medicinal herbs on the volcanic ridge at dawn"
+                alt="Harvesting medicinal herbs on the ridge at dawn"
                 className="w-full h-auto object-cover"
                 loading="lazy"
                 width={800}
