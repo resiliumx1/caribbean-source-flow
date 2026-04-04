@@ -116,7 +116,7 @@ const TrinityHomepage = () => {
       <Suspense fallback={<SectionFallback />}>
         <RidgeRetreat />
       </Suspense>
-      <Suspense fallback={null}><BotanicalVine /></Suspense>
+      
       <Suspense fallback={<SectionFallback />}>
         <SchoolSection />
       </Suspense>
