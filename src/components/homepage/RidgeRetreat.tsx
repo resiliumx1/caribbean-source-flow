@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import retreatHero from "@/assets/retreat-hero-yoga.webp";
+import { VineVariationD } from "@/components/decorative/BotanicalVine";
 
 const features = [
 "Daily one-on-one consultations",
