@@ -348,29 +348,32 @@ export function ShopFilterNav({
                 </button>
               )}
               {formOpen && (
-                <DropdownPanel>
-                  <OptionRow
-                    icon={LayoutGrid}
-                    label="All Forms"
-                    active={!activeForm}
-                    onClick={() => { onFormChange(null); setFormOpen(false); }}
-                  />
-                  {FORMS.map(f => {
-                    const Icon = FORM_ICON_MAP[f.slug] || Leaf;
-                    return (
-                      <OptionRow
-                        key={f.slug}
-                        icon={Icon}
-                        label={f.label}
-                        active={activeForm === f.slug}
-                        onClick={() => {
-                          onFormChange(activeForm === f.slug ? null : f.slug);
-                          setFormOpen(false);
-                        }}
-                      />
-                    );
-                  })}
-                </DropdownPanel>
+                <>
+                  <div className="fixed inset-0 z-[9989]" onClick={() => setFormOpen(false)} />
+                  <DropdownPanel parentRef={formRef}>
+                    <OptionRow
+                      icon={LayoutGrid}
+                      label="All Forms"
+                      active={!activeForm}
+                      onClick={() => { onFormChange(null); setFormOpen(false); }}
+                    />
+                    {FORMS.map(f => {
+                      const Icon = FORM_ICON_MAP[f.slug] || Leaf;
+                      return (
+                        <OptionRow
+                          key={f.slug}
+                          icon={Icon}
+                          label={f.label}
+                          active={activeForm === f.slug}
+                          onClick={() => {
+                            onFormChange(activeForm === f.slug ? null : f.slug);
+                            setFormOpen(false);
+                          }}
+                        />
+                      );
+                    })}
+                  </DropdownPanel>
+                </>
               )}
             </div>
 
