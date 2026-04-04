@@ -5,9 +5,9 @@ import {
   Phone, Mail, MessageCircle, Share2, X, Sun, Moon,
   Globe, ChevronDown, Download, ExternalLink, ZoomIn
 } from "lucide-react";
-import goddessPhoto from "@/assets/goddess-itopia.png";
-import ubuntuLogo from "@/assets/ubuntu-logo.png";
-import kailashLogo from "@/assets/mount-kailash-logo-green.png";
+import goddessPhoto from "@/assets/goddess-itopia.webp";
+import ubuntuLogo from "@/assets/ubuntu-logo.webp";
+import kailashLogo from "@/assets/mount-kailash-logo-green.webp";
 
 const CARD_URL = "https://caribbean-source-flow.lovable.app/goddess";
 
