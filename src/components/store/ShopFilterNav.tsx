@@ -73,6 +73,7 @@ interface ShopFilterNavProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   conditionCounts?: Map<string, number>;
+  allProducts?: Product[];
 }
 
 export function ShopFilterNav({
