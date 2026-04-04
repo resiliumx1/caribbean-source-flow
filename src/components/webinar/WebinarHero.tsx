@@ -80,7 +80,7 @@ export default function WebinarHero() {
           className="font-jost font-light max-w-xl mx-auto mb-6 leading-relaxed"
           style={{ color: "rgba(242,234,216,0.85)", fontSize: "1.1rem" }}
         >
-          Honorable Priest Kailash and the MKRC team share 21 years of herbal wisdom
+          Rt Hon Priest Kailash K Leonce and the MKRC team share 21 years of herbal wisdom
           — through free, expert-led webinars you can watch anytime.
         </p>
 

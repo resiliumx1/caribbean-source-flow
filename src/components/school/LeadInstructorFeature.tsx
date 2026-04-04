@@ -27,7 +27,7 @@ export function LeadInstructorFeature() {
                   Lead Instructor
                 </span>
                 <h3 className="text-xl font-serif font-bold text-foreground mb-1">
-                  Rt. Honourable Priest Kailash Kay Leonce
+                  Rt Hon Priest Kailash K Leonce
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">Grand Master Herbal Physician & Founder, HSEK</p>
 

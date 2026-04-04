@@ -14,7 +14,7 @@ interface Instructor {
 
 const instructors: Instructor[] = [
   {
-    name: "Rt. Honourable Priest Kailash Kay Leonce",
+    name: "Rt Hon Priest Kailash K Leonce",
     title: "Grand Master Herbal Physician",
     credentials: "Lead Instructor & Founder, HSEK",
     bio: "A 21+ year master herbalist and founder of Mount Kailash Rejuvenation Centre and the Herbal School of Esoteric Knowledge. Author of 'The New Herbal Manual,' Priest Kailash has trained over 500 herbalists and is recognized by the St. Lucia Tourism Authority as an Official Cultural Heritage Partner. His approach blends traditional Caribbean bush medicine with modern scientific methodology.",

@@ -60,7 +60,7 @@ export default function WebinarHost() {
             Founder, Mount Kailash Rejuvenation Centre
           </p>
           <p className="font-jost font-light leading-relaxed mb-8" style={{ color: "var(--site-text-secondary)" }}>
-            For over two decades, Honorable Priest Kailash has dedicated his life to the study and practice of herbal medicine
+            For over two decades, Priest Kailash has dedicated his life to the study and practice of herbal medicine
             from the volcanic mountains of Saint Lucia. He created these free webinars because he believes healing knowledge
             belongs to everyone — not locked behind paywalls.
           </p>
