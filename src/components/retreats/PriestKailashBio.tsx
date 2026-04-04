@@ -11,7 +11,7 @@ export function PriestKailashBio() {
             <div className="aspect-[4/5] rounded-2xl overflow-hidden" style={{ border: '2px solid rgba(188,138,95,0.3)', boxShadow: '0 0 40px rgba(188,138,95,0.08)' }}>
               <img
                 src={priestPhoto}
-                alt="Priest Kailash Kay Leonce welcoming guests"
+                alt="Rt Hon Priest Kailash K Leonce welcoming guests"
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
