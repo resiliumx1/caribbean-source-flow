@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin, FileText, Package, Truck } from "lucide-react";
+import { FooterVine } from "@/components/decorative/BotanicalVine";
 
 export const Footer = () => {
   return (
