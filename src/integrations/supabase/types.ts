@@ -291,6 +291,7 @@ export type Database = {
           subtotal_xcd: number
           total_usd: number
           total_xcd: number
+          tracking_carrier: string | null
           tracking_number: string | null
           updated_at: string | null
           user_id: string | null
@@ -323,6 +324,7 @@ export type Database = {
           subtotal_xcd: number
           total_usd: number
           total_xcd: number
+          tracking_carrier?: string | null
           tracking_number?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -355,6 +357,7 @@ export type Database = {
           subtotal_xcd?: number
           total_usd?: number
           total_xcd?: number
+          tracking_carrier?: string | null
           tracking_number?: string | null
           updated_at?: string | null
           user_id?: string | null

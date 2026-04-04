@@ -34,6 +34,7 @@ const AdminRetreatDates = lazy(() => import("./pages/AdminRetreatDates"));
 const AdminReviews = lazy(() => import("./pages/AdminReviews"));
 const AdminWebinars = lazy(() => import("./pages/AdminWebinars"));
 const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
+const AdminOrders = lazy(() => import("./pages/AdminOrders"));
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
@@ -136,6 +137,7 @@ function AppContent() {
             <Route path="reviews" element={<AdminReviews />} />
             <Route path="webinars" element={<AdminWebinars />} />
             <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="orders" element={<AdminOrders />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

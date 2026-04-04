@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Menu, User, MessageCircle, DoorOpen } from "lucide-react";
+import { ShoppingBag, Menu, User, MessageCircle, DoorOpen, UserCircle } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { Button } from "@/components/ui/button";
 import { CurrencyToggle } from "./CurrencyToggle";
@@ -9,6 +9,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { CustomerPortal } from "./CustomerPortal";
 
 const SCHOOL_URL = "https://mount-kailash-school-temp.netlify.app";
 
@@ -31,6 +32,7 @@ export function StoreHeader() {
   const prevCountRef = useRef(cartCount);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
+  const [portalOpen, setPortalOpen] = useState(false);
 
   // Gate visibility: hidden until gate-complete on homepage first visit
   const [headerVisible, setHeaderVisible] = useState(() => {
@@ -167,6 +169,10 @@ export function StoreHeader() {
             </div>
             <CurrencyToggle />
 
+            <Button variant="ghost" size="icon" aria-label="My Account" onClick={() => setPortalOpen(true)}>
+              <UserCircle className="w-5 h-5" />
+            </Button>
+
             <Link to="/cart" className="relative" aria-label="Shopping cart">
               <Button variant="ghost" size="icon" aria-label="View cart" className={cartBounce ? "animate-bounce" : ""}>
                 <ShoppingBag className="w-5 h-5" />
@@ -229,6 +235,13 @@ export function StoreHeader() {
 
                   <hr className="my-2" />
 
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); setPortalOpen(true); }}
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors text-left min-h-[44px] flex items-center gap-2"
+                  >
+                    <UserCircle className="w-5 h-5" /> My Account
+                  </button>
+
                   <Link
                     to="/admin/login"
                     onClick={() => setMobileMenuOpen(false)}
@@ -261,6 +274,7 @@ export function StoreHeader() {
           </div>
         </div>
       </div>
+      <CustomerPortal open={portalOpen} onClose={() => setPortalOpen(false)} />
     </header>
   );
 }
