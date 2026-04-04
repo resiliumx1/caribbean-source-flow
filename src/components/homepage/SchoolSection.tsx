@@ -1,5 +1,6 @@
 import { ArrowRight, GraduationCap, Award, Users, CreditCard } from "lucide-react";
 import schoolFaculty from "@/assets/school-faculty-ceremony.webp";
+import { VineVariationB } from "@/components/decorative/BotanicalVine";
 
 const features = [
   { icon: GraduationCap, text: "6 months online + 3 weeks in-person immersion" },
