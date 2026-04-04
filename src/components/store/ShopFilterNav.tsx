@@ -279,7 +279,7 @@ export function ShopFilterNav({
               ) : (
                 <button
                   onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
+                  className="filter-btn-goal flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(false)}
                 >
                   <Compass className="w-4 h-4 filter-icon-goal" style={{ color: '#3D715D' }} /> Shop by Goal <ChevronDown className="w-3.5 h-3.5" />
