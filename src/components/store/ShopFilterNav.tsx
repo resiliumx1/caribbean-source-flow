@@ -531,16 +531,24 @@ export function ShopFilterNav({
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e) => { onSearchChange(e.target.value); setShowSearchDropdown(e.target.value.length > 0); }}
               placeholder="Search products..."
               className="w-full rounded-full text-[13px] outline-none"
               style={{ height: 44, paddingLeft: 36, paddingRight: 36, background: '#ffffff', border: '1px solid #d4d0c8', fontFamily: "'DM Sans', sans-serif", color: '#333' }}
+              onFocus={() => { if (searchQuery) setShowSearchDropdown(true); }}
             />
             {searchQuery && (
-              <button onClick={() => onSearchChange('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+              <button onClick={() => { onSearchChange(''); setShowSearchDropdown(false); }} className="absolute right-3 top-1/2 -translate-y-1/2">
                 <X className="w-4 h-4" style={{ color: '#999' }} />
               </button>
             )}
+            <SearchDropdown
+              query={searchQuery}
+              products={allProducts || []}
+              isOpen={showSearchDropdown}
+              onClose={() => setShowSearchDropdown(false)}
+              onViewAll={(q) => { onSearchChange(q); setShowSearchDropdown(false); }}
+            />
           </div>
 
           {/* Row 2: Filter buttons + Sort */}
