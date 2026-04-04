@@ -266,6 +266,7 @@ export function ShopFilterNav({
             <div ref={goalRef} className="relative">
               {activeCondition ? (
                 <button
+                  onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }}
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(true)}
                 >
