@@ -178,7 +178,7 @@ export function StoreHeader() {
 
             <Link to="/admin/login" className="hidden sm:block" aria-label="Admin login">
               <Button variant="ghost" size="icon" aria-label="Admin login">
-                <User className="w-5 h-5" />
+                <User className="w-4 h-4 text-muted-foreground" />
               </Button>
             </Link>
 
