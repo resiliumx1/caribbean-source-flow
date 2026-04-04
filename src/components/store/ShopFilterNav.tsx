@@ -485,12 +485,15 @@ export function ShopFilterNav({
                 </button>
               )}
               {goalOpen && (
-                <DropdownPanel>
-                  <OptionRow icon={LayoutGrid} label="All" active={!activeCondition} onClick={() => { onConditionChange(null); setGoalOpen(false); }} />
-                  {(conditions || []).map(c => (
-                    <OptionRow key={c.id} icon={getConditionIcon(c.slug)} label={c.name} active={activeCondition === c.slug} count={conditionCounts?.get(c.slug)} onClick={() => { onConditionChange(activeCondition === c.slug ? null : c.slug); setGoalOpen(false); }} />
-                  ))}
-                </DropdownPanel>
+                <>
+                  <div className="fixed inset-0 z-[9989]" onClick={() => setGoalOpen(false)} />
+                  <DropdownPanel parentRef={goalRef}>
+                    <OptionRow icon={LayoutGrid} label="All" active={!activeCondition} onClick={() => { onConditionChange(null); setGoalOpen(false); }} />
+                    {(conditions || []).map(c => (
+                      <OptionRow key={c.id} icon={getConditionIcon(c.slug)} label={c.name} active={activeCondition === c.slug} count={conditionCounts?.get(c.slug)} onClick={() => { onConditionChange(activeCondition === c.slug ? null : c.slug); setGoalOpen(false); }} />
+                    ))}
+                  </DropdownPanel>
+                </>
               )}
             </div>
 
