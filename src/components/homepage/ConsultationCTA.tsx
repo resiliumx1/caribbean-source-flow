@@ -7,7 +7,7 @@ export function ConsultationCTA() {
   return (
     <section
       className="py-20 px-4 relative"
-      style={{ background: "var(--site-bg-primary, #F5F1E8)" }}
+      style={{ background: "var(--site-bg-primary, #F5F1E8)", overflow: "visible" }}
     >
       <div className="max-w-2xl mx-auto text-center">
         {/* Portrait */}

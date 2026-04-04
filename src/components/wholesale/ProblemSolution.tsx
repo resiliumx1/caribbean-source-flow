@@ -1,6 +1,6 @@
 import { AlertTriangle, CheckCircle2, ShieldCheck, Clock, Truck } from "lucide-react";
 import inconsistentQuality from "@/assets/inconsistent-quality.png";
-import labProcessing from "@/assets/lab-processing.png";
+import labProcessing from "@/assets/bottle-lineup-wholesale.webp";
 import warehouseImage from "@/assets/miami-warehouse.jpg";
 
 const solutions = [
