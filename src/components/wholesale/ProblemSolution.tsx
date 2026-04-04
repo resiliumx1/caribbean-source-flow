@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle2, ShieldCheck, Clock, Truck } from "lucide-react";
-import inconsistentQuality from "@/assets/inconsistent-quality.png";
+import inconsistentQuality from "@/assets/inconsistent-quality.webp";
 import labProcessing from "@/assets/bottle-lineup-wholesale.webp";
 import warehouseImage from "@/assets/miami-warehouse.jpg";
 
