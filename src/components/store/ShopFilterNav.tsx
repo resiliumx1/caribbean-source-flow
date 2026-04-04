@@ -315,6 +315,7 @@ export function ShopFilterNav({
             <div ref={formRef} className="relative">
               {activeForm ? (
                 <button
+                  onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }}
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(true)}
                 >
