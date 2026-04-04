@@ -485,8 +485,8 @@ export function ShopFilterNav({
                   <X className="w-3 h-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); onFormChange(null); }} />
                 </button>
               ) : (
-                <button onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
-                  <FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3 h-3" />
+                <button onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }} className="filter-btn-form flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
+                  <FlaskConical className="w-4 h-4 filter-icon-form" style={{ color: '#3D715D' }} /> Form <ChevronDown className="w-3 h-3" />
                 </button>
               )}
               {formOpen && (
