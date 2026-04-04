@@ -267,6 +267,7 @@ export function StoreHeader() {
           </div>
         </div>
       </div>
+      <CustomerPortal open={portalOpen} onClose={() => setPortalOpen(false)} />
     </header>
   );
 }
