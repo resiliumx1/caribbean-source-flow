@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Leaf } from "lucide-react";
 import priestPhoto from "@/assets/priest-kailash-host.webp";
+import { VineVariationA } from "@/components/decorative/BotanicalVine";
 
 export function ConsultationCTA() {
   return (
