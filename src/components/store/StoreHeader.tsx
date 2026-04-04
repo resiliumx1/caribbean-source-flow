@@ -156,11 +156,11 @@ export function StoreHeader() {
             </div>
             <CurrencyToggle />
 
-            <Link to="/account" aria-label="My Account">
-              <Button variant="ghost" size="icon" aria-label="My Account">
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/account" aria-label="My Account">
                 <UserCircle className="w-5 h-5" style={{ color: "#1b4332" }} />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
             <Link to="/cart" className="relative" aria-label="Shopping cart">
               <Button variant="ghost" size="icon" aria-label="View cart" className={cartBounce ? "animate-bounce" : ""}>
