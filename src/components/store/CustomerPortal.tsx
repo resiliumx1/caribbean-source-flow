@@ -143,11 +143,14 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
         </div>
 
         {!looked ? (
-          <div style={S.section}>
+          <div style={{ ...S.section, flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <Leaf className="w-10 h-10 mx-auto mb-3" style={{ color: "#1b4332", opacity: 0.7 }} />
+              <p style={{ fontSize: 14, color: "#666", lineHeight: 1.6, maxWidth: 280, margin: "0 auto" }}>
+                Enter the email you used at checkout to view your orders and tracking info.
+              </p>
+            </div>
             <form onSubmit={handleLookup}>
-              <label style={{ fontSize: 13, fontWeight: 500, color: "#555", display: "block", marginBottom: 6 }}>
-                Enter the email you used at checkout
-              </label>
               <input
                 type="email"
                 value={email}
@@ -158,12 +161,9 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
                 onBlur={(e) => { e.currentTarget.style.borderColor = "#d4d0c8"; e.currentTarget.style.boxShadow = "none"; }}
                 required
               />
-              <button type="submit" style={{ ...S.btn, marginTop: 12 }} disabled={loading}>
+              <button type="submit" style={{ ...S.btn, marginTop: 14 }} disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Find My Orders"}
               </button>
-              <p style={{ fontSize: 12, color: "#999", fontStyle: "italic", marginTop: 12, lineHeight: 1.6 }}>
-                We'll look up all orders associated with this email address.
-              </p>
             </form>
           </div>
         ) : (
