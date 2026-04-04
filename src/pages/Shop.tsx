@@ -268,6 +268,7 @@ export default function Shop() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         conditionCounts={conditionCounts}
+        allProducts={products || []}
       />
 
       <main className="container mx-auto px-4 pt-8 sm:pt-12 pb-20">
