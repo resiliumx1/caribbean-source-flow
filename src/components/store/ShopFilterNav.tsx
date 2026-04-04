@@ -637,6 +637,17 @@ export function ShopFilterNav({
           from { opacity: 0; transform: translateY(-4px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes gentleSpin {
+          0% { transform: rotate(0deg); }
+          25% { transform: rotate(15deg); }
+          50% { transform: rotate(0deg); }
+          75% { transform: rotate(-15deg); }
+          100% { transform: rotate(0deg); }
+        }
+        @keyframes gentleBubble {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-2px) scale(1.05); }
+        }
       `}</style>
     </>
   );
