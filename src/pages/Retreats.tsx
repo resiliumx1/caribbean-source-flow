@@ -10,6 +10,7 @@ import { RetreatVideoGallery } from "@/components/retreats/RetreatVideoGallery";
 import { TransformationStories } from "@/components/retreats/TransformationStories";
 import { RetreatCalendar } from "@/components/retreats/RetreatCalendar";
 import { GroupRetreatsList } from "@/components/retreats/GroupRetreatsList";
+import { TikTokGuestJourney } from "@/components/retreats/TikTokGuestJourney";
 import { RetreatFAQ } from "@/components/retreats/RetreatFAQ";
 import { UnifiedFooter } from "@/components/trinity/UnifiedFooter";
 import { MessageCircle } from "lucide-react";
