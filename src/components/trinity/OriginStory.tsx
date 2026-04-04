@@ -11,7 +11,7 @@ export function OriginStory() {
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--site-border)' }}>
             <img
               src={wholesaleCollage}
-              alt="Priest Kailash Kay Leonce inspecting medicinal herbs at Mount Kailash processing facility, Saint Lucia"
+              alt="Rt Hon Priest Kailash K Leonce inspecting medicinal herbs at Mount Kailash processing facility, Saint Lucia"
               className="w-full h-auto object-cover transition-all duration-300 hover:brightness-110"
               loading="lazy"
               width={1200}
