@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { X, Truck, ExternalLink, Search, Loader2, ShoppingBag, MapPin } from "lucide-react";
+import { X, Truck, ExternalLink, Search, Loader2, Leaf, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -46,8 +46,35 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
       setOrders(data.orders || []);
       setOrderItems(data.orderItems || {});
       setLooked(true);
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message || "Could not look up orders.", variant: "destructive" });
+    } catch {
+      // Fallback: direct Supabase query
+      try {
+        const { data: ordersData } = await supabase
+          .from("orders")
+          .select("*")
+          .eq("email", email.trim().toLowerCase())
+          .order("created_at", { ascending: false });
+
+        setOrders(ordersData || []);
+
+        if (ordersData && ordersData.length > 0) {
+          const orderIds = ordersData.map((o: any) => o.id);
+          const { data: itemsData } = await supabase
+            .from("order_items")
+            .select("*")
+            .in("order_id", orderIds);
+
+          const grouped: Record<string, any[]> = {};
+          (itemsData || []).forEach((item: any) => {
+            if (!grouped[item.order_id]) grouped[item.order_id] = [];
+            grouped[item.order_id].push(item);
+          });
+          setOrderItems(grouped);
+        }
+        setLooked(true);
+      } catch (fallbackErr: any) {
+        toast({ title: "Error", description: fallbackErr.message || "Could not look up orders.", variant: "destructive" });
+      }
     } finally {
       setLoading(false);
     }
@@ -79,15 +106,16 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
     overlay: { position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.5)", transition: "opacity 0.2s" },
     panel: {
       position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 9999, width: "min(420px, 100vw)",
-      background: "#ffffff", boxShadow: "-8px 0 30px rgba(0,0,0,0.15)", overflowY: "auto" as const,
+      background: "#fafaf8", boxShadow: "-8px 0 30px rgba(0,0,0,0.15)", overflowY: "auto" as const,
       animation: "portalSlideIn 300ms ease-out forwards",
       fontFamily: "'DM Sans', sans-serif",
     },
-    header: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #eee" },
+    header: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #f0ede8" },
     section: { padding: "16px 20px" },
     input: {
       width: "100%", height: 44, borderRadius: 8, border: "1px solid #d4d0c8", padding: "0 14px",
-      fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none",
+      fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none", background: "#ffffff",
+      transition: "border-color 0.2s, box-shadow 0.2s",
     },
     btn: {
       width: "100%", height: 44, borderRadius: 8, border: "none", cursor: "pointer",
@@ -102,9 +130,12 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
       <div style={S.overlay} onClick={onClose} />
       <div style={S.panel}>
         <div style={S.header}>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 20, color: "#1b4332" }}>
-            {looked ? "Your Orders" : "Look Up Orders"}
-          </h2>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Leaf className="w-5 h-5" style={{ color: "#1b4332" }} />
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 20, color: "#1b4332" }}>
+              {looked ? "Your Orders" : "Look Up Orders"}
+            </h2>
+          </div>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer" }}>
             <X className="w-5 h-5" style={{ color: "#888" }} />
           </button>
@@ -122,6 +153,8 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 style={S.input}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "#1b4332"; e.currentTarget.style.boxShadow = "0 0 0 2px rgba(27,67,50,0.15)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "#d4d0c8"; e.currentTarget.style.boxShadow = "none"; }}
                 required
               />
               <button type="submit" style={{ ...S.btn, marginTop: 12 }} disabled={loading}>
@@ -134,19 +167,39 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
           </div>
         ) : (
           <>
-            {/* Orders */}
-            <div style={S.section}>
+            {/* Welcome back / email row */}
+            <div style={{ ...S.section, paddingBottom: 0 }}>
+              {orders.length > 0 && (
+                <div style={{ background: "rgba(27,67,50,0.06)", borderRadius: 10, padding: "10px 14px", marginBottom: 12 }}>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: "#1b4332", fontFamily: "'Cormorant Garamond', serif" }}>Welcome back 🌿</p>
+                  <p style={{ fontSize: 12, color: "#666", marginTop: 2 }}>{email}</p>
+                </div>
+              )}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <p style={{ fontSize: 13, color: "#888" }}>{email}</p>
-                <button onClick={handleReset} style={{ fontSize: 12, color: "#1b4332", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+                {orders.length === 0 && <p style={{ fontSize: 13, color: "#888" }}>{email}</p>}
+                <button onClick={handleReset} style={{ fontSize: 12, color: "#1b4332", background: "none", border: "none", cursor: "pointer", textDecoration: "underline", marginLeft: "auto" }}>
                   Different email
                 </button>
               </div>
+            </div>
+
+            {/* Orders */}
+            <div style={S.section}>
               {orders.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "20px 0" }}>
-                  <ShoppingBag className="w-8 h-8 mx-auto mb-3" style={{ color: "#ccc" }} />
-                  <p style={{ fontSize: 14, color: "#888", marginBottom: 12 }}>No orders found for this email.</p>
-                  <Link to="/shop" onClick={onClose} style={{ fontSize: 13, color: "#1b4332", fontWeight: 600, textDecoration: "none" }}>
+                <div style={{ textAlign: "center", padding: "28px 0" }}>
+                  <Leaf className="w-12 h-12 mx-auto mb-4" style={{ color: "#c5c0b8" }} />
+                  <p style={{ fontSize: 15, color: "#888", marginBottom: 4, fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>No orders found</p>
+                  <p style={{ fontSize: 13, color: "#aaa", marginBottom: 16 }}>We couldn't find any orders for this email.</p>
+                  <Link
+                    to="/shop"
+                    onClick={onClose}
+                    style={{
+                      display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+                      height: 40, padding: "0 20px", borderRadius: 8,
+                      background: "#1b4332", color: "#fff", fontSize: 13, fontWeight: 600,
+                      textDecoration: "none", fontFamily: "'DM Sans', sans-serif",
+                    }}
+                  >
                     Browse our shop →
                   </Link>
                 </div>
@@ -156,7 +209,7 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
                     const status = STATUS_STYLES[order.status || "pending"] || STATUS_STYLES.pending;
                     const items = orderItems[order.id] || [];
                     return (
-                      <div key={order.id} style={{ border: "1px solid #eee", borderRadius: 12, padding: 14, background: "#fafafa" }}>
+                      <div key={order.id} style={{ border: "1px solid #f0ede8", borderRadius: 12, padding: 14, background: "#ffffff" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                           <span style={{ fontSize: 12, color: "#888" }}>{formatDate(order.created_at)}</span>
                           <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20, background: status.bg, color: status.color }}>
@@ -199,7 +252,7 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
             </div>
 
             {/* Track Order Section */}
-            <div style={{ ...S.section, borderTop: "1px solid #eee" }}>
+            <div style={{ ...S.section, borderTop: "1px solid #f0ede8" }}>
               <h3 style={S.sectionTitle}>Track an Order</h3>
               <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
                 <input

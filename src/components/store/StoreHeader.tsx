@@ -159,7 +159,7 @@ export function StoreHeader() {
             <CurrencyToggle />
 
             <Button variant="ghost" size="icon" aria-label="My Account" onClick={() => setPortalOpen(true)}>
-              <UserCircle className="w-5 h-5" />
+              <UserCircle className="w-5 h-5" style={{ color: "#1b4332" }} />
             </Button>
 
             <Link to="/cart" className="relative" aria-label="Shopping cart">
