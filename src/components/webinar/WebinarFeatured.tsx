@@ -82,7 +82,7 @@ export default function WebinarFeatured() {
           </h2>
           <p className="font-jost font-light mb-6 leading-relaxed" style={{ color: "var(--site-text-secondary)" }}>
             Discover Caribbean herbal protocols that have helped hundreds restore hormonal balance,
-            boost fertility, and reclaim vitality — with Honorable Priest Kailash.
+            boost fertility, and reclaim vitality — with Priest Kailash.
           </p>
 
           {/* Metadata */}

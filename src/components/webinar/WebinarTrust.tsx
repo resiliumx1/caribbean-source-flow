@@ -29,7 +29,7 @@ export default function WebinarTrust() {
           Ancient Wisdom. Zero Cost. Real Results.
         </h2>
         <p className="font-jost font-light max-w-lg mx-auto mb-14" style={{ color: "var(--site-text-secondary)" }}>
-          Honorable Priest Kailash believes healing knowledge belongs to everyone.
+          Priest Kailash believes healing knowledge belongs to everyone.
           These sessions are our gift to you.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

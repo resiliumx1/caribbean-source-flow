@@ -27,7 +27,7 @@ export default function WebinarHost() {
           >
             <img
               src={priestKailashImg}
-              alt="Honorable Priest Kailash — herbal medicine practitioner and MKRC founder"
+              alt="Rt Hon Priest Kailash K Leonce — herbal medicine practitioner and MKRC founder"
               className="w-full h-auto object-cover"
               loading="lazy"
             />
@@ -54,13 +54,13 @@ export default function WebinarHost() {
             className="font-cormorant font-bold mb-2"
             style={{ color: "var(--site-text-primary)", fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)" }}
           >
-            Honorable Priest Kailash
+            Rt Hon Priest Kailash K Leonce
           </h2>
           <p className="font-jost font-light mb-6" style={{ color: "var(--site-gold)" }}>
             Founder, Mount Kailash Rejuvenation Centre
           </p>
           <p className="font-jost font-light leading-relaxed mb-8" style={{ color: "var(--site-text-secondary)" }}>
-            For over two decades, Honorable Priest Kailash has dedicated his life to the study and practice of herbal medicine
+            For over two decades, Priest Kailash has dedicated his life to the study and practice of herbal medicine
             from the volcanic mountains of Saint Lucia. He created these free webinars because he believes healing knowledge
             belongs to everyone — not locked behind paywalls.
           </p>

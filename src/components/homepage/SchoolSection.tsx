@@ -1,5 +1,5 @@
 import { ArrowRight, GraduationCap, Award, Users, CreditCard } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, GraduationCap, Award, Users, CreditCard } from "lucide-react";
 import schoolFaculty from "@/assets/school-faculty-ceremony.webp";
 
 const features = [
@@ -63,8 +63,10 @@ export function SchoolSection() {
         </div>
 
         {/* Single Featured Card */}
-        <Link
-          to="/school/herbal-physician"
+        <a
+          href="https://mount-kailash-school-temp.netlify.app"
+          target="_blank"
+          rel="noopener noreferrer"
           className="group block rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
           style={{
             background: "var(--site-bg-card, #FFFFFF)",
@@ -162,7 +164,7 @@ export function SchoolSection() {
               </p>
             </div>
           </div>
-        </Link>
+        </a>
 
         {/* Trust Bar */}
         <div className="flex flex-wrap justify-center items-center gap-6 mt-8">

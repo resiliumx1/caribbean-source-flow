@@ -10,7 +10,7 @@ export function PriestKailashQuote() {
           terrain — the cellular environment where disease takes root."
         </blockquote>
         <cite style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-gold)', fontStyle: 'normal' }}>
-          — Priest Kailash Kay Leonce, Master Herbalist
+          — Rt Hon Priest Kailash K Leonce, Master Herbalist
         </cite>
       </div>
     </section>

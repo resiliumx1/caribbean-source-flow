@@ -165,7 +165,7 @@ export function StoreFooter() {
             </p>
             <p className="text-xs max-w-xl text-center md:text-right">
               Traditional use based on St. Lucian bush medicine practices under the guidance
-              of Right Honourable Priest Kailash Kay Leonce.
+              of Rt Hon Priest Kailash K Leonce.
             </p>
           </div>
         </div>

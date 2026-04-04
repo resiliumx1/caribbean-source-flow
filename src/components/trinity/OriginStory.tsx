@@ -36,7 +36,7 @@ export function OriginStory() {
 
             <div className="space-y-4 mb-8" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', lineHeight: 1.7 }}>
               <p>
-                For over two decades, Right Honourable Priest Kailash Kay Leonce
+                For over two decades, Rt Hon Priest Kailash K Leonce
                 has cultivated the art of St. Lucian bush medicine in the shadow
                 of the Pitons—where volcanic soil yields herbs of extraordinary
                 potency.

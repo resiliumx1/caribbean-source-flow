@@ -27,7 +27,7 @@ export function CallingSection() {
               that you can heal others."
             </p>
             <footer className="mt-6 text-primary-foreground/70 text-base font-medium">
-              — Rt. Honourable Priest Kailash Kay Leonce
+              — Rt Hon Priest Kailash K Leonce
             </footer>
           </blockquote>
         </motion.div>
