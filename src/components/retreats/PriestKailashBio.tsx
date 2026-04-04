@@ -26,8 +26,11 @@ export function PriestKailashBio() {
             </span>
 
             <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 44px)', color: 'var(--site-text-primary)', marginBottom: '8px' }}>
-              Priest Kailash Kay Leonce
+              Rt Hon Priest Kailash K Leonce
             </h2>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontStyle: 'italic', fontSize: '16px', color: '#666', marginBottom: '12px' }}>
+              He will guide you forward to that connection
+            </p>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: '16px', color: 'var(--site-gold)', marginBottom: '28px' }}>
               Traditional Wisdom Keeper · 21 Years of Practice
             </p>

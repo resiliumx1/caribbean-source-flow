@@ -101,14 +101,21 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <Link
-          to="/shop"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+        {/* Back Button */}
+        <button
+          onClick={() => {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              window.location.href = '/shop';
+            }
+          }}
+          className="inline-flex items-center gap-2 text-sm transition-colors mb-6 hover:underline"
+          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '14px', color: '#1b4332', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Shop
-        </Link>
+          ← Back to Shop
+        </button>
 
         {/* Main grid - 60/40 split for larger images */}
         <div className="grid lg:grid-cols-[1fr_450px] gap-8 lg:gap-12">

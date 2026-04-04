@@ -16,7 +16,7 @@ import { StoreFooter } from "@/components/store/StoreFooter";
 export default function HerbalPhysicianCourse() {
   return (
     <>
-      <SEOHead title="Herbal Physician Training | School of Bush Medicine | Mount Kailash" description="Become a certified herbal physician. Clinical bush medicine training from St. Lucia. 500+ graduates worldwide. Led by Priest Kailash Kay Leonce." path="/school/herbal-physician" />
+      <SEOHead title="Herbal Physician Training | School of Bush Medicine | Mount Kailash" description="Become a certified herbal physician. Clinical bush medicine training from St. Lucia. 500+ graduates worldwide. Led by Rt Hon Priest Kailash K Leonce." path="/school/herbal-physician" />
       <SchoolStickyHeader />
       <main className="pb-20 lg:pb-0">
         <CourseDetailHero />

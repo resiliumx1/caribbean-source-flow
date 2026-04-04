@@ -40,7 +40,8 @@ const pillars = [
   description: "Master-level clinical certification",
   cta: "Start Training",
   ctaWeight: "font-semibold" as const,
-  route: "/school/herbal-physician",
+  route: "https://mount-kailash-school-temp.netlify.app",
+  external: true,
   image: pillarSchool,
   icon: GraduationCap
 }];

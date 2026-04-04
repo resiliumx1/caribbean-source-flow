@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { BookOpen, ShieldCheck, Heart, Check } from "lucide-react";
 
 const materials = [
-  { text: "The New Herbal Manual — Rt. Hon. Priest Kailash Kay Leonce", icon: BookOpen },
+  { text: "The New Herbal Manual — Rt Hon Priest Kailash K Leonce", icon: BookOpen },
   { text: "Medical Herbalism — David Hoffmann, FNIMH, AHG", icon: BookOpen },
   { text: "Lab Coat, Scrubs, PPE (for in-person practical)", icon: ShieldCheck },
 ];

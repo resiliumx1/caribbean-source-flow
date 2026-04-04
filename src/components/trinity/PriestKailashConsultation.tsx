@@ -46,7 +46,7 @@ export function PriestKailashConsultation() {
               }}
             >
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: '13px', color: '#f2ead8' }}>
-                Right Honourable Priest Kailash Kay Leonce
+                Rt Hon Priest Kailash K Leonce
               </span>
               <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '12px', color: 'var(--site-gold)' }}>
                 Master Herbalist · 21+ Years Practice

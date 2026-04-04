@@ -184,7 +184,7 @@ export function CourseDetailHero() {
 
                 <div className="border-t border-border pt-4 mt-4">
                   <h4 className="text-sm font-semibold text-foreground mb-2">Instructors</h4>
-                  <p className="text-sm text-muted-foreground">Priest Kailash Kay Leonce</p>
+                  <p className="text-sm text-muted-foreground">Rt Hon Priest Kailash K Leonce</p>
                   <p className="text-sm text-muted-foreground">Goddess Ronda Itopia Archer</p>
                 </div>
               </div>

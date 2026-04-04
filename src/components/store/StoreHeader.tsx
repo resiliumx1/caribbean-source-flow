@@ -87,7 +87,7 @@ export function StoreHeader() {
       {isLocalVisitor && (
         <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
           <span className="inline-flex items-center gap-2">
-            🚚 Live in St. Lucia? Get same-day delivery. Order by 2 PM.
+            📞 Live in St. Lucia? Call our local number for expedited delivery!
           </span>
         </div>
       )}

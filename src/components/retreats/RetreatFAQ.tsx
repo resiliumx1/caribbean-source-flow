@@ -12,15 +12,15 @@ const faqs = [
   },
   {
     q: "Where Is It?",
-    a: "Our retreat centre is located in Soufrière, on the southwest coast of St. Lucia — nestled between the iconic Pitons and the volcanic rainforest. It's a 90-minute scenic drive from Hewanorra International Airport (UVF).",
+    a: "Our retreat centre is located on the outskirts of Castries, nestled in the windy mountains of Marc. It is a 90-minute drive from Hewanorra International Airport (UVF).",
   },
   {
     q: "What Should I Bring?",
-    a: "Comfortable clothes for warm weather and nature walks, sturdy shoes, a journal for reflection, and an open heart. We provide linens, towels, rain ponchos, and all herbal products.",
+    a: "Comfortable, free-flowing clothing for warm weather and nature walks, sturdy shoes, a journal for reflection, and an open heart to receive nature's healing. We provide linens, towels, and all herbal products.",
   },
   {
     q: "Dietary Accommodations?",
-    a: "All meals are 100% plant-based, prepared with ingredients from our volcanic soil gardens. We can accommodate most allergies and sensitivities — just let us know during booking.",
+    a: "All feasts are 100% plant-based, prepared with ingredients from our organically mineral rich soil gardens. We can accommodate most allergies and sensitivities — just let us know during booking.",
   },
   {
     q: "Is This Right For Me?",
