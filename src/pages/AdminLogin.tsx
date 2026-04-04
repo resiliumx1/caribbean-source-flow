@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export default function AdminLogin() {
@@ -58,7 +58,14 @@ export default function AdminLogin() {
   }
 
   return (
-    <main className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-muted/30 flex items-center justify-center p-4 relative">
+      <Link
+        to="/"
+        className="absolute top-6 left-6 flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to site
+      </Link>
       <Card className="w-full max-w-md" role="form">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex justify-center">

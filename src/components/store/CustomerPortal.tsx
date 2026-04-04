@@ -103,22 +103,23 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
   if (!open) return null;
 
   const S: Record<string, React.CSSProperties> = {
-    overlay: { position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.5)", transition: "opacity 0.2s" },
+    overlay: { position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(2px)", transition: "opacity 0.2s" },
     panel: {
-      position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 9999, width: "min(420px, 100vw)",
-      background: "#fafaf8", boxShadow: "-8px 0 30px rgba(0,0,0,0.15)", overflowY: "auto" as const,
+      position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 9999, width: "min(400px, 92vw)",
+      background: "#fafaf8", boxShadow: "-8px 0 30px rgba(0,0,0,0.18)", overflowY: "auto" as const,
       animation: "portalSlideIn 300ms ease-out forwards",
       fontFamily: "'DM Sans', sans-serif",
+      display: "flex", flexDirection: "column" as const,
     },
-    header: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #f0ede8" },
-    section: { padding: "16px 20px" },
+    header: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 22px", borderBottom: "1px solid #f0ede8" },
+    section: { padding: "20px 22px" },
     input: {
-      width: "100%", height: 44, borderRadius: 8, border: "1px solid #d4d0c8", padding: "0 14px",
+      width: "100%", height: 46, borderRadius: 10, border: "1px solid #d4d0c8", padding: "0 14px",
       fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none", background: "#ffffff",
       transition: "border-color 0.2s, box-shadow 0.2s",
     },
     btn: {
-      width: "100%", height: 44, borderRadius: 8, border: "none", cursor: "pointer",
+      width: "100%", height: 46, borderRadius: 10, border: "none", cursor: "pointer",
       background: "#1b4332", color: "#fff", fontSize: 14, fontWeight: 600,
       fontFamily: "'DM Sans', sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
     },
@@ -142,11 +143,14 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
         </div>
 
         {!looked ? (
-          <div style={S.section}>
+          <div style={{ ...S.section, flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <Leaf className="w-10 h-10 mx-auto mb-3" style={{ color: "#1b4332", opacity: 0.7 }} />
+              <p style={{ fontSize: 14, color: "#666", lineHeight: 1.6, maxWidth: 280, margin: "0 auto" }}>
+                Enter the email you used at checkout to view your orders and tracking info.
+              </p>
+            </div>
             <form onSubmit={handleLookup}>
-              <label style={{ fontSize: 13, fontWeight: 500, color: "#555", display: "block", marginBottom: 6 }}>
-                Enter the email you used at checkout
-              </label>
               <input
                 type="email"
                 value={email}
@@ -157,12 +161,9 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
                 onBlur={(e) => { e.currentTarget.style.borderColor = "#d4d0c8"; e.currentTarget.style.boxShadow = "none"; }}
                 required
               />
-              <button type="submit" style={{ ...S.btn, marginTop: 12 }} disabled={loading}>
+              <button type="submit" style={{ ...S.btn, marginTop: 14 }} disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Find My Orders"}
               </button>
-              <p style={{ fontSize: 12, color: "#999", fontStyle: "italic", marginTop: 12, lineHeight: 1.6 }}>
-                We'll look up all orders associated with this email address.
-              </p>
             </form>
           </div>
         ) : (
