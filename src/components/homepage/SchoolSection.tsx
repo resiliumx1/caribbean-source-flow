@@ -188,6 +188,7 @@ export function SchoolSection() {
           ))}
         </div>
       </div>
+      <VineVariationB />
     </section>
   );
 }

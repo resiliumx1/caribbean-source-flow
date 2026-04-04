@@ -174,6 +174,7 @@ export function WholesaleAuthority() {
           </button>
         </div>
       </div>
+      <VineVariationC />
     </section>
   );
 }

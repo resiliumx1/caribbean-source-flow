@@ -137,6 +137,7 @@ export function ConsultationCTA() {
           Not ready? Explore the Apothecary →
         </Link>
       </div>
+      <VineVariationA />
     </section>
   );
 }
