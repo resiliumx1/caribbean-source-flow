@@ -4,7 +4,7 @@ const items = [
   { Icon: Lock, label: "Secure Checkout" },
   { Icon: Truck, label: "3-Day US Delivery" },
   { Icon: Leaf, label: "100% Natural" },
-  { Icon: RotateCcw, label: "30-Day Returns" },
+  { Icon: RotateCcw, label: "COA Verified" },
 ];
 
 export function TrustBar() {

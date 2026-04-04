@@ -22,7 +22,7 @@ const parts = [
     price: "$4,400",
     details: [
       { icon: Calendar, label: "Start Date", value: "October 1, 2026" },
-      { icon: MapPin, label: "Location", value: "Mount Kailash, Soufrière, St. Lucia" },
+      { icon: MapPin, label: "Location", value: "Mount Kailash, Marc, Castries, St. Lucia" },
       { icon: Plane, label: "Duration", value: "10 days immersive" },
       { icon: Home, label: "Includes", value: "Accommodation on-site" },
     ],

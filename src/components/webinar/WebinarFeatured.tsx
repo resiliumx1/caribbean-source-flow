@@ -33,17 +33,6 @@ export default function WebinarFeatured() {
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-          {/* Play button */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div
-              className="w-20 h-20 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:scale-110 cursor-pointer"
-              style={{ backgroundColor: "rgba(201,168,76,0.9)", boxShadow: "0 0 30px rgba(201,168,76,0.3)" }}
-            >
-              <svg width="24" height="28" viewBox="0 0 22 26" fill="none">
-                <path d="M2 1.5L20.5 13L2 24.5V1.5Z" fill="#090909" stroke="#090909" strokeWidth="2" strokeLinejoin="round" />
-              </svg>
-            </div>
-          </div>
 
           {/* Duration badge */}
           <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ backgroundColor: "rgba(201,168,76,0.9)" }}>
@@ -110,10 +99,11 @@ export default function WebinarFeatured() {
               {isLive ? "Reserve My Seat" : "Watch Recording"}
             </a>
             <button
+              onClick={() => document.getElementById("archive")?.scrollIntoView({ behavior: "smooth" })}
               className="font-jost font-medium px-7 py-3 rounded-full text-sm border transition-all duration-300 hover:brightness-110 min-h-[48px]"
               style={{ borderColor: "rgba(242,234,216,0.3)", color: "var(--site-text-primary)" }}
             >
-              Share Session
+              Browse All Sessions
             </button>
           </div>
 

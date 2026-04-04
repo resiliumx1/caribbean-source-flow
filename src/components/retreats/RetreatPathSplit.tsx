@@ -10,7 +10,7 @@ const whatsappNumber = "+17582855195";
 const groupIncludes = [
   "Daily bush medicine workshops",
   "Traditional plant-based meals",
-  "Volcanic rainforest excursions",
+  "Tropical rainforest excursions",
   "Personal wellness consultation",
   "Integration practices",
   "Airport transfers",

@@ -10,6 +10,7 @@ import { RetreatVideoGallery } from "@/components/retreats/RetreatVideoGallery";
 import { TransformationStories } from "@/components/retreats/TransformationStories";
 import { RetreatCalendar } from "@/components/retreats/RetreatCalendar";
 import { GroupRetreatsList } from "@/components/retreats/GroupRetreatsList";
+import { TikTokGuestJourney } from "@/components/retreats/TikTokGuestJourney";
 import { RetreatFAQ } from "@/components/retreats/RetreatFAQ";
 import { UnifiedFooter } from "@/components/trinity/UnifiedFooter";
 import { MessageCircle } from "lucide-react";
@@ -32,7 +33,7 @@ const Retreats = () => {
 
   return (
     <main className="min-h-screen">
-      <SEOHead title="Wellness Retreats in Saint Lucia | Mount Kailash" description="Immersive wellness retreats in St. Lucia's volcanic rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal." path="/retreats" />
+      <SEOHead title="Wellness Retreats in Saint Lucia | Mount Kailash" description="Immersive wellness retreats in St. Lucia's tropical rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal." path="/retreats" />
       <RetreatsHero />
       <FadeInStagger delay={0.1}>
         <RetreatPathSplit />
@@ -51,6 +52,9 @@ const Retreats = () => {
       </FadeInStagger>
       <FadeInStagger delay={0.35}>
         <TransformationStories />
+      </FadeInStagger>
+      <FadeInStagger delay={0.38}>
+        <TikTokGuestJourney />
       </FadeInStagger>
       <FadeInStagger delay={0.4}>
         <RetreatFAQ />

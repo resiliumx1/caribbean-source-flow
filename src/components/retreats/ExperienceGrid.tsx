@@ -5,7 +5,7 @@ const experiences = [
     icon: Leaf,
     title: "Learn",
     subtitle: "Bush Medicine Workshops",
-    description: "Harvest herbs from volcanic soil and learn traditional preparation methods passed down through generations.",
+    description: "Harvest herbs from organically mineral rich soil and learn traditional preparation methods passed down through generations.",
   },
   {
     icon: Heart,
@@ -17,12 +17,12 @@ const experiences = [
     icon: UtensilsCrossed,
     title: "Nourish",
     subtitle: "Plant-Based Cuisine",
-    description: "Farm-to-table Caribbean meals made with ingredients grown in our volcanic soil gardens.",
+    description: "Farm-to-table Caribbean meals made with ingredients grown in our organically mineral rich soil gardens.",
   },
   {
     icon: Mountain,
     title: "Explore",
-    subtitle: "Volcanic Rainforest",
+    subtitle: "Tropical Rainforest",
     description: "Guided walks through lush trails, Sulphur Springs visits, and breathtaking Piton views.",
   },
   {

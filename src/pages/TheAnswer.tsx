@@ -5,6 +5,7 @@ import {
   Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles,
   ChevronDown, Star, ArrowRight, CheckCircle2, MapPin
 } from "lucide-react";
+import { AnswerChallenge } from "@/components/answer/AnswerChallenge";
 import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import tincture from "@/assets/mkrc-answer-tincture.png";
@@ -49,7 +50,7 @@ const INGREDIENTS = [
     latin: "Petiveria alliacea",
     alias: "The Caribbean's Secret Weapon",
     shortDesc: "Used for centuries across the Caribbean to fortify the immune system. Rich in dibenzyl trisulphide (DTS) — a rare organic sulphur compound.",
-    fullDesc: "Research confirms its antimicrobial, antiviral, and immunomodulatory properties. Traditionally harvested from wild populations in St. Lucia's volcanic rainforest, this herb forms the backbone of The Answer's immune-fortifying power.",
+    fullDesc: "Research confirms its antimicrobial, antiviral, and immunomodulatory properties. Traditionally harvested from wild populations in St. Lucia's tropical rainforest, this herb forms the backbone of The Answer's immune-fortifying power.",
     tags: ["Antimicrobial", "Immunomodulatory", "Anti-inflammatory"],
     leafSvg: "M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2c1.5 3 2.5 6 2 9-1 3-3 5-5 6 2-1 4-3 5-6s.5-6-2-9z",
   },
@@ -69,7 +70,7 @@ const INGREDIENTS = [
     latin: "Annona muricata",
     alias: "Nature's Cellular Guardian",
     shortDesc: "Widely used across the Caribbean and Latin America to enhance immunity through activation of MAP kinase pathways.",
-    fullDesc: "Traditionally valued for supporting cellular health, promoting natural apoptosis of mutated cells, and providing a powerful antioxidant shield. The leaves are hand-selected at peak potency from trees growing in St. Lucia's mineral-rich volcanic soil.",
+    fullDesc: "Traditionally valued for supporting cellular health, promoting natural apoptosis of mutated cells, and providing a powerful antioxidant shield. The leaves are hand-selected at peak potency from trees growing in St. Lucia's organically mineral rich soil.",
     tags: ["Immune Enhancer", "Antioxidant", "Cellular Health"],
     leafSvg: "M17 8C8 10 5.9 16.9 3.9 19.9M5 2l3 6-2 8 4 4 8-2 4-8-4-6z",
   },
@@ -187,7 +188,7 @@ export default function TheAnswer() {
           <span className="answer-trust-bar__dot">·</span>
           <span>Free Shipping Over $75</span>
           <span className="answer-trust-bar__dot">·</span>
-          <span>30-Day Satisfaction Guarantee</span>
+          <span>COA Documentation</span>
           <span className="answer-trust-bar__dot">·</span>
           <span>Subscribe &amp; Save 15%</span>
         </div>
@@ -406,6 +407,9 @@ export default function TheAnswer() {
           ))}
         </div>
       </section>
+
+      {/* ===== ANSWER CHALLENGE ===== */}
+      <AnswerChallenge />
 
       {/* ===== 8. THE COVENANT — Final CTA ===== */}
       <section id="purchase" className="final-cta">

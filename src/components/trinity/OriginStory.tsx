@@ -11,7 +11,7 @@ export function OriginStory() {
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--site-border)' }}>
             <img
               src={wholesaleCollage}
-              alt="Priest Kailash Kay Leonce inspecting medicinal herbs at Mount Kailash processing facility, Saint Lucia"
+              alt="Rt Hon Priest Kailash K Leonce inspecting medicinal herbs at Mount Kailash processing facility, Saint Lucia"
               className="w-full h-auto object-cover transition-all duration-300 hover:brightness-110"
               loading="lazy"
               width={1200}
@@ -27,7 +27,7 @@ export function OriginStory() {
           {/* Content — Left */}
           <div className="lg:pl-8">
             <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>
-              From Volcanic Soil
+              From Mineral Rich Soil
             </span>
 
             <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 3.5vw, 40px)', color: 'var(--site-text-primary)', marginBottom: '24px', lineHeight: 1.2 }}>
@@ -38,7 +38,7 @@ export function OriginStory() {
               <p>
                 For over two decades, Rt Hon Priest Kailash K Leonce
                 has cultivated the art of St. Lucian bush medicine in the shadow
-                of the Pitons—where volcanic soil yields herbs of extraordinary
+                where organically mineral rich soil yields herbs of extraordinary
                 potency.
               </p>
               <p>
@@ -85,7 +85,7 @@ export function OriginStory() {
             >
               <img
                 src={schoolFaculty}
-                alt="Priest Kailash Kay Leonce with Mount Kailash School of Esoteric Knowledge faculty in ceremonial robes, Saint Lucia"
+                alt="Rt Hon Priest Kailash K Leonce with Mount Kailash School of Esoteric Knowledge faculty in ceremonial robes, Saint Lucia"
                 className="w-full h-auto object-cover"
                 style={{ objectPosition: 'center top' }}
                 loading="lazy"

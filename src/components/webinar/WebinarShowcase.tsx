@@ -53,17 +53,6 @@ function VideoCard({ video, onClick }: { video: WebinarVideo; onClick: () => voi
         {/* Gradient scrim */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-        {/* Play button — gold */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
-            style={{ backgroundColor: "rgba(201,168,76,0.85)", boxShadow: "0 0 20px rgba(201,168,76,0.2)" }}
-          >
-            <svg width="16" height="18" viewBox="0 0 16 18" fill="none">
-              <path d="M1 1L15 9L1 17V1Z" fill="#090909" />
-            </svg>
-          </div>
-        </div>
 
         {/* New badge */}
         {isNew && (
