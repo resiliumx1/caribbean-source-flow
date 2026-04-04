@@ -330,7 +330,7 @@ export function ShopFilterNav({
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(false)}
                 >
-                  <FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3.5 h-3.5" />
+                  <FlaskConical className="w-4 h-4 filter-icon-form" style={{ color: '#3D715D' }} /> Form <ChevronDown className="w-3.5 h-3.5" />
                 </button>
               )}
               {formOpen && (
