@@ -1,5 +1,5 @@
 import { ArrowRight, GraduationCap, Award, Users, CreditCard } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, GraduationCap, Award, Users, CreditCard } from "lucide-react";
 import schoolFaculty from "@/assets/school-faculty-ceremony.webp";
 
 const features = [
