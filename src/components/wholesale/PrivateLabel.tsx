@@ -21,7 +21,7 @@ export const PrivateLabel = ({ onScrollToForm }: PrivateLabelProps) => {
           <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: "4/3" }}>
             <img
               src={labProcessing}
-              alt="Processing facility for custom formulations"
+              alt="Mount Kailash herbal tincture product lineup — Pure Gold, Pure Green, Colax, Virility, Fey Duvan, Blood Detox"
                className="w-full h-full object-cover"
                loading="lazy"
             />

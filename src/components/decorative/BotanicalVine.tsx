@@ -209,8 +209,8 @@ export function VineVariationD({ className = "" }: { className?: string }) {
 // Footer vine — full animated leaves with dewdrops + sparkles
 export function FooterVine() {
   return (
-    <div style={{ width: '100%', overflow: 'hidden', height: 80, marginBottom: -30, pointerEvents: 'none' }}>
-      <svg width="100%" height="80" viewBox="0 0 1000 80" preserveAspectRatio="xMidYMid slice" fill="none" style={{ color: '#3a6a3a', opacity: 0.55 }}>
+    <div style={{ width: '100%', overflow: 'visible', height: 80, marginBottom: -30, pointerEvents: 'none' }}>
+      <svg width="100%" height="80" viewBox="0 0 1000 80" preserveAspectRatio="xMidYMid slice" fill="none" style={{ color: '#5a9a5a', opacity: 0.55 }}>
         <motion.g animate={{ rotate: [-0.8, 0.8, -0.8] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} style={{ originX: "500px", originY: "40px" }}>
           <motion.path d="M 0 40 C 150 10, 350 70, 500 40 C 650 10, 850 70, 1000 40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"
             initial={{ pathLength: 0, opacity: 0 }} whileInView={{ pathLength: 1, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 2.5, ease: "easeInOut" }} />
