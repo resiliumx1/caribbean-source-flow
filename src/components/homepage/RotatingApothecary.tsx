@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store-context";
+import { VineVariationB } from "@/components/decorative/BotanicalVine";
 
 export function RotatingApothecary() {
   const { currency } = useStore();
