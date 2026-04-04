@@ -121,16 +121,14 @@ export function ShopFilterNav({
     return () => observer.disconnect();
   }, []);
 
-  // Close dropdowns on click outside
+  // Close search dropdown on click outside
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (goalOpen && goalRef.current && !goalRef.current.contains(e.target as Node)) setGoalOpen(false);
-      if (formOpen && formRef.current && !formRef.current.contains(e.target as Node)) setFormOpen(false);
       if (showSearchDropdown && searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) setShowSearchDropdown(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [goalOpen, formOpen, showSearchDropdown]);
+  }, [showSearchDropdown]);
 
   const productCountLabel = () => {
     if (searchQuery) return `${totalProducts} result${totalProducts !== 1 ? 's' : ''}`;
@@ -172,23 +170,34 @@ export function ShopFilterNav({
     </button>
   );
 
-  // Dropdown panel
-  const DropdownPanel = ({ children }: { children: React.ReactNode }) => (
-    <div
-      className="absolute left-0 top-full mt-2 z-50 min-w-[260px]"
-      style={{
-        background: '#ffffff',
-        borderRadius: 12,
-        padding: 8,
-        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-        border: '1px solid rgba(0,0,0,0.06)',
-        maxHeight: 400,
-        overflowY: 'auto',
-      }}
-    >
-      {children}
-    </div>
-  );
+  // Dropdown panel - fixed positioning to escape sticky stacking context
+  const DropdownPanel = ({ children, parentRef: pRef }: { children: React.ReactNode; parentRef?: React.RefObject<HTMLDivElement> }) => {
+    const [pos, setPos] = useState({ top: 0, left: 0 });
+    useEffect(() => {
+      if (pRef?.current) {
+        const rect = pRef.current.getBoundingClientRect();
+        setPos({ top: rect.bottom + 8, left: rect.left });
+      }
+    }, [pRef]);
+    return (
+      <div
+        className="fixed z-[9990] min-w-[260px]"
+        style={{
+          top: pos.top,
+          left: pos.left,
+          background: '#ffffff',
+          borderRadius: 12,
+          padding: 8,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+          border: '1px solid rgba(0,0,0,0.06)',
+          maxHeight: 400,
+          overflowY: 'auto',
+        }}
+      >
+        {children}
+      </div>
+    );
+  };
 
   // Mobile bottom sheet
   const BottomSheet = ({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) => (
@@ -287,27 +296,30 @@ export function ShopFilterNav({
                 </button>
               )}
               {goalOpen && (
-                <DropdownPanel>
-                  <OptionRow
-                    icon={LayoutGrid}
-                    label="All"
-                    active={!activeCondition}
-                    onClick={() => { onConditionChange(null); setGoalOpen(false); }}
-                  />
-                  {(conditions || []).map(c => (
+                <>
+                  <div className="fixed inset-0 z-[9989]" onClick={() => setGoalOpen(false)} />
+                  <DropdownPanel parentRef={goalRef}>
                     <OptionRow
-                      key={c.id}
-                      icon={getConditionIcon(c.slug)}
-                      label={c.name}
-                      active={activeCondition === c.slug}
-                      count={conditionCounts?.get(c.slug)}
-                      onClick={() => {
-                        onConditionChange(activeCondition === c.slug ? null : c.slug);
-                        setGoalOpen(false);
-                      }}
+                      icon={LayoutGrid}
+                      label="All"
+                      active={!activeCondition}
+                      onClick={() => { onConditionChange(null); setGoalOpen(false); }}
                     />
-                  ))}
-                </DropdownPanel>
+                    {(conditions || []).map(c => (
+                      <OptionRow
+                        key={c.id}
+                        icon={getConditionIcon(c.slug)}
+                        label={c.name}
+                        active={activeCondition === c.slug}
+                        count={conditionCounts?.get(c.slug)}
+                        onClick={() => {
+                          onConditionChange(activeCondition === c.slug ? null : c.slug);
+                          setGoalOpen(false);
+                        }}
+                      />
+                    ))}
+                  </DropdownPanel>
+                </>
               )}
             </div>
 
@@ -336,29 +348,32 @@ export function ShopFilterNav({
                 </button>
               )}
               {formOpen && (
-                <DropdownPanel>
-                  <OptionRow
-                    icon={LayoutGrid}
-                    label="All Forms"
-                    active={!activeForm}
-                    onClick={() => { onFormChange(null); setFormOpen(false); }}
-                  />
-                  {FORMS.map(f => {
-                    const Icon = FORM_ICON_MAP[f.slug] || Leaf;
-                    return (
-                      <OptionRow
-                        key={f.slug}
-                        icon={Icon}
-                        label={f.label}
-                        active={activeForm === f.slug}
-                        onClick={() => {
-                          onFormChange(activeForm === f.slug ? null : f.slug);
-                          setFormOpen(false);
-                        }}
-                      />
-                    );
-                  })}
-                </DropdownPanel>
+                <>
+                  <div className="fixed inset-0 z-[9989]" onClick={() => setFormOpen(false)} />
+                  <DropdownPanel parentRef={formRef}>
+                    <OptionRow
+                      icon={LayoutGrid}
+                      label="All Forms"
+                      active={!activeForm}
+                      onClick={() => { onFormChange(null); setFormOpen(false); }}
+                    />
+                    {FORMS.map(f => {
+                      const Icon = FORM_ICON_MAP[f.slug] || Leaf;
+                      return (
+                        <OptionRow
+                          key={f.slug}
+                          icon={Icon}
+                          label={f.label}
+                          active={activeForm === f.slug}
+                          onClick={() => {
+                            onFormChange(activeForm === f.slug ? null : f.slug);
+                            setFormOpen(false);
+                          }}
+                        />
+                      );
+                    })}
+                  </DropdownPanel>
+                </>
               )}
             </div>
 
@@ -404,8 +419,8 @@ export function ShopFilterNav({
                 </button>
                 {showSortDropdown && (
                   <>
-                    <div className="fixed inset-0 z-40" onClick={() => setShowSortDropdown(false)} />
-                    <div className="absolute right-0 top-full mt-1 z-50 rounded-lg shadow-xl py-1 min-w-[180px]" style={{ background: '#ffffff', border: '1px solid #d4d0c8' }}>
+                    <div className="fixed inset-0 z-[9989]" onClick={() => setShowSortDropdown(false)} />
+                    <div className="fixed z-[9990] rounded-lg shadow-xl py-1 min-w-[180px]" style={{ background: '#ffffff', border: '1px solid #d4d0c8', top: (navRef.current?.getBoundingClientRect().bottom || 0) + 4, right: 24 }}>
                       {SORT_OPTIONS.map(opt => (
                         <button
                           key={opt.value}
@@ -470,12 +485,15 @@ export function ShopFilterNav({
                 </button>
               )}
               {goalOpen && (
-                <DropdownPanel>
-                  <OptionRow icon={LayoutGrid} label="All" active={!activeCondition} onClick={() => { onConditionChange(null); setGoalOpen(false); }} />
-                  {(conditions || []).map(c => (
-                    <OptionRow key={c.id} icon={getConditionIcon(c.slug)} label={c.name} active={activeCondition === c.slug} count={conditionCounts?.get(c.slug)} onClick={() => { onConditionChange(activeCondition === c.slug ? null : c.slug); setGoalOpen(false); }} />
-                  ))}
-                </DropdownPanel>
+                <>
+                  <div className="fixed inset-0 z-[9989]" onClick={() => setGoalOpen(false)} />
+                  <DropdownPanel parentRef={goalRef}>
+                    <OptionRow icon={LayoutGrid} label="All" active={!activeCondition} onClick={() => { onConditionChange(null); setGoalOpen(false); }} />
+                    {(conditions || []).map(c => (
+                      <OptionRow key={c.id} icon={getConditionIcon(c.slug)} label={c.name} active={activeCondition === c.slug} count={conditionCounts?.get(c.slug)} onClick={() => { onConditionChange(activeCondition === c.slug ? null : c.slug); setGoalOpen(false); }} />
+                    ))}
+                  </DropdownPanel>
+                </>
               )}
             </div>
 
@@ -492,12 +510,15 @@ export function ShopFilterNav({
                 </button>
               )}
               {formOpen && (
-                <DropdownPanel>
-                  <OptionRow icon={LayoutGrid} label="All Forms" active={!activeForm} onClick={() => { onFormChange(null); setFormOpen(false); }} />
-                  {FORMS.map(f => (
-                    <OptionRow key={f.slug} icon={FORM_ICON_MAP[f.slug] || Leaf} label={f.label} active={activeForm === f.slug} onClick={() => { onFormChange(activeForm === f.slug ? null : f.slug); setFormOpen(false); }} />
-                  ))}
-                </DropdownPanel>
+                <>
+                  <div className="fixed inset-0 z-[9989]" onClick={() => setFormOpen(false)} />
+                  <DropdownPanel parentRef={formRef}>
+                    <OptionRow icon={LayoutGrid} label="All Forms" active={!activeForm} onClick={() => { onFormChange(null); setFormOpen(false); }} />
+                    {FORMS.map(f => (
+                      <OptionRow key={f.slug} icon={FORM_ICON_MAP[f.slug] || Leaf} label={f.label} active={activeForm === f.slug} onClick={() => { onFormChange(activeForm === f.slug ? null : f.slug); setFormOpen(false); }} />
+                    ))}
+                  </DropdownPanel>
+                </>
               )}
             </div>
 
@@ -510,8 +531,8 @@ export function ShopFilterNav({
               </button>
               {showSortDropdown && (
                 <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowSortDropdown(false)} />
-                  <div className="absolute right-0 top-full mt-1 z-50 rounded-lg shadow-xl py-1 min-w-[180px]" style={{ background: '#ffffff', border: '1px solid #d4d0c8' }}>
+                  <div className="fixed inset-0 z-[9989]" onClick={() => setShowSortDropdown(false)} />
+                  <div className="fixed z-[9990] rounded-lg shadow-xl py-1 min-w-[180px]" style={{ background: '#ffffff', border: '1px solid #d4d0c8', top: (navRef.current?.getBoundingClientRect().bottom || 0) + 4, right: 24 }}>
                     {SORT_OPTIONS.map(opt => (
                       <button key={opt.value} onClick={() => { onSortChange(opt.value); setShowSortDropdown(false); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-black/5" style={{ color: sortBy === opt.value ? '#1b4332' : '#333', fontFamily: "'DM Sans', sans-serif", fontWeight: sortBy === opt.value ? 600 : 400 }}>
                         {opt.label}

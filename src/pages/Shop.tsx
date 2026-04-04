@@ -113,6 +113,10 @@ function ProductReel({ products }: { products: Product[] }) {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+        @keyframes gridFadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         @media (max-width: 768px) {
           .rounded-full[style*="width: 100"] {
             width: 80px !important;
@@ -189,7 +193,7 @@ export default function Shop() {
 
     if (activeForm) {
       const types = FORM_TYPES[activeForm] || [];
-      filtered = filtered.filter((p) => types.includes(p.product_type));
+      filtered = filtered.filter((p) => types.some(t => t.toLowerCase() === p.product_type?.toLowerCase()));
     }
 
     // Sort
@@ -248,6 +252,18 @@ export default function Shop() {
 
   const isFiltered = !!activeCondition || !!activeForm || !!debouncedSearch;
   const showDefaultView = !isFiltered;
+
+  // Auto-scroll to results when filter changes
+  useEffect(() => {
+    if (activeCondition || activeForm || sortBy !== "featured") {
+      setTimeout(() => {
+        const filterNav = document.getElementById('filter-nav');
+        if (filterNav) {
+          filterNav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [activeCondition, activeForm, sortBy]);
 
   return (
     <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
@@ -333,7 +349,11 @@ export default function Shop() {
             )}
 
             {displayProducts.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+              <div
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6"
+                style={{ animation: 'gridFadeIn 0.3s ease-out' }}
+                key={`${activeCondition}-${activeForm}-${sortBy}`}
+              >
                 {displayProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
