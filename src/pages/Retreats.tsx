@@ -53,6 +53,9 @@ const Retreats = () => {
       <FadeInStagger delay={0.35}>
         <TransformationStories />
       </FadeInStagger>
+      <FadeInStagger delay={0.38}>
+        <TikTokGuestJourney />
+      </FadeInStagger>
       <FadeInStagger delay={0.4}>
         <RetreatFAQ />
       </FadeInStagger>

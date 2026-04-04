@@ -408,6 +408,9 @@ export default function TheAnswer() {
         </div>
       </section>
 
+      {/* ===== ANSWER CHALLENGE ===== */}
+      <AnswerChallenge />
+
       {/* ===== 8. THE COVENANT — Final CTA ===== */}
       <section id="purchase" className="final-cta">
         <div ref={reveal} className="ta-reveal">
