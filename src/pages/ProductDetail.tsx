@@ -47,7 +47,7 @@ export default function ProductDetail() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 pt-20 pb-8">
           <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
             <Skeleton className="aspect-square rounded-xl" />
             <div className="space-y-4">
