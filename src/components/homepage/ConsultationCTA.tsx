@@ -6,7 +6,7 @@ import { VineVariationA } from "@/components/decorative/BotanicalVine";
 export function ConsultationCTA() {
   return (
     <section
-      className="py-20 px-4"
+      className="py-20 px-4 relative"
       style={{ background: "var(--site-bg-primary, #F5F1E8)" }}
     >
       <div className="max-w-2xl mx-auto text-center">
