@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { MessageCircle, Phone, MapPin } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
+import { FooterVine } from "@/components/decorative/BotanicalVine";
 
 const whatsappNumber = "+17582855195";
 const whatsappMessage = encodeURIComponent(
@@ -10,6 +11,7 @@ const whatsappMessage = encodeURIComponent(
 export function UnifiedFooter() {
   return (
     <footer style={{ background: 'var(--site-footer-bg)', color: 'var(--site-footer-text)' }}>
+      <FooterVine />
       <div className="container mx-auto max-w-6xl px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand Column */}

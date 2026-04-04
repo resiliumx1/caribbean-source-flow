@@ -2,12 +2,14 @@ import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, MessageCircle, Instagram, Facebook } from "lucide-react";
 import { useStore } from "@/lib/store-context";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
+import { FooterVine } from "@/components/decorative/BotanicalVine";
 
 export function StoreFooter() {
   const { storeEmail, storePhone, whatsappNumber } = useStore();
 
   return (
     <footer className="bg-primary text-primary-foreground">
+      <FooterVine />
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-4 gap-12">
           {/* Brand */}

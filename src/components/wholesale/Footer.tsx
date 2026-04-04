@@ -1,8 +1,10 @@
 import { Phone, Mail, MapPin, FileText, Package, Truck } from "lucide-react";
+import { FooterVine } from "@/components/decorative/BotanicalVine";
 
 export const Footer = () => {
   return (
     <footer className="py-16" style={{ background: "var(--site-footer-bg)", borderTop: "1px solid rgba(201,168,76,0.15)", fontFamily: "'DM Sans', sans-serif" }}>
+      <FooterVine />
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}

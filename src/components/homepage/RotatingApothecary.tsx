@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store-context";
+import { VineVariationB } from "@/components/decorative/BotanicalVine";
 
 export function RotatingApothecary() {
   const { currency } = useStore();
@@ -29,7 +30,7 @@ export function RotatingApothecary() {
   const items = [...products, ...products];
 
   return (
-    <section style={{ background: "var(--site-bg-secondary)" }} className="py-24 md:py-28 overflow-hidden">
+    <section style={{ background: "var(--site-bg-secondary)", position: "relative" }} className="py-24 md:py-28 overflow-hidden">
       <div className="container mx-auto max-w-6xl px-4 mb-10">
         <div className="flex items-end justify-between">
           <div>
@@ -197,6 +198,7 @@ export function RotatingApothecary() {
           100% { transform: translateX(-50%); }
         }
       `}</style>
+      <VineVariationB />
     </section>
   );
 }

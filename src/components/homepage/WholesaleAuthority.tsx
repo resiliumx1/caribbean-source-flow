@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, FileCheck, TrendingDown, Tag } from "lucide-react";
+import { VineVariationC } from "@/components/decorative/BotanicalVine";
 
 const features = [
   {
@@ -173,6 +174,7 @@ export function WholesaleAuthority() {
           </button>
         </div>
       </div>
+      <VineVariationC />
     </section>
   );
 }

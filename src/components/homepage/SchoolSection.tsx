@@ -1,5 +1,6 @@
 import { ArrowRight, GraduationCap, Award, Users, CreditCard } from "lucide-react";
 import schoolFaculty from "@/assets/school-faculty-ceremony.webp";
+import { VineVariationB } from "@/components/decorative/BotanicalVine";
 
 const features = [
   { icon: GraduationCap, text: "6 months online + 3 weeks in-person immersion" },
@@ -17,7 +18,7 @@ const trustItems = [
 export function SchoolSection() {
   return (
     <section
-      className="py-20 px-4"
+      className="py-20 px-4 relative"
       style={{ background: "var(--site-bg-primary, #F5F1E8)" }}
     >
       <div className="max-w-6xl mx-auto">
@@ -187,6 +188,7 @@ export function SchoolSection() {
           ))}
         </div>
       </div>
+      <VineVariationB />
     </section>
   );
 }

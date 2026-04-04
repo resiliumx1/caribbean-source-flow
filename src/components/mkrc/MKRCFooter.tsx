@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FooterVine } from "@/components/decorative/BotanicalVine";
 
 const FOOTER_LINKS = {
   shop: [
@@ -65,6 +66,7 @@ export default function MKRCFooter() {
         padding: "60px 0 40px",
       }}
     >
+      <FooterVine />
       <div
         className="mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10"
         style={{ maxWidth: 1200, padding: "0 24px" }}

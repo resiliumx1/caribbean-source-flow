@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import apothecaryDisplay from "@/assets/apothecary-display.png";
+import { VineVariationA } from "@/components/decorative/BotanicalVine";
 
 export function SourceStory() {
   return (
-    <section style={{ background: "var(--site-bg-primary)" }}>
+    <section style={{ background: "var(--site-bg-primary)", position: "relative" }}>
       <div className="container mx-auto max-w-6xl px-4 py-24 md:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left — Image with overlapping stat */}
@@ -152,6 +153,7 @@ export function SourceStory() {
           </div>
         </div>
       </div>
+      <VineVariationA />
     </section>
   );
 }

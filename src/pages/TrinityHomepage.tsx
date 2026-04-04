@@ -15,8 +15,6 @@ const SchoolSection = lazy(() => import("@/components/homepage/SchoolSection").t
 const ConsultationCTA = lazy(() => import("@/components/homepage/ConsultationCTA").then(m => ({ default: m.ConsultationCTA })));
 const HomepageFooter = lazy(() => import("@/components/homepage/HomepageFooter").then(m => ({ default: m.HomepageFooter })));
 const SocialProofMatrix = lazy(() => import("@/components/trinity/SocialProofMatrix").then(m => ({ default: m.SocialProofMatrix })));
-const BotanicalBranch = lazy(() => import("@/components/decorative/BotanicalSeparators").then(m => ({ default: m.SymmetricalBranch })));
-const BotanicalVine = lazy(() => import("@/components/decorative/BotanicalSeparators").then(m => ({ default: m.WindingVine })));
 
 const GoddessWhatsApp = () => (
   <a
@@ -109,23 +107,20 @@ const TrinityHomepage = () => {
       <Suspense fallback={<SectionFallback />}>
         <SourceStory />
       </Suspense>
-      <Suspense fallback={null}><BotanicalBranch /></Suspense>
       <Suspense fallback={<SectionFallback />}>
         <RotatingApothecary />
       </Suspense>
-      <Suspense fallback={null}><BotanicalVine /></Suspense>
       <Suspense fallback={<SectionFallback />}>
         <WholesaleAuthority />
       </Suspense>
-      <Suspense fallback={null}><BotanicalBranch /></Suspense>
       <Suspense fallback={<SectionFallback />}>
         <RidgeRetreat />
       </Suspense>
-      <Suspense fallback={null}><BotanicalVine /></Suspense>
+      
       <Suspense fallback={<SectionFallback />}>
         <SchoolSection />
       </Suspense>
-      <Suspense fallback={null}><BotanicalBranch /></Suspense>
+      
       <Suspense fallback={<SectionFallback />}>
         <ConsultationCTA />
       </Suspense>
