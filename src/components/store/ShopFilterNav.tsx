@@ -121,16 +121,14 @@ export function ShopFilterNav({
     return () => observer.disconnect();
   }, []);
 
-  // Close dropdowns on click outside
+  // Close search dropdown on click outside
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (goalOpen && goalRef.current && !goalRef.current.contains(e.target as Node)) setGoalOpen(false);
-      if (formOpen && formRef.current && !formRef.current.contains(e.target as Node)) setFormOpen(false);
       if (showSearchDropdown && searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) setShowSearchDropdown(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [goalOpen, formOpen, showSearchDropdown]);
+  }, [showSearchDropdown]);
 
   const productCountLabel = () => {
     if (searchQuery) return `${totalProducts} result${totalProducts !== 1 ? 's' : ''}`;
