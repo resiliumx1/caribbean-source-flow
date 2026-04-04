@@ -5,6 +5,7 @@ import {
   Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles,
   ChevronDown, Star, ArrowRight, CheckCircle2, MapPin
 } from "lucide-react";
+import { AnswerChallenge } from "@/components/answer/AnswerChallenge";
 import SectionLabel from "@/components/mkrc/SectionLabel";
 import CounterAnimation from "@/components/mkrc/CounterAnimation";
 import tincture from "@/assets/mkrc-answer-tincture.png";
