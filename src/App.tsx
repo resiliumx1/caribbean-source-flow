@@ -34,6 +34,7 @@ const AdminRetreatDates = lazy(() => import("./pages/AdminRetreatDates"));
 const AdminReviews = lazy(() => import("./pages/AdminReviews"));
 const AdminWebinars = lazy(() => import("./pages/AdminWebinars"));
 const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
+const AdminOrders = lazy(() => import("./pages/AdminOrders"));
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
