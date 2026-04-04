@@ -302,7 +302,7 @@ export default function Shop() {
           <>
             <FeaturedProduct />
 
-            {sectionRows.length > 0 ? (
+            {sectionRows.length > 0 && (
               sectionRows.map((row) => (
                 <section key={row.slug} className="mb-12 sm:mb-16">
                   <div className="flex items-baseline justify-between mb-4 sm:mb-6">
@@ -320,7 +320,10 @@ export default function Shop() {
                   </div>
                 </section>
               ))
-            ) : allSingles.length > 0 ? (
+            )}
+
+            {/* All Products grid - always shown in default view */}
+            {allSingles.length > 0 && (
               <section className="mb-12 sm:mb-16">
                 <h2 className="mb-4 sm:mb-6" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "clamp(20px, 3vw, 28px)", color: "var(--site-text-primary)" }}>
                   All Remedies
@@ -331,9 +334,7 @@ export default function Shop() {
                   ))}
                 </div>
               </section>
-            ) : null}
-
-            
+            )}
           </>
         ) : (
           <>
