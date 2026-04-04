@@ -637,16 +637,25 @@ export function ShopFilterNav({
           from { opacity: 0; transform: translateY(-4px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes gentleSpin {
+        @keyframes compassWobble {
           0% { transform: rotate(0deg); }
-          25% { transform: rotate(15deg); }
-          50% { transform: rotate(0deg); }
-          75% { transform: rotate(-15deg); }
+          20% { transform: rotate(20deg); }
+          40% { transform: rotate(-15deg); }
+          60% { transform: rotate(10deg); }
+          80% { transform: rotate(-5deg); }
           100% { transform: rotate(0deg); }
         }
-        @keyframes gentleBubble {
-          0%, 100% { transform: translateY(0) scale(1); }
+        .filter-btn-goal:hover .filter-icon-goal {
+          animation: compassWobble 0.6s ease-in-out;
+        }
+        @keyframes flaskBubble {
+          0% { transform: translateY(0) scale(1); }
+          30% { transform: translateY(-4px) scale(1.1); }
           50% { transform: translateY(-2px) scale(1.05); }
+          100% { transform: translateY(0) scale(1); }
+        }
+        .filter-btn-form:hover .filter-icon-form {
+          animation: flaskBubble 0.5s ease-out;
         }
       `}</style>
     </>
