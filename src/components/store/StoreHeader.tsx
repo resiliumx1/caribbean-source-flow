@@ -151,19 +151,8 @@ export function StoreHeader() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="w-8 h-8"
-              aria-label="Replay gate entrance"
-              title="Replay entrance"
-              onClick={() => {
-                localStorage.removeItem('mkrc-gate-seen');
-                window.location.href = '/';
-              }}
-            >
-              <DoorOpen className="w-4 h-4 opacity-60" />
-            </Button>
+
+
             <div className="hidden sm:block">
               <SkyToggle />
             </div>
