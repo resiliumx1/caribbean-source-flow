@@ -107,7 +107,6 @@ const TrinityHomepage = () => {
       <Suspense fallback={<SectionFallback />}>
         <SourceStory />
       </Suspense>
-      <Suspense fallback={null}><BotanicalBranch /></Suspense>
       <Suspense fallback={<SectionFallback />}>
         <RotatingApothecary />
       </Suspense>
