@@ -69,7 +69,7 @@ export default function AdminLayout() {
               <Button variant="outline" size="sm" className="h-8 w-8 p-0" aria-label="Toggle theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
                 {theme === 'dark' ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
               </Button>
-              <Link to="/"><Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs"><Home className="h-3 w-3" /><span className="hidden sm:inline">Site</span></Button></Link>
+              <Link to="/"><Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" style={{ color: '#1b4332' }}><Home className="h-4 w-4" /><span className="hidden sm:inline">Back to Site</span></Button></Link>
               <button onClick={() => signOut()} className="text-xs text-destructive hover:underline">Sign Out</button>
             </div>
           </div>
