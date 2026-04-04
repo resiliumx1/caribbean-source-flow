@@ -4,7 +4,7 @@ import { useProduct } from "@/hooks/use-products";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import { Skeleton } from "@/components/ui/skeleton";
-import theAnswerImg from "@/assets/the-answer-chronixx-studio.png";
+import theAnswerImg from "@/assets/the-answer-chronixx-studio.webp";
 
 export function FeaturedProduct() {
   const { data: product, isLoading } = useProduct("the-answer");

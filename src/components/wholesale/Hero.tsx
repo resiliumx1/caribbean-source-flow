@@ -1,5 +1,5 @@
 import { ArrowRight, Download, MessageCircle } from "lucide-react";
-import priestHarvesting from "@/assets/priest-kailash-harvesting.png";
+import priestHarvesting from "@/assets/priest-kailash-harvesting.webp";
 import warehouseImage from "@/assets/wholesale-warehouse-hero.webp";
 
 interface HeroProps {

@@ -1,8 +1,8 @@
 import { Waves, Leaf, FlaskConical, Coffee, ArrowRight } from "lucide-react";
-import oceanBotanicals from "@/assets/ocean-botanicals.png";
+import oceanBotanicals from "@/assets/ocean-botanicals.webp";
 import herbProcessing from "@/assets/herb-processing.webp";
 import labProcessing from "@/assets/bottle-lineup-wholesale.webp";
-import bushMedicineBasket from "@/assets/bush-medicine-basket.png";
+import bushMedicineBasket from "@/assets/bush-medicine-basket.webp";
 
 const productCategories = [
   {
