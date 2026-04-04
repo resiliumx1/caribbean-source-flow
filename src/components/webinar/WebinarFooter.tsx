@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FooterVine } from "@/components/decorative/BotanicalVine";
 
 const NAV = [
   { label: "Shop", href: "/shop" },
