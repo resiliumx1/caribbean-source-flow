@@ -282,7 +282,7 @@ export function ShopFilterNav({
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(false)}
                 >
-                  🎯 Shop by Goal <ChevronDown className="w-3.5 h-3.5" />
+                  <Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Shop by Goal <ChevronDown className="w-3.5 h-3.5" />
                 </button>
               )}
               {goalOpen && (
