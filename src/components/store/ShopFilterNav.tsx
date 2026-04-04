@@ -4,8 +4,9 @@ import { SearchDropdown } from "./SearchDropdown";
 import type { Product } from "@/hooks/use-products";
 import {
   ChevronDown, X, SlidersHorizontal, Search, Check,
-  LayoutGrid, Flame, Apple, Moon, ShieldCheck, Dumbbell, Heart, Package,
+  LayoutGrid, Flame, Moon, ShieldCheck, Dumbbell, Heart, Package,
   Droplets, Pill, Coffee, BookOpen, Leaf, Sparkles,
+  Utensils, RefreshCw, Activity, Sun, Wind, Zap, Compass, FlaskConical,
 } from "lucide-react";
 
 const CONDITION_ICON_MAP: Record<string, React.ElementType> = {
