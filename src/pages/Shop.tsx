@@ -387,6 +387,7 @@ export default function Shop() {
       <TrustBar />
       <StoreFooter />
       <MobileStickyCtA />
+      <RecentSalesPopup />
     </div>
   );
 }
