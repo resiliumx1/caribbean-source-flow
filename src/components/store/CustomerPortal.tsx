@@ -103,22 +103,23 @@ export function CustomerPortal({ open, onClose }: CustomerPortalProps) {
   if (!open) return null;
 
   const S: Record<string, React.CSSProperties> = {
-    overlay: { position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.5)", transition: "opacity 0.2s" },
+    overlay: { position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(2px)", transition: "opacity 0.2s" },
     panel: {
-      position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 9999, width: "min(420px, 100vw)",
-      background: "#fafaf8", boxShadow: "-8px 0 30px rgba(0,0,0,0.15)", overflowY: "auto" as const,
+      position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 9999, width: "min(400px, 92vw)",
+      background: "#fafaf8", boxShadow: "-8px 0 30px rgba(0,0,0,0.18)", overflowY: "auto" as const,
       animation: "portalSlideIn 300ms ease-out forwards",
       fontFamily: "'DM Sans', sans-serif",
+      display: "flex", flexDirection: "column" as const,
     },
-    header: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #f0ede8" },
-    section: { padding: "16px 20px" },
+    header: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 22px", borderBottom: "1px solid #f0ede8" },
+    section: { padding: "20px 22px" },
     input: {
-      width: "100%", height: 44, borderRadius: 8, border: "1px solid #d4d0c8", padding: "0 14px",
+      width: "100%", height: 46, borderRadius: 10, border: "1px solid #d4d0c8", padding: "0 14px",
       fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none", background: "#ffffff",
       transition: "border-color 0.2s, box-shadow 0.2s",
     },
     btn: {
-      width: "100%", height: 44, borderRadius: 8, border: "none", cursor: "pointer",
+      width: "100%", height: 46, borderRadius: 10, border: "none", cursor: "pointer",
       background: "#1b4332", color: "#fff", fontSize: 14, fontWeight: 600,
       fontFamily: "'DM Sans', sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
     },
