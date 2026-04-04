@@ -266,6 +266,7 @@ export function ShopFilterNav({
             <div ref={goalRef} className="relative">
               {activeCondition ? (
                 <button
+                  onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }}
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(true)}
                 >
@@ -314,6 +315,7 @@ export function ShopFilterNav({
             <div ref={formRef} className="relative">
               {activeForm ? (
                 <button
+                  onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }}
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(true)}
                 >
@@ -458,7 +460,7 @@ export function ShopFilterNav({
             {/* Goal dropdown */}
             <div ref={goalRef} className="relative">
               {activeCondition ? (
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(true)}>
+                <button onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(true)}>
                   {activeConditionName}
                   <X className="w-3 h-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); onConditionChange(null); }} />
                 </button>
@@ -480,7 +482,7 @@ export function ShopFilterNav({
             {/* Form dropdown */}
             <div ref={formRef} className="relative">
               {activeForm ? (
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(true)}>
+                <button onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(true)}>
                   {activeFormName}
                   <X className="w-3 h-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); onFormChange(null); }} />
                 </button>
