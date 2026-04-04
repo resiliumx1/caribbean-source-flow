@@ -463,8 +463,8 @@ export function ShopFilterNav({
                   <X className="w-3 h-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); onConditionChange(null); }} />
                 </button>
               ) : (
-                <button onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
-                  <Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Goal <ChevronDown className="w-3 h-3" />
+                <button onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }} className="filter-btn-goal flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
+                  <Compass className="w-4 h-4 filter-icon-goal" style={{ color: '#3D715D' }} /> Goal <ChevronDown className="w-3 h-3" />
                 </button>
               )}
               {goalOpen && (
