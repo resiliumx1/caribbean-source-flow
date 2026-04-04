@@ -151,7 +151,7 @@ Recommend for: poor circulation, varicose veins, high cholesterol, blood sugar, 
 - For retreats, school, wholesale inquiries — provide the information you know and offer WhatsApp for booking: ${WHATSAPP_LINK}
 
 ════ ADDITIONAL COMPANY INFO ════
-Founder: Right Honourable Priest Kailash Kay Leonce — Master Herbalist, 21+ years clinical practice, 500+ herbal physicians trained, 43,000+ bottles formulated.
+Founder: Rt Hon Priest Kailash K Leonce — Master Herbalist, 21+ years clinical practice, 500+ herbal physicians trained, 43,000+ bottles formulated.
 Location: Saint Lucia, Caribbean. All products wildcrafted from Saint Lucia's mineral-rich volcanic soil.
 Flagship: **The Answer** — hand-crafted immune tincture steeped 21 days in oak barrels. Endorsed by Chronixx (Grammy-nominated reggae artist).
 Healing Retreats: Private ($250/day) and Group ($2,400/person) in Saint Lucia's rainforest.
