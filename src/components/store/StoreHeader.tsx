@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Menu, User, MessageCircle, DoorOpen } from "lucide-react";
+import { ShoppingBag, Menu, User, MessageCircle, DoorOpen, UserCircle } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { Button } from "@/components/ui/button";
 import { CurrencyToggle } from "./CurrencyToggle";
@@ -9,6 +9,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { CustomerPortal } from "./CustomerPortal";
 
 const SCHOOL_URL = "https://mount-kailash-school-temp.netlify.app";
 
