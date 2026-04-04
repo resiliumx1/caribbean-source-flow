@@ -99,10 +99,11 @@ export default function WebinarFeatured() {
               {isLive ? "Reserve My Seat" : "Watch Recording"}
             </a>
             <button
+              onClick={() => document.getElementById("webinar-showcase")?.scrollIntoView({ behavior: "smooth" })}
               className="font-jost font-medium px-7 py-3 rounded-full text-sm border transition-all duration-300 hover:brightness-110 min-h-[48px]"
               style={{ borderColor: "rgba(242,234,216,0.3)", color: "var(--site-text-primary)" }}
             >
-              Share Session
+              Browse All Sessions
             </button>
           </div>
 
