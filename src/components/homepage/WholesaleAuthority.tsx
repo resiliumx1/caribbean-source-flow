@@ -23,8 +23,8 @@ const features = [
 export function WholesaleAuthority() {
   return (
     <section
-      className="relative py-24 md:py-28 overflow-hidden"
-      style={{ background: "#0F281E" }}
+      className="relative py-24 md:py-28"
+      style={{ background: "#0F281E", overflow: "visible" }}
     >
       {/* Background watermark */}
       <div

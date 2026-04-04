@@ -199,6 +199,7 @@ export function RotatingApothecary() {
           100% { transform: translateX(-50%); }
         }
       `}</style>
+      </div>
       <VineVariationB />
     </section>
   );
