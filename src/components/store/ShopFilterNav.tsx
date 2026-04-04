@@ -88,6 +88,7 @@ export function ShopFilterNav({
   searchQuery,
   onSearchChange,
   conditionCounts,
+  allProducts,
 }: ShopFilterNavProps) {
   const { data: conditions } = useConditions();
   const [goalOpen, setGoalOpen] = useState(false);
