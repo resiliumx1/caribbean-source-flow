@@ -172,23 +172,34 @@ export function ShopFilterNav({
     </button>
   );
 
-  // Dropdown panel
-  const DropdownPanel = ({ children }: { children: React.ReactNode }) => (
-    <div
-      className="absolute left-0 top-full mt-2 z-50 min-w-[260px]"
-      style={{
-        background: '#ffffff',
-        borderRadius: 12,
-        padding: 8,
-        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-        border: '1px solid rgba(0,0,0,0.06)',
-        maxHeight: 400,
-        overflowY: 'auto',
-      }}
-    >
-      {children}
-    </div>
-  );
+  // Dropdown panel - fixed positioning to escape sticky stacking context
+  const DropdownPanel = ({ children, parentRef: pRef }: { children: React.ReactNode; parentRef?: React.RefObject<HTMLDivElement> }) => {
+    const [pos, setPos] = useState({ top: 0, left: 0 });
+    useEffect(() => {
+      if (pRef?.current) {
+        const rect = pRef.current.getBoundingClientRect();
+        setPos({ top: rect.bottom + 8, left: rect.left });
+      }
+    }, [pRef]);
+    return (
+      <div
+        className="fixed z-[9990] min-w-[260px]"
+        style={{
+          top: pos.top,
+          left: pos.left,
+          background: '#ffffff',
+          borderRadius: 12,
+          padding: 8,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+          border: '1px solid rgba(0,0,0,0.06)',
+          maxHeight: 400,
+          overflowY: 'auto',
+        }}
+      >
+        {children}
+      </div>
+    );
+  };
 
   // Mobile bottom sheet
   const BottomSheet = ({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) => (
