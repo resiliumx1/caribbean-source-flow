@@ -164,7 +164,7 @@ export function SchoolSection() {
               </p>
             </div>
           </div>
-        </Link>
+        </a>
 
         {/* Trust Bar */}
         <div className="flex flex-wrap justify-center items-center gap-6 mt-8">
