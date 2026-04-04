@@ -460,7 +460,7 @@ export function ShopFilterNav({
             {/* Goal dropdown */}
             <div ref={goalRef} className="relative">
               {activeCondition ? (
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(true)}>
+                <button onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(true)}>
                   {activeConditionName}
                   <X className="w-3 h-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); onConditionChange(null); }} />
                 </button>
