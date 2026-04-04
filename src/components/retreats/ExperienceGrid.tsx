@@ -5,7 +5,7 @@ const experiences = [
     icon: Leaf,
     title: "Learn",
     subtitle: "Bush Medicine Workshops",
-    description: "Harvest herbs from volcanic soil and learn traditional preparation methods passed down through generations.",
+    description: "Harvest herbs from organically mineral rich soil and learn traditional preparation methods passed down through generations.",
   },
   {
     icon: Heart,
