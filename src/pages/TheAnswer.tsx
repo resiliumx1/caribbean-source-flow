@@ -49,7 +49,7 @@ const INGREDIENTS = [
     latin: "Petiveria alliacea",
     alias: "The Caribbean's Secret Weapon",
     shortDesc: "Used for centuries across the Caribbean to fortify the immune system. Rich in dibenzyl trisulphide (DTS) — a rare organic sulphur compound.",
-    fullDesc: "Research confirms its antimicrobial, antiviral, and immunomodulatory properties. Traditionally harvested from wild populations in St. Lucia's volcanic rainforest, this herb forms the backbone of The Answer's immune-fortifying power.",
+    fullDesc: "Research confirms its antimicrobial, antiviral, and immunomodulatory properties. Traditionally harvested from wild populations in St. Lucia's tropical rainforest, this herb forms the backbone of The Answer's immune-fortifying power.",
     tags: ["Antimicrobial", "Immunomodulatory", "Anti-inflammatory"],
     leafSvg: "M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2c1.5 3 2.5 6 2 9-1 3-3 5-5 6 2-1 4-3 5-6s.5-6-2-9z",
   },
