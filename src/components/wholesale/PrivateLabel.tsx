@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import labProcessing from "@/assets/lab-processing.png";
+import labProcessing from "@/assets/bottle-lineup-wholesale.webp";
 
 interface PrivateLabelProps {
   onScrollToForm: () => void;
