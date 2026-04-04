@@ -565,7 +565,7 @@ export function ShopFilterNav({
                   <X className="w-3.5 h-3.5" onClick={(e) => { e.stopPropagation(); onConditionChange(null); }} />
                 </>
               ) : (
-                <>🎯 Goal <ChevronDown className="w-3.5 h-3.5" /></>
+                <><Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Goal <ChevronDown className="w-3.5 h-3.5" /></>
               )}
             </button>
             <button
