@@ -169,6 +169,10 @@ export function StoreHeader() {
             </div>
             <CurrencyToggle />
 
+            <Button variant="ghost" size="icon" aria-label="My Account" onClick={() => setPortalOpen(true)}>
+              <UserCircle className="w-5 h-5" />
+            </Button>
+
             <Link to="/cart" className="relative" aria-label="Shopping cart">
               <Button variant="ghost" size="icon" aria-label="View cart" className={cartBounce ? "animate-bounce" : ""}>
                 <ShoppingBag className="w-5 h-5" />
