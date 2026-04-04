@@ -1,75 +1,177 @@
-import { useState, useEffect, useCallback } from "react";
-import { ShoppingBag, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { X } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useProducts } from "@/hooks/use-products";
 
-const RECENT_SALES = [
-  { name: "Sarah M.", location: "Miami, FL", product: "Sea Moss Gold", time: "2 minutes ago" },
-  { name: "David R.", location: "London, UK", product: "The Answer Tincture", time: "5 minutes ago" },
-  { name: "Keisha T.", location: "Castries, St. Lucia", product: "Soursop Bitters", time: "8 minutes ago" },
-  { name: "Marcus J.", location: "Toronto, Canada", product: "Alkaline Herbal Bundle", time: "12 minutes ago" },
-  { name: "Amara L.", location: "Brooklyn, NY", product: "Moringa Capsules", time: "15 minutes ago" },
-  { name: "James W.", location: "Atlanta, GA", product: "Seamoss Gel (32oz)", time: "18 minutes ago" },
-  { name: "Priya S.", location: "Birmingham, UK", product: "Detox Tea Blend", time: "22 minutes ago" },
-  { name: "Tamika B.", location: "Houston, TX", product: "Elderberry Syrup", time: "25 minutes ago" },
-  { name: "Andre C.", location: "Vieux Fort, St. Lucia", product: "Turmeric & Ginger Elixir", time: "30 minutes ago" },
-  { name: "Nicole F.", location: "Los Angeles, CA", product: "Full Body Cleanse Kit", time: "35 minutes ago" },
-  { name: "Omar H.", location: "Chicago, IL", product: "Irish Sea Moss Capsules", time: "40 minutes ago" },
-  { name: "Grace P.", location: "Kingston, Jamaica", product: "Fertility Blend", time: "45 minutes ago" },
+const PURCHASE_DATA = [
+  { product: "The Answer", city: "Brooklyn", country: "US", minutes: 3 },
+  { product: "Colax Colon Cleanser", city: "Toronto", country: "Canada", minutes: 7 },
+  { product: "Pure Green", city: "London", country: "UK", minutes: 12 },
+  { product: "Virili-Tea", city: "Castries", country: "Saint Lucia", minutes: 5 },
+  { product: "Hemp Syrup", city: "Atlanta", country: "US", minutes: 18 },
+  { product: "Moon Cycle Tea", city: "Bridgetown", country: "Barbados", minutes: 2 },
+  { product: "Dewormer", city: "Houston", country: "US", minutes: 9 },
+  { product: "Super Male Vitality Package", city: "Miami", country: "US", minutes: 14 },
+  { product: "Restful Tea", city: "Kingston", country: "Jamaica", minutes: 6 },
+  { product: "Sea Moss", city: "New York", country: "US", minutes: 4 },
+  { product: "Detox Bundle", city: "Soufrière", country: "Saint Lucia", minutes: 11 },
+  { product: "Queenly Tea Bundle", city: "Port of Spain", country: "Trinidad", minutes: 8 },
+  { product: "The Answer", city: "Chicago", country: "US", minutes: 1 },
+  { product: "Immunity Kit", city: "Montego Bay", country: "Jamaica", minutes: 16 },
+  { product: "Kingly Tea Bundle", city: "Lagos", country: "Nigeria", minutes: 10 },
+  { product: "Medina Tea", city: "Charlotte", country: "US", minutes: 3 },
+  { product: "Blue Vervaine", city: "Roseau", country: "Dominica", minutes: 7 },
+  { product: "Digestive Bundle", city: "Antigua", country: "Antigua & Barbuda", minutes: 13 },
 ];
 
+const SESSION_KEY = "mkrc_popup_count";
+const MAX_POPUPS = 6;
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export function RecentSalesPopup() {
+  const { data: products } = useProducts();
   const [visible, setVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [order] = useState(() => shuffle(PURCHASE_DATA.map((_, i) => i)));
+
+  const productImageMap = useMemo(() => {
+    if (!products) return new Map<string, { image: string; slug: string }>();
+    const map = new Map<string, { image: string; slug: string }>();
+    for (const p of products) {
+      map.set(p.name.toLowerCase(), { image: p.image_url || "", slug: p.slug });
+    }
+    return map;
+  }, [products]);
+
+  const getShownCount = () => parseInt(sessionStorage.getItem(SESSION_KEY) || "0", 10);
+  const incCount = () => sessionStorage.setItem(SESSION_KEY, String(getShownCount() + 1));
 
   const showNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % RECENT_SALES.length);
+    if (getShownCount() >= MAX_POPUPS) return;
+    setCurrentIndex((prev) => (prev + 1) % order.length);
     setVisible(true);
+    incCount();
     setTimeout(() => setVisible(false), 5000);
-  }, []);
+  }, [order]);
 
   useEffect(() => {
-    const initialTimer = setTimeout(showNext, 15000);
-    const interval = setInterval(showNext, 45000);
+    if (getShownCount() >= MAX_POPUPS) return;
+    const initialTimer = setTimeout(showNext, 8000);
+    const interval = setInterval(() => {
+      if (getShownCount() >= MAX_POPUPS) return;
+      showNext();
+    }, 15000);
     return () => {
       clearTimeout(initialTimer);
       clearInterval(interval);
     };
   }, [showNext]);
 
-  const sale = RECENT_SALES[currentIndex];
+  if (!visible) return null;
+
+  const sale = PURCHASE_DATA[order[currentIndex]];
+  const match = productImageMap.get(sale.product.toLowerCase());
+  const slug = match?.slug || "the-answer";
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -100, opacity: 0 }}
-          transition={{ type: "spring", damping: 20, stiffness: 300 }}
-          className="fixed bottom-20 left-4 z-50 max-w-xs"
+    <Link
+      to={`/shop/${slug}`}
+      className="fixed bottom-20 left-4 z-50 max-w-[320px] block"
+      style={{ animation: "saleSlideIn 0.35s ease-out forwards" }}
+      onClick={() => setVisible(false)}
+    >
+      <div
+        className="rounded-xl shadow-lg flex items-start gap-3 p-3.5"
+        style={{
+          background: "rgba(255,255,255,0.97)",
+          border: "1px solid rgba(0,0,0,0.06)",
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        {/* Thumbnail */}
+        <div
+          className="flex-shrink-0 w-[60px] h-[60px] rounded-lg overflow-hidden flex items-center justify-center"
+          style={{ background: "#fafafa" }}
         >
-          <div className="bg-card border border-border rounded-xl shadow-lg p-3.5 flex items-start gap-3">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <ShoppingBag className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground leading-snug">
-                {sale.name} <span className="text-muted-foreground font-normal">from</span> {sale.location}
-              </p>
-              <p className="text-sm text-primary font-semibold truncate">
-                purchased {sale.product}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">{sale.time}</p>
-            </div>
-            <button
-              onClick={() => setVisible(false)}
-              className="flex-shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+          {match?.image ? (
+            <img
+              src={match.image}
+              alt={sale.product}
+              className="w-full h-full object-contain p-1"
+              loading="lazy"
+            />
+          ) : (
+            <div
+              className="w-full h-full flex items-center justify-center text-lg"
+              style={{ color: "#1b4332" }}
             >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+              🌿
+            </div>
+          )}
+        </div>
+
+        {/* Text */}
+        <div className="flex-1 min-w-0">
+          <p
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 13,
+              fontWeight: 600,
+              color: "#333",
+              lineHeight: 1.3,
+            }}
+          >
+            Someone in {sale.city}, {sale.country}
+          </p>
+          <p
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 13,
+              color: "#555",
+              lineHeight: 1.3,
+            }}
+          >
+            just purchased <strong>{sale.product}</strong>
+          </p>
+          <p
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 11,
+              color: "#999",
+              marginTop: 2,
+            }}
+          >
+            {sale.minutes} minute{sale.minutes !== 1 ? "s" : ""} ago
+          </p>
+        </div>
+
+        {/* Close */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setVisible(false);
+          }}
+          className="flex-shrink-0 p-1 hover:opacity-70"
+        >
+          <X className="w-3.5 h-3.5" style={{ color: "#999" }} />
+        </button>
+      </div>
+
+      <style>{`
+        @keyframes saleSlideIn {
+          from { transform: translateX(-110%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+      `}</style>
+    </Link>
   );
 }
