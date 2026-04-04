@@ -225,6 +225,23 @@ export default function Shop() {
       .filter((row) => row.products.length > 0);
   }, [allSingles, conditions, conditionProductMap, activeCondition, activeForm, debouncedSearch]);
 
+  // Total all active products (singles + bundles + the answer)
+  const totalAllProducts = useMemo(() => {
+    if (!products) return 0;
+    return products.filter(p => p.is_active !== false).length;
+  }, [products]);
+
+  // Condition product counts for dropdown
+  const conditionCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!conditions || !conditionProductMap) return map;
+    for (const c of conditions) {
+      const ids = conditionProductMap.get(c.slug);
+      map.set(c.slug, ids ? ids.size : 0);
+    }
+    return map;
+  }, [conditions, conditionProductMap]);
+
   const isFiltered = !!activeCondition || !!activeForm || !!debouncedSearch;
   const showDefaultView = !isFiltered;
 
@@ -243,8 +260,10 @@ export default function Shop() {
         sortBy={sortBy}
         onSortChange={setSortBy}
         totalProducts={displayProducts.length}
+        totalAllProducts={totalAllProducts}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        conditionCounts={conditionCounts}
       />
 
       <main className="container mx-auto px-4 pt-8 sm:pt-12 pb-20">
