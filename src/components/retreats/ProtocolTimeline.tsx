@@ -5,7 +5,7 @@ import { ClipboardCheck, Leaf, Utensils, Heart, Package } from "lucide-react";
 const steps = [
   { icon: ClipboardCheck, title: "Assess", description: "Personalized intake and consultation to understand your body, lifestyle, and goals." },
   { icon: Leaf, title: "Cleanse", description: "Targeted herbal detox protocols using natural formulations designed for cellular support." },
-  { icon: Utensils, title: "Nourish", description: "Plant-based meals and formulations grown in volcanic soil to replenish minerals and energy." },
+  { icon: Utensils, title: "Nourish", description: "Plant-based meals and formulations grown in organically mineral rich soil to replenish minerals and energy." },
   { icon: Heart, title: "Integrate", description: "Breathwork, bush walks, stillness, and guided practices to lock in results." },
   { icon: Package, title: "Sustain", description: "Post-experience support, follow-up consultation, and ongoing formulation access." },
 ];

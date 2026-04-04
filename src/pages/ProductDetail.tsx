@@ -428,7 +428,7 @@ export default function ProductDetail() {
                   <div className="space-y-3">
                     <div>
                       <p className="font-medium text-foreground">St. Lucia (Local Delivery)</p>
-                      <p>Same-day delivery available for orders placed before 2 PM (North region).</p>
+                      <p>📞 Call our local number for expedited delivery in St. Lucia.</p>
                       <p>Delivery fees: EC$15-25 depending on zone.</p>
                     </div>
                     <div>

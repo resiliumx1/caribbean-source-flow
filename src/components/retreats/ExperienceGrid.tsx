@@ -22,7 +22,7 @@ const experiences = [
   {
     icon: Mountain,
     title: "Explore",
-    subtitle: "Volcanic Rainforest",
+    subtitle: "Tropical Rainforest",
     description: "Guided walks through lush trails, Sulphur Springs visits, and breathtaking Piton views.",
   },
   {

@@ -126,7 +126,7 @@ export function HomepageFooter() {
             </ul>
             <div className="mt-6 space-y-2 text-sm">
               <div className="flex items-center gap-2" style={{ color: "#A8B5A0" }}>
-                <MapPin className="w-4 h-4" /> Soufrière, St. Lucia
+                <MapPin className="w-4 h-4" /> Marc, Castries, St. Lucia
               </div>
               <div className="flex items-center gap-2" style={{ color: "#A8B5A0" }}>
                 <Phone className="w-4 h-4" /> +1 (758) 285-5195

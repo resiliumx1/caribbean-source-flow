@@ -61,7 +61,7 @@ export default function WebinarHost() {
           </p>
           <p className="font-jost font-light leading-relaxed mb-8" style={{ color: "var(--site-text-secondary)" }}>
             For over two decades, Priest Kailash has dedicated his life to the study and practice of herbal medicine
-            from the volcanic mountains of Saint Lucia. He created these free webinars because he believes healing knowledge
+            from the mountains of Saint Lucia. He created these free webinars because he believes healing knowledge
             belongs to everyone — not locked behind paywalls.
           </p>
           <div className="flex flex-wrap gap-3 mb-8">

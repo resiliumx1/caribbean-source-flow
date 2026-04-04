@@ -85,7 +85,7 @@ export function OriginStory() {
             >
               <img
                 src={schoolFaculty}
-                alt="Priest Kailash Kay Leonce with Mount Kailash School of Esoteric Knowledge faculty in ceremonial robes, Saint Lucia"
+                alt="Rt Hon Priest Kailash K Leonce with Mount Kailash School of Esoteric Knowledge faculty in ceremonial robes, Saint Lucia"
                 className="w-full h-auto object-cover"
                 style={{ objectPosition: 'center top' }}
                 loading="lazy"

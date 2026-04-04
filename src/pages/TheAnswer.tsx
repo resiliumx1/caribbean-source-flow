@@ -187,7 +187,7 @@ export default function TheAnswer() {
           <span className="answer-trust-bar__dot">·</span>
           <span>Free Shipping Over $75</span>
           <span className="answer-trust-bar__dot">·</span>
-          <span>30-Day Satisfaction Guarantee</span>
+          <span>COA Documentation</span>
           <span className="answer-trust-bar__dot">·</span>
           <span>Subscribe &amp; Save 15%</span>
         </div>

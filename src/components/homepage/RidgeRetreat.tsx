@@ -88,7 +88,7 @@ export function RidgeRetreat() {
               }}>
               
               Admittance by application. Work directly with Priest Kailash in
-              the volcanic rainforest. Develop your personalized protocol
+              the tropical rainforest. Develop your personalized protocol
               through daily clinical sessions, harvest walks, and formulation
               workshops.
             </p>

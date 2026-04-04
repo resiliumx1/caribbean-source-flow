@@ -27,7 +27,7 @@ const faqs = [
   {
     question: "What's the time commitment?",
     answer:
-      "Part 1 (Online) requires approximately 10–15 hours per week, including live Wednesday sessions (90 minutes), Sunday presentations, and self-paced study. All sessions are recorded for flexible review. Part 2 (In-Person) is a full-time 10-day immersion at our campus in Soufrière, Saint Lucia.",
+      "Part 1 (Online) requires approximately 10–15 hours per week, including live Wednesday sessions (90 minutes), Sunday presentations, and self-paced study. All sessions are recorded for flexible review. Part 2 (In-Person) is a full-time 10-day immersion at our campus in Marc, Castries, Saint Lucia.",
   },
   {
     question: "Is there a refund policy?",

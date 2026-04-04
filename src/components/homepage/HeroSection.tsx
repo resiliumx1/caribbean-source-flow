@@ -199,7 +199,7 @@ export function HeroSection() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl w-full z-[1]">
                 <img
                   src={priestPhoto}
-                  alt="Priest Kailash Leyonce at the volcanic ridge in Saint Lucia"
+                  alt="Rt Hon Priest Kailash K Leonce at the ridge in Saint Lucia"
                   className="w-full h-full object-cover"
                   style={{ objectPosition: "center top", minHeight: "400px" }}
                   loading="eager"

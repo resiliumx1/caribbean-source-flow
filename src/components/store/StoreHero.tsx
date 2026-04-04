@@ -26,7 +26,7 @@ export function StoreHero() {
         <div className="max-w-3xl">
           <h1 className="hero-title text-cream mb-6">
             Medicine from the{" "}
-            <span className="text-gradient-gold">Volcanic Soil</span> of St. Lucia
+            <span className="text-gradient-gold">Mineral Rich Soil</span> of St. Lucia
           </h1>
 
           <p className="hero-subtitle text-cream/90 mb-8 max-w-2xl">

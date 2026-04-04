@@ -90,7 +90,7 @@ export function TrinityHero() {
                 opacity: 0.9,
               }}
             >
-              Crafted in Saint Lucia using herbs grown in mineral-rich volcanic soil,
+              Crafted in Saint Lucia using herbs grown in organically mineral rich soil,
               Mt. Kailash delivers natural formulations, immersive retreats, and trusted
               wholesale supply—designed to restore balance at every level.
             </p>

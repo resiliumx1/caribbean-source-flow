@@ -80,7 +80,7 @@ export function SourceStory() {
                 lineHeight: 1.2,
               }}
             >
-              From Volcanic Soil to Cellular Terrain
+              From Mineral Rich Soil to Cellular Terrain
             </h2>
 
             <div
