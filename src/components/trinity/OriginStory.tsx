@@ -27,7 +27,7 @@ export function OriginStory() {
           {/* Content — Left */}
           <div className="lg:pl-8">
             <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-6" style={{ background: 'rgba(201,168,76,0.1)', color: 'var(--site-gold-text)' }}>
-              From Volcanic Soil
+              From Mineral Rich Soil
             </span>
 
             <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 3.5vw, 40px)', color: 'var(--site-text-primary)', marginBottom: '24px', lineHeight: 1.2 }}>
