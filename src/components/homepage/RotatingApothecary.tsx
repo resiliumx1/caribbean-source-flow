@@ -30,7 +30,8 @@ export function RotatingApothecary() {
   const items = [...products, ...products];
 
   return (
-    <section style={{ background: "var(--site-bg-secondary)", position: "relative" }} className="py-24 md:py-28 overflow-hidden">
+    <section style={{ background: "var(--site-bg-secondary)", position: "relative", overflow: "visible" }} className="py-24 md:py-28">
+      <div style={{ overflow: "hidden" }}>
       <div className="container mx-auto max-w-6xl px-4 mb-10">
         <div className="flex items-end justify-between">
           <div>
