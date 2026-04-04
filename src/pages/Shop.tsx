@@ -158,14 +158,10 @@ export default function Shop() {
     return map;
   }, [conditions, assignments]);
 
-  // Separate product types
-  const { bundles, theAnswerProduct, allSingles } = useMemo(() => {
-    if (!products) return { bundles: [] as Product[], theAnswerProduct: null as Product | null, allSingles: [] as Product[] };
-    const bundles = products.filter((p) => p.product_type === "bundle" || (p.product_categories as any)?.slug === "curated-bundles");
-    const theAnswerProduct = products.find((p) => p.slug === "the-answer") || null;
-    const bundleIds = new Set(bundles.map(b => b.id));
-    const allSingles = products.filter((p) => p.slug !== "the-answer" && p.is_active !== false);
-    return { bundles, theAnswerProduct, allSingles };
+  // All active products (including bundles and The Answer)
+  const allSingles = useMemo(() => {
+    if (!products) return [] as Product[];
+    return products.filter((p) => p.is_active !== false);
   }, [products]);
 
   // Apply filters + sorting + search
