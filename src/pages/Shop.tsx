@@ -113,6 +113,10 @@ function ProductReel({ products }: { products: Product[] }) {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+        @keyframes gridFadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         @media (max-width: 768px) {
           .rounded-full[style*="width: 100"] {
             width: 80px !important;
