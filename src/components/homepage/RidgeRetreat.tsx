@@ -12,7 +12,7 @@ const features = [
 
 export function RidgeRetreat() {
   return (
-    <section style={{ background: "#0F281E" }} className="py-20 md:py-28">
+    <section style={{ background: "#0F281E", position: "relative" }} className="py-20 md:py-28">
       <div className="container mx-auto max-w-6xl px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left — Image */}
