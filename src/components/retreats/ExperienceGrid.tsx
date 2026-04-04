@@ -17,7 +17,7 @@ const experiences = [
     icon: UtensilsCrossed,
     title: "Nourish",
     subtitle: "Plant-Based Cuisine",
-    description: "Farm-to-table Caribbean meals made with ingredients grown in our volcanic soil gardens.",
+    description: "Farm-to-table Caribbean meals made with ingredients grown in our organically mineral rich soil gardens.",
   },
   {
     icon: Mountain,
