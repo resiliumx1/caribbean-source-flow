@@ -570,7 +570,7 @@ export function ShopFilterNav({
             </button>
             <button
               onClick={() => setMobileSheet("form")}
-              className="flex-1 flex items-center justify-center gap-1.5 rounded-full text-[13px]"
+              className="filter-btn-form flex-1 flex items-center justify-center gap-1.5 rounded-full text-[13px]"
               style={{ ...pillBtn(!!activeForm), minHeight: 44 }}
             >
               {activeForm ? (
