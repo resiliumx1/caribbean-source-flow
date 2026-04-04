@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingBag, Menu, User, MessageCircle, DoorOpen, UserCircle } from "lucide-react";
+import { ShoppingBag, Menu, User, MessageCircle, UserCircle } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { Button } from "@/components/ui/button";
 import { CurrencyToggle } from "./CurrencyToggle";
@@ -151,26 +151,15 @@ export function StoreHeader() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="w-8 h-8"
-              aria-label="Replay gate entrance"
-              title="Replay entrance"
-              onClick={() => {
-                localStorage.removeItem('mkrc-gate-seen');
-                window.location.href = '/';
-              }}
-            >
-              <DoorOpen className="w-4 h-4 opacity-60" />
-            </Button>
+
+
             <div className="hidden sm:block">
               <SkyToggle />
             </div>
             <CurrencyToggle />
 
             <Button variant="ghost" size="icon" aria-label="My Account" onClick={() => setPortalOpen(true)}>
-              <UserCircle className="w-5 h-5" />
+              <UserCircle className="w-5 h-5" style={{ color: "#1b4332" }} />
             </Button>
 
             <Link to="/cart" className="relative" aria-label="Shopping cart">

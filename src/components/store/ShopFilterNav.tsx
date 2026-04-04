@@ -4,8 +4,9 @@ import { SearchDropdown } from "./SearchDropdown";
 import type { Product } from "@/hooks/use-products";
 import {
   ChevronDown, X, SlidersHorizontal, Search, Check,
-  LayoutGrid, Flame, Apple, Moon, ShieldCheck, Dumbbell, Heart, Package,
+  LayoutGrid, Flame, Moon, ShieldCheck, Dumbbell, Heart, Package,
   Droplets, Pill, Coffee, BookOpen, Leaf, Sparkles,
+  Utensils, RefreshCw, Activity, Sun, Wind, Zap, Compass, FlaskConical,
 } from "lucide-react";
 
 const CONDITION_ICON_MAP: Record<string, React.ElementType> = {
@@ -19,17 +20,17 @@ const CONDITION_ICON_MAP: Record<string, React.ElementType> = {
   "womens-health": Heart,
   "mens-health": Dumbbell,
   "men-s-health": Dumbbell,
-  digestion: Apple,
-  "gut-health": Apple,
-  "gut-health-digestion": Apple,
-  detox: Leaf,
-  circulation: Heart,
+  digestion: Utensils,
+  "gut-health": Utensils,
+  "gut-health-digestion": Utensils,
+  detox: RefreshCw,
+  circulation: Activity,
   pain: Flame,
   "inflammation-pain": Flame,
   "inflammation": Flame,
-  skin: Sparkles,
-  respiratory: Leaf,
-  energy: Flame,
+  skin: Sun,
+  respiratory: Wind,
+  energy: Zap,
   "curated-protocols": Package,
 };
 
@@ -281,7 +282,7 @@ export function ShopFilterNav({
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(false)}
                 >
-                  🎯 Shop by Goal <ChevronDown className="w-3.5 h-3.5" />
+                  <Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Shop by Goal <ChevronDown className="w-3.5 h-3.5" />
                 </button>
               )}
               {goalOpen && (
@@ -329,7 +330,7 @@ export function ShopFilterNav({
                   className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px]"
                   style={pillBtn(false)}
                 >
-                  📦 Form <ChevronDown className="w-3.5 h-3.5" />
+                  <FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3.5 h-3.5" />
                 </button>
               )}
               {formOpen && (
@@ -463,7 +464,7 @@ export function ShopFilterNav({
                 </button>
               ) : (
                 <button onClick={() => { setGoalOpen(!goalOpen); setFormOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
-                  🎯 Goal <ChevronDown className="w-3 h-3" />
+                  <Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Goal <ChevronDown className="w-3 h-3" />
                 </button>
               )}
               {goalOpen && (
@@ -485,7 +486,7 @@ export function ShopFilterNav({
                 </button>
               ) : (
                 <button onClick={() => { setFormOpen(!formOpen); setGoalOpen(false); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px]" style={pillBtn(false)}>
-                  📦 Form <ChevronDown className="w-3 h-3" />
+                  <FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3 h-3" />
                 </button>
               )}
               {formOpen && (
@@ -564,7 +565,7 @@ export function ShopFilterNav({
                   <X className="w-3.5 h-3.5" onClick={(e) => { e.stopPropagation(); onConditionChange(null); }} />
                 </>
               ) : (
-                <>🎯 Goal <ChevronDown className="w-3.5 h-3.5" /></>
+                <><Compass className="w-4 h-4" style={{ animation: 'gentleSpin 8s linear infinite' }} /> Goal <ChevronDown className="w-3.5 h-3.5" /></>
               )}
             </button>
             <button
@@ -578,7 +579,7 @@ export function ShopFilterNav({
                   <X className="w-3.5 h-3.5" onClick={(e) => { e.stopPropagation(); onFormChange(null); }} />
                 </>
               ) : (
-                <>📦 Form <ChevronDown className="w-3.5 h-3.5" /></>
+                <><FlaskConical className="w-4 h-4" style={{ animation: 'gentleBubble 3s ease-in-out infinite' }} /> Form <ChevronDown className="w-3.5 h-3.5" /></>
               )}
             </button>
             <button
@@ -635,6 +636,17 @@ export function ShopFilterNav({
         @keyframes filterBadgeIn {
           from { opacity: 0; transform: translateY(-4px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gentleSpin {
+          0% { transform: rotate(0deg); }
+          25% { transform: rotate(15deg); }
+          50% { transform: rotate(0deg); }
+          75% { transform: rotate(-15deg); }
+          100% { transform: rotate(0deg); }
+        }
+        @keyframes gentleBubble {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-2px) scale(1.05); }
         }
       `}</style>
     </>

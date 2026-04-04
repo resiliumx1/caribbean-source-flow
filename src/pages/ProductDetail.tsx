@@ -110,11 +110,13 @@ export default function ProductDetail() {
               window.location.href = '/shop';
             }
           }}
-          className="inline-flex items-center gap-2 text-sm transition-colors mb-6 hover:underline"
-          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '14px', color: '#1b4332', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+          className="inline-flex items-center gap-2 transition-colors mb-6 w-full md:w-auto md:border-0 border-b border-border pb-3 md:pb-0"
+          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: '#1b4332', background: 'none', border: 'none', cursor: 'pointer', padding: '6px 12px', borderRadius: 8 }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = '#f5f0e8'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
         >
-          <ArrowLeft className="w-4 h-4" />
-          ← Back to Shop
+          <ArrowLeft className="w-5 h-5" />
+          Back to Shop
         </button>
 
         {/* Main grid - 60/40 split for larger images */}
