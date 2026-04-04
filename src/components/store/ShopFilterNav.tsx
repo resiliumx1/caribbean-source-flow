@@ -100,6 +100,8 @@ export function ShopFilterNav({
   const sentinelRef = useRef<HTMLDivElement>(null);
   const goalRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
   const activeCount = (activeCondition ? 1 : 0) + (activeForm ? 1 : 0);
   const activeConditionName = conditions?.find(c => c.slug === activeCondition)?.name;
