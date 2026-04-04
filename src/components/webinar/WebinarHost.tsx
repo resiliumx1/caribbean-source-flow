@@ -27,7 +27,7 @@ export default function WebinarHost() {
           >
             <img
               src={priestKailashImg}
-              alt="Honorable Priest Kailash — herbal medicine practitioner and MKRC founder"
+              alt="Rt Hon Priest Kailash K Leonce — herbal medicine practitioner and MKRC founder"
               className="w-full h-auto object-cover"
               loading="lazy"
             />
