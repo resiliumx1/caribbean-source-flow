@@ -69,7 +69,7 @@ const INGREDIENTS = [
     latin: "Annona muricata",
     alias: "Nature's Cellular Guardian",
     shortDesc: "Widely used across the Caribbean and Latin America to enhance immunity through activation of MAP kinase pathways.",
-    fullDesc: "Traditionally valued for supporting cellular health, promoting natural apoptosis of mutated cells, and providing a powerful antioxidant shield. The leaves are hand-selected at peak potency from trees growing in St. Lucia's mineral-rich volcanic soil.",
+    fullDesc: "Traditionally valued for supporting cellular health, promoting natural apoptosis of mutated cells, and providing a powerful antioxidant shield. The leaves are hand-selected at peak potency from trees growing in St. Lucia's organically mineral rich soil.",
     tags: ["Immune Enhancer", "Antioxidant", "Cellular Health"],
     leafSvg: "M17 8C8 10 5.9 16.9 3.9 19.9M5 2l3 6-2 8 4 4 8-2 4-8-4-6z",
   },
