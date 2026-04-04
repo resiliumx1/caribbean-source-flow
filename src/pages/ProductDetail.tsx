@@ -30,7 +30,7 @@ export default function ProductDetail() {
 
   // Scroll to top on page load
   useLayoutEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, [slug]);
 
   // Set default variant when variants load
