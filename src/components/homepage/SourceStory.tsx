@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import apothecaryDisplay from "@/assets/apothecary-display.png";
+import { VineVariationA } from "@/components/decorative/BotanicalVine";
 
 export function SourceStory() {
   return (
