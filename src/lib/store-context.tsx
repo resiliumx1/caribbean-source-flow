@@ -135,7 +135,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 export function useStore() {
   const context = useContext(StoreContext);
   if (context === undefined) {
-    throw new Error("useStore must be used within a StoreProvider");
+    // Return safe defaults instead of throwing — prevents blank screens
+    // when components render outside StoreProvider during error recovery
+    return {
+      currency: "USD" as const,
+      setCurrency: () => {},
+      exchangeRate: 2.70,
+      formatPrice: (usd: number) => `$${usd.toFixed(2)}`,
+      formatPriceBoth: (usd: number, xcd: number) => `$${usd.toFixed(2)}`,
+      whatsappNumber: "+13059429407",
+      salesManager: "Goddess Itopia Archer",
+      storeEmail: "goddessitopia@mountkailashslu.com",
+      storePhone: "+13059429407",
+      isLocalVisitor: false,
+      setIsLocalVisitor: () => {},
+    };
   }
   return context;
 }
