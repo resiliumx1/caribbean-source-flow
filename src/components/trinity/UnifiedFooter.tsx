@@ -3,7 +3,7 @@ import { MessageCircle, Phone, MapPin } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { FooterVine } from "@/components/decorative/BotanicalVine";
 
-const whatsappNumber = "+17582855195";
+const whatsappNumber = "+13059429407";
 const whatsappMessage = encodeURIComponent(
   "Hello, I'd like to learn more about Mount Kailash products and services."
 );
