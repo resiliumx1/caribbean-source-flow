@@ -127,11 +127,13 @@ export default function MKRCFooter() {
             {FOOTER_LINKS.connect.map((l) => (
               <FooterLink key={l.label} {...l} />
             ))}
-            <ContactNumbers
-              className="text-sm mt-2"
-              linkClassName="hover:text-[var(--mkrc-accent-gold)]"
-              variant="stacked"
-            />
+            <div style={{ color: "var(--mkrc-text-secondary)" }}>
+              <ContactNumbers
+                className="text-sm mt-2"
+                linkClassName="hover:text-[var(--mkrc-accent-gold)]"
+                variant="stacked"
+              />
+            </div>
             <p style={{ color: "var(--mkrc-text-tertiary)", fontSize: "0.85rem", marginTop: 8 }}>
               Marc Bexon, LC04 301, Saint Lucia
             </p>
