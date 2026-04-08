@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FooterVine } from "@/components/decorative/BotanicalVine";
+import { ContactNumbers } from "@/components/ContactNumbers";
 
 const FOOTER_LINKS = {
   shop: [
@@ -126,6 +127,11 @@ export default function MKRCFooter() {
             {FOOTER_LINKS.connect.map((l) => (
               <FooterLink key={l.label} {...l} />
             ))}
+            <ContactNumbers
+              className="text-sm mt-2"
+              linkClassName="hover:text-[var(--mkrc-accent-gold)]"
+              variant="stacked"
+            />
             <p style={{ color: "var(--mkrc-text-tertiary)", fontSize: "0.85rem", marginTop: 8 }}>
               Marc Bexon, LC04 301, Saint Lucia
             </p>

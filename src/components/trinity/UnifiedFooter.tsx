@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { MessageCircle, Phone, MapPin } from "lucide-react";
+import { MessageCircle, MapPin } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { FooterVine } from "@/components/decorative/BotanicalVine";
+import { ContactNumbers } from "@/components/ContactNumbers";
 
 const whatsappNumber = "+13059429407";
 const whatsappMessage = encodeURIComponent(
@@ -88,9 +89,11 @@ export function UnifiedFooter() {
               <div className="flex items-center gap-2" style={{ color: 'var(--site-footer-muted)' }}>
                 <MapPin className="w-4 h-4" /> Marc, Castries, St. Lucia
               </div>
-              <div className="flex items-center gap-2" style={{ color: 'var(--site-footer-muted)' }}>
-                <Phone className="w-4 h-4" /> +1 (758) 285-5195
-              </div>
+              <ContactNumbers
+                className="text-sm"
+                linkClassName="hover:text-[#c9a84c]"
+                variant="stacked"
+              />
             </div>
           </div>
         </div>
