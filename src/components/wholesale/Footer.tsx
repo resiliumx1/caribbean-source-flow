@@ -1,5 +1,6 @@
-import { Phone, Mail, MapPin, FileText, Package, Truck } from "lucide-react";
+import { Mail, MapPin, FileText, Package, Truck } from "lucide-react";
 import { FooterVine } from "@/components/decorative/BotanicalVine";
+import { ContactNumbers } from "@/components/ContactNumbers";
 
 export const Footer = () => {
   return (
@@ -23,12 +24,13 @@ export const Footer = () => {
           {/* Contact */}
           <div>
             <h4 style={{ fontWeight: 500, fontSize: "15px", color: "var(--site-footer-text)", marginBottom: "16px" }}>Contact Us</h4>
+            <div className="mb-4">
+              <ContactNumbers
+                linkClassName="hover:text-[#c9a84c]"
+                className="text-sm"
+              />
+            </div>
             <ul className="space-y-3">
-              <li>
-                <a href="tel:+13059429407" className="flex items-center gap-2 transition-colors hover:text-[#c9a84c]" style={{ color: "var(--site-footer-muted)", fontSize: "14px" }}>
-                  <Phone className="w-4 h-4" style={{ color: "#c9a84c" }} /> +1 (305) 942-9407
-                </a>
-              </li>
               <li>
                 <a href="mailto:Goddessitopia@mountkailashslu.com" className="flex items-center gap-2 transition-colors hover:text-[#c9a84c]" style={{ color: "var(--site-footer-muted)", fontSize: "14px" }}>
                   <Mail className="w-4 h-4" style={{ color: "#c9a84c" }} /> Goddessitopia@mountkailashslu.com

@@ -29,13 +29,16 @@ export const Header = ({ onScrollToForm }: HeaderProps) => {
           {/* Contact & CTA */}
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-4 text-sm text-muted-foreground">
-              <a 
-                href="tel:+13059429407" 
-                className="flex items-center gap-1.5 hover:text-foreground transition-colors"
-              >
+              <span className="flex items-center gap-1.5">
                 <Phone className="w-4 h-4" />
-                +1 (305) 942-9407
-              </a>
+                <span className="inline-flex items-center gap-2">
+                  <a href="tel:+13059429407" className="hover:text-foreground transition-colors">🇺🇸 305-942-9407</a>
+                  <span className="opacity-40">·</span>
+                  <a href="tel:+17582855195" className="hover:text-foreground transition-colors">🇱🇨 (758) 285-5195</a>
+                  <span className="opacity-40">·</span>
+                  <a href="tel:+17587223660" className="hover:text-foreground transition-colors">🇱🇨 (758) 722-3660</a>
+                </span>
+              </span>
               <a 
                 href="mailto:Goddessitopia@mountkailashslu.com" 
                 className="flex items-center gap-1.5 hover:text-foreground transition-colors"

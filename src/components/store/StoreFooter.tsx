@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, MessageCircle, Instagram, Facebook } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Instagram, Facebook } from "lucide-react";
 import { useStore } from "@/lib/store-context";
+import { ContactNumbers } from "@/components/ContactNumbers";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { FooterVine } from "@/components/decorative/BotanicalVine";
 
@@ -110,11 +111,10 @@ export function StoreFooter() {
                   {storeEmail}
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-gold" />
-                <a href={`tel:${storePhone}`} className="hover:text-gold transition-colors">
-                  {storePhone}
-                </a>
+              <li>
+                <ContactNumbers
+                  linkClassName="text-primary-foreground/80 hover:text-gold"
+                />
               </li>
               <li className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-gold" />
