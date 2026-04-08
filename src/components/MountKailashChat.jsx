@@ -435,7 +435,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
         Our wellness team can help with pricing, orders, and personalised advice.
       </p>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <a href="https://wa.me/17582855195" target="_blank" rel="noopener noreferrer" style={{
+        <a href="https://wa.me/13059429407" target="_blank" rel="noopener noreferrer" style={{
           display: "inline-flex", alignItems: "center", gap: 5,
           padding: "8px 15px", background: "#25d366", color: "#fff",
           borderRadius: 20, textDecoration: "none", fontSize: 13, fontWeight: "bold",
