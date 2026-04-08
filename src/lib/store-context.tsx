@@ -138,18 +138,18 @@ export function useStore() {
     // Return safe defaults instead of throwing — prevents blank screens
     // when components render outside StoreProvider during error recovery
     return {
-      currency: "USD" as const,
-      setCurrency: () => {},
+      currency: "USD" as Currency,
+      setCurrency: (() => {}) as (currency: Currency) => void,
       exchangeRate: 2.70,
-      formatPrice: (usd: number) => `$${usd.toFixed(2)}`,
-      formatPriceBoth: (usd: number, xcd: number) => `$${usd.toFixed(2)}`,
+      formatPrice: (usd: number, _xcd: number) => `$${usd.toFixed(2)}`,
+      formatPriceBoth: (usd: number, _xcd: number) => ({ primary: `$${usd.toFixed(2)}`, secondary: "" }),
       whatsappNumber: "+13059429407",
       salesManager: "Goddess Itopia Archer",
       storeEmail: "goddessitopia@mountkailashslu.com",
       storePhone: "+13059429407",
       isLocalVisitor: false,
-      setIsLocalVisitor: () => {},
-    };
+      setIsLocalVisitor: (() => {}) as (isLocal: boolean) => void,
+    } satisfies StoreContextType;
   }
   return context;
 }
