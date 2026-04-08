@@ -686,7 +686,7 @@ export default function MountKailashChat({ onNavigate, externalMessages, setExte
               <div style={{ fontSize: 20, marginBottom: 6 }}>📞</div>
               <div style={{ color: t.gold, fontWeight: "bold", marginBottom: 10, fontSize: 15, fontFamily: "'DM Sans', sans-serif" }}>Contact Our Team</div>
               <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
-                <a href="https://wa.me/17582855195" target="_blank" rel="noopener noreferrer" style={{
+                <a href="https://wa.me/13059429407" target="_blank" rel="noopener noreferrer" style={{
                   padding: "8px 15px", background: "#25d366", color: "#fff",
                   borderRadius: 20, textDecoration: "none", fontSize: 13, fontWeight: "bold",
                 }}>💬 WhatsApp</a>
