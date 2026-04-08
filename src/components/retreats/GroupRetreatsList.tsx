@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useRetreatDates } from "@/hooks/use-retreats";
 import { format } from "date-fns";
 
-const whatsappNumber = "+17582855195";
+const whatsappNumber = "+13059429407";
 
 export function GroupRetreatsList() {
   const { data: retreatDates = [] } = useRetreatDates();

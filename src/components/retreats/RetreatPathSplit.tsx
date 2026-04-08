@@ -5,7 +5,7 @@ import { useStore } from "@/lib/store-context";
 import { format } from "date-fns";
 
 const EXCHANGE_RATE = 2.70;
-const whatsappNumber = "+17582855195";
+const whatsappNumber = "+13059429407";
 
 const groupIncludes = [
   "Daily bush medicine workshops",

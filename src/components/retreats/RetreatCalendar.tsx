@@ -23,7 +23,7 @@ import {
 } from "@/hooks/use-retreats";
 import { useStore } from "@/lib/store-context";
 
-const whatsappNumber = "+17582855195";
+const whatsappNumber = "+13059429407";
 const EXCHANGE_RATE = 2.70;
 
 export function RetreatCalendar() {

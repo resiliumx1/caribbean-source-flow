@@ -99,8 +99,11 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
               Speak With Our Sourcing Team
             </a>
 
-            <button
-              onClick={onScrollToForm}
+            <a
+              href="/mount-kailash-product-catalogue.pdf"
+              download="Mount-Kailash-Product-Catalogue.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full border-2 transition-all hover:bg-white/10"
               style={{
                 borderColor: "var(--site-hero-text-on-dark)",
@@ -111,8 +114,8 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
               }}
             >
               <Download className="w-5 h-5" />
-              Download Product Catalog
-            </button>
+              Download Product Catalogue
+            </a>
           </div>
         </div>
       </div>
