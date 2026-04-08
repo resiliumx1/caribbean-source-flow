@@ -89,11 +89,13 @@ export function UnifiedFooter() {
               <div className="flex items-center gap-2" style={{ color: 'var(--site-footer-muted)' }}>
                 <MapPin className="w-4 h-4" /> Marc, Castries, St. Lucia
               </div>
-              <ContactNumbers
-                className="text-sm"
-                linkClassName="hover:text-[#c9a84c]"
-                variant="stacked"
-              />
+              <div style={{ color: 'var(--site-footer-muted)' }}>
+                <ContactNumbers
+                  className="text-sm"
+                  linkClassName="hover:text-[#c9a84c]"
+                  variant="stacked"
+                />
+              </div>
             </div>
           </div>
         </div>

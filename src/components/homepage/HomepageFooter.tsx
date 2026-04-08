@@ -131,11 +131,13 @@ export function HomepageFooter() {
               <div className="flex items-center gap-2" style={{ color: "#A8B5A0" }}>
                 <MapPin className="w-4 h-4" /> Marc, Castries, St. Lucia
               </div>
-              <ContactNumbers
-                className="text-sm"
-                linkClassName="hover:text-[#D4A373]"
-                variant="stacked"
-              />
+              <div style={{ color: "#A8B5A0" }}>
+                <ContactNumbers
+                  className="text-sm"
+                  linkClassName="hover:text-[#D4A373]"
+                  variant="stacked"
+                />
+              </div>
             </div>
           </div>
         </div>

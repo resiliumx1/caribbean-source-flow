@@ -24,7 +24,7 @@ export const Footer = () => {
           {/* Contact */}
           <div>
             <h4 style={{ fontWeight: 500, fontSize: "15px", color: "var(--site-footer-text)", marginBottom: "16px" }}>Contact Us</h4>
-            <div className="mb-4">
+            <div className="mb-4" style={{ color: "var(--site-footer-muted)", fontSize: "14px" }}>
               <ContactNumbers
                 linkClassName="hover:text-[#c9a84c]"
                 className="text-sm"
