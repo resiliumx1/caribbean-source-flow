@@ -58,7 +58,7 @@ export function ContactNumbers({
         <a
           key={n.tel}
           href={`tel:${n.tel}`}
-          className={`inline-flex items-center gap-2 min-h-[44px] transition-colors ${linkClassName}`}
+          className={`inline-flex items-center gap-2 min-h-[44px] transition-colors text-inherit ${linkClassName}`}
         >
           <span aria-hidden="true" className="text-base">{n.flag}</span>
           <span>{n.display}</span>
