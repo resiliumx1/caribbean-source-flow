@@ -27,7 +27,7 @@ const sidebarFacts = [
   "Level 1 Herbal Physician certification",
 ];
 
-const whatsappNumber = "+17582855195";
+const whatsappNumber = "+13059429407";
 
 export function CourseDetailHero() {
   const whatsappMessage = encodeURIComponent(

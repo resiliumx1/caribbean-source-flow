@@ -28,10 +28,10 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [currency, setCurrency] = useState<Currency>("USD");
   const [exchangeRate, setExchangeRate] = useState(2.70);
-  const [whatsappNumber, setWhatsappNumber] = useState("+17582855195");
+  const [whatsappNumber, setWhatsappNumber] = useState("+13059429407");
   const [salesManager, setSalesManager] = useState("Goddess Itopia Archer");
   const [storeEmail, setStoreEmail] = useState("goddessitopia@mountkailashslu.com");
-  const [storePhone, setStorePhone] = useState("+17582855195");
+  const [storePhone, setStorePhone] = useState("+13059429407");
   const [isLocalVisitor, setIsLocalVisitor] = useState(false);
 
   useEffect(() => {

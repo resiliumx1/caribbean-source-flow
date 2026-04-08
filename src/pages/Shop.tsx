@@ -247,7 +247,7 @@ export default function Shop() {
     return map;
   }, [conditions, conditionProductMap]);
 
-  const isFiltered = !!activeCondition || !!activeForm || !!debouncedSearch;
+  const isFiltered = !!activeCondition || !!activeForm || !!debouncedSearch || sortBy !== "featured";
   const showDefaultView = !isFiltered;
 
   // Auto-scroll to results when filter changes
