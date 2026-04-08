@@ -19,6 +19,8 @@ interface StoreContextType {
   salesManager: string;
   storeEmail: string;
   storePhone: string;
+  saintLuciaPhone1: string;
+  saintLuciaPhone2: string;
   isLocalVisitor: boolean;
   setIsLocalVisitor: (isLocal: boolean) => void;
 }
@@ -32,6 +34,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [salesManager, setSalesManager] = useState("Goddess Itopia Archer");
   const [storeEmail, setStoreEmail] = useState("goddessitopia@mountkailashslu.com");
   const [storePhone, setStorePhone] = useState("+13059429407");
+  const [saintLuciaPhone1, setSaintLuciaPhone1] = useState("+17582855195");
+  const [saintLuciaPhone2, setSaintLuciaPhone2] = useState("+17587223660");
   const [isLocalVisitor, setIsLocalVisitor] = useState(false);
 
   useEffect(() => {
@@ -55,6 +59,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             case "store_info":
               setStoreEmail((value as StoreSettings["store_info"]).email);
               setStorePhone((value as StoreSettings["store_info"]).phone);
+              break;
+            case "saint_lucia_phone_1":
+              if (typeof setting.value === "string") setSaintLuciaPhone1(setting.value);
+              break;
+            case "saint_lucia_phone_2":
+              if (typeof setting.value === "string") setSaintLuciaPhone2(setting.value);
               break;
           }
         });
@@ -123,6 +133,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         salesManager,
         storeEmail,
         storePhone,
+        saintLuciaPhone1,
+        saintLuciaPhone2,
         isLocalVisitor,
         setIsLocalVisitor,
       }}
@@ -147,6 +159,8 @@ export function useStore() {
       salesManager: "Goddess Itopia Archer",
       storeEmail: "goddessitopia@mountkailashslu.com",
       storePhone: "+13059429407",
+      saintLuciaPhone1: "+17582855195",
+      saintLuciaPhone2: "+17587223660",
       isLocalVisitor: false,
       setIsLocalVisitor: (() => {}) as (isLocal: boolean) => void,
     } satisfies StoreContextType;
