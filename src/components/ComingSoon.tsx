@@ -48,7 +48,7 @@ const ComingSoon = () => {
           </a>
           
           <a
-            href="mailto:info@mtkailash.com"
+            href="mailto:goddessitopia@mountkailashslu.com"
             className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#F7F3EE]/30 text-[#F7F3EE] rounded-full font-semibold hover:bg-[#F7F3EE]/10 hover:border-[#F7F3EE]/50 transition-all duration-300"
           >
             <Mail className="w-5 h-5" />

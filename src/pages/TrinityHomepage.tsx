@@ -5,6 +5,7 @@ import { MessageCircle, ArrowRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { GateEntrance, isReturningVisitor } from "@/components/gate-entrance";
+import { SITE_URL } from "@/lib/site-config";
 
 // Lazy load below-fold sections
 const SourceStory = lazy(() => import("@/components/homepage/SourceStory").then(m => ({ default: m.SourceStory })));
@@ -100,7 +101,7 @@ const TrinityHomepage = () => {
       <Helmet>
         <title>Mount Kailash Rejuvenation Centre | Caribbean Bush Medicine & Wellness</title>
         <meta name="description" content="Mount Kailash Rejuvenation Centre — 21+ years of Caribbean clinical bush medicine from Saint Lucia. Shop herbal tinctures, book a 7-day immersive healing retreat, or train as a certified herbal physician under Rt Hon Priest Kailash K Leonce." />
-        <link rel="canonical" href="https://caribbean-source-flow.lovable.app/" />
+        <link rel="canonical" href={`${SITE_URL}/`} />
       </Helmet>
 
       <HeroSection />
