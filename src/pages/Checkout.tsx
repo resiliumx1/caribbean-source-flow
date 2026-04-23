@@ -53,22 +53,16 @@ export default function Checkout() {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      if (!token) {
-        toast({
-          title: "Please log in",
-          description: "You need to be logged in to checkout.",
-          variant: "destructive",
-        });
-        setIsSubmitting(false);
-        return;
-      }
+      // Guest checkout supported — fall back to anon key when not logged in
+      const authToken = token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/woo-order`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${authToken}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -89,6 +83,7 @@ export default function Checkout() {
               country: form.country,
             },
             customer_note: form.customer_note,
+            return_url: `${window.location.origin}/account?order=success`,
           }),
         }
       );

@@ -12,35 +12,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify authenticated user
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Parse request body
+    // Parse request body — guest checkout allowed (no auth required)
     const body = await req.json();
-    const { items, billing, customer_note } = body;
+    const { items, billing, customer_note, return_url } = body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return new Response(
@@ -150,7 +127,9 @@ Deno.serve(async (req) => {
         order_key: wooOrder.order_key,
         total: wooOrder.total,
         currency: wooOrder.currency,
-        payment_url: `${wooUrl}/checkout/order-pay/${wooOrder.id}/?pay_for_order=true&key=${wooOrder.order_key}`,
+        payment_url: `${normalizedUrl}/checkout/order-pay/${wooOrder.id}/?pay_for_order=true&key=${wooOrder.order_key}${
+          return_url ? `&return_url=${encodeURIComponent(return_url)}` : ""
+        }`,
         status: wooOrder.status,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
