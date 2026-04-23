@@ -8,8 +8,9 @@ import {
 import goddessPhoto from "@/assets/goddess-itopia.webp";
 import ubuntuLogo from "@/assets/ubuntu-logo.webp";
 import kailashLogo from "@/assets/mount-kailash-logo-green.webp";
+import { SITE_URL } from "@/lib/site-config";
 
-const CARD_URL = "https://caribbean-source-flow.lovable.app/goddess";
+const CARD_URL = `${SITE_URL}/goddess`;
 
 // ─── Photo Lightbox ──────────────────────────────────────────────────────────
 function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {

@@ -89,14 +89,14 @@ export function StoreFooter() {
                 </span>
               </li>
               <li>
-                <span className="cursor-default">
+                <Link to="/privacy" className="hover:text-gold transition-colors">
                   Privacy Policy
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="cursor-default">
+                <Link to="/terms" className="hover:text-gold transition-colors">
                   Terms of Service
-                </span>
+                </Link>
               </li>
             </ul>
           </div>

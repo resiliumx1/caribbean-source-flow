@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { SITE_URL } from "@/lib/site-config";
 
 interface SEOHeadProps {
   title: string;
@@ -7,7 +8,7 @@ interface SEOHeadProps {
   ogImage?: string;
 }
 
-const BASE_URL = "https://caribbean-source-flow.lovable.app";
+const BASE_URL = SITE_URL;
 const DEFAULT_OG = "https://storage.googleapis.com/gpt-engineer-file-uploads/KBVCYBIRlWQKYPcd76HHSztmFF13/social-images/social-1770013953420-KHALASH LOGO.jpeg";
 
 export function SEOHead({ title, description, path, ogImage }: SEOHeadProps) {
