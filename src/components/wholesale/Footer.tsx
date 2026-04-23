@@ -82,8 +82,8 @@ export const Footer = () => {
               © {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <span className="cursor-default" style={{ fontSize: "14px", color: "var(--site-footer-muted)" }}>Privacy Policy</span>
-              <span className="cursor-default" style={{ fontSize: "14px", color: "var(--site-footer-muted)" }}>Terms of Service</span>
+              <a href="/privacy" style={{ fontSize: "14px", color: "var(--site-footer-muted)" }} className="hover:underline">Privacy Policy</a>
+              <a href="/terms" style={{ fontSize: "14px", color: "var(--site-footer-muted)" }} className="hover:underline">Terms of Service</a>
             </div>
           </div>
         </div>

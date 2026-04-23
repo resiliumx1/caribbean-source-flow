@@ -105,7 +105,10 @@ export function UnifiedFooter() {
         <div className="container mx-auto max-w-6xl px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4" style={{ fontSize: '12px', color: '#a89e90' }}>
             <p>© {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.</p>
-            <p className="text-center md:text-right max-w-xl">Traditional use based on St. Lucian bush medicine practices.</p>
+            <div className="flex gap-5">
+              <a href="/privacy" className="hover:underline">Privacy</a>
+              <a href="/terms" className="hover:underline">Terms</a>
+            </div>
           </div>
         </div>
       </div>

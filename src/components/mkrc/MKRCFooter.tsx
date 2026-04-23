@@ -150,9 +150,13 @@ export default function MKRCFooter() {
           borderTop: "1px solid var(--mkrc-border-subtle)",
         }}
       >
-        <p style={{ color: "var(--mkrc-text-tertiary)", fontSize: "0.8rem" }}>
-          © 2026 Mount Kailash Rejuvenation Centre
-        </p>
+        <div className="flex flex-col sm:flex-row items-center gap-4" style={{ color: "var(--mkrc-text-tertiary)", fontSize: "0.8rem" }}>
+          <p>© 2026 Mount Kailash Rejuvenation Centre</p>
+          <div className="flex gap-4">
+            <a href="/privacy" className="hover:underline">Privacy</a>
+            <a href="/terms" className="hover:underline">Terms</a>
+          </div>
+        </div>
         <div className="flex items-center gap-5">
           <a
             href="https://www.instagram.com/mountkailashslu/"

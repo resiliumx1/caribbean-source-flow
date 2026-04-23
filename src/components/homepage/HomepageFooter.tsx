@@ -150,9 +150,10 @@ export function HomepageFooter() {
             style={{ fontSize: "12px", color: "#A8B5A0" }}
           >
             <p>© {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.</p>
-            <p className="text-center md:text-right max-w-xl">
-              Traditional use based on St. Lucian bush medicine practices.
-            </p>
+            <div className="flex gap-5">
+              <a href="/privacy" className="hover:underline">Privacy</a>
+              <a href="/terms" className="hover:underline">Terms</a>
+            </div>
           </div>
         </div>
       </div>
