@@ -24,6 +24,57 @@ interface WooProduct {
   categories: { id: number; name: string; slug: string }[];
 }
 
+const oauthEncode = (value: string) =>
+  encodeURIComponent(value).replace(/[!'()*]/g, (char) =>
+    `%${char.charCodeAt(0).toString(16).toUpperCase()}`
+  );
+
+const createOauthUrl = async (rawUrl: string, consumerKey: string, consumerSecret: string) => {
+  const url = new URL(rawUrl);
+  const oauthParams = new URLSearchParams({
+    oauth_consumer_key: consumerKey,
+    oauth_nonce: crypto.randomUUID().replace(/-/g, ""),
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+    oauth_version: "1.0",
+  });
+
+  const signatureParams = [
+    ...Array.from(url.searchParams.entries()),
+    ...Array.from(oauthParams.entries()),
+  ]
+    .sort(([aKey, aValue], [bKey, bValue]) =>
+      aKey === bKey ? aValue.localeCompare(bValue) : aKey.localeCompare(bKey)
+    )
+    .map(([key, value]) => `${oauthEncode(key)}=${oauthEncode(value)}`)
+    .join("&");
+
+  const baseString = [
+    "GET",
+    oauthEncode(`${url.origin}${url.pathname}`),
+    oauthEncode(signatureParams),
+  ].join("&");
+
+  const signingKey = `${oauthEncode(consumerSecret)}&`;
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(signingKey),
+    { name: "HMAC", hash: "SHA-1" },
+    false,
+    ["sign"]
+  );
+  const signatureBuffer = await crypto.subtle.sign(
+    "HMAC",
+    cryptoKey,
+    new TextEncoder().encode(baseString)
+  );
+  const signature = btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)));
+
+  oauthParams.forEach((value, key) => url.searchParams.set(key, value));
+  url.searchParams.set("oauth_signature", signature);
+  return url.toString();
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
