@@ -12,7 +12,7 @@ export function StoreFooter() {
     <footer className="bg-primary text-primary-foreground">
       <FooterVine />
       <div className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-4 gap-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
@@ -88,14 +88,21 @@ export function StoreFooter() {
                   Returns Policy
                 </span>
               </li>
-              <li>
-                <Link to="/privacy-policy" className="hover:text-gold transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="font-serif font-semibold mb-4">Legal</h4>
+            <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li>
                 <Link to="/terms-and-conditions" className="hover:text-gold transition-colors">
                   Terms &amp; Conditions
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy-policy" className="hover:text-gold transition-colors">
+                  Privacy Policy
                 </Link>
               </li>
             </ul>
