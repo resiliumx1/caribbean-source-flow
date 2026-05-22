@@ -14,9 +14,9 @@ export default function PrivacyPolicy() {
         description="How Mount Kailash Rejuvenation Centre collects, uses, stores, and protects your personal information."
         path="/privacy-policy"
       />
-      <main className="min-h-screen pt-28 pb-20 px-6 bg-background text-foreground font-body">
+      <main className="min-h-screen pt-28 pb-20 px-6 bg-background text-foreground font-sans">
         <article className="max-w-3xl mx-auto">
-          <h1 className="font-display text-4xl md:text-5xl mb-2 text-foreground">
+          <h1 className="font-serif text-4xl md:text-5xl mb-2 text-foreground">
             Privacy Policy
           </h1>
           <p className="text-base text-muted-foreground mb-2">
@@ -37,7 +37,7 @@ export default function PrivacyPolicy() {
 
           <Section n="1" title="Information We Collect">
             <p className="mb-3 leading-relaxed">We may collect the following information:</p>
-            <h3 className="font-display text-xl mb-2 mt-4 text-foreground">
+            <h3 className="font-serif text-xl mb-2 mt-4 text-foreground">
               Personal Information
             </h3>
             <Bullets
@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
                 "Health or dietary information voluntarily provided for retreats or wellness services",
               ]}
             />
-            <h3 className="font-display text-xl mb-2 mt-6 text-foreground">
+            <h3 className="font-serif text-xl mb-2 mt-6 text-foreground">
               Technical Information
             </h3>
             <Bullets
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
                 "Cookies and usage analytics",
               ]}
             />
-            <h3 className="font-display text-xl mb-2 mt-6 text-foreground">
+            <h3 className="font-serif text-xl mb-2 mt-6 text-foreground">
               Transaction Information
             </h3>
             <Bullets
@@ -290,7 +290,7 @@ function Section({
 }) {
   return (
     <section className="mb-10">
-      <h2 className="font-display text-2xl md:text-3xl mb-4 text-foreground">
+      <h2 className="font-serif text-2xl md:text-3xl mb-4 text-foreground">
         {n}. {title}
       </h2>
       {children}

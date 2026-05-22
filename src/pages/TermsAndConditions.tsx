@@ -14,9 +14,9 @@ export default function TermsAndConditions() {
         description="Terms and Conditions governing your use of the Mount Kailash Rejuvenation Centre website, products, retreats, programs, and services."
         path="/terms-and-conditions"
       />
-      <main className="min-h-screen pt-28 pb-20 px-6 bg-background text-foreground font-body">
+      <main className="min-h-screen pt-28 pb-20 px-6 bg-background text-foreground font-sans">
         <article className="max-w-3xl mx-auto">
-          <h1 className="font-display text-4xl md:text-5xl mb-2 text-foreground">
+          <h1 className="font-serif text-4xl md:text-5xl mb-2 text-foreground">
             Terms and Conditions
           </h1>
           <p className="text-base text-muted-foreground mb-2">
@@ -329,7 +329,7 @@ function Section({
 }) {
   return (
     <section className="mb-10">
-      <h2 className="font-display text-2xl md:text-3xl mb-4 text-foreground">
+      <h2 className="font-serif text-2xl md:text-3xl mb-4 text-foreground">
         {n}. {title}
       </h2>
       {children}
