@@ -218,6 +218,41 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Require admin auth
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const authClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const adminCheck = createClient(supabaseUrl, serviceKey);
+    const { data: profile } = await adminCheck
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", claimsData.claims.sub)
+      .single();
+    if (!profile?.is_admin) {
+      return new Response(JSON.stringify({ error: "Admin access required" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const channelId = await resolveChannelId(YOUTUBE_HANDLE);
     if (!channelId) {
       return new Response(
@@ -292,8 +327,9 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
+    console.error("youtube-sync error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "An internal error occurred during sync." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
