@@ -1181,6 +1181,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_get_reviews: {
+        Args: { p_sort?: string; p_status?: string }
+        Returns: {
+          content: string
+          created_at: string
+          helpful_count: number
+          id: string
+          images: Json
+          is_verified_purchase: boolean
+          product_id: string
+          product_name: string
+          product_slug: string
+          rating: number
+          status: string
+          title: string
+          user_email: string
+          user_name: string
+        }[]
+      }
       check_verified_purchase: {
         Args: { p_email: string; p_product_id: string }
         Returns: boolean

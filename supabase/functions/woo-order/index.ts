@@ -33,6 +33,41 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Basic input validation
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (typeof billing.email !== "string" || billing.email.length > 255 || !emailRe.test(billing.email)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid email" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const lenChecks: [string, unknown, number][] = [
+      ["first_name", billing.first_name, 100],
+      ["last_name", billing.last_name, 100],
+      ["phone", billing.phone, 30],
+      ["address_1", billing.address_1, 255],
+      ["address_2", billing.address_2, 255],
+      ["city", billing.city, 100],
+      ["state", billing.state, 100],
+      ["postcode", billing.postcode, 20],
+      ["country", billing.country, 2],
+      ["customer_note", customer_note, 1000],
+    ];
+    for (const [name, val, max] of lenChecks) {
+      if (val != null && (typeof val !== "string" || val.length > max)) {
+        return new Response(
+          JSON.stringify({ error: `Invalid ${name}` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+    if (items.length > 50) {
+      return new Response(
+        JSON.stringify({ error: "Too many items" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // WooCommerce credentials
     const wooKey = Deno.env.get("WOO_CONSUMER_KEY");
     const wooSecret = Deno.env.get("WOO_CONSUMER_SECRET");
@@ -128,9 +163,8 @@ Deno.serve(async (req) => {
     const wooOrder = await wooRes.json();
 
     if (!wooRes.ok) {
-      throw new Error(
-        `WooCommerce order creation failed [${wooRes.status}]: ${JSON.stringify(wooOrder)}`
-      );
+      console.error("WooCommerce order error:", wooRes.status, wooOrder);
+      throw new Error("Order creation failed");
     }
 
     return new Response(
@@ -151,7 +185,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error("woo-order error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "An internal error occurred while creating your order. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
