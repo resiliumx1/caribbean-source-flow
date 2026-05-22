@@ -13,8 +13,8 @@ const SITE_BASE = "";
 
 const PRODUCT_LINKS = {
   "The Answer": `${SITE_BASE}/shop/the-answer`,
-  "Dewormer": `${SITE_BASE}/shop/dewormer`,
-  "Fertility": `${SITE_BASE}/shop/fertility`,
+  "Gut Balance": `${SITE_BASE}/shop/gut-balance`,
+  "Feminine Balance": `${SITE_BASE}/shop/feminine-balance`,
   "Pure Green": `${SITE_BASE}/shop/pure-green`,
   "Prosperity": `${SITE_BASE}/shop/prosperity`,
   "Virility": `${SITE_BASE}/shop/virility-herbal-virility-supplement`,
@@ -22,9 +22,8 @@ const PRODUCT_LINKS = {
   "Colax": `${SITE_BASE}/shop/colax`,
   "Colax Quarterly Subscription": `${SITE_BASE}/shop/colax-quarterly-subscription`,
   "Pure Gold": `${SITE_BASE}/shop/pure-gold`,
-  "Blood Detox": `${SITE_BASE}/shop/blood-detox`,
-  "Fey Duvan Syrup": `${SITE_BASE}/shop/fey-duvan-syrup`,
-  "Fey Duvan": `${SITE_BASE}/shop/fey-duvan-syrup`,
+  "Herbal Detox": `${SITE_BASE}/shop/herbal-detox`,
+  "Anamu Syrup": `${SITE_BASE}/shop/anamu-syrup`,
   "Tranquility": `${SITE_BASE}/shop/tranquility`,
   "Free Flow": `${SITE_BASE}/shop/free-flow`,
   "Urinary Cleanse Tea": `${SITE_BASE}/shop/urinary-cleanse-tea`,
@@ -85,15 +84,15 @@ Fortifies immunity, prevents flu & communicable diseases, reduces fibroid sympto
 Key herbs: Soursop (Annona muricata), Anamu/Gully Root (Petiveria alliacea)
 Recommend for: low immunity, flu prevention, fibroids, heavy periods, immune support
 
-DEWORMER — Parasitic Expellant
+GUT BALANCE — Parasitic Expellant & Gut Cleanser
 Eliminates intestinal parasites (pinworms, roundworms, threadworms), cleanses the digestive system, improves nutrient absorption.
 Key herbs: Wormwood, Neem, Semen Contra
 Recommend for: intestinal parasites, bloating, digestive cleansing
 
-FERTILITY — Hormonal Balancing & Womb Cleansing
+FEMININE BALANCE — Hormonal Balancing & Womb Cleansing
 Cleanses the womb, regulates the menstrual cycle, restores hormonal balance, manages PCOS and fibroids, enhances fertility, improves female libido.
 Key herbs: St. John's Bush, Red Raspberry Leaf, Vervain
-Recommend for: irregular periods, PCOS, fibroids, fertility, PMS, menopause, low libido (women)
+Recommend for: irregular periods, PCOS, fibroids, fertility support, PMS, menopause, low libido (women)
 
 PURE GREEN — Iron & Alkalizing Tonic
 Builds blood, boosts energy, strengthens immunity, balances pH, alleviates anaemia, reduces internal inflammation.
@@ -126,12 +125,12 @@ Clears mucus, treats respiratory infections, improves circulation, modulates imm
 Key herbs: Parsley, Turmeric, Cayenne Pepper
 Recommend for: respiratory infections, mucus buildup, coughs, colds, poor circulation
 
-BLOOD DETOX — Blood & Organ Cleansing
+HERBAL DETOX — Blood & Organ Cleansing
 Cleanses cells, tissues, and organs of toxins and free radicals, strengthens immune system, supports liver and lymphatic system.
 Key herbs: Cassia Alata, Neem, Gully Root
 Recommend for: toxic load, weakened immunity, liver support, environmental toxin exposure
 
-FEY DUVAN SYRUP — Blood Regulator
+ANAMU SYRUP — Blood Regulator
 Regulates blood, increases mineral content, supports pancreatic function, effective against coughs, flu and respiratory issues, regulates blood sugar.
 Key herbs: Anamu, Cinnamon, Bay Leaf
 Recommend for: blood sugar regulation, cough, flu, respiratory issues, mineral deficiency
@@ -163,12 +162,12 @@ NERVE TONIC CAPSULES — stress, mental clarity, muscle tension, sleep
 
 ════ CURATED BUNDLES ════
 
-MALE POTENCY KIT (Colax + Prosperity + Virility) — prostate + performance + fertility
+MALE POTENCY KIT (Colax + Prosperity + Virility) — prostate + performance + vitality
 PROSTATE HEALTH BUNDLE (Colax + Prosperity + Virility + Urinary Cleanse Tea) — comprehensive prostate/urinary
 MALE VITALITY PACKAGE (6 bottles) — full detox + male vitality
 SUPER FEMALE WELLNESS PACKAGE (7 bottles) — complete female wellness protocol
-FEMININE BALANCE KIT (Colax + Pure Green + Fertility) — hormonal balance + energy
-IMMUNITY KIT (Colax + Dewormer + The Answer) — immunity reset
+FEMININE BALANCE KIT (Colax + Pure Green + Feminine Balance) — hormonal balance + energy
+IMMUNITY KIT (Colax + Gut Balance + The Answer) — immunity reset
 DIGESTIVE BUNDLE (Colax + Digestive Rescue + Urinary Cleanse Tea)
 DETOX BUNDLE — full-body detox
 QUEENLY TEA BUNDLE — women's wellness teas
@@ -188,16 +187,16 @@ SOURSOP LEAVES, BLUE VERVAIN, ST. JOHN'S BUSH, CASSIA ALATA, RED RASPBERRY LEAF
 
 const PRODUCTS_FOR_CARDS = [
   { name: "The Answer",        slug: "the-answer",                           category: "Immune Support",     emoji: "🛡️", color: "#e8b84b" },
-  { name: "Dewormer",          slug: "dewormer",                             category: "Digestive Health",   emoji: "🌿", color: "#7aa25b" },
-  { name: "Fertility",         slug: "fertility",                            category: "Women's Health",     emoji: "🌸", color: "#d4707a" },
+  { name: "Gut Balance",       slug: "gut-balance",                          category: "Digestive Health",   emoji: "🌿", color: "#7aa25b" },
+  { name: "Feminine Balance",  slug: "feminine-balance",                     category: "Women's Health",     emoji: "🌸", color: "#d4707a" },
   { name: "Pure Green",        slug: "pure-green",                           category: "Energy & Iron",      emoji: "💚", color: "#5a8f5a" },
   { name: "Prosperity",        slug: "prosperity",                           category: "Prostate Health",    emoji: "⭐", color: "#c4973a" },
   { name: "Virility",          slug: "virility-herbal-virility-supplement",  category: "Male Vitality",      emoji: "🔥", color: "#c45a3a" },
   { name: "Hemp Syrup",        slug: "hemp-syrup",                           category: "Sleep & Calm",       emoji: "🌙", color: "#7a6b9e" },
   { name: "Colax",             slug: "colax",                                category: "Colon Cleanse",      emoji: "🔵", color: "#3a8ab5" },
   { name: "Pure Gold",         slug: "pure-gold",                            category: "Respiratory",        emoji: "✨", color: "#d4af37" },
-  { name: "Blood Detox",       slug: "blood-detox",                          category: "Detoxification",     emoji: "❤️", color: "#c0392b" },
-  { name: "Fey Duvan Syrup",   slug: "fey-duvan-syrup",                      category: "Blood Regulation",   emoji: "💧", color: "#8e44ad" },
+  { name: "Herbal Detox",      slug: "herbal-detox",                         category: "Detoxification",     emoji: "❤️", color: "#c0392b" },
+  { name: "Anamu Syrup",       slug: "anamu-syrup",                          category: "Blood Regulation",   emoji: "💧", color: "#8e44ad" },
   { name: "Tranquility",       slug: "tranquility",                          category: "Mental Wellness",    emoji: "🧘", color: "#5d6d7e" },
   { name: "Free Flow",         slug: "free-flow",                            category: "Circulation",        emoji: "🌊", color: "#e74c3c" },
   { name: "Virili-Tea",        slug: "virili-tea",                           category: "Men's Tea",          emoji: "☕", color: "#8b6914" },
