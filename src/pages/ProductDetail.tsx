@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom"; // product detail page
+import { useParams, Link, Navigate } from "react-router-dom"; // product detail page
 import { ArrowLeft, ShoppingBag, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles, MessageCircle, Check } from "lucide-react";
 import { useState, useEffect, useLayoutEffect } from "react";
 import { StoreFooter } from "@/components/store/StoreFooter";
@@ -13,13 +13,25 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { useProduct, useBundleItems } from "@/hooks/use-products";
 import { useProductVariants, type ProductVariant } from "@/hooks/use-product-variants";
 import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 
+// Redirect map for renamed product slugs
+const SLUG_REDIRECTS: Record<string, string> = {
+  "blood-detox": "herbal-detox",
+  "dewormer": "gut-balance",
+  "fey-duvan-syrup": "anamu-syrup",
+  "fertility": "feminine-balance",
+};
+
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
+  if (slug && SLUG_REDIRECTS[slug]) {
+    return <Navigate to={`/shop/${SLUG_REDIRECTS[slug]}`} replace />;
+  }
   const { data: product, isLoading } = useProduct(slug || "");
   const { data: bundleItems } = useBundleItems(product?.product_type === "bundle" ? product.id : "");
   const { data: variants = [] } = useProductVariants(product?.id);
@@ -27,6 +39,7 @@ export default function ProductDetail() {
   const { formatPrice, formatPriceBoth, whatsappNumber, isLocalVisitor } = useStore();
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [labelOpen, setLabelOpen] = useState(false);
 
   // Scroll to top on page load
   useLayoutEffect(() => {
@@ -292,6 +305,39 @@ export default function ProductDetail() {
                 </p>
               </div>
             )}
+
+            {/* ========== PRODUCT LABEL ========== */}
+            {(product as any).label_image_url && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-foreground mb-3">
+                  Product Label & Supplement Facts
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setLabelOpen(true)}
+                  className="group block w-full rounded-xl border border-border bg-muted/30 p-3 hover:border-primary/40 transition-colors"
+                  aria-label={`View ${product.name} supplement facts label`}
+                >
+                  <img
+                    src={(product as any).label_image_url}
+                    alt={`${product.name} supplement facts label`}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-auto max-h-80 object-contain mx-auto cursor-zoom-in"
+                  />
+                  <span className="block text-xs text-muted-foreground mt-2 text-center group-hover:text-primary transition-colors">
+                    Tap to zoom
+                  </span>
+                </button>
+                <div className="my-6 h-px bg-border" />
+              </div>
+            )}
+            <ImageLightbox
+              images={(product as any).label_image_url ? [(product as any).label_image_url] : []}
+              isOpen={labelOpen}
+              onClose={() => setLabelOpen(false)}
+              alt={`${product.name} supplement facts label`}
+            />
 
             {/* Variant selector for herbs */}
             {variants.length > 0 && (
