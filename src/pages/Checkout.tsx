@@ -318,7 +318,9 @@ export default function Checkout() {
 
             {/* Order summary */}
             <div className="lg:col-span-2">
-              <div className="bg-card rounded-xl border border-border p-6 sticky top-24 space-y-4">
+              <div className="sticky top-24 space-y-4">
+                <FDADisclaimer variant="compact" />
+                <div className="bg-card rounded-xl border border-border p-6 space-y-4">
                 <h2 className="font-serif font-semibold text-lg text-foreground">
                   Order Summary
                 </h2>
@@ -365,12 +367,44 @@ export default function Checkout() {
                   your order.
                 </p>
 
+                <label className="flex items-start gap-3 text-sm text-foreground cursor-pointer select-none pt-1">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    required
+                    className="mt-1 h-4 w-4 rounded border-border accent-primary shrink-0"
+                    aria-label="Agree to Terms and Conditions and Privacy Policy"
+                  />
+                  <span className="leading-relaxed">
+                    I have read and agree to the{" "}
+                    <Link
+                      to="/terms-and-conditions"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:opacity-80"
+                    >
+                      Terms &amp; Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      to="/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:opacity-80"
+                    >
+                      Privacy Policy
+                    </Link>
+                    .
+                  </span>
+                </label>
+
                 <Button
                   type="submit"
                   variant="hero"
                   size="lg"
                   className="w-full gap-2"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !agreedToTerms}
                 >
                   {isSubmitting ? (
                     <>
@@ -384,6 +418,7 @@ export default function Checkout() {
                     </>
                   )}
                 </Button>
+                </div>
               </div>
             </div>
           </div>
