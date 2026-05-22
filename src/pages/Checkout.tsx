@@ -89,7 +89,18 @@ export default function Checkout() {
       });
 
       if (result.payment_url) {
-        window.location.href = result.payment_url;
+        // Break out of the Lovable preview iframe — mountkailashslu.com
+        // blocks framing, so a same-frame redirect shows "refused to connect".
+        try {
+          if (window.top && window.top !== window.self) {
+            window.top.location.href = result.payment_url;
+          } else {
+            window.location.href = result.payment_url;
+          }
+        } catch {
+          // Cross-origin top access blocked — open in a new tab instead.
+          window.open(result.payment_url, "_blank", "noopener,noreferrer");
+        }
       }
     } catch (err: any) {
       toast({
