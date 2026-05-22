@@ -222,28 +222,26 @@ export function useAdminReviews(status: string, sort: string) {
   return useQuery({
     queryKey: ["admin-reviews", status, sort],
     queryFn: async () => {
-      let query = supabase
-        .from("reviews")
-        .select("*, products(name, slug)");
-
-      if (status !== "all") {
-        query = query.eq("status", status);
-      }
-
-      switch (sort) {
-        case "rating_high":
-          query = query.order("rating", { ascending: false });
-          break;
-        case "rating_low":
-          query = query.order("rating", { ascending: true });
-          break;
-        default:
-          query = query.order("created_at", { ascending: false });
-      }
-
-      const { data, error } = await query;
+      const { data, error } = await supabase.rpc("admin_get_reviews", {
+        p_status: status,
+        p_sort: sort,
+      });
       if (error) throw error;
-      return data as (Review & { products: { name: string; slug: string } | null })[];
+      return (data ?? []).map((r: any) => ({
+        id: r.id,
+        product_id: r.product_id,
+        user_name: r.user_name,
+        user_email: r.user_email,
+        rating: r.rating,
+        title: r.title,
+        content: r.content,
+        images: r.images,
+        status: r.status,
+        helpful_count: r.helpful_count,
+        is_verified_purchase: r.is_verified_purchase,
+        created_at: r.created_at,
+        products: r.product_name ? { name: r.product_name, slug: r.product_slug } : null,
+      })) as (Review & { products: { name: string; slug: string } | null })[];
     },
   });
 }
