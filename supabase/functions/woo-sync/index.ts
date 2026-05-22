@@ -249,6 +249,7 @@ Deno.serve(async (req) => {
         synced,
         created,
         updated,
+        skipped,
         images_preserved,
         errors,
       }),
