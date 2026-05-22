@@ -63,14 +63,26 @@ Deno.serve(async (req) => {
       (products || []).map((p) => [p.id, p])
     );
 
+    // Identify any items missing a WooCommerce ID before attempting to build the order.
+    const unsyncedNames = items
+      .map((item: any) => productMap.get(item.product_id))
+      .filter((p: any) => !p?.woo_product_id)
+      .map((p: any) => p?.name || "Unknown product");
+
+    if (unsyncedNames.length > 0) {
+      return new Response(
+        JSON.stringify({
+          error: `These items aren't available for online checkout yet: ${unsyncedNames.join(", ")}. Please remove them from your cart or contact us to complete your order.`,
+          code: "MISSING_WOO_PRODUCT_ID",
+          unsynced: unsyncedNames,
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Build WooCommerce line_items
     const lineItems = items.map((item: any) => {
-      const product = productMap.get(item.product_id);
-      if (!product?.woo_product_id) {
-        throw new Error(
-          `Product "${product?.name || item.product_id}" has no WooCommerce ID. Run a sync first.`
-        );
-      }
+      const product = productMap.get(item.product_id)!;
       return {
         product_id: product.woo_product_id,
         quantity: item.quantity || 1,
