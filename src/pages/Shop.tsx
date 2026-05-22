@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/store/ProductCard";
 import { TrustBar } from "@/components/store/TrustBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { MobileStickyCtA } from "@/components/store/MobileStickyCtA";
+import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { RecentSalesPopup } from "@/components/store/RecentSalesPopup";
 import { useProducts, type Product } from "@/hooks/use-products";
 import { useConditions, useProductConditionAssignments } from "@/hooks/use-conditions";
