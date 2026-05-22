@@ -175,6 +175,7 @@ Deno.serve(async (req) => {
     let synced = 0;
     let created = 0;
     let updated = 0;
+    let skipped = 0;
     let images_preserved = 0;
     const errors: string[] = [];
 
