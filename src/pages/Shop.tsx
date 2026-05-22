@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/store/ProductCard";
 import { TrustBar } from "@/components/store/TrustBar";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { MobileStickyCtA } from "@/components/store/MobileStickyCtA";
+import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { RecentSalesPopup } from "@/components/store/RecentSalesPopup";
 import { useProducts, type Product } from "@/hooks/use-products";
 import { useConditions, useProductConditionAssignments } from "@/hooks/use-conditions";
@@ -285,6 +286,7 @@ export default function Shop() {
       />
 
       <main className="container mx-auto px-4 pt-8 sm:pt-12 pb-20">
+        <FDADisclaimer variant="banner" />
         {/* Search results indicator */}
         {debouncedSearch && displayProducts.length > 0 && (
           <p className="mb-4" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: '#555' }}>

@@ -153,6 +153,7 @@ export default function MKRCFooter() {
         <div className="flex flex-col sm:flex-row items-center gap-4" style={{ color: "var(--mkrc-text-tertiary)", fontSize: "0.8rem" }}>
           <p>© 2026 Mount Kailash Rejuvenation Centre</p>
           <div className="flex gap-4">
+            <span style={{ color: "var(--mkrc-text-secondary)", fontWeight: 500 }}>Legal:</span>
             <a href="/privacy-policy" className="hover:underline">Privacy Policy</a>
             <a href="/terms-and-conditions" className="hover:underline">Terms &amp; Conditions</a>
           </div>
