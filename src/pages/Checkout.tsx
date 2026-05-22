@@ -10,6 +10,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { FDADisclaimer } from "@/components/FDADisclaimer";
 
 export default function Checkout() {
   const { cartItems, cartCount, clearCart } = useCart();
@@ -17,6 +18,7 @@ export default function Checkout() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const [form, setForm] = useState({
     first_name: "",
@@ -48,6 +50,13 @@ export default function Checkout() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.email || !form.first_name || cartItems.length === 0) return;
+    if (!agreedToTerms) {
+      toast({
+        title: "Please agree to the Terms & Conditions and Privacy Policy",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
