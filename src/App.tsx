@@ -45,6 +45,8 @@ const GoddessCard = lazy(() => import("./pages/GoddessCard"));
 const CustomerAccountPage = lazy(() => import("./pages/CustomerAccountPage"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 
 const queryClient = new QueryClient();
 
@@ -131,8 +133,10 @@ function AppContent() {
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/goddess" element={<GoddessCard />} />
           <Route path="/account" element={<CustomerAccountPage />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
+          <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
           <Route path="/index" element={<Navigate to="/" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
