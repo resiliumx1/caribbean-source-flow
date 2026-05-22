@@ -46,7 +46,7 @@ function useRevealObserver() {
 const INGREDIENTS = [
   {
     icon: Leaf,
-    name: "Fey Duvan (Anamu)",
+    name: "Anamu Syrup",
     latin: "Petiveria alliacea",
     alias: "The Caribbean's Secret Weapon",
     shortDesc: "Used for centuries across the Caribbean to fortify the immune system. Rich in dibenzyl trisulphide (DTS) — a rare organic sulphur compound.",
