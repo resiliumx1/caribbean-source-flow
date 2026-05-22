@@ -275,7 +275,7 @@ export default function AdminProducts() {
                   if (!res.ok) throw new Error(result.error || "Sync failed");
                   toast({
                     title: "WooCommerce Sync Complete",
-                    description: `${result.synced} products synced (${result.created} new, ${result.updated} updated)${result.errors.length ? `, ${result.errors.length} errors` : ""}`,
+                    description: `${result.synced} synced (${result.updated} updated${result.matched_by_name ? `, ${result.matched_by_name} linked by name` : ""}${result.skipped ? `, ${result.skipped} skipped` : ""})${result.errors?.length ? `, ${result.errors.length} errors` : ""}`,
                   });
                   queryClient.invalidateQueries({ queryKey: ["admin-products"] });
                   queryClient.invalidateQueries({ queryKey: ["products"] });
