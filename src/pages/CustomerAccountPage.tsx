@@ -88,31 +88,8 @@ export default function CustomerAccountPage() {
       setOrders(data.orders || []);
       setOrderItems(data.orderItems || {});
       setLooked(true);
-    } catch {
-      try {
-        const { data: ordersData } = await supabase
-          .from("orders")
-          .select("*")
-          .eq("email", email.trim().toLowerCase())
-          .order("created_at", { ascending: false });
-        setOrders(ordersData || []);
-        if (ordersData && ordersData.length > 0) {
-          const orderIds = ordersData.map((o: any) => o.id);
-          const { data: itemsData } = await supabase
-            .from("order_items")
-            .select("*")
-            .in("order_id", orderIds);
-          const grouped: Record<string, any[]> = {};
-          (itemsData || []).forEach((item: any) => {
-            if (!grouped[item.order_id]) grouped[item.order_id] = [];
-            grouped[item.order_id].push(item);
-          });
-          setOrderItems(grouped);
-        }
-        setLooked(true);
-      } catch (fallbackErr: any) {
-        toast({ title: "Error", description: fallbackErr.message || "Could not look up orders.", variant: "destructive" });
-      }
+    } catch (err: any) {
+      toast({ title: "Error", description: "Could not look up orders. Please try again.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
