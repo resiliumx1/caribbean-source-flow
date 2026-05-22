@@ -45,9 +45,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Normalize URL and build Basic Auth
+    // Normalize URL and authenticate with query parameters.
+    // Some WordPress hosts strip Authorization headers, so do not use Basic Auth here.
     const normalizedUrl = wooUrl.trim().replace(/\/+$/, '').replace(/\/wp-json(\/wc\/v3)?$/, '');
-    const basicAuth = btoa(`${wooKey}:${wooSecret}`);
 
     // Look up woo_product_id for each item from DB
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
@@ -110,13 +110,15 @@ Deno.serve(async (req) => {
       customer_note: customer_note || "",
     };
 
-    const apiUrl = `${normalizedUrl}/wp-json/wc/v3/orders`;
+    const apiUrl =
+      `${normalizedUrl}/wp-json/wc/v3/orders` +
+      `?consumer_key=${encodeURIComponent(wooKey)}` +
+      `&consumer_secret=${encodeURIComponent(wooSecret)}`;
 
     const wooRes = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Basic ${basicAuth}`,
         "User-Agent": "MountKailash/1.0",
         "Accept": "application/json",
       },
