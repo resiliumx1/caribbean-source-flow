@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, ExternalLink } from "lucide-react";
+import { ArrowLeft, Loader2, ExternalLink, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,11 +9,11 @@ import { StoreFooter } from "@/components/store/StoreFooter";
 import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { createWooCommerceOrder } from "@/lib/woocommerce";
 import { FDADisclaimer } from "@/components/FDADisclaimer";
 
 export default function Checkout() {
-  const { cartItems, cartCount, clearCart } = useCart();
+  const { cartItems, cartCount } = useCart();
   const { formatPriceBoth } = useStore();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -60,60 +60,43 @@ export default function Checkout() {
 
     setIsSubmitting(true);
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      // Guest checkout supported — fall back to anon key when not logged in
-      const authToken = token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/woo-order`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            items: cartItems.map((item) => ({
-              product_id: item.product_id,
-              quantity: item.quantity,
-            })),
-            billing: {
-              first_name: form.first_name,
-              last_name: form.last_name,
-              email: form.email,
-              phone: form.phone,
-              address_1: form.address_1,
-              address_2: form.address_2,
-              city: form.city,
-              state: form.state,
-              postcode: form.postcode,
-              country: form.country,
-            },
-            customer_note: form.customer_note,
-            return_url: `${window.location.origin}/account?order=success`,
-          }),
-        }
-      );
-
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Order creation failed");
-
-      clearCart();
-      toast({
-        title: "Order Created!",
-        description: `Order #${result.order_number} placed. Redirecting to payment...`,
+      const result = await createWooCommerceOrder({
+        items: cartItems.map((item) => ({
+          product_id: item.product_id,
+          quantity: item.quantity,
+        })),
+        billing: {
+          first_name: form.first_name,
+          last_name: form.last_name,
+          email: form.email,
+          phone: form.phone,
+          address_1: form.address_1,
+          address_2: form.address_2,
+          city: form.city,
+          state: form.state,
+          postcode: form.postcode,
+          country: form.country,
+        },
+        customer_note: form.customer_note,
+        return_url: `${window.location.origin}/account?order=success`,
       });
 
-      // Redirect to WooCommerce payment page
+      // Cart is intentionally NOT cleared here — it persists until the user
+      // returns from WooCommerce with a completed order (handled on /account).
+      toast({
+        title: "Order Created!",
+        description: `Order #${result.order_number} placed. Redirecting to secure payment...`,
+      });
+
       if (result.payment_url) {
         window.location.href = result.payment_url;
       }
     } catch (err: any) {
       toast({
-        title: "Checkout Error",
-        description: err.message,
+        title: "Unable to process checkout",
+        description:
+          err?.message ||
+          "Unable to process checkout. Please try again or contact us.",
         variant: "destructive",
       });
     } finally {
@@ -409,7 +392,7 @@ export default function Checkout() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Placing Order...
+                      Processing...
                     </>
                   ) : (
                     <>
@@ -418,6 +401,11 @@ export default function Checkout() {
                     </>
                   )}
                 </Button>
+
+                <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
+                  <Lock className="w-3 h-3" />
+                  <span>Secure checkout powered by Mount Kailash</span>
+                </div>
                 </div>
               </div>
             </div>

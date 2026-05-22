@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { SEOHead } from "@/components/SEOHead";
+import { useCart } from "@/hooks/use-cart";
 
 const CARRIER_URLS: Record<string, (tn: string) => string> = {
   usps: (tn) => `https://tools.usps.com/go/TrackConfirmAction?tLabels=${tn}`,
@@ -49,6 +50,20 @@ export default function CustomerAccountPage() {
   const [trackNumber, setTrackNumber] = useState("");
   const [trackCarrier, setTrackCarrier] = useState("usps");
   const { toast } = useToast();
+  const { clearCart } = useCart();
+
+  // Clear cart only when the user returns from WooCommerce with a completed order.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("order") === "success") {
+      clearCart();
+      toast({
+        title: "Order complete",
+        description: "Thank you! Your order has been received.",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const c = {
     pageBg: isDark ? "#0d1a14" : "#F4EFEA",
