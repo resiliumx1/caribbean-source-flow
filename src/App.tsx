@@ -156,6 +156,7 @@ function AppContent() {
       <Suspense fallback={null}>
         <ChatWidget />
       </Suspense>
+      <CookieConsent />
     </>
   );
 }
