@@ -10,7 +10,7 @@ const PURCHASE_DATA = [
   { product: "Virili-Tea", city: "Castries", country: "Saint Lucia", minutes: 5 },
   { product: "Hemp Syrup", city: "Atlanta", country: "US", minutes: 18 },
   { product: "Moon Cycle Tea", city: "Bridgetown", country: "Barbados", minutes: 2 },
-  { product: "Dewormer", city: "Houston", country: "US", minutes: 9 },
+  { product: "Gut Balance", city: "Houston", country: "US", minutes: 9 },
   { product: "Super Male Vitality Package", city: "Miami", country: "US", minutes: 14 },
   { product: "Restful Tea", city: "Kingston", country: "Jamaica", minutes: 6 },
   { product: "Sea Moss", city: "New York", country: "US", minutes: 4 },
