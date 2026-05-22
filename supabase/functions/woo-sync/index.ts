@@ -104,14 +104,31 @@ Deno.serve(async (req) => {
     let hasMore = true;
 
     while (hasMore) {
-      const url = `${baseApi}/products?per_page=100&page=${page}&status=publish`;
-      const res = await fetch(url, {
+      const headerUrl = `${baseApi}/products?per_page=100&page=${page}&status=publish`;
+      let res = await fetch(headerUrl, {
         headers: {
           "Authorization": `Basic ${basicAuth}`,
           "User-Agent": "MountKailash/1.0",
           "Accept": "application/json",
         },
       });
+
+      // Some WordPress hosts strip the Authorization header. Fall back to
+      // query-string credentials (WooCommerce officially supports this over HTTPS).
+      if (res.status === 401) {
+        const qsUrl =
+          `${baseApi}/products?per_page=100&page=${page}&status=publish` +
+          `&consumer_key=${encodeURIComponent(wooKey)}` +
+          `&consumer_secret=${encodeURIComponent(wooSecret)}`;
+        console.log("DEBUG woo-sync: header auth got 401, retrying with query-string auth");
+        res = await fetch(qsUrl, {
+          headers: {
+            "User-Agent": "MountKailash/1.0",
+            "Accept": "application/json",
+          },
+        });
+      }
+
       if (!res.ok) {
         const body = await res.text();
         throw new Error(`WooCommerce API error [${res.status}]: ${body}`);
