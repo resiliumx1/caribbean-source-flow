@@ -175,6 +175,7 @@ Deno.serve(async (req) => {
     let synced = 0;
     let created = 0;
     let updated = 0;
+    let skipped = 0;
     let images_preserved = 0;
     const errors: string[] = [];
 
@@ -229,23 +230,10 @@ Deno.serve(async (req) => {
           }
           updated++;
         } else {
-          // NEW PRODUCT: Always insert with full WooCommerce data
-          const categoryId = await resolveCategory(woo);
-          await adminClient.from("products").insert({
-            name: woo.name,
-            slug: woo.slug,
-            woo_product_id: woo.id,
-            product_type: woo.type === "simple" ? "tincture" : woo.type,
-            category_id: categoryId,
-            ...prices,
-            description: stripHtml(woo.description),
-            short_description: stripHtml(woo.short_description) || null,
-            image_url: woo.images.length > 0 ? woo.images[0].src : null,
-            additional_images: woo.images.length > 1 ? woo.images.slice(1).map((i) => i.src) : [],
-            stock_status: stockStatus,
-            is_active: true,
-          });
-          created++;
+          // NEW PRODUCT: Skip — sync never auto-inserts new WooCommerce products.
+          // Add products manually via the admin to keep the shop curated.
+          skipped++;
+          continue;
         }
         synced++;
       } catch (e) {
@@ -261,6 +249,7 @@ Deno.serve(async (req) => {
         synced,
         created,
         updated,
+        skipped,
         images_preserved,
         errors,
       }),
