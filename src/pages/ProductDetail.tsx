@@ -29,9 +29,6 @@ const SLUG_REDIRECTS: Record<string, string> = {
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
-  if (slug && SLUG_REDIRECTS[slug]) {
-    return <Navigate to={`/shop/${SLUG_REDIRECTS[slug]}`} replace />;
-  }
   const { data: product, isLoading } = useProduct(slug || "");
   const { data: bundleItems } = useBundleItems(product?.product_type === "bundle" ? product.id : "");
   const { data: variants = [] } = useProductVariants(product?.id);
@@ -45,6 +42,10 @@ export default function ProductDetail() {
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, [slug]);
+
+  if (slug && SLUG_REDIRECTS[slug]) {
+    return <Navigate to={`/shop/${SLUG_REDIRECTS[slug]}`} replace />;
+  }
 
   // Set default variant when variants load
   useEffect(() => {
