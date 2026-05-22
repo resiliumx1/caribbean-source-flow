@@ -133,6 +133,35 @@ Deno.serve(async (req) => {
     // Helper functions
     const stripHtml = (html: string) => html.replace(/<[^>]*>/g, "").trim();
 
+    // Normalize a product name for fuzzy matching:
+    // lowercase, decode common HTML entities, strip punctuation, collapse whitespace.
+    const normalizeName = (raw: string): string =>
+      (raw || "")
+        .toLowerCase()
+        .replace(/&amp;/g, "&")
+        .replace(/&#0?39;|&apos;|&rsquo;|&lsquo;/g, "'")
+        .replace(/&quot;|&ldquo;|&rdquo;/g, '"')
+        .replace(/&nbsp;/g, " ")
+        .replace(/[^\p{L}\p{N}]+/gu, " ")
+        .trim()
+        .replace(/\s+/g, " ");
+
+    // Pre-load all Supabase products and build slug + name lookup maps.
+    const { data: allExisting } = await adminClient
+      .from("products")
+      .select("id, slug, name, image_url");
+    const bySlug = new Map<string, { id: string; image_url: string | null }>();
+    const byName = new Map<string, { id: string; image_url: string | null }>();
+    const nameCollisions = new Set<string>();
+    for (const p of allExisting || []) {
+      if (p.slug) bySlug.set(p.slug, { id: p.id, image_url: p.image_url });
+      const key = normalizeName(p.name);
+      if (key) {
+        if (byName.has(key)) nameCollisions.add(key);
+        else byName.set(key, { id: p.id, image_url: p.image_url });
+      }
+    }
+
     const resolveCategory = async (woo: WooProduct): Promise<string | null> => {
       if (woo.categories.length === 0) return null;
       const wooCat = woo.categories[0];
@@ -176,6 +205,7 @@ Deno.serve(async (req) => {
     let created = 0;
     let updated = 0;
     let skipped = 0;
+    let matched_by_name = 0;
     let images_preserved = 0;
     const errors: string[] = [];
 
@@ -184,12 +214,23 @@ Deno.serve(async (req) => {
         const prices = computePrices(woo);
         const stockStatus = mapStockStatus(woo.stock_status);
 
-        // Check if product exists by slug
-        const { data: existing } = await adminClient
-          .from("products")
-          .select("id, image_url")
-          .eq("slug", woo.slug)
-          .maybeSingle();
+        // Try slug match first, then fall back to normalized name match.
+        let existing = bySlug.get(woo.slug) || null;
+        let matchedByName = false;
+        if (!existing) {
+          const key = normalizeName(woo.name);
+          if (key && nameCollisions.has(key)) {
+            errors.push(
+              `${woo.name}: ambiguous name match in Supabase — resolve duplicates manually.`
+            );
+          } else if (key) {
+            const hit = byName.get(key);
+            if (hit) {
+              existing = hit;
+              matchedByName = true;
+            }
+          }
+        }
 
         if (existing) {
           if (mode === "safe") {
@@ -229,6 +270,7 @@ Deno.serve(async (req) => {
             await adminClient.from("products").update(productData).eq("id", existing.id);
           }
           updated++;
+          if (matchedByName) matched_by_name++;
         } else {
           // NEW PRODUCT: Skip — sync never auto-inserts new WooCommerce products.
           // Add products manually via the admin to keep the shop curated.
@@ -250,6 +292,7 @@ Deno.serve(async (req) => {
         created,
         updated,
         skipped,
+        matched_by_name,
         images_preserved,
         errors,
       }),
