@@ -1,0 +1,1 @@
+DELETE FROM public.retreat_videos WHERE id IN ('77b1baf5-7188-4031-9f51-f0749784a681','55d543e7-24da-4ff2-8d29-a0445453e16a');

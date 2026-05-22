@@ -141,7 +141,15 @@ export function RetreatVideoGallery() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          className={
+            videos.length === 1
+              ? "grid grid-cols-1 gap-6 max-w-2xl mx-auto"
+              : videos.length === 2
+              ? "grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
+              : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          }
+        >
           {videos.map((video) => {
             const thumbnailSrc = video.thumbnail_url || getThumbnail(video.video_url);
             const canEmbed = isEmbeddableUrl(video.video_url) || isDirectVideo(video.video_url);
