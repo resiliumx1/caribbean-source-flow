@@ -24,7 +24,7 @@ const productCategories = [
     title: "Clinical Formulations",
     icon: FlaskConical,
     image: labProcessing,
-    specs: ["The Answer (Immune Protocol)", "Prosperity (Men's Vitality)", "Fertility, Dewormer, Nerve Tonic"],
+    specs: ["The Answer (Immune Protocol)", "Prosperity (Men's Vitality)", "Feminine Balance, Gut Balance, Nerve Tonic"],
   },
   {
     id: "teas",

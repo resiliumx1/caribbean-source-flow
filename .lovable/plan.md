@@ -1,103 +1,73 @@
+# Plan — Product Renames + Product Label Images
 
+## Part 1 — Product Renames
 
-# Launch Readiness Audit — Mount Kailash
+### Database updates (products table)
+Rename + re-slug, keeping IDs intact:
 
-Here's a complete checklist of what's working, what needs fixing, and what to request from the client before going live on the real domain.
+| Old name | Old slug | New name | New slug |
+|---|---|---|---|
+| Blood Detox | blood-detox | Herbal Detox | herbal-detox |
+| Dewormer | dewormer | Gut Balance | gut-balance |
+| Fey Duvan Syrup | fey-duvan-syrup | Anamu Syrup | anamu-syrup |
+| Fertility | fertility | Feminine Balance | feminine-balance |
 
----
+Colax and Free Flow unchanged.
 
-## 1. What's Working ✅
+### Old-slug redirects
+Add a small client-side redirect map in `src/pages/ProductDetail.tsx` (or in the route file) so `/shop/blood-detox`, `/shop/dewormer`, `/shop/fey-duvan-syrup`, `/shop/fertility` 301-style redirect to the new slugs via `<Navigate replace>`. This protects existing inbound links and SEO.
 
-- **Routing & pages**: All 14 live routes resolve, lazy-loaded with proper SPA fallback.
-- **Cart flow**: `/shop → /cart → /checkout` is wired end-to-end.
-- **Backend**: Lovable Cloud connected; 5 edge functions deployed (`woo-order`, `woo-sync`, `concierge-chat`, `guest-orders`, `youtube-sync`).
-- **WooCommerce sync**: Product sync + order creation hits live Woo store via `WOO_STORE_URL` + consumer key/secret (already set as secrets).
-- **Customer order lookup**: `/account` page uses `guest-orders` edge function (service-role, RLS-safe).
-- **Admin panel**: `/admin/login` + product/order/retreat/review/webinar management.
-- **AI chat**: Concierge widget uses `LOVABLE_API_KEY` (no client key needed).
-- **SEO**: `SEOHead`, `sitemap.xml`, `robots.txt`, JSON-LD all in place.
-- **Three contact numbers**: Display correctly in light + dark mode across all footers.
+### Hardcoded string updates
+Find-and-replace product-name + slug references in:
+- `src/components/MountKailashChat.jsx` (PRODUCT_LINKS, PRODUCT_CATALOG, kit descriptions)
+- `src/components/store/RecentSalesPopup.tsx` ("Dewormer" entry)
+- `src/components/wholesale/ProductGrid.tsx` (specs list mentioning Fertility, Dewormer)
+- `src/components/wholesale/PrivateLabel.tsx` (alt text mentioning Fey Duvan, Blood Detox)
+- `src/pages/TheAnswer.tsx` ("Fey Duvan (Anamu)" → "Anamu Syrup")
 
----
+Descriptive uses of the word "fertility" (webinar topics, SEO copy, testimonials) are NOT product references and will be left alone.
 
-## 2. Critical Issues to Fix Before Launch 🔴
-
-### A. Checkout requires login but there's no signup/login UI for shoppers
-`src/pages/Checkout.tsx` line 58 blocks checkout if no auth session — but the storefront has **no login page or signup flow** exposed to customers. Result: every shopper sees "Please log in" and is stuck.
-
-**Fix options** (need your decision — see questions below).
-
-### B. Hardcoded preview domain in 6+ places
-The string `caribbean-source-flow.lovable.app` is hardcoded in:
-- `index.html` (canonical, OG URL, JSON-LD, noscript)
-- `public/sitemap.xml` (all 8 URLs)
-- `public/robots.txt` (sitemap line)
-- `src/components/SEOHead.tsx` (BASE_URL)
-- `src/pages/TrinityHomepage.tsx` (canonical)
-- `src/pages/GoddessCard.tsx` (vCard URL)
-
-All must be replaced with the real production domain at launch.
-
-### C. Stale email address
-`src/components/ComingSoon.tsx` uses `info@mtkailash.com` — every other file uses `goddessitopia@mountkailashslu.com` or `blessedlove@mountkailashslu.com`. Confirm and unify.
-
-### D. Payment redirect points back to WooCommerce
-`woo-order` edge function returns a `payment_url` like `https://[woo-store]/checkout/order-pay/...`. Customers leave the new site to pay on the existing WooCommerce checkout. This works, but the WooCommerce store must:
-- Accept that domain in CORS / referrer rules
-- Have payment gateways (Stripe/PayPal) live and tested
-- Successfully redirect back after payment (currently no return URL is set — buyer ends on Woo's "thank you" page, not yours)
+### Note — "Male Balance"
+The prompt lists `male-balance-isolated.webp` but there is no standalone "Male Balance" product. Closest match is `Virility Male Balance Capsules` (slug `virility-male-balance-capsules`). I'll assign the label there. Flag for confirmation if wrong.
 
 ---
 
-## 3. What to Request From the Client
+## Part 2 — Product Label Images
 
-### Domain & DNS
-1. **Registrar login** (GoDaddy, Namecheap, etc.) OR ability to set DNS records, so we can:
-   - Add A record `@ → 185.158.133.1`
-   - Add A record `www → 185.158.133.1`
-   - Add TXT verification record (Lovable provides)
-2. **Final domain to use** (e.g. `mountkailashslu.com`, `mtkailash.com`, etc.) and whether `www` or root is primary.
-3. **Existing MX records** — preserve these so email keeps working.
-4. **If using Cloudflare or any proxy** — let us know (changes the connection method).
+### Storage
+Upload the 11 `.webp` files from the uploaded zip to the existing public `product-images` Supabase bucket under a `labels/` prefix, e.g. `labels/herbal-detox-isolated.webp`. Public URLs are stable and CDN-cached.
 
-### WooCommerce / Payments
-5. Confirm **WooCommerce store URL** (`WOO_STORE_URL` secret) is the production store, not staging.
-6. Confirm payment gateways (Stripe/PayPal/etc.) are **live mode**, not sandbox, on the WooCommerce side.
-7. **Test order**: place one real low-value order end-to-end after launch.
-8. Decide whether to offer **guest checkout** or require accounts (drives Fix A above).
+### Schema
+Add nullable `label_image_url text` column to `products`. (Cleaner than reusing `additional_images`, and won't collide with the gallery.)
 
-### Email
-9. Final inbox(es) for:
-   - Order notifications
-   - Wholesale inquiries
-   - General contact / footer
-10. Decide if you want **Lovable Emails** (branded transactional emails — order confirmations, account emails) set up. This needs DNS access too.
+### Data
+Populate `label_image_url` for the 11 products (matched by slug after the rename):
 
-### Content & Assets
-11. **Final OG/social share image** (currently using a Google Cloud Storage URL — should be self-hosted).
-12. Twitter/X handle confirmation (`@MountKailash` is in `index.html` — verify it exists).
-13. Google Analytics / Meta Pixel / TikTok Pixel IDs if tracking is wanted.
-14. Google Search Console + Bing Webmaster verification codes (to submit sitemap after launch).
+prosperity, pure-gold, pure-green, the-answer, anamu-syrup, colax, feminine-balance, free-flow, gut-balance, herbal-detox, virility-male-balance-capsules.
 
-### Legal
-15. Privacy Policy + Terms of Service pages — currently not present in routes.
-16. Cookie consent banner — currently none.
+### UI — ProductDetail.tsx
+Add a new `ProductLabel` section in `src/pages/ProductDetail.tsx`, rendered only when `label_image_url` is set. Placement: **after** the "About This Formulation" description block, **before** the variant selector / quantity / Add to Cart controls (matches the prompt's "below description, above add to cart").
+
+Structure:
+- Heading: "Product Label & Supplement Facts" (matches existing `text-lg font-semibold` heading style used in the page).
+- Clickable thumbnail using the existing `src/components/ui/image-lightbox.tsx` component (already in the project) → opens a full-size zoomable modal.
+- `alt="{product.name} supplement facts label"`.
+- `loading="lazy"`, `decoding="async"`.
+- Followed by the existing `h-px bg-border` divider used between sections.
+
+No changes needed to product cards, cart, checkout, or admin — label is PDP-only.
 
 ---
 
-## 4. Decisions I Need From You
+## Technical execution order
 
-I'll ask these in a follow-up so we can lock the plan and execute.
+1. **Migration**: add `label_image_url` column to `products`.
+2. **Storage upload**: 11 webp files → `product-images/labels/`.
+3. **Data updates**: rename products + slugs; set `label_image_url` for all 11.
+4. **Code**: redirect map in router, string replacements in the 5 hardcoded files, new label section in `ProductDetail.tsx`.
+5. **Verify**: visit `/shop/blood-detox` → redirects to `/shop/herbal-detox`; label appears + opens lightbox.
 
----
+## Confirmations needed before build
 
-## Technical Implementation (when you approve)
-
-1. **Centralize the production URL** — replace hardcoded preview URLs with a single constant or environment variable, then update sitemap, robots, SEO head, JSON-LD.
-2. **Fix checkout auth gate** — either add a guest checkout path in `woo-order` (drop the JWT check, validate inputs server-side), or add a proper customer signup/login UI.
-3. **Add return-URL handling** in `woo-order` so post-payment Woo redirects back to `/account` or a new `/order-confirmed` page.
-4. **Update `ComingSoon.tsx`** email to match the canonical address.
-5. **Add Privacy + Terms** routes + footer links.
-6. **Optional: scaffold Lovable Emails** for branded order receipts.
-7. **Connect custom domain** in Project Settings → Domains once DNS is ready, then re-publish.
-
+1. OK to assign `male-balance-isolated.webp` to the existing `Virility Male Balance Capsules` product?
+2. Slug `anamu-syrup` for the renamed "Fey Duvan Syrup" — confirm (vs `anamu` alone).

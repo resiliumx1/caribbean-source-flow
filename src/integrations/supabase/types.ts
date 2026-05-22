@@ -539,6 +539,7 @@ export type Database = {
           ingredients: string | null
           is_active: boolean | null
           is_featured: boolean | null
+          label_image_url: string | null
           name: string
           original_price_usd: number | null
           original_price_xcd: number | null
@@ -571,6 +572,7 @@ export type Database = {
           ingredients?: string | null
           is_active?: boolean | null
           is_featured?: boolean | null
+          label_image_url?: string | null
           name: string
           original_price_usd?: number | null
           original_price_xcd?: number | null
@@ -603,6 +605,7 @@ export type Database = {
           ingredients?: string | null
           is_active?: boolean | null
           is_featured?: boolean | null
+          label_image_url?: string | null
           name?: string
           original_price_usd?: number | null
           original_price_xcd?: number | null
