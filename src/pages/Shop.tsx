@@ -285,6 +285,7 @@ export default function Shop() {
       />
 
       <main className="container mx-auto px-4 pt-8 sm:pt-12 pb-20">
+        <FDADisclaimer variant="banner" />
         {/* Search results indicator */}
         {debouncedSearch && displayProducts.length > 0 && (
           <p className="mb-4" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: '#555' }}>

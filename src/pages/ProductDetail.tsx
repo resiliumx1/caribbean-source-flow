@@ -9,6 +9,7 @@ import { VariantSelector } from "@/components/store/VariantSelector";
 import { RelatedProducts } from "@/components/store/RelatedProducts";
 import { ReviewSection } from "@/components/reviews/ReviewSection";
 import { CompareButton } from "@/components/store/CompareButton";
+import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -339,6 +340,10 @@ export default function ProductDetail() {
               onClose={() => setLabelOpen(false)}
               alt={`${product.name} supplement facts label`}
             />
+
+            <div className="mb-6">
+              <FDADisclaimer variant="compact" />
+            </div>
 
             {/* Variant selector for herbs */}
             {variants.length > 0 && (
