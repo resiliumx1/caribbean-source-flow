@@ -151,8 +151,8 @@ export function HomepageFooter() {
           >
             <p>© {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.</p>
             <div className="flex gap-5">
-              <a href="/privacy" className="hover:underline">Privacy</a>
-              <a href="/terms" className="hover:underline">Terms</a>
+              <a href="/privacy-policy" className="hover:underline">Privacy Policy</a>
+              <a href="/terms-and-conditions" className="hover:underline">Terms &amp; Conditions</a>
             </div>
           </div>
         </div>
