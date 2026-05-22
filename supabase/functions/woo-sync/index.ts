@@ -180,6 +180,16 @@ Deno.serve(async (req) => {
         });
       }
 
+      if (res.status === 401) {
+        console.log("DEBUG woo-sync: query-string auth got 401, retrying with OAuth 1.0 auth");
+        res = await fetch(await createOauthUrl(headerUrl, wooKey, wooSecret), {
+          headers: {
+            "User-Agent": "MountKailash/1.0",
+            "Accept": "application/json",
+          },
+        });
+      }
+
       if (!res.ok) {
         const body = await res.text();
         throw new Error(`WooCommerce API error [${res.status}]: ${body}`);
