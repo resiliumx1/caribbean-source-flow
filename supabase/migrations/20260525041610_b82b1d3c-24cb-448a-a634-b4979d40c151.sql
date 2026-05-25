@@ -1,0 +1,1 @@
+REVOKE SELECT (user_email) ON public.reviews FROM anon, authenticated;

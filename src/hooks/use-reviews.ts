@@ -43,14 +43,17 @@ export function useProductReviews(productId: string | undefined, page: number = 
 
       const { data, error, count } = await supabase
         .from("reviews")
-        .select("*", { count: "exact" })
+        .select(
+          "id, product_id, user_name, rating, title, content, images, status, helpful_count, is_verified_purchase, created_at",
+          { count: "exact" }
+        )
         .eq("product_id", productId!)
         .eq("status", "approved")
         .order("created_at", { ascending: false })
         .range(from, to);
 
       if (error) throw error;
-      return { reviews: (data ?? []) as Review[], total: count ?? 0 };
+      return { reviews: (data ?? []) as unknown as Review[], total: count ?? 0 };
     },
     enabled: !!productId,
   });
