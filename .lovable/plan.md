@@ -1,21 +1,23 @@
-## Create new admin user
+## Update admin credentials
 
-Create a fully provisioned admin account:
+Set the admin login to:
+- **Email:** `admin123@mountkailashslu.com` (already exists)
+- **Password:** `Itopia1!`
 
-- **Email:** `admin123@mountkailashslu.com`
-- **Password:** `itopia1!`
-- **Login URL:** `/admin/login`
+### Step
 
-### Steps
+Run a database migration that updates the existing admin user's password:
 
-1. Run a database migration that:
-   - Inserts the user into `auth.users` with email pre-confirmed and password `itopia1!` (bcrypt-hashed via `crypt()`).
-   - Inserts the matching `profiles` row with `is_admin = true` (the `handle_new_user` trigger creates the profile; the migration then flips `is_admin`).
-   - Uses `ON CONFLICT (email) DO NOTHING` on the auth insert so re-running is safe; if the user already exists, just updates the password and admin flag.
+```sql
+UPDATE auth.users
+SET encrypted_password = crypt('Itopia1!', gen_salt('bf')),
+    updated_at = now()
+WHERE email = 'admin123@mountkailashslu.com';
+```
 
-2. No frontend code changes — `AdminLogin.tsx` and `useAdmin` already handle email/password sign-in and `is_admin` checks.
+No frontend changes — the password-visibility toggle on `/admin/login` is already in place.
 
 ### Notes
 
-- Password `itopia1!` is weak by HIBP standards. If leaked-password protection is on, signup would block it, but direct inserts bypass that check — it will work, but consider changing it after first login.
-- Existing admin `yannick23d@gmail.com` is untouched.
+- Supabase Auth uses the email as the login identifier; "admin123" lives as the local part of `admin123@mountkailashslu.com`. If you want a different email entirely, let me know.
+- `Itopia1!` is short and likely flagged by HIBP; direct DB update bypasses that check so it will work, but consider rotating to a stronger password later.
