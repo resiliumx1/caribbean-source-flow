@@ -1,23 +1,46 @@
-## Update admin credentials
+## Goal
 
-Set the admin login to:
-- **Email:** `admin123@mountkailashslu.com` (already exists)
-- **Password:** `Itopia1!`
+Apply the rename table and rename Virility tincture → Male Balance, then sync all references in code + backend.
 
-### Step
+## Current state (already done in backend)
 
-Run a database migration that updates the existing admin user's password:
+Database already reflects most of the table:
+- Herbal Detox ✅ (formerly Blood Detox)
+- Gut Balance ✅ (formerly Dewormer)
+- Anamu Syrup ✅ (formerly Fey Duvan)
+- Feminine Balance ✅ (formerly Fertility)
+- Colax, Free Flow — unchanged
 
-```sql
-UPDATE auth.users
-SET encrypted_password = crypt('Itopia1!', gen_salt('bf')),
-    updated_at = now()
-WHERE email = 'admin123@mountkailashslu.com';
-```
+What's missing:
+- Product still named **"Virility"** (slug `virility-herbal-virility-supplement`) needs to become **"Male Balance"**.
+- Several places in code/edge functions still mention the old names (Blood Detox, Dewormer, Fey Duvan, Fertility, Virility) as product references.
 
-No frontend changes — the password-visibility toggle on `/admin/login` is already in place.
+Note: There's also a separate product "Virility Male Balance Capsules" (capsules) — that one stays as-is unless you want it renamed too.
 
-### Notes
+## Plan
 
-- Supabase Auth uses the email as the login identifier; "admin123" lives as the local part of `admin123@mountkailashslu.com`. If you want a different email entirely, let me know.
-- `Itopia1!` is short and likely flagged by HIBP; direct DB update bypasses that check so it will work, but consider rotating to a stronger password later.
+### 1. Database migration
+
+- Rename `products` row id `057353cd…` → name `Male Balance`, slug `male-balance` (keep old slug working via the redirect map in `ProductDetail.tsx`).
+- Update bundle / kit names that embed old terms:
+  - `Feminine Balance Kit` — already correct.
+  - Check for any kit/bundle whose name still says "Virility" / "Fertility" / "Dewormer" / "Blood Detox" / "Fey Duvan" and rename.
+
+### 2. Frontend code
+
+- `src/pages/ProductDetail.tsx` — add `"virility-herbal-virility-supplement": "male-balance"` redirect alongside existing dewormer/fey-duvan/fertility redirects.
+- `src/components/MountKailashChat.jsx` — replace product entries "Virility" → "Male Balance", update slug, update bundle copy (Male Potency Kit, Prostate Health Bundle product lists).
+- `src/components/wholesale/PrivateLabel.tsx` — update alt text lineup ("…Colax, Male Balance, Anamu Syrup, Herbal Detox").
+
+### 3. Edge function
+
+- `supabase/functions/concierge-chat/index.ts` — replace product blocks: Dewormer → Gut Balance, Blood Detox → Herbal Detox, Fey Duvan Syrup → Anamu Syrup, Fertility → Feminine Balance, Virility → Male Balance. Update bundle compositions accordingly.
+
+### 4. Leave generic concept words alone
+
+- Words like "fertility", "detox" used as health concerns/topics in webinar copy, SEO descriptions, and school sections stay (they describe the concern, not the product). Only product-name references change.
+
+## Out of scope
+
+- "Virility Male Balance Capsules" capsule product is untouched (let me know if it should also be renamed to just "Male Balance Capsules").
+- Image filenames in old migration files (`dewormer-main.webp`, etc.) — historic, not user-visible.
