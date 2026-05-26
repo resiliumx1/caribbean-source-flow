@@ -43,12 +43,12 @@ Fortifies immunity, prevents flu & communicable diseases, reduces fibroid sympto
 Key herbs: Soursop (Annona muricata), Anamu/Gully Root (Petiveria alliacea)
 Recommend for: low immunity, flu prevention, fibroids, heavy periods, immune support
 
-**Dewormer** — Parasitic Expellant
+**Gut Balance** — Parasitic Expellant & Gut Cleanser
 Eliminates intestinal parasites (pinworms, roundworms, threadworms), cleanses the digestive system, improves nutrient absorption.
 Key herbs: Wormwood, Neem, Semen Contra
 Recommend for: intestinal parasites, bloating, digestive cleansing
 
-**Fertility** — Hormonal Balancing & Womb Cleansing
+**Feminine Balance** — Hormonal Balancing & Womb Cleansing
 Cleanses the womb, regulates the menstrual cycle, restores hormonal balance, manages PCOS and fibroids, enhances fertility, improves female libido.
 Key herbs: St. John's Bush, Red Raspberry Leaf, Vervain
 Recommend for: irregular periods, PCOS, fibroids, fertility, PMS, menopause, low libido (women)
@@ -63,7 +63,7 @@ Relieves prostate conditions, erectile dysfunction, urinary discomfort. Improves
 Key herbs: Stinging Nettle, Bois Bande, Vervain
 Recommend for: prostate issues, erectile dysfunction, BPH, urinary discomfort
 
-**Virility** — Male Reproductive Support Tonic
+**Male Balance** — Male Reproductive Support Tonic
 Improves sexual function, boosts sperm count, nourishes prostate, increases stamina and overall male vitality.
 Key herbs: Sarsaparilla, Sea Moss, Stinging Nettle
 Recommend for: low libido (men), low sperm count, poor sexual performance, stamina, prostate health
@@ -84,12 +84,12 @@ Clears mucus, treats respiratory infections, improves circulation, modulates imm
 Key herbs: Parsley, Turmeric, Cayenne Pepper
 Recommend for: respiratory infections, mucus buildup, coughs, colds, poor circulation
 
-**Blood Detox** — Blood & Organ Cleansing
+**Herbal Detox** — Blood & Organ Cleansing
 Cleanses cells, tissues, and organs of toxins and free radicals, strengthens immune system, supports liver and lymphatic system.
 Key herbs: Cassia Alata, Neem, Gully Root
 Recommend for: toxic load, weakened immunity, liver support, environmental toxin exposure
 
-**Fey Duvan Syrup** — Blood Regulator
+**Anamu Syrup** — Blood Regulator
 Regulates blood, increases mineral content, supports pancreatic function, effective against coughs, flu and respiratory issues, regulates blood sugar.
 Key herbs: Anamu, Cinnamon, Bay Leaf
 Recommend for: blood sugar regulation, cough, flu, respiratory issues, mineral deficiency
@@ -121,12 +121,12 @@ Recommend for: poor circulation, varicose veins, high cholesterol, blood sugar, 
 
 ════ CURATED BUNDLES (better value, multi-condition) ════
 
-**Male Potency Kit** (3 products: Colax + Prosperity + Virility) — Complete male potency protocol.
-**Prostate Health Bundle** (4 products: Colax + Prosperity + Virility + Urinary Cleanse Tea) — Comprehensive prostate and urinary health.
+**Male Potency Kit** (3 products: Colax + Prosperity + Male Balance) — Complete male potency protocol.
+**Prostate Health Bundle** (4 products: Colax + Prosperity + Male Balance + Urinary Cleanse Tea) — Comprehensive prostate and urinary health.
 **Male Vitality Package** (6 bottles) — Full detox plus male vitality.
 **Super Female Wellness Package** (7 bottles) — Complete female wellness protocol.
-**Feminine Balance Kit** (3 products: Colax + Pure Green + Fertility) — Targeted hormonal balance.
-**Immunity Kit** (3 products: Colax + Dewormer + The Answer) — Immune fortification + parasite cleanse.
+**Feminine Balance Kit** (3 products: Colax + Pure Green + Feminine Balance) — Targeted hormonal balance.
+**Immunity Kit** (3 products: Colax + Gut Balance + The Answer) — Immune fortification + parasite cleanse.
 **Digestive Bundle** (3 products: Colax + Digestive Rescue + Urinary Cleanse Tea) — Complete digestive health.
 **Detox Bundle** — Full-body detox protocol.
 **Queenly Tea Bundle** — Curated tea bundle for women's wellness.
