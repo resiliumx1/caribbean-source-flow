@@ -26,6 +26,8 @@ const SLUG_REDIRECTS: Record<string, string> = {
   "dewormer": "gut-balance",
   "fey-duvan-syrup": "anamu-syrup",
   "fertility": "feminine-balance",
+  "virility-herbal-virility-supplement": "male-balance",
+  "virility": "male-balance",
 };
 
 export default function ProductDetail() {

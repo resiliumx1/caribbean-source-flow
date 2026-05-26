@@ -17,7 +17,7 @@ const PRODUCT_LINKS = {
   "Feminine Balance": `${SITE_BASE}/shop/feminine-balance`,
   "Pure Green": `${SITE_BASE}/shop/pure-green`,
   "Prosperity": `${SITE_BASE}/shop/prosperity`,
-  "Virility": `${SITE_BASE}/shop/virility-herbal-virility-supplement`,
+  "Male Balance": `${SITE_BASE}/shop/male-balance`,
   "Hemp Syrup": `${SITE_BASE}/shop/hemp-syrup`,
   "Colax": `${SITE_BASE}/shop/colax`,
   "Colax Quarterly Subscription": `${SITE_BASE}/shop/colax-quarterly-subscription`,
@@ -104,7 +104,7 @@ Relieves prostate conditions, erectile dysfunction, urinary discomfort. Improves
 Key herbs: Stinging Nettle, Bois Bande, Vervain
 Recommend for: prostate issues, erectile dysfunction, BPH, urinary discomfort
 
-VIRILITY — Male Reproductive Support Tonic
+MALE BALANCE — Male Reproductive Support Tonic
 Improves sexual function, boosts sperm count, nourishes prostate, increases stamina and overall male vitality.
 Key herbs: Sarsaparilla, Sea Moss, Stinging Nettle
 Recommend for: low libido (men), low sperm count, poor sexual performance, stamina, prostate health
@@ -162,8 +162,8 @@ NERVE TONIC CAPSULES — stress, mental clarity, muscle tension, sleep
 
 ════ CURATED BUNDLES ════
 
-MALE POTENCY KIT (Colax + Prosperity + Virility) — prostate + performance + vitality
-PROSTATE HEALTH BUNDLE (Colax + Prosperity + Virility + Urinary Cleanse Tea) — comprehensive prostate/urinary
+MALE POTENCY KIT (Colax + Prosperity + Male Balance) — prostate + performance + vitality
+PROSTATE HEALTH BUNDLE (Colax + Prosperity + Male Balance + Urinary Cleanse Tea) — comprehensive prostate/urinary
 MALE VITALITY PACKAGE (6 bottles) — full detox + male vitality
 SUPER FEMALE WELLNESS PACKAGE (7 bottles) — complete female wellness protocol
 FEMININE BALANCE KIT (Colax + Pure Green + Feminine Balance) — hormonal balance + energy
@@ -191,7 +191,7 @@ const PRODUCTS_FOR_CARDS = [
   { name: "Feminine Balance",  slug: "feminine-balance",                     category: "Women's Health",     emoji: "🌸", color: "#d4707a" },
   { name: "Pure Green",        slug: "pure-green",                           category: "Energy & Iron",      emoji: "💚", color: "#5a8f5a" },
   { name: "Prosperity",        slug: "prosperity",                           category: "Prostate Health",    emoji: "⭐", color: "#c4973a" },
-  { name: "Virility",          slug: "virility-herbal-virility-supplement",  category: "Male Vitality",      emoji: "🔥", color: "#c45a3a" },
+  { name: "Male Balance",      slug: "male-balance",                         category: "Male Vitality",      emoji: "🔥", color: "#c45a3a" },
   { name: "Hemp Syrup",        slug: "hemp-syrup",                           category: "Sleep & Calm",       emoji: "🌙", color: "#7a6b9e" },
   { name: "Colax",             slug: "colax",                                category: "Colon Cleanse",      emoji: "🔵", color: "#3a8ab5" },
   { name: "Pure Gold",         slug: "pure-gold",                            category: "Respiratory",        emoji: "✨", color: "#d4af37" },
