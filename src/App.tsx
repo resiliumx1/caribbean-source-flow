@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-route
 import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { PAYPAL_CLIENT_ID } from "@/lib/paypal";
 import { StoreProvider } from "@/lib/store-context";
 import { ComparisonProvider } from "@/lib/comparison-context";
 import { StoreHeader } from "@/components/store/StoreHeader";
@@ -167,7 +169,17 @@ const App = () => {
     return <ComingSoon />;
   }
 
+  const paypalOptions = {
+    clientId: (import.meta.env.VITE_PAYPAL_CLIENT_ID as string) || PAYPAL_CLIENT_ID,
+    currency: "USD",
+    intent: "capture",
+    components: "buttons",
+    enableFunding: "venmo,paylater,card",
+    disableFunding: "",
+  };
+
   return (
+    <PayPalScriptProvider options={paypalOptions} deferLoading={true}>
     <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
@@ -191,6 +203,7 @@ const App = () => {
       </ThemeProvider>
     </QueryClientProvider>
     </HelmetProvider>
+    </PayPalScriptProvider>
   );
 };
 
