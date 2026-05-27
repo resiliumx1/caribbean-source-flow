@@ -106,6 +106,7 @@ export function RotatingApothecary() {
               <Link
                 key={product.id + "-" + i}
                 to={`/shop/${product.slug}`}
+                draggable={false}
                 className="group block flex-shrink-0 rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1"
                 style={{
                   width: "300px",
@@ -124,6 +125,7 @@ export function RotatingApothecary() {
                     alt={product.name}
                     className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 dark:brightness-110"
                     loading="lazy"
+                    draggable={false}
                     width={300}
                     height={300}
                   />
