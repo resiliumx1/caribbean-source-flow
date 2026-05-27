@@ -410,9 +410,10 @@ export default function Checkout() {
                         onApprove={async (data, actions) => {
                           if (!actions.order) return;
                           setIsProcessing(true);
+                          let captureId: string | undefined;
                           try {
                             const details = await actions.order.capture();
-                            const captureId =
+                            captureId =
                               (details as any)?.purchase_units?.[0]?.payments
                                 ?.captures?.[0]?.id || data.orderID;
 
@@ -452,7 +453,7 @@ export default function Checkout() {
                             if (!res.ok || !result?.order_number) {
                               throw new Error(
                                 result?.error ||
-                                  "Payment captured but order could not be saved. Please contact info@mountkailashslu.com with your PayPal receipt."
+                                  "Payment captured but order could not be saved."
                               );
                             }
 
@@ -463,13 +464,27 @@ export default function Checkout() {
                             });
                             navigate(`/order-confirmation/${result.order_number}`);
                           } catch (err: any) {
-                            console.error("Checkout finalize error:", err);
+                            // 🚨 PayPal already captured — money taken but order not saved.
+                            // Surface the capture ID VERY loudly so the customer can share it.
+                            console.error(
+                              "\n========================================================\n" +
+                                "🚨 PAYPAL CAPTURED BUT ORDER NOT SAVED 🚨\n" +
+                                `PayPal Transaction ID: ${captureId ?? "(unknown)"}\n` +
+                                `PayPal Order ID:       ${data.orderID}\n` +
+                                `Customer Email:        ${form.email}\n` +
+                                `Error:                 ${err?.message}\n` +
+                                "Email info@mountkailashslu.com with the Transaction ID.\n" +
+                                "========================================================\n"
+                            );
+                            const txnLine = captureId
+                              ? `Your PayPal Transaction ID: ${captureId}. `
+                              : "";
                             toast({
-                              title: "Order save failed",
+                              title: "⚠️ Payment received but order didn't save",
                               description:
-                                err?.message ||
-                                "Payment may have been captured. Please contact info@mountkailashslu.com.",
+                                `${txnLine}Please email info@mountkailashslu.com with this ID so we can manually create your order. Do NOT pay again. (${err?.message ?? "save failed"})`,
                               variant: "destructive",
+                              duration: 60000,
                             });
                             setIsProcessing(false);
                           }
