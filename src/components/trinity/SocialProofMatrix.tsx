@@ -1,5 +1,8 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Star, Award, GraduationCap, FileCheck, Sparkles } from "lucide-react";
+import { Star, Award, GraduationCap, FileCheck, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 
 // Sacred Apothecary Luxury palette
 const C = {
@@ -20,6 +23,7 @@ type Motif = "mortar" | "bottles" | "tincture";
 interface Testimonial {
   name: string;
   initials: string;
+  avatar: string;
   subtext: string;
   quote: string;
   badges: string[];
@@ -30,6 +34,8 @@ const TESTIMONIALS: Testimonial[] = [
   {
     name: "Jennifer Liu",
     initials: "JL",
+    avatar:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces&q=80",
     subtext: "Yoga Instructor, Vancouver",
     quote:
       "The cellular detox was intense but transformative. I lost 12 pounds of inflammation and my skin cleared completely.",
@@ -39,6 +45,8 @@ const TESTIMONIALS: Testimonial[] = [
   {
     name: "David R.",
     initials: "DR",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&q=80",
     subtext: "Houston, TX",
     quote:
       "I was skeptical but Virility worked. Energy, focus, everything improved. Ordering my third bottle.",
@@ -48,6 +56,8 @@ const TESTIMONIALS: Testimonial[] = [
   {
     name: "Keisha M.",
     initials: "KM",
+    avatar:
+      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=200&fit=crop&crop=faces&q=80",
     subtext: "Brooklyn, NY",
     quote:
       "The Answer tincture gave me relief in 10 days. This is real medicine, not watered-down supplements. I can feel the difference.",
