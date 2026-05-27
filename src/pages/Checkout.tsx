@@ -51,7 +51,7 @@ export default function Checkout() {
     customer_name: "",
     email: "",
     phone: "",
-    delivery_type: "shipping" as "shipping" | "pickup",
+    delivery_type: "local" as "local" | "international",
     address_line1: "",
     address_line2: "",
     city: "",
@@ -74,7 +74,8 @@ export default function Checkout() {
   );
   const prices = formatPriceBoth(subtotalUsd, subtotalXcd);
 
-  const isShipping = form.delivery_type === "shipping";
+  // Both delivery types require an address (local courier or international shipping).
+  const isShipping = true;
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
   const isFormValid = useMemo(() => {
     if (!form.customer_name.trim()) return false;
@@ -186,16 +187,20 @@ export default function Checkout() {
                   <select
                     id="delivery_type"
                     value={form.delivery_type}
-                    onChange={(e) => update("delivery_type", e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value as "local" | "international";
+                      update("delivery_type", v);
+                      // Auto-set country to LC for local, clear for international default
+                      if (v === "local") update("country", "LC");
+                    }}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <option value="shipping">Ship to address</option>
-                    <option value="pickup">Pickup in-store</option>
+                    <option value="local">Local Delivery (Saint Lucia)</option>
+                    <option value="international">International Shipping</option>
                   </select>
                 </div>
 
-                {isShipping ? (
-                  <>
+                <>
                     <div>
                       <Label htmlFor="address_line1">Address Line 1 *</Label>
                       <Input
@@ -262,12 +267,7 @@ export default function Checkout() {
                         </select>
                       </div>
                     </div>
-                  </>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    You've selected in-store pickup. Our team will contact you to confirm.
-                  </p>
-                )}
+                </>
               </div>
 
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
