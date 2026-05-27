@@ -332,7 +332,7 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
   const reduce = useReducedMotion();
   return (
     <motion.article
-      className="sa-card group relative rounded-[24px]"
+      className="sa-card group relative rounded-[24px] h-full w-full flex"
       initial={reduce ? false : { opacity: 0, y: 30 }}
       whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
@@ -345,7 +345,7 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
 
       {/* Inner panel */}
       <div
-        className="sa-card-inner relative rounded-[22px] px-6 py-7 md:px-8 md:py-9 h-full flex flex-col items-center text-center overflow-hidden"
+        className="sa-card-inner relative rounded-[22px] px-6 py-7 md:px-8 md:py-9 h-full w-full flex flex-col items-center text-center overflow-hidden"
       >
         {/* Bottom botanical motif watermark */}
         <div className="sa-motif-wrap" aria-hidden="true">
@@ -420,7 +420,7 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
 
         {/* Quote */}
         <p
-          className="mt-4"
+          className="mt-4 flex-1"
           style={{
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: "italic",
@@ -436,7 +436,7 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
 
         {/* Badges */}
         {t.badges.length > 0 && (
-          <div className="mt-6 flex flex-col gap-2 items-center">
+          <div className="mt-6 flex flex-col gap-2 items-center mt-auto pt-6">
             {t.badges.map((b, idx) => (
               <span
                 key={idx}
@@ -658,10 +658,10 @@ export function SocialProofMatrix() {
             if (!reduce) autoplayRef.current?.play();
           }}
         >
-          <div className="sa-embla -mx-3" ref={emblaRef}>
+        <div className="sa-embla -mx-3" ref={emblaRef}>
             <div className="sa-embla__container">
               {TESTIMONIALS.map((t, i) => (
-                <div className="sa-embla__slide" key={t.name}>
+              <div className="sa-embla__slide flex" key={t.name}>
                   <TestimonialCard t={t} i={i} />
                 </div>
               ))}
