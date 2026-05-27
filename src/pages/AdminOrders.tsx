@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Search, Truck, Package, CheckCircle, XCircle, Save } from "lucide-react";
+import { Loader2, Search, Truck, Package, CheckCircle, XCircle, Save, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered", "cancelled"];
@@ -29,6 +29,7 @@ export default function AdminOrders() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState({ status: "", tracking_number: "", tracking_carrier: "" });
   const [saving, setSaving] = useState(false);
+  const [resendingId, setResendingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => { fetchOrders(); }, []);
@@ -89,6 +90,23 @@ export default function AdminOrders() {
   };
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+  const resendConfirmation = async (orderId: string) => {
+    setResendingId(orderId);
+    const { data, error } = await supabase.functions.invoke("send-order-emails", {
+      body: { orderId, emailType: "order_placed" },
+    });
+    setResendingId(null);
+    if (error || (data as any)?.error) {
+      toast({
+        title: "Email failed",
+        description: (error as any)?.message || (data as any)?.error || "Could not send email.",
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: "Email sent", description: "Confirmation email resent to the customer." });
+    }
+  };
 
   const filtered = orders.filter(o => {
     if (!search) return true;
@@ -196,12 +214,25 @@ export default function AdminOrders() {
                     </div>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => startEdit(order)}
-                    className="text-xs text-primary hover:underline mt-1"
-                  >
-                    Edit status & tracking
-                  </button>
+                  <div className="flex items-center gap-3 mt-1">
+                    <button
+                      onClick={() => startEdit(order)}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      Edit status & tracking
+                    </button>
+                    <button
+                      onClick={() => resendConfirmation(order.id)}
+                      disabled={resendingId === order.id}
+                      className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 disabled:opacity-50"
+                      title="Resend order confirmation email"
+                    >
+                      {resendingId === order.id
+                        ? <Loader2 className="w-3 h-3 animate-spin" />
+                        : <Mail className="w-3 h-3" />}
+                      Resend confirmation
+                    </button>
+                  </div>
                 )}
               </div>
             );
