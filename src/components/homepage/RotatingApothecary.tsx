@@ -4,9 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store-context";
 import { VineVariationB } from "@/components/decorative/BotanicalVine";
+import { useMarquee } from "@/hooks/use-marquee";
 
 export function RotatingApothecary() {
   const { currency } = useStore();
+  const { ref: marqueeRef, handlers: marqueeHandlers } = useMarquee(0.6);
 
   const { data: products = [] } = useQuery({
     queryKey: ["featured-products-carousel"],
@@ -85,17 +87,17 @@ export function RotatingApothecary() {
         />
 
         <div
-          className="flex gap-6 px-4 apothecary-scroll"
+          ref={marqueeRef}
+          className="flex gap-6 px-4 apothecary-scroll select-none"
           style={{
-            animation: "apothecary-scroll 30s linear infinite",
-            width: "max-content",
+            overflowX: "auto",
+            overflowY: "hidden",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            cursor: "grab",
+            WebkitOverflowScrolling: "touch",
           }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.animationPlayState = "paused";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.animationPlayState = "running";
-          }}
+          {...marqueeHandlers}
         >
           {items.map((product, i) => {
             const price = currency === "XCD" ? product.price_xcd : product.price_usd;
@@ -104,6 +106,7 @@ export function RotatingApothecary() {
               <Link
                 key={product.id + "-" + i}
                 to={`/shop/${product.slug}`}
+                draggable={false}
                 className="group block flex-shrink-0 rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1"
                 style={{
                   width: "300px",
@@ -122,6 +125,7 @@ export function RotatingApothecary() {
                     alt={product.name}
                     className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 dark:brightness-110"
                     loading="lazy"
+                    draggable={false}
                     width={300}
                     height={300}
                   />
@@ -194,10 +198,8 @@ export function RotatingApothecary() {
       </div>
 
       <style>{`
-        @keyframes apothecary-scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
+        .apothecary-scroll::-webkit-scrollbar { display: none; }
+        .apothecary-scroll:active { cursor: grabbing; }
       `}</style>
       </div>
       <VineVariationB />
