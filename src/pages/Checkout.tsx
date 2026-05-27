@@ -419,9 +419,6 @@ export default function Checkout() {
 
                             const { data: sessionData } =
                               await supabase.auth.getSession();
-                            const userId =
-                              sessionData?.session?.user?.id ?? null;
-
                             const res = await fetch(
                               `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/paypal-checkout`,
                               {
@@ -444,7 +441,6 @@ export default function Checkout() {
                                   paypal_order_id: data.orderID,
                                   paypal_capture_id: captureId,
                                   currency_used: currency,
-                                  user_id: userId,
                                 }),
                               }
                             );

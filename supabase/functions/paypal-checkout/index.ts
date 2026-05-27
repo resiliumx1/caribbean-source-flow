@@ -29,7 +29,6 @@ interface CheckoutPayload {
   paypal_order_id: string;
   paypal_capture_id: string;
   currency_used: "USD" | "XCD";
-  user_id?: string | null;
 }
 
 Deno.serve(async (req) => {
@@ -50,6 +49,26 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // Resolve authenticated user (if any) from incoming Authorization header.
+    // We never trust a user_id from the client; the only authoritative source
+    // is a valid JWT verified server-side. Anything else => guest order.
+    let authedUserId: string | null = null;
+    const authHeader = req.headers.get("Authorization") || req.headers.get("authorization");
+    if (authHeader?.toLowerCase().startsWith("bearer ")) {
+      const token = authHeader.slice(7).trim();
+      // Skip our own publishable/anon key (not a user JWT)
+      if (token && token.split(".").length === 3) {
+        try {
+          const { data: userData, error: userErr } = await supabase.auth.getUser(token);
+          if (!userErr && userData?.user?.id) {
+            authedUserId = userData.user.id;
+          }
+        } catch (_e) {
+          // ignore — treat as guest
+        }
+      }
+    }
 
     // Map delivery_type to allowed DB values ('local' | 'international').
     // Country LC (Saint Lucia) => local; anything else => international.
@@ -96,7 +115,7 @@ Deno.serve(async (req) => {
 
     // Insert order — trigger generates order_number, history trigger logs status
     const orderInsert = {
-      user_id: payload.user_id ?? null,
+      user_id: authedUserId,
       customer_name: payload.form.customer_name,
       email: payload.form.email.toLowerCase().trim(),
       phone: payload.form.phone || null,
