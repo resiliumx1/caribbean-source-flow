@@ -652,7 +652,60 @@ export function SocialProofMatrix() {
         .sa-card:hover .sa-motif { opacity: 0.22; transform: translateX(-50%) scale(1.04); }
         .sa-motif-wrap { position: absolute; inset: 0; pointer-events: none; }
 
-        .sa-avatar-disc { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; }
+        .sa-avatar-disc {
+          width: 64px; height: 64px; border-radius: 50%; overflow: hidden;
+          background: #0a2218;
+          box-shadow: 0 0 18px rgba(226,200,102,0.18);
+          transition: box-shadow 500ms ease;
+        }
+        .sa-avatar-disc img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .sa-card:hover .sa-avatar-disc { box-shadow: 0 0 26px rgba(226,200,102,0.4); }
+
+        /* Embla carousel */
+        .sa-embla { overflow: hidden; }
+        .sa-embla__container { display: flex; touch-action: pan-y; backface-visibility: hidden; }
+        .sa-embla__slide {
+          flex: 0 0 100%;
+          min-width: 0;
+          padding: 0 12px;
+          transition: opacity 700ms cubic-bezier(0.22,1,0.36,1);
+          opacity: 0.45;
+        }
+        .sa-embla__slide.is-selected,
+        .sa-embla__slide.is-in-view { opacity: 1; }
+        @media (min-width: 768px) { .sa-embla__slide { flex: 0 0 50%; } }
+        @media (min-width: 1024px) { .sa-embla__slide { flex: 0 0 33.3333%; } }
+
+        .sa-arrow {
+          width: 44px; height: 44px; border-radius: 50%;
+          display: inline-flex; align-items: center; justify-content: center;
+          background: rgba(10,40,28,0.6);
+          border: 1px solid rgba(201,166,70,0.4);
+          color: ${C.gold};
+          transition: background 300ms ease, border-color 300ms ease, color 300ms ease, transform 300ms ease;
+          backdrop-filter: blur(4px);
+        }
+        .sa-arrow:hover { background: rgba(15,58,42,0.85); border-color: ${C.goldBright}; color: ${C.goldBright}; }
+        .sa-arrow:focus-visible { outline: 2px solid ${C.goldBright}; outline-offset: 2px; }
+        .sa-arrow:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .sa-dot {
+          width: 24px; height: 24px;
+          min-width: 24px; min-height: 24px;
+          display: inline-flex; align-items: center; justify-content: center;
+          background: transparent; border: 0; cursor: pointer;
+        }
+        .sa-dot__inner {
+          display: block;
+          width: 8px; height: 8px; border-radius: 999px;
+          background: rgba(201,166,70,0.3);
+          transition: width 400ms ease, background 400ms ease, box-shadow 400ms ease;
+        }
+        .sa-dot.is-active .sa-dot__inner {
+          width: 26px;
+          background: ${C.gold};
+          box-shadow: 0 0 8px rgba(226,200,102,0.55);
+        }
 
         .sa-avatar-ring {
           position: relative; width: 72px; height: 72px; border-radius: 50%;
