@@ -67,7 +67,7 @@ export default function Checkout() {
   // Trigger deferred SDK load on mount
   useEffect(() => {
     if (!isResolved && !isPending) {
-      paypalDispatch({ type: "setLoadingStatus", value: "pending" as any });
+      paypalDispatch({ type: "resetOptions", value: { currency: "USD" } as any });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
