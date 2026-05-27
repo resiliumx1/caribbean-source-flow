@@ -263,6 +263,44 @@ export type Database = {
           },
         ]
       }
+      order_status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          order_id: string
+          previous_status: string | null
+          status: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id: string
+          previous_status?: string | null
+          status: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id?: string
+          previous_status?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           address_line1: string
@@ -272,6 +310,7 @@ export type Database = {
           country: string
           created_at: string | null
           currency_used: string
+          customer_name: string
           customer_notes: string | null
           delivery_type: string
           delivery_zone_id: string | null
@@ -280,6 +319,7 @@ export type Database = {
           order_number: string | null
           payment_method: string
           payment_status: string | null
+          payment_transaction_id: string | null
           phone: string | null
           postal_code: string | null
           shipping_rate_id: string | null
@@ -305,6 +345,7 @@ export type Database = {
           country?: string
           created_at?: string | null
           currency_used: string
+          customer_name: string
           customer_notes?: string | null
           delivery_type: string
           delivery_zone_id?: string | null
@@ -313,6 +354,7 @@ export type Database = {
           order_number?: string | null
           payment_method: string
           payment_status?: string | null
+          payment_transaction_id?: string | null
           phone?: string | null
           postal_code?: string | null
           shipping_rate_id?: string | null
@@ -338,6 +380,7 @@ export type Database = {
           country?: string
           created_at?: string | null
           currency_used?: string
+          customer_name?: string
           customer_notes?: string | null
           delivery_type?: string
           delivery_zone_id?: string | null
@@ -346,6 +389,7 @@ export type Database = {
           order_number?: string | null
           payment_method?: string
           payment_status?: string | null
+          payment_transaction_id?: string | null
           phone?: string | null
           postal_code?: string | null
           shipping_rate_id?: string | null
