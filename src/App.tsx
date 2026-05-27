@@ -46,6 +46,7 @@ const HerbalPhysicianCourse = lazy(() => import("./pages/HerbalPhysicianCourse")
 const GateEntrancePage = lazy(() => import("./pages/GateEntrancePage"));
 const GoddessCard = lazy(() => import("./pages/GoddessCard"));
 const CustomerAccountPage = lazy(() => import("./pages/CustomerAccountPage"));
+const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -128,6 +129,7 @@ function AppContent() {
           <Route path="/shop/:slug" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-confirmation/:orderNumber" element={<OrderConfirmation />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/retreats" element={<Retreats />} />
           <Route path="/the-answer" element={<TheAnswer />} />
