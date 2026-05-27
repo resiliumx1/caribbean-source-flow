@@ -5,53 +5,54 @@ import { Star, Award, GraduationCap, FileCheck, Sparkles } from "lucide-react";
 const C = {
   bg: "#061b14",
   bgDeep: "#04140e",
-  card: "rgba(10, 45, 32, 0.78)",
   cardGradFrom: "#09251b",
   cardGradTo: "#0f3a2a",
   gold: "#c9a646",
   goldBright: "#e2c866",
-  goldSoft: "rgba(201,166,70,0.55)",
+  goldSoft: "rgba(201,166,70,0.6)",
   ivory: "#f7f1df",
   cream: "#d8cdb1",
   herb: "#6f9f7a",
 };
 
+type Motif = "mortar" | "bottles" | "tincture";
+
 interface Testimonial {
   name: string;
+  initials: string;
   subtext: string;
   quote: string;
   badges: string[];
-  avatarSeed: string;
-  avatarBg: string;
+  motif: Motif;
 }
 
 const TESTIMONIALS: Testimonial[] = [
   {
     name: "Jennifer Liu",
+    initials: "JL",
     subtext: "Yoga Instructor, Vancouver",
     quote:
       "The cellular detox was intense but transformative. I lost 12 pounds of inflammation and my skin cleared completely.",
     badges: ["Eczema, digestive issues", "Clear skin for first time in 15 years"],
-    avatarSeed: "jennifer-liu",
-    avatarBg: "c0aede",
+    motif: "mortar",
   },
   {
     name: "David R.",
+    initials: "DR",
     subtext: "Houston, TX",
     quote:
       "I was skeptical but Virility worked. Energy, focus, everything improved. Ordering my third bottle.",
     badges: ["Energy & focus improved"],
-    avatarSeed: "david-r",
-    avatarBg: "ffdfbf",
+    motif: "bottles",
   },
   {
     name: "Keisha M.",
+    initials: "KM",
     subtext: "Brooklyn, NY",
     quote:
       "The Answer tincture gave me relief in 10 days. This is real medicine, not watered-down supplements. I can feel the difference.",
     badges: ["Relief in 10 days"],
-    avatarSeed: "keisha-m",
-    avatarBg: "b6e3f4",
+    motif: "tincture",
   },
 ];
 
