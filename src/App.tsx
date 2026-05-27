@@ -47,6 +47,9 @@ const GateEntrancePage = lazy(() => import("./pages/GateEntrancePage"));
 const GoddessCard = lazy(() => import("./pages/GoddessCard"));
 const CustomerAccountPage = lazy(() => import("./pages/CustomerAccountPage"));
 const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
+const CustomerLogin = lazy(() => import("./pages/CustomerLogin"));
+const MyOrders = lazy(() => import("./pages/MyOrders"));
+const MyOrderDetail = lazy(() => import("./pages/MyOrderDetail"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -138,6 +141,9 @@ function AppContent() {
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/goddess" element={<GoddessCard />} />
           <Route path="/account" element={<CustomerAccountPage />} />
+          <Route path="/account/orders" element={<MyOrders />} />
+          <Route path="/account/orders/:orderNumber" element={<MyOrderDetail />} />
+          <Route path="/login" element={<CustomerLogin />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
