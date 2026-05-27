@@ -421,6 +421,55 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
 export function SocialProofMatrix() {
   const reduce = useReducedMotion();
 
+  const autoplayRef = useRef(
+    Autoplay({ delay: 5500, stopOnInteraction: false, stopOnMouseEnter: true })
+  );
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      slidesToScroll: 1,
+      duration: 32, // ~800ms feel
+      containScroll: "trimSnaps",
+    },
+    reduce ? [] : [autoplayRef.current]
+  );
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [snaps, setSnaps] = useState<number[]>([]);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setCanPrev(emblaApi.canScrollPrev());
+    setCanNext(emblaApi.canScrollNext());
+    // Tag in-view slides for opacity styling
+    const inView = new Set(emblaApi.slidesInView());
+    emblaApi.slideNodes().forEach((node, i) => {
+      node.classList.toggle("is-in-view", inView.has(i));
+      node.classList.toggle("is-selected", i === emblaApi.selectedScrollSnap());
+    });
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    setSnaps(emblaApi.scrollSnapList());
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    emblaApi.on("slidesInView", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+      emblaApi.off("slidesInView", onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
   return (
     <section
       className="sa-section relative overflow-hidden py-24 md:py-32"
@@ -553,11 +602,60 @@ export function SocialProofMatrix() {
           </p>
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 md:gap-8">
-          {TESTIMONIALS.map((t, i) => (
-            <TestimonialCard key={t.name} t={t} i={i} />
-          ))}
+        {/* Cards carousel */}
+        <div
+          className="relative"
+          onMouseEnter={() => autoplayRef.current?.stop()}
+          onMouseLeave={() => {
+            if (!reduce) autoplayRef.current?.play();
+          }}
+        >
+          <div className="sa-embla -mx-3" ref={emblaRef}>
+            <div className="sa-embla__container">
+              {TESTIMONIALS.map((t, i) => (
+                <div className="sa-embla__slide" key={t.name}>
+                  <TestimonialCard t={t} i={i} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Arrows + dots */}
+          <div className="mt-10 flex items-center justify-center gap-5">
+            <button
+              type="button"
+              aria-label="Previous testimonial"
+              className="sa-arrow"
+              onClick={scrollPrev}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-1" role="tablist" aria-label="Testimonial slides">
+              {snaps.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === selectedIndex}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                  className={`sa-dot ${i === selectedIndex ? "is-active" : ""}`}
+                  onClick={() => emblaApi?.scrollTo(i)}
+                >
+                  <span className="sa-dot__inner" />
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              aria-label="Next testimonial"
+              className="sa-arrow"
+              onClick={scrollNext}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Bottom trust row */}
