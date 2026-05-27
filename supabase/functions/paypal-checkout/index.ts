@@ -163,6 +163,16 @@ Deno.serve(async (req) => {
       throw itemsErr;
     }
 
+    // Fire-and-forget order confirmation emails. Never block the order on email failure.
+    try {
+      const { error: emailErr } = await supabase.functions.invoke("send-order-emails", {
+        body: { orderId: order.id, emailType: "order_placed" },
+      });
+      if (emailErr) console.error("send-order-emails invoke error:", emailErr);
+    } catch (e) {
+      console.error("send-order-emails threw (order still saved):", e);
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
