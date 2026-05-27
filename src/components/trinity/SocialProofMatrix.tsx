@@ -313,35 +313,20 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
         {/* Top crest */}
         <div className="mb-3 relative z-10"><CardCrest /></div>
 
-        {/* Monogram avatar */}
-        <div className="sa-avatar-ring mb-4 relative z-10" aria-hidden="true">
+        {/* Profile photo avatar */}
+        <div className="sa-avatar-ring mb-4 relative z-10">
           <div className="sa-avatar-disc">
-            <svg viewBox="0 0 64 64" width="64" height="64">
-              <defs>
-                <radialGradient id={`av-${t.initials}`} cx="50%" cy="35%" r="65%">
-                  <stop offset="0%" stopColor="#1d4030" />
-                  <stop offset="100%" stopColor="#0a2218" />
-                </radialGradient>
-              </defs>
-              <circle cx="32" cy="32" r="31" fill={`url(#av-${t.initials})`} />
-              {/* tiny botanical accents */}
-              <g fill="none" stroke={C.gold} strokeWidth="0.6" opacity="0.7">
-                <path d="M14 50 q4 -8 10 -10" />
-                <path d="M50 14 q-4 8 -10 10" />
-              </g>
-              <text
-                x="32"
-                y="40"
-                textAnchor="middle"
-                fontFamily="'Cormorant Garamond', serif"
-                fontSize="22"
-                fontWeight="600"
-                fill={C.ivory}
-                letterSpacing="1"
-              >
-                {t.initials}
-              </text>
-            </svg>
+            <img
+              src={t.avatar}
+              alt={t.name}
+              width={72}
+              height={72}
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+              }}
+            />
           </div>
         </div>
 
