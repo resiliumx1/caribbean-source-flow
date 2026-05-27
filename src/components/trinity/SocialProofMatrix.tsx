@@ -497,13 +497,21 @@ export function SocialProofMatrix() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-14 md:mb-16"
         >
-          <div className="flex items-center justify-center gap-3 mb-5">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <span
+              aria-hidden="true"
+              style={{
+                height: 1,
+                width: 80,
+                background: `linear-gradient(90deg, transparent, ${C.gold})`,
+              }}
+            />
             <EyebrowOrnament />
             <span
               style={{
                 fontFamily: "'Jost', sans-serif",
                 fontSize: 12,
-                letterSpacing: "0.32em",
+                letterSpacing: "0.36em",
                 color: C.gold,
                 textTransform: "uppercase",
               }}
@@ -511,6 +519,14 @@ export function SocialProofMatrix() {
               Testimonials
             </span>
             <EyebrowOrnament flip />
+            <span
+              aria-hidden="true"
+              style={{
+                height: 1,
+                width: 80,
+                background: `linear-gradient(270deg, transparent, ${C.gold})`,
+              }}
+            />
           </div>
 
           <h2
@@ -595,31 +611,53 @@ export function SocialProofMatrix() {
 
       {/* Scoped styles */}
       <style>{`
-        .sa-card { position: relative; isolation: isolate; transition: transform 600ms cubic-bezier(0.22,1,0.36,1); }
-        .sa-card:hover { transform: translateY(-6px); }
+        .sa-card {
+          position: relative; isolation: isolate;
+          transition: transform 600ms cubic-bezier(0.22,1,0.36,1), filter 600ms ease;
+          filter: drop-shadow(0 18px 40px rgba(0,0,0,0.55));
+        }
+        .sa-card:hover { transform: translateY(-6px); filter: drop-shadow(0 24px 50px rgba(0,0,0,0.65)) drop-shadow(0 0 22px rgba(226,200,102,0.22)); }
 
         .sa-card-border {
-          position: absolute; inset: 0; border-radius: 24px; padding: 1px;
-          background: linear-gradient(160deg, ${C.gold} 0%, rgba(201,166,70,0.15) 28%, rgba(201,166,70,0.08) 50%, rgba(201,166,70,0.25) 75%, ${C.goldBright} 100%);
+          position: absolute; inset: 0; border-radius: 24px; padding: 1.2px;
+          background: linear-gradient(160deg, ${C.goldBright} 0%, ${C.gold} 18%, rgba(201,166,70,0.25) 40%, rgba(201,166,70,0.18) 60%, ${C.gold} 82%, ${C.goldBright} 100%);
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor; mask-composite: exclude;
-          opacity: 0.85; transition: opacity 500ms ease, filter 500ms ease;
+          opacity: 1; transition: filter 500ms ease;
           pointer-events: none;
         }
-        .sa-card:hover .sa-card-border {
-          opacity: 1;
-          filter: drop-shadow(0 0 14px rgba(226,200,102,0.35));
+        .sa-card:hover .sa-card-border { filter: drop-shadow(0 0 12px rgba(226,200,102,0.55)); }
+
+        .sa-card-inset {
+          position: absolute; inset: 8px; border-radius: 18px;
+          border: 1px solid rgba(201,166,70,0.28);
+          pointer-events: none;
+          box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+          transition: border-color 500ms ease;
         }
+        .sa-card:hover .sa-card-inset { border-color: rgba(226,200,102,0.55); }
 
         .sa-card-inner {
           background:
-            radial-gradient(120% 80% at 50% 0%, rgba(201,166,70,0.07), transparent 60%),
+            radial-gradient(140% 90% at 50% 0%, rgba(201,166,70,0.12), transparent 55%),
+            radial-gradient(120% 80% at 50% 100%, rgba(111,159,122,0.10), transparent 60%),
             linear-gradient(160deg, ${C.cardGradFrom} 0%, ${C.cardGradTo} 100%);
           box-shadow:
-            inset 0 1px 0 rgba(255,235,180,0.06),
-            inset 0 0 60px rgba(0,0,0,0.35),
-            0 30px 60px -30px rgba(0,0,0,0.6);
+            inset 0 1px 0 rgba(255,235,180,0.08),
+            inset 0 0 70px rgba(0,0,0,0.4);
         }
+
+        .sa-motif {
+          position: absolute; left: 50%; bottom: 6px;
+          transform: translateX(-50%);
+          width: 78%; height: auto;
+          opacity: 0.13;
+          transition: opacity 600ms ease, transform 600ms ease;
+        }
+        .sa-card:hover .sa-motif { opacity: 0.22; transform: translateX(-50%) scale(1.04); }
+        .sa-motif-wrap { position: absolute; inset: 0; pointer-events: none; }
+
+        .sa-avatar-disc { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; }
 
         .sa-avatar-ring {
           position: relative; width: 72px; height: 72px; border-radius: 50%;
