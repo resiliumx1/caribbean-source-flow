@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.woo-order]
 verify_jwt = false
+
+[functions.paypal-checkout]
+verify_jwt = false
