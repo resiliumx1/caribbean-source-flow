@@ -60,9 +60,9 @@ const TESTIMONIALS: Testimonial[] = [
 
 const CornerVine = ({ flipX = false, flipY = false }: { flipX?: boolean; flipY?: boolean }) => (
   <svg
-    viewBox="0 0 120 120"
-    width="96"
-    height="96"
+    viewBox="0 0 140 140"
+    width="128"
+    height="128"
     className="sa-corner-vine pointer-events-none absolute"
     style={{
       transform: `scale(${flipX ? -1 : 1}, ${flipY ? -1 : 1})`,
@@ -70,20 +70,121 @@ const CornerVine = ({ flipX = false, flipY = false }: { flipX?: boolean; flipY?:
     }}
     aria-hidden="true"
   >
-    <g fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" opacity="0.85">
-      <path d="M6 6 L6 46" />
-      <path d="M6 6 L46 6" />
-      <path d="M6 6 Q34 12 50 32 Q60 46 78 50" className="sa-vine-grow" />
-      <path d="M6 6 Q12 34 32 50 Q46 60 50 78" className="sa-vine-grow" />
-      {/* leaves */}
-      <path d="M22 18 q6 -8 14 -4 q-4 8 -14 4 z" fill="currentColor" fillOpacity="0.35" />
-      <path d="M18 22 q-8 6 -4 14 q8 -4 4 -14 z" fill="currentColor" fillOpacity="0.35" />
-      <path d="M44 30 q8 -2 12 6 q-8 4 -12 -6 z" fill="currentColor" fillOpacity="0.3" />
-      <path d="M30 44 q-2 8 6 12 q4 -8 -6 -12 z" fill="currentColor" fillOpacity="0.3" />
-      <circle cx="50" cy="50" r="1.4" fill="currentColor" />
-      <circle cx="60" cy="38" r="0.9" fill="currentColor" />
-      <circle cx="38" cy="60" r="0.9" fill="currentColor" />
+    <g fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round">
+      {/* Ornamental scroll */}
+      <path d="M8 8 Q24 8 30 22 Q34 32 24 38 Q14 44 18 56" opacity="0.95" />
+      <path d="M8 8 Q8 24 22 30 Q32 34 38 24 Q44 14 56 18" opacity="0.95" />
+      {/* Main vine */}
+      <path
+        className="sa-vine-grow"
+        d="M8 8 Q48 14 70 38 Q86 56 96 84"
+        strokeWidth="1.1"
+      />
+      <path
+        className="sa-vine-grow"
+        d="M8 8 Q14 48 38 70 Q56 86 84 96"
+        strokeWidth="1.1"
+      />
+      {/* Tendrils */}
+      <path d="M50 28 q6 -4 10 2" opacity="0.7" />
+      <path d="M28 50 q-4 6 2 10" opacity="0.7" />
+      <path d="M70 48 q8 -2 10 6" opacity="0.6" />
+      <path d="M48 70 q-2 8 6 10" opacity="0.6" />
+      {/* Leaves */}
+      <path d="M40 22 q8 -10 18 -4 q-6 12 -18 4 z" fill="currentColor" fillOpacity="0.55" />
+      <path d="M22 40 q-10 8 -4 18 q12 -6 4 -18 z" fill="currentColor" fillOpacity="0.55" />
+      <path d="M62 44 q10 -2 14 8 q-12 6 -14 -8 z" fill="currentColor" fillOpacity="0.45" />
+      <path d="M44 62 q-2 10 8 14 q6 -12 -8 -14 z" fill="currentColor" fillOpacity="0.45" />
+      <path d="M82 70 q8 0 10 8 q-10 4 -10 -8 z" fill="currentColor" fillOpacity="0.4" />
+      <path d="M70 82 q0 8 8 10 q4 -10 -8 -10 z" fill="currentColor" fillOpacity="0.4" />
+      {/* Berries / dots */}
+      <circle cx="60" cy="60" r="1.8" fill="currentColor" />
+      <circle cx="78" cy="40" r="1.2" fill="currentColor" />
+      <circle cx="40" cy="78" r="1.2" fill="currentColor" />
+      <circle cx="92" cy="78" r="1" fill="currentColor" opacity="0.8" />
+      <circle cx="78" cy="92" r="1" fill="currentColor" opacity="0.8" />
+      <circle cx="20" cy="20" r="1.5" fill="currentColor" />
     </g>
+  </svg>
+);
+
+/* ---------- Per-card botanical motif (bottom watermark) ---------- */
+
+const MotifMortar = () => (
+  <g fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round">
+    {/* mortar */}
+    <path d="M70 80 q30 0 60 0 q-6 22 -30 22 q-24 0 -30 -22 z" fill="currentColor" fillOpacity="0.18" />
+    <path d="M68 80 q32 -4 64 0" />
+    {/* pestle */}
+    <path d="M118 40 l-22 38" strokeWidth="1.2" />
+    <circle cx="120" cy="38" r="3.5" fill="currentColor" fillOpacity="0.35" />
+    {/* herbs sprig left */}
+    <path d="M40 90 q-4 -28 14 -50" />
+    <path d="M44 70 q-10 -2 -14 -10" />
+    <path d="M48 56 q-12 -2 -16 -12" />
+    <path d="M54 44 q-10 -2 -14 -10" />
+    {/* herbs sprig right */}
+    <path d="M170 92 q4 -26 -12 -48" />
+    <path d="M166 72 q10 -2 14 -10" />
+    <path d="M162 58 q12 -2 16 -12" />
+    <path d="M156 46 q10 -2 14 -10" />
+  </g>
+);
+
+const MotifBottles = () => (
+  <g fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round">
+    {/* tall bottle */}
+    <path d="M70 50 l0 12 q-8 6 -8 16 l0 28 q0 6 6 6 l16 0 q6 0 6 -6 l0 -28 q0 -10 -8 -16 l0 -12 z" fill="currentColor" fillOpacity="0.15" />
+    <path d="M68 50 l16 0" />
+    <path d="M65 80 l24 0" />
+    {/* short bottle */}
+    <path d="M100 64 l0 8 q-6 4 -6 12 l0 24 q0 5 5 5 l14 0 q5 0 5 -5 l0 -24 q0 -8 -6 -12 l0 -8 z" fill="currentColor" fillOpacity="0.15" />
+    <path d="M98 64 l14 0" />
+    {/* round flask */}
+    <path d="M140 70 l0 10 q-12 4 -12 20 q0 12 14 12 q14 0 14 -12 q0 -16 -12 -20 l0 -10 z" fill="currentColor" fillOpacity="0.15" />
+    <path d="M138 70 l8 0" />
+    {/* steam wisps */}
+    <path d="M76 44 q4 -6 0 -10" opacity="0.6" />
+    <path d="M107 58 q3 -5 0 -8" opacity="0.6" />
+    <path d="M144 64 q3 -5 0 -8" opacity="0.6" />
+  </g>
+);
+
+const MotifTincture = () => (
+  <g fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round">
+    {/* dropper bottle */}
+    <rect x="92" y="56" width="36" height="50" rx="4" fill="currentColor" fillOpacity="0.16" />
+    <path d="M92 70 l36 0" />
+    <path d="M100 56 l0 -8 l20 0 l0 8" />
+    {/* dropper tip */}
+    <path d="M108 48 l4 -10 l-2 0 z" fill="currentColor" fillOpacity="0.4" />
+    {/* drop */}
+    <path d="M110 96 q2 4 0 6 q-2 -2 0 -6 z" fill="currentColor" fillOpacity="0.6" />
+    {/* flowering herb left */}
+    <path d="M50 100 q-2 -24 12 -44" />
+    <path d="M56 80 q-10 -2 -14 -10" />
+    <path d="M60 64 q-12 -2 -16 -12" />
+    <circle cx="62" cy="56" r="3" fill="currentColor" fillOpacity="0.45" />
+    <circle cx="58" cy="62" r="2" fill="currentColor" fillOpacity="0.4" />
+    {/* flowering herb right */}
+    <path d="M170 100 q2 -22 -10 -42" />
+    <path d="M164 82 q10 -2 14 -10" />
+    <path d="M160 66 q12 -2 16 -12" />
+    <circle cx="160" cy="58" r="3" fill="currentColor" fillOpacity="0.45" />
+    <circle cx="164" cy="64" r="2" fill="currentColor" fillOpacity="0.4" />
+  </g>
+);
+
+const CardMotif = ({ kind }: { kind: Motif }) => (
+  <svg
+    viewBox="0 0 220 120"
+    className="sa-motif pointer-events-none"
+    aria-hidden="true"
+    style={{ color: C.gold }}
+  >
+    {kind === "mortar" && <MotifMortar />}
+    {kind === "bottles" && <MotifBottles />}
+    {kind === "tincture" && <MotifTincture />}
   </svg>
 );
 
