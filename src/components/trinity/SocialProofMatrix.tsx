@@ -280,13 +280,20 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.7, delay: 0.15 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Ornate gold border layer */}
+      {/* Outer ornate gold border layer */}
       <div className="sa-card-border" aria-hidden="true" />
+      {/* Subtle inner gold inset line */}
+      <div className="sa-card-inset" aria-hidden="true" />
 
       {/* Inner panel */}
       <div
-        className="sa-card-inner relative rounded-[22px] px-7 py-8 md:px-8 md:py-10 h-full flex flex-col items-center text-center"
+        className="sa-card-inner relative rounded-[22px] px-6 py-7 md:px-8 md:py-9 h-full flex flex-col items-center text-center overflow-hidden"
       >
+        {/* Bottom botanical motif watermark */}
+        <div className="sa-motif-wrap" aria-hidden="true">
+          <CardMotif kind={t.motif} />
+        </div>
+
         {/* Corner vines */}
         <div className="absolute top-0 left-0"><CornerVine /></div>
         <div className="absolute top-0 right-0"><CornerVine flipX /></div>
@@ -294,19 +301,38 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
         <div className="absolute bottom-0 right-0"><CornerVine flipX flipY /></div>
 
         {/* Top crest */}
-        <div className="mb-4 -mt-1 opacity-90"><CardCrest /></div>
+        <div className="mb-3 relative z-10"><CardCrest /></div>
 
-        {/* Avatar */}
-        <div className="sa-avatar-ring mb-5">
-          <img
-            src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(
-              t.avatarSeed
-            )}&backgroundColor=${t.avatarBg}&radius=50`}
-            alt={t.name}
-            width={64}
-            height={64}
-            loading="lazy"
-          />
+        {/* Monogram avatar */}
+        <div className="sa-avatar-ring mb-4 relative z-10" aria-hidden="true">
+          <div className="sa-avatar-disc">
+            <svg viewBox="0 0 64 64" width="64" height="64">
+              <defs>
+                <radialGradient id={`av-${t.initials}`} cx="50%" cy="35%" r="65%">
+                  <stop offset="0%" stopColor="#1d4030" />
+                  <stop offset="100%" stopColor="#0a2218" />
+                </radialGradient>
+              </defs>
+              <circle cx="32" cy="32" r="31" fill={`url(#av-${t.initials})`} />
+              {/* tiny botanical accents */}
+              <g fill="none" stroke={C.gold} strokeWidth="0.6" opacity="0.7">
+                <path d="M14 50 q4 -8 10 -10" />
+                <path d="M50 14 q-4 8 -10 10" />
+              </g>
+              <text
+                x="32"
+                y="40"
+                textAnchor="middle"
+                fontFamily="'Cormorant Garamond', serif"
+                fontSize="22"
+                fontWeight="600"
+                fill={C.ivory}
+                letterSpacing="1"
+              >
+                {t.initials}
+              </text>
+            </svg>
+          </div>
         </div>
 
         <h3
