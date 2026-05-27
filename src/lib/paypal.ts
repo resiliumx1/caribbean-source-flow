@@ -1,16 +1,18 @@
 /**
  * PayPal configuration.
  *
- * The Client ID is a publishable identifier — it is safe to ship in client code
- * (the PayPal JS SDK exposes it in the browser anyway). The secret/private key
- * stays server-side in the edge function.
- *
- * To switch to live: replace PAYPAL_CLIENT_ID with the live Client ID and set
- * PAYPAL_ENVIRONMENT to "production".
+ * The Client ID must be supplied via the VITE_PAYPAL_CLIENT_ID environment
+ * variable. We intentionally do NOT ship a hardcoded sandbox fallback — that
+ * would risk routing real customer payments to a sandbox account.
  */
-export const PAYPAL_CLIENT_ID =
-  "ASJHID7rCZ0VGaeETGq5AfImd2J8j4--KdXNfpk5glkADGI2Be_SXfiWhFdqF-HhzYe0b1cCvvLQQUbx";
+const clientId = import.meta.env.VITE_PAYPAL_CLIENT_ID as string | undefined;
 
-export const PAYPAL_ENVIRONMENT: "sandbox" | "production" = "sandbox";
+if (!clientId) {
+  throw new Error(
+    "Missing VITE_PAYPAL_CLIENT_ID environment variable. Set it to your PayPal Client ID (sandbox or live) before running the app."
+  );
+}
+
+export const PAYPAL_CLIENT_ID: string = clientId;
 
 export const PAYPAL_CURRENCY = "USD";
