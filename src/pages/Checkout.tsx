@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,7 @@ import { useStore } from "@/lib/store-context";
 import { useToast } from "@/hooks/use-toast";
 import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  PayPalButtons,
-  usePayPalScriptReducer,
-} from "@paypal/react-paypal-js";
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 
 const COUNTRIES: Array<{ code: string; name: string }> = [
   { code: "LC", name: "Saint Lucia" },
@@ -48,7 +45,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [{ isResolved, isPending }, paypalDispatch] = usePayPalScriptReducer();
+  const [{ isResolved }] = usePayPalScriptReducer();
 
   const [form, setForm] = useState({
     customer_name: "",
@@ -63,14 +60,6 @@ export default function Checkout() {
     country: "LC",
     customer_notes: "",
   });
-
-  // Trigger deferred SDK load on mount
-  useEffect(() => {
-    if (!isResolved && !isPending) {
-      paypalDispatch({ type: "resetOptions", value: { currency: "USD" } as any });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const update = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));

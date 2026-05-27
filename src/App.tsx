@@ -179,7 +179,7 @@ const App = () => {
   };
 
   return (
-    <PayPalScriptProvider options={paypalOptions} deferLoading={true}>
+    <PayPalScriptProvider options={paypalOptions}>
     <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
