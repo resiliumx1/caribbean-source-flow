@@ -676,8 +676,13 @@ export function SocialProofMatrix() {
           background: #1a3327;
         }
 
-        .sa-corner-vine { stroke-dasharray: 220; stroke-dashoffset: 60; transition: stroke-dashoffset 900ms ease, opacity 500ms ease; opacity: 0.55; }
-        .sa-card:hover .sa-corner-vine { stroke-dashoffset: 0; opacity: 0.95; }
+        .sa-corner-vine { opacity: 0.8; transition: opacity 500ms ease; }
+        .sa-card:hover .sa-corner-vine { opacity: 1; }
+        .sa-corner-vine .sa-vine-grow {
+          stroke-dasharray: 260; stroke-dashoffset: 130;
+          transition: stroke-dashoffset 1100ms cubic-bezier(0.22,1,0.36,1);
+        }
+        .sa-card:hover .sa-corner-vine .sa-vine-grow { stroke-dashoffset: 0; }
 
         .sa-card-shimmer {
           pointer-events: none; position: absolute; inset: 0; border-radius: 22px;
