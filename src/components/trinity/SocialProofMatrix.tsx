@@ -1,5 +1,8 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Star, Award, GraduationCap, FileCheck, Sparkles } from "lucide-react";
+import { Star, Award, GraduationCap, FileCheck, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 
 // Sacred Apothecary Luxury palette
 const C = {
@@ -20,6 +23,7 @@ type Motif = "mortar" | "bottles" | "tincture";
 interface Testimonial {
   name: string;
   initials: string;
+  avatar: string;
   subtext: string;
   quote: string;
   badges: string[];
@@ -30,6 +34,8 @@ const TESTIMONIALS: Testimonial[] = [
   {
     name: "Jennifer Liu",
     initials: "JL",
+    avatar:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces&q=80",
     subtext: "Yoga Instructor, Vancouver",
     quote:
       "The cellular detox was intense but transformative. I lost 12 pounds of inflammation and my skin cleared completely.",
@@ -39,6 +45,8 @@ const TESTIMONIALS: Testimonial[] = [
   {
     name: "David R.",
     initials: "DR",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&q=80",
     subtext: "Houston, TX",
     quote:
       "I was skeptical but Virility worked. Energy, focus, everything improved. Ordering my third bottle.",
@@ -48,6 +56,8 @@ const TESTIMONIALS: Testimonial[] = [
   {
     name: "Keisha M.",
     initials: "KM",
+    avatar:
+      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&h=200&fit=crop&crop=faces&q=80",
     subtext: "Brooklyn, NY",
     quote:
       "The Answer tincture gave me relief in 10 days. This is real medicine, not watered-down supplements. I can feel the difference.",
@@ -303,35 +313,20 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
         {/* Top crest */}
         <div className="mb-3 relative z-10"><CardCrest /></div>
 
-        {/* Monogram avatar */}
-        <div className="sa-avatar-ring mb-4 relative z-10" aria-hidden="true">
+        {/* Profile photo avatar */}
+        <div className="sa-avatar-ring mb-4 relative z-10">
           <div className="sa-avatar-disc">
-            <svg viewBox="0 0 64 64" width="64" height="64">
-              <defs>
-                <radialGradient id={`av-${t.initials}`} cx="50%" cy="35%" r="65%">
-                  <stop offset="0%" stopColor="#1d4030" />
-                  <stop offset="100%" stopColor="#0a2218" />
-                </radialGradient>
-              </defs>
-              <circle cx="32" cy="32" r="31" fill={`url(#av-${t.initials})`} />
-              {/* tiny botanical accents */}
-              <g fill="none" stroke={C.gold} strokeWidth="0.6" opacity="0.7">
-                <path d="M14 50 q4 -8 10 -10" />
-                <path d="M50 14 q-4 8 -10 10" />
-              </g>
-              <text
-                x="32"
-                y="40"
-                textAnchor="middle"
-                fontFamily="'Cormorant Garamond', serif"
-                fontSize="22"
-                fontWeight="600"
-                fill={C.ivory}
-                letterSpacing="1"
-              >
-                {t.initials}
-              </text>
-            </svg>
+            <img
+              src={t.avatar}
+              alt={t.name}
+              width={72}
+              height={72}
+              loading="lazy"
+              decoding="async"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+              }}
+            />
           </div>
         </div>
 
@@ -425,6 +420,55 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
 
 export function SocialProofMatrix() {
   const reduce = useReducedMotion();
+
+  const autoplayRef = useRef(
+    Autoplay({ delay: 5500, stopOnInteraction: false, stopOnMouseEnter: true })
+  );
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      slidesToScroll: 1,
+      duration: 32, // ~800ms feel
+      containScroll: "trimSnaps",
+    },
+    reduce ? [] : [autoplayRef.current]
+  );
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [snaps, setSnaps] = useState<number[]>([]);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setCanPrev(emblaApi.canScrollPrev());
+    setCanNext(emblaApi.canScrollNext());
+    // Tag in-view slides for opacity styling
+    const inView = new Set(emblaApi.slidesInView());
+    emblaApi.slideNodes().forEach((node, i) => {
+      node.classList.toggle("is-in-view", inView.has(i));
+      node.classList.toggle("is-selected", i === emblaApi.selectedScrollSnap());
+    });
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    setSnaps(emblaApi.scrollSnapList());
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    emblaApi.on("slidesInView", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+      emblaApi.off("slidesInView", onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
     <section
@@ -558,11 +602,60 @@ export function SocialProofMatrix() {
           </p>
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 md:gap-8">
-          {TESTIMONIALS.map((t, i) => (
-            <TestimonialCard key={t.name} t={t} i={i} />
-          ))}
+        {/* Cards carousel */}
+        <div
+          className="relative"
+          onMouseEnter={() => autoplayRef.current?.stop()}
+          onMouseLeave={() => {
+            if (!reduce) autoplayRef.current?.play();
+          }}
+        >
+          <div className="sa-embla -mx-3" ref={emblaRef}>
+            <div className="sa-embla__container">
+              {TESTIMONIALS.map((t, i) => (
+                <div className="sa-embla__slide" key={t.name}>
+                  <TestimonialCard t={t} i={i} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Arrows + dots */}
+          <div className="mt-10 flex items-center justify-center gap-5">
+            <button
+              type="button"
+              aria-label="Previous testimonial"
+              className="sa-arrow"
+              onClick={scrollPrev}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-1" role="tablist" aria-label="Testimonial slides">
+              {snaps.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === selectedIndex}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                  className={`sa-dot ${i === selectedIndex ? "is-active" : ""}`}
+                  onClick={() => emblaApi?.scrollTo(i)}
+                >
+                  <span className="sa-dot__inner" />
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              aria-label="Next testimonial"
+              className="sa-arrow"
+              onClick={scrollNext}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Bottom trust row */}
@@ -657,7 +750,60 @@ export function SocialProofMatrix() {
         .sa-card:hover .sa-motif { opacity: 0.22; transform: translateX(-50%) scale(1.04); }
         .sa-motif-wrap { position: absolute; inset: 0; pointer-events: none; }
 
-        .sa-avatar-disc { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; }
+        .sa-avatar-disc {
+          width: 64px; height: 64px; border-radius: 50%; overflow: hidden;
+          background: #0a2218;
+          box-shadow: 0 0 18px rgba(226,200,102,0.18);
+          transition: box-shadow 500ms ease;
+        }
+        .sa-avatar-disc img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .sa-card:hover .sa-avatar-disc { box-shadow: 0 0 26px rgba(226,200,102,0.4); }
+
+        /* Embla carousel */
+        .sa-embla { overflow: hidden; }
+        .sa-embla__container { display: flex; touch-action: pan-y; backface-visibility: hidden; }
+        .sa-embla__slide {
+          flex: 0 0 100%;
+          min-width: 0;
+          padding: 0 12px;
+          transition: opacity 700ms cubic-bezier(0.22,1,0.36,1);
+          opacity: 0.45;
+        }
+        .sa-embla__slide.is-selected,
+        .sa-embla__slide.is-in-view { opacity: 1; }
+        @media (min-width: 768px) { .sa-embla__slide { flex: 0 0 50%; } }
+        @media (min-width: 1024px) { .sa-embla__slide { flex: 0 0 33.3333%; } }
+
+        .sa-arrow {
+          width: 44px; height: 44px; border-radius: 50%;
+          display: inline-flex; align-items: center; justify-content: center;
+          background: rgba(10,40,28,0.6);
+          border: 1px solid rgba(201,166,70,0.4);
+          color: ${C.gold};
+          transition: background 300ms ease, border-color 300ms ease, color 300ms ease, transform 300ms ease;
+          backdrop-filter: blur(4px);
+        }
+        .sa-arrow:hover { background: rgba(15,58,42,0.85); border-color: ${C.goldBright}; color: ${C.goldBright}; }
+        .sa-arrow:focus-visible { outline: 2px solid ${C.goldBright}; outline-offset: 2px; }
+        .sa-arrow:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .sa-dot {
+          width: 24px; height: 24px;
+          min-width: 24px; min-height: 24px;
+          display: inline-flex; align-items: center; justify-content: center;
+          background: transparent; border: 0; cursor: pointer;
+        }
+        .sa-dot__inner {
+          display: block;
+          width: 8px; height: 8px; border-radius: 999px;
+          background: rgba(201,166,70,0.3);
+          transition: width 400ms ease, background 400ms ease, box-shadow 400ms ease;
+        }
+        .sa-dot.is-active .sa-dot__inner {
+          width: 26px;
+          background: ${C.gold};
+          box-shadow: 0 0 8px rgba(226,200,102,0.55);
+        }
 
         .sa-avatar-ring {
           position: relative; width: 72px; height: 72px; border-radius: 50%;
