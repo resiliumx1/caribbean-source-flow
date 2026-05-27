@@ -66,6 +66,54 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
+// extend with additional reviews
+TESTIMONIALS.push(
+  {
+    name: "Amara Johnson",
+    initials: "AJ",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=faces&q=80",
+    subtext: "Atlanta, GA",
+    quote:
+      "I've tried every wellness brand imaginable. Mount Kailash is the first one that delivered measurable change in my bloodwork.",
+    badges: ["Inflammation markers down", "Sleep restored"],
+    motif: "bottles",
+  },
+  {
+    name: "Marcus Bennett",
+    initials: "MB",
+    avatar:
+      "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=200&h=200&fit=crop&crop=faces&q=80",
+    subtext: "London, UK",
+    quote:
+      "The craftsmanship is unmistakable. From the soil to the bottle, you can feel the intention. My migraines have all but vanished.",
+    badges: ["Migraine relief"],
+    motif: "tincture",
+  },
+  {
+    name: "Sophia Patel",
+    initials: "SP",
+    avatar:
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop&crop=faces&q=80",
+    subtext: "Toronto, ON",
+    quote:
+      "Three months on the protocol and my hormonal cycles are finally regular. I cried the first time I felt truly balanced.",
+    badges: ["Hormonal balance", "Mood lifted"],
+    motif: "mortar",
+  },
+  {
+    name: "Elena Vasquez",
+    initials: "EV",
+    avatar:
+      "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=200&h=200&fit=crop&crop=faces&q=80",
+    subtext: "Miami, FL",
+    quote:
+      "This is the only apothecary I trust. The potency is undeniable and the guidance from the team has been priceless.",
+    badges: ["Trusted by family"],
+    motif: "bottles",
+  },
+);
+
 /* ---------- Decorative SVGs ---------- */
 
 const CornerVine = ({ flipX = false, flipY = false }: { flipX?: boolean; flipY?: boolean }) => (
