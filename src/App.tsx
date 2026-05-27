@@ -178,7 +178,7 @@ const App = () => {
   }
 
   const paypalOptions = {
-    clientId: (import.meta.env.VITE_PAYPAL_CLIENT_ID as string) || PAYPAL_CLIENT_ID,
+    clientId: PAYPAL_CLIENT_ID,
     currency: "USD",
     intent: "capture",
     components: "buttons",
