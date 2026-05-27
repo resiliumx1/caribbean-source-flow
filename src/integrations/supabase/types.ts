@@ -215,6 +215,45 @@ export type Database = {
         }
         Relationships: []
       }
+      failed_order_alerts: {
+        Row: {
+          amount_usd: number | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          error_message: string | null
+          id: string
+          payload: Json | null
+          paypal_capture_id: string
+          paypal_order_id: string | null
+          resolved: boolean
+        }
+        Insert: {
+          amount_usd?: number | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          error_message?: string | null
+          id?: string
+          payload?: Json | null
+          paypal_capture_id: string
+          paypal_order_id?: string | null
+          resolved?: boolean
+        }
+        Update: {
+          amount_usd?: number | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          error_message?: string | null
+          id?: string
+          payload?: Json | null
+          paypal_capture_id?: string
+          paypal_order_id?: string | null
+          resolved?: boolean
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string | null

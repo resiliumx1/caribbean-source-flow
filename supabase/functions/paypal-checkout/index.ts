@@ -17,7 +17,7 @@ interface CheckoutPayload {
     customer_name: string;
     email: string;
     phone: string;
-    delivery_type: "shipping" | "pickup";
+    delivery_type: "local" | "international";
     address_line1: string;
     address_line2?: string;
     city: string;
@@ -50,6 +50,13 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // Map delivery_type to allowed DB values ('local' | 'international').
+    // Country LC (Saint Lucia) => local; anything else => international.
+    const deliveryType: "local" | "international" =
+      payload.form.delivery_type === "local" || payload.form.delivery_type === "international"
+        ? payload.form.delivery_type
+        : (payload.form.country?.toUpperCase() === "LC" ? "local" : "international");
 
     // Re-fetch products from DB to get authoritative pricing (never trust client prices)
     const productIds = [...new Set(payload.items.map((i) => i.product_id))];
@@ -88,37 +95,42 @@ Deno.serve(async (req) => {
     const total_xcd = subtotal_xcd + shipping_xcd;
 
     // Insert order — trigger generates order_number, history trigger logs status
+    const orderInsert = {
+      user_id: payload.user_id ?? null,
+      customer_name: payload.form.customer_name,
+      email: payload.form.email.toLowerCase().trim(),
+      phone: payload.form.phone || null,
+      delivery_type: deliveryType,
+      address_line1: payload.form.address_line1 || "—",
+      address_line2: payload.form.address_line2 || null,
+      city: payload.form.city || "—",
+      state_province: payload.form.state_province || null,
+      postal_code: payload.form.postal_code || null,
+      country: payload.form.country || "LC",
+      subtotal_usd,
+      subtotal_xcd,
+      shipping_usd,
+      shipping_xcd,
+      total_usd,
+      total_xcd,
+      currency_used: payload.currency_used,
+      payment_method: "paypal",
+      payment_status: "paid", // allowed: pending|paid|failed|refunded
+      payment_transaction_id: payload.paypal_capture_id,
+      status: "pending",
+      customer_notes: payload.form.customer_notes || null,
+    };
+
     const { data: order, error: orderErr } = await supabase
       .from("orders")
-      .insert({
-        user_id: payload.user_id ?? null,
-        customer_name: payload.form.customer_name,
-        email: payload.form.email.toLowerCase().trim(),
-        phone: payload.form.phone || null,
-        delivery_type: payload.form.delivery_type,
-        address_line1: payload.form.address_line1 || "—",
-        address_line2: payload.form.address_line2 || null,
-        city: payload.form.city || "—",
-        state_province: payload.form.state_province || null,
-        postal_code: payload.form.postal_code || null,
-        country: payload.form.country || "LC",
-        subtotal_usd,
-        subtotal_xcd,
-        shipping_usd,
-        shipping_xcd,
-        total_usd,
-        total_xcd,
-        currency_used: payload.currency_used,
-        payment_method: "paypal",
-        payment_status: "completed",
-        payment_transaction_id: payload.paypal_capture_id,
-        status: "pending",
-        customer_notes: payload.form.customer_notes || null,
-      })
+      .insert(orderInsert)
       .select("id, order_number")
       .single();
 
-    if (orderErr) throw orderErr;
+    if (orderErr) {
+      await logFailedOrder(supabase, payload, orderInsert, orderErr.message);
+      throw orderErr;
+    }
 
     // Insert order_items
     const { error: itemsErr } = await supabase
@@ -128,6 +140,7 @@ Deno.serve(async (req) => {
     if (itemsErr) {
       console.error("order_items insert failed, rolling back order:", itemsErr);
       await supabase.from("orders").delete().eq("id", order.id);
+      await logFailedOrder(supabase, payload, orderInsert, `order_items: ${itemsErr.message}`);
       throw itemsErr;
     }
 
@@ -142,8 +155,44 @@ Deno.serve(async (req) => {
   } catch (err: any) {
     console.error("paypal-checkout error:", err);
     return new Response(
-      JSON.stringify({ error: err?.message || "Checkout failed." }),
+      JSON.stringify({
+        error: err?.message || "Checkout failed.",
+      }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
+
+async function logFailedOrder(
+  supabase: any,
+  payload: CheckoutPayload,
+  orderInsert: any,
+  errorMessage: string
+) {
+  // VERY LOUD console marker so this is unmissable in logs
+  console.error(
+    "\n========================================================\n" +
+      "🚨 PAYPAL PAID BUT ORDER SAVE FAILED — MANUAL RECONCILE 🚨\n" +
+      `PayPal Capture ID: ${payload.paypal_capture_id}\n` +
+      `PayPal Order ID:   ${payload.paypal_order_id}\n` +
+      `Customer Email:    ${payload.form?.email}\n` +
+      `Customer Name:     ${payload.form?.customer_name}\n` +
+      `Amount USD:        ${orderInsert?.total_usd}\n` +
+      `Error:             ${errorMessage}\n` +
+      "Email info@mountkailashslu.com to refund or fulfill manually.\n" +
+      "========================================================\n"
+  );
+  try {
+    await supabase.from("failed_order_alerts").insert({
+      paypal_capture_id: payload.paypal_capture_id,
+      paypal_order_id: payload.paypal_order_id,
+      customer_email: payload.form?.email ?? null,
+      customer_name: payload.form?.customer_name ?? null,
+      amount_usd: orderInsert?.total_usd ?? null,
+      error_message: errorMessage,
+      payload: payload as any,
+    });
+  } catch (e) {
+    console.error("Failed to log failed_order_alerts row:", e);
+  }
+}
