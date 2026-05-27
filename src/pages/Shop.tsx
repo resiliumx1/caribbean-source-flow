@@ -15,6 +15,7 @@ import { useProducts, type Product } from "@/hooks/use-products";
 import { useConditions, useProductConditionAssignments } from "@/hooks/use-conditions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Leaf } from "lucide-react";
+import { useMarquee } from "@/hooks/use-marquee";
 
 // Form-to-product_type mapping
 const FORM_TYPES: Record<string, string[]> = {
@@ -40,6 +41,7 @@ function ProductSkeleton() {
 
 function ProductReel({ products }: { products: Product[] }) {
   const reelItems = products.filter(p => p.image_url).slice(0, 12);
+  const { ref: marqueeRef, handlers: marqueeHandlers } = useMarquee(0.5);
   if (reelItems.length < 3) return null;
   const doubled = [...reelItems, ...reelItems];
 
@@ -48,12 +50,25 @@ function ProductReel({ products }: { products: Product[] }) {
       <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '11px', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--site-gold)', textAlign: 'center', marginBottom: '12px' }}>
         Our Formulas
       </p>
-      <div style={{ overflow: 'hidden' }}>
-        <div style={{ display: 'flex', width: 'max-content', animation: 'reel-scroll 30s linear infinite', gap: '0px' }}>
+      <div
+        ref={marqueeRef}
+        className="reel-scroll select-none"
+        style={{
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          cursor: 'grab',
+          WebkitOverflowScrolling: 'touch',
+        }}
+        {...marqueeHandlers}
+      >
+        <div style={{ display: 'flex', width: 'max-content', gap: '0px' }}>
           {doubled.map((p, i) => (
             <Link
               key={`${p.id}-${i}`}
               to={`/shop/${p.slug}`}
+              draggable={false}
               className="group"
               style={{
                 display: 'flex',
@@ -111,10 +126,8 @@ function ProductReel({ products }: { products: Product[] }) {
         </div>
       </div>
       <style>{`
-        @keyframes reel-scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
+        .reel-scroll::-webkit-scrollbar { display: none; }
+        .reel-scroll:active { cursor: grabbing; }
         @keyframes gridFadeIn {
           from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
