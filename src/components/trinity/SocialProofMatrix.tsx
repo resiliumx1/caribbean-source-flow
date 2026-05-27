@@ -5,53 +5,54 @@ import { Star, Award, GraduationCap, FileCheck, Sparkles } from "lucide-react";
 const C = {
   bg: "#061b14",
   bgDeep: "#04140e",
-  card: "rgba(10, 45, 32, 0.78)",
   cardGradFrom: "#09251b",
   cardGradTo: "#0f3a2a",
   gold: "#c9a646",
   goldBright: "#e2c866",
-  goldSoft: "rgba(201,166,70,0.55)",
+  goldSoft: "rgba(201,166,70,0.6)",
   ivory: "#f7f1df",
   cream: "#d8cdb1",
   herb: "#6f9f7a",
 };
 
+type Motif = "mortar" | "bottles" | "tincture";
+
 interface Testimonial {
   name: string;
+  initials: string;
   subtext: string;
   quote: string;
   badges: string[];
-  avatarSeed: string;
-  avatarBg: string;
+  motif: Motif;
 }
 
 const TESTIMONIALS: Testimonial[] = [
   {
     name: "Jennifer Liu",
+    initials: "JL",
     subtext: "Yoga Instructor, Vancouver",
     quote:
       "The cellular detox was intense but transformative. I lost 12 pounds of inflammation and my skin cleared completely.",
     badges: ["Eczema, digestive issues", "Clear skin for first time in 15 years"],
-    avatarSeed: "jennifer-liu",
-    avatarBg: "c0aede",
+    motif: "mortar",
   },
   {
     name: "David R.",
+    initials: "DR",
     subtext: "Houston, TX",
     quote:
       "I was skeptical but Virility worked. Energy, focus, everything improved. Ordering my third bottle.",
     badges: ["Energy & focus improved"],
-    avatarSeed: "david-r",
-    avatarBg: "ffdfbf",
+    motif: "bottles",
   },
   {
     name: "Keisha M.",
+    initials: "KM",
     subtext: "Brooklyn, NY",
     quote:
       "The Answer tincture gave me relief in 10 days. This is real medicine, not watered-down supplements. I can feel the difference.",
     badges: ["Relief in 10 days"],
-    avatarSeed: "keisha-m",
-    avatarBg: "b6e3f4",
+    motif: "tincture",
   },
 ];
 
@@ -59,9 +60,9 @@ const TESTIMONIALS: Testimonial[] = [
 
 const CornerVine = ({ flipX = false, flipY = false }: { flipX?: boolean; flipY?: boolean }) => (
   <svg
-    viewBox="0 0 120 120"
-    width="96"
-    height="96"
+    viewBox="0 0 140 140"
+    width="128"
+    height="128"
     className="sa-corner-vine pointer-events-none absolute"
     style={{
       transform: `scale(${flipX ? -1 : 1}, ${flipY ? -1 : 1})`,
@@ -69,20 +70,121 @@ const CornerVine = ({ flipX = false, flipY = false }: { flipX?: boolean; flipY?:
     }}
     aria-hidden="true"
   >
-    <g fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" opacity="0.85">
-      <path d="M6 6 L6 46" />
-      <path d="M6 6 L46 6" />
-      <path d="M6 6 Q34 12 50 32 Q60 46 78 50" className="sa-vine-grow" />
-      <path d="M6 6 Q12 34 32 50 Q46 60 50 78" className="sa-vine-grow" />
-      {/* leaves */}
-      <path d="M22 18 q6 -8 14 -4 q-4 8 -14 4 z" fill="currentColor" fillOpacity="0.35" />
-      <path d="M18 22 q-8 6 -4 14 q8 -4 4 -14 z" fill="currentColor" fillOpacity="0.35" />
-      <path d="M44 30 q8 -2 12 6 q-8 4 -12 -6 z" fill="currentColor" fillOpacity="0.3" />
-      <path d="M30 44 q-2 8 6 12 q4 -8 -6 -12 z" fill="currentColor" fillOpacity="0.3" />
-      <circle cx="50" cy="50" r="1.4" fill="currentColor" />
-      <circle cx="60" cy="38" r="0.9" fill="currentColor" />
-      <circle cx="38" cy="60" r="0.9" fill="currentColor" />
+    <g fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round">
+      {/* Ornamental scroll */}
+      <path d="M8 8 Q24 8 30 22 Q34 32 24 38 Q14 44 18 56" opacity="0.95" />
+      <path d="M8 8 Q8 24 22 30 Q32 34 38 24 Q44 14 56 18" opacity="0.95" />
+      {/* Main vine */}
+      <path
+        className="sa-vine-grow"
+        d="M8 8 Q48 14 70 38 Q86 56 96 84"
+        strokeWidth="1.1"
+      />
+      <path
+        className="sa-vine-grow"
+        d="M8 8 Q14 48 38 70 Q56 86 84 96"
+        strokeWidth="1.1"
+      />
+      {/* Tendrils */}
+      <path d="M50 28 q6 -4 10 2" opacity="0.7" />
+      <path d="M28 50 q-4 6 2 10" opacity="0.7" />
+      <path d="M70 48 q8 -2 10 6" opacity="0.6" />
+      <path d="M48 70 q-2 8 6 10" opacity="0.6" />
+      {/* Leaves */}
+      <path d="M40 22 q8 -10 18 -4 q-6 12 -18 4 z" fill="currentColor" fillOpacity="0.55" />
+      <path d="M22 40 q-10 8 -4 18 q12 -6 4 -18 z" fill="currentColor" fillOpacity="0.55" />
+      <path d="M62 44 q10 -2 14 8 q-12 6 -14 -8 z" fill="currentColor" fillOpacity="0.45" />
+      <path d="M44 62 q-2 10 8 14 q6 -12 -8 -14 z" fill="currentColor" fillOpacity="0.45" />
+      <path d="M82 70 q8 0 10 8 q-10 4 -10 -8 z" fill="currentColor" fillOpacity="0.4" />
+      <path d="M70 82 q0 8 8 10 q4 -10 -8 -10 z" fill="currentColor" fillOpacity="0.4" />
+      {/* Berries / dots */}
+      <circle cx="60" cy="60" r="1.8" fill="currentColor" />
+      <circle cx="78" cy="40" r="1.2" fill="currentColor" />
+      <circle cx="40" cy="78" r="1.2" fill="currentColor" />
+      <circle cx="92" cy="78" r="1" fill="currentColor" opacity="0.8" />
+      <circle cx="78" cy="92" r="1" fill="currentColor" opacity="0.8" />
+      <circle cx="20" cy="20" r="1.5" fill="currentColor" />
     </g>
+  </svg>
+);
+
+/* ---------- Per-card botanical motif (bottom watermark) ---------- */
+
+const MotifMortar = () => (
+  <g fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round">
+    {/* mortar */}
+    <path d="M70 80 q30 0 60 0 q-6 22 -30 22 q-24 0 -30 -22 z" fill="currentColor" fillOpacity="0.18" />
+    <path d="M68 80 q32 -4 64 0" />
+    {/* pestle */}
+    <path d="M118 40 l-22 38" strokeWidth="1.2" />
+    <circle cx="120" cy="38" r="3.5" fill="currentColor" fillOpacity="0.35" />
+    {/* herbs sprig left */}
+    <path d="M40 90 q-4 -28 14 -50" />
+    <path d="M44 70 q-10 -2 -14 -10" />
+    <path d="M48 56 q-12 -2 -16 -12" />
+    <path d="M54 44 q-10 -2 -14 -10" />
+    {/* herbs sprig right */}
+    <path d="M170 92 q4 -26 -12 -48" />
+    <path d="M166 72 q10 -2 14 -10" />
+    <path d="M162 58 q12 -2 16 -12" />
+    <path d="M156 46 q10 -2 14 -10" />
+  </g>
+);
+
+const MotifBottles = () => (
+  <g fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round">
+    {/* tall bottle */}
+    <path d="M70 50 l0 12 q-8 6 -8 16 l0 28 q0 6 6 6 l16 0 q6 0 6 -6 l0 -28 q0 -10 -8 -16 l0 -12 z" fill="currentColor" fillOpacity="0.15" />
+    <path d="M68 50 l16 0" />
+    <path d="M65 80 l24 0" />
+    {/* short bottle */}
+    <path d="M100 64 l0 8 q-6 4 -6 12 l0 24 q0 5 5 5 l14 0 q5 0 5 -5 l0 -24 q0 -8 -6 -12 l0 -8 z" fill="currentColor" fillOpacity="0.15" />
+    <path d="M98 64 l14 0" />
+    {/* round flask */}
+    <path d="M140 70 l0 10 q-12 4 -12 20 q0 12 14 12 q14 0 14 -12 q0 -16 -12 -20 l0 -10 z" fill="currentColor" fillOpacity="0.15" />
+    <path d="M138 70 l8 0" />
+    {/* steam wisps */}
+    <path d="M76 44 q4 -6 0 -10" opacity="0.6" />
+    <path d="M107 58 q3 -5 0 -8" opacity="0.6" />
+    <path d="M144 64 q3 -5 0 -8" opacity="0.6" />
+  </g>
+);
+
+const MotifTincture = () => (
+  <g fill="none" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round">
+    {/* dropper bottle */}
+    <rect x="92" y="56" width="36" height="50" rx="4" fill="currentColor" fillOpacity="0.16" />
+    <path d="M92 70 l36 0" />
+    <path d="M100 56 l0 -8 l20 0 l0 8" />
+    {/* dropper tip */}
+    <path d="M108 48 l4 -10 l-2 0 z" fill="currentColor" fillOpacity="0.4" />
+    {/* drop */}
+    <path d="M110 96 q2 4 0 6 q-2 -2 0 -6 z" fill="currentColor" fillOpacity="0.6" />
+    {/* flowering herb left */}
+    <path d="M50 100 q-2 -24 12 -44" />
+    <path d="M56 80 q-10 -2 -14 -10" />
+    <path d="M60 64 q-12 -2 -16 -12" />
+    <circle cx="62" cy="56" r="3" fill="currentColor" fillOpacity="0.45" />
+    <circle cx="58" cy="62" r="2" fill="currentColor" fillOpacity="0.4" />
+    {/* flowering herb right */}
+    <path d="M170 100 q2 -22 -10 -42" />
+    <path d="M164 82 q10 -2 14 -10" />
+    <path d="M160 66 q12 -2 16 -12" />
+    <circle cx="160" cy="58" r="3" fill="currentColor" fillOpacity="0.45" />
+    <circle cx="164" cy="64" r="2" fill="currentColor" fillOpacity="0.4" />
+  </g>
+);
+
+const CardMotif = ({ kind }: { kind: Motif }) => (
+  <svg
+    viewBox="0 0 220 120"
+    className="sa-motif pointer-events-none"
+    aria-hidden="true"
+    style={{ color: C.gold }}
+  >
+    {kind === "mortar" && <MotifMortar />}
+    {kind === "bottles" && <MotifBottles />}
+    {kind === "tincture" && <MotifTincture />}
   </svg>
 );
 
@@ -178,13 +280,20 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.7, delay: 0.15 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Ornate gold border layer */}
+      {/* Outer ornate gold border layer */}
       <div className="sa-card-border" aria-hidden="true" />
+      {/* Subtle inner gold inset line */}
+      <div className="sa-card-inset" aria-hidden="true" />
 
       {/* Inner panel */}
       <div
-        className="sa-card-inner relative rounded-[22px] px-7 py-8 md:px-8 md:py-10 h-full flex flex-col items-center text-center"
+        className="sa-card-inner relative rounded-[22px] px-6 py-7 md:px-8 md:py-9 h-full flex flex-col items-center text-center overflow-hidden"
       >
+        {/* Bottom botanical motif watermark */}
+        <div className="sa-motif-wrap" aria-hidden="true">
+          <CardMotif kind={t.motif} />
+        </div>
+
         {/* Corner vines */}
         <div className="absolute top-0 left-0"><CornerVine /></div>
         <div className="absolute top-0 right-0"><CornerVine flipX /></div>
@@ -192,19 +301,38 @@ function TestimonialCard({ t, i }: { t: Testimonial; i: number }) {
         <div className="absolute bottom-0 right-0"><CornerVine flipX flipY /></div>
 
         {/* Top crest */}
-        <div className="mb-4 -mt-1 opacity-90"><CardCrest /></div>
+        <div className="mb-3 relative z-10"><CardCrest /></div>
 
-        {/* Avatar */}
-        <div className="sa-avatar-ring mb-5">
-          <img
-            src={`https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(
-              t.avatarSeed
-            )}&backgroundColor=${t.avatarBg}&radius=50`}
-            alt={t.name}
-            width={64}
-            height={64}
-            loading="lazy"
-          />
+        {/* Monogram avatar */}
+        <div className="sa-avatar-ring mb-4 relative z-10" aria-hidden="true">
+          <div className="sa-avatar-disc">
+            <svg viewBox="0 0 64 64" width="64" height="64">
+              <defs>
+                <radialGradient id={`av-${t.initials}`} cx="50%" cy="35%" r="65%">
+                  <stop offset="0%" stopColor="#1d4030" />
+                  <stop offset="100%" stopColor="#0a2218" />
+                </radialGradient>
+              </defs>
+              <circle cx="32" cy="32" r="31" fill={`url(#av-${t.initials})`} />
+              {/* tiny botanical accents */}
+              <g fill="none" stroke={C.gold} strokeWidth="0.6" opacity="0.7">
+                <path d="M14 50 q4 -8 10 -10" />
+                <path d="M50 14 q-4 8 -10 10" />
+              </g>
+              <text
+                x="32"
+                y="40"
+                textAnchor="middle"
+                fontFamily="'Cormorant Garamond', serif"
+                fontSize="22"
+                fontWeight="600"
+                fill={C.ivory}
+                letterSpacing="1"
+              >
+                {t.initials}
+              </text>
+            </svg>
+          </div>
         </div>
 
         <h3
@@ -369,13 +497,21 @@ export function SocialProofMatrix() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-14 md:mb-16"
         >
-          <div className="flex items-center justify-center gap-3 mb-5">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <span
+              aria-hidden="true"
+              style={{
+                height: 1,
+                width: 80,
+                background: `linear-gradient(90deg, transparent, ${C.gold})`,
+              }}
+            />
             <EyebrowOrnament />
             <span
               style={{
                 fontFamily: "'Jost', sans-serif",
                 fontSize: 12,
-                letterSpacing: "0.32em",
+                letterSpacing: "0.36em",
                 color: C.gold,
                 textTransform: "uppercase",
               }}
@@ -383,6 +519,14 @@ export function SocialProofMatrix() {
               Testimonials
             </span>
             <EyebrowOrnament flip />
+            <span
+              aria-hidden="true"
+              style={{
+                height: 1,
+                width: 80,
+                background: `linear-gradient(270deg, transparent, ${C.gold})`,
+              }}
+            />
           </div>
 
           <h2
@@ -467,31 +611,53 @@ export function SocialProofMatrix() {
 
       {/* Scoped styles */}
       <style>{`
-        .sa-card { position: relative; isolation: isolate; transition: transform 600ms cubic-bezier(0.22,1,0.36,1); }
-        .sa-card:hover { transform: translateY(-6px); }
+        .sa-card {
+          position: relative; isolation: isolate;
+          transition: transform 600ms cubic-bezier(0.22,1,0.36,1), filter 600ms ease;
+          filter: drop-shadow(0 18px 40px rgba(0,0,0,0.55));
+        }
+        .sa-card:hover { transform: translateY(-6px); filter: drop-shadow(0 24px 50px rgba(0,0,0,0.65)) drop-shadow(0 0 22px rgba(226,200,102,0.22)); }
 
         .sa-card-border {
-          position: absolute; inset: 0; border-radius: 24px; padding: 1px;
-          background: linear-gradient(160deg, ${C.gold} 0%, rgba(201,166,70,0.15) 28%, rgba(201,166,70,0.08) 50%, rgba(201,166,70,0.25) 75%, ${C.goldBright} 100%);
+          position: absolute; inset: 0; border-radius: 24px; padding: 1.2px;
+          background: linear-gradient(160deg, ${C.goldBright} 0%, ${C.gold} 18%, rgba(201,166,70,0.25) 40%, rgba(201,166,70,0.18) 60%, ${C.gold} 82%, ${C.goldBright} 100%);
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           -webkit-mask-composite: xor; mask-composite: exclude;
-          opacity: 0.85; transition: opacity 500ms ease, filter 500ms ease;
+          opacity: 1; transition: filter 500ms ease;
           pointer-events: none;
         }
-        .sa-card:hover .sa-card-border {
-          opacity: 1;
-          filter: drop-shadow(0 0 14px rgba(226,200,102,0.35));
+        .sa-card:hover .sa-card-border { filter: drop-shadow(0 0 12px rgba(226,200,102,0.55)); }
+
+        .sa-card-inset {
+          position: absolute; inset: 8px; border-radius: 18px;
+          border: 1px solid rgba(201,166,70,0.28);
+          pointer-events: none;
+          box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+          transition: border-color 500ms ease;
         }
+        .sa-card:hover .sa-card-inset { border-color: rgba(226,200,102,0.55); }
 
         .sa-card-inner {
           background:
-            radial-gradient(120% 80% at 50% 0%, rgba(201,166,70,0.07), transparent 60%),
+            radial-gradient(140% 90% at 50% 0%, rgba(201,166,70,0.12), transparent 55%),
+            radial-gradient(120% 80% at 50% 100%, rgba(111,159,122,0.10), transparent 60%),
             linear-gradient(160deg, ${C.cardGradFrom} 0%, ${C.cardGradTo} 100%);
           box-shadow:
-            inset 0 1px 0 rgba(255,235,180,0.06),
-            inset 0 0 60px rgba(0,0,0,0.35),
-            0 30px 60px -30px rgba(0,0,0,0.6);
+            inset 0 1px 0 rgba(255,235,180,0.08),
+            inset 0 0 70px rgba(0,0,0,0.4);
         }
+
+        .sa-motif {
+          position: absolute; left: 50%; bottom: 6px;
+          transform: translateX(-50%);
+          width: 78%; height: auto;
+          opacity: 0.13;
+          transition: opacity 600ms ease, transform 600ms ease;
+        }
+        .sa-card:hover .sa-motif { opacity: 0.22; transform: translateX(-50%) scale(1.04); }
+        .sa-motif-wrap { position: absolute; inset: 0; pointer-events: none; }
+
+        .sa-avatar-disc { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; }
 
         .sa-avatar-ring {
           position: relative; width: 72px; height: 72px; border-radius: 50%;
@@ -510,8 +676,13 @@ export function SocialProofMatrix() {
           background: #1a3327;
         }
 
-        .sa-corner-vine { stroke-dasharray: 220; stroke-dashoffset: 60; transition: stroke-dashoffset 900ms ease, opacity 500ms ease; opacity: 0.55; }
-        .sa-card:hover .sa-corner-vine { stroke-dashoffset: 0; opacity: 0.95; }
+        .sa-corner-vine { opacity: 0.8; transition: opacity 500ms ease; }
+        .sa-card:hover .sa-corner-vine { opacity: 1; }
+        .sa-corner-vine .sa-vine-grow {
+          stroke-dasharray: 260; stroke-dashoffset: 130;
+          transition: stroke-dashoffset 1100ms cubic-bezier(0.22,1,0.36,1);
+        }
+        .sa-card:hover .sa-corner-vine .sa-vine-grow { stroke-dashoffset: 0; }
 
         .sa-card-shimmer {
           pointer-events: none; position: absolute; inset: 0; border-radius: 22px;
