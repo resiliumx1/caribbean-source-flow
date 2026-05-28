@@ -295,13 +295,13 @@ export function HeroSection() {
         <span className="hero-ambient-orb hero-ambient-orb--b" />
       </div>
 
-      <div className="flex-1 flex items-center relative z-[1]">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-6 lg:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+      <div className="flex-1 min-h-0 flex items-center relative z-[1]">
+        <div className="container mx-auto max-w-7xl w-full px-4 sm:px-6 py-4 lg:py-5 h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-stretch h-full">
             {/* Left column */}
-            <div className="lg:col-span-7 flex flex-col min-w-0">
+            <div className="lg:col-span-7 flex flex-col min-w-0 min-h-0">
               <div
-                className="w-full mb-5 lg:mb-8 hero-reveal"
+                className="w-full mb-4 lg:mb-5 hero-reveal"
                 style={{ animationDelay: "120ms" }}
               >
                 <h1
@@ -311,33 +311,33 @@ export function HeroSection() {
                     fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 600,
                     letterSpacing: "-0.025em",
-                    lineHeight: 0.98,
-                    fontSize: "clamp(44px, 6.4vw, 96px)",
+                    lineHeight: 0.95,
+                    fontSize: "clamp(40px, min(5.4vw, 9.2vh), 82px)",
                   }}
                 >
                   <span className="hero-gold-word">Re</span>claim Your{" "}
                   <span className="hero-gold-word">Balance</span>.
-                  <span className="block mt-1 lg:mt-2">
+                  <span className="block mt-0.5 lg:mt-1">
                     <span className="hero-gold-word">Re</span>connect with your{" "}
                     <span className="hero-gold-word">essence</span>.
                   </span>
                 </h1>
                 <p
-                  className="mt-5 lg:mt-6"
+                  className="mt-3 lg:mt-4"
                   style={{
                     color: "#e2c866",
                     fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 700,
-                    letterSpacing: "0.32em",
+                    letterSpacing: "0.3em",
                     textTransform: "uppercase",
-                    fontSize: "clamp(13px, 1.35vw, 20px)",
+                    fontSize: "clamp(12px, 1.2vw, 18px)",
                   }}
                 >
                   Welcome to Mount Kailash.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 flex-1 hero-grid min-w-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1 min-h-0 hero-grid min-w-0">
                 {pillars.map((pillar, i) => (
                   <PillarCard key={pillar.route} pillar={pillar} index={i} />
                 ))}
@@ -346,7 +346,7 @@ export function HeroSection() {
 
             {/* Right column — founder portrait */}
             <div
-              className="lg:col-span-5 flex min-w-0 hero-reveal"
+              className="lg:col-span-5 flex min-w-0 min-h-0 hero-reveal"
               style={{ animationDelay: "260ms" }}
             >
               <div className="hero-frame relative w-full rounded-[22px] overflow-hidden">
@@ -355,7 +355,7 @@ export function HeroSection() {
                     src={priestPhoto}
                     alt="Rt Hon Priest Kailash K Leonce at the ridge in Saint Lucia"
                     className="hero-portrait w-full h-full object-cover"
-                    style={{ objectPosition: "center top", minHeight: "360px" }}
+                    style={{ objectPosition: "center top" }}
                     loading="eager"
                     fetchPriority="high"
                     width={600}
@@ -403,10 +403,10 @@ export function HeroSection() {
           borderTop: "1px solid rgba(201,166,70,0.45)",
         }}
       >
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-3">
-          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-2 lg:py-2.5">
+          <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
             {trustItems.map(({ icon: Icon, label }) => (
-              <li key={label} className="flex items-center gap-2 min-h-[28px]">
+              <li key={label} className="flex items-center gap-2 min-h-[24px]">
                 <Icon
                   className="w-3.5 h-3.5 shrink-0"
                   style={{ color: "#e2c866" }}
@@ -434,15 +434,17 @@ export function HeroSection() {
       <style>{`
         .hero-viewport-fit {
           min-height: 100vh;
-          padding-top: 80px;
+          height: 100vh;
+          padding-top: 72px;
           box-sizing: border-box;
         }
-        @media (max-height: 800px) and (min-width: 1024px) {
-          .hero-viewport-fit { padding-top: 64px; }
+        @media (max-height: 820px) and (min-width: 1024px) {
+          .hero-viewport-fit { padding-top: 60px; }
         }
         @media (max-width: 1023px) {
           .hero-viewport-fit {
             min-height: auto;
+            height: auto;
             padding-top: 80px;
             overflow: visible;
           }
