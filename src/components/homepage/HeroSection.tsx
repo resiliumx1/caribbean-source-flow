@@ -453,14 +453,33 @@ export function HeroSection() {
           }
         }
 
+        .hero-headline { letter-spacing: -0.02em; }
         .hero-gold-word {
-          background: linear-gradient(135deg, #c9a646 0%, #e2c866 50%, #b88a2e 100%);
+          position: relative;
+          display: inline-block;
+          background-image: linear-gradient(
+            100deg,
+            #b88a2e 0%,
+            #c9a646 22%,
+            #e2c866 42%,
+            #fff2c2 50%,
+            #e2c866 58%,
+            #c9a646 78%,
+            #b88a2e 100%
+          );
+          background-size: 220% 100%;
+          background-position: 100% 0;
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
-          text-shadow: 0 0 18px rgba(226,200,102,0.18);
           font-style: italic;
-          font-weight: 500;
+          font-weight: 600;
+          filter: drop-shadow(0 0 12px rgba(226,200,102,0.18));
+          animation: hero-gold-sheen 7s ease-in-out infinite;
+        }
+        @keyframes hero-gold-sheen {
+          0%, 100% { background-position: 100% 0; }
+          50% { background-position: 0% 0; }
         }
 
         @keyframes hero-rise {
