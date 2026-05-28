@@ -42,12 +42,12 @@ export default function Cart() {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <main className="container mx-auto px-4 pt-24 pb-16 text-center flex-1">
-          <Leaf className="w-20 h-20 text-muted-foreground mx-auto mb-4" style={{ color: "#c5c0b8" }} />
+          <Leaf className="w-20 h-20 text-muted-foreground mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             Your Bag is Empty
           </h1>
           <p className="text-muted-foreground mb-8">Your healing journey starts here</p>
-          <Button asChild size="lg" style={{ height: 48, background: "#1b4332", color: "#fff" }}>
+          <Button asChild size="lg" className="h-12 bg-forest text-cream hover:bg-forest-dark">
             <Link to="/shop">Continue Shopping</Link>
           </Button>
         </main>
@@ -60,17 +60,17 @@ export default function Cart() {
     <div className="min-h-screen bg-background flex flex-col">
       <main className="container mx-auto px-4 pt-24 pb-8 flex-1">
         {/* Back to Shop */}
-        <Link to="/shop" className="inline-flex items-center gap-1.5 text-sm mb-2 transition-colors hover:opacity-80" style={{ color: "#1b4332", fontWeight: 500 }}>
+        <Link to="/shop" className="inline-flex items-center gap-1.5 text-sm mb-2 font-medium text-forest dark:text-sage transition-colors hover:opacity-80">
           <ArrowLeft className="w-4 h-4" /> Back to Shop
         </Link>
 
         {/* Breadcrumb */}
-        <nav className="mb-6" style={{ fontSize: 13, color: "#999" }}>
-          <Link to="/" className="hover:underline">Home</Link>
+        <nav className="mb-6 text-[13px] text-muted-foreground">
+          <Link to="/" className="hover:underline hover:text-foreground">Home</Link>
           <span className="mx-1.5">/</span>
-          <Link to="/shop" className="hover:underline">Shop</Link>
+          <Link to="/shop" className="hover:underline hover:text-foreground">Shop</Link>
           <span className="mx-1.5">/</span>
-          <span style={{ color: "#555" }}>Your Bag</span>
+          <span className="text-foreground">Your Bag</span>
         </nav>
 
         <h1 className="text-3xl font-serif font-bold text-foreground mb-8">
@@ -93,13 +93,10 @@ export default function Cart() {
               return (
                 <div
                   key={item.id}
-                  className="flex gap-4 p-4"
-                  style={{
-                    borderBottom: idx < cartItems.length - 1 ? "1px solid #f0ede8" : "none",
-                  }}
+                  className={`flex gap-5 p-5 ${idx < cartItems.length - 1 ? "border-b border-border" : ""}`}
                 >
                   {/* Image */}
-                  <Link to={`/shop/${item.product.slug}`} className="shrink-0 w-24 h-24 rounded-xl overflow-hidden" style={{ aspectRatio: '1/1', background: '#fafafa' }}>
+                  <Link to={`/shop/${item.product.slug}`} className="shrink-0 w-32 h-32 sm:w-36 sm:h-36 rounded-xl overflow-hidden bg-muted" style={{ aspectRatio: '1/1' }}>
                     {item.product.image_url ? (
                       <img
                         src={item.product.image_url}
@@ -120,20 +117,26 @@ export default function Cart() {
                   <div className="flex-1 min-w-0">
                     <Link
                       to={`/shop/${item.product.slug}`}
-                      className="hover:text-primary transition-colors line-clamp-2"
-                      style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 16, color: "var(--foreground)" }}
+                      className="hover:text-primary transition-colors line-clamp-2 text-foreground"
+                      style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 20, lineHeight: 1.25 }}
                     >
                       {item.product.name}
                     </Link>
 
                     {/* Unit price */}
-                    <p className="text-muted-foreground mt-0.5" style={{ fontSize: 13 }}>
+                    <p className="text-muted-foreground mt-1 text-[14px]">
                       {unitPrice.primary} each
                     </p>
 
                     {item.product.size_info && (
-                      <p className="text-sm text-muted-foreground mt-0.5">
+                      <p className="text-[14px] text-muted-foreground mt-0.5">
                         {item.product.size_info}
+                      </p>
+                    )}
+
+                    {item.product.short_description && (
+                      <p className="text-[14px] text-muted-foreground/90 mt-1.5 line-clamp-2">
+                        {item.product.short_description}
                       </p>
                     )}
 
@@ -185,14 +188,14 @@ export default function Cart() {
 
                     {/* Mobile price - shown below on small screens */}
                     <div className="sm:hidden mt-3">
-                      <p className="font-semibold text-foreground">{itemPrices.primary}</p>
+                      <p className="font-semibold text-foreground text-lg">{itemPrices.primary}</p>
                       <p className="text-sm text-muted-foreground">{itemPrices.secondary}</p>
                     </div>
                   </div>
 
                   {/* Price - desktop */}
                   <div className="text-right shrink-0 hidden sm:block">
-                    <p className="font-semibold text-foreground">{itemPrices.primary}</p>
+                    <p className="font-semibold text-foreground text-lg">{itemPrices.primary}</p>
                     <p className="text-sm text-muted-foreground">{itemPrices.secondary}</p>
                   </div>
                 </div>
@@ -202,11 +205,11 @@ export default function Cart() {
 
           {/* Summary */}
           <div className="lg:col-span-1">
-            <div className="rounded-xl border border-border p-6 lg:sticky lg:top-24" style={{ background: "#fafaf8" }}>
+            <div className="rounded-xl border border-border bg-card p-6 lg:sticky lg:top-24">
               <h2 className="font-serif font-semibold text-foreground text-lg mb-2">
                 Order Summary
               </h2>
-              <div className="h-px mb-4" style={{ background: "#f0ede8" }} />
+              <div className="h-px mb-4 bg-border" />
 
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-sm">
@@ -218,7 +221,7 @@ export default function Cart() {
                   <span className="text-foreground">Calculated at checkout</span>
                 </div>
                 {isLocalVisitor && (
-                  <div className="text-xs text-success">
+                  <div className="text-xs text-success font-medium">
                     Local delivery available from EC$15
                   </div>
                 )}
@@ -237,8 +240,7 @@ export default function Cart() {
               <div className="space-y-3">
                 <Button
                   size="lg"
-                  className="w-full gap-2"
-                  style={{ height: 52, background: "#1b4332", color: "#fff" }}
+                  className="w-full gap-2 h-[52px] bg-forest text-cream hover:bg-forest-dark"
                   asChild
                 >
                   <Link to="/checkout">
@@ -248,7 +250,7 @@ export default function Cart() {
                 </Button>
 
                 {/* Secure checkout note */}
-                <div className="flex items-center justify-center gap-1.5" style={{ fontSize: 11, color: "#888" }}>
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
                   <Lock className="w-3 h-3" /> Secure Checkout
                 </div>
 
@@ -269,7 +271,7 @@ export default function Cart() {
                 </Button>
 
                 {/* Trust signals */}
-                <p className="text-center text-muted-foreground" style={{ fontSize: 12 }}>
+                <p className="text-center text-muted-foreground text-xs">
                   🌿 100% Natural · 🇱🇨 Made in St. Lucia
                 </p>
 
