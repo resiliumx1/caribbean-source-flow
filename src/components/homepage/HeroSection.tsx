@@ -175,65 +175,69 @@ function PillarCard({ pillar, index }: { pillar: (typeof pillars)[number]; index
         className="absolute bottom-2 left-2 w-7 h-7 z-[11] opacity-70 group-hover:opacity-100 transition-opacity duration-500"
         flipY
       />
-      <div className="relative z-[12] w-3/5 h-full flex flex-col justify-center p-4 lg:p-5">
+      <div className="relative z-[12] w-[62%] h-full flex flex-col justify-center p-5 lg:p-6">
         <span
-          className="inline-flex items-center justify-center w-8 h-8 rounded-full mb-2"
+          className="inline-flex items-center justify-center w-9 h-9 rounded-full mb-3"
           style={{
             background:
-              "linear-gradient(135deg, rgba(201,166,70,0.25), rgba(226,200,102,0.12))",
-            border: "1px solid rgba(201,166,70,0.55)",
+              "linear-gradient(135deg, rgba(201,166,70,0.28), rgba(226,200,102,0.08))",
+            border: "1px solid rgba(226,200,102,0.55)",
+            boxShadow:
+              "inset 0 0 0 1px rgba(247,241,223,0.06), 0 4px 12px rgba(0,0,0,0.25)",
           }}
         >
-          <IconComp className="w-4 h-4" style={{ color: "#e2c866" }} />
+          <IconComp className="w-[18px] h-[18px]" style={{ color: "#e2c866" }} />
         </span>
         <h3
-          className="mb-1 leading-tight"
+          className="mb-1.5 leading-[1.05]"
           style={{
             fontFamily: "'Cormorant Garamond', serif",
             color: "#f7f1df",
             fontWeight: 600,
-            fontSize: "clamp(18px, 1.6vw, 22px)",
-            letterSpacing: "0.005em",
+            fontSize: "clamp(22px, 1.9vw, 28px)",
+            letterSpacing: "-0.005em",
           }}
         >
           {pillar.title}
         </h3>
         <p
-          className="mb-3"
+          className="mb-4"
           style={{
             fontFamily: "'DM Sans', sans-serif",
-            color: "rgba(216,205,177,0.85)",
+            color: "rgba(216,205,177,0.82)",
             fontWeight: 300,
-            fontSize: "12.5px",
-            lineHeight: 1.45,
+            fontSize: "13px",
+            lineHeight: 1.5,
+            letterSpacing: "0.01em",
           }}
         >
           {pillar.description}
         </p>
         <span
-          className="pillar-cta inline-flex items-center gap-1.5 mt-auto self-start px-3 py-1.5 rounded-full overflow-hidden relative"
+          className="pillar-cta inline-flex items-center gap-2 mt-auto self-start px-4 py-2 rounded-full overflow-hidden relative"
           style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "12.5px",
+            fontSize: "12px",
             fontWeight: 600,
             color: "#0a2218",
             background:
               "linear-gradient(135deg, #c9a646 0%, #e2c866 50%, #b88a2e 100%)",
             boxShadow:
-              "0 4px 14px rgba(201,166,70,0.25), inset 0 1px 0 rgba(255,255,255,0.25)",
-            letterSpacing: "0.02em",
+              "0 6px 18px rgba(201,166,70,0.32), inset 0 1px 0 rgba(255,255,255,0.32), inset 0 -1px 0 rgba(0,0,0,0.12)",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
           }}
         >
           <span className="pillar-cta-shimmer" aria-hidden />
           <span className="relative z-10">{pillar.cta}</span>
-          <ArrowRight className="pillar-cta-arrow w-3.5 h-3.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
+          <ArrowRight className="pillar-cta-arrow w-3.5 h-3.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1.5" />
         </span>
       </div>
     </>
   );
 
   const sharedClassName =
-    "pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500 min-h-[160px]";
+    "pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500 min-h-[190px]";
   const sharedStyle = {
     background:
       "linear-gradient(135deg, #0a2218 0%, #09251b 60%, #0f3a2a 100%)",
@@ -301,37 +305,39 @@ export function HeroSection() {
                 style={{ animationDelay: "120ms" }}
               >
                 <h1
-                  className="text-[32px] sm:text-[42px] lg:text-[56px] leading-[1.05]"
+                  className="hero-headline text-[40px] sm:text-[60px] lg:text-[84px]"
                   style={{
                     color: "#f7f1df",
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontWeight: 500,
-                    letterSpacing: "-0.005em",
+                    fontWeight: 600,
+                    letterSpacing: "-0.015em",
+                    lineHeight: 0.98,
                   }}
                 >
-                  Reclaim Your <span className="hero-gold-word">Balance</span>.
-                  <span className="block">
-                    Reconnect with your{" "}
+                  <span className="hero-gold-word">Re</span>claim Your{" "}
+                  <span className="hero-gold-word">Balance</span>.
+                  <span className="block mt-1 lg:mt-2">
+                    <span className="hero-gold-word">Re</span>connect with your{" "}
                     <span className="hero-gold-word">essence</span>.
                   </span>
                 </h1>
                 <p
-                  className="text-[14px] sm:text-[16px] lg:text-[17px] mt-4"
+                  className="text-[12px] sm:text-[14px] lg:text-[15px] mt-6 lg:mt-8"
                   style={{
                     color: "#e2c866",
                     fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 400,
-                    letterSpacing: "0.18em",
+                    fontWeight: 600,
+                    letterSpacing: "0.32em",
                     textTransform: "uppercase",
                   }}
                 >
                   Welcome to Mount Kailash.
                 </p>
                 <p
-                  className="text-[13px] sm:text-[14px] lg:text-[15px] mt-3"
+                  className="text-[13px] sm:text-[14px] lg:text-[15px] mt-3 italic"
                   style={{
                     color: "rgba(216,205,177,0.8)",
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 300,
                     letterSpacing: "0.04em",
                   }}
@@ -451,14 +457,33 @@ export function HeroSection() {
           }
         }
 
+        .hero-headline { letter-spacing: -0.02em; }
         .hero-gold-word {
-          background: linear-gradient(135deg, #c9a646 0%, #e2c866 50%, #b88a2e 100%);
+          position: relative;
+          display: inline-block;
+          background-image: linear-gradient(
+            100deg,
+            #b88a2e 0%,
+            #c9a646 22%,
+            #e2c866 42%,
+            #fff2c2 50%,
+            #e2c866 58%,
+            #c9a646 78%,
+            #b88a2e 100%
+          );
+          background-size: 220% 100%;
+          background-position: 100% 0;
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
-          text-shadow: 0 0 18px rgba(226,200,102,0.18);
           font-style: italic;
-          font-weight: 500;
+          font-weight: 600;
+          filter: drop-shadow(0 0 12px rgba(226,200,102,0.18));
+          animation: hero-gold-sheen 7s ease-in-out infinite;
+        }
+        @keyframes hero-gold-sheen {
+          0%, 100% { background-position: 100% 0; }
+          50% { background-position: 0% 0; }
         }
 
         @keyframes hero-rise {
@@ -630,6 +655,7 @@ export function HeroSection() {
             animation: none !important; opacity: 1 !important; transform: none !important;
           }
           .hero-particle, .hero-ambient-orb { animation: none !important; }
+          .hero-gold-word { animation: none !important; background-position: 50% 0 !important; }
           .pillar-card::before, .pillar-card[data-drawn="true"]::before {
             animation: none !important; opacity: 0.6 !important;
           }
