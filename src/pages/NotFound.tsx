@@ -203,9 +203,6 @@ const NotFound = () => {
             <Link to="/shop" className="nf-btn nf-btn--secondary">
               Shop Remedies
             </Link>
-            <Link to="/contact" className="nf-btn nf-btn--ghost">
-              Contact Us
-            </Link>
           </div>
 
           <p
