@@ -301,37 +301,39 @@ export function HeroSection() {
                 style={{ animationDelay: "120ms" }}
               >
                 <h1
-                  className="text-[32px] sm:text-[42px] lg:text-[56px] leading-[1.05]"
+                  className="hero-headline text-[40px] sm:text-[60px] lg:text-[84px]"
                   style={{
                     color: "#f7f1df",
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontWeight: 500,
-                    letterSpacing: "-0.005em",
+                    fontWeight: 600,
+                    letterSpacing: "-0.015em",
+                    lineHeight: 0.98,
                   }}
                 >
-                  Reclaim Your <span className="hero-gold-word">Balance</span>.
-                  <span className="block">
-                    Reconnect with your{" "}
+                  <span className="hero-gold-word">Re</span>claim Your{" "}
+                  <span className="hero-gold-word">Balance</span>.
+                  <span className="block mt-1 lg:mt-2">
+                    <span className="hero-gold-word">Re</span>connect with your{" "}
                     <span className="hero-gold-word">essence</span>.
                   </span>
                 </h1>
                 <p
-                  className="text-[14px] sm:text-[16px] lg:text-[17px] mt-4"
+                  className="text-[12px] sm:text-[14px] lg:text-[15px] mt-6 lg:mt-8"
                   style={{
                     color: "#e2c866",
                     fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 400,
-                    letterSpacing: "0.18em",
+                    fontWeight: 600,
+                    letterSpacing: "0.32em",
                     textTransform: "uppercase",
                   }}
                 >
                   Welcome to Mount Kailash.
                 </p>
                 <p
-                  className="text-[13px] sm:text-[14px] lg:text-[15px] mt-3"
+                  className="text-[13px] sm:text-[14px] lg:text-[15px] mt-3 italic"
                   style={{
                     color: "rgba(216,205,177,0.8)",
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 300,
                     letterSpacing: "0.04em",
                   }}
