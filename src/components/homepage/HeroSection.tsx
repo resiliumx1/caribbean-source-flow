@@ -237,7 +237,7 @@ function PillarCard({ pillar, index }: { pillar: (typeof pillars)[number]; index
   );
 
   const sharedClassName =
-    "pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500 min-h-[190px]";
+    "pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500 min-h-[150px]";
   const sharedStyle = {
     background:
       "linear-gradient(135deg, #0a2218 0%, #09251b 60%, #0f3a2a 100%)",
@@ -299,19 +299,19 @@ export function HeroSection() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-6 lg:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
             {/* Left column */}
-            <div className="lg:col-span-7 flex flex-col">
+            <div className="lg:col-span-8 flex flex-col">
               <div
-                className="max-w-[640px] mb-6 lg:mb-10 hero-reveal"
+                className="max-w-[760px] mb-5 lg:mb-8 hero-reveal"
                 style={{ animationDelay: "120ms" }}
               >
                 <h1
-                  className="hero-headline text-[44px] sm:text-[68px] lg:text-[88px]"
+                  className="hero-headline text-[48px] sm:text-[76px] lg:text-[104px]"
                   style={{
                     color: "#f7f1df",
                     fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 600,
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.0,
+                    letterSpacing: "-0.025em",
+                    lineHeight: 0.96,
                   }}
                 >
                   <span className="hero-gold-word">Re</span>claim Your{" "}
@@ -322,12 +322,12 @@ export function HeroSection() {
                   </span>
                 </h1>
                 <p
-                  className="text-[13px] sm:text-[15px] lg:text-[16px] mt-5 lg:mt-6"
+                  className="text-[14px] sm:text-[17px] lg:text-[19px] mt-5 lg:mt-7"
                   style={{
                     color: "#e2c866",
                     fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 600,
-                    letterSpacing: "0.36em",
+                    fontWeight: 700,
+                    letterSpacing: "0.42em",
                     textTransform: "uppercase",
                   }}
                 >
@@ -344,7 +344,7 @@ export function HeroSection() {
 
             {/* Right column — founder portrait */}
             <div
-              className="lg:col-span-5 flex hero-reveal"
+              className="lg:col-span-4 flex hero-reveal"
               style={{ animationDelay: "260ms" }}
             >
               <div className="hero-frame relative w-full rounded-[22px] overflow-hidden">
