@@ -297,21 +297,21 @@ export function HeroSection() {
 
       <div className="flex-1 flex items-center relative z-[1]">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-6 lg:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-6 items-stretch">
             {/* Left column */}
-            <div className="lg:col-span-7 flex flex-col">
+            <div className="lg:col-span-8 flex flex-col">
               <div
-                className="max-w-[640px] mb-6 lg:mb-10 hero-reveal"
+                className="max-w-[760px] mb-5 lg:mb-7 hero-reveal"
                 style={{ animationDelay: "120ms" }}
               >
                 <h1
-                  className="hero-headline text-[44px] sm:text-[68px] lg:text-[88px]"
+                  className="hero-headline text-[52px] sm:text-[80px] lg:text-[108px]"
                   style={{
                     color: "#f7f1df",
                     fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 600,
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.0,
+                    letterSpacing: "-0.025em",
+                    lineHeight: 0.96,
                   }}
                 >
                   <span className="hero-gold-word">Re</span>claim Your{" "}
@@ -322,12 +322,12 @@ export function HeroSection() {
                   </span>
                 </h1>
                 <p
-                  className="text-[13px] sm:text-[15px] lg:text-[16px] mt-5 lg:mt-6"
+                  className="text-[15px] sm:text-[19px] lg:text-[22px] mt-5 lg:mt-6"
                   style={{
                     color: "#e2c866",
                     fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 600,
-                    letterSpacing: "0.36em",
+                    letterSpacing: "0.34em",
                     textTransform: "uppercase",
                   }}
                 >
@@ -344,7 +344,7 @@ export function HeroSection() {
 
             {/* Right column — founder portrait */}
             <div
-              className="lg:col-span-5 flex hero-reveal"
+              className="lg:col-span-4 flex hero-reveal"
               style={{ animationDelay: "260ms" }}
             >
               <div className="hero-frame relative w-full rounded-[22px] overflow-hidden">
