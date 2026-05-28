@@ -237,7 +237,7 @@ function PillarCard({ pillar, index }: { pillar: (typeof pillars)[number]; index
   );
 
   const sharedClassName =
-    "pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500 min-h-[160px]";
+    "pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500 min-h-[190px]";
   const sharedStyle = {
     background:
       "linear-gradient(135deg, #0a2218 0%, #09251b 60%, #0f3a2a 100%)",
@@ -655,6 +655,7 @@ export function HeroSection() {
             animation: none !important; opacity: 1 !important; transform: none !important;
           }
           .hero-particle, .hero-ambient-orb { animation: none !important; }
+          .hero-gold-word { animation: none !important; background-position: 50% 0 !important; }
           .pillar-card::before, .pillar-card[data-drawn="true"]::before {
             animation: none !important; opacity: 0.6 !important;
           }
