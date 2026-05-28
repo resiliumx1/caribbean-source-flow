@@ -175,9 +175,9 @@ function PillarCard({ pillar, index }: { pillar: (typeof pillars)[number]; index
         className="absolute bottom-2 left-2 w-7 h-7 z-[11] opacity-70 group-hover:opacity-100 transition-opacity duration-500"
         flipY
       />
-      <div className="relative z-[12] w-[62%] h-full flex flex-col justify-center p-5 lg:p-6">
+      <div className="relative z-[12] w-[62%] h-full flex flex-col justify-center p-4 lg:p-5">
         <span
-          className="inline-flex items-center justify-center w-9 h-9 rounded-full mb-3"
+          className="inline-flex items-center justify-center w-8 h-8 rounded-full mb-2"
           style={{
             background:
               "linear-gradient(135deg, rgba(201,166,70,0.28), rgba(226,200,102,0.08))",
@@ -186,38 +186,38 @@ function PillarCard({ pillar, index }: { pillar: (typeof pillars)[number]; index
               "inset 0 0 0 1px rgba(247,241,223,0.06), 0 4px 12px rgba(0,0,0,0.25)",
           }}
         >
-          <IconComp className="w-[18px] h-[18px]" style={{ color: "#e2c866" }} />
+          <IconComp className="w-[16px] h-[16px]" style={{ color: "#e2c866" }} />
         </span>
         <h3
-          className="mb-1.5 leading-[1.05]"
+          className="mb-1 leading-[1.05]"
           style={{
             fontFamily: "'Cormorant Garamond', serif",
             color: "#f7f1df",
             fontWeight: 600,
-            fontSize: "clamp(22px, 1.9vw, 28px)",
+            fontSize: "clamp(18px, 1.5vw, 22px)",
             letterSpacing: "-0.005em",
           }}
         >
           {pillar.title}
         </h3>
         <p
-          className="mb-4"
+          className="mb-3"
           style={{
             fontFamily: "'DM Sans', sans-serif",
             color: "rgba(216,205,177,0.82)",
             fontWeight: 300,
-            fontSize: "13px",
-            lineHeight: 1.5,
+            fontSize: "12px",
+            lineHeight: 1.45,
             letterSpacing: "0.01em",
           }}
         >
           {pillar.description}
         </p>
         <span
-          className="pillar-cta inline-flex items-center gap-2 mt-auto self-start px-4 py-2 rounded-full overflow-hidden relative"
+          className="pillar-cta inline-flex items-center gap-2 mt-auto self-start px-3 py-1.5 rounded-full overflow-hidden relative"
           style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "12px",
+            fontSize: "11px",
             fontWeight: 600,
             color: "#0a2218",
             background:
@@ -237,7 +237,7 @@ function PillarCard({ pillar, index }: { pillar: (typeof pillars)[number]; index
   );
 
   const sharedClassName =
-    "pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500 min-h-[190px]";
+    "pillar-card group relative overflow-hidden rounded-2xl block transition-all duration-500 min-h-[150px]";
   const sharedStyle = {
     background:
       "linear-gradient(135deg, #0a2218 0%, #09251b 60%, #0f3a2a 100%)",
@@ -299,19 +299,19 @@ export function HeroSection() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-6 lg:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
             {/* Left column */}
-            <div className="lg:col-span-7 flex flex-col">
+            <div className="lg:col-span-8 flex flex-col">
               <div
-                className="max-w-[640px] mb-6 lg:mb-10 hero-reveal"
+                className="max-w-[760px] mb-5 lg:mb-8 hero-reveal"
                 style={{ animationDelay: "120ms" }}
               >
                 <h1
-                  className="hero-headline text-[44px] sm:text-[68px] lg:text-[88px]"
+                  className="hero-headline text-[48px] sm:text-[76px] lg:text-[104px]"
                   style={{
                     color: "#f7f1df",
                     fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 600,
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.0,
+                    letterSpacing: "-0.025em",
+                    lineHeight: 0.96,
                   }}
                 >
                   <span className="hero-gold-word">Re</span>claim Your{" "}
@@ -322,12 +322,12 @@ export function HeroSection() {
                   </span>
                 </h1>
                 <p
-                  className="text-[13px] sm:text-[15px] lg:text-[16px] mt-5 lg:mt-6"
+                  className="text-[14px] sm:text-[17px] lg:text-[19px] mt-5 lg:mt-7"
                   style={{
                     color: "#e2c866",
                     fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 600,
-                    letterSpacing: "0.36em",
+                    fontWeight: 700,
+                    letterSpacing: "0.42em",
                     textTransform: "uppercase",
                   }}
                 >
@@ -344,7 +344,7 @@ export function HeroSection() {
 
             {/* Right column — founder portrait */}
             <div
-              className="lg:col-span-5 flex hero-reveal"
+              className="lg:col-span-4 flex hero-reveal"
               style={{ animationDelay: "260ms" }}
             >
               <div className="hero-frame relative w-full rounded-[22px] overflow-hidden">
