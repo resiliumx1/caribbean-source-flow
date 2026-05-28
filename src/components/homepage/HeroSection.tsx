@@ -299,19 +299,20 @@ export function HeroSection() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-6 lg:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
             {/* Left column */}
-            <div className="lg:col-span-8 flex flex-col">
+            <div className="lg:col-span-7 flex flex-col min-w-0">
               <div
-                className="max-w-[760px] mb-5 lg:mb-8 hero-reveal"
+                className="w-full mb-5 lg:mb-8 hero-reveal"
                 style={{ animationDelay: "120ms" }}
               >
                 <h1
-                  className="hero-headline text-[48px] sm:text-[76px] lg:text-[104px]"
+                  className="hero-headline"
                   style={{
                     color: "#f7f1df",
                     fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 600,
                     letterSpacing: "-0.025em",
-                    lineHeight: 0.96,
+                    lineHeight: 1.0,
+                    fontSize: "clamp(40px, 5vw, 72px)",
                   }}
                 >
                   <span className="hero-gold-word">Re</span>claim Your{" "}
@@ -322,20 +323,21 @@ export function HeroSection() {
                   </span>
                 </h1>
                 <p
-                  className="text-[14px] sm:text-[17px] lg:text-[19px] mt-5 lg:mt-7"
+                  className="mt-5 lg:mt-6"
                   style={{
                     color: "#e2c866",
                     fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 700,
-                    letterSpacing: "0.42em",
+                    letterSpacing: "0.32em",
                     textTransform: "uppercase",
+                    fontSize: "clamp(13px, 1.2vw, 18px)",
                   }}
                 >
                   Welcome to Mount Kailash.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 flex-1 hero-grid">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 flex-1 hero-grid min-w-0">
                 {pillars.map((pillar, i) => (
                   <PillarCard key={pillar.route} pillar={pillar} index={i} />
                 ))}
@@ -344,7 +346,7 @@ export function HeroSection() {
 
             {/* Right column — founder portrait */}
             <div
-              className="lg:col-span-4 flex hero-reveal"
+              className="lg:col-span-5 flex min-w-0 hero-reveal"
               style={{ animationDelay: "260ms" }}
             >
               <div className="hero-frame relative w-full rounded-[22px] overflow-hidden">
