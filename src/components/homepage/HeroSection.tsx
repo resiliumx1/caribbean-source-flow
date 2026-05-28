@@ -453,28 +453,35 @@ export function HeroSection() {
           position: relative;
           display: inline-block;
           background-image: linear-gradient(
-            100deg,
+            110deg,
             #b88a2e 0%,
             #c9a646 22%,
-            #e2c866 42%,
-            #fff2c2 50%,
-            #e2c866 58%,
+            #e2c866 38%,
+            #fff2a8 48%,
+            #ffffff 50%,
+            #fff2a8 52%,
+            #e2c866 62%,
             #c9a646 78%,
             #b88a2e 100%
           );
-          background-size: 220% 100%;
-          background-position: 100% 0;
+          background-size: 240% 100%;
+          background-position: 120% 0;
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
+          -webkit-text-fill-color: transparent;
           font-style: italic;
           font-weight: 600;
-          filter: drop-shadow(0 0 12px rgba(226,200,102,0.18));
-          animation: hero-gold-sheen 7s ease-in-out infinite;
+          filter: drop-shadow(0 0 14px rgba(226,200,102,0.22));
+          animation: hero-gold-sheen 5s ease-in-out infinite;
         }
         @keyframes hero-gold-sheen {
-          0%, 100% { background-position: 100% 0; }
-          50% { background-position: 0% 0; }
+          0%   { background-position: 120% 0; }
+          45%  { background-position: -40% 0; }
+          100% { background-position: -40% 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-gold-word { animation: none; background-position: 50% 0; }
         }
 
         @keyframes hero-rise {
