@@ -629,6 +629,29 @@ export function HeroSection() {
         }
 
         .pillar-cta { position: relative; }
+        .hero-cta-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          height: 40px;
+          min-width: 180px;
+          padding: 0 18px;
+          border-radius: 999px;
+          overflow: hidden;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          line-height: 1;
+          white-space: nowrap;
+        }
+        @media (max-height: 820px) and (min-width: 1024px) {
+          .hero-cta-btn { height: 36px; min-width: 168px; font-size: 11.5px; padding: 0 16px; }
+        }
+        @media (max-width: 640px) {
+          .hero-cta-btn { width: 100%; min-width: 0; height: 44px; }
+        }
         .pillar-cta-shimmer {
           position: absolute; inset: 0;
           background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
