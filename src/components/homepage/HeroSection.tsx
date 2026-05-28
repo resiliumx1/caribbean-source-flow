@@ -311,8 +311,8 @@ export function HeroSection() {
                     fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 600,
                     letterSpacing: "-0.025em",
-                    lineHeight: 1.0,
-                    fontSize: "clamp(40px, 5vw, 72px)",
+                    lineHeight: 0.98,
+                    fontSize: "clamp(44px, 6.4vw, 96px)",
                   }}
                 >
                   <span className="hero-gold-word">Re</span>claim Your{" "}
@@ -330,7 +330,7 @@ export function HeroSection() {
                     fontWeight: 700,
                     letterSpacing: "0.32em",
                     textTransform: "uppercase",
-                    fontSize: "clamp(13px, 1.2vw, 18px)",
+                    fontSize: "clamp(13px, 1.35vw, 20px)",
                   }}
                 >
                   Welcome to Mount Kailash.
