@@ -251,44 +251,6 @@ export default function AdminProducts() {
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              className="gap-2"
-              disabled={isSyncing}
-              onClick={async () => {
-                setIsSyncing(true);
-                try {
-                  const { data: sessionData } = await supabase.auth.getSession();
-                  const token = sessionData?.session?.access_token;
-                  if (!token) throw new Error("Not authenticated");
-                  const res = await fetch(
-                    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/woo-sync`,
-                    {
-                      method: "POST",
-                      headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                      },
-                    }
-                  );
-                  const result = await res.json();
-                  if (!res.ok) throw new Error(result.error || "Sync failed");
-                  toast({
-                    title: "WooCommerce Sync Complete",
-                    description: `${result.synced} synced (${result.updated} updated${result.matched_by_name ? `, ${result.matched_by_name} linked by name` : ""}${result.skipped ? `, ${result.skipped} skipped` : ""})${result.errors?.length ? `, ${result.errors.length} errors` : ""}`,
-                  });
-                  queryClient.invalidateQueries({ queryKey: ["admin-products"] });
-                  queryClient.invalidateQueries({ queryKey: ["products"] });
-                } catch (e: any) {
-                  toast({ title: "Sync Failed", description: e.message, variant: "destructive" });
-                } finally {
-                  setIsSyncing(false);
-                }
-              }}
-            >
-              {isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-              {isSyncing ? "Syncing..." : "Sync from WooCommerce"}
-            </Button>
             <DialogTrigger asChild>
               <Button className="gap-2"><Plus className="w-4 h-4" />Add Product</Button>
             </DialogTrigger>
