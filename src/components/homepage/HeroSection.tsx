@@ -214,22 +214,18 @@ function PillarCard({ pillar, index }: { pillar: (typeof pillars)[number]; index
           {pillar.description}
         </p>
         <span
-          className="pillar-cta inline-flex items-center gap-2 mt-auto self-start px-3 py-1.5 rounded-full overflow-hidden relative"
+          className="pillar-cta hero-cta-btn mt-auto self-start"
           style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "11px",
-            fontWeight: 600,
             color: "#0a2218",
             background:
               "linear-gradient(135deg, #c9a646 0%, #e2c866 50%, #b88a2e 100%)",
             boxShadow:
               "0 6px 18px rgba(201,166,70,0.32), inset 0 1px 0 rgba(255,255,255,0.32), inset 0 -1px 0 rgba(0,0,0,0.12)",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
           }}
         >
           <span className="pillar-cta-shimmer" aria-hidden />
-          <span className="relative z-10">{pillar.cta}</span>
+          <span className="relative z-10 whitespace-nowrap">{pillar.cta}</span>
           <ArrowRight className="pillar-cta-arrow w-3.5 h-3.5 relative z-10 transition-transform duration-300 group-hover:translate-x-1.5" />
         </span>
       </div>
@@ -633,6 +629,29 @@ export function HeroSection() {
         }
 
         .pillar-cta { position: relative; }
+        .hero-cta-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          height: 40px;
+          min-width: 180px;
+          padding: 0 18px;
+          border-radius: 999px;
+          overflow: hidden;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          line-height: 1;
+          white-space: nowrap;
+        }
+        @media (max-height: 820px) and (min-width: 1024px) {
+          .hero-cta-btn { height: 36px; min-width: 168px; font-size: 11.5px; padding: 0 16px; }
+        }
+        @media (max-width: 640px) {
+          .hero-cta-btn { width: 100%; min-width: 0; height: 44px; }
+        }
         .pillar-cta-shimmer {
           position: absolute; inset: 0;
           background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
