@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 /**
  * Hook for an infinite right-to-left marquee that the user can also
@@ -13,6 +13,9 @@ export function useMarquee(speed = 0.5) {
   const pauseUntilRef = useRef(0);
   const hoverRef = useRef(false);
   const dragRef = useRef({ down: false, startX: 0, startScroll: 0, moved: false });
+  const [manualPaused, setManualPaused] = useState(false);
+  const manualPausedRef = useRef(false);
+  useEffect(() => { manualPausedRef.current = manualPaused; }, [manualPaused]);
 
   useEffect(() => {
     const el = ref.current;
@@ -29,7 +32,11 @@ export function useMarquee(speed = 0.5) {
           if (node.scrollLeft >= half) node.scrollLeft -= half;
           else if (node.scrollLeft < 0) node.scrollLeft += half;
         }
-        const paused = hoverRef.current || dragRef.current.down || Date.now() < pauseUntilRef.current;
+        const paused =
+          manualPausedRef.current ||
+          hoverRef.current ||
+          dragRef.current.down ||
+          Date.now() < pauseUntilRef.current;
         if (!paused && half > 0) {
           node.scrollLeft += speed;
         }
@@ -78,5 +85,7 @@ export function useMarquee(speed = 0.5) {
     },
   };
 
-  return { ref, handlers };
+  const toggle = useCallback(() => setManualPaused((p) => !p), []);
+
+  return { ref, handlers, paused: manualPaused, toggle };
 }
