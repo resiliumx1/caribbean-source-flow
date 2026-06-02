@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Pause, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store-context";
@@ -8,7 +8,7 @@ import { useMarquee } from "@/hooks/use-marquee";
 
 export function RotatingApothecary() {
   const { currency } = useStore();
-  const { ref: marqueeRef, handlers: marqueeHandlers } = useMarquee(0.6);
+  const { ref: marqueeRef, handlers: marqueeHandlers, paused, toggle } = useMarquee(0.6);
 
   const { data: products = [] } = useQuery({
     queryKey: ["featured-products-carousel"],
@@ -71,6 +71,25 @@ export function RotatingApothecary() {
 
       {/* Carousel with gradient masks */}
       <div className="relative">
+        {/* Pause / Play toggle */}
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={paused ? "Resume carousel" : "Pause carousel"}
+          aria-pressed={paused}
+          className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 inline-flex items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95"
+          style={{
+            width: 44,
+            height: 44,
+            background: "var(--site-gold)",
+            color: "#0F281E",
+            boxShadow: "0 4px 14px rgba(0,0,0,0.18)",
+            border: "1px solid rgba(0,0,0,0.08)",
+          }}
+        >
+          {paused ? <Play className="w-4 h-4 ml-0.5" /> : <Pause className="w-4 h-4" />}
+        </button>
+
         {/* Left mask */}
         <div
           className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
