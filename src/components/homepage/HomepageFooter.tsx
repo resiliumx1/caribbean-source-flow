@@ -150,7 +150,19 @@ export function HomepageFooter() {
             style={{ fontSize: "12px", color: "#A8B5A0" }}
           >
             <p>© {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.</p>
-            <div className="flex gap-5">
+            <div className="flex items-center gap-5">
+              <button
+                onClick={() => {
+                  try { localStorage.removeItem("mkrc-gate-seen"); } catch { /* noop */ }
+                  window.location.href = "/";
+                }}
+                className="inline-flex items-center gap-1.5 hover:text-[#D4A373] transition-colors"
+                aria-label="Replay intro"
+                title="Replay intro"
+              >
+                <Play className="w-3 h-3" />
+                Replay Intro
+              </button>
               <span style={{ color: "#c9a84c", fontWeight: 500 }}>Legal:</span>
               <a href="/privacy-policy" className="hover:underline">Privacy Policy</a>
               <a href="/terms-and-conditions" className="hover:underline">Terms &amp; Conditions</a>
