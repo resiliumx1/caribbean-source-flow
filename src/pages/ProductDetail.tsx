@@ -1,6 +1,8 @@
 import { useParams, Link, Navigate } from "react-router-dom"; // product detail page
 import { ArrowLeft, ShoppingBag, Minus, Plus, Truck, Leaf, FlaskConical, AlertCircle, Tag, Sparkles, MessageCircle, Check } from "lucide-react";
 import { useState, useEffect, useLayoutEffect } from "react";
+import { Helmet } from "react-helmet-async";
+import { SITE_URL } from "@/lib/site-config";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
 import { ProductGallery } from "@/components/store/ProductGallery";
@@ -115,8 +117,47 @@ export default function ProductDetail() {
     });
   };
 
+  // SEO: per-product title, description, canonical, og tags, and Product JSON-LD
+  const seoTitle = `${product.name} | Mount Kailash`.slice(0, 60);
+  const rawDesc = product.short_description || product.description || `${product.name} — Caribbean bush medicine from Mount Kailash Rejuvenation Centre.`;
+  const seoDesc = rawDesc.replace(/\s+/g, " ").trim().slice(0, 158);
+  const canonical = `${SITE_URL}/shop/${slug}`;
+  const productImage = product.image_url || undefined;
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: seoDesc,
+    ...(productImage ? { image: productImage } : {}),
+    brand: { "@type": "Brand", name: "Mount Kailash Rejuvenation Centre" },
+    offers: {
+      "@type": "Offer",
+      price: currentPriceUsd?.toFixed(2),
+      priceCurrency: "USD",
+      availability:
+        product.stock_status === "out_of_stock"
+          ? "https://schema.org/OutOfStock"
+          : "https://schema.org/InStock",
+      url: canonical,
+    },
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={canonical} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:type" content="product" />
+        {productImage && <meta property="og:image" content={productImage} />}
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDesc} />
+        {productImage && <meta name="twitter:image" content={productImage} />}
+        <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+      </Helmet>
         <main className="container mx-auto px-4 pt-20 pb-8">
         {/* Back Button */}
         <Link
