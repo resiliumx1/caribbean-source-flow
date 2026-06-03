@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MessageCircle, MapPin } from "lucide-react";
+import { MessageCircle, MapPin, Play } from "lucide-react";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { FooterVine } from "@/components/decorative/BotanicalVine";
 import { ContactNumbers } from "@/components/ContactNumbers";
