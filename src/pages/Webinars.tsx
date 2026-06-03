@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SEOHead } from "@/components/SEOHead";
+import { Helmet } from "react-helmet-async";
 import { useWebinarVideos, WebinarVideo } from "@/hooks/use-webinar-videos";
 import "@/styles/webinar.css";
 
@@ -40,9 +41,41 @@ export default function Webinars() {
       )
     : dbVideos;
 
+  const eventSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: (dbVideos || []).slice(0, 20).map((v, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "EducationEvent",
+        name: v.title || "Herbal Medicine Webinar",
+        description: v.description || "Free herbal medicine webinar with Priest Kailash.",
+        eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+        eventStatus: "https://schema.org/EventScheduled",
+        location: {
+          "@type": "VirtualLocation",
+          url: v.youtube_video_id
+            ? `https://www.youtube.com/watch?v=${v.youtube_video_id}`
+            : "https://mountkailashslu.com/webinars",
+        },
+        organizer: {
+          "@type": "Organization",
+          name: "Mount Kailash Rejuvenation Centre",
+          url: "https://mountkailashslu.com/",
+        },
+      },
+    })),
+  };
+
   return (
     <div style={{ backgroundColor: "var(--site-bg-primary)", color: "var(--site-text-primary)" }}>
       <SEOHead title="Free Herbal Medicine Webinars | Mount Kailash" description="Free live webinars on herbal medicine, immunity, fertility, and detox with Priest Kailash. Expert-led holistic wellness sessions." path="/webinars" />
+      {dbVideos.length > 0 && (
+        <Helmet>
+          <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
+        </Helmet>
+      )}
       <WebinarHero />
       <WebinarFeatured />
       <WebinarCommunity onVideoClick={setSelectedVideo} />
