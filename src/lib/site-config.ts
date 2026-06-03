@@ -9,6 +9,6 @@
  *
  * Those static files cannot read this constant at build time.
  */
-export const SITE_URL = "https://caribbean-source-flow.lovable.app";
+export const SITE_URL = "https://mountkailashslu.com";
 
 export const CONTACT_EMAIL = "goddessitopia@mountkailashslu.com";
