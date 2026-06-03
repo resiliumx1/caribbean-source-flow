@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://caribbean-source-flow.lovable.app/</loc>
+    <loc>https://mountkailashslu.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://caribbean-source-flow.lovable.app/shop</loc>
+    <loc>https://mountkailashslu.com/shop</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://caribbean-source-flow.lovable.app/wholesale</loc>
+    <loc>https://mountkailashslu.com/wholesale</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caribbean-source-flow.lovable.app/retreats</loc>
+    <loc>https://mountkailashslu.com/retreats</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://caribbean-source-flow.lovable.app/the-answer</loc>
+    <loc>https://mountkailashslu.com/the-answer</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://caribbean-source-flow.lovable.app/webinars</loc>
+    <loc>https://mountkailashslu.com/webinars</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://caribbean-source-flow.lovable.app/school/herbal-physician</loc>
+    <loc>https://mountkailashslu.com/school/herbal-physician</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mountkailashslu.com/privacy-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mountkailashslu.com/terms-and-conditions</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

@@ -1,4 +1,5 @@
 import { SEOHead } from "@/components/SEOHead";
+import { Helmet } from "react-helmet-async";
 import { SchoolStickyHeader } from "@/components/school/SchoolStickyHeader";
 import { CourseDetailHero } from "@/components/school/CourseDetailHero";
 import { TransformationPromise } from "@/components/school/TransformationPromise";
@@ -14,9 +15,24 @@ import { EnrollmentCTA } from "@/components/school/EnrollmentCTA";
 import { StoreFooter } from "@/components/store/StoreFooter";
 
 export default function HerbalPhysicianCourse() {
+  const courseSchema = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: "Herbal Physician Training",
+    description:
+      "Clinical bush medicine training program — become a certified herbal physician under Rt Hon Priest Kailash K Leonce in Saint Lucia.",
+    provider: {
+      "@type": "Organization",
+      name: "Mount Kailash Rejuvenation Centre — School of Bush Medicine",
+      sameAs: "https://mountkailashslu.com/",
+    },
+  };
   return (
     <>
-      <SEOHead title="Herbal Physician Training | School of Bush Medicine | Mount Kailash" description="Become a certified herbal physician. Clinical bush medicine training from St. Lucia. 500+ graduates worldwide. Led by Rt Hon Priest Kailash K Leonce." path="/school/herbal-physician" />
+      <SEOHead title="Herbal Physician Training | Mount Kailash" description="Become a certified herbal physician. Clinical bush medicine training from Saint Lucia. 500+ graduates worldwide. Led by Rt Hon Priest Kailash K Leonce." path="/school/herbal-physician" />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(courseSchema)}</script>
+      </Helmet>
       <SchoolStickyHeader />
       <main className="pb-20 lg:pb-0">
         <CourseDetailHero />
