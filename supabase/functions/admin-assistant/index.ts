@@ -169,12 +169,17 @@ serve(async (req) => {
     const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
     const userClient = createClient(SUPABASE_URL, ANON, { global: { headers: { Authorization: authHeader } } });
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claims, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claims?.claims?.sub) {
+    let userId: string | null = null;
+    try {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: claims } = await userClient.auth.getClaims(token);
+      userId = claims?.claims?.sub ?? null;
+    } catch (_) {
+      userId = null;
+    }
+    if (!userId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    const userId = claims.claims.sub;
 
     const admin = createClient(SUPABASE_URL, SERVICE);
     const { data: profile } = await admin.from("profiles").select("is_admin").eq("id", userId).maybeSingle();
