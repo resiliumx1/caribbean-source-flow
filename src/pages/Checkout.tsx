@@ -426,7 +426,7 @@ export default function Checkout() {
                     ) : (
                       <PayPalButtons
                         disabled={!canPay}
-                        forceReRender={[subtotalUsd, currency]}
+                        forceReRender={[totalUsd, currency, form.delivery_type]}
                         style={{
                           layout: "vertical",
                           color: "gold",
@@ -439,7 +439,7 @@ export default function Checkout() {
                             purchase_units: [
                               {
                                 amount: {
-                                  value: subtotalUsd.toFixed(2),
+                                  value: totalUsd.toFixed(2),
                                   currency_code: "USD",
                                 },
                                 description: "Mount Kailash Order",
