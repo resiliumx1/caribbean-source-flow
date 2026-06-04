@@ -51,7 +51,7 @@ export default function Checkout() {
     customer_name: "",
     email: "",
     phone: "",
-    delivery_type: "local" as "local" | "international",
+    delivery_type: "pickup" as "local" | "international" | "pickup",
     address_line1: "",
     address_line2: "",
     city: "",
@@ -72,10 +72,38 @@ export default function Checkout() {
     (sum, item) => sum + (item.product?.price_xcd ?? 0) * item.quantity,
     0
   );
-  const prices = formatPriceBoth(subtotalUsd, subtotalXcd);
 
-  // Both delivery types require an address (local courier or international shipping).
-  const isShipping = true;
+  // Detect whether cart needs shipping at all (any non-digital item)
+  const hasPhysical = cartItems.some(
+    (i) => i.product && !(i.product as any).is_digital
+  );
+
+  // Shipping rules:
+  //   - All digital → $0
+  //   - Pickup (Saint Lucia) → $0
+  //   - Local delivery (Saint Lucia) → 30 XCD (~$11.11 USD)
+  //   - International → $30 USD (81 XCD)
+  const EXCHANGE = 2.7;
+  let shippingUsd = 0;
+  let shippingXcd = 0;
+  if (hasPhysical) {
+    if (form.delivery_type === "local") {
+      shippingXcd = 30;
+      shippingUsd = +(30 / EXCHANGE).toFixed(2);
+    } else if (form.delivery_type === "international") {
+      shippingUsd = 30;
+      shippingXcd = +(30 * EXCHANGE).toFixed(2);
+    }
+  }
+
+  const totalUsd = subtotalUsd + shippingUsd;
+  const totalXcd = subtotalXcd + shippingXcd;
+  const subtotalPrices = formatPriceBoth(subtotalUsd, subtotalXcd);
+  const shippingPrices = formatPriceBoth(shippingUsd, shippingXcd);
+  const prices = formatPriceBoth(totalUsd, totalXcd);
+
+  // Pickup doesn't need a shipping address.
+  const isShipping = hasPhysical && form.delivery_type !== "pickup";
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
   const isFormValid = useMemo(() => {
     if (!form.customer_name.trim()) return false;
@@ -182,25 +210,32 @@ export default function Checkout() {
                 <h2 className="font-serif font-semibold text-lg text-foreground">
                   Delivery
                 </h2>
-                <div>
-                  <Label htmlFor="delivery_type">Delivery Method *</Label>
-                  <select
-                    id="delivery_type"
-                    value={form.delivery_type}
-                    onChange={(e) => {
-                      const v = e.target.value as "local" | "international";
-                      update("delivery_type", v);
-                      // Auto-set country to LC for local, clear for international default
-                      if (v === "local") update("country", "LC");
-                    }}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <option value="local">Local Delivery (Saint Lucia)</option>
-                    <option value="international">International Shipping</option>
-                  </select>
-                </div>
+                {hasPhysical ? (
+                  <div>
+                    <Label htmlFor="delivery_type">Delivery Method *</Label>
+                    <select
+                      id="delivery_type"
+                      value={form.delivery_type}
+                      onChange={(e) => {
+                        const v = e.target.value as "local" | "international" | "pickup";
+                        update("delivery_type", v);
+                        if (v === "local" || v === "pickup") update("country", "LC");
+                      }}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <option value="pickup">Pickup at Mount Kailash — Free (Saint Lucia)</option>
+                      <option value="local">Local Delivery — 30 XCD (Saint Lucia)</option>
+                      <option value="international">International Shipping — $30 USD</option>
+                    </select>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Your order is fully digital — no shipping required.
+                  </p>
+                )}
 
-                <>
+                {isShipping && (
+                  <>
                     <div>
                       <Label htmlFor="address_line1">Address Line 1 *</Label>
                       <Input
@@ -267,7 +302,8 @@ export default function Checkout() {
                         </select>
                       </div>
                     </div>
-                </>
+                  </>
+                )}
               </div>
 
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
@@ -316,11 +352,15 @@ export default function Checkout() {
                   <div className="border-t border-border pt-4 space-y-2">
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Subtotal</span>
-                      <span>{prices.primary}</span>
+                      <span>{subtotalPrices.primary}</span>
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Shipping</span>
-                      <span>Free</span>
+                      <span>
+                        {hasPhysical && shippingUsd > 0
+                          ? shippingPrices.primary
+                          : "Free"}
+                      </span>
                     </div>
                     <div className="flex justify-between pt-2 border-t border-border">
                       <span className="font-semibold text-foreground">Total</span>
@@ -386,7 +426,7 @@ export default function Checkout() {
                     ) : (
                       <PayPalButtons
                         disabled={!canPay}
-                        forceReRender={[subtotalUsd, currency]}
+                        forceReRender={[totalUsd, currency, form.delivery_type]}
                         style={{
                           layout: "vertical",
                           color: "gold",
@@ -399,7 +439,7 @@ export default function Checkout() {
                             purchase_units: [
                               {
                                 amount: {
-                                  value: subtotalUsd.toFixed(2),
+                                  value: totalUsd.toFixed(2),
                                   currency_code: "USD",
                                 },
                                 description: "Mount Kailash Order",

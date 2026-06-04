@@ -30,6 +30,7 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Retreats = lazy(() => import("./pages/Retreats"));
+const RetreatBooking = lazy(() => import("./pages/RetreatBooking"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
@@ -138,6 +139,7 @@ function AppContent() {
           <Route path="/order-confirmation/:orderNumber" element={<OrderConfirmation />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/retreats" element={<Retreats />} />
+          <Route path="/retreats/book/:slug" element={<RetreatBooking />} />
           <Route path="/the-answer" element={<TheAnswer />} />
           <Route path="/webinars" element={<WebinarsPage />} />
           <Route path="/school/herbal-physician" element={<HerbalPhysicianCourse />} />

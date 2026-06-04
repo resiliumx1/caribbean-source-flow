@@ -701,6 +701,7 @@ export type Database = {
           image_url: string | null
           ingredients: string | null
           is_active: boolean | null
+          is_digital: boolean
           is_featured: boolean | null
           label_image_url: string | null
           name: string
@@ -734,6 +735,7 @@ export type Database = {
           image_url?: string | null
           ingredients?: string | null
           is_active?: boolean | null
+          is_digital?: boolean
           is_featured?: boolean | null
           label_image_url?: string | null
           name: string
@@ -767,6 +769,7 @@ export type Database = {
           image_url?: string | null
           ingredients?: string | null
           is_active?: boolean | null
+          is_digital?: boolean
           is_featured?: boolean | null
           label_image_url?: string | null
           name?: string
@@ -842,6 +845,8 @@ export type Database = {
       }
       retreat_bookings: {
         Row: {
+          amount_paid_usd: number | null
+          balance_due_usd: number | null
           contact_email: string
           contact_name: string
           contact_phone: string | null
@@ -850,7 +855,10 @@ export type Database = {
           end_date: string
           guest_count: number
           id: string
+          payment_option: string
           payment_status: string
+          paypal_capture_id: string | null
+          paypal_order_id: string | null
           retreat_date_id: string | null
           retreat_type_id: string
           special_requests: string | null
@@ -861,6 +869,8 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          amount_paid_usd?: number | null
+          balance_due_usd?: number | null
           contact_email: string
           contact_name: string
           contact_phone?: string | null
@@ -869,7 +879,10 @@ export type Database = {
           end_date: string
           guest_count?: number
           id?: string
+          payment_option?: string
           payment_status?: string
+          paypal_capture_id?: string | null
+          paypal_order_id?: string | null
           retreat_date_id?: string | null
           retreat_type_id: string
           special_requests?: string | null
@@ -880,6 +893,8 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          amount_paid_usd?: number | null
+          balance_due_usd?: number | null
           contact_email?: string
           contact_name?: string
           contact_phone?: string | null
@@ -888,7 +903,10 @@ export type Database = {
           end_date?: string
           guest_count?: number
           id?: string
+          payment_option?: string
           payment_status?: string
+          paypal_capture_id?: string | null
+          paypal_order_id?: string | null
           retreat_date_id?: string | null
           retreat_type_id?: string
           special_requests?: string | null

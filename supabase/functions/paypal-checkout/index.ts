@@ -17,7 +17,7 @@ interface CheckoutPayload {
     customer_name: string;
     email: string;
     phone: string;
-    delivery_type: "local" | "international";
+    delivery_type: "local" | "international" | "pickup";
     address_line1: string;
     address_line2?: string;
     city: string;
@@ -70,18 +70,18 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Map delivery_type to allowed DB values ('local' | 'international').
-    // Country LC (Saint Lucia) => local; anything else => international.
-    const deliveryType: "local" | "international" =
-      payload.form.delivery_type === "local" || payload.form.delivery_type === "international"
-        ? payload.form.delivery_type
+    // Map delivery_type to allowed DB values. Country LC => local default; else international.
+    const incomingDt = payload.form.delivery_type;
+    const deliveryType: "local" | "international" | "pickup" =
+      incomingDt === "local" || incomingDt === "international" || incomingDt === "pickup"
+        ? incomingDt
         : (payload.form.country?.toUpperCase() === "LC" ? "local" : "international");
 
     // Re-fetch products from DB to get authoritative pricing (never trust client prices)
     const productIds = [...new Set(payload.items.map((i) => i.product_id))];
     const { data: products, error: prodErr } = await supabase
       .from("products")
-      .select("id, name, price_usd, price_xcd")
+      .select("id, name, price_usd, price_xcd, is_digital")
       .in("id", productIds);
     if (prodErr) throw prodErr;
     if (!products || products.length !== productIds.length) {
@@ -92,12 +92,14 @@ Deno.serve(async (req) => {
 
     let subtotal_usd = 0;
     let subtotal_xcd = 0;
+    let hasPhysical = false;
     const itemRows = payload.items.map((line) => {
       const p: any = productMap.get(line.product_id);
       if (!p) throw new Error(`Product not found: ${line.product_id}`);
       const qty = Math.max(1, Math.floor(line.quantity));
       subtotal_usd += Number(p.price_usd) * qty;
       subtotal_xcd += Number(p.price_xcd) * qty;
+      if (!p.is_digital) hasPhysical = true;
       return {
         product_id: p.id,
         product_name: p.name,
@@ -107,9 +109,23 @@ Deno.serve(async (req) => {
       };
     });
 
-    // Shipping is free for now
-    const shipping_usd = 0;
-    const shipping_xcd = 0;
+    // Shipping rules (must match Checkout.tsx):
+    //   - No physical items → free
+    //   - pickup → free
+    //   - local → 30 XCD (~$11.11 USD)
+    //   - international → $30 USD (81 XCD)
+    const EXCHANGE = 2.7;
+    let shipping_usd = 0;
+    let shipping_xcd = 0;
+    if (hasPhysical) {
+      if (deliveryType === "local") {
+        shipping_xcd = 30;
+        shipping_usd = +(30 / EXCHANGE).toFixed(2);
+      } else if (deliveryType === "international") {
+        shipping_usd = 30;
+        shipping_xcd = +(30 * EXCHANGE).toFixed(2);
+      }
+    }
     const total_usd = subtotal_usd + shipping_usd;
     const total_xcd = subtotal_xcd + shipping_xcd;
 
@@ -120,9 +136,9 @@ Deno.serve(async (req) => {
       email: payload.form.email.toLowerCase().trim(),
       phone: payload.form.phone || null,
       delivery_type: deliveryType,
-      address_line1: payload.form.address_line1 || "—",
+      address_line1: payload.form.address_line1 || (deliveryType === "pickup" ? "Pickup at Mount Kailash" : "—"),
       address_line2: payload.form.address_line2 || null,
-      city: payload.form.city || "—",
+      city: payload.form.city || (deliveryType === "pickup" ? "Saint Lucia" : "—"),
       state_province: payload.form.state_province || null,
       postal_code: payload.form.postal_code || null,
       country: payload.form.country || "LC",
