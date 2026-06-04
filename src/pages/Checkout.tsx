@@ -210,25 +210,32 @@ export default function Checkout() {
                 <h2 className="font-serif font-semibold text-lg text-foreground">
                   Delivery
                 </h2>
-                <div>
-                  <Label htmlFor="delivery_type">Delivery Method *</Label>
-                  <select
-                    id="delivery_type"
-                    value={form.delivery_type}
-                    onChange={(e) => {
-                      const v = e.target.value as "local" | "international";
-                      update("delivery_type", v);
-                      // Auto-set country to LC for local, clear for international default
-                      if (v === "local") update("country", "LC");
-                    }}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <option value="local">Local Delivery (Saint Lucia)</option>
-                    <option value="international">International Shipping</option>
-                  </select>
-                </div>
+                {hasPhysical ? (
+                  <div>
+                    <Label htmlFor="delivery_type">Delivery Method *</Label>
+                    <select
+                      id="delivery_type"
+                      value={form.delivery_type}
+                      onChange={(e) => {
+                        const v = e.target.value as "local" | "international" | "pickup";
+                        update("delivery_type", v);
+                        if (v === "local" || v === "pickup") update("country", "LC");
+                      }}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <option value="pickup">Pickup at Mount Kailash — Free (Saint Lucia)</option>
+                      <option value="local">Local Delivery — 30 XCD (Saint Lucia)</option>
+                      <option value="international">International Shipping — $30 USD</option>
+                    </select>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Your order is fully digital — no shipping required.
+                  </p>
+                )}
 
-                <>
+                {isShipping && (
+                  <>
                     <div>
                       <Label htmlFor="address_line1">Address Line 1 *</Label>
                       <Input
@@ -295,7 +302,8 @@ export default function Checkout() {
                         </select>
                       </div>
                     </div>
-                </>
+                  </>
+                )}
               </div>
 
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
