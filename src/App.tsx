@@ -18,6 +18,7 @@ import ComingSoon from "@/components/ComingSoon";
 
 // Lazy load non-critical global components
 const ChatWidget = lazy(() => import("@/components/ChatWidget"));
+const AdminChat = lazy(() => import("@/components/admin/AdminChat"));
 
 // Eagerly loaded (homepage)
 import TrinityHomepage from "./pages/TrinityHomepage";
@@ -170,6 +171,11 @@ function AppContent() {
       {!isAdminRoute && (
         <Suspense fallback={null}>
           <ChatWidget />
+        </Suspense>
+      )}
+      {isAdminRoute && (
+        <Suspense fallback={null}>
+          <AdminChat />
         </Suspense>
       )}
       <CookieConsent />
