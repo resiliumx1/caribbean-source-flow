@@ -55,6 +55,7 @@ export default function AdminOrders() {
     fulfillment_status: "",
     tracking_number: "",
     tracking_carrier: "",
+    cancellation_reason: "",
   });
   const [saving, setSaving] = useState(false);
   const [resending, setResending] = useState(false);
