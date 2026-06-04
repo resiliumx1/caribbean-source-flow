@@ -23,9 +23,10 @@ const ADMIN_CC = "blessedlove@mountkailashslu.com";
 
 interface RequestBody {
   orderId: string;
-  emailType: "order_placed" | "order_shipped";
+  emailType: "order_placed" | "order_shipped" | "order_delivered" | "order_cancelled";
   fromFallback?: boolean;
   force?: boolean;
+  cancellationReason?: string;
 }
 
 Deno.serve(async (req) => {
@@ -34,7 +35,7 @@ Deno.serve(async (req) => {
   let parsedBody: RequestBody | null = null;
   try {
     parsedBody = (await req.json()) as RequestBody;
-    const { orderId, emailType, fromFallback, force } = parsedBody;
+    const { orderId, emailType, fromFallback, force, cancellationReason } = parsedBody;
     if (!orderId) throw new Error("orderId is required");
     if (!emailType) throw new Error("emailType is required");
 
@@ -120,6 +121,48 @@ Deno.serve(async (req) => {
         subject: `Your order is on the way! - ${order.order_number}`,
         html: customerOrderShippedHtml(order, items || []),
       });
+      return new Response(
+        JSON.stringify({ success: true, customer: result }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (emailType === "order_delivered") {
+      const result = await sendEmail({
+        from: customerFrom,
+        to: [order.email],
+        reply_to: SUPPORT_EMAIL,
+        subject: `Your order has been delivered - ${order.order_number}`,
+        html: customerOrderDeliveredHtml(order, items || []),
+      });
+      return new Response(
+        JSON.stringify({ success: true, customer: result }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (emailType === "order_cancelled") {
+      const reason = (cancellationReason || "").trim();
+      const result = await sendEmail({
+        from: customerFrom,
+        to: [order.email],
+        reply_to: SUPPORT_EMAIL,
+        subject: `Your order has been cancelled - ${order.order_number}`,
+        html: customerOrderCancelledHtml(order, items || [], reason),
+      });
+      // Notify admin too
+      try {
+        await sendEmail({
+          from: adminFrom,
+          to: [ADMIN_TO],
+          cc: [ADMIN_CC],
+          reply_to: order.email,
+          subject: `❌ Order ${order.order_number} cancelled - ${order.customer_name}`,
+          html: `<p>Order <strong>${esc(order.order_number)}</strong> was cancelled.</p><p><strong>Reason:</strong> ${esc(reason || "(no reason provided)")}</p>`,
+        });
+      } catch (e) {
+        console.error("Admin cancel email failed:", e);
+      }
       return new Response(
         JSON.stringify({ success: true, customer: result }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -352,4 +395,79 @@ function buildTrackingUrl(carrier: string | null, tracking: string | null): stri
   if (c === "fedex") return `https://www.fedex.com/fedextrack/?trknbr=${encodeURIComponent(tracking)}`;
   if (c === "dhl") return `https://www.dhl.com/en/express/tracking.html?AWB=${encodeURIComponent(tracking)}`;
   return "";
+}
+
+function customerOrderDeliveredHtml(order: any, items: any[]): string {
+  const itemsList = items.map(i =>
+    `<li style="margin:6px 0;font-size:14px;">${esc(i.product_name)} × ${esc(i.quantity)}</li>`
+  ).join("");
+  const inner = `
+    <tr><td style="padding:32px 28px 8px 28px;">
+      <h1 style="margin:0 0 12px 0;font-family:Georgia,serif;color:${BRAND_DARK};font-size:26px;">
+        Your order has arrived 🌿
+      </h1>
+      <p style="margin:0 0 8px 0;font-size:15px;line-height:1.6;">
+        Hello ${esc(order.customer_name)}, order <strong>${esc(order.order_number)}</strong> has been marked as delivered.
+        We hope every item arrived in perfect condition.
+      </p>
+    </td></tr>
+    <tr><td style="padding:8px 28px 20px 28px;">
+      <div style="border:1px solid #ece4d4;border-radius:10px;padding:18px;background:#fffdf8;">
+        <div style="font-size:11px;color:${BRAND_MUTED};text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">In this delivery</div>
+        <ul style="margin:0;padding-left:20px;">${itemsList}</ul>
+      </div>
+    </td></tr>
+    <tr><td style="padding:0 28px 24px 28px;">
+      <div style="background:${BRAND_CREAM};border-left:3px solid ${BRAND_GOLD};padding:14px 16px;border-radius:4px;">
+        <div style="font-weight:bold;color:${BRAND_DARK};margin-bottom:6px;font-family:Georgia,serif;">A small favour</div>
+        <div style="font-size:14px;line-height:1.6;color:${BRAND_TEXT};">
+          We'd love to hear how the feast is treating you. Reply to this email with a few words —
+          your feedback helps other guests on the path to rejuvenation.
+        </div>
+      </div>
+    </td></tr>
+    <tr><td style="padding:0 28px 28px 28px;font-size:13px;color:${BRAND_MUTED};line-height:1.6;">
+      Anything missing or damaged? Reply right away and we'll make it right.
+    </td></tr>`;
+  return shell(inner, `Order ${order.order_number} delivered`);
+}
+
+function customerOrderCancelledHtml(order: any, items: any[], reason: string): string {
+  const itemsList = items.map(i =>
+    `<li style="margin:6px 0;font-size:14px;">${esc(i.product_name)} × ${esc(i.quantity)}</li>`
+  ).join("");
+  const inner = `
+    <tr><td style="padding:32px 28px 8px 28px;">
+      <h1 style="margin:0 0 12px 0;font-family:Georgia,serif;color:${BRAND_DARK};font-size:26px;">
+        Your order has been cancelled
+      </h1>
+      <p style="margin:0 0 8px 0;font-size:15px;line-height:1.6;">
+        Hello ${esc(order.customer_name)}, we're writing to confirm that order
+        <strong>${esc(order.order_number)}</strong> has been cancelled.
+      </p>
+    </td></tr>
+    ${reason ? `
+    <tr><td style="padding:8px 28px 4px 28px;">
+      <div style="background:#fff4ec;border-left:3px solid #c8542b;padding:14px 16px;border-radius:4px;">
+        <div style="font-weight:bold;color:#7a2f12;margin-bottom:6px;font-family:Georgia,serif;">Reason for cancellation</div>
+        <div style="font-size:14px;line-height:1.6;color:${BRAND_TEXT};white-space:pre-wrap;">${esc(reason)}</div>
+      </div>
+    </td></tr>` : ""}
+    <tr><td style="padding:16px 28px 8px 28px;">
+      <div style="border:1px solid #ece4d4;border-radius:10px;padding:18px;background:#fffdf8;">
+        <div style="font-size:11px;color:${BRAND_MUTED};text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">Items in this order</div>
+        <ul style="margin:0;padding-left:20px;">${itemsList}</ul>
+      </div>
+    </td></tr>
+    <tr><td style="padding:16px 28px 4px 28px;">
+      <div style="font-size:14px;line-height:1.6;color:${BRAND_TEXT};">
+        If you were charged, any refund will be processed to your original payment method within
+        5–10 business days. If you have questions, simply reply to this email or contact us at
+        <a href="mailto:${SUPPORT_EMAIL}" style="color:${BRAND_DARK};">${SUPPORT_EMAIL}</a>.
+      </div>
+    </td></tr>
+    <tr><td style="padding:0 28px 28px 28px;font-size:13px;color:${BRAND_MUTED};line-height:1.6;">
+      We hope to serve you again soon.
+    </td></tr>`;
+  return shell(inner, `Order ${order.order_number} cancelled`);
 }

@@ -55,6 +55,7 @@ export default function AdminOrders() {
     fulfillment_status: "",
     tracking_number: "",
     tracking_carrier: "",
+    cancellation_reason: "",
   });
   const [saving, setSaving] = useState(false);
   const [resending, setResending] = useState(false);
@@ -144,47 +145,80 @@ export default function AdminOrders() {
       fulfillment_status: order.fulfillment_status || "unfulfilled",
       tracking_number: order.tracking_number || "",
       tracking_carrier: order.tracking_carrier || "",
+      cancellation_reason: "",
     });
   };
 
   const saveEdit = async () => {
     if (!selectedId) return;
     const prev = orders.find(o => o.id === selectedId);
+    const newStatus = editData.fulfillment_status;
+    const prevStatus = prev?.fulfillment_status || "unfulfilled";
+    const becameCancelled = newStatus === "cancelled" && prevStatus !== "cancelled";
+    const reason = (editData.cancellation_reason || "").trim();
+    if (becameCancelled && !reason) {
+      toast({
+        title: "Reason required",
+        description: "Please add a short reason before cancelling this order.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSaving(true);
+    const updatePayload: any = {
+      payment_status: editData.payment_status,
+      fulfillment_status: editData.fulfillment_status,
+      status: editData.fulfillment_status,
+      tracking_number: editData.tracking_number || null,
+      tracking_carrier: editData.tracking_carrier || null,
+    };
+    if (becameCancelled) {
+      const stamp = new Date().toISOString().slice(0, 10);
+      const existing = (prev?.admin_notes || "").trim();
+      updatePayload.admin_notes = (existing ? existing + "\n\n" : "") +
+        `[${stamp}] Cancelled: ${reason}`;
+    }
     const { error } = await supabase
       .from("orders")
-      .update({
-        payment_status: editData.payment_status,
-        fulfillment_status: editData.fulfillment_status,
-        status: editData.fulfillment_status, // keep legacy column in sync
-        tracking_number: editData.tracking_number || null,
-        tracking_carrier: editData.tracking_carrier || null,
-      })
+      .update(updatePayload)
       .eq("id", selectedId);
     setSaving(false);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Updated", description: "Order updated successfully." });
-      // Auto-send "shipped" email when fulfillment transitions to shipped
-      // (or when a tracking number is added to an already-shipped order).
+      // Status-change email triggers (skipping "unfulfilled")
       const becameShipped =
-        editData.fulfillment_status === "shipped" &&
-        (prev?.fulfillment_status !== "shipped" ||
+        newStatus === "shipped" &&
+        (prevStatus !== "shipped" ||
           (editData.tracking_number && editData.tracking_number !== (prev?.tracking_number || "")));
-      if (becameShipped) {
+      const becameDelivered = newStatus === "delivered" && prevStatus !== "delivered";
+
+      const triggerEmail = async (
+        emailType: "order_shipped" | "order_delivered" | "order_cancelled",
+        extra: Record<string, unknown> = {},
+        labels: { ok: string; fail: string },
+      ) => {
         const { data, error: mailErr } = await supabase.functions.invoke("send-order-emails", {
-          body: { orderId: selectedId, emailType: "order_shipped", force: true },
+          body: { orderId: selectedId, emailType, force: true, ...extra },
         });
         if (mailErr || (data as any)?.error) {
           toast({
-            title: "Shipping email failed",
-            description: (mailErr as any)?.message || (data as any)?.error || "Could not send shipping email.",
+            title: labels.fail,
+            description: (mailErr as any)?.message || (data as any)?.error || "Could not send email.",
             variant: "destructive",
           });
         } else if (!(data as any)?.skipped) {
-          toast({ title: "Shipping email sent", description: "Customer was notified with tracking details." });
+          toast({ title: labels.ok, description: "Customer has been notified by email." });
         }
+      };
+
+      if (becameShipped) {
+        await triggerEmail("order_shipped", {}, { ok: "Shipping email sent", fail: "Shipping email failed" });
+      } else if (becameDelivered) {
+        await triggerEmail("order_delivered", {}, { ok: "Delivery email sent", fail: "Delivery email failed" });
+      } else if (becameCancelled) {
+        await triggerEmail("order_cancelled", { cancellationReason: reason }, { ok: "Cancellation email sent", fail: "Cancellation email failed" });
       }
       setEditing(false);
       fetchOrders();
@@ -545,6 +579,23 @@ function DrawerContent({
                   {FULFILLMENT_OPTIONS.map(s => <option key={s} value={s}>{cap(s)}</option>)}
                 </select>
               </label>
+              {editData.fulfillment_status === "cancelled" && (
+                <label className="block">
+                  <span className="text-sm text-muted-foreground">
+                    Reason for cancellation <span className="text-destructive">*</span>
+                  </span>
+                  <textarea
+                    value={editData.cancellation_reason}
+                    onChange={(e) => setEditData((d: any) => ({ ...d, cancellation_reason: e.target.value }))}
+                    placeholder="e.g. Customer requested cancellation, item out of stock, payment issue..."
+                    rows={3}
+                    className="mt-1.5 w-full rounded-md border border-border bg-background text-[15px] px-3 py-2 resize-y"
+                  />
+                  <span className="mt-1 block text-xs text-muted-foreground">
+                    Sent to the customer in the cancellation email and saved to admin notes.
+                  </span>
+                </label>
+              )}
               <div className="grid grid-cols-2 gap-3">
                 <label className="block">
                   <span className="text-sm text-muted-foreground">Carrier</span>
