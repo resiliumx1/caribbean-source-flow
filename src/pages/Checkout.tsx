@@ -352,11 +352,15 @@ export default function Checkout() {
                   <div className="border-t border-border pt-4 space-y-2">
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Subtotal</span>
-                      <span>{prices.primary}</span>
+                      <span>{subtotalPrices.primary}</span>
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Shipping</span>
-                      <span>Free</span>
+                      <span>
+                        {hasPhysical && shippingUsd > 0
+                          ? shippingPrices.primary
+                          : "Free"}
+                      </span>
                     </div>
                     <div className="flex justify-between pt-2 border-t border-border">
                       <span className="font-semibold text-foreground">Total</span>
