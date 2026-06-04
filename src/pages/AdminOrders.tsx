@@ -149,6 +149,7 @@ export default function AdminOrders() {
 
   const saveEdit = async () => {
     if (!selectedId) return;
+    const prev = orders.find(o => o.id === selectedId);
     setSaving(true);
     const { error } = await supabase
       .from("orders")
@@ -165,6 +166,26 @@ export default function AdminOrders() {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Updated", description: "Order updated successfully." });
+      // Auto-send "shipped" email when fulfillment transitions to shipped
+      // (or when a tracking number is added to an already-shipped order).
+      const becameShipped =
+        editData.fulfillment_status === "shipped" &&
+        (prev?.fulfillment_status !== "shipped" ||
+          (editData.tracking_number && editData.tracking_number !== (prev?.tracking_number || "")));
+      if (becameShipped) {
+        const { data, error: mailErr } = await supabase.functions.invoke("send-order-emails", {
+          body: { orderId: selectedId, emailType: "order_shipped", force: true },
+        });
+        if (mailErr || (data as any)?.error) {
+          toast({
+            title: "Shipping email failed",
+            description: (mailErr as any)?.message || (data as any)?.error || "Could not send shipping email.",
+            variant: "destructive",
+          });
+        } else if (!(data as any)?.skipped) {
+          toast({ title: "Shipping email sent", description: "Customer was notified with tracking details." });
+        }
+      }
       setEditing(false);
       fetchOrders();
     }
