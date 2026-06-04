@@ -579,6 +579,23 @@ function DrawerContent({
                   {FULFILLMENT_OPTIONS.map(s => <option key={s} value={s}>{cap(s)}</option>)}
                 </select>
               </label>
+              {editData.fulfillment_status === "cancelled" && (
+                <label className="block">
+                  <span className="text-sm text-muted-foreground">
+                    Reason for cancellation <span className="text-destructive">*</span>
+                  </span>
+                  <textarea
+                    value={editData.cancellation_reason}
+                    onChange={(e) => setEditData((d: any) => ({ ...d, cancellation_reason: e.target.value }))}
+                    placeholder="e.g. Customer requested cancellation, item out of stock, payment issue..."
+                    rows={3}
+                    className="mt-1.5 w-full rounded-md border border-border bg-background text-[15px] px-3 py-2 resize-y"
+                  />
+                  <span className="mt-1 block text-xs text-muted-foreground">
+                    Sent to the customer in the cancellation email and saved to admin notes.
+                  </span>
+                </label>
+              )}
               <div className="grid grid-cols-2 gap-3">
                 <label className="block">
                   <span className="text-sm text-muted-foreground">Carrier</span>
