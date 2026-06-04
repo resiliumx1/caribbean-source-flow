@@ -51,7 +51,7 @@ export default function Checkout() {
     customer_name: "",
     email: "",
     phone: "",
-    delivery_type: "local" as "local" | "international",
+    delivery_type: "pickup" as "local" | "international" | "pickup",
     address_line1: "",
     address_line2: "",
     city: "",
@@ -72,10 +72,38 @@ export default function Checkout() {
     (sum, item) => sum + (item.product?.price_xcd ?? 0) * item.quantity,
     0
   );
-  const prices = formatPriceBoth(subtotalUsd, subtotalXcd);
 
-  // Both delivery types require an address (local courier or international shipping).
-  const isShipping = true;
+  // Detect whether cart needs shipping at all (any non-digital item)
+  const hasPhysical = cartItems.some(
+    (i) => i.product && !(i.product as any).is_digital
+  );
+
+  // Shipping rules:
+  //   - All digital → $0
+  //   - Pickup (Saint Lucia) → $0
+  //   - Local delivery (Saint Lucia) → 30 XCD (~$11.11 USD)
+  //   - International → $30 USD (81 XCD)
+  const EXCHANGE = 2.7;
+  let shippingUsd = 0;
+  let shippingXcd = 0;
+  if (hasPhysical) {
+    if (form.delivery_type === "local") {
+      shippingXcd = 30;
+      shippingUsd = +(30 / EXCHANGE).toFixed(2);
+    } else if (form.delivery_type === "international") {
+      shippingUsd = 30;
+      shippingXcd = +(30 * EXCHANGE).toFixed(2);
+    }
+  }
+
+  const totalUsd = subtotalUsd + shippingUsd;
+  const totalXcd = subtotalXcd + shippingXcd;
+  const subtotalPrices = formatPriceBoth(subtotalUsd, subtotalXcd);
+  const shippingPrices = formatPriceBoth(shippingUsd, shippingXcd);
+  const prices = formatPriceBoth(totalUsd, totalXcd);
+
+  // Pickup doesn't need a shipping address.
+  const isShipping = hasPhysical && form.delivery_type !== "pickup";
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
   const isFormValid = useMemo(() => {
     if (!form.customer_name.trim()) return false;
