@@ -1,0 +1,1 @@
+UPDATE public.orders SET is_test = true WHERE id IN ('d18de8ab-37b4-468e-b539-3e73224ac0bb','cb76c303-9bac-4604-96c2-9dda7f912b64','1fa89625-f244-44c1-ab48-c38b48f01065');
