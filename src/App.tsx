@@ -120,6 +120,7 @@ function AppContent() {
   const showHeader = !pagesWithoutHeader.some(
     (path) => location.pathname.startsWith(path)
   );
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <>
@@ -166,9 +167,11 @@ function AppContent() {
         </Routes>
       </Suspense>
       <CompareBar />
-      <Suspense fallback={null}>
-        <ChatWidget />
-      </Suspense>
+      {!isAdminRoute && (
+        <Suspense fallback={null}>
+          <ChatWidget />
+        </Suspense>
+      )}
       <CookieConsent />
     </>
   );
