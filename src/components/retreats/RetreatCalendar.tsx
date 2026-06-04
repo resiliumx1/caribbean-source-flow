@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import {
   format,
   startOfMonth,
@@ -447,9 +448,20 @@ export function RetreatCalendar() {
 
                 {/* CTAs */}
                 <div className="space-y-3">
-                  <Button className="w-full" size="lg" disabled={!pricing}>
-                    Secure with 50% Deposit
-                  </Button>
+                  {pricing && (
+                    <Link
+                      to={
+                        selectedType === "group" && getRetreatForDate(selectedRange.start!)
+                          ? `/retreats/book/${(groupRetreat as any)?.slug || "group-immersion"}?date=${getRetreatForDate(selectedRange.start!)!.id}`
+                          : `/retreats/book/${(soloRetreat as any)?.slug || "solo-retreat"}?nights=${pricing.nights}`
+                      }
+                      className="block"
+                    >
+                      <Button className="w-full" size="lg">
+                        Book Now — Pay in Full or 50% Deposit
+                      </Button>
+                    </Link>
+                  )}
                   <a
                     href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}
                     target="_blank"
