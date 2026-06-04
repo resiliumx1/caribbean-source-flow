@@ -157,7 +157,7 @@ export default function AdminOrders() {
   const resendConfirmation = async (orderId: string) => {
     setResending(true);
     const { data, error } = await supabase.functions.invoke("send-order-emails", {
-      body: { orderId, emailType: "order_placed" },
+      body: { orderId, emailType: "order_placed", force: true },
     });
     setResending(false);
     if (error || (data as any)?.error) {
