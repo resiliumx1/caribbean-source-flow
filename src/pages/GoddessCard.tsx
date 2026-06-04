@@ -99,7 +99,7 @@ function QRLightbox({ onClose }: { onClose: () => void }) {
           <p className="text-white/80 text-[14px] text-center font-medium tracking-wide">
             Point your camera here to open this card
           </p>
-          <p className="text-white/40 text-[11px] text-center break-all">{CARD_URL}</p>
+          <p className="text-white/75 text-[11px] text-center break-all">{CARD_URL}</p>
         </motion.div>
         <button
           onClick={onClose}
@@ -302,7 +302,7 @@ export default function GoddessCard() {
   const bg = isDark ? "bg-[#0e0e16] text-white" : "bg-[#f4f0e8] text-[#1a1a2e]";
   const cardBg = isDark ? "bg-[#16161d]" : "bg-white";
   const borderColor = isDark ? "border-white/10" : "border-[#1a1a2e]/10";
-  const mutedText = isDark ? "text-white/60" : "text-[#1a1a2e]/60";
+  const mutedText = isDark ? "text-white/75" : "text-[#1a1a2e]/75";
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${bg}`} style={{ fontFamily: "'DM Sans', sans-serif" }}>
