@@ -215,6 +215,33 @@ export type Database = {
         }
         Relationships: []
       }
+      email_send_failures: {
+        Row: {
+          created_at: string
+          email_type: string
+          error_message: string
+          id: string
+          order_id: string | null
+          recipient: string | null
+        }
+        Insert: {
+          created_at?: string
+          email_type: string
+          error_message: string
+          id?: string
+          order_id?: string | null
+          recipient?: string | null
+        }
+        Update: {
+          created_at?: string
+          email_type?: string
+          error_message?: string
+          id?: string
+          order_id?: string | null
+          recipient?: string | null
+        }
+        Relationships: []
+      }
       failed_order_alerts: {
         Row: {
           amount_usd: number | null

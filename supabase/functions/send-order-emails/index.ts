@@ -25,13 +25,16 @@ interface RequestBody {
   orderId: string;
   emailType: "order_placed" | "order_shipped";
   fromFallback?: boolean;
+  force?: boolean;
 }
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  let parsedBody: RequestBody | null = null;
   try {
-    const { orderId, emailType, fromFallback } = (await req.json()) as RequestBody;
+    parsedBody = (await req.json()) as RequestBody;
+    const { orderId, emailType, fromFallback, force } = parsedBody;
     if (!orderId) throw new Error("orderId is required");
     if (!emailType) throw new Error("emailType is required");
 
@@ -46,6 +49,15 @@ Deno.serve(async (req) => {
     const { data: order, error: orderErr } = await supabase
       .from("orders").select("*").eq("id", orderId).single();
     if (orderErr || !order) throw new Error(orderErr?.message || "Order not found");
+
+    // Skip test orders unless explicitly forced (e.g. admin "Resend confirmation").
+    if (order.is_test && !force) {
+      console.log(`Skipping email for test order ${order.order_number} (${orderId})`);
+      return new Response(
+        JSON.stringify({ success: true, skipped: true, reason: "is_test" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     const { data: items, error: itemsErr } = await supabase
       .from("order_items").select("*").eq("order_id", orderId);
@@ -117,6 +129,21 @@ Deno.serve(async (req) => {
     throw new Error(`Unknown emailType: ${emailType}`);
   } catch (err: any) {
     console.error("send-order-emails error:", err);
+    // Best-effort failure log so silent failures are visible to admins.
+    try {
+      const supabaseLog = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      );
+      await supabaseLog.from("email_send_failures").insert({
+        order_id: parsedBody?.orderId ?? null,
+        email_type: parsedBody?.emailType ?? "unknown",
+        recipient: null,
+        error_message: String(err?.message || err),
+      });
+    } catch (logErr) {
+      console.error("Failed to log email failure:", logErr);
+    }
     return new Response(
       JSON.stringify({ error: err?.message || "Failed to send email" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
