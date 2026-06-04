@@ -23,9 +23,10 @@ const ADMIN_CC = "blessedlove@mountkailashslu.com";
 
 interface RequestBody {
   orderId: string;
-  emailType: "order_placed" | "order_shipped";
+  emailType: "order_placed" | "order_shipped" | "order_delivered" | "order_cancelled";
   fromFallback?: boolean;
   force?: boolean;
+  cancellationReason?: string;
 }
 
 Deno.serve(async (req) => {
@@ -34,7 +35,7 @@ Deno.serve(async (req) => {
   let parsedBody: RequestBody | null = null;
   try {
     parsedBody = (await req.json()) as RequestBody;
-    const { orderId, emailType, fromFallback, force } = parsedBody;
+    const { orderId, emailType, fromFallback, force, cancellationReason } = parsedBody;
     if (!orderId) throw new Error("orderId is required");
     if (!emailType) throw new Error("emailType is required");
 
@@ -120,6 +121,48 @@ Deno.serve(async (req) => {
         subject: `Your order is on the way! - ${order.order_number}`,
         html: customerOrderShippedHtml(order, items || []),
       });
+      return new Response(
+        JSON.stringify({ success: true, customer: result }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (emailType === "order_delivered") {
+      const result = await sendEmail({
+        from: customerFrom,
+        to: [order.email],
+        reply_to: SUPPORT_EMAIL,
+        subject: `Your order has been delivered - ${order.order_number}`,
+        html: customerOrderDeliveredHtml(order, items || []),
+      });
+      return new Response(
+        JSON.stringify({ success: true, customer: result }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (emailType === "order_cancelled") {
+      const reason = (cancellationReason || "").trim();
+      const result = await sendEmail({
+        from: customerFrom,
+        to: [order.email],
+        reply_to: SUPPORT_EMAIL,
+        subject: `Your order has been cancelled - ${order.order_number}`,
+        html: customerOrderCancelledHtml(order, items || [], reason),
+      });
+      // Notify admin too
+      try {
+        await sendEmail({
+          from: adminFrom,
+          to: [ADMIN_TO],
+          cc: [ADMIN_CC],
+          reply_to: order.email,
+          subject: `❌ Order ${order.order_number} cancelled - ${order.customer_name}`,
+          html: `<p>Order <strong>${esc(order.order_number)}</strong> was cancelled.</p><p><strong>Reason:</strong> ${esc(reason || "(no reason provided)")}</p>`,
+        });
+      } catch (e) {
+        console.error("Admin cancel email failed:", e);
+      }
       return new Response(
         JSON.stringify({ success: true, customer: result }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
