@@ -1,47 +1,46 @@
-# Improve Crawler & LLM Readability (A + C)
+## Goal
 
-Goal: cut the 3706% rendered-content gap so search engines and AI crawlers (ChatGPT, Perplexity, Claude, Googlebot) see real content instead of an empty `<div id="root">`.
+Fix admin navigation so it works on every screen size, lands on Orders by default, and never traps the user inside a view. Styling (warm cream, deep green, terracotta) is preserved.
 
-## What changes
+## Part 1 — Default landing tab & order
 
-### Part A — Prerender all public routes at build time
+In `src/App.tsx`:
+- Change the `/admin` index redirect from `/admin/products` to `/admin/orders`.
 
-Add a prerender step that runs after `vite build`, spins up a headless browser, visits every public route, and writes the fully-rendered HTML back into `dist/<route>/index.html`. React still hydrates normally for live users.
+In `src/components/admin/AdminLayout.tsx`:
+- Reorder the nav array to: Orders, Products, Retreats, Retreat Dates, Reviews, Webinars, Analytics, Notifications.
+- Active highlight logic already keys off `location.pathname`, so Orders will appear active on first load.
 
-- Install `puppeteer` (dev dep) + small custom prerender script (no plugin lock-in, works cleanly with our strict whitelist router).
-- Route whitelist (mirrors current router): `/`, `/shop`, `/shop/[per category page]`, `/the-answer`, `/webinars`, `/retreats`, `/school`, `/wholesale`, `/about`, `/contact`, `/customer-portal`, plus key product detail routes if statically known. Dynamic product slugs are skipped (handled by React at runtime + Helmet meta).
-- Hook into `package.json` as `"build": "vite build && node scripts/prerender.mjs"`.
-- Preserves Helmet-injected `<title>`, meta, JSON-LD per route — they get baked into each snapshot.
-- Gate Entrance: prerender waits for `networkidle0` + a short delay so hero/nav/footer render before snapshot. Gate animation still plays on real load (it's GSAP, runs on hydration).
+## Part 2 — Responsive admin nav (hamburger under ~1024px)
 
-### Part C — Enrich `<noscript>` fallback in index.html
+In `src/components/admin/AdminLayout.tsx`:
+- Keep the existing desktop row, but gate it with `hidden lg:flex` instead of `md:flex`.
+- Add a hamburger button visible `lg:hidden`, placed to the left of the bell so logo / hamburger / bell / theme toggle stay in a single non-overflowing row at 375px and 768px (small icon-only buttons, tighter gaps on mobile).
+- Tapping the hamburger opens a slide-in `Sheet` (left side, full height, scrollable `overflow-y-auto`) containing:
+  - Every nav item (Orders → Notifications) with active state highlighted and the same unread badge on Notifications.
+  - A divider, then: account email, dark-mode toggle, Back to Site link, Sign Out button.
+  - The bell stays in the header (already responsive), but the mobile menu also includes a "Notifications" entry.
+- Selecting any item calls `navigate(...)` and closes the sheet. Sheet already closes on outside click and Escape via Radix.
+- Ensure header layout on small widths: logo shrinks to icon only, email hidden below `lg`, no overlap.
 
-Hand-write a static fallback inside `<div id="root">` and `<noscript>` containing:
+## Part 3 — Back navigation / escape hatches
 
-- H1 "Mount Kailash Rejuvenation Centre"
-- Tagline + 2–3 sentence description (mineral rich soil, clinical bush medicine, Saint Lucia)
-- Primary nav links as plain `<a href>` (Shop, The Answer, Webinars, Retreats, School, Wholesale, Contact)
-- Official contact numbers + address
-- Link to sitemap
+Order detail drawer (`src/pages/AdminOrders.tsx`):
+- Add a visible close (X) button in the sticky header of the side panel.
+- Clicking the backdrop already closes it; confirm and keep.
+- Add an Escape key listener that closes the drawer (and exits edit mode first if active).
+- Add a `history.pushState` when the drawer opens and a `popstate` listener that intercepts the browser Back button to close the drawer instead of leaving the admin. Only after the drawer is closed does Back navigate normally. Same treatment for the edit modal: Back closes edit first, then the drawer, then the page.
 
-React replaces the `<div id="root">` content on hydration — zero visual impact for real users. `<noscript>` is invisible unless JS is disabled.
+Mobile nav sheet:
+- Radix Sheet already handles Escape and outside-click; no extra work.
 
-## Files touched
+Sub-pages reached from a tab:
+- The admin uses tabs only (no nested detail routes today besides the Orders drawer, which is covered above). No additional Back buttons needed unless a tab grows a sub-route later.
 
-- `package.json` — add `puppeteer` devDep, update `build` script
-- `scripts/prerender.mjs` — new prerender runner (route list + puppeteer loop)
-- `index.html` — enrich fallback markup inside `#root` and `<noscript>`
-- `vite.config.ts` — no change expected
+## Technical notes
 
-## Risk / safety
-
-- Zero runtime impact: prerender is build-time only; noscript is invisible with JS on.
-- Build time increases ~30–90s depending on route count.
-- If prerender fails for a route, script logs + skips (doesn't fail the build).
-- Gate Entrance, GSAP, framer-motion all still run on hydration exactly as today.
-
-## Verification
-
-After republish, test with:
-- `curl https://mountkailashslu.com/` → should return real HTML with headings/nav, not empty `#root`
-- Re-run the SEO checker — rendered-content % should drop dramatically (target <300%)
+- Files touched: `src/App.tsx`, `src/components/admin/AdminLayout.tsx`, `src/pages/AdminOrders.tsx`.
+- New imports: `Menu` icon from `lucide-react`; `Sheet`, `SheetContent`, `SheetTrigger` from `@/components/ui/sheet` in `AdminLayout`.
+- Breakpoint: Tailwind `lg` (1024px) — desktop row above, hamburger below.
+- No backend, schema, or tab-content changes.
+- No styling token changes; reuse existing cream/green/terracotta classes already used in the header.
