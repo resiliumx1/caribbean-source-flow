@@ -318,15 +318,26 @@ function DrawerContent({
   const subtotal = Number(order.subtotal_usd ?? 0);
   const shipping = Number(order.shipping_usd ?? 0);
   const total = Number(order.total_usd ?? 0);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const handleCopy = async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 1500);
+    } catch {
+      // ignore
+    }
+  };
 
   return (
-    <div className="flex flex-col min-h-full">
+    <div className="flex flex-col min-h-full text-[15px] leading-[1.5]">
       {/* Header */}
-      <div className="sticky top-0 bg-background border-b border-border px-5 py-4 flex items-start justify-between gap-3 z-10">
+      <div className="sticky top-0 bg-background border-b border-border px-5 sm:px-6 py-5 flex items-start justify-between gap-3 z-10">
         <div className="min-w-0">
-          <h2 className="text-xl font-bold text-foreground">{order.order_number || "—"}</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">{formatDateTime(order.created_at)}</p>
-          <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+          <h2 className="text-2xl font-bold text-foreground">{order.order_number || "—"}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{formatDateTime(order.created_at)}</p>
+          <div className="flex items-center gap-1.5 mt-3 flex-wrap">
             <Pill label={payment} color={PAYMENT_COLORS[payment] || "#6b7280"} />
             <Pill label={fulfillment} color={FULFILLMENT_COLORS[fulfillment] || "#6b7280"} />
             {order.is_test && (
@@ -343,137 +354,185 @@ function DrawerContent({
         </button>
       </div>
 
-      <div className="flex-1 p-5 space-y-6">
+      <div className="flex-1 px-5 sm:px-6 py-6 space-y-7">
+        {/* Shipping Address */}
+        <section>
+          <h3 className="uppercase tracking-widest text-[11px] font-bold text-muted-foreground mb-3">Shipping Address</h3>
+          <div className="rounded-xl border border-border bg-muted/30 p-4">
+            <p className="text-foreground whitespace-pre-line font-medium">{formatAddress(order)}</p>
+          </div>
+        </section>
+
         {/* Products */}
         <section>
-          <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">Products</h3>
-          <div className="space-y-2">
+          <h3 className="uppercase tracking-widest text-[11px] font-bold text-muted-foreground mb-3">Products</h3>
+          <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
             {items.map((i: any) => {
               const unit = Number(i.unit_price ?? i.price_usd ?? 0);
               const line = unit * (i.quantity || 0);
               return (
-                <div key={i.id} className="flex items-start justify-between gap-3 py-2 border-b border-border/50 last:border-0">
+                <div key={i.id} className="flex items-start justify-between gap-4 py-1">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground">{i.product_name}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Qty {i.quantity} · ${unit.toFixed(2)} each</p>
+                    <p className="font-medium text-foreground">{i.product_name}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">Qty {i.quantity} · ${unit.toFixed(2)} each</p>
                   </div>
-                  <p className="text-sm font-semibold text-foreground shrink-0">${line.toFixed(2)}</p>
+                  <p className="font-semibold text-foreground tabular-nums shrink-0">${line.toFixed(2)}</p>
                 </div>
               );
             })}
-          </div>
 
-          <div className="mt-4 space-y-1.5 pt-3 border-t border-border">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span className="text-foreground">${subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Shipping</span>
-              <span className="text-foreground">${shipping.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-lg font-bold pt-2 border-t border-border/50">
-              <span className="text-foreground">Total</span>
-              <span className="text-foreground">${total.toFixed(2)} <span className="text-xs font-normal text-muted-foreground">USD</span></span>
+            <div className="space-y-2 pt-3 border-t border-border/60">
+              <div className="flex justify-between text-[15px]">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-foreground tabular-nums">${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-[15px]">
+                <span className="text-muted-foreground">Shipping</span>
+                <span className="text-foreground tabular-nums">${shipping.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-xl font-bold pt-2 border-t border-border/60">
+                <span className="text-foreground">Total</span>
+                <span className="text-foreground tabular-nums">${total.toFixed(2)} <span className="text-sm font-normal text-muted-foreground">USD</span></span>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Customer */}
         <section>
-          <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">Customer</h3>
-          <p className="text-sm font-medium text-foreground">{order.customer_name || "—"}</p>
-          <p className="text-sm text-muted-foreground">{order.email}</p>
-          {order.phone && <p className="text-sm text-muted-foreground">{order.phone}</p>}
+          <h3 className="uppercase tracking-widest text-[11px] font-bold text-muted-foreground mb-3">Customer</h3>
+          <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2.5">
+            <div>
+              <p className="text-muted-foreground text-sm">Name</p>
+              <p className="font-medium text-foreground">{order.customer_name || "—"}</p>
+            </div>
+            {order.email && (
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-muted-foreground text-sm">Email</p>
+                  <p className="font-medium text-foreground truncate">{order.email}</p>
+                </div>
+                <button
+                  onClick={() => handleCopy(order.email, "email")}
+                  className="shrink-0 w-9 h-9 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground"
+                  aria-label="Copy email"
+                  title="Copy email"
+                >
+                  {copiedField === "email" ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+            )}
+            {order.phone && (
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-muted-foreground text-sm">Phone</p>
+                  <p className="font-medium text-foreground truncate">{order.phone}</p>
+                </div>
+                <button
+                  onClick={() => handleCopy(order.phone, "phone")}
+                  className="shrink-0 w-9 h-9 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground"
+                  aria-label="Copy phone"
+                  title="Copy phone"
+                >
+                  {copiedField === "phone" ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+            )}
+          </div>
         </section>
 
-        {/* Shipping Address */}
+        {/* Payment & Fulfillment */}
         <section>
-          <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">Shipping address</h3>
-          <p className="text-sm text-foreground whitespace-pre-line">{formatAddress(order)}</p>
-        </section>
-
-        {/* Fulfillment */}
-        <section>
-          <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">Fulfillment</h3>
-          <div className="text-sm text-foreground space-y-1">
-            <p><span className="text-muted-foreground">Payment:</span> <span className="font-medium">{cap(payment)}</span></p>
-            <p><span className="text-muted-foreground">Status:</span> <span className="font-medium">{cap(fulfillment)}</span></p>
-            <p className="flex items-center gap-1.5">
-              <Truck className="w-3.5 h-3.5 text-muted-foreground" />
-              {order.tracking_number
-                ? <span className="font-medium">{order.tracking_number}{order.tracking_carrier ? ` (${order.tracking_carrier.toUpperCase()})` : ""}</span>
-                : <span className="text-muted-foreground italic">No tracking number yet</span>}
-            </p>
+          <h3 className="uppercase tracking-widest text-[11px] font-bold text-muted-foreground mb-3">Payment &amp; Fulfillment</h3>
+          <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground text-sm">Payment status</span>
+              <span className="font-semibold text-foreground">{cap(payment)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground text-sm">Fulfillment status</span>
+              <span className="font-semibold text-foreground">{cap(fulfillment)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground text-sm">Tracking</span>
+              <span className="flex items-center gap-1.5">
+                <Truck className="w-4 h-4 text-muted-foreground" />
+                {order.tracking_number
+                  ? <span className="font-medium">{order.tracking_number}{order.tracking_carrier ? ` (${order.tracking_carrier.toUpperCase()})` : ""}</span>
+                  : <span className="text-muted-foreground italic">No tracking number yet</span>}
+              </span>
+            </div>
           </div>
         </section>
 
         {/* Note */}
         {(order.note || order.customer_notes) && (
           <section>
-            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">Order note</h3>
-            <p className="text-sm text-foreground whitespace-pre-line bg-muted/50 rounded-lg p-3">{order.note || order.customer_notes}</p>
+            <h3 className="uppercase tracking-widest text-[11px] font-bold text-muted-foreground mb-3">Order Note</h3>
+            <div className="rounded-xl border border-border bg-muted/30 p-4">
+              <p className="text-foreground whitespace-pre-line">{order.note || order.customer_notes}</p>
+            </div>
           </section>
         )}
 
         {/* Edit form */}
         {editing && (
-          <section className="bg-muted/50 rounded-lg p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-foreground">Edit status &amp; tracking</h3>
-            <div className="space-y-2">
+          <section className="rounded-xl border border-border bg-muted/50 p-5 space-y-4">
+            <h3 className="text-base font-bold text-foreground">Edit status &amp; tracking</h3>
+            <div className="space-y-3">
               <label className="block">
-                <span className="text-xs text-muted-foreground">Payment status</span>
+                <span className="text-sm text-muted-foreground">Payment status</span>
                 <select
                   value={editData.payment_status}
                   onChange={(e) => setEditData((d: any) => ({ ...d, payment_status: e.target.value }))}
-                  className="mt-1 w-full h-10 rounded-md border border-border bg-background text-sm px-2"
+                  className="mt-1.5 w-full h-11 rounded-md border border-border bg-background text-[15px] px-3"
                 >
                   {PAYMENT_OPTIONS.map(s => <option key={s} value={s}>{cap(s)}</option>)}
                 </select>
               </label>
               <label className="block">
-                <span className="text-xs text-muted-foreground">Fulfillment status</span>
+                <span className="text-sm text-muted-foreground">Fulfillment status</span>
                 <select
                   value={editData.fulfillment_status}
                   onChange={(e) => setEditData((d: any) => ({ ...d, fulfillment_status: e.target.value }))}
-                  className="mt-1 w-full h-10 rounded-md border border-border bg-background text-sm px-2"
+                  className="mt-1.5 w-full h-11 rounded-md border border-border bg-background text-[15px] px-3"
                 >
                   {FULFILLMENT_OPTIONS.map(s => <option key={s} value={s}>{cap(s)}</option>)}
                 </select>
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <label className="block">
-                  <span className="text-xs text-muted-foreground">Carrier</span>
+                  <span className="text-sm text-muted-foreground">Carrier</span>
                   <select
                     value={editData.tracking_carrier}
                     onChange={(e) => setEditData((d: any) => ({ ...d, tracking_carrier: e.target.value }))}
-                    className="mt-1 w-full h-10 rounded-md border border-border bg-background text-sm px-2"
+                    className="mt-1.5 w-full h-11 rounded-md border border-border bg-background text-[15px] px-3"
                   >
                     {CARRIER_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                   </select>
                 </label>
                 <label className="block">
-                  <span className="text-xs text-muted-foreground">Tracking #</span>
+                  <span className="text-sm text-muted-foreground">Tracking #</span>
                   <input
                     value={editData.tracking_number}
                     onChange={(e) => setEditData((d: any) => ({ ...d, tracking_number: e.target.value }))}
                     placeholder="Tracking number"
-                    className="mt-1 w-full h-10 rounded-md border border-border bg-background text-sm px-3"
+                    className="mt-1.5 w-full h-11 rounded-md border border-border bg-background text-[15px] px-3"
                   />
                 </label>
               </div>
-              <div className="flex gap-2 pt-1">
+              <div className="flex gap-3 pt-1">
                 <button
                   onClick={saveEdit}
                   disabled={saving}
-                  className="flex-1 h-11 rounded-md bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-1.5 hover:bg-primary/90 disabled:opacity-60"
+                  className="flex-1 h-12 rounded-md bg-primary text-primary-foreground text-[15px] font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 disabled:opacity-60"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   Save changes
                 </button>
                 <button
                   onClick={cancelEdit}
-                  className="h-11 px-4 rounded-md border border-border text-sm text-muted-foreground hover:text-foreground"
+                  className="h-12 px-5 rounded-md border border-border text-[15px] font-medium text-muted-foreground hover:text-foreground"
                 >
                   Cancel
                 </button>
@@ -485,17 +544,17 @@ function DrawerContent({
 
       {/* Footer actions */}
       {!editing && (
-        <div className="sticky bottom-0 bg-background border-t border-border p-4 flex gap-2">
+        <div className="sticky bottom-0 bg-background border-t border-border px-5 sm:px-6 py-5 flex gap-3">
           <button
             onClick={startEdit}
-            className="flex-1 h-11 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90"
+            className="flex-1 h-12 rounded-md bg-primary text-primary-foreground text-[15px] font-semibold hover:bg-primary/90"
           >
             Edit status &amp; tracking
           </button>
           <button
             onClick={onResend}
             disabled={resending}
-            className="flex-1 h-11 rounded-md border border-border text-sm font-semibold text-foreground hover:bg-muted inline-flex items-center justify-center gap-1.5 disabled:opacity-60"
+            className="flex-1 h-12 rounded-md border border-border text-[15px] font-semibold text-foreground hover:bg-muted inline-flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {resending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
             Resend confirmation
@@ -505,3 +564,4 @@ function DrawerContent({
     </div>
   );
 }
+
