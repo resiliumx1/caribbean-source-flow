@@ -470,6 +470,20 @@ export default function AdminProducts() {
                     {BADGE_OPTIONS.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                <label className="flex items-center gap-2 mt-2 text-xs cursor-pointer select-none">
+                  <Checkbox
+                    checked={!!(product as any).is_digital}
+                    onCheckedChange={(checked) =>
+                      updateProduct.mutate({
+                        id: product.id,
+                        updates: { is_digital: !!checked },
+                      })
+                    }
+                  />
+                  <span className="text-muted-foreground">
+                    Digital product (no shipping)
+                  </span>
+                </label>
               </CardHeader>
               <CardContent className="space-y-3">
                 <ProductImageUpload
