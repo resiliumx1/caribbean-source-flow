@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Search, Truck, Save, Mail, X } from "lucide-react";
+import { Loader2, Search, Truck, Save, Mail, X, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
 
 const PAYMENT_OPTIONS = ["unpaid", "paid", "refunded"];
 const FULFILLMENT_OPTIONS = ["unfulfilled", "shipped", "delivered", "cancelled"];
