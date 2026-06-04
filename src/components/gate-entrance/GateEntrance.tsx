@@ -176,7 +176,7 @@ export function GateEntrance({ onGateComplete }: GateEntranceProps) {
       {/* Hero Text */}
       <div className="hero-content" ref={heroContentRef}>
         <span className="h-eyebrow">Welcome to</span>
-        <h1 className="h-title">Mount Kailash</h1>
+        <div className="h-title">Mount Kailash</div>
         <p className="h-sub">Rejuvenation Centre</p>
         <div className="h-divider">
           <div className="diam" />

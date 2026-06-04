@@ -99,10 +99,9 @@ const TrinityHomepage = () => {
       )}
 
       <Helmet>
-        <title>Mount Kailash Rejuvenation Centre | Bush Medicine SLU</title>
-        <meta name="description" content="Caribbean clinical bush medicine from Saint Lucia. Shop herbal tinctures, book a healing retreat, or train as an herbal physician with Priest Kailash." />
-        <meta property="og:title" content="Mount Kailash Rejuvenation Centre | Bush Medicine SLU" />
-        <meta property="og:description" content="Caribbean clinical bush medicine from Saint Lucia. Shop herbal tinctures, book a healing retreat, or train as an herbal physician with Priest Kailash." />
+        <title>Mount Kailash Rejuvenation Centre — Clinical Bush Medicine, Retreats & Herbal School, Saint Lucia</title>
+        <meta property="og:title" content="Mount Kailash Rejuvenation Centre — Clinical Bush Medicine, Retreats & Herbal School, Saint Lucia" />
+        <meta property="og:description" content="Mount Kailash Rejuvenation Centre offers Caribbean clinical bush medicine from Saint Lucia. Shop herbal tinctures, book a healing retreat, or train as an herbal physician with Priest Kailash." />
         <meta property="og:url" content={`${SITE_URL}/`} />
         <meta property="og:type" content="website" />
         <link rel="canonical" href={`${SITE_URL}/`} />

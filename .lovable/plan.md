@@ -1,46 +1,27 @@
-## Goal
+## SEO Checker findings — diagnosis
 
-Apply the rename table and rename Virility tincture → Male Balance, then sync all references in code + backend.
+Validated against the live source. Five of seven items are real and fixable in `index.html` + the homepage; one is a duplicate that resolves automatically; one is a tip.
 
-## Current state (already done in backend)
+| # | Finding | Cause in code | Fix |
+|---|---|---|---|
+| 1 | **Only provide one canonical link** (Error) | `index.html` line 11 has `<link rel="canonical">` AND `TrinityHomepage.tsx` Helmet adds another → two canonicals in rendered HTML | Remove the static canonical from `index.html`. Per-route Helmet owns it (head-meta rule: `<link>` tags don't dedupe). |
+| 2 | **Remove duplicate meta description** (Error) | `index.html` ships one description; `TrinityHomepage.tsx` Helmet sets an identical one. Helmet *should* dedupe by `name`, but the scanner still flags two descriptions at scan time. | Drop the duplicate `<meta name="description">` from the homepage Helmet (keep `og:description` / `twitter:description`). The static one in `index.html` stays as the sitewide fallback. |
+| 3 | **Use only one H1** (Error) | Two `<h1>` elements render on `/`: `GateEntrance.tsx:179` ("Mount Kailash") and `HeroSection.tsx:303` (the real page headline). | Demote the gate's `<h1 class="h-title">` to a `<div class="h-title">` (or `<p>`). It's a decorative brand mark on the entrance overlay, not the page heading. CSS targets `.h-title` so styling is unaffected. |
+| 4 | **Remove duplicate heading texts** (Warning) | Resolves with #3 — the gate's "Mount Kailash" repeats brand text already shown elsewhere on the page. Once it's no longer a heading, the duplicate-heading warning clears. | No additional change. |
+| 5 | **Improve meta description text** (Warning) | Current description (157 chars) is fine length-wise but starts with a fragment ("Caribbean clinical bush medicine…") with no verb. Scanner wants a more action-oriented sentence. | Rewrite description in `index.html` to a clearer benefit-led sentence including the brand name, e.g. *"Mount Kailash Rejuvenation Centre offers Caribbean bush medicine from Saint Lucia — shop herbal tinctures, book a healing retreat, or train as an herbal physician with Priest Kailash."* |
+| 6 | **Make page title match content** (Warning) | Title is "Mount Kailash Rejuvenation Centre \| Bush Medicine SLU"; the visible hero copy emphasizes *clinical herbal medicine, retreats, school*. The bridge word "Bush Medicine SLU" reads like a slug. | Refine to *"Mount Kailash Rejuvenation Centre — Clinical Bush Medicine, Retreats & Herbal School, Saint Lucia"* so the title matches the hero/services content the scanner reads. |
+| 7 | **Add favicon markup** (Tip) | `public/favicon.ico` exists but `index.html` never declares `<link rel="icon">`. Browsers auto-discover, but the scanner wants explicit markup. | Add `<link rel="icon" type="image/x-icon" href="/favicon.ico" />` to `<head>`. |
 
-Database already reflects most of the table:
-- Herbal Detox ✅ (formerly Blood Detox)
-- Gut Balance ✅ (formerly Dewormer)
-- Anamu Syrup ✅ (formerly Fey Duvan)
-- Feminine Balance ✅ (formerly Fertility)
-- Colax, Free Flow — unchanged
+## Files to edit
 
-What's missing:
-- Product still named **"Virility"** (slug `virility-herbal-virility-supplement`) needs to become **"Male Balance"**.
-- Several places in code/edge functions still mention the old names (Blood Detox, Dewormer, Fey Duvan, Fertility, Virility) as product references.
+- **`index.html`** — remove `<link rel="canonical">`; rewrite `<meta name="description">` (and the matching `og:description` / `twitter:description`); add `<link rel="icon">`; refine `<title>` (and matching `og:title` / `twitter:title`).
+- **`src/pages/TrinityHomepage.tsx`** — remove the duplicate `<meta name="description">` line from Helmet; keep canonical, og:*, title.
+- **`src/components/gate-entrance/GateEntrance.tsx`** — change `<h1 className="h-title">Mount Kailash</h1>` to `<div className="h-title">Mount Kailash</div>`. The visible `<h1>` becomes the one in `HeroSection.tsx` ("Clinical Bush Medicine…"), which is the correct page H1.
 
-Note: There's also a separate product "Virility Male Balance Capsules" (capsules) — that one stays as-is unless you want it renamed too.
+## Out of scope / not changing
 
-## Plan
+- The `<h1>` inside `<noscript>` in `index.html` — only renders for JS-disabled crawlers, doesn't conflict.
+- Other route pages (Shop, Retreats, Webinars, etc.) — scan was against `/` only; their Helmet metadata is already per-route.
+- Sitemap, robots, structured data — already correct from prior SEO passes.
 
-### 1. Database migration
-
-- Rename `products` row id `057353cd…` → name `Male Balance`, slug `male-balance` (keep old slug working via the redirect map in `ProductDetail.tsx`).
-- Update bundle / kit names that embed old terms:
-  - `Feminine Balance Kit` — already correct.
-  - Check for any kit/bundle whose name still says "Virility" / "Fertility" / "Dewormer" / "Blood Detox" / "Fey Duvan" and rename.
-
-### 2. Frontend code
-
-- `src/pages/ProductDetail.tsx` — add `"virility-herbal-virility-supplement": "male-balance"` redirect alongside existing dewormer/fey-duvan/fertility redirects.
-- `src/components/MountKailashChat.jsx` — replace product entries "Virility" → "Male Balance", update slug, update bundle copy (Male Potency Kit, Prostate Health Bundle product lists).
-- `src/components/wholesale/PrivateLabel.tsx` — update alt text lineup ("…Colax, Male Balance, Anamu Syrup, Herbal Detox").
-
-### 3. Edge function
-
-- `supabase/functions/concierge-chat/index.ts` — replace product blocks: Dewormer → Gut Balance, Blood Detox → Herbal Detox, Fey Duvan Syrup → Anamu Syrup, Fertility → Feminine Balance, Virility → Male Balance. Update bundle compositions accordingly.
-
-### 4. Leave generic concept words alone
-
-- Words like "fertility", "detox" used as health concerns/topics in webinar copy, SEO descriptions, and school sections stay (they describe the concern, not the product). Only product-name references change.
-
-## Out of scope
-
-- "Virility Male Balance Capsules" capsule product is untouched (let me know if it should also be renamed to just "Male Balance Capsules").
-- Image filenames in old migration files (`dewormer-main.webp`, etc.) — historic, not user-visible.
+After approval I'll mark the relevant `seo_chat` findings fixed and remind you to republish so the changes hit the public URL.
