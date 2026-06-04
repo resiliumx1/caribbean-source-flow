@@ -38,6 +38,7 @@ const AdminReviews = lazy(() => import("./pages/AdminReviews"));
 const AdminWebinars = lazy(() => import("./pages/AdminWebinars"));
 const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
 const AdminOrders = lazy(() => import("./pages/AdminOrders"));
+const AdminNotifications = lazy(() => import("./pages/AdminNotifications"));
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const TheAnswer = lazy(() => import("./pages/TheAnswer"));
 const WebinarsPage = lazy(() => import("./pages/Webinars"));
@@ -159,6 +160,7 @@ function AppContent() {
             <Route path="webinars" element={<AdminWebinars />} />
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="orders" element={<AdminOrders />} />
+            <Route path="notifications" element={<AdminNotifications />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

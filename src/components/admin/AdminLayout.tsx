@@ -1,15 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
 import { Loader2, Home, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    let active = true;
+    const fetchUnread = async () => {
+      const { count } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("is_read", false);
+      if (active) setUnread(count || 0);
+    };
+    fetchUnread();
+    const channel = supabase
+      .channel("notifications-badge")
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications" }, fetchUnread)
+      .subscribe();
+    return () => { active = false; supabase.removeChannel(channel); };
+  }, [isAdmin]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -55,11 +75,18 @@ export default function AdminLayout() {
                 { label: 'Reviews', href: '/admin/reviews' },
                 { label: 'Webinars', href: '/admin/webinars' },
                 { label: 'Analytics', href: '/admin/analytics' },
+                { label: 'Notifications', href: '/admin/notifications' },
               ].map((link) => {
                 const isActive = location.pathname.startsWith(link.href);
+                const isNotif = link.href === '/admin/notifications';
                 return (
-                  <Link key={link.href} to={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
+                  <Link key={link.href} to={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors inline-flex items-center gap-1.5" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
                     {link.label}
+                    {isNotif && unread > 0 && (
+                      <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
+                        {unread > 99 ? '99+' : unread}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

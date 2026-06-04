@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Search, Truck, Save, Mail, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -57,8 +58,20 @@ export default function AdminOrders() {
   const [saving, setSaving] = useState(false);
   const [resending, setResending] = useState(false);
   const { toast } = useToast();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => { fetchOrders(); }, []);
+
+  // Auto-open an order if navigated here with state.openOrderId (e.g. from notifications)
+  useEffect(() => {
+    const pendingId = (location.state as any)?.openOrderId;
+    if (pendingId && orders.some(o => o.id === pendingId)) {
+      setSelectedId(pendingId);
+      setEditing(false);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [orders, location.state]);
 
   // Lock body scroll when drawer is open
   useEffect(() => {
