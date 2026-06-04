@@ -83,6 +83,30 @@ export default function AdminOrders() {
     }
   }, [selectedId]);
 
+  // Close drawer/edit on Escape
+  useEffect(() => {
+    if (!selectedId) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (editing) setEditing(false);
+      else setSelectedId(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selectedId, editing]);
+
+  // Intercept browser Back so it closes the drawer (and edit modal) first
+  useEffect(() => {
+    if (!selectedId) return;
+    window.history.pushState({ adminDrawer: true }, "");
+    const onPop = () => {
+      if (editing) setEditing(false);
+      setSelectedId(null);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [selectedId]);
+
   const fetchOrders = async () => {
     setLoading(true);
     const { data } = await supabase
