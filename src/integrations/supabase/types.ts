@@ -264,6 +264,7 @@ export type Database = {
           product_id: string
           product_name: string
           quantity: number
+          unit_price: number | null
         }
         Insert: {
           created_at?: string | null
@@ -274,6 +275,7 @@ export type Database = {
           product_id: string
           product_name: string
           quantity: number
+          unit_price?: number | null
         }
         Update: {
           created_at?: string | null
@@ -284,6 +286,7 @@ export type Database = {
           product_id?: string
           product_name?: string
           quantity?: number
+          unit_price?: number | null
         }
         Relationships: [
           {
@@ -354,13 +357,17 @@ export type Database = {
           delivery_type: string
           delivery_zone_id: string | null
           email: string
+          fulfillment_status: string | null
           id: string
+          is_test: boolean
+          note: string | null
           order_number: string | null
           payment_method: string
           payment_status: string | null
           payment_transaction_id: string | null
           phone: string | null
           postal_code: string | null
+          shipping_address: Json | null
           shipping_rate_id: string | null
           shipping_usd: number
           shipping_xcd: number
@@ -389,13 +396,17 @@ export type Database = {
           delivery_type: string
           delivery_zone_id?: string | null
           email: string
+          fulfillment_status?: string | null
           id?: string
+          is_test?: boolean
+          note?: string | null
           order_number?: string | null
           payment_method: string
           payment_status?: string | null
           payment_transaction_id?: string | null
           phone?: string | null
           postal_code?: string | null
+          shipping_address?: Json | null
           shipping_rate_id?: string | null
           shipping_usd?: number
           shipping_xcd?: number
@@ -424,13 +435,17 @@ export type Database = {
           delivery_type?: string
           delivery_zone_id?: string | null
           email?: string
+          fulfillment_status?: string | null
           id?: string
+          is_test?: boolean
+          note?: string | null
           order_number?: string | null
           payment_method?: string
           payment_status?: string | null
           payment_transaction_id?: string | null
           phone?: string | null
           postal_code?: string | null
+          shipping_address?: Json | null
           shipping_rate_id?: string | null
           shipping_usd?: number
           shipping_xcd?: number
