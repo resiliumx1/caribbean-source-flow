@@ -31,8 +31,10 @@ interface RequestBody {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  let parsedBody: RequestBody | null = null;
   try {
-    const { orderId, emailType, fromFallback, force } = (await req.json()) as RequestBody;
+    parsedBody = (await req.json()) as RequestBody;
+    const { orderId, emailType, fromFallback, force } = parsedBody;
     if (!orderId) throw new Error("orderId is required");
     if (!emailType) throw new Error("emailType is required");
 
@@ -133,10 +135,9 @@ Deno.serve(async (req) => {
         Deno.env.get("SUPABASE_URL")!,
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
       );
-      const body = await safeReadBody(req);
       await supabaseLog.from("email_send_failures").insert({
-        order_id: body?.orderId ?? null,
-        email_type: body?.emailType ?? "unknown",
+        order_id: parsedBody?.orderId ?? null,
+        email_type: parsedBody?.emailType ?? "unknown",
         recipient: null,
         error_message: String(err?.message || err),
       });
@@ -149,11 +150,6 @@ Deno.serve(async (req) => {
     );
   }
 });
-
-async function safeReadBody(_req: Request): Promise<any> {
-  // Body was already consumed at the top of the handler; nothing to recover.
-  return null;
-}
 
 // ---------- Template helpers ----------
 
