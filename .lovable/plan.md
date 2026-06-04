@@ -1,27 +1,47 @@
-## SEO Checker findings — diagnosis
+# Improve Crawler & LLM Readability (A + C)
 
-Validated against the live source. Five of seven items are real and fixable in `index.html` + the homepage; one is a duplicate that resolves automatically; one is a tip.
+Goal: cut the 3706% rendered-content gap so search engines and AI crawlers (ChatGPT, Perplexity, Claude, Googlebot) see real content instead of an empty `<div id="root">`.
 
-| # | Finding | Cause in code | Fix |
-|---|---|---|---|
-| 1 | **Only provide one canonical link** (Error) | `index.html` line 11 has `<link rel="canonical">` AND `TrinityHomepage.tsx` Helmet adds another → two canonicals in rendered HTML | Remove the static canonical from `index.html`. Per-route Helmet owns it (head-meta rule: `<link>` tags don't dedupe). |
-| 2 | **Remove duplicate meta description** (Error) | `index.html` ships one description; `TrinityHomepage.tsx` Helmet sets an identical one. Helmet *should* dedupe by `name`, but the scanner still flags two descriptions at scan time. | Drop the duplicate `<meta name="description">` from the homepage Helmet (keep `og:description` / `twitter:description`). The static one in `index.html` stays as the sitewide fallback. |
-| 3 | **Use only one H1** (Error) | Two `<h1>` elements render on `/`: `GateEntrance.tsx:179` ("Mount Kailash") and `HeroSection.tsx:303` (the real page headline). | Demote the gate's `<h1 class="h-title">` to a `<div class="h-title">` (or `<p>`). It's a decorative brand mark on the entrance overlay, not the page heading. CSS targets `.h-title` so styling is unaffected. |
-| 4 | **Remove duplicate heading texts** (Warning) | Resolves with #3 — the gate's "Mount Kailash" repeats brand text already shown elsewhere on the page. Once it's no longer a heading, the duplicate-heading warning clears. | No additional change. |
-| 5 | **Improve meta description text** (Warning) | Current description (157 chars) is fine length-wise but starts with a fragment ("Caribbean clinical bush medicine…") with no verb. Scanner wants a more action-oriented sentence. | Rewrite description in `index.html` to a clearer benefit-led sentence including the brand name, e.g. *"Mount Kailash Rejuvenation Centre offers Caribbean bush medicine from Saint Lucia — shop herbal tinctures, book a healing retreat, or train as an herbal physician with Priest Kailash."* |
-| 6 | **Make page title match content** (Warning) | Title is "Mount Kailash Rejuvenation Centre \| Bush Medicine SLU"; the visible hero copy emphasizes *clinical herbal medicine, retreats, school*. The bridge word "Bush Medicine SLU" reads like a slug. | Refine to *"Mount Kailash Rejuvenation Centre — Clinical Bush Medicine, Retreats & Herbal School, Saint Lucia"* so the title matches the hero/services content the scanner reads. |
-| 7 | **Add favicon markup** (Tip) | `public/favicon.ico` exists but `index.html` never declares `<link rel="icon">`. Browsers auto-discover, but the scanner wants explicit markup. | Add `<link rel="icon" type="image/x-icon" href="/favicon.ico" />` to `<head>`. |
+## What changes
 
-## Files to edit
+### Part A — Prerender all public routes at build time
 
-- **`index.html`** — remove `<link rel="canonical">`; rewrite `<meta name="description">` (and the matching `og:description` / `twitter:description`); add `<link rel="icon">`; refine `<title>` (and matching `og:title` / `twitter:title`).
-- **`src/pages/TrinityHomepage.tsx`** — remove the duplicate `<meta name="description">` line from Helmet; keep canonical, og:*, title.
-- **`src/components/gate-entrance/GateEntrance.tsx`** — change `<h1 className="h-title">Mount Kailash</h1>` to `<div className="h-title">Mount Kailash</div>`. The visible `<h1>` becomes the one in `HeroSection.tsx` ("Clinical Bush Medicine…"), which is the correct page H1.
+Add a prerender step that runs after `vite build`, spins up a headless browser, visits every public route, and writes the fully-rendered HTML back into `dist/<route>/index.html`. React still hydrates normally for live users.
 
-## Out of scope / not changing
+- Install `puppeteer` (dev dep) + small custom prerender script (no plugin lock-in, works cleanly with our strict whitelist router).
+- Route whitelist (mirrors current router): `/`, `/shop`, `/shop/[per category page]`, `/the-answer`, `/webinars`, `/retreats`, `/school`, `/wholesale`, `/about`, `/contact`, `/customer-portal`, plus key product detail routes if statically known. Dynamic product slugs are skipped (handled by React at runtime + Helmet meta).
+- Hook into `package.json` as `"build": "vite build && node scripts/prerender.mjs"`.
+- Preserves Helmet-injected `<title>`, meta, JSON-LD per route — they get baked into each snapshot.
+- Gate Entrance: prerender waits for `networkidle0` + a short delay so hero/nav/footer render before snapshot. Gate animation still plays on real load (it's GSAP, runs on hydration).
 
-- The `<h1>` inside `<noscript>` in `index.html` — only renders for JS-disabled crawlers, doesn't conflict.
-- Other route pages (Shop, Retreats, Webinars, etc.) — scan was against `/` only; their Helmet metadata is already per-route.
-- Sitemap, robots, structured data — already correct from prior SEO passes.
+### Part C — Enrich `<noscript>` fallback in index.html
 
-After approval I'll mark the relevant `seo_chat` findings fixed and remind you to republish so the changes hit the public URL.
+Hand-write a static fallback inside `<div id="root">` and `<noscript>` containing:
+
+- H1 "Mount Kailash Rejuvenation Centre"
+- Tagline + 2–3 sentence description (mineral rich soil, clinical bush medicine, Saint Lucia)
+- Primary nav links as plain `<a href>` (Shop, The Answer, Webinars, Retreats, School, Wholesale, Contact)
+- Official contact numbers + address
+- Link to sitemap
+
+React replaces the `<div id="root">` content on hydration — zero visual impact for real users. `<noscript>` is invisible unless JS is disabled.
+
+## Files touched
+
+- `package.json` — add `puppeteer` devDep, update `build` script
+- `scripts/prerender.mjs` — new prerender runner (route list + puppeteer loop)
+- `index.html` — enrich fallback markup inside `#root` and `<noscript>`
+- `vite.config.ts` — no change expected
+
+## Risk / safety
+
+- Zero runtime impact: prerender is build-time only; noscript is invisible with JS on.
+- Build time increases ~30–90s depending on route count.
+- If prerender fails for a route, script logs + skips (doesn't fail the build).
+- Gate Entrance, GSAP, framer-motion all still run on hydration exactly as today.
+
+## Verification
+
+After republish, test with:
+- `curl https://mountkailashslu.com/` → should return real HTML with headings/nav, not empty `#root`
+- Re-run the SEO checker — rendered-content % should drop dramatically (target <300%)
