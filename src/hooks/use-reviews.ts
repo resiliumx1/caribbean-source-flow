@@ -42,7 +42,7 @@ export function useProductReviews(productId: string | undefined, page: number = 
       const to = from + PAGE_SIZE - 1;
 
       const { data, error, count } = await supabase
-        .from("reviews")
+        .from("reviews_public" as any)
         .select(
           "id, product_id, user_name, rating, title, content, images, status, helpful_count, is_verified_purchase, created_at",
           { count: "exact" }
@@ -64,7 +64,7 @@ export function useReviewStats(productId: string | undefined) {
     queryKey: ["review-stats", productId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("reviews")
+        .from("reviews_public" as any)
         .select("rating")
         .eq("product_id", productId!)
         .eq("status", "approved");
@@ -76,7 +76,7 @@ export function useReviewStats(productId: string | undefined) {
       const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       let sum = 0;
 
-      reviews.forEach((r) => {
+      (reviews as unknown as Array<{ rating: number }>).forEach((r) => {
         sum += r.rating;
         distribution[r.rating] = (distribution[r.rating] || 0) + 1;
       });
