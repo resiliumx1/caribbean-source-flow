@@ -1143,6 +1143,13 @@ export type Database = {
             referencedRelation: "reviews"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "review_helpfulness_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       reviews: {
@@ -1359,7 +1366,56 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      reviews_public: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          helpful_count: number | null
+          id: string | null
+          images: Json | null
+          is_verified_purchase: boolean | null
+          product_id: string | null
+          rating: number | null
+          status: string | null
+          title: string | null
+          user_name: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string | null
+          images?: Json | null
+          is_verified_purchase?: boolean | null
+          product_id?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string | null
+          images?: Json | null
+          is_verified_purchase?: boolean | null
+          product_id?: string | null
+          rating?: number | null
+          status?: string | null
+          title?: string | null
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       admin_get_reviews: {
