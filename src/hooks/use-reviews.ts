@@ -76,7 +76,7 @@ export function useReviewStats(productId: string | undefined) {
       const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       let sum = 0;
 
-      (reviews as Array<{ rating: number }>).forEach((r) => {
+      (reviews as unknown as Array<{ rating: number }>).forEach((r) => {
         sum += r.rating;
         distribution[r.rating] = (distribution[r.rating] || 0) + 1;
       });
