@@ -194,7 +194,7 @@ const App = () => {
     clientId: PAYPAL_CLIENT_ID,
     currency: "USD",
     intent: "capture",
-    components: "buttons",
+    components: "buttons,card-fields",
     enableFunding: "venmo,paylater,card",
     disableFunding: "",
   };
