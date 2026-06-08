@@ -689,6 +689,140 @@ export default function Checkout() {
                     )}
                   </div>
 
+                  {/* Helper line clarifying the card option in the PayPal stack */}
+                  {isResolved && (
+                    <p className="text-xs text-muted-foreground text-center -mt-1">
+                      The black <strong>Debit or Credit Card</strong> button accepts
+                      cards without a PayPal account.
+                    </p>
+                  )}
+
+                  {/* Embedded Advanced Card Fields — only renders if the merchant
+                      account is approved for Advanced Credit & Debit Card Payments.
+                      Otherwise the eligibility gate keeps the section hidden and the
+                      black PayPal "Debit or Credit Card" guest button stays the
+                      working fallback. */}
+                  {isResolved && canPay && (
+                    <div className="pt-2">
+                      <PayPalCardFieldsProvider
+                        createOrder={async () => {
+                          if (pendingPayPalOrderIdRef.current) {
+                            return pendingPayPalOrderIdRef.current;
+                          }
+                          // Mint a PayPal order using REST via the same SDK route
+                          // the buttons use. `actions.order.create` isn't available
+                          // here, so we delegate to a fetch against PayPal's order
+                          // create through a window-level helper — instead, we use
+                          // the PayPal JS SDK's window.paypal.Orders if present.
+                          const w: any = window;
+                          const id = await w.paypal.Orders.create({
+                            intent: "CAPTURE",
+                            purchase_units: [
+                              {
+                                amount: {
+                                  value: totalUsd.toFixed(2),
+                                  currency_code: "USD",
+                                },
+                                description: "Mount Kailash Order",
+                              },
+                            ],
+                          });
+                          pendingPayPalOrderIdRef.current = id;
+                          setShowRetryButton(false);
+                          return id;
+                        }}
+                        onApprove={async (data) => {
+                          setIsProcessing(true);
+                          let captureId: string | undefined;
+                          try {
+                            // Card-fields captures server-side via PayPal; the
+                            // capture id arrives in onApprove data.
+                            captureId =
+                              (data as any)?.captureId ||
+                              (data as any)?.orderID;
+                            const result = await submitOrderToBackend(
+                              data.orderID,
+                              captureId!
+                            );
+                            pendingPayPalOrderIdRef.current = null;
+                            setPendingCapture(null);
+                            setShowRetryButton(false);
+                            clearCart();
+                            toast({
+                              title: "Order placed!",
+                              description: `Confirmation #${result.order_number}`,
+                            });
+                            navigate(`/order-confirmation/${result.order_number}`);
+                          } catch (err: any) {
+                            console.error(
+                              "🚨 CARD-FIELDS CAPTURED BUT ORDER NOT SAVED",
+                              { orderID: data.orderID, captureId, err }
+                            );
+                            if (captureId) {
+                              setPendingCapture({
+                                orderID: data.orderID,
+                                captureID: captureId,
+                              });
+                            }
+                            toast({
+                              title: "⚠️ Payment received but order didn't save",
+                              description: `Your PayPal Transaction ID${
+                                captureId ? ` (${captureId})` : ""
+                              } was charged. Tap "Retry saving order" — you will not be charged again. (${
+                                err?.message ?? "save failed"
+                              })`,
+                              variant: "destructive",
+                              duration: 60000,
+                            });
+                            setIsProcessing(false);
+                          }
+                        }}
+                        onError={(err: any) => {
+                          const errMessage =
+                            err?.message || err?.toString?.() || "Card payment error";
+                          const debugId =
+                            err?.debug_id || err?.details?.[0]?.debug_id || null;
+                          console.error("Card-fields error:", err);
+                          fetch(
+                            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/log-payment-attempt`,
+                            {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+                              },
+                              body: JSON.stringify({
+                                stage: "paypal_card_fields_error",
+                                error_message: errMessage,
+                                paypal_debug_id: debugId,
+                                paypal_order_id: pendingPayPalOrderIdRef.current,
+                                cart_total_usd: totalUsd,
+                                customer_email: form.email || null,
+                              }),
+                            }
+                          ).catch(() => {});
+                          toast({
+                            title: "Card payment didn't go through",
+                            description:
+                              "Your card was declined or couldn't be processed. Double-check the number, expiry, and CVV, or try the PayPal button above. " +
+                              (debugId ? `Quote debug id ${debugId} if contacting support.` : ""),
+                            variant: "destructive",
+                            duration: 20000,
+                          });
+                          setIsProcessing(false);
+                        }}
+                      >
+                        <CardFieldsSection
+                          totalLabel={prices.primary}
+                          isProcessing={isProcessing}
+                          setIsProcessing={setIsProcessing}
+                          cardholderName={form.customer_name}
+                        />
+                      </PayPalCardFieldsProvider>
+                    </div>
+                  )}
+
                   {/* Retry banners */}
                   {pendingCapture ? (
                     <div className="rounded-lg border border-amber-400/40 bg-amber-50/60 dark:bg-amber-950/30 p-3 text-sm space-y-2">
