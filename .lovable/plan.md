@@ -1,49 +1,41 @@
-## What the customer saw
+## Goal
+Let customers pay by debit/credit card on the checkout page without a separate payment processor, using PayPal as the underlying processor.
 
-The red banner — `Payment failed. Please try again or contact support at info@mountkailashslu.com` — is shown by the `onError` callback in `src/pages/Checkout.tsx` (lines 528–537). It fires when the **PayPal SDK itself throws an error**, *before* any money is captured and *before* anything reaches our backend.
+## Step 1 — Verify the existing guest "Debit or Credit Card" button
+PayPal's vertical button stack already loads with `enableFunding: "venmo,paylater,card"` in `src/App.tsx`, which renders a black "Debit or Credit Card" button under the yellow PayPal button. Tapping it opens PayPal's hosted guest card form (card number, expiry, CVV, billing address) — no PayPal account needed. PayPal processes and settles to the existing PayPal Business account.
 
-## What actually happened (root cause)
+I'll open the live checkout in the preview browser at mobile width with a test cart item and confirm the black card button renders. If it does, this path already works today and just needs to be clearly labelled in the UI.
 
-The failure happened entirely inside PayPal, not in our checkout code:
+UI polish (small):
+- Add a subtle "Pay with debit or credit card — no PayPal account required" helper line under the PayPal button stack so customers know the second button is the card option.
 
-- No row in `failed_order_alerts` — our edge function was never called.
-- No `paypal-checkout` edge-function logs at all for this attempt.
-- No matching order in `orders` near the customer's time.
-- Order total $316 USD is well within PayPal limits, so it was not an amount rejection.
+## Step 2 — Add embedded Advanced Card Fields (in-page card form)
+Most customers expect to type card details directly into the checkout page, not in a popup. PayPal's `card-fields` component renders hosted, PCI-compliant card-number / expiry / CVV inputs inline.
 
-That means **no money was taken**. The customer can safely retry. Typical real-world causes for PayPal's `onError` at this stage:
+### Changes
 
-1. Card declined inside the PayPal modal (most common — issuer blocked international/USD charge).
-2. PayPal popup blocked by the mobile browser, or modal closed mid-flow.
-3. Customer's PayPal account flagged / region restriction on USD.
-4. Network drop while the PayPal iframe was loading.
+**`src/App.tsx`**
+- Change `components: "buttons"` → `components: "buttons,card-fields"` in `paypalOptions`.
 
-The customer's screenshot is 384px wide (mobile) — mobile PayPal popups are the #1 cause of this exact toast in production.
+**`src/pages/Checkout.tsx`**
+- Below the existing `<PayPalButtons>`, add a new "Or pay with card" section containing:
+  - `<PayPalCardFieldsProvider>` wired to the same `createOrder` (reuses `pendingPayPalOrderIdRef` so retries don't double-charge) and the same `onApprove` → `submitOrderToBackend` flow used by `<PayPalButtons>`.
+  - `<PayPalNumberField>`, `<PayPalExpiryField>`, `<PayPalCVVField>` styled with the existing checkout border / focus-ring / 44px touch-target tokens.
+  - A "Pay $XX.XX with card" primary button that calls `cardFieldsForm.submit()`.
+- Reuse the existing `onError` handler (debug-id surfacing, "window closed" detection, fire-and-forget `log-payment-attempt`, retry-save state).
+- Eligibility gate: only render the card-fields block when `cardFieldsForm.isEligible()` returns true. If the merchant account isn't approved for Advanced Credit and Debit Card Payments, the block stays hidden and the existing black guest-card button (Step 1) remains the working fallback. No regression.
+- Same cache-invalidation `useEffect` on `[totalUsd, delivery_type, cartCount]` clears the cached PayPal order id for card fields too.
 
-## What I'd improve so we can diagnose the next one
+### What does NOT change
+- `src/lib/paypal.ts` (same client ID).
+- `supabase/functions/paypal-checkout/index.ts` (same order-save path — card-fields captures and saves identically to button captures).
+- `supabase/functions/log-payment-attempt/index.ts` (reused).
+- No new secrets, no new tables, no new edge functions.
 
-The current `onError` swallows PayPal's actual error object — we only log `console.error("PayPal error:", err)` and show a generic toast. That's why we have nothing to look at. Small, low-risk improvements:
+## Caveats to surface to the user
+- **Advanced Card Fields requires PayPal Business approval for "Advanced Credit and Debit Card Payments."** US accounts usually have it by default; some regions / newer accounts need to apply in the PayPal dashboard. If it's not approved, the inline form silently won't render and customers fall back to the (working) black guest-card button.
+- PayPal may still hide the card button for buyers in unsupported regions or buyers already logged into PayPal — that's controlled by PayPal, not by us.
 
-1. **Capture PayPal's error code into our DB.** Add a lightweight `payment_attempts` table (or reuse `failed_order_alerts` with a new `stage` column) so the `onError` handler POSTs `{ stage: 'paypal_sdk_error', error_message, error_name, paypal_debug_id, cart_total, email_if_filled }` to an edge function. This gives us a forensic trail without exposing anything sensitive.
-2. **Show the customer a more helpful message.** Replace the generic toast with: "PayPal couldn't complete the payment. This usually means your card was declined or the PayPal window was closed. Try again, use a different card, or pay with a PayPal balance. If it keeps happening, email info@mountkailashslu.com." Keep the destructive-toast variant.
-3. **Log PayPal's `debug_id`** (from `err?.details` / `err?.debug_id` when present) in the console alongside the existing message. Customers can quote this when emailing support.
-4. (Optional) Detect "Window closed" specifically and toast `Payment window was closed — try again` instead of "failed".
-
-These are all in `src/pages/Checkout.tsx` plus a tiny new `supabase/functions/log-payment-attempt/index.ts` and one migration. No change to pricing, shipping, or the capture/save flow.
-
-## What to tell the customer right now
-
-The payment did not go through and no money was charged. Ask her to:
-
-- Try again (preferably from a desktop browser or a different network).
-- If it still fails, try a different card or pay from PayPal balance.
-- If she got a PayPal email with a "Transaction ID" or "Debug ID", forward it so we can look it up.
-
-## Files I'd touch (if you approve step 2)
-
-- `src/pages/Checkout.tsx` — richer `onError`, friendlier toast, fire-and-forget log call.
-- `supabase/functions/log-payment-attempt/index.ts` *(new)* — accepts the SDK error payload.
-- `supabase/migrations/<timestamp>_payment_attempts.sql` *(new)* — table + grants + admin-only RLS.
-- `supabase/config.toml` — register the new function with `verify_jwt = false`.
-
-Want me to proceed with the diagnostic logging improvements, or just leave the explanation and let the customer retry?
+## Files to touch
+- `src/App.tsx` — add `card-fields` to `components`.
+- `src/pages/Checkout.tsx` — add the card-fields block, helper text under buttons, eligibility gate.

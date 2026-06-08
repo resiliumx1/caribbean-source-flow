@@ -680,6 +680,14 @@ export default function Checkout() {
                     )}
                   </div>
 
+                  {/* Helper line clarifying the card option in the PayPal stack */}
+                  {isResolved && (
+                    <p className="text-xs text-muted-foreground text-center -mt-1">
+                      The black <strong>Debit or Credit Card</strong> button accepts
+                      cards without a PayPal account.
+                    </p>
+                  )}
+
                   {/* Retry banners */}
                   {pendingCapture ? (
                     <div className="rounded-lg border border-amber-400/40 bg-amber-50/60 dark:bg-amber-950/30 p-3 text-sm space-y-2">
