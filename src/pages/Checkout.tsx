@@ -526,12 +526,57 @@ export default function Checkout() {
                           }
                         }}
                         onError={(err) => {
-                          console.error("PayPal error:", err);
+                          const anyErr = err as any;
+                          const errMessage =
+                            anyErr?.message ||
+                            anyErr?.toString?.() ||
+                            "Unknown PayPal SDK error";
+                          const errName = anyErr?.name || null;
+                          const debugId =
+                            anyErr?.debug_id ||
+                            anyErr?.details?.[0]?.debug_id ||
+                            anyErr?.paymentSource?.debug_id ||
+                            null;
+                          console.error(
+                            "PayPal SDK error:",
+                            { name: errName, message: errMessage, debug_id: debugId },
+                            err
+                          );
+                          // Fire-and-forget — never block the UI on logging.
+                          fetch(
+                            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/log-payment-attempt`,
+                            {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+                              },
+                              body: JSON.stringify({
+                                stage: "paypal_sdk_error",
+                                error_name: errName,
+                                error_message: errMessage,
+                                paypal_debug_id: debugId,
+                                cart_total_usd: totalUsd,
+                                customer_email: form.email || null,
+                                payload: {
+                                  delivery_type: form.delivery_type,
+                                  country: form.country,
+                                  item_count: cartCount,
+                                },
+                              }),
+                            }
+                          ).catch(() => {});
+                          const friendly =
+                            /window closed|popup|closed by user/i.test(errMessage)
+                              ? "The PayPal window was closed before payment finished. Please try again."
+                              : "PayPal couldn't complete the payment. This usually means the card was declined or the PayPal window was closed. Try again, use a different card, or pay from your PayPal balance. If this keeps happening, email info@mountkailashslu.com" +
+                                (debugId ? ` and quote debug id ${debugId}.` : ".");
                           toast({
-                            title: "Payment failed",
-                            description:
-                              "Payment failed. Please try again or contact support at info@mountkailashslu.com",
+                            title: "Payment didn't go through",
+                            description: friendly,
                             variant: "destructive",
+                            duration: 20000,
                           });
                           setIsProcessing(false);
                         }}

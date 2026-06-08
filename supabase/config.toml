@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.paypal-checkout]
 verify_jwt = false
+
+[functions.log-payment-attempt]
+verify_jwt = false
