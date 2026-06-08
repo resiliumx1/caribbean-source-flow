@@ -550,6 +550,48 @@ export type Database = {
           },
         ]
       }
+      payment_attempts: {
+        Row: {
+          cart_total_usd: number | null
+          created_at: string
+          customer_email: string | null
+          error_message: string | null
+          error_name: string | null
+          id: string
+          payload: Json | null
+          paypal_debug_id: string | null
+          paypal_order_id: string | null
+          stage: string
+          user_agent: string | null
+        }
+        Insert: {
+          cart_total_usd?: number | null
+          created_at?: string
+          customer_email?: string | null
+          error_message?: string | null
+          error_name?: string | null
+          id?: string
+          payload?: Json | null
+          paypal_debug_id?: string | null
+          paypal_order_id?: string | null
+          stage: string
+          user_agent?: string | null
+        }
+        Update: {
+          cart_total_usd?: number | null
+          created_at?: string
+          customer_email?: string | null
+          error_message?: string | null
+          error_name?: string | null
+          id?: string
+          payload?: Json | null
+          paypal_debug_id?: string | null
+          paypal_order_id?: string | null
+          stage?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       product_categories: {
         Row: {
           created_at: string | null
