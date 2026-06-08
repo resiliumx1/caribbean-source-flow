@@ -11,7 +11,16 @@ import { useStore } from "@/lib/store-context";
 import { useToast } from "@/hooks/use-toast";
 import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { supabase } from "@/integrations/supabase/client";
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import {
+  PayPalButtons,
+  PayPalCardFieldsProvider,
+  PayPalNameField,
+  PayPalNumberField,
+  PayPalExpiryField,
+  PayPalCVVField,
+  usePayPalCardFields,
+  usePayPalScriptReducer,
+} from "@paypal/react-paypal-js";
 
 const COUNTRIES: Array<{ code: string; name: string }> = [
   { code: "LC", name: "Saint Lucia" },
