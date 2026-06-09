@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Search, Truck, Save, Mail, X, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import WooLegacyOrders from "@/components/admin/WooLegacyOrders";
 
 
 const PAYMENT_OPTIONS = ["unpaid", "paid", "refunded"];
@@ -43,6 +44,7 @@ function Pill({ label, color }: { label: string; color: string }) {
 }
 
 export default function AdminOrders() {
+  const [tab, setTab] = useState<"lovable" | "woo">("lovable");
   const [orders, setOrders] = useState<any[]>([]);
   const [orderItems, setOrderItems] = useState<Record<string, any[]>>({});
   const [loading, setLoading] = useState(true);
@@ -272,6 +274,23 @@ export default function AdminOrders() {
     <div>
       <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
         <h1 className="text-2xl font-bold text-foreground">Orders</h1>
+        <div className="inline-flex rounded-lg border border-border bg-card p-1">
+          <button
+            onClick={() => setTab("lovable")}
+            className={`px-3 h-8 text-xs font-semibold rounded-md transition ${tab === "lovable" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >Lovable Orders</button>
+          <button
+            onClick={() => setTab("woo")}
+            className={`px-3 h-8 text-xs font-semibold rounded-md transition ${tab === "woo" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >WooCommerce (legacy)</button>
+        </div>
+      </div>
+
+      {tab === "woo" ? (
+        <WooLegacyOrders />
+      ) : (
+      <>
+      <div className="flex items-center justify-end mb-4 gap-4 flex-wrap">
         <div className="flex items-center gap-3 flex-wrap">
           <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
             <input
@@ -382,6 +401,8 @@ export default function AdminOrders() {
             />
           </aside>
         </div>
+      )}
+      </>
       )}
     </div>
   );
