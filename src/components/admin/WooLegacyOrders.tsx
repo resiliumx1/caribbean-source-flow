@@ -3,71 +3,98 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, RefreshCw, Search, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const STATUSES = ["any", "pending", "processing", "on-hold", "completed", "cancelled", "refunded", "failed"];
+const PAGE_SIZE = 50;
+
+// raw woo statuses begin with "wc-"
+const STATUSES = ["any", "wc-completed", "wc-processing", "wc-on-hold", "wc-pending", "wc-cancelled", "wc-refunded", "wc-failed"];
 
 const STATUS_COLORS: Record<string, string> = {
-  completed: "#15803d",
-  processing: "#1d4ed8",
-  "on-hold": "#b45309",
-  pending: "#b45309",
-  cancelled: "#6b7280",
-  refunded: "#6b7280",
-  failed: "#b91c1c",
+  "wc-completed": "#15803d",
+  "wc-processing": "#1d4ed8",
+  "wc-on-hold": "#b45309",
+  "wc-pending": "#b45309",
+  "wc-cancelled": "#6b7280",
+  "wc-refunded": "#6b7280",
+  "wc-failed": "#b91c1c",
 };
 
+function cleanStatus(s: string) { return (s || "").replace(/^wc-/, ""); }
 function cap(s: string) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
-function Pill({ label, color }: { label: string; color: string }) {
+function Pill({ status }: { status: string }) {
+  const color = STATUS_COLORS[status] || "#6b7280";
   return (
     <span
       className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold tracking-wide"
       style={{ background: `${color}1f`, color }}
     >
-      {cap(label)}
+      {cap(cleanStatus(status))}
     </span>
   );
 }
 
-function toISODate(d: Date) {
-  return d.toISOString().slice(0, 10);
-}
+function toISODate(d: Date) { return d.toISOString().slice(0, 10); }
+
+type LegacyOrder = {
+  order_id: number;
+  order_date: string;
+  status: string;
+  order_total: string | number | null;
+  currency: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  postcode: string | null;
+  country: string | null;
+  payment_method: string | null;
+  items: string | null;
+};
 
 export default function WooLegacyOrders() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [totalPages, setTotalPages] = useState(1);
+  const [orders, setOrders] = useState<LegacyOrder[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("any");
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const today = new Date();
-  const twoMonthsAgo = new Date(today.getTime() - 60 * 24 * 60 * 60 * 1000);
-  const [after, setAfter] = useState(toISODate(twoMonthsAgo));
-  const [before, setBefore] = useState(toISODate(today));
-  const [selected, setSelected] = useState<any | null>(null);
+  // archive spans 2022-2026, default to full range
+  const [after, setAfter] = useState("2022-01-01");
+  const [before, setBefore] = useState(toISODate(new Date(today.getTime() + 24 * 60 * 60 * 1000)));
+  const [selected, setSelected] = useState<LegacyOrder | null>(null);
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("woo-orders-list", {
-        body: {
-          page,
-          per_page: 50,
-          status,
-          search,
-          after: new Date(after + "T00:00:00Z").toISOString(),
-          before: new Date(before + "T23:59:59Z").toISOString(),
-        },
-      });
+      let q = supabase
+        .from("legacy_woocommerce_orders")
+        .select("*", { count: "exact" })
+        .gte("order_date", new Date(after + "T00:00:00Z").toISOString())
+        .lte("order_date", new Date(before + "T23:59:59Z").toISOString())
+        .order("order_date", { ascending: false });
+
+      if (status !== "any") q = q.eq("status", status);
+      if (search) {
+        const s = search.replace(/[%,]/g, "");
+        q = q.or(`email.ilike.%${s}%,first_name.ilike.%${s}%,last_name.ilike.%${s}%,order_id::text.ilike.%${s}%,items.ilike.%${s}%`);
+      }
+
+      const from = (page - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      const { data, count, error } = await q.range(from, to);
       if (error) throw error;
-      if ((data as any)?.error) throw new Error((data as any).error);
-      setOrders((data as any)?.orders || []);
-      setTotalPages((data as any)?.totalPages || 1);
-      setTotalCount((data as any)?.totalCount || 0);
+      setOrders((data as LegacyOrder[]) || []);
+      setTotalCount(count || 0);
     } catch (e: any) {
-      toast({ title: "Failed to load WooCommerce orders", description: e.message || String(e), variant: "destructive" });
+      toast({ title: "Failed to load legacy orders", description: e.message || String(e), variant: "destructive" });
       setOrders([]);
     } finally {
       setLoading(false);
@@ -86,7 +113,7 @@ export default function WooLegacyOrders() {
     <div>
       <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
         <div className="text-xs text-muted-foreground">
-          Read-only history pulled live from your WooCommerce store.{" "}
+          Read-only archive of historical WooCommerce orders (Jul 2022 – May 2026).{" "}
           {totalCount > 0 && <span className="text-foreground font-semibold">{totalCount.toLocaleString()} order{totalCount !== 1 ? "s" : ""}</span>}
           {" "}in range.
         </div>
@@ -114,11 +141,11 @@ export default function WooLegacyOrders() {
           <label className="block text-[11px] text-muted-foreground mb-1">Status</label>
           <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}
             className="h-9 px-2 rounded-lg border border-border bg-background text-sm">
-            {STATUSES.map(s => <option key={s} value={s}>{s === "any" ? "Any status" : cap(s)}</option>)}
+            {STATUSES.map(s => <option key={s} value={s}>{s === "any" ? "Any status" : cap(cleanStatus(s))}</option>)}
           </select>
         </div>
         <form onSubmit={onSearch} className="flex-1 min-w-[220px]">
-          <label className="block text-[11px] text-muted-foreground mb-1">Search (email, name, order #)</label>
+          <label className="block text-[11px] text-muted-foreground mb-1">Search (email, name, order #, item)</label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -134,38 +161,35 @@ export default function WooLegacyOrders() {
       {loading ? (
         <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
       ) : orders.length === 0 ? (
-        <p className="text-center text-muted-foreground py-16">No WooCommerce orders in this range.</p>
+        <p className="text-center text-muted-foreground py-16">No legacy orders in this range.</p>
       ) : (
         <div className="space-y-2">
           {orders.map((o) => {
-            const s = (o.status || "").toLowerCase();
-            const name = `${o.billing?.first_name || ""} ${o.billing?.last_name || ""}`.trim() || "—";
+            const name = `${o.first_name || ""} ${o.last_name || ""}`.trim() || "—";
             return (
               <button
-                key={o.id}
+                key={o.order_id}
                 onClick={() => setSelected(o)}
                 className="w-full text-left bg-card border border-border rounded-xl p-4 hover:border-primary/40 hover:shadow-sm transition-all min-h-[44px]"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="font-bold text-base text-foreground tracking-tight">#{o.number}</span>
-                      <Pill label={s} color={STATUS_COLORS[s] || "#6b7280"} />
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-semibold uppercase tracking-wider">Woo</span>
+                      <span className="font-bold text-base text-foreground tracking-tight">#{o.order_id}</span>
+                      <Pill status={o.status} />
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-semibold uppercase tracking-wider">Woo · Archive</span>
                     </div>
                     <p className="text-sm font-semibold text-foreground truncate">{name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{o.billing?.email}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{new Date(o.date_created).toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground truncate">{o.email}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{new Date(o.order_date).toLocaleString()}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-base font-bold text-foreground">{o.currency} {Number(o.total).toFixed(2)}</p>
-                    <p className="text-[11px] text-muted-foreground truncate max-w-[160px]">{o.payment_method_title || "—"}</p>
+                    <p className="text-base font-bold text-foreground">{o.currency || ""} {Number(o.order_total || 0).toFixed(2)}</p>
+                    <p className="text-[11px] text-muted-foreground truncate max-w-[160px]">{o.payment_method || "—"}</p>
                   </div>
                 </div>
-                {o.line_items?.length > 0 && (
-                  <p className="text-xs text-muted-foreground mt-2 truncate">
-                    {o.line_items.map((li: any) => `${li.name} ×${li.quantity}`).join(", ")}
-                  </p>
+                {o.items && (
+                  <p className="text-xs text-muted-foreground mt-2 truncate">{o.items.replace(/\s*\|\s*/g, ", ")}</p>
                 )}
               </button>
             );
@@ -173,24 +197,16 @@ export default function WooLegacyOrders() {
         </div>
       )}
 
-      {/* Pagination */}
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-center gap-3 mt-5">
-          <button
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page <= 1}
-            className="h-9 px-3 rounded-lg border border-border text-sm disabled:opacity-40"
-          >Previous</button>
+          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}
+            className="h-9 px-3 rounded-lg border border-border text-sm disabled:opacity-40">Previous</button>
           <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
-          <button
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page >= totalPages}
-            className="h-9 px-3 rounded-lg border border-border text-sm disabled:opacity-40"
-          >Next</button>
+          <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
+            className="h-9 px-3 rounded-lg border border-border text-sm disabled:opacity-40">Next</button>
         </div>
       )}
 
-      {/* Drawer */}
       {selected && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/50 animate-in fade-in" onClick={() => setSelected(null)} />
@@ -198,8 +214,8 @@ export default function WooLegacyOrders() {
             <div className="p-5 space-y-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-xl font-bold text-foreground">Order #{selected.number}</h2>
-                  <p className="text-xs text-muted-foreground">{new Date(selected.date_created).toLocaleString()}</p>
+                  <h2 className="text-xl font-bold text-foreground">Order #{selected.order_id}</h2>
+                  <p className="text-xs text-muted-foreground">{new Date(selected.order_date).toLocaleString()}</p>
                 </div>
                 <button onClick={() => setSelected(null)} className="p-2 rounded-lg hover:bg-muted">
                   <X className="w-4 h-4" />
@@ -207,71 +223,44 @@ export default function WooLegacyOrders() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <Pill label={(selected.status || "").toLowerCase()} color={STATUS_COLORS[(selected.status || "").toLowerCase()] || "#6b7280"} />
+                <Pill status={selected.status} />
                 <span className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold tracking-wide bg-muted text-foreground">
-                  {selected.payment_method_title || "Unknown payment"}
+                  {selected.payment_method || "Unknown payment"}
                 </span>
               </div>
 
               <section>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Customer</h3>
-                <p className="text-sm text-foreground">{selected.billing?.first_name} {selected.billing?.last_name}</p>
-                <p className="text-sm text-foreground">{selected.billing?.email}</p>
-                {selected.billing?.phone && <p className="text-sm text-foreground">{selected.billing.phone}</p>}
+                <p className="text-sm text-foreground">{selected.first_name} {selected.last_name}</p>
+                <p className="text-sm text-foreground">{selected.email}</p>
+                {selected.phone && <p className="text-sm text-foreground">{selected.phone}</p>}
               </section>
 
               <section>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Billing address</h3>
                 <p className="text-sm whitespace-pre-line text-foreground">
-                  {[selected.billing?.address_1, selected.billing?.address_2,
-                    [selected.billing?.city, selected.billing?.state, selected.billing?.postcode].filter(Boolean).join(", "),
-                    selected.billing?.country].filter(Boolean).join("\n") || "—"}
+                  {[selected.address,
+                    [selected.city, selected.state, selected.postcode].filter(Boolean).join(", "),
+                    selected.country].filter(Boolean).join("\n") || "—"}
                 </p>
               </section>
 
-              {selected.shipping && (selected.shipping.address_1 || selected.shipping.city) && (
-                <section>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Shipping address</h3>
-                  <p className="text-sm whitespace-pre-line text-foreground">
-                    {[selected.shipping?.address_1, selected.shipping?.address_2,
-                      [selected.shipping?.city, selected.shipping?.state, selected.shipping?.postcode].filter(Boolean).join(", "),
-                      selected.shipping?.country].filter(Boolean).join("\n")}
-                  </p>
-                </section>
-              )}
-
               <section>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Items</h3>
-                <ul className="divide-y divide-border border border-border rounded-lg">
-                  {selected.line_items?.map((li: any) => (
-                    <li key={li.id} className="flex items-center justify-between p-3 text-sm">
-                      <div className="min-w-0">
-                        <p className="font-semibold text-foreground truncate">{li.name}</p>
-                        {li.sku && <p className="text-[11px] text-muted-foreground">SKU: {li.sku}</p>}
-                      </div>
-                      <div className="text-right shrink-0 ml-3">
-                        <p className="text-foreground">×{li.quantity}</p>
-                        <p className="text-xs text-muted-foreground">{selected.currency} {Number(li.total).toFixed(2)}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                {selected.items ? (
+                  <ul className="divide-y divide-border border border-border rounded-lg">
+                    {selected.items.split("|").map((it, i) => (
+                      <li key={i} className="p-3 text-sm text-foreground">{it.trim()}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">—</p>
+                )}
                 <div className="flex justify-between mt-3 text-sm font-bold text-foreground">
                   <span>Total</span>
-                  <span>{selected.currency} {Number(selected.total).toFixed(2)}</span>
+                  <span>{selected.currency || ""} {Number(selected.order_total || 0).toFixed(2)}</span>
                 </div>
               </section>
-
-              {selected.customer_note && (
-                <section>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Customer note</h3>
-                  <p className="text-sm whitespace-pre-line text-foreground">{selected.customer_note}</p>
-                </section>
-              )}
-
-              {selected.transaction_id && (
-                <p className="text-xs text-muted-foreground">Transaction ID: {selected.transaction_id}</p>
-              )}
             </div>
           </aside>
         </div>
