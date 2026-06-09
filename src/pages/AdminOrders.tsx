@@ -402,6 +402,8 @@ export default function AdminOrders() {
           </aside>
         </div>
       )}
+      </>
+      )}
     </div>
   );
 }
