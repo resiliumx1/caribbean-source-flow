@@ -78,16 +78,30 @@ Deno.serve(async (req) => {
 
     const auth = "Basic " + btoa(`${wooKey}:${wooSecret}`);
     const url = `${baseApi}/orders?${qp.toString()}`;
-    const res = await fetch(url, { headers: { Authorization: auth } });
-
-    if (!res.ok) {
-      const text = await res.text();
-      return json({ error: `WooCommerce error ${res.status}`, details: text.slice(0, 500) }, 502);
-    }
+    const res = await fetch(url, {
+      headers: { Authorization: auth, Accept: "application/json" },
+      redirect: "follow",
+    });
 
     const totalPages = Number(res.headers.get("X-WP-TotalPages") || "1");
     const totalCount = Number(res.headers.get("X-WP-Total") || "0");
-    const data = await res.json();
+    const bodyText = await res.text();
+    let data: any;
+    try {
+      data = JSON.parse(bodyText);
+    } catch {
+      return json({
+        error: `WooCommerce returned non-JSON (status ${res.status})`,
+        url,
+        preview: bodyText.slice(0, 300),
+      }, 502);
+    }
+    if (!res.ok) {
+      return json({ error: `WooCommerce error ${res.status}`, details: data }, 502);
+    }
+    if (!Array.isArray(data)) {
+      return json({ error: "Unexpected WooCommerce response", details: data }, 502);
+    }
 
     const orders = (data as any[]).map((o) => ({
       id: o.id,
