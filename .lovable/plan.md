@@ -1,41 +1,35 @@
 ## Goal
-Let customers pay by debit/credit card on the checkout page without a separate payment processor, using PayPal as the underlying processor.
+Give admins a way to view historical orders that were placed on the old WooCommerce store (last 2 months), without importing them into the Lovable database.
 
-## Step 1 — Verify the existing guest "Debit or Credit Card" button
-PayPal's vertical button stack already loads with `enableFunding: "venmo,paylater,card"` in `src/App.tsx`, which renders a black "Debit or Credit Card" button under the yellow PayPal button. Tapping it opens PayPal's hosted guest card form (card number, expiry, CVV, billing address) — no PayPal account needed. PayPal processes and settles to the existing PayPal Business account.
+## What you'll see
+- On `/admin/orders`, two tabs at the top:
+  - **Lovable Orders** (current default view, unchanged)
+  - **WooCommerce (legacy)** — new
+- The Woo tab shows a table with: order #, date, customer name, email, status, payment method, total, and an "View details" expand that reveals line items, billing address, and customer note.
+- Filters: status dropdown (any / processing / completed / on-hold / cancelled / refunded), search by email or order #, and a date range (defaulting to the last 2 months).
+- Pagination (50 per page) with prev/next.
+- A small "Refresh" button to re-pull from WooCommerce.
 
-I'll open the live checkout in the preview browser at mobile width with a test cart item and confirm the black card button renders. If it does, this path already works today and just needs to be clearly labelled in the UI.
+## How it works (technical)
+1. **New edge function `woo-orders-list`** (`supabase/functions/woo-orders-list/index.ts`)
+   - Requires an authenticated admin caller (verifies the JWT and checks `profiles.is_admin = true` using the service role client). Non-admins get 403.
+   - Accepts query params: `after` (ISO date, defaults to now − 60 days), `before`, `status`, `search`, `page`, `per_page` (max 100).
+   - Calls `GET {WOO_STORE_URL}/wp-json/wc/v3/orders` using `WOO_CONSUMER_KEY` / `WOO_CONSUMER_SECRET` (basic auth), forwarding the params.
+   - Returns `{ orders, totalPages, totalCount }` with only the fields the UI needs (id, number, date_created, status, total, currency, payment_method_title, billing, line_items, customer_note).
+   - CORS headers included.
 
-UI polish (small):
-- Add a subtle "Pay with debit or credit card — no PayPal account required" helper line under the PayPal button stack so customers know the second button is the card option.
+2. **UI changes in `src/pages/AdminOrders.tsx`**
+   - Wrap existing content in a shadcn `Tabs` component with `lovable` and `woo` tabs.
+   - New component `src/components/admin/WooLegacyOrders.tsx` handles fetching via `supabase.functions.invoke('woo-orders-list', ...)`, table rendering, filters, pagination, and a details drawer/dialog.
+   - Reuse existing table/badge/button primitives so it matches the current admin styling.
 
-## Step 2 — Add embedded Advanced Card Fields (in-page card form)
-Most customers expect to type card details directly into the checkout page, not in a popup. PayPal's `card-fields` component renders hosted, PCI-compliant card-number / expiry / CVV inputs inline.
+3. **No DB migration required.** Nothing is written — data is read live from WooCommerce each time.
 
-### Changes
+## Out of scope
+- Importing Woo orders into the `orders` table.
+- Editing, refunding, or fulfilling Woo orders from the admin (Woo remains the source of truth for those).
+- Exporting to CSV (can be added later if useful).
 
-**`src/App.tsx`**
-- Change `components: "buttons"` → `components: "buttons,card-fields"` in `paypalOptions`.
-
-**`src/pages/Checkout.tsx`**
-- Below the existing `<PayPalButtons>`, add a new "Or pay with card" section containing:
-  - `<PayPalCardFieldsProvider>` wired to the same `createOrder` (reuses `pendingPayPalOrderIdRef` so retries don't double-charge) and the same `onApprove` → `submitOrderToBackend` flow used by `<PayPalButtons>`.
-  - `<PayPalNumberField>`, `<PayPalExpiryField>`, `<PayPalCVVField>` styled with the existing checkout border / focus-ring / 44px touch-target tokens.
-  - A "Pay $XX.XX with card" primary button that calls `cardFieldsForm.submit()`.
-- Reuse the existing `onError` handler (debug-id surfacing, "window closed" detection, fire-and-forget `log-payment-attempt`, retry-save state).
-- Eligibility gate: only render the card-fields block when `cardFieldsForm.isEligible()` returns true. If the merchant account isn't approved for Advanced Credit and Debit Card Payments, the block stays hidden and the existing black guest-card button (Step 1) remains the working fallback. No regression.
-- Same cache-invalidation `useEffect` on `[totalUsd, delivery_type, cartCount]` clears the cached PayPal order id for card fields too.
-
-### What does NOT change
-- `src/lib/paypal.ts` (same client ID).
-- `supabase/functions/paypal-checkout/index.ts` (same order-save path — card-fields captures and saves identically to button captures).
-- `supabase/functions/log-payment-attempt/index.ts` (reused).
-- No new secrets, no new tables, no new edge functions.
-
-## Caveats to surface to the user
-- **Advanced Card Fields requires PayPal Business approval for "Advanced Credit and Debit Card Payments."** US accounts usually have it by default; some regions / newer accounts need to apply in the PayPal dashboard. If it's not approved, the inline form silently won't render and customers fall back to the (working) black guest-card button.
-- PayPal may still hide the card button for buyers in unsupported regions or buyers already logged into PayPal — that's controlled by PayPal, not by us.
-
-## Files to touch
-- `src/App.tsx` — add `card-fields` to `components`.
-- `src/pages/Checkout.tsx` — add the card-fields block, helper text under buttons, eligibility gate.
+## Risks / notes
+- If the Woo store is slow or rate-limited, the tab will show a loading state and surface the upstream error message.
+- The 2-month default keeps the first page fast; admins can widen the date range manually.
