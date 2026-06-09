@@ -281,6 +281,63 @@ export type Database = {
         }
         Relationships: []
       }
+      legacy_woocommerce_orders: {
+        Row: {
+          address: string | null
+          city: string | null
+          country: string | null
+          currency: string | null
+          email: string | null
+          first_name: string | null
+          items: string | null
+          last_name: string | null
+          order_date: string
+          order_id: number
+          order_total: number | null
+          payment_method: string | null
+          phone: string | null
+          postcode: string | null
+          state: string | null
+          status: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          currency?: string | null
+          email?: string | null
+          first_name?: string | null
+          items?: string | null
+          last_name?: string | null
+          order_date: string
+          order_id: number
+          order_total?: number | null
+          payment_method?: string | null
+          phone?: string | null
+          postcode?: string | null
+          state?: string | null
+          status: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          currency?: string | null
+          email?: string | null
+          first_name?: string | null
+          items?: string | null
+          last_name?: string | null
+          order_date?: string
+          order_id?: number
+          order_total?: number | null
+          payment_method?: string | null
+          phone?: string | null
+          postcode?: string | null
+          state?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
