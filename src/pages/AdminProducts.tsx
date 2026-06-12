@@ -498,6 +498,24 @@ export default function AdminProducts() {
                   additionalImages={(product as any).additional_images ?? []}
                   onUploadComplete={handleImageUpdate}
                 />
+                <Button
+                  variant={product.is_active === false ? "default" : "outline"}
+                  size="sm"
+                  className="w-full gap-2"
+                  onClick={() =>
+                    updateProduct.mutate({
+                      id: product.id,
+                      updates: { is_active: !(product.is_active !== false) },
+                    })
+                  }
+                  disabled={updateProduct.isPending}
+                >
+                  {product.is_active === false ? (
+                    <><Eye className="w-3.5 h-3.5" />Show in Shop</>
+                  ) : (
+                    <><EyeOff className="w-3.5 h-3.5" />Hide from Shop</>
+                  )}
+                </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" size="sm" className="w-full gap-2">
