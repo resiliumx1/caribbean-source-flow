@@ -22,7 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProductImageUpload from "@/components/admin/ProductImageUpload";
-import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X, Trash2, RefreshCw } from "lucide-react";
+import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X, Trash2, RefreshCw, Eye, EyeOff } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -372,7 +372,12 @@ export default function AdminProducts() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts?.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
+            <Card key={product.id} className={`overflow-hidden ${product.is_active === false ? "opacity-60 border-dashed" : ""}`}>
+              {product.is_active === false && (
+                <div className="bg-muted/60 border-b px-3 py-1.5 text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                  <EyeOff className="w-3.5 h-3.5" /> Hidden from shop
+                </div>
+              )}
               <CardHeader className="pb-3">
                 <div className="flex items-start gap-2">
                   <Checkbox
@@ -493,6 +498,24 @@ export default function AdminProducts() {
                   additionalImages={(product as any).additional_images ?? []}
                   onUploadComplete={handleImageUpdate}
                 />
+                <Button
+                  variant={product.is_active === false ? "default" : "outline"}
+                  size="sm"
+                  className="w-full gap-2"
+                  onClick={() =>
+                    updateProduct.mutate({
+                      id: product.id,
+                      updates: { is_active: !(product.is_active !== false) },
+                    })
+                  }
+                  disabled={updateProduct.isPending}
+                >
+                  {product.is_active === false ? (
+                    <><Eye className="w-3.5 h-3.5" />Show in Shop</>
+                  ) : (
+                    <><EyeOff className="w-3.5 h-3.5" />Hide from Shop</>
+                  )}
+                </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" size="sm" className="w-full gap-2">
