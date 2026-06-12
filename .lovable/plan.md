@@ -1,35 +1,17 @@
-## Goal
-Give admins a way to view historical orders that were placed on the old WooCommerce store (last 2 months), without importing them into the Lovable database.
+## Plan
 
-## What you'll see
-- On `/admin/orders`, two tabs at the top:
-  - **Lovable Orders** (current default view, unchanged)
-  - **WooCommerce (legacy)** — new
-- The Woo tab shows a table with: order #, date, customer name, email, status, payment method, total, and an "View details" expand that reveals line items, billing address, and customer note.
-- Filters: status dropdown (any / processing / completed / on-hold / cancelled / refunded), search by email or order #, and a date range (defaulting to the last 2 months).
-- Pagination (50 per page) with prev/next.
-- A small "Refresh" button to re-pull from WooCommerce.
+### 1. Hide the Hemp Syrup product now
+- Find the Hemp Syrup product in the `products` table by name/slug and set `is_active = false` so it stops appearing in the shop, search, featured carousel, and related lists (all queries already filter by `is_active = true`).
 
-## How it works (technical)
-1. **New edge function `woo-orders-list`** (`supabase/functions/woo-orders-list/index.ts`)
-   - Requires an authenticated admin caller (verifies the JWT and checks `profiles.is_admin = true` using the service role client). Non-admins get 403.
-   - Accepts query params: `after` (ISO date, defaults to now − 60 days), `before`, `status`, `search`, `page`, `per_page` (max 100).
-   - Calls `GET {WOO_STORE_URL}/wp-json/wc/v3/orders` using `WOO_CONSUMER_KEY` / `WOO_CONSUMER_SECRET` (basic auth), forwarding the params.
-   - Returns `{ orders, totalPages, totalCount }` with only the fields the UI needs (id, number, date_created, status, total, currency, payment_method_title, billing, line_items, customer_note).
-   - CORS headers included.
+### 2. Add a "Hide / Show" toggle in the Shop Admin
+- In `src/pages/AdminProducts.tsx`, add a visibility toggle on each product row (eye / eye-off icon button, or a small switch in the actions column) that flips `is_active` for that product.
+- Show a clear visual state for hidden products in the admin list (e.g. dimmed row + "Hidden" badge) so admins can see what's currently off the storefront.
+- Wire it to a Supabase `update` on `products` and invalidate the products query so the UI refreshes.
+- No schema changes — `products.is_active` already exists and is what the storefront filters on.
 
-2. **UI changes in `src/pages/AdminOrders.tsx`**
-   - Wrap existing content in a shadcn `Tabs` component with `lovable` and `woo` tabs.
-   - New component `src/components/admin/WooLegacyOrders.tsx` handles fetching via `supabase.functions.invoke('woo-orders-list', ...)`, table rendering, filters, pagination, and a details drawer/dialog.
-   - Reuse existing table/badge/button primitives so it matches the current admin styling.
+### Technical notes
+- Storefront queries (`useProducts`, `useFeaturedProducts`, `RotatingApothecary`, search, related) all already filter `is_active = true`, so flipping the flag is sufficient.
+- Hemp Syrup will be flipped via a data update (insert tool), not a schema migration.
+- Admin write is gated by existing RLS policies on `products` (admin-only updates).
 
-3. **No DB migration required.** Nothing is written — data is read live from WooCommerce each time.
-
-## Out of scope
-- Importing Woo orders into the `orders` table.
-- Editing, refunding, or fulfilling Woo orders from the admin (Woo remains the source of truth for those).
-- Exporting to CSV (can be added later if useful).
-
-## Risks / notes
-- If the Woo store is slow or rate-limited, the tab will show a loading state and surface the upstream error message.
-- The 2-month default keeps the first page fast; admins can widen the date range manually.
+Want me to use an eye icon button inline on each row, or a labeled switch in an "Actions" area?
