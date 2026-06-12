@@ -34,6 +34,41 @@ Deno.serve(async (req) => {
 
   let parsedBody: RequestBody | null = null;
   try {
+    // --- Auth gate ----------------------------------------------------------
+    // This function can be invoked in two legitimate ways:
+    //   1. From another edge function via supabase.functions.invoke(...) — the
+    //      caller is created with SUPABASE_SERVICE_ROLE_KEY, so the bearer
+    //      token equals the service role key.
+    //   2. From an authenticated admin in the dashboard (AdminOrders).
+    // Anything else is rejected to stop spoofed "shipped/cancelled" emails.
+    const authHeader = req.headers.get("Authorization") || req.headers.get("authorization") || "";
+    const token = authHeader.toLowerCase().startsWith("bearer ")
+      ? authHeader.slice(7).trim()
+      : "";
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+    let authorized = false;
+    if (token && serviceRoleKey && token === serviceRoleKey) {
+      authorized = true;
+    } else if (token && token.split(".").length === 3) {
+      const authClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        serviceRoleKey
+      );
+      const { data: userData } = await authClient.auth.getUser(token);
+      const uid = userData?.user?.id;
+      if (uid) {
+        const { data: profile } = await authClient
+          .from("profiles").select("is_admin").eq("id", uid).maybeSingle();
+        if (profile?.is_admin) authorized = true;
+      }
+    }
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     parsedBody = (await req.json()) as RequestBody;
     const { orderId, emailType, fromFallback, force, cancellationReason } = parsedBody;
     if (!orderId) throw new Error("orderId is required");
