@@ -1,17 +1,14 @@
-## Plan
+### 1. Swap the PayPal Client ID
+Replace the hardcoded LIVE Client ID in `src/lib/paypal.ts` with the new ID you provided.
 
-### 1. Hide the Hemp Syrup product now
-- Find the Hemp Syrup product in the `products` table by name/slug and set `is_active = false` so it stops appearing in the shop, search, featured carousel, and related lists (all queries already filter by `is_active = true`).
+### 2. Store the new PayPal Client Secret
+Add `PAYPAL_CLIENT_SECRET` as a runtime secret via the secrets tool so it is available to edge functions if/when server-side verification is added later.
 
-### 2. Add a "Hide / Show" toggle in the Shop Admin
-- In `src/pages/AdminProducts.tsx`, add a visibility toggle on each product row (eye / eye-off icon button, or a small switch in the actions column) that flips `is_active` for that product.
-- Show a clear visual state for hidden products in the admin list (e.g. dimmed row + "Hidden" badge) so admins can see what's currently off the storefront.
-- Wire it to a Supabase `update` on `products` and invalidate the products query so the UI refreshes.
-- No schema changes — `products.is_active` already exists and is what the storefront filters on.
+### 3. Keep existing checkout flow
+No changes to the `paypal-checkout` or `retreat-checkout` edge functions — they will continue trusting the client-provided capture ID and amount as they do today.
 
-### Technical notes
-- Storefront queries (`useProducts`, `useFeaturedProducts`, `RotatingApothecary`, search, related) all already filter `is_active = true`, so flipping the flag is sufficient.
-- Hemp Syrup will be flipped via a data update (insert tool), not a schema migration.
-- Admin write is gated by existing RLS policies on `products` (admin-only updates).
+---
 
-Want me to use an eye icon button inline on each row, or a labeled switch in an "Actions" area?
+**New Client ID received:** `ARA5I0pb-Sr8CDj3wiliKf-qILV9wMuX0YRNaBFbBsVld88v2CWs2ILHegOPuLfizo2G-czuNEyHje0L`
+**Environment:** LIVE
+**Server-side verification:** Not included (per your request)

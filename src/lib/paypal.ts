@@ -8,6 +8,6 @@
  * Environment: LIVE (production).
  */
 export const PAYPAL_CLIENT_ID =
-  "AcmIy_966oNjaBXz8q4hdddx0dwem9S3nPkEv4Tiy8mk4Yw-GLMxJMMgmmb_YUhl8oKmvDkI4XQdsdbu";
+  "ARA5I0pb-Sr8CDj3wiliKf-qILV9wMuX0YRNaBFbBsVld88v2CWs2ILHegOPuLfizo2G-czuNEyHje0L";
 
 export const PAYPAL_CURRENCY = "USD";
