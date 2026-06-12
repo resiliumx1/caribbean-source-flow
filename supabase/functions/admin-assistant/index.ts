@@ -201,7 +201,9 @@ serve(async (req) => {
       }
     }
 
-    const ANTHROPIC_KEY = Deno.env.get("VITE_ANTHROPIC_API_KEY") || Deno.env.get("ANTHROPIC_API_KEY");
+    // Only read the server-side secret. Never fall back to a VITE_ prefixed
+    // variable — Vite bundles any VITE_* env into the public client.
+    const ANTHROPIC_KEY = Deno.env.get("ANTHROPIC_API_KEY");
     if (!ANTHROPIC_KEY) {
       return new Response(JSON.stringify({ error: "Assistant not configured" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }

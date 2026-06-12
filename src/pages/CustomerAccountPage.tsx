@@ -43,6 +43,7 @@ function useIsDark() {
 export default function CustomerAccountPage() {
   const isDark = useIsDark();
   const [email, setEmail] = useState("");
+  const [orderNumber, setOrderNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [looked, setLooked] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
@@ -79,10 +80,18 @@ export default function CustomerAccountPage() {
   const handleLookup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
+    if (!orderNumber.trim()) {
+      toast({
+        title: "Order number required",
+        description: "Please enter the order number from your confirmation email.",
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("guest-orders", {
-        body: { email: email.trim() },
+        body: { email: email.trim(), order_number: orderNumber.trim() },
       });
       if (error) throw error;
       setOrders(data.orders || []);
@@ -97,6 +106,7 @@ export default function CustomerAccountPage() {
 
   const handleReset = () => {
     setEmail("");
+    setOrderNumber("");
     setLooked(false);
     setOrders([]);
     setOrderItems({});
@@ -168,11 +178,24 @@ export default function CustomerAccountPage() {
                 onBlur={(e) => { e.currentTarget.style.borderColor = c.inputBorder; e.currentTarget.style.boxShadow = "none"; }}
                 required
               />
+              <label style={{ fontSize: 13, fontWeight: 500, color: c.textMuted, fontFamily: "'DM Sans', sans-serif" }}>
+                Order number
+              </label>
+              <input
+                type="text"
+                value={orderNumber}
+                onChange={(e) => setOrderNumber(e.target.value)}
+                placeholder="MK20260101-0001"
+                style={inputStyle}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "#1b4332"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(27,67,50,0.1)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = c.inputBorder; e.currentTarget.style.boxShadow = "none"; }}
+                required
+              />
               <button type="submit" style={btnStyle} disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Find My Orders"}
               </button>
               <p style={{ fontSize: 12, color: c.textMuted, textAlign: "center", fontFamily: "'DM Sans', sans-serif" }}>
-                We'll look up all orders associated with this email.
+                Your order number is in your confirmation email (e.g. MK20260101-0001).
               </p>
             </form>
           </div>
