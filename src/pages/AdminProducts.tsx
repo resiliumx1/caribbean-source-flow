@@ -372,7 +372,12 @@ export default function AdminProducts() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts?.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
+            <Card key={product.id} className={`overflow-hidden ${product.is_active === false ? "opacity-60 border-dashed" : ""}`}>
+              {product.is_active === false && (
+                <div className="bg-muted/60 border-b px-3 py-1.5 text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                  <EyeOff className="w-3.5 h-3.5" /> Hidden from shop
+                </div>
+              )}
               <CardHeader className="pb-3">
                 <div className="flex items-start gap-2">
                   <Checkbox
