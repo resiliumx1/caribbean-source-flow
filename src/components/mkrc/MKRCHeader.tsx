@@ -135,7 +135,7 @@ export default function MKRCHeader() {
       {/* Mobile overlay */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-8"
+          className="fixed inset-0 z-[100] flex flex-col items-center gap-8 overflow-y-auto overscroll-contain py-24 px-6"
           style={{ backgroundColor: "var(--mkrc-bg-primary)" }}
         >
           <button
