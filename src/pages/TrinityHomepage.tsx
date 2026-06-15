@@ -104,6 +104,14 @@ const TrinityHomepage = () => {
         <meta property="og:description" content="Mount Kailash Rejuvenation Centre offers Caribbean clinical bush medicine from Saint Lucia. Shop herbal tinctures, book a healing retreat, or train as an herbal physician with Priest Kailash." />
         <meta property="og:url" content={`${SITE_URL}/`} />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content={`${SITE_URL}/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg`} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="The Answer tincture — Mount Kailash Rejuvenation Centre" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Mount Kailash Rejuvenation Centre — Clinical Bush Medicine, Retreats & Herbal School, Saint Lucia" />
+        <meta name="twitter:description" content="Mount Kailash Rejuvenation Centre offers Caribbean clinical bush medicine from Saint Lucia. Shop herbal tinctures, book a healing retreat, or train as an herbal physician with Priest Kailash." />
+        <meta name="twitter:image" content={`${SITE_URL}/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg`} />
         <link rel="canonical" href={`${SITE_URL}/`} />
       </Helmet>
 

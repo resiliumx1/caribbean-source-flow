@@ -137,7 +137,7 @@ export default function TheAnswer() {
 
   return (
     <div className="the-answer-page min-h-screen">
-      <SEOHead title="The Answer — Caribbean Immune Elixir | Mount Kailash" description="MKRC's best-selling immune elixir — handcrafted in Saint Lucia with Anamu, Vervain & Soursop. Endorsed by Chronixx. Oak-aged 21 days." path="/the-answer" />
+      <SEOHead title="The Answer — Caribbean Immune Elixir | Mount Kailash" description="MKRC's best-selling immune elixir — handcrafted in Saint Lucia with Anamu, Vervain & Soursop. Endorsed by Chronixx. Oak-aged 21 days." path="/the-answer" ogImage={heroBottle} />
 
       {/* ===== 1. GALLERY HERO: Bottle as Sculpture ===== */}
       <section className="answer-hero">
