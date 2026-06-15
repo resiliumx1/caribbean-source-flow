@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
+import shopHero from "@/assets/shop-hero-apothecary.webp";
 import { ShopHero } from "@/components/store/ShopHero";
 import { ShopFilterNav } from "@/components/store/ShopFilterNav";
 import { FeaturedProduct } from "@/components/store/FeaturedProduct";

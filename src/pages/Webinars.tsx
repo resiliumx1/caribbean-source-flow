@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SEOHead } from "@/components/SEOHead";
+import webinarOg from "@/assets/mkrc-webinar-featured.webp";
 import { Helmet } from "react-helmet-async";
 import { useWebinarVideos, WebinarVideo } from "@/hooks/use-webinar-videos";
 import "@/styles/webinar.css";

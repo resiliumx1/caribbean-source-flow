@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
+import retreatOg from "@/assets/retreat-hero-yoga.webp";
 import FadeInStagger from "@/components/FadeInStagger";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
 import { RetreatPathSplit } from "@/components/retreats/RetreatPathSplit";
