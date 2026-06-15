@@ -1,46 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://mountkailashslu.com/</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg</image:loc>
+      <image:title>The Answer — Mount Kailash Rejuvenation Centre</image:title>
+      <image:caption>The Answer herbal tincture by Mount Kailash Rejuvenation Centre, Saint Lucia.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mountkailashslu.com/shop</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg</image:loc>
+      <image:title>Mount Kailash Apothecary Shop</image:title>
+      <image:caption>Herbal tinctures and botanical formulations from Saint Lucia.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mountkailashslu.com/wholesale</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg</image:loc>
+      <image:title>Mount Kailash Wholesale</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://mountkailashslu.com/retreats</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg</image:loc>
+      <image:title>Wellness Immersion Retreats — Mount Kailash</image:title>
+      <image:caption>Botanical wellness retreats in the mineral rich soil of Saint Lucia.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mountkailashslu.com/the-answer</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg</image:loc>
+      <image:title>The Answer Herbal Tincture</image:title>
+      <image:caption>Foy Duran, Vervain and Soursop Leaves botanical formulation.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mountkailashslu.com/webinars</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg</image:loc>
+      <image:title>Mount Kailash Webinars Library</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://mountkailashslu.com/school/herbal-physician</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg</image:loc>
+      <image:title>Herbal Physician Certification Course</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://mountkailashslu.com/privacy-policy</loc>
