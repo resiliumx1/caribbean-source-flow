@@ -61,6 +61,7 @@ export default function WebinarHero() {
 
         {/* Headline */}
         <h1 className="mb-6">
+          <span className="sr-only">Free Herbal Medicine Webinars with Priest Kailash — </span>
           <span
             className="block font-cormorant font-light"
             style={{ color: "#f2ead8", fontSize: "clamp(2rem, 4.5vw, 3.6rem)", lineHeight: 1.15 }}

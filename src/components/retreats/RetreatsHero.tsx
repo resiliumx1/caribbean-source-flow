@@ -40,6 +40,7 @@ export function RetreatsHero() {
             textShadow: '0 2px 8px rgba(0,0,0,0.7), 0 4px 20px rgba(0,0,0,0.5)',
           }}
         >
+          <span className="sr-only">Wellness Retreats in Saint Lucia — </span>
           Restore. Reset. Reconnect.
         </h1>
 

@@ -40,6 +40,7 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
               color: "var(--site-hero-text-on-dark)",
             }}
           >
+            <span className="sr-only">Wholesale Caribbean Botanicals & Bush Medicine Supplier — </span>
             Eliminate Batch Variability
           </h1>
 

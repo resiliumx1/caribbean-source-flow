@@ -145,6 +145,7 @@ export default function TheAnswer() {
         <div className="answer-hero__story-side">
           <div ref={reveal} className="ta-reveal answer-hero__story-inner">
             <h1 className="answer-hero__title">
+              <span className="sr-only">The Answer — Caribbean Immune Tincture by Mount Kailash. </span>
               The <em>Answer.</em>
             </h1>
             <p className="answer-hero__subtitle">
