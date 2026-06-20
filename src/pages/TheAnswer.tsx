@@ -1,6 +1,8 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
+import { RelatedLinks } from "@/components/RelatedLinks";
+import { getBreadcrumbs } from "@/lib/internal-links";
 import {
   Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles,
   ChevronDown, Star, ArrowRight, CheckCircle2, MapPin
@@ -142,7 +144,7 @@ export default function TheAnswer() {
         description="MKRC's best-selling immune elixir — handcrafted in Saint Lucia with Anamu, Vervain & Soursop. Endorsed by Chronixx. Oak-aged 21 days."
         path="/the-answer"
         ogImage={heroBottle}
-        breadcrumbs={[{ name: "The Answer", path: "/the-answer" }]}
+        breadcrumbs={getBreadcrumbs("the-answer")}
         schema={{
           "@context": "https://schema.org",
           "@type": "Product",
@@ -458,6 +460,8 @@ export default function TheAnswer() {
           </p>
         </div>
       </section>
+
+      <RelatedLinks nodeId="the-answer" />
     </div>
   );
 }
