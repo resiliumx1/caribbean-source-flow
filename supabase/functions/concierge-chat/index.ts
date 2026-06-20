@@ -292,6 +292,13 @@ serve(async (req) => {
         const tm = text.match(trackingRe);
         if (tm) query = tm[1];
       }
+      // Bare token (user just pasted a tracking number with no other words)
+      if (!query) {
+        const trimmed = text.trim();
+        if (/^[A-Za-z0-9\- ]{8,40}$/.test(trimmed) && /[0-9]/.test(trimmed) && /[A-Za-z0-9]/.test(trimmed) && trimmed.split(/\s+/).length <= 2) {
+          query = trimmed.replace(/\s+/g, "");
+        }
+      }
       if (query) {
         const result = await lookupOrder(query);
         return streamPlainReply(result.message);
