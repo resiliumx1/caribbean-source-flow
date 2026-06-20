@@ -189,6 +189,18 @@ Deno.serve(async (req) => {
       console.error("send-order-emails threw (order still saved):", e);
     }
 
+    // Fire-and-forget SMS notifications. Never block the order on SMS failure.
+    try {
+      await supabase.functions.invoke("send-sms", {
+        body: { orderId: order.id, smsType: "order_placed" },
+      });
+      await supabase.functions.invoke("send-sms", {
+        body: { orderId: order.id, smsType: "admin_new_order" },
+      });
+    } catch (e) {
+      console.error("send-sms threw (order still saved):", e);
+    }
+
     return new Response(
       JSON.stringify({
         success: true,

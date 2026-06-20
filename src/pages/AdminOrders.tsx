@@ -222,6 +222,17 @@ export default function AdminOrders() {
       } else if (becameCancelled) {
         await triggerEmail("order_cancelled", { cancellationReason: reason }, { ok: "Cancellation email sent", fail: "Cancellation email failed" });
       }
+
+      // Fire matching SMS (best-effort, never block)
+      try {
+        if (becameShipped) {
+          await supabase.functions.invoke("send-sms", { body: { orderId: selectedId, smsType: "order_shipped", force: true } });
+        } else if (becameCancelled) {
+          await supabase.functions.invoke("send-sms", { body: { orderId: selectedId, smsType: "order_cancelled", force: true } });
+        }
+      } catch (e) {
+        console.error("send-sms invoke failed:", e);
+      }
       setEditing(false);
       fetchOrders();
     }
