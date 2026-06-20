@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      articles: {
+        Row: {
+          author: string
+          body_markdown: string
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_published: boolean
+          meta_description: string | null
+          published_date: string | null
+          slug: string
+          title: string
+          updated_at: string
+          updated_date: string | null
+        }
+        Insert: {
+          author?: string
+          body_markdown?: string
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          meta_description?: string | null
+          published_date?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+          updated_date?: string | null
+        }
+        Update: {
+          author?: string
+          body_markdown?: string
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          meta_description?: string | null
+          published_date?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+          updated_date?: string | null
+        }
+        Relationships: []
+      }
       bundle_items: {
         Row: {
           bundle_id: string
