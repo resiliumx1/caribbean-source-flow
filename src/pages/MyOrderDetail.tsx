@@ -114,7 +114,7 @@ export default function MyOrderDetail() {
 
   return (
     <div className="min-h-screen bg-background pt-20">
-      <SEOHead title={`Order ${order.order_number} | Mount Kailash`} description="Order details" path={`/account/orders/${orderNumber}`} />
+      <SEOHead title={`Order ${order.order_number} | Mount Kailash`} description="Order details" path={`/account/orders/${orderNumber}`} noindex />
       <main className="container mx-auto px-4 py-10 max-w-4xl">
         <Link to="/account/orders" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to My Orders

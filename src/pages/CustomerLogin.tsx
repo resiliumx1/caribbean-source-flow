@@ -58,7 +58,7 @@ export default function CustomerLogin() {
 
   return (
     <div className="min-h-screen bg-background pt-20 flex items-center justify-center px-4 py-12">
-      <SEOHead title="Sign In | Mount Kailash" description="Access your orders and account." path="/login" />
+      <SEOHead title="Sign In | Mount Kailash" description="Access your orders and account." path="/login" noindex />
       <div className="w-full max-w-md">
         <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to site
