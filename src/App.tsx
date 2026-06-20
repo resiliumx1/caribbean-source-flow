@@ -48,6 +48,8 @@ const ComparePage = lazy(() => import("./pages/ComparePage"));
 const HerbalPhysicianCourse = lazy(() => import("./pages/HerbalPhysicianCourse"));
 const GateEntrancePage = lazy(() => import("./pages/GateEntrancePage"));
 const GoddessCard = lazy(() => import("./pages/GoddessCard"));
+const Learn = lazy(() => import("./pages/Learn"));
+const LearnArticle = lazy(() => import("./pages/LearnArticle"));
 const CustomerAccountPage = lazy(() => import("./pages/CustomerAccountPage"));
 const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
 const CustomerLogin = lazy(() => import("./pages/CustomerLogin"));
@@ -143,6 +145,8 @@ function AppContent() {
           <Route path="/the-answer" element={<TheAnswer />} />
           <Route path="/webinars" element={<WebinarsPage />} />
           <Route path="/school/herbal-physician" element={<HerbalPhysicianCourse />} />
+          <Route path="/learn" element={<Learn />} />
+          <Route path="/learn/:slug" element={<LearnArticle />} />
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/goddess" element={<GoddessCard />} />
           <Route path="/account" element={<CustomerAccountPage />} />
