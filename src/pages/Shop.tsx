@@ -279,7 +279,22 @@ export default function Shop() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
-      <SEOHead title="Herbal Apothecary | Mount Kailash" description="Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration." path="/shop" ogImage={shopHero} />
+      <SEOHead
+        title="Herbal Apothecary | Mount Kailash"
+        description="Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration."
+        path="/shop"
+        ogImage={shopHero}
+        breadcrumbs={[{ name: "Shop", path: "/shop" }]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Mount Kailash Herbal Apothecary",
+          description:
+            "Caribbean herbal tinctures, capsules, teas, and raw bush medicine hand-formulated in Saint Lucia.",
+          url: "https://mountkailashslu.com/shop",
+          about: { "@type": "Thing", name: "Caribbean Bush Medicine" },
+        }}
+      />
       <ShopHero />
 
       <ProductReel products={allSingles} />

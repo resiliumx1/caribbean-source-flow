@@ -29,7 +29,29 @@ export default function HerbalPhysicianCourse() {
   };
   return (
     <>
-      <SEOHead title="Herbal Physician Training | Mount Kailash" description="Become a certified herbal physician. Clinical bush medicine training from Saint Lucia. 500+ graduates worldwide. Led by Rt Hon Priest Kailash K Leonce." path="/school/herbal-physician" />
+      <SEOHead
+        title="Herbal Physician Training | Mount Kailash"
+        description="Become a certified herbal physician. Clinical bush medicine training from Saint Lucia. 500+ graduates worldwide. Led by Rt Hon Priest Kailash K Leonce."
+        path="/school/herbal-physician"
+        breadcrumbs={[
+          { name: "School", path: "/school/herbal-physician" },
+          { name: "Herbal Physician Course", path: "/school/herbal-physician" },
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Course",
+          name: "Herbal Physician Certification Course",
+          description:
+            "Clinical bush medicine certification program training the next generation of herbal physicians.",
+          url: "https://mountkailashslu.com/school/herbal-physician",
+          provider: {
+            "@type": "Organization",
+            name: "Mount Kailash School of Bush Medicine",
+            sameAs: "https://mountkailashslu.com",
+          },
+          educationalCredentialAwarded: "Certified Herbal Physician",
+        }}
+      />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(courseSchema)}</script>
       </Helmet>

@@ -137,7 +137,28 @@ export default function TheAnswer() {
 
   return (
     <div className="the-answer-page min-h-screen">
-      <SEOHead title="The Answer — Caribbean Immune Elixir | Mount Kailash" description="MKRC's best-selling immune elixir — handcrafted in Saint Lucia with Anamu, Vervain & Soursop. Endorsed by Chronixx. Oak-aged 21 days." path="/the-answer" ogImage={heroBottle} />
+      <SEOHead
+        title="The Answer — Caribbean Immune Elixir | Mount Kailash"
+        description="MKRC's best-selling immune elixir — handcrafted in Saint Lucia with Anamu, Vervain & Soursop. Endorsed by Chronixx. Oak-aged 21 days."
+        path="/the-answer"
+        ogImage={heroBottle}
+        breadcrumbs={[{ name: "The Answer", path: "/the-answer" }]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "The Answer — Caribbean Immune Elixir",
+          description:
+            "Oak-aged 21 days. A Caribbean immune elixir handcrafted in Saint Lucia with Foy Duran (Anamu), Vervain, and Soursop Leaves.",
+          brand: { "@type": "Brand", name: "Mount Kailash Rejuvenation Centre" },
+          category: "Herbal Tincture",
+          url: "https://mountkailashslu.com/the-answer",
+          manufacturer: {
+            "@type": "Organization",
+            name: "Mount Kailash Rejuvenation Centre",
+            address: { "@type": "PostalAddress", addressLocality: "Soufriere", addressCountry: "LC" },
+          },
+        }}
+      />
 
       {/* ===== 1. GALLERY HERO: Bottle as Sculpture ===== */}
       <section className="answer-hero">

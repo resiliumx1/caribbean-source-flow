@@ -102,7 +102,7 @@ export default function MyOrders() {
 
   return (
     <div className="min-h-screen bg-background pt-20">
-      <SEOHead title="My Orders | Mount Kailash" description="View your order history." path="/account/orders" />
+      <SEOHead title="My Orders | Mount Kailash" description="View your order history." path="/account/orders" noindex />
       <main className="container mx-auto px-4 py-10 max-w-4xl">
         <Link to="/account" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Account
