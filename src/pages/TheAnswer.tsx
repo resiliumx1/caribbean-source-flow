@@ -178,7 +178,11 @@ export default function TheAnswer() {
               Daily defense, steeped in oak &amp; roots. A centuries-old Caribbean wellness secret — nature's most potent immune-fortifying herbs, hand-selected and oak-aged to perfection.
             </p>
             <div className="answer-hero__ctas">
-              <Link to="/shop/the-answer" className="answer-hero__btn-primary">
+              <Link
+                to="/shop/the-answer"
+                className="answer-hero__btn-primary"
+                aria-label="Buy The Answer Caribbean immune elixir — start your 21-day ritual"
+              >
                 Start Your 21-Day Ritual <ArrowRight size={16} />
               </Link>
               <button onClick={() => scrollToSection("meet-the-herbs")} className="answer-hero__btn-secondary">
@@ -449,7 +453,11 @@ export default function TheAnswer() {
               <span key={b} className="final-cta__badge">{b}</span>
             ))}
           </div>
-          <Link to="/shop/the-answer" className="final-cta__main-btn">
+          <Link
+            to="/shop/the-answer"
+            className="final-cta__main-btn"
+            aria-label="Buy The Answer immune elixir from the Mount Kailash apothecary — $45"
+          >
             Begin the Ritual — $45 <ArrowRight size={16} />
           </Link>
           <p className="final-cta__risk">
