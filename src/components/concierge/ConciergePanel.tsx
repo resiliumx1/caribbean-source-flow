@@ -15,6 +15,7 @@ const quickActions = [
   "Find a formulation",
   "Retreat availability",
   "Wholesale inquiry",
+  "Track my order",
 ];
 
 export function ConciergePanel({ isOpen, onClose }: ConciergePanelProps) {
