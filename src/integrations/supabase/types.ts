@@ -1424,6 +1424,65 @@ export type Database = {
         }
         Relationships: []
       }
+      tracking_subscriptions: {
+        Row: {
+          active: boolean
+          channel: string
+          contact: string
+          created_at: string
+          id: string
+          last_known_fulfillment: string | null
+          last_known_status: string | null
+          last_known_tracking: string | null
+          last_notified_at: string | null
+          order_id: string
+          unsubscribe_token: string
+          updated_at: string
+          verified: boolean
+          verify_token: string
+        }
+        Insert: {
+          active?: boolean
+          channel: string
+          contact: string
+          created_at?: string
+          id?: string
+          last_known_fulfillment?: string | null
+          last_known_status?: string | null
+          last_known_tracking?: string | null
+          last_notified_at?: string | null
+          order_id: string
+          unsubscribe_token?: string
+          updated_at?: string
+          verified?: boolean
+          verify_token?: string
+        }
+        Update: {
+          active?: boolean
+          channel?: string
+          contact?: string
+          created_at?: string
+          id?: string
+          last_known_fulfillment?: string | null
+          last_known_status?: string | null
+          last_known_tracking?: string | null
+          last_notified_at?: string | null
+          order_id?: string
+          unsubscribe_token?: string
+          updated_at?: string
+          verified?: boolean
+          verify_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_subscriptions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       webinar_videos: {
         Row: {
           category: string

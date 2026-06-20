@@ -29,6 +29,49 @@ function checkRateLimit(sessionId: string): { allowed: boolean; remaining: numbe
 const WHATSAPP_NUMBER = "13059429407";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20MKRC%2C%20I%20have%20a%20question`;
 
+const NOTIFY_CTA =
+  "\n\n🔔 *Want a heads-up the moment this order moves?* Reply with `notify me at you@email.com` and I'll email you on every status change (shipped, in transit, delivered). Unsubscribe anytime in one click.";
+
+// Track the most recently looked-up order per session in-memory so a follow-up
+// "notify me at ..." message knows which order to subscribe to.
+const lastLookup = new Map<string, { orderQuery: string; at: number }>();
+const LOOKUP_TTL_MS = 30 * 60 * 1000;
+
+function rememberLookup(sessionId: string, query: string) {
+  lastLookup.set(sessionId, { orderQuery: query, at: Date.now() });
+}
+function recallLookup(sessionId: string): string | null {
+  const e = lastLookup.get(sessionId);
+  if (!e) return null;
+  if (Date.now() - e.at > LOOKUP_TTL_MS) { lastLookup.delete(sessionId); return null; }
+  return e.orderQuery;
+}
+
+const NOTIFY_RE = /\b(?:notify|alert|email|text|update)s?\s+me\s+(?:at|on|to|with)\s+([^\s,;]+)/i;
+const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,253}\.[a-zA-Z]{2,}$/;
+const PHONE_RE = /^\+[1-9]\d{6,14}$/;
+
+async function callSubscribe(orderQuery: string, contact: string, channel: "email" | "sms") {
+  try {
+    const res = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/tracking-subscribe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+      },
+      body: JSON.stringify({ orderQuery, channel, contact }),
+    });
+    const json = await res.json().catch(() => ({}));
+    return json?.message ||
+      (res.ok
+        ? "You're subscribed — check your inbox for the confirmation."
+        : "I couldn't set that up just now. Try again or tap 💬 CONNECT_WITH_TEAM.");
+  } catch (err) {
+    console.error("callSubscribe error", err);
+    return "I couldn't set that up just now. Please try again in a moment.";
+  }
+}
+
 // Emit a deterministic assistant reply as a single SSE chunk + [DONE], matching
 // the OpenAI delta format the client already parses.
 function streamPlainReply(text: string): Response {
@@ -282,6 +325,35 @@ serve(async (req) => {
     const lastUser = [...messages].reverse().find((m: any) => m.role === "user");
     if (lastUser?.content) {
       const text: string = lastUser.content;
+
+      // ── Notify-me intercept ──
+      const notifyMatch = text.match(NOTIFY_RE);
+      if (notifyMatch) {
+        const contact = notifyMatch[1].replace(/[.,;)]$/, "");
+        const channel: "email" | "sms" = EMAIL_RE.test(contact)
+          ? "email"
+          : PHONE_RE.test(contact)
+          ? "sms"
+          : "email";
+        if (!EMAIL_RE.test(contact) && !PHONE_RE.test(contact)) {
+          return streamPlainReply(
+            "That doesn't look like a valid email or phone number. Try `notify me at you@email.com` (or a phone like `+17585551234`).",
+          );
+        }
+        const orderQuery = recallLookup(sessionId) || (() => {
+          const m = text.match(/\b(MK-\d{8}-\d{4})\b/i);
+          return m?.[1]?.toUpperCase() || null;
+        })();
+        if (!orderQuery) {
+          return streamPlainReply(
+            "I'm happy to set up updates — first paste the tracking number or order number (looks like **MK-20260615-0420**), then send `notify me at " +
+              contact + "`.",
+          );
+        }
+        const reply = await callSubscribe(orderQuery, contact, channel);
+        return streamPlainReply(reply);
+      }
+
       const orderNumRe = /\b(MK-\d{8}-\d{4})\b/i;
       const trackingRe = /\b([A-Z0-9]{10,30})\b/;
       const intentRe = /\b(track|tracking|where('?s| is)?\s+my\s+order|status of (my )?order|order status)\b/i;
@@ -301,7 +373,9 @@ serve(async (req) => {
       }
       if (query) {
         const result = await lookupOrder(query);
-        return streamPlainReply(result.message);
+        if (result.found) rememberLookup(sessionId, query);
+        const reply = result.found ? result.message + NOTIFY_CTA : result.message;
+        return streamPlainReply(reply);
       }
     }
 
