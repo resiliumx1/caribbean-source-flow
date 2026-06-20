@@ -29,6 +29,25 @@ function checkRateLimit(sessionId: string): { allowed: boolean; remaining: numbe
 const WHATSAPP_NUMBER = "13059429407";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20MKRC%2C%20I%20have%20a%20question`;
 
+// Emit a deterministic assistant reply as a single SSE chunk + [DONE], matching
+// the OpenAI delta format the client already parses.
+function streamPlainReply(text: string): Response {
+  const enc = new TextEncoder();
+  const chunk = {
+    choices: [{ delta: { role: "assistant", content: text }, index: 0, finish_reason: null }],
+  };
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(enc.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+      controller.enqueue(enc.encode("data: [DONE]\n\n"));
+      controller.close();
+    },
+  });
+  return new Response(stream, {
+    headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+  });
+}
+
 const SYSTEM_PROMPT = `You are the Mount Kailash Rejuvenation Centre AI Health Advisor. You help customers find the right herbal remedy from our active product range based on their symptoms, health goals, or conditions.
 
 COMPANY: Mount Kailash Rejuvenation Centre, St. Lucia. Led by Rt Hon Priest Kailash K Leonce (master herbalist, 21+ years). Herbs wildcrafted from St. Lucian rainforests.
