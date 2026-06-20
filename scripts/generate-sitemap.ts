@@ -38,6 +38,7 @@ const staticEntries: Entry[] = [
   { loc: "/retreats",                  changefreq: "weekly",  priority: "0.8", lastmod: today },
   { loc: "/school/herbal-physician",   changefreq: "monthly", priority: "0.8", lastmod: today },
   { loc: "/wholesale",                 changefreq: "monthly", priority: "0.8", lastmod: today },
+  { loc: "/learn",                     changefreq: "weekly",  priority: "0.7", lastmod: today },
 ];
 
 async function fetchDynamic(): Promise<Entry[]> {
@@ -78,6 +79,26 @@ async function fetchDynamic(): Promise<Entry[]> {
       lastmod: (r.updated_at || today).toString().slice(0, 10),
       changefreq: "monthly",
       priority: "0.7",
+    });
+  }
+
+  // Published learn articles — one entry per row, mirroring the page's loader filter.
+  const { data: articles, error: aErr } = await sb
+    .from("articles")
+    .select("slug, updated_date, published_date, updated_at")
+    .eq("is_published", true)
+    .not("slug", "is", null);
+  if (aErr) console.warn("[sitemap] articles error:", aErr.message);
+  for (const a of articles || []) {
+    if (!a.slug) continue;
+    const lastmod = (a.updated_date || a.published_date || a.updated_at || today)
+      .toString()
+      .slice(0, 10);
+    out.push({
+      loc: `/learn/${a.slug}`,
+      lastmod,
+      changefreq: "monthly",
+      priority: "0.6",
     });
   }
 
