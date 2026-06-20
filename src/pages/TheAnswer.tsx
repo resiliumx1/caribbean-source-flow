@@ -249,6 +249,11 @@ export default function TheAnswer() {
         </div>
       </section>
 
+      <DirectAnswer
+        question="What is The Answer tincture?"
+        answer="The Answer is Mount Kailash's flagship Caribbean botanical tincture — Foy Duran (Anamu), Vervain and Soursop leaves, hand-extracted in Soufrière, Saint Lucia and oak-aged for twenty-one days. Adults take a small dropper measure once or twice a day as part of a steady traditional wellness ritual, with no fillers, synthetic flavours or preservatives."
+      />
+
       {/* ===== 2. CHRONIXX STATS ===== */}
       <section id="chronixx" className="chronixx-section">
         <div className="chronixx-section__inner">
