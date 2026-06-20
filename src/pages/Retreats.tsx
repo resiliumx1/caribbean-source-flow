@@ -43,7 +43,22 @@ const Retreats = () => {
 
   return (
     <main className="min-h-screen">
-      <SEOHead title="Wellness Retreats in Saint Lucia | Mount Kailash" description="Immersive wellness retreats in St. Lucia's tropical rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal." path="/retreats" ogImage={retreatOg} />
+      <SEOHead
+        title="Wellness Retreats in Saint Lucia | Mount Kailash"
+        description="Immersive wellness retreats in St. Lucia's tropical rainforest. Group and private programs with plant-based cuisine, bush medicine workshops, and personal renewal."
+        path="/retreats"
+        ogImage={retreatOg}
+        breadcrumbs={[{ name: "Retreats", path: "/retreats" }]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "TouristAttraction",
+          name: "Mount Kailash Wellness Retreats",
+          description:
+            "7-day immersive wellness retreats in the volcanic highlands of Saint Lucia, with daily herbal feasts and clinical bush medicine protocols.",
+          url: "https://mountkailashslu.com/retreats",
+          address: { "@type": "PostalAddress", addressLocality: "Soufriere", addressCountry: "LC" },
+        }}
+      />
       <RetreatsHero />
       <FadeInStagger delay={0.1}>
         <RetreatPathSplit />
