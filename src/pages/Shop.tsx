@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
+import { RelatedLinks } from "@/components/RelatedLinks";
+import { getBreadcrumbs } from "@/lib/internal-links";
 import shopHero from "@/assets/shop-hero-apothecary.webp";
 import { ShopHero } from "@/components/store/ShopHero";
 import { ShopFilterNav } from "@/components/store/ShopFilterNav";
@@ -284,7 +286,7 @@ export default function Shop() {
         description="Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration."
         path="/shop"
         ogImage={shopHero}
-        breadcrumbs={[{ name: "Shop", path: "/shop" }]}
+        breadcrumbs={getBreadcrumbs("shop")}
         schema={{
           "@context": "https://schema.org",
           "@type": "CollectionPage",
@@ -417,6 +419,7 @@ export default function Shop() {
       </main>
 
       <TrustBar />
+      <RelatedLinks nodeId="shop" />
       <StoreFooter />
       <MobileStickyCtA />
       <RecentSalesPopup />

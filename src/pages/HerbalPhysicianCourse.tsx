@@ -1,5 +1,7 @@
 import { SEOHead } from "@/components/SEOHead";
 import { Helmet } from "react-helmet-async";
+import { RelatedLinks } from "@/components/RelatedLinks";
+import { getBreadcrumbs } from "@/lib/internal-links";
 import { SchoolStickyHeader } from "@/components/school/SchoolStickyHeader";
 import { CourseDetailHero } from "@/components/school/CourseDetailHero";
 import { TransformationPromise } from "@/components/school/TransformationPromise";
@@ -33,10 +35,7 @@ export default function HerbalPhysicianCourse() {
         title="Herbal Physician Training | Mount Kailash"
         description="Become a certified herbal physician. Clinical bush medicine training from Saint Lucia. 500+ graduates worldwide. Led by Rt Hon Priest Kailash K Leonce."
         path="/school/herbal-physician"
-        breadcrumbs={[
-          { name: "School", path: "/school/herbal-physician" },
-          { name: "Herbal Physician Course", path: "/school/herbal-physician" },
-        ]}
+        breadcrumbs={getBreadcrumbs("school")}
         schema={{
           "@context": "https://schema.org",
           "@type": "Course",
@@ -68,6 +67,7 @@ export default function HerbalPhysicianCourse() {
         <GraduationSection />
         <SchoolFAQ />
         <EnrollmentCTA />
+        <RelatedLinks nodeId="school" />
         <StoreFooter />
       </main>
     </>
