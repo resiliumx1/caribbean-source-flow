@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { RelatedLinks } from "@/components/RelatedLinks";
 import { getBreadcrumbs } from "@/lib/internal-links";
 import { StoreFooter } from "@/components/store/StoreFooter";
+import { useProduct } from "@/hooks/use-products";
+import { useReviewStats } from "@/hooks/use-reviews";
 import {
   Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles,
   ChevronDown, Star, ArrowRight, CheckCircle2, MapPin
@@ -132,11 +134,48 @@ const TESTIMONIALS = [
 export default function TheAnswer() {
   const reveal = useRevealObserver();
   const [expandedHerb, setExpandedHerb] = useState<number | null>(null);
+  // Pull live product data from DB so the JSON-LD Product block stays in sync with pricing/stock.
+  const { data: answerProduct } = useProduct("the-answer");
+  const { data: answerStats } = useReviewStats(answerProduct?.id);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
     return () => document.documentElement.classList.remove("dark");
   }, []);
+
+  const answerCategory = (answerProduct as any)?.product_categories?.name as string | undefined;
+  const answerImage = answerProduct?.image_url || undefined;
+  const answerSchema: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: "The Answer Tincture",
+    description:
+      "The Answer Tincture — flagship botanical formulation of Foy Duran, Vervain and Soursop leaves, oak-aged 21 days in Soufrière, Saint Lucia, for traditional cellular wellness and rejuvenation.",
+    ...(answerImage ? { image: answerImage } : {}),
+    brand: { "@type": "Brand", name: "Mount Kailash Rejuvenation Centre" },
+    ...(answerCategory ? { category: answerCategory } : { category: "Herbal Tincture" }),
+    ...(answerProduct
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: answerProduct.price_usd?.toFixed(2),
+            priceCurrency: "USD",
+            availability:
+              answerProduct.stock_status === "out_of_stock"
+                ? "https://schema.org/OutOfStock"
+                : "https://schema.org/InStock",
+            url: "https://mountkailashslu.com/shop/the-answer",
+          },
+        }
+      : {}),
+  };
+  if (answerStats && answerStats.total > 0) {
+    answerSchema.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: answerStats.average.toFixed(1),
+      reviewCount: answerStats.total,
+    };
+  }
 
   return (
     <div className="the-answer-page min-h-screen">
@@ -146,21 +185,7 @@ export default function TheAnswer() {
         path="/the-answer"
         ogImage={heroBottle}
         breadcrumbs={getBreadcrumbs("the-answer")}
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: "The Answer — Caribbean Immune Elixir",
-          description:
-            "Oak-aged 21 days. A Caribbean immune elixir handcrafted in Saint Lucia with Foy Duran (Anamu), Vervain, and Soursop Leaves.",
-          brand: { "@type": "Brand", name: "Mount Kailash Rejuvenation Centre" },
-          category: "Herbal Tincture",
-          url: "https://mountkailashslu.com/the-answer",
-          manufacturer: {
-            "@type": "Organization",
-            name: "Mount Kailash Rejuvenation Centre",
-            address: { "@type": "PostalAddress", addressLocality: "Soufriere", addressCountry: "LC" },
-          },
-        }}
+        schema={answerSchema}
       />
 
       {/* ===== 1. GALLERY HERO: Bottle as Sculpture ===== */}

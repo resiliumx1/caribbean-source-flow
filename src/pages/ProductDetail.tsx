@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { useProduct, useBundleItems } from "@/hooks/use-products";
 import { useProductVariants, type ProductVariant } from "@/hooks/use-product-variants";
+import { useReviewStats } from "@/hooks/use-reviews";
 import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 
@@ -37,6 +38,7 @@ export default function ProductDetail() {
   const { data: product, isLoading } = useProduct(slug || "");
   const { data: bundleItems } = useBundleItems(product?.product_type === "bundle" ? product.id : "");
   const { data: variants = [] } = useProductVariants(product?.id);
+  const { data: reviewStats } = useReviewStats(product?.id);
   const { addToCart, isAddingToCart } = useCart();
   const { formatPrice, formatPriceBoth, whatsappNumber, isLocalVisitor } = useStore();
   const [quantity, setQuantity] = useState(1);
@@ -129,13 +131,20 @@ export default function ProductDetail() {
   const seoDesc = stripHtml(rawDesc).replace(/\s+/g, " ").trim().slice(0, 158);
   const canonical = `${SITE_URL}/shop/${slug}`;
   const productImage = product.image_url || undefined;
-  const productSchema = {
+  const categoryName = (product as any).product_categories?.name as string | undefined;
+  const isTheAnswer = slug === "the-answer";
+  const schemaName = isTheAnswer ? "The Answer Tincture" : product.name;
+  const schemaDesc = isTheAnswer
+    ? `The Answer Tincture — flagship botanical formulation of Foy Duran, Vervain and Soursop leaves, oak-aged in Soufrière, Saint Lucia, for traditional cellular wellness and rejuvenation.`
+    : seoDesc;
+  const productSchema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.name,
-    description: seoDesc,
+    name: schemaName,
+    description: schemaDesc,
     ...(productImage ? { image: productImage } : {}),
     brand: { "@type": "Brand", name: "Mount Kailash Rejuvenation Centre" },
+    ...(categoryName ? { category: categoryName } : {}),
     offers: {
       "@type": "Offer",
       price: currentPriceUsd?.toFixed(2),
@@ -147,6 +156,14 @@ export default function ProductDetail() {
       url: canonical,
     },
   };
+  // Only include aggregateRating when there are real approved reviews. Never fabricate.
+  if (reviewStats && reviewStats.total > 0) {
+    productSchema.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: reviewStats.average.toFixed(1),
+      reviewCount: reviewStats.total,
+    };
+  }
 
   return (
     <div className="min-h-screen bg-background">
