@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { GateEntrance, isReturningVisitor } from "@/components/gate-entrance";
 import { SITE_URL } from "@/lib/site-config";
+import { DirectAnswer } from "@/components/DirectAnswer";
 
 // Lazy load below-fold sections
 const SourceStory = lazy(() => import("@/components/homepage/SourceStory").then(m => ({ default: m.SourceStory })));
@@ -117,6 +118,10 @@ const TrinityHomepage = () => {
       </Helmet>
 
       <HeroSection />
+      <DirectAnswer
+        question="What is clinical bush medicine?"
+        answer="Clinical bush medicine is the traditional Caribbean practice of formulating, prescribing and overseeing wildcrafted herbal remedies in a structured clinical setting. At Mount Kailash in Soufrière, Saint Lucia, Rt. Hon. Priest Kailash K. Leonce blends generations of bush medicine knowledge with intake consultations, batch-tracked tinctures and supervised retreats to support everyday wellness."
+      />
       <Suspense fallback={<SectionFallback />}>
         <SourceStory />
       </Suspense>

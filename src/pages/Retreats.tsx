@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
 import { useRetreatDates } from "@/hooks/use-retreats";
+import { DirectAnswer } from "@/components/DirectAnswer";
 import retreatOg from "@/assets/retreat-hero-yoga.webp";
 import FadeInStagger from "@/components/FadeInStagger";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
@@ -118,6 +119,10 @@ const Retreats = () => {
         schema={retreatsSchemas}
       />
       <RetreatsHero />
+      <DirectAnswer
+        question="What is a Mount Kailash healing retreat?"
+        answer="A Mount Kailash healing retreat is a seven-day immersive wellness stay in the volcanic highlands of Soufrière, Saint Lucia. Guests follow a guided traditional bush medicine protocol with daily herbal feasts, steams, plant walks and a one-to-one consultation with Rt. Hon. Priest Kailash K. Leonce, paced for first-timers and seasoned wellness travellers alike."
+      />
       <FadeInStagger delay={0.1}>
         <RetreatPathSplit />
       </FadeInStagger>

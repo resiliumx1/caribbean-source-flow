@@ -14,6 +14,7 @@ import { GraduationSection } from "@/components/school/GraduationSection";
 import { SchoolFAQ } from "@/components/school/SchoolFAQ";
 import { EnrollmentCTA } from "@/components/school/EnrollmentCTA";
 import { StoreFooter } from "@/components/store/StoreFooter";
+import { DirectAnswer } from "@/components/DirectAnswer";
 
 export default function HerbalPhysicianCourse() {
   const courseSchema = {
@@ -63,6 +64,10 @@ export default function HerbalPhysicianCourse() {
       <SchoolStickyHeader />
       <main className="pb-20 lg:pb-0">
         <CourseDetailHero />
+        <DirectAnswer
+          question="How do you become a clinical herbal physician?"
+          answer="At Mount Kailash, you become a clinical herbal physician by completing a cohort-based certification program led by Rt. Hon. Priest Kailash K. Leonce. The blended curriculum covers Caribbean materia medica, formulation, case-taking and supervised clinical hours at the Soufrière estate, preparing graduates to consult and formulate within their own community's legal scope of practice."
+        />
         <TransformationPromise />
         <CurriculumAccordion />
         <StudentWorkSamples />

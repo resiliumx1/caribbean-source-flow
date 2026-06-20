@@ -6,6 +6,7 @@ import { getBreadcrumbs } from "@/lib/internal-links";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { useProduct } from "@/hooks/use-products";
 import { useReviewStats } from "@/hooks/use-reviews";
+import { DirectAnswer } from "@/components/DirectAnswer";
 import {
   Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles,
   ChevronDown, Star, ArrowRight, CheckCircle2, MapPin

@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { SEOHead } from "@/components/SEOHead";
 import FadeInStagger from "@/components/FadeInStagger";
 import { Hero } from "@/components/wholesale/Hero";
+import { DirectAnswer } from "@/components/DirectAnswer";
 import { ProblemSolution } from "@/components/wholesale/ProblemSolution";
 import { ProductGrid } from "@/components/wholesale/ProductGrid";
 import { SourcingProcess } from "@/components/wholesale/SourcingProcess";
@@ -29,6 +30,10 @@ const Wholesale = () => {
       <FadeInStagger delay={0.08}>
         <Hero onScrollToForm={scrollToForm} />
       </FadeInStagger>
+      <DirectAnswer
+        question="What does Mount Kailash wholesale offer?"
+        answer="Mount Kailash wholesales single-origin Caribbean botanicals from Soufrière, Saint Lucia — herbal tinctures, sea moss, syrups, capsules, teas and selected raw herbs — to clinics, practitioners and wellness retailers. Every batch ships with documentation, tiered pricing scales with case volume, and most U.S. orders arrive in roughly three business days from our Miami fulfillment point."
+      />
       <FadeInStagger delay={0.1}>
         <ProblemSolution />
       </FadeInStagger>
