@@ -1,5 +1,4 @@
 import { SEOHead } from "@/components/SEOHead";
-import { Helmet } from "react-helmet-async";
 import { RelatedLinks } from "@/components/RelatedLinks";
 import { getBreadcrumbs } from "@/lib/internal-links";
 import { SchoolStickyHeader } from "@/components/school/SchoolStickyHeader";
