@@ -20,13 +20,36 @@ export default function HerbalPhysicianCourse() {
   const courseSchema = {
     "@context": "https://schema.org",
     "@type": "Course",
-    name: "Herbal Physician Training",
+    name: "Clinical Herbal Physician Certification",
     description:
-      "Clinical bush medicine training program — become a certified herbal physician under Rt Hon Priest Kailash K Leonce in Saint Lucia.",
+      "A cohort-based certification program training students as clinical herbal physicians in Caribbean bush medicine, led by Rt. Hon. Priest Kailash K. Leonce. Over 500 herbal physicians trained.",
+    url: "https://mountkailashslu.com/school/herbal-physician",
     provider: {
       "@type": "Organization",
-      name: "Mount Kailash Rejuvenation Centre — School of Bush Medicine",
-      sameAs: "https://mountkailashslu.com/",
+      name: "Mount Kailash School of Bush Medicine",
+      sameAs: "https://mountkailashslu.com/school/herbal-physician",
+    },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "{{online | onsite | blended}}",
+      courseWorkload: "{{e.g. PT12W for a 12-week part-time course}}",
+      location: {
+        "@type": "Place",
+        name: "Mount Kailash Rejuvenation Centre",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Soufrière",
+          addressRegion: "Saint Lucia",
+          addressCountry: "LC",
+        },
+      },
+    },
+    offers: {
+      "@type": "Offer",
+      price: "{{TUITION_PRICE}}",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url: "https://mountkailashslu.com/school/herbal-physician",
     },
   };
   return (
@@ -36,24 +59,8 @@ export default function HerbalPhysicianCourse() {
         description="Train as a clinical herbal physician with Priest Kailash. 500+ graduates. Cohort-based certification in Caribbean clinical bush medicine."
         path="/school/herbal-physician"
         breadcrumbs={getBreadcrumbs("school")}
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "Course",
-          name: "Herbal Physician Certification Course",
-          description:
-            "Clinical bush medicine certification program training the next generation of herbal physicians.",
-          url: "https://mountkailashslu.com/school/herbal-physician",
-          provider: {
-            "@type": "Organization",
-            name: "Mount Kailash School of Bush Medicine",
-            sameAs: "https://mountkailashslu.com",
-          },
-          educationalCredentialAwarded: "Certified Herbal Physician",
-        }}
+        schema={courseSchema}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(courseSchema)}</script>
-      </Helmet>
       <SchoolStickyHeader />
       <main className="pb-20 lg:pb-0">
         <CourseDetailHero />
