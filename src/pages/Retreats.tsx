@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
+import { useRetreatDates } from "@/hooks/use-retreats";
 import retreatOg from "@/assets/retreat-hero-yoga.webp";
 import FadeInStagger from "@/components/FadeInStagger";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
@@ -32,6 +33,7 @@ const GoddessWhatsApp = () => (
 
 const Retreats = () => {
   const location = useLocation();
+  const { data: retreatDates = [] } = useRetreatDates();
 
   useEffect(() => {
     if (location.hash === '#calendar') {
@@ -41,6 +43,70 @@ const Retreats = () => {
     }
   }, [location.hash]);
 
+  // Build a JSON-LD Event for every PUBLISHED, FUTURE retreat date.
+  // Pull every value from the DB; skip any record missing a real start_date.
+  const today = new Date().toISOString().split("T")[0];
+  const eventSchemas = retreatDates
+    .filter((d) => d?.start_date && d.start_date >= today)
+    .map((d) => {
+      const rt = d.retreat_types as { name?: string; slug?: string; base_price_usd?: number; description?: string } | undefined;
+      const priceUsd = d.price_override_usd ?? rt?.base_price_usd;
+      const url = rt?.slug
+        ? `https://mountkailashslu.com/retreats/book/${rt.slug}`
+        : "https://mountkailashslu.com/retreats";
+      const schema: Record<string, unknown> = {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        name: rt?.name || "Mount Kailash Healing Retreat",
+        ...(rt?.description ? { description: rt.description } : {}),
+        startDate: d.start_date,
+        ...(d.end_date ? { endDate: d.end_date } : {}),
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        eventStatus: "https://schema.org/EventScheduled",
+        location: {
+          "@type": "Place",
+          name: "Mount Kailash Rejuvenation Centre",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Soufrière",
+            addressRegion: "Saint Lucia",
+            addressCountry: "LC",
+          },
+        },
+        organizer: {
+          "@type": "Organization",
+          name: "Mount Kailash Rejuvenation Centre",
+          url: "https://mountkailashslu.com",
+        },
+      };
+      if (priceUsd != null) {
+        schema.offers = {
+          "@type": "Offer",
+          price: Number(priceUsd).toFixed(2),
+          priceCurrency: "USD",
+          availability:
+            d.spots_total && d.spots_booked >= d.spots_total
+              ? "https://schema.org/SoldOut"
+              : "https://schema.org/InStock",
+          url,
+        };
+      }
+      return schema;
+    });
+
+  const retreatsSchemas: Record<string, unknown>[] = [
+    {
+      "@context": "https://schema.org",
+      "@type": "TouristAttraction",
+      name: "Mount Kailash Wellness Retreats",
+      description:
+        "7-day immersive wellness retreats in the volcanic highlands of Saint Lucia, with daily herbal feasts and clinical bush medicine protocols.",
+      url: "https://mountkailashslu.com/retreats",
+      address: { "@type": "PostalAddress", addressLocality: "Soufriere", addressCountry: "LC" },
+    },
+    ...eventSchemas,
+  ];
+
   return (
     <main className="min-h-screen">
       <SEOHead
@@ -49,15 +115,7 @@ const Retreats = () => {
         path="/retreats"
         ogImage={retreatOg}
         breadcrumbs={[{ name: "Retreats", path: "/retreats" }]}
-        schema={{
-          "@context": "https://schema.org",
-          "@type": "TouristAttraction",
-          name: "Mount Kailash Wellness Retreats",
-          description:
-            "7-day immersive wellness retreats in the volcanic highlands of Saint Lucia, with daily herbal feasts and clinical bush medicine protocols.",
-          url: "https://mountkailashslu.com/retreats",
-          address: { "@type": "PostalAddress", addressLocality: "Soufriere", addressCountry: "LC" },
-        }}
+        schema={retreatsSchemas}
       />
       <RetreatsHero />
       <FadeInStagger delay={0.1}>
