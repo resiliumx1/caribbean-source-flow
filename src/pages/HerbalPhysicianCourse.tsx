@@ -32,8 +32,8 @@ export default function HerbalPhysicianCourse() {
   return (
     <>
       <SEOHead
-        title="Herbal Physician Training | Mount Kailash"
-        description="Become a certified herbal physician. Clinical bush medicine training from Saint Lucia. 500+ graduates worldwide. Led by Rt Hon Priest Kailash K Leonce."
+        title="Clinical Herbal Physician Certification | Mount Kailash School of Bush Medicine"
+        description="Train as a clinical herbal physician with Priest Kailash. 500+ graduates. Cohort-based certification in Caribbean clinical bush medicine."
         path="/school/herbal-physician"
         breadcrumbs={getBreadcrumbs("school")}
         schema={{
