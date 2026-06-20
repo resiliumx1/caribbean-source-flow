@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { lookupOrder } from "../order-tracking-lookup/index.ts";
+import { lookupOrder } from "../_shared/order-lookup.ts";
 import { mapAsPromptBlock } from "../_shared/system-product-map.ts";
 
 const corsHeaders = {
