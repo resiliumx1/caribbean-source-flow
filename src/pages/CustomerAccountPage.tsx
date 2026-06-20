@@ -136,7 +136,7 @@ export default function CustomerAccountPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: c.pageBg, paddingTop: 90 }}>
-      <SEOHead title="Your Account | Mount Kailash" description="Look up your orders and track shipments." path="/account" />
+      <SEOHead title="Your Account | Mount Kailash" description="Look up your orders and track shipments." path="/account" noindex />
 
       <main style={{ maxWidth: 560, margin: "0 auto", padding: "40px 20px 80px" }}>
         {/* Back link */}
