@@ -1,77 +1,113 @@
 ## Goal
-Improve the concierge AI bot (`supabase/functions/concierge-chat/index.ts`) in two areas:
-1. Teach it how delivery, fulfillment, and tracking actually work so customers get accurate ETAs.
-2. Make it more reliable at mapping medical questions / symptoms to specific products.
+1. Let customers paste a tracking number (or order number) into the concierge chatbot and get back live status + an ETA window from our own `orders` table.
+2. Generate that ETA from dispatch date + destination country using a shared table of regional delivery windows.
+3. Add a structured System→Product map (data, not just prose in the prompt) the bot uses for reliable symptom matching.
 
-No UI changes; this is a single edit to the `SYSTEM_PROMPT` plus a small handoff-rule tweak.
+## Architecture
 
-## Changes
+### A. New edge function: `order-tracking-lookup`
+`supabase/functions/order-tracking-lookup/index.ts`
 
-### 1. New "Delivery & Tracking" section in the system prompt
-Add a clearly labeled block the model can quote from. Content:
+- **Input** (POST JSON): `{ query: string }` where `query` is a tracking number OR order number (`MK-YYYYMMDD-XXXX`).
+- **Auth**: public function (no JWT). Tracking numbers and `MK-…` order numbers are unguessable enough; we additionally rate-limit by IP/sessionId (same in-memory pattern as `concierge-chat`, 20 lookups / hr).
+- **DB access**: uses `SUPABASE_SERVICE_ROLE_KEY` (already in secrets) so it can read `orders` past RLS. Query:
+  ```ts
+  .from("orders")
+    .select("order_number, tracking_number, tracking_carrier, status, fulfillment_status, country, delivery_type, updated_at, created_at")
+    .or(`tracking_number.eq.${q},order_number.eq.${q}`)
+    .maybeSingle()
+  ```
+- **Output** (sanitized — never returns email/address/phone/totals):
+  ```json
+  {
+    "found": true,
+    "orderNumber": "MK-20260615-0420",
+    "status": "shipped",
+    "fulfillmentStatus": "in_transit",
+    "trackingNumber": "1Z…",
+    "carrier": "DHL",
+    "carrierTrackingUrl": "https://www.dhl.com/…",
+    "dispatchedAt": "2026-06-17T...",
+    "destinationRegion": "USA",
+    "etaWindow": { "earliest": "2026-06-20", "latest": "2026-06-24" },
+    "message": "Your order shipped 3 days ago via DHL. Expected delivery: Jun 20–24."
+  }
+  ```
+- If `not found` → `{ found: false, message: "…" }`.
+- If found but not yet shipped → ETA window starts from `created_at + handling buffer`.
 
-- **How fulfillment works**
-  - After an order is placed, the MKRC team receives it and personally prepares the parcel.
-  - Once shipped, the team sends the customer a tracking number by email (and WhatsApp if requested).
-  - The customer can use that tracking number on the carrier's site to see the exact expected delivery date.
-- **Typical timelines** (use as guidance, not guarantees)
-  - Saint Lucia local delivery: 1–2 business days after dispatch.
-  - Caribbean (CARICOM): 3–7 business days after dispatch.
-  - USA / Canada (from Miami warehouse for wholesale; international post for retail): ~3–7 business days USA, 7–14 days Canada.
-  - UK / EU: 7–14 business days.
-  - Rest of world: 10–21 business days.
-  - Order handling/processing before dispatch: 1–3 business days.
-- **What the AI should say**
-  - If asked "where is my order" / "when will it arrive" / "do you have tracking":
-    - Explain the flow above (team ships → tracking number emailed → use it on carrier site for exact ETA).
-    - Give the relevant typical window if the customer's region is known.
-    - Then add `💬 CONNECT_WITH_TEAM` so a human can look up their specific order.
-  - Never invent a tracking number, never invent an order status, never promise a specific delivery date.
+### B. Shared delivery-windows table
+`supabase/functions/_shared/delivery-windows.ts`
 
-### 2. Tighten the handoff rule
-Currently the prompt says "redirect for order status / shipping tracking" but also tells it to answer first. Clarify:
-- For *general* delivery questions ("how long does shipping take to the UK?") → answer using the timelines above, no handoff required.
-- For *specific* order questions ("where is order MK-...", "I haven't received my package") → give the flow explanation, then `💬 CONNECT_WITH_TEAM`.
+Single source of truth used by both the tracking function and the concierge prompt (kept in sync):
+```ts
+export const HANDLING_DAYS = { min: 1, max: 3 };
+export const DELIVERY_WINDOWS = {
+  LC: { label: "Saint Lucia", min: 1, max: 2 },
+  CARIBBEAN: { label: "Caribbean / CARICOM", min: 3, max: 7, countries: ["BB","TT","JM","GD","VC","DM","AG","KN","GY","SR","BS","BZ"] },
+  USA: { label: "USA", min: 3, max: 7, countries: ["US"] },
+  CANADA: { label: "Canada", min: 7, max: 14, countries: ["CA"] },
+  UK_EU: { label: "UK / EU", min: 7, max: 14, countries: ["GB","IE","FR","DE","ES","IT","NL","BE","SE","NO","DK","FI","PT","AT","CH","PL"] },
+  ROW: { label: "Rest of world", min: 10, max: 21 },
+};
+export function resolveRegion(country?: string | null) { /* map → key */ }
+export function computeEta(dispatchDate: Date | null, region) { /* returns {earliest, latest} */ }
+export function carrierTrackingUrl(carrier?: string, tracking?: string) { /* DHL, UPS, USPS, FedEx, DPD, Royal Mail — fallback to google */ }
+```
 
-### 3. Strengthen symptom → product reliability
-Add a "Symptom Triage" section the model must consult before answering health questions:
+### C. Concierge chatbot wiring
+`supabase/functions/concierge-chat/index.ts`
 
-- **Mandatory reasoning steps** (internal, not shown to user):
-  1. Identify the primary symptom / system (immune, digestive, hormonal, nervous, respiratory, circulatory, urinary, male repro, female repro, detox, sleep, blood sugar, skin).
-  2. List candidate products from the catalogue whose "Recommend for" line matches.
-  3. Pick the single most specific product. If 2+ systems are involved, suggest the matching **bundle** instead of listing items separately.
-  4. Only recommend products that appear in the catalogue above.
+- **Pre-LLM intercept**: before calling the model, scan the user's latest message for a tracking-number pattern (`/\b(MK-\d{8}-\d{4}|1Z[0-9A-Z]{16}|\d{12,22})\b/`) **or** the phrase "track", "tracking", "where is my order" combined with any alphanumeric token. If matched, call the same internal lookup logic and return a deterministic, formatted reply directly (no model hallucination risk). Fallback to the LLM if lookup says `not found`, with a hint to double-check the number.
+- **Frontend hint**: also accept a structured client signal `body.intent === "track"` with `body.trackingQuery` so the chat UI can offer a "Track my order" quick-action.
 
-- **Symptom → product quick-map** (add as an explicit lookup so the model doesn't drift):
-  - Cold / flu / low immunity → **The Answer**; add **Pure Gold** if respiratory; bundle: **Immunity Kit**.
-  - Cough, mucus, chest congestion → **Pure Gold**; **Anamu Syrup** if also flu-like.
-  - Parasites, bloating, "worms" → **Gut Balance**.
-  - Constipation, sluggish colon → **Colax**; ongoing → **Colax Quarterly Subscription**.
-  - Indigestion, stomach pain, gas → **Digestive Rescue**; bundle: **Digestive Bundle**.
-  - Anaemia, fatigue, low energy → **Pure Green**.
-  - Insomnia, anxiety, stress, ADHD, depression → **Tranquility** or **Hemp Syrup**; capsule form: **Nerve Tonic Capsules**; tea: **Restful Tea**.
-  - High blood pressure, heart support → **Hemp Syrup**, **Free Flow**.
-  - High cholesterol, varicose veins, poor circulation → **Free Flow**.
-  - Diabetes / blood sugar regulation → **Anamu Syrup**, **Free Flow**.
-  - Kidney stones, UTI, urinary issues → **Urinary Cleanse Tea**.
-  - Prostate, BPH, urinary urgency in men → **Prosperity**; bundle: **Prostate Health Bundle**.
-  - Erectile dysfunction, low libido (men), low sperm count, stamina → **Male Balance** or **Prosperity**; capsule: **Virility Male Balance Capsules**; tea: **Virili-Tea**; bundles: **Male Potency Kit**, **Male Vitality Package**.
-  - Fibroids, heavy/irregular periods, PCOS, fertility, PMS, menopause, low libido (women) → **Feminine Balance**; tea: **Moon Cycle Tea**; bundles: **Feminine Balance Kit**, **Super Female Wellness Package**.
-  - Toxic load, post-illness recovery, liver support → **Herbal Detox**; bundle: **Detox Bundle**.
-  - Skin issues, fungal, eczema → **Cassia Alata** (raw herb).
-  - General women's wellness tea → **Queenly Tea Bundle**; men → **Kingly Tea Bundle**.
+### D. Frontend chat UI
+`src/components/ai-assistant/` (existing chat widget — I'll locate the exact file when building)
 
-- **Safety guardrails** (reinforced):
-  - Never diagnose. Frame as "traditional Caribbean herbal support for [symptom]", not "treats [disease]".
-  - For pregnancy, nursing, prescription-drug interactions, children under 12, or red-flag symptoms (chest pain, severe bleeding, suspected stroke/heart attack, suicidal thoughts) → recommend seeing a qualified medical professional and add `💬 CONNECT_WITH_TEAM`.
-  - If symptom doesn't match anything in the catalogue, say so honestly and offer the team handoff instead of inventing a product.
-  - Always recommend at least one specific product when the symptom does match — don't punt to WhatsApp for basic recommendations.
+- Add a "📦 Track my order" suggestion chip in the chat composer that pre-fills `Track order: ` and focuses the input.
+- No new screens; just a chip + a small helper line ("Paste your tracking number or order ID like MK-20260615-0420").
 
-## Technical notes
-- Single-file change: `supabase/functions/concierge-chat/index.ts` (prompt only).
-- No schema, no client, no new env vars. Function auto-deploys on save.
-- Token impact: prompt grows by ~60 lines; still well within Gemini's context budget.
-- No change to streaming, rate limit, or the existing `💬 CONNECT_WITH_TEAM` UI trigger token.
+### E. System → Product map (structured data)
+New file: `src/lib/system-product-map.ts`
 
-## Out of scope (flagging for later if you want)
-- Actually wiring the bot into the `orders` table to look up a real tracking number for an authenticated customer. Right now it can only *explain* the process; it can't fetch a specific order. Say the word and I can add that as a follow-up.
+Typed map used by both the frontend (future Shop "Find by symptom" filter) and exported as a JSON block injected into the concierge system prompt so the bot reads from a single source of truth instead of prose-only.
+
+```ts
+export type BodySystem =
+  | "immune" | "respiratory" | "digestive" | "colon"
+  | "hormonal_female" | "male_reproductive" | "prostate"
+  | "nervous_sleep" | "cardiovascular" | "blood_sugar"
+  | "urinary" | "detox_liver" | "blood_anaemia" | "skin";
+
+export interface SystemEntry {
+  system: BodySystem;
+  label: string;
+  symptoms: string[];          // keywords for matching
+  primaryProducts: string[];   // product names exactly as in catalogue
+  bundles?: string[];
+  notes?: string;
+}
+
+export const SYSTEM_PRODUCT_MAP: SystemEntry[] = [ /* one entry per system, mirroring current quick-map */ ];
+export function findSystemsForSymptom(input: string): SystemEntry[] { /* keyword search */ }
+```
+
+`concierge-chat` will read this map (duplicated into the function dir as `_shared/system-product-map.ts` since edge functions can't import from `src/`) and inject a compact JSON version into the system prompt, replacing the hand-written quick-map block so prose and data can't drift apart.
+
+## Privacy & safety
+- Tracking lookup returns only: order number, status, carrier, tracking #, dispatch date, destination country (not address), ETA. **No email, phone, address, totals, line items.**
+- Rate-limited (20 lookups / IP / hr) to deter scraping.
+- All output is plain text formatted server-side — no LLM rephrasing of order data, so no chance of hallucinating a fake ETA.
+- Input validation with Zod: `query` length 4–40, alphanumeric + `-` only.
+
+## Files to be created / edited
+- **NEW** `supabase/functions/order-tracking-lookup/index.ts`
+- **NEW** `supabase/functions/_shared/delivery-windows.ts`
+- **NEW** `supabase/functions/_shared/system-product-map.ts`
+- **NEW** `src/lib/system-product-map.ts` (frontend mirror, same data)
+- **EDIT** `supabase/functions/concierge-chat/index.ts` — pre-LLM tracking intercept, prompt now injects map from shared file
+- **EDIT** chat UI widget — add "Track my order" quick chip + helper text
+
+## Out of scope (flag for later)
+- Calling carriers' real APIs (DHL/UPS/USPS) for live in-transit scans. We're returning **our** dispatch state + a calculated ETA window. Easy to layer on later via a carrier-specific function.
+- Authenticated "my orders" lookup tied to a logged-in account (could be added so logged-in users see all their orders without typing a number).
