@@ -1,76 +1,38 @@
-## Goal
-After a customer looks up their order in the concierge chat, offer them an optional opt-in: get an email (or SMS) the moment their shipment status changes (e.g. shipped → in transit → out for delivery → delivered).
+Twilio is now connected to the project (secret `TWILIO_API_KEY` is available). Before I build, I need to confirm scope.
 
-## How it will work
+## What I'd like to build
 
-```text
-Customer pastes tracking #  →  bot returns status + ETA
-                            →  bot shows "🔔 Notify me when this changes" card
-                            →  customer enters email (or phone) + confirms
-                            →  row written to tracking_subscriptions
-Cron every 10 min  →  watcher edge function loops active subs,
-                      compares order.status / fulfillment_status / tracking_number
-                      to last_known_*, and sends a Resend email on change.
-```
+A `send-sms` edge function that uses the Twilio gateway to send transactional SMS, plus hooks into existing order events so customers (and optionally admins) get texted automatically.
 
-## Database (one migration)
+### Triggers (proposed defaults)
+1. **Order placed** → SMS to customer: "Hi {name}, we got your order {order_number} ($X). We'll text again when it ships."
+2. **Payment received** → SMS to customer: "Payment confirmed for order {order_number}. Thank you."
+3. **Order shipped** (status → `shipped` with tracking) → SMS to customer with tracking carrier + number.
+4. **Admin alert on new order** → SMS to a configured admin number.
 
-`public.tracking_subscriptions`
-- `id uuid pk`
-- `order_id uuid → orders(id) on delete cascade`
-- `channel text check in ('email','sms')`
-- `contact text` (email address or E.164 phone)
-- `last_known_status text`, `last_known_fulfillment text`, `last_known_tracking text`
-- `verified boolean default false` (email double-opt-in via token)
-- `verify_token uuid default gen_random_uuid()`
-- `unsubscribe_token uuid default gen_random_uuid()`
-- `active boolean default true`
-- `created_at`, `updated_at`, `last_notified_at`
-- unique(order_id, channel, lower(contact))
+All SMS only fire when the order has a valid phone number; failures are logged but don't block the order.
 
-GRANTs + RLS: service_role full; anon insert only via edge function (no direct table policy for anon); authenticated select own rows where `contact = auth.email()`.
+### Settings the user controls
+- A `TWILIO_FROM_NUMBER` secret (the Twilio phone number messages send from) — I'll request this via add_secret in build mode.
+- A `TWILIO_ADMIN_NUMBER` secret for admin alerts (optional; if absent, admin SMS is skipped).
+- Per-trigger on/off toggles stored in the existing `store_settings` table (e.g. `sms_notify_order_placed`, `sms_notify_payment`, `sms_notify_shipped`, `sms_notify_admin`).
 
-## Edge functions
+### Technical pieces
+- New edge function `supabase/functions/send-sms/index.ts` — validates input with Zod, calls `https://connector-gateway.lovable.dev/twilio/Messages.json` using `LOVABLE_API_KEY` + `TWILIO_API_KEY`, returns Twilio message SID.
+- New DB trigger on `orders` (INSERT, and UPDATE of `payment_status`/`status`) that calls the edge function via `pg_net` — OR I keep it simpler and invoke `send-sms` from the existing checkout / admin order-update code paths in the app. Recommendation: **invoke from app code**, because it's less moving parts and matches the existing notification pattern.
+- Small admin UI toggle row added to the existing store-settings admin page so a non-technical admin can turn each SMS on/off.
 
-1. **`tracking-subscribe`** (public, rate-limited 5/IP/hr)
-   - Body: `{ orderQuery, channel, contact }`
-   - Validates contact format, runs `lookupOrder()` to resolve the order, inserts subscription with current status as baseline, sends confirmation email via Resend containing a verify link + unsubscribe link.
-2. **`tracking-verify`** — GET `?token=` → flips `verified=true`, renders a branded HTML success page.
-3. **`tracking-unsubscribe`** — GET `?token=` → sets `active=false`, renders confirmation page.
-4. **`tracking-status-watcher`** — scheduled (pg_cron, every 10 min). For each active+verified sub, fetches order, diffs against `last_known_*`, sends Resend email "📦 Update on order MK-…" with new status + carrier link, updates `last_known_*` and `last_notified_at`. Auto-deactivates when status becomes `delivered`.
+### Out of scope (unless you say otherwise)
+- Inbound SMS / two-way replies
+- Marketing SMS (would need opt-in flow + STOP/HELP handling)
+- WhatsApp (you said click-to-chat only; no work needed)
+- Voice calls
 
-Cron job created via `supabase--insert` (per scheduling guide).
+## Questions before I build
 
-## SMS support
-Schema and `channel='sms'` path are wired, but actual send requires the Twilio connector. If `channel='sms'` and Twilio env not present, the subscribe function will return a friendly "SMS coming soon — we've saved your email instead?" prompt. (No partial Twilio code that would silently fail.)
+1. Confirm the four triggers above (order placed, payment received, shipped, admin alert) — keep all, or drop some?
+2. What Twilio number will messages send from? I'll request it as `TWILIO_FROM_NUMBER` via add_secret.
+3. Do you want an admin alert SMS on every new order? If yes, what number? (Stored as `TWILIO_ADMIN_NUMBER`.)
+4. Any custom message wording, or are my defaults above fine to start?
 
-## Concierge integration
-- After a successful tracking lookup, the bot appends a short opt-in block to its reply:
-  > 🔔 *Want to know when this moves? Reply* `notify me at you@email.com` *and we'll email you on every status change.*
-- `concierge-chat` pre-LLM intercept gains a `notify me at <email>` / `notify me at <+phone>` parser that calls `tracking-subscribe` with the most recently looked-up order in the conversation (stored in `concierge_conversations.metadata`).
-- Adds quick-action chip: "🔔 Notify me on updates" (only shown after a tracking lookup in the current session — gated on a local flag).
-
-## Email template
-New React Email template `shipment-status-update.tsx` registered in transactional registry, plus a one-off `tracking-subscription-confirm.tsx` for the double-opt-in. Both use existing brand styling. Footer includes the one-click unsubscribe link.
-
-## Files
-
-**New**
-- `supabase/migrations/<ts>_tracking_subscriptions.sql`
-- `supabase/functions/tracking-subscribe/index.ts`
-- `supabase/functions/tracking-verify/index.ts`
-- `supabase/functions/tracking-unsubscribe/index.ts`
-- `supabase/functions/tracking-status-watcher/index.ts`
-- `supabase/functions/_shared/tracking-notify.ts` (Resend send helper + status-diff util)
-- `supabase/functions/_shared/transactional-email-templates/shipment-status-update.tsx`
-- `supabase/functions/_shared/transactional-email-templates/tracking-subscription-confirm.tsx`
-
-**Edited**
-- `supabase/functions/concierge-chat/index.ts` (append opt-in CTA after lookups; parse `notify me at …`; store last-looked-up order in conversation metadata)
-- `supabase/functions/_shared/transactional-email-templates/registry.ts`
-- `src/components/concierge/ConciergePanel.tsx` (post-lookup quick chip)
-
-## Out of scope
-- Live carrier scan polling (still relies on internal `orders.status` / `fulfillment_status` changes made by the team)
-- Branded SMS sending (schema only until Twilio is connected)
-- Authenticated "manage all my subscriptions" page (use unsubscribe links for now)
+Once you answer, I'll switch to build mode and ship it.
