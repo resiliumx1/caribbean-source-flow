@@ -49,30 +49,42 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "MedicalBusiness",
+      "@type": ["Organization", "HealthAndBeautyBusiness"],
       "name": "Mount Kailash Rejuvenation Centre",
-      "description": "Clinical bush medicine formulations and wellness retreats in St. Lucia. 21+ years of herbal practice led by Priest Kailash Kay Leonce.",
-      "url": "https://mountkailashslu.com/",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Soufriere",
-        "addressCountry": "LC"
-      },
+      "alternateName": "MKRC",
+      "url": "https://mountkailashslu.com",
+      "logo": "https://mountkailashslu.com/star-seal.png",
+      "image": "https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg",
+      "description": "Caribbean clinical bush medicine from Soufrière, Saint Lucia. Herbal tinctures, sea moss formulations and traditional bush medicine, plus healing retreats and a school for herbal physicians, led by Rt. Hon. Priest Kailash K. Leonce.",
       "founder": {
         "@type": "Person",
-        "name": "Priest Kailash Kay Leonce",
-        "jobTitle": "Clinical Herbalist"
+        "name": "Rt. Hon. Priest Kailash K. Leonce",
+        "jobTitle": "Grand Master Herbal Physician, Founder"
       },
-      "knowsAbout": ["Bush Medicine", "Herbal Medicine", "Wellness Retreats", "Caribbean Botanicals", "Cellular Detox"],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Services",
-        "itemListElement": [
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Wholesale Botanical Supply" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Herbal Apothecary" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ridge Healing Retreats" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "School of Bush Medicine" } }
-        ]
+      "slogan": "Nature's answers for optimum health and wellbeing",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Soufrière",
+        "addressRegion": "Saint Lucia",
+        "addressCountry": "LC"
+      },
+      "sameAs": [
+        "https://www.instagram.com/mountkailashslu/",
+        "https://twitter.com/MountKailash"
+      ],
+      "knowsAbout": ["Clinical bush medicine", "Herbal tinctures", "Sea moss", "Caribbean botanicals", "Herbal physician training", "Wellness retreats"]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Mount Kailash Rejuvenation Centre",
+      "url": "https://mountkailashslu.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://mountkailashslu.com/shop?q={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
     }
     </script>
