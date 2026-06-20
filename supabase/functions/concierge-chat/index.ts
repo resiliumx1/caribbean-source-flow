@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { lookupOrder } from "../order-tracking-lookup/index.ts";
+import { mapAsPromptBlock } from "../_shared/system-product-map.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -177,23 +179,8 @@ Internal reasoning steps — do not show to the user:
 3. If two or more systems are involved OR the customer wants a complete protocol → recommend the matching BUNDLE instead of listing items separately.
 4. Always recommend at least one specific product when there is a clear match — do not punt to WhatsApp for basic recommendations.
 
-Symptom → product quick-map:
-- Cold / flu / low immunity → **The Answer** (add **Pure Gold** if respiratory). Bundle: **Immunity Kit**.
-- Cough / mucus / chest congestion → **Pure Gold**; **Anamu Syrup** if flu-like.
-- Intestinal parasites / worms / bloating from parasites → **Gut Balance**.
-- Constipation / sluggish colon → **Colax** (ongoing: **Colax Quarterly Subscription**).
-- Indigestion / stomach pain / gas / poor gut health → **Digestive Rescue**. Bundle: **Digestive Bundle**.
-- Anaemia / fatigue / low energy / inflammation → **Pure Green**.
-- Insomnia / anxiety / stress / depression / ADHD / poor focus → **Tranquility** or **Hemp Syrup**; capsule form: **Nerve Tonic Capsules**; tea: **Restful Tea**.
-- High blood pressure / heart support → **Hemp Syrup**, **Free Flow**.
-- High cholesterol / varicose veins / poor circulation → **Free Flow**.
-- Blood sugar regulation / diabetes support → **Anamu Syrup**, **Free Flow**.
-- Kidney stones / UTI / urinary discomfort → **Urinary Cleanse Tea**.
-- Prostate / BPH / urinary urgency (men) → **Prosperity**. Bundle: **Prostate Health Bundle**.
-- Erectile dysfunction / low libido (men) / low sperm count / stamina → **Male Balance** or **Prosperity**; capsule: **Virility Male Balance Capsules**; tea: **Virili-Tea**. Bundles: **Male Potency Kit**, **Male Vitality Package**.
-- Fibroids / heavy or irregular periods / PCOS / fertility / PMS / menopause / low libido (women) → **Feminine Balance**; tea: **Moon Cycle Tea**. Bundles: **Feminine Balance Kit**, **Super Female Wellness Package**.
-- Toxic load / post-illness recovery / liver support → **Herbal Detox**. Bundle: **Detox Bundle**.
-- Skin issues / fungal / eczema → **Cassia Alata** (raw herb).
+Symptom → product map (authoritative — do not invent items outside this list):
+${mapAsPromptBlock()}
 - General women's wellness tea ritual → **Queenly Tea Bundle**; men → **Kingly Tea Bundle**.
 
 Safety guardrails (non-negotiable):
@@ -266,6 +253,29 @@ serve(async (req) => {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
+      }
+    }
+
+    // ───── Tracking-number intercept ─────
+    // If the latest user message contains a tracking/order pattern, look it up
+    // directly and stream a deterministic reply — bypass the LLM so we never
+    // hallucinate order data.
+    const lastUser = [...messages].reverse().find((m: any) => m.role === "user");
+    if (lastUser?.content) {
+      const text: string = lastUser.content;
+      const orderNumRe = /\b(MK-\d{8}-\d{4})\b/i;
+      const trackingRe = /\b([A-Z0-9]{10,30})\b/;
+      const intentRe = /\b(track|tracking|where('?s| is)?\s+my\s+order|status of (my )?order|order status)\b/i;
+      let query: string | null = null;
+      const orderMatch = text.match(orderNumRe);
+      if (orderMatch) query = orderMatch[1].toUpperCase();
+      else if (intentRe.test(text)) {
+        const tm = text.match(trackingRe);
+        if (tm) query = tm[1];
+      }
+      if (query) {
+        const result = await lookupOrder(query);
+        return streamPlainReply(result.message);
       }
     }
 
