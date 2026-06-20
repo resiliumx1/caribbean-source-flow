@@ -1,18 +1,13 @@
 # Mount Kailash Rejuvenation Centre
 
-> Caribbean clinical bush medicine from Saint Lucia. Wholesale botanicals, retail herbal apothecary, immersive healing retreats, and certified herbal physician training led by Rt Hon Priest Kailash K Leonce (21+ years of clinical herbal practice).
+> Caribbean clinical bush medicine from Soufrière, Saint Lucia, led by Rt. Hon. Priest Kailash K. Leonce. 21+ years of practice, 500+ herbal physicians trained, 43,000+ bottles formulated annually, 3-day US delivery.
 
 ## Pages
 
-- [Home](/): Overview of Mount Kailash and its four pillars — wholesale, apothecary, retreats, school.
-- [Wholesale](/wholesale): Caribbean botanical wholesale with COA documentation for clinics, retailers, and wellness brands.
-- [Apothecary / Shop](/shop): Wildcrafted herbal tinctures, capsules, teas, and raw herbs from Saint Lucia.
-- [The Answer](/the-answer): Signature immune elixir formulated with Anamu, Vervain, and Soursop leaves.
-- [Retreats](/retreats): 7-day immersive cellular detox and wellness retreats in the volcanic highlands of Saint Lucia.
-- [Webinars](/webinars): Free live and on-demand herbal medicine webinars with Priest Kailash.
-- [Herbal Physician School](/school/herbal-physician): Clinical bush medicine training program; 500+ graduates worldwide.
-
-## Optional
-
-- [Privacy Policy](/privacy-policy): How personal data is collected, used, and protected.
-- [Terms and Conditions](/terms-and-conditions): Terms of use for the website and services.
+- [Home](https://mountkailashslu.com/): Overview of Mount Kailash and its four pillars — apothecary, retreats, school, wholesale.
+- [Apothecary / Shop](https://mountkailashslu.com/shop): Wildcrafted herbal tinctures, capsules, teas, and raw herbs from Saint Lucia.
+- [The Answer](https://mountkailashslu.com/the-answer): Signature immune tincture with Anamu, Vervain, and Soursop leaves — steeped 21 days in oak barrels.
+- [Webinars](https://mountkailashslu.com/webinars): Free live and on-demand herbal medicine webinars with Priest Kailash Leonce.
+- [Healing Retreats](https://mountkailashslu.com/retreats): 7-day immersive cellular detox and wellness retreats in the volcanic highlands of Saint Lucia.
+- [School of Bush Medicine](https://mountkailashslu.com/school/herbal-physician): Clinical bush medicine training program; 500+ graduates worldwide.
+- [Wholesale](https://mountkailashslu.com/wholesale): Bulk botanical supply for clinics, retailers, and wellness brands; Miami warehouse, 3-day US delivery.
