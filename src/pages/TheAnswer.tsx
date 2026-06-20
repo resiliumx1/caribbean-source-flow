@@ -141,8 +141,8 @@ export default function TheAnswer() {
   return (
     <div className="the-answer-page min-h-screen">
       <SEOHead
-        title="The Answer — Caribbean Immune Elixir | Mount Kailash"
-        description="MKRC's best-selling immune elixir — handcrafted in Saint Lucia with Anamu, Vervain & Soursop. Endorsed by Chronixx. Oak-aged 21 days."
+        title="The Answer Tincture — Foy Duran, Vervain & Soursop | Mount Kailash"
+        description="Our flagship botanical formulation — Foy Duran, Vervain and Soursop leaves, used in clinical practice for cellular detox and rejuvenation. Made in Soufrière, Saint Lucia."
         path="/the-answer"
         ogImage={heroBottle}
         breadcrumbs={getBreadcrumbs("the-answer")}

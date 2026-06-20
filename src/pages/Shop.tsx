@@ -282,8 +282,8 @@ export default function Shop() {
   return (
     <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
       <SEOHead
-        title="Herbal Apothecary | Mount Kailash"
-        description="Shop wildcrafted Caribbean herbal tinctures, capsules, teas and raw herbs. Hand-extracted bush medicine with 40% higher alkaloid concentration."
+        title="The Apothecary — Herbal Tinctures, Sea Moss & Bush Medicine | Mount Kailash"
+        description="Hand-formulated herbal tinctures, sea moss, capsules and teas from mineral-rich Saint Lucia botanicals. Single-origin, practitioner-grade, 3-day US delivery."
         path="/shop"
         ogImage={shopHero}
         breadcrumbs={getBreadcrumbs("shop")}

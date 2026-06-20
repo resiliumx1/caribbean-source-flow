@@ -91,8 +91,12 @@ export default function RetreatBooking() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title={`Book ${retreatType.name} | Mount Kailash`}
-        description="Reserve your spot at Mount Kailash Rejuvenation Centre. Pay in full or with a 50% deposit."
+        title={`${retreatType.name} — Healing Retreat in Saint Lucia | Mount Kailash`.slice(0, 70)}
+        description={(
+          retreatType.description
+            ? String(retreatType.description).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
+            : `${retreatType.name} — an immersive ${retreatType.min_nights ?? 7}-night herbal retreat in Soufrière, Saint Lucia with daily bush-medicine feasts and clinical guidance.`
+        ).slice(0, 158)}
         path={`/retreats/book/${slug}`}
       />
       <main className="container mx-auto px-4 py-10 max-w-4xl">

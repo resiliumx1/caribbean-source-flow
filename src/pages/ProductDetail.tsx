@@ -117,10 +117,16 @@ export default function ProductDetail() {
     });
   };
 
-  // SEO: per-product title, description, canonical, og tags, and Product JSON-LD
-  const seoTitle = `${product.name} | Mount Kailash`.slice(0, 60);
-  const rawDesc = product.short_description || product.description || `${product.name} — Caribbean bush medicine from Mount Kailash Rejuvenation Centre.`;
-  const seoDesc = rawDesc.replace(/\s+/g, " ").trim().slice(0, 158);
+  // SEO: per-product title, description, canonical, og tags, and Product JSON-LD.
+  // Title pattern keeps the product name front-loaded and uniquely identifies the page.
+  const seoTitle = `${product.name} — Saint Lucia Herbal Formulation | Mount Kailash`.slice(0, 70);
+  // Strip HTML tags from descriptions before using as meta — traditional-use framing only.
+  const stripHtml = (s: string) => s.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ");
+  const rawDesc =
+    product.short_description ||
+    product.description ||
+    `${product.name} — single-origin Caribbean botanical formulation hand-crafted in Soufrière, Saint Lucia, for traditional wellness use.`;
+  const seoDesc = stripHtml(rawDesc).replace(/\s+/g, " ").trim().slice(0, 158);
   const canonical = `${SITE_URL}/shop/${slug}`;
   const productImage = product.image_url || undefined;
   const productSchema = {
