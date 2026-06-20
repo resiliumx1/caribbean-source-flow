@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { lookupOrder } from "../_shared/order-lookup.ts";
+import { mapAsPromptBlock } from "../_shared/system-product-map.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -26,6 +28,25 @@ function checkRateLimit(sessionId: string): { allowed: boolean; remaining: numbe
 
 const WHATSAPP_NUMBER = "13059429407";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%20MKRC%2C%20I%20have%20a%20question`;
+
+// Emit a deterministic assistant reply as a single SSE chunk + [DONE], matching
+// the OpenAI delta format the client already parses.
+function streamPlainReply(text: string): Response {
+  const enc = new TextEncoder();
+  const chunk = {
+    choices: [{ delta: { role: "assistant", content: text }, index: 0, finish_reason: null }],
+  };
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(enc.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+      controller.enqueue(enc.encode("data: [DONE]\n\n"));
+      controller.close();
+    },
+  });
+  return new Response(stream, {
+    headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+  });
+}
 
 const SYSTEM_PROMPT = `You are the Mount Kailash Rejuvenation Centre AI Health Advisor. You help customers find the right herbal remedy from our active product range based on their symptoms, health goals, or conditions.
 
@@ -177,23 +198,8 @@ Internal reasoning steps — do not show to the user:
 3. If two or more systems are involved OR the customer wants a complete protocol → recommend the matching BUNDLE instead of listing items separately.
 4. Always recommend at least one specific product when there is a clear match — do not punt to WhatsApp for basic recommendations.
 
-Symptom → product quick-map:
-- Cold / flu / low immunity → **The Answer** (add **Pure Gold** if respiratory). Bundle: **Immunity Kit**.
-- Cough / mucus / chest congestion → **Pure Gold**; **Anamu Syrup** if flu-like.
-- Intestinal parasites / worms / bloating from parasites → **Gut Balance**.
-- Constipation / sluggish colon → **Colax** (ongoing: **Colax Quarterly Subscription**).
-- Indigestion / stomach pain / gas / poor gut health → **Digestive Rescue**. Bundle: **Digestive Bundle**.
-- Anaemia / fatigue / low energy / inflammation → **Pure Green**.
-- Insomnia / anxiety / stress / depression / ADHD / poor focus → **Tranquility** or **Hemp Syrup**; capsule form: **Nerve Tonic Capsules**; tea: **Restful Tea**.
-- High blood pressure / heart support → **Hemp Syrup**, **Free Flow**.
-- High cholesterol / varicose veins / poor circulation → **Free Flow**.
-- Blood sugar regulation / diabetes support → **Anamu Syrup**, **Free Flow**.
-- Kidney stones / UTI / urinary discomfort → **Urinary Cleanse Tea**.
-- Prostate / BPH / urinary urgency (men) → **Prosperity**. Bundle: **Prostate Health Bundle**.
-- Erectile dysfunction / low libido (men) / low sperm count / stamina → **Male Balance** or **Prosperity**; capsule: **Virility Male Balance Capsules**; tea: **Virili-Tea**. Bundles: **Male Potency Kit**, **Male Vitality Package**.
-- Fibroids / heavy or irregular periods / PCOS / fertility / PMS / menopause / low libido (women) → **Feminine Balance**; tea: **Moon Cycle Tea**. Bundles: **Feminine Balance Kit**, **Super Female Wellness Package**.
-- Toxic load / post-illness recovery / liver support → **Herbal Detox**. Bundle: **Detox Bundle**.
-- Skin issues / fungal / eczema → **Cassia Alata** (raw herb).
+Symptom → product map (authoritative — do not invent items outside this list):
+${mapAsPromptBlock()}
 - General women's wellness tea ritual → **Queenly Tea Bundle**; men → **Kingly Tea Bundle**.
 
 Safety guardrails (non-negotiable):
@@ -266,6 +272,36 @@ serve(async (req) => {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
+      }
+    }
+
+    // ───── Tracking-number intercept ─────
+    // If the latest user message contains a tracking/order pattern, look it up
+    // directly and stream a deterministic reply — bypass the LLM so we never
+    // hallucinate order data.
+    const lastUser = [...messages].reverse().find((m: any) => m.role === "user");
+    if (lastUser?.content) {
+      const text: string = lastUser.content;
+      const orderNumRe = /\b(MK-\d{8}-\d{4})\b/i;
+      const trackingRe = /\b([A-Z0-9]{10,30})\b/;
+      const intentRe = /\b(track|tracking|where('?s| is)?\s+my\s+order|status of (my )?order|order status)\b/i;
+      let query: string | null = null;
+      const orderMatch = text.match(orderNumRe);
+      if (orderMatch) query = orderMatch[1].toUpperCase();
+      else if (intentRe.test(text)) {
+        const tm = text.match(trackingRe);
+        if (tm) query = tm[1];
+      }
+      // Bare token (user just pasted a tracking number with no other words)
+      if (!query) {
+        const trimmed = text.trim();
+        if (/^[A-Za-z0-9\- ]{8,40}$/.test(trimmed) && /[0-9]/.test(trimmed) && /[A-Za-z0-9]/.test(trimmed) && trimmed.split(/\s+/).length <= 2) {
+          query = trimmed.replace(/\s+/g, "");
+        }
+      }
+      if (query) {
+        const result = await lookupOrder(query);
+        return streamPlainReply(result.message);
       }
     }
 
