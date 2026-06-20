@@ -3,6 +3,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { RelatedLinks } from "@/components/RelatedLinks";
 import { getBreadcrumbs } from "@/lib/internal-links";
+import { StoreFooter } from "@/components/store/StoreFooter";
 import {
   Shield, Leaf, Droplets, Heart, FlaskConical, Sparkles,
   ChevronDown, Star, ArrowRight, CheckCircle2, MapPin
@@ -470,6 +471,7 @@ export default function TheAnswer() {
       </section>
 
       <RelatedLinks nodeId="the-answer" />
+      <StoreFooter />
     </div>
   );
 }

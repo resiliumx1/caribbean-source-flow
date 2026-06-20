@@ -1,18 +1,29 @@
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Mail, MapPin, MessageCircle, Instagram, Facebook } from "lucide-react";
 import { useStore } from "@/lib/store-context";
 import { ContactNumbers } from "@/components/ContactNumbers";
 import mtKailashLogo from "@/assets/mt-kailash-logo.webp";
 import { FooterVine } from "@/components/decorative/BotanicalVine";
+import { LINK_NODES, type LinkNodeId } from "@/lib/internal-links";
 
 export function StoreFooter() {
   const { storeEmail, storePhone, whatsappNumber } = useStore();
+  const { pathname } = useLocation();
+
+  // Build the "Explore" cross-link column from the central internal-links map.
+  // Excludes the current page so we never link back to ourselves, and skips
+  // 'home' (already reachable via the brand mark).
+  const exploreIds: LinkNodeId[] = ["shop", "the-answer", "school", "retreats", "webinars", "wholesale"];
+  const exploreLinks = exploreIds
+    .map((id) => LINK_NODES[id])
+    .filter((node) => node.path !== pathname);
 
   return (
     <footer className="bg-primary text-primary-foreground">
       <FooterVine />
       <div className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-12">
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
@@ -66,6 +77,24 @@ export function StoreFooter() {
                   Raw Herbs
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          {/* Explore — keyword-relevant cross-links driven by the internal-links map */}
+          <div>
+            <h4 className="font-serif font-semibold mb-4">Explore</h4>
+            <ul className="space-y-2 text-sm text-primary-foreground/80">
+              {exploreLinks.map((node) => (
+                <li key={node.id}>
+                  <Link
+                    to={node.path}
+                    className="hover:text-gold transition-colors"
+                    title={node.blurb}
+                  >
+                    {node.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
