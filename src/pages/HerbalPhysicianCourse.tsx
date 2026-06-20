@@ -67,6 +67,7 @@ export default function HerbalPhysicianCourse() {
         <GraduationSection />
         <SchoolFAQ />
         <EnrollmentCTA />
+        <RelatedLinks nodeId="school" />
         <StoreFooter />
       </main>
     </>
