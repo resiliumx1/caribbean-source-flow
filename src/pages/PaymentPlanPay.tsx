@@ -249,14 +249,22 @@ export default function PaymentPlanPay() {
                           } else {
                             if (res.plan) setPlan(res.plan);
                             setReceipt({ amount: Number(res.amount) });
+                            // Safety net: refetch from DB so the webhook path
+                            // (or any concurrent capture) is reflected too.
+                            load();
                           }
                         } finally {
                           setProcessing(false);
                         }
                       }}
+                      onCancel={() => {
+                        setProcessing(false);
+                        setError("Payment was cancelled. You can try again when you're ready.");
+                      }}
                       onError={(err) => {
                         console.error("PayPal error", err);
                         setError("PayPal encountered an error. Please try again.");
+                        setProcessing(false);
                       }}
                     />
                   </div>
