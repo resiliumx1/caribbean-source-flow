@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { verifyPaypalCapture } from "../_shared/paypal-verify.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -128,6 +129,14 @@ Deno.serve(async (req) => {
     }
     const total_usd = subtotal_usd + shipping_usd;
     const total_xcd = subtotal_xcd + shipping_xcd;
+
+    // Server-side PayPal verification: confirm the capture really completed
+    // for the amount we just computed. Never trust the client-supplied capture id alone.
+    await verifyPaypalCapture({
+      paypal_order_id: payload.paypal_order_id,
+      paypal_capture_id: payload.paypal_capture_id,
+      expected_usd: +total_usd.toFixed(2),
+    });
 
     // Insert order — trigger generates order_number, history trigger logs status
     const orderInsert = {

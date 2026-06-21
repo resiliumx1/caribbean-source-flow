@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { verifyPaypalCapture } from "../_shared/paypal-verify.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -101,13 +102,13 @@ Deno.serve(async (req) => {
         : +total_usd.toFixed(2);
     const balance_due_usd = +(total_usd - amount_paid_usd).toFixed(2);
 
-    // Verify PayPal capture matches what we expected to charge
-    const captureAmt = Number(payload.paypal_capture_amount_usd ?? 0);
-    if (Math.abs(captureAmt - amount_paid_usd) > 0.05) {
-      throw new Error(
-        `Payment amount mismatch (charged ${captureAmt}, expected ${amount_paid_usd}).`
-      );
-    }
+    // Server-side PayPal verification: confirm the capture actually completed
+    // for the amount we just computed. Replaces the previous client-trust check.
+    await verifyPaypalCapture({
+      paypal_order_id: payload.paypal_order_id,
+      paypal_capture_id: payload.paypal_capture_id,
+      expected_usd: amount_paid_usd,
+    });
 
     const { data: booking, error: bookErr } = await supabase
       .from("retreat_bookings")
