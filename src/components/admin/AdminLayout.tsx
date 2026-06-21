@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { label: 'Reviews', href: '/admin/reviews' },
   { label: 'Webinars', href: '/admin/webinars' },
   { label: 'Analytics', href: '/admin/analytics' },
+  { label: 'Payment Plans', href: '/admin/payment-plans' },
   { label: 'Notifications', href: '/admin/notifications' },
 ];
 
