@@ -14,3 +14,12 @@ verify_jwt = false
 
 [functions.log-payment-attempt]
 verify_jwt = false
+
+[functions.create-paypal-plan-order]
+verify_jwt = false
+
+[functions.capture-paypal-plan-order]
+verify_jwt = false
+
+[functions.paypal-plan-webhook]
+verify_jwt = false
