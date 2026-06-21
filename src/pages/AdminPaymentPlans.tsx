@@ -14,6 +14,9 @@ import {
 import { toast } from "sonner";
 import { Copy, Plus, Loader2 } from "lucide-react";
 
+const PUBLIC_SITE_ORIGIN = "https://www.mountkailashslu.com";
+const buildPayLink = (id: string) => `${PUBLIC_SITE_ORIGIN}/pay/${id}`;
+
 type Plan = {
   id: string;
   customer_name: string;
@@ -83,14 +86,14 @@ export default function AdminPaymentPlans() {
     if (error) return toast.error(error.message);
     setOpen(false);
     setForm({ customer_name: "", customer_email: "", package_name: "", total_amount: "", min_payment: "" });
-    const link = `${window.location.origin}/pay/${data.id}`;
+    const link = buildPayLink(data.id);
     await navigator.clipboard.writeText(link).catch(() => {});
     toast.success("Plan created — link copied to clipboard");
     load();
   };
 
   const copyLink = async (id: string) => {
-    const link = `${window.location.origin}/pay/${id}`;
+    const link = buildPayLink(id);
     await navigator.clipboard.writeText(link).catch(() => {});
     toast.success("Payment link copied");
   };
