@@ -697,6 +697,83 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_plans: {
+        Row: {
+          amount_paid: number
+          balance_remaining: number
+          created_at: string
+          created_by: string | null
+          customer_email: string
+          customer_name: string
+          id: string
+          min_payment: number | null
+          package_name: string
+          status: string
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          amount_paid?: number
+          balance_remaining: number
+          created_at?: string
+          created_by?: string | null
+          customer_email: string
+          customer_name: string
+          id?: string
+          min_payment?: number | null
+          package_name: string
+          status?: string
+          total_amount: number
+          updated_at?: string
+        }
+        Update: {
+          amount_paid?: number
+          balance_remaining?: number
+          created_at?: string
+          created_by?: string | null
+          customer_email?: string
+          customer_name?: string
+          id?: string
+          min_payment?: number | null
+          package_name?: string
+          status?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          paypal_capture_id: string
+          plan_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          paypal_capture_id: string
+          plan_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          paypal_capture_id?: string
+          plan_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "payment_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_categories: {
         Row: {
           created_at: string | null
@@ -1642,6 +1719,29 @@ export type Database = {
           user_email: string
           user_name: string
         }[]
+      }
+      apply_payment: {
+        Args: { p_amount: number; p_plan_id: string }
+        Returns: {
+          amount_paid: number
+          balance_remaining: number
+          created_at: string
+          created_by: string | null
+          customer_email: string
+          customer_name: string
+          id: string
+          min_payment: number | null
+          package_name: string
+          status: string
+          total_amount: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payment_plans"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       check_verified_purchase: {
         Args: { p_email: string; p_product_id: string }
