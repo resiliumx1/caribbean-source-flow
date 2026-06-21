@@ -59,6 +59,8 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
+const PaymentPlanPay = lazy(() => import("./pages/PaymentPlanPay"));
+const AdminPaymentPlans = lazy(() => import("./pages/AdminPaymentPlans"));
 
 const queryClient = new QueryClient();
 
@@ -158,6 +160,7 @@ function AppContent() {
           <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
           <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
           <Route path="/index" element={<Navigate to="/" replace />} />
+          <Route path="/pay/:planId" element={<PaymentPlanPay />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="/admin/orders" replace />} />
@@ -169,6 +172,7 @@ function AppContent() {
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="notifications" element={<AdminNotifications />} />
+            <Route path="payment-plans" element={<AdminPaymentPlans />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
