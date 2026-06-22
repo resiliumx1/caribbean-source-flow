@@ -382,9 +382,24 @@ export default function AdminOrders() {
                 )}
 
                 {order.tracking_number && (
-                  <div className="flex items-center gap-1.5 text-xs text-blue-600 mt-2">
+                  <div
+                    className="flex items-center gap-1.5 text-xs text-blue-600 mt-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Truck className="w-3.5 h-3.5" />
-                    {order.tracking_number} {order.tracking_carrier && `(${order.tracking_carrier.toUpperCase()})`}
+                    {order.tracking_carrier && CARRIER_URLS[order.tracking_carrier] ? (
+                      <a
+                        href={CARRIER_URLS[order.tracking_carrier](order.tracking_number)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 underline hover:no-underline"
+                      >
+                        {order.tracking_number} ({order.tracking_carrier.toUpperCase()})
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <span>{order.tracking_number} {order.tracking_carrier && `(${order.tracking_carrier.toUpperCase()})`}</span>
+                    )}
                   </div>
                 )}
               </button>
