@@ -17,6 +17,13 @@ const CARRIER_OPTIONS = [
   { value: "other", label: "Other" },
 ];
 
+const CARRIER_URLS: Record<string, (tn: string) => string> = {
+  usps: (tn) => `https://tools.usps.com/go/TrackConfirmAction?tLabels=${tn}`,
+  ups: (tn) => `https://www.ups.com/track?tracknum=${tn}`,
+  fedex: (tn) => `https://www.fedex.com/fedextrack/?trknbr=${tn}`,
+  dhl: (tn) => `https://www.dhl.com/en/express/tracking.html?AWB=${tn}`,
+};
+
 const PAYMENT_COLORS: Record<string, string> = {
   paid: "#15803d",
   unpaid: "#b45309",
