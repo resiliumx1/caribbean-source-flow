@@ -18,6 +18,9 @@ export function useProducts(categorySlug?: string) {
         .eq("is_active", true)
         .order("display_order", { ascending: true });
 
+      // Hide products past their expiration
+      query = query.or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
+
       if (categorySlug) {
         const { data: category } = await supabase
           .from("product_categories")
