@@ -590,9 +590,23 @@ function DrawerContent({
               <span className="text-muted-foreground text-sm">Tracking</span>
               <span className="flex items-center gap-1.5">
                 <Truck className="w-4 h-4 text-muted-foreground" />
-                {order.tracking_number
-                  ? <span className="font-medium">{order.tracking_number}{order.tracking_carrier ? ` (${order.tracking_carrier.toUpperCase()})` : ""}</span>
-                  : <span className="text-muted-foreground italic">No tracking number yet</span>}
+                {order.tracking_number ? (
+                  order.tracking_carrier && CARRIER_URLS[order.tracking_carrier] ? (
+                    <a
+                      href={CARRIER_URLS[order.tracking_carrier](order.tracking_number)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium inline-flex items-center gap-1 text-blue-600 underline hover:no-underline"
+                    >
+                      {order.tracking_number}{order.tracking_carrier ? ` (${order.tracking_carrier.toUpperCase()})` : ""}
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  ) : (
+                    <span className="font-medium">{order.tracking_number}{order.tracking_carrier ? ` (${order.tracking_carrier.toUpperCase()})` : ""}</span>
+                  )
+                ) : (
+                  <span className="text-muted-foreground italic">No tracking number yet</span>
+                )}
               </span>
             </div>
           </div>
