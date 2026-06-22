@@ -63,6 +63,38 @@ export default function CustomerAccountPage() {
         description: "Thank you! Your order has been received.",
       });
     }
+
+    // Prefill from query params so emailed tracking links work in one click.
+    // Supported: ?email=&order= (auto-look-up), ?track=&carrier= (prefill tracker).
+    const qEmail = params.get("email");
+    const qOrder = params.get("order_number") || (params.get("order") !== "success" ? params.get("order") : null);
+    const qTrack = params.get("track") || params.get("tracking");
+    const qCarrier = params.get("carrier");
+
+    if (qEmail) setEmail(qEmail);
+    if (qOrder) setOrderNumber(qOrder);
+    if (qTrack) setTrackNumber(qTrack);
+    if (qCarrier && CARRIER_URLS[qCarrier.toLowerCase()]) setTrackCarrier(qCarrier.toLowerCase());
+
+    // Auto-submit the order lookup when both email and order number are present.
+    if (qEmail && qOrder) {
+      (async () => {
+        setLoading(true);
+        try {
+          const { data, error } = await supabase.functions.invoke("guest-orders", {
+            body: { email: qEmail.trim(), order_number: qOrder.trim() },
+          });
+          if (error) throw error;
+          setOrders(data.orders || []);
+          setOrderItems(data.orderItems || {});
+          setLooked(true);
+        } catch {
+          toast({ title: "Error", description: "Could not look up orders. Please try again.", variant: "destructive" });
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
