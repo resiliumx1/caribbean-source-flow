@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Search, Truck, Save, Mail, X, Copy, Check } from "lucide-react";
+import { Loader2, Search, Truck, Save, Mail, X, Copy, Check, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import WooLegacyOrders from "@/components/admin/WooLegacyOrders";
 
@@ -16,6 +16,13 @@ const CARRIER_OPTIONS = [
   { value: "dhl", label: "DHL" },
   { value: "other", label: "Other" },
 ];
+
+const CARRIER_URLS: Record<string, (tn: string) => string> = {
+  usps: (tn) => `https://tools.usps.com/go/TrackConfirmAction?tLabels=${tn}`,
+  ups: (tn) => `https://www.ups.com/track?tracknum=${tn}`,
+  fedex: (tn) => `https://www.fedex.com/fedextrack/?trknbr=${tn}`,
+  dhl: (tn) => `https://www.dhl.com/en/express/tracking.html?AWB=${tn}`,
+};
 
 const PAYMENT_COLORS: Record<string, string> = {
   paid: "#15803d",
@@ -375,9 +382,24 @@ export default function AdminOrders() {
                 )}
 
                 {order.tracking_number && (
-                  <div className="flex items-center gap-1.5 text-xs text-blue-600 mt-2">
+                  <div
+                    className="flex items-center gap-1.5 text-xs text-blue-600 mt-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Truck className="w-3.5 h-3.5" />
-                    {order.tracking_number} {order.tracking_carrier && `(${order.tracking_carrier.toUpperCase()})`}
+                    {order.tracking_carrier && CARRIER_URLS[order.tracking_carrier] ? (
+                      <a
+                        href={CARRIER_URLS[order.tracking_carrier](order.tracking_number)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 underline hover:no-underline"
+                      >
+                        {order.tracking_number} ({order.tracking_carrier.toUpperCase()})
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <span>{order.tracking_number} {order.tracking_carrier && `(${order.tracking_carrier.toUpperCase()})`}</span>
+                    )}
                   </div>
                 )}
               </button>
@@ -568,9 +590,23 @@ function DrawerContent({
               <span className="text-muted-foreground text-sm">Tracking</span>
               <span className="flex items-center gap-1.5">
                 <Truck className="w-4 h-4 text-muted-foreground" />
-                {order.tracking_number
-                  ? <span className="font-medium">{order.tracking_number}{order.tracking_carrier ? ` (${order.tracking_carrier.toUpperCase()})` : ""}</span>
-                  : <span className="text-muted-foreground italic">No tracking number yet</span>}
+                {order.tracking_number ? (
+                  order.tracking_carrier && CARRIER_URLS[order.tracking_carrier] ? (
+                    <a
+                      href={CARRIER_URLS[order.tracking_carrier](order.tracking_number)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium inline-flex items-center gap-1 text-blue-600 underline hover:no-underline"
+                    >
+                      {order.tracking_number}{order.tracking_carrier ? ` (${order.tracking_carrier.toUpperCase()})` : ""}
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  ) : (
+                    <span className="font-medium">{order.tracking_number}{order.tracking_carrier ? ` (${order.tracking_carrier.toUpperCase()})` : ""}</span>
+                  )
+                ) : (
+                  <span className="text-muted-foreground italic">No tracking number yet</span>
+                )}
               </span>
             </div>
           </div>
