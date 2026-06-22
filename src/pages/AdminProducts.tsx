@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +22,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProductImageUpload from "@/components/admin/ProductImageUpload";
-import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X, Trash2, RefreshCw, Eye, EyeOff } from "lucide-react";
+import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X, Trash2, RefreshCw, Eye, EyeOff, Upload, CalendarClock } from "lucide-react";
+import { compressImage } from "@/lib/image-utils";
 import {
   AlertDialog,
   AlertDialogAction,
