@@ -1,9 +1,10 @@
 import { useState, useRef } from "react";
-import { Plus, Trash2, Star, Upload, Pencil, Video, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Star, Upload, Pencil, Video, Image as ImageIcon, Tent, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -47,9 +48,11 @@ export default function AdminRetreats() {
         <TabsList>
           <TabsTrigger value="gallery" className="gap-2"><ImageIcon className="w-4 h-4" />Gallery</TabsTrigger>
           <TabsTrigger value="videos" className="gap-2"><Video className="w-4 h-4" />Videos</TabsTrigger>
+          <TabsTrigger value="retreats" className="gap-2"><Tent className="w-4 h-4" />Retreats</TabsTrigger>
         </TabsList>
         <TabsContent value="gallery"><GalleryTab /></TabsContent>
         <TabsContent value="videos"><VideosTab /></TabsContent>
+        <TabsContent value="retreats"><RetreatsTab /></TabsContent>
       </Tabs>
     </div>
   );
@@ -174,6 +177,284 @@ function GalleryTab() {
                   {image.description && <p className="text-xs text-muted-foreground line-clamp-2">{image.description}</p>}
                 </div>
               )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ========== RETREATS TAB ========== */
+function RetreatsTab() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    type: "group" as "group" | "solo",
+    base_price_usd: "",
+    max_capacity: "10",
+    min_nights: "1",
+    max_nights: "1",
+    description: "",
+    has_date: false,
+    start_date: "",
+    end_date: "",
+    spots_total: "20",
+  });
+  const [imageFiles, setImageFiles] = useState<(File | null)[]>([null, null, null, null]);
+
+  const { data: retreats = [], isLoading } = useQuery({
+    queryKey: ["admin-retreat-types"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("retreat_types")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  const resetForm = () => {
+    setForm({
+      name: "", type: "group", base_price_usd: "", max_capacity: "10",
+      min_nights: "1", max_nights: "1", description: "",
+      has_date: false, start_date: "", end_date: "", spots_total: "20",
+    });
+    setImageFiles([null, null, null, null]);
+  };
+
+  const createRetreat = useMutation({
+    mutationFn: async () => {
+      const slug = form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const uploaded: string[] = [];
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i];
+        if (!file) continue;
+        const ext = file.name.split(".").pop() || "jpg";
+        const path = `retreats/${slug}-${i}-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("retreat-images").upload(path, file, { cacheControl: "3600", upsert: true });
+        if (upErr) throw upErr;
+        const { data: u } = supabase.storage.from("retreat-images").getPublicUrl(path);
+        uploaded.push(u.publicUrl);
+      }
+      const { data: rt, error } = await supabase.from("retreat_types").insert({
+        slug,
+        name: form.name,
+        type: form.type,
+        base_price_usd: parseFloat(form.base_price_usd) || 0,
+        price_type: form.type === "group" ? "per_person" : "per_night",
+        max_capacity: parseInt(form.max_capacity) || 10,
+        min_nights: parseInt(form.min_nights) || 1,
+        max_nights: parseInt(form.max_nights) || 1,
+        description: form.description || null,
+        image_url: uploaded[0] ?? null,
+        additional_images: uploaded.slice(1),
+        is_active: true,
+      }).select().single();
+      if (error) throw error;
+
+      if (form.has_date && form.start_date && form.end_date) {
+        const { error: dErr } = await supabase.from("retreat_dates").insert({
+          retreat_type_id: rt.id,
+          start_date: form.start_date,
+          end_date: form.end_date,
+          spots_total: parseInt(form.spots_total) || 20,
+          is_published: true,
+        });
+        if (dErr) throw dErr;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-retreat-types"] });
+      toast({ title: "Retreat created" });
+      setIsDialogOpen(false);
+      resetForm();
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const toggleActive = useMutation({
+    mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
+      const { error } = await supabase.from("retreat_types").update({ is_active }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-retreat-types"] }),
+  });
+
+  const deleteRetreat = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("retreat_types").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-retreat-types"] });
+      toast({ title: "Retreat deleted" });
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  return (
+    <div className="space-y-6 pt-4">
+      <div className="flex items-center justify-between">
+        <p className="text-muted-foreground">Manage retreat offerings (group events, solo immersions)</p>
+        <Dialog open={isDialogOpen} onOpenChange={(o) => { setIsDialogOpen(o); if (!o) resetForm(); }}>
+          <DialogTrigger asChild><Button className="gap-2"><Plus className="w-4 h-4" />Add Retreat</Button></DialogTrigger>
+          <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>Add New Retreat</DialogTitle></DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-medium">Retreat Name *</label>
+                <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="e.g., Caribbean Wellness Saint Lucia 2026" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Type</label>
+                  <Select value={form.type} onValueChange={(v: "group" | "solo") => setForm((p) => ({ ...p, type: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="group">Group</SelectItem>
+                      <SelectItem value="solo">Solo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Base Price (USD) *</label>
+                  <Input type="number" step="0.01" value={form.base_price_usd} onChange={(e) => setForm((p) => ({ ...p, base_price_usd: e.target.value }))} placeholder="70" />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="text-sm font-medium">Capacity</label>
+                  <Input type="number" value={form.max_capacity} onChange={(e) => setForm((p) => ({ ...p, max_capacity: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Min Nights</label>
+                  <Input type="number" value={form.min_nights} onChange={(e) => setForm((p) => ({ ...p, min_nights: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Max Nights</label>
+                  <Input type="number" value={form.max_nights} onChange={(e) => setForm((p) => ({ ...p, max_nights: e.target.value }))} />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Description</label>
+                <Textarea rows={3} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} placeholder="What's included, the experience…" />
+              </div>
+
+              {/* Images 1-4 */}
+              <div>
+                <label className="text-sm font-medium">Images (up to 4)</label>
+                <p className="text-xs text-muted-foreground mb-2">First image is the primary/cover.</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {imageFiles.map((file, i) => (
+                    <label key={i} className="relative aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer overflow-hidden flex items-center justify-center bg-muted/30">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0] ?? null;
+                          setImageFiles((prev) => { const n = [...prev]; n[i] = f; return n; });
+                        }}
+                      />
+                      {file ? (
+                        <>
+                          <img src={URL.createObjectURL(file)} alt={`Slot ${i + 1}`} className="w-full h-full object-cover" />
+                          {i === 0 && <span className="absolute top-1 left-1 bg-amber-500 text-white text-[9px] font-medium px-1 py-0.5 rounded">Cover</span>}
+                          <button type="button" onClick={(e) => { e.preventDefault(); setImageFiles((prev) => { const n = [...prev]; n[i] = null; return n; }); }} className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-0.5">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                          <Upload className="w-4 h-4" />
+                          <span className="text-[10px]">{i === 0 ? "Cover" : "Add"}</span>
+                        </div>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Optional initial date */}
+              <div className="rounded-lg border border-border p-3 space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer select-none text-sm font-medium">
+                  <Checkbox checked={form.has_date} onCheckedChange={(v) => setForm((p) => ({ ...p, has_date: !!v }))} />
+                  <span>Add an initial scheduled date</span>
+                </label>
+                {form.has_date && (
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-xs text-muted-foreground">Start Date</label>
+                      <Input type="date" value={form.start_date} onChange={(e) => setForm((p) => ({ ...p, start_date: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground">End Date</label>
+                      <Input type="date" value={form.end_date} onChange={(e) => setForm((p) => ({ ...p, end_date: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="text-xs text-muted-foreground">Spots</label>
+                      <Input type="number" value={form.spots_total} onChange={(e) => setForm((p) => ({ ...p, spots_total: e.target.value }))} />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                onClick={() => createRetreat.mutate()}
+                disabled={!form.name || !form.base_price_usd || createRetreat.isPending}
+                className="w-full"
+              >
+                {createRetreat.isPending ? "Creating..." : "Create Retreat"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{[...Array(6)].map((_, i) => <Skeleton key={i} className="h-48 rounded-xl" />)}</div>
+      ) : retreats.length === 0 ? (
+        <div className="text-center py-16 bg-card rounded-xl border border-border">
+          <Tent className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No retreats yet</h3>
+          <Button onClick={() => setIsDialogOpen(true)}><Plus className="w-4 h-4 mr-2" />Add First Retreat</Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {retreats.map((r) => (
+            <div key={r.id} className="bg-card rounded-xl border border-border overflow-hidden">
+              {r.image_url && (
+                <div className="aspect-video bg-muted">
+                  <img src={r.image_url} alt={r.name} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="p-4 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-medium text-sm line-clamp-2">{r.name}</p>
+                  <Badge variant={r.is_active ? "default" : "outline"} className="shrink-0 text-xs">
+                    {r.is_active ? "Active" : "Hidden"}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {r.type === "group" ? "Group" : "Solo"} · ${r.base_price_usd} · cap {r.max_capacity}
+                </p>
+                {r.description && <p className="text-xs text-muted-foreground line-clamp-2">{r.description}</p>}
+                <div className="flex items-center justify-between pt-2">
+                  <Button variant="ghost" size="sm" className="h-7 text-xs"
+                    onClick={() => toggleActive.mutate({ id: r.id, is_active: !r.is_active })}>
+                    {r.is_active ? "Hide" : "Show"}
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive"
+                    onClick={() => { if (confirm(`Delete "${r.name}"?`)) deleteRetreat.mutate(r.id); }}>
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              </div>
             </div>
           ))}
         </div>

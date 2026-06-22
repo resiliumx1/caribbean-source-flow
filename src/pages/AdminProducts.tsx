@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +22,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProductImageUpload from "@/components/admin/ProductImageUpload";
-import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X, Trash2, RefreshCw, Eye, EyeOff } from "lucide-react";
+import { Search, Package, ImageIcon, Loader2, Plus, Pencil, Check, X, Trash2, RefreshCw, Eye, EyeOff, Upload, CalendarClock } from "lucide-react";
+import { compressImage } from "@/lib/image-utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -88,6 +89,10 @@ export default function AdminProducts() {
     badge: "none",
     stock_status: "in_stock",
   });
+  const [newImageFiles, setNewImageFiles] = useState<(File | null)[]>([null, null, null, null]);
+  const [hasExpiration, setHasExpiration] = useState(false);
+  const [expiresAt, setExpiresAt] = useState<string>("");
+  const newFileInputs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["admin-products"],
@@ -119,6 +124,24 @@ export default function AdminProducts() {
       const priceUsd = parseFloat(newProduct.price_usd);
       const priceXcd = parseFloat(newProduct.price_xcd) || priceUsd * 2.7;
 
+      // Upload any selected images first
+      const uploaded: string[] = [];
+      for (let i = 0; i < newImageFiles.length; i++) {
+        const file = newImageFiles[i];
+        if (!file) continue;
+        const compressed = await compressImage(file, { maxWidth: 1200, maxHeight: 1200 });
+        const ext = compressed.name.split(".").pop() || "jpg";
+        const path = `products/${slug}-${i}-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("product-images")
+          .upload(path, compressed, { cacheControl: "3600", upsert: true });
+        if (upErr) throw upErr;
+        const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
+        uploaded.push(urlData.publicUrl);
+      }
+      const primary = uploaded[0] ?? null;
+      const additional = uploaded.slice(1);
+
       const { error } = await supabase.from("products").insert({
         name: newProduct.name,
         slug,
@@ -129,6 +152,9 @@ export default function AdminProducts() {
         short_description: newProduct.short_description || null,
         badge: newProduct.badge === "none" ? null : newProduct.badge,
         stock_status: newProduct.stock_status,
+        image_url: primary,
+        additional_images: additional,
+        expires_at: hasExpiration && expiresAt ? new Date(expiresAt).toISOString() : null,
       });
       if (error) throw error;
     },
@@ -138,6 +164,9 @@ export default function AdminProducts() {
       toast({ title: "Product created" });
       setIsAddOpen(false);
       setNewProduct({ name: "", product_type: "tincture", category_id: "", price_usd: "", price_xcd: "", short_description: "", badge: "none", stock_status: "in_stock" });
+      setNewImageFiles([null, null, null, null]);
+      setHasExpiration(false);
+      setExpiresAt("");
     },
     onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
@@ -255,7 +284,7 @@ export default function AdminProducts() {
               <Button className="gap-2"><Plus className="w-4 h-4" />Add Product</Button>
             </DialogTrigger>
           </div>
-          <DialogContent className="sm:max-w-lg">
+          <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Add New Product</DialogTitle></DialogHeader>
             <div className="space-y-4 pt-4">
               <div>
@@ -319,6 +348,82 @@ export default function AdminProducts() {
                   </Select>
                 </div>
               </div>
+
+              {/* Images (1-4) */}
+              <div>
+                <label className="text-sm font-medium">Images (up to 4)</label>
+                <p className="text-xs text-muted-foreground mb-2">First image is the primary shown on product cards.</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {newImageFiles.map((file, i) => (
+                    <label
+                      key={i}
+                      className="relative aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer overflow-hidden flex items-center justify-center bg-muted/30"
+                    >
+                      <input
+                        ref={(el) => (newFileInputs.current[i] = el)}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0] ?? null;
+                          setNewImageFiles((prev) => {
+                            const next = [...prev];
+                            next[i] = f;
+                            return next;
+                          });
+                        }}
+                      />
+                      {file ? (
+                        <>
+                          <img src={URL.createObjectURL(file)} alt={`Slot ${i + 1}`} className="w-full h-full object-cover" />
+                          {i === 0 && (
+                            <span className="absolute top-1 left-1 bg-amber-500 text-white text-[9px] font-medium px-1 py-0.5 rounded">Primary</span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setNewImageFiles((prev) => {
+                                const next = [...prev];
+                                next[i] = null;
+                                return next;
+                              });
+                            }}
+                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-0.5"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                          <Upload className="w-4 h-4" />
+                          <span className="text-[10px]">{i === 0 ? "Primary" : "Add"}</span>
+                        </div>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Optional expiration */}
+              <div className="rounded-lg border border-border p-3 space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer select-none text-sm font-medium">
+                  <Checkbox checked={hasExpiration} onCheckedChange={(v) => setHasExpiration(!!v)} />
+                  <CalendarClock className="w-4 h-4 text-muted-foreground" />
+                  <span>Set an expiration date</span>
+                </label>
+                {hasExpiration && (
+                  <>
+                    <Input
+                      type="datetime-local"
+                      value={expiresAt}
+                      onChange={(e) => setExpiresAt(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">Product will be automatically hidden from the shop after this time.</p>
+                  </>
+                )}
+              </div>
+
               <Button onClick={() => createProduct.mutate()} disabled={!newProduct.name || !newProduct.price_usd || createProduct.isPending} className="w-full">
                 {createProduct.isPending ? "Creating..." : "Create Product"}
               </Button>
