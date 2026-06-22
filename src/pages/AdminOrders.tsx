@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Search, Truck, Save, Mail, X, Copy, Check } from "lucide-react";
+import { Loader2, Search, Truck, Save, Mail, X, Copy, Check, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import WooLegacyOrders from "@/components/admin/WooLegacyOrders";
 
