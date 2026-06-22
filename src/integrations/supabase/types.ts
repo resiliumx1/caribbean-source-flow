@@ -921,6 +921,7 @@ export type Database = {
           description: string | null
           display_order: number | null
           dosage_instructions: string | null
+          expires_at: string | null
           id: string
           image_url: string | null
           ingredients: string | null
@@ -955,6 +956,7 @@ export type Database = {
           description?: string | null
           display_order?: number | null
           dosage_instructions?: string | null
+          expires_at?: string | null
           id?: string
           image_url?: string | null
           ingredients?: string | null
@@ -989,6 +991,7 @@ export type Database = {
           description?: string | null
           display_order?: number | null
           dosage_instructions?: string | null
+          expires_at?: string | null
           id?: string
           image_url?: string | null
           ingredients?: string | null
@@ -1255,10 +1258,12 @@ export type Database = {
       }
       retreat_types: {
         Row: {
+          additional_images: string[]
           base_price_usd: number
           created_at: string
           description: string | null
           id: string
+          image_url: string | null
           includes: Json | null
           is_active: boolean
           max_capacity: number
@@ -1271,10 +1276,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          additional_images?: string[]
           base_price_usd: number
           created_at?: string
           description?: string | null
           id?: string
+          image_url?: string | null
           includes?: Json | null
           is_active?: boolean
           max_capacity?: number
@@ -1287,10 +1294,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          additional_images?: string[]
           base_price_usd?: number
           created_at?: string
           description?: string | null
           id?: string
+          image_url?: string | null
           includes?: Json | null
           is_active?: boolean
           max_capacity?: number
