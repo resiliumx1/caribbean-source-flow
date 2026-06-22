@@ -279,8 +279,8 @@ export default function CustomerAccountPage() {
           </>
         )}
 
-        {/* Track a Shipment — only shown when at least one looked-up order has tracking */}
-        {looked && orders.some((o) => !!o.tracking_number) && (
+        {/* Track a Shipment */}
+        {looked && (
         <div style={{ marginTop: 32, background: c.cardBg, borderRadius: 20, padding: 36, border: `1px solid ${c.border}` }}>
           <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 18, color: c.textPrimary, marginBottom: 16 }}>
             Track a Shipment
