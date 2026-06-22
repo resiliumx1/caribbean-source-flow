@@ -1,9 +1,10 @@
 import { useState, useRef } from "react";
-import { Plus, Trash2, Star, Upload, Pencil, Video, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, Star, Upload, Pencil, Video, Image as ImageIcon, Tent, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -47,9 +48,11 @@ export default function AdminRetreats() {
         <TabsList>
           <TabsTrigger value="gallery" className="gap-2"><ImageIcon className="w-4 h-4" />Gallery</TabsTrigger>
           <TabsTrigger value="videos" className="gap-2"><Video className="w-4 h-4" />Videos</TabsTrigger>
+          <TabsTrigger value="retreats" className="gap-2"><Tent className="w-4 h-4" />Retreats</TabsTrigger>
         </TabsList>
         <TabsContent value="gallery"><GalleryTab /></TabsContent>
         <TabsContent value="videos"><VideosTab /></TabsContent>
+        <TabsContent value="retreats"><RetreatsTab /></TabsContent>
       </Tabs>
     </div>
   );
