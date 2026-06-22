@@ -89,6 +89,10 @@ export default function AdminProducts() {
     badge: "none",
     stock_status: "in_stock",
   });
+  const [newImageFiles, setNewImageFiles] = useState<(File | null)[]>([null, null, null, null]);
+  const [hasExpiration, setHasExpiration] = useState(false);
+  const [expiresAt, setExpiresAt] = useState<string>("");
+  const newFileInputs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["admin-products"],
@@ -120,6 +124,24 @@ export default function AdminProducts() {
       const priceUsd = parseFloat(newProduct.price_usd);
       const priceXcd = parseFloat(newProduct.price_xcd) || priceUsd * 2.7;
 
+      // Upload any selected images first
+      const uploaded: string[] = [];
+      for (let i = 0; i < newImageFiles.length; i++) {
+        const file = newImageFiles[i];
+        if (!file) continue;
+        const compressed = await compressImage(file, { maxWidth: 1200, maxHeight: 1200 });
+        const ext = compressed.name.split(".").pop() || "jpg";
+        const path = `products/${slug}-${i}-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("product-images")
+          .upload(path, compressed, { cacheControl: "3600", upsert: true });
+        if (upErr) throw upErr;
+        const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
+        uploaded.push(urlData.publicUrl);
+      }
+      const primary = uploaded[0] ?? null;
+      const additional = uploaded.slice(1);
+
       const { error } = await supabase.from("products").insert({
         name: newProduct.name,
         slug,
@@ -130,6 +152,9 @@ export default function AdminProducts() {
         short_description: newProduct.short_description || null,
         badge: newProduct.badge === "none" ? null : newProduct.badge,
         stock_status: newProduct.stock_status,
+        image_url: primary,
+        additional_images: additional,
+        expires_at: hasExpiration && expiresAt ? new Date(expiresAt).toISOString() : null,
       });
       if (error) throw error;
     },
@@ -139,6 +164,9 @@ export default function AdminProducts() {
       toast({ title: "Product created" });
       setIsAddOpen(false);
       setNewProduct({ name: "", product_type: "tincture", category_id: "", price_usd: "", price_xcd: "", short_description: "", badge: "none", stock_status: "in_stock" });
+      setNewImageFiles([null, null, null, null]);
+      setHasExpiration(false);
+      setExpiresAt("");
     },
     onError: (e) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
