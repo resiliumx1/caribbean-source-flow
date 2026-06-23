@@ -14,7 +14,7 @@ export function ConsultationCTA() {
         <div className="mb-8 flex justify-center">
           <img
             src={priestPhoto}
-            alt="Priest Kailash Leyonce, Master Herbalist"
+            alt="Priest Kailash Leonce, Master Herbalist"
             className="rounded-full object-cover transition-transform duration-500 hover:scale-105"
             style={{
               width: "220px",
@@ -50,7 +50,7 @@ export function ConsultationCTA() {
             marginBottom: "24px",
           }}
         >
-          With Priest Kailash Leyonce
+          With Priest Kailash Leonce
         </h3>
 
         {/* Body */}
