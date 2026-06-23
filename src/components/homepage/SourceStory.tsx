@@ -133,7 +133,7 @@ export function SourceStory() {
                   fontStyle: "normal",
                 }}
               >
-                — Priest Kailash Leyonce
+                — Priest Kailash Leonce
               </cite>
             </div>
 
