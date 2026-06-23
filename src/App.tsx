@@ -128,6 +128,11 @@ function AppContent() {
   );
   const isAdminRoute = location.pathname.startsWith("/admin");
 
+  const RedirectProductToShop = () => {
+    const { slug } = useParams();
+    return <Navigate to={`/shop/${slug}`} replace />;
+  };
+
   return (
     <>
       <ScrollToTop />
