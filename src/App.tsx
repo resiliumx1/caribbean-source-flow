@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate, useParams } from "react-router-dom";
 import { useEffect, lazy, Suspense } from "react";
 import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
@@ -160,6 +160,8 @@ function AppContent() {
           <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
           <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
           <Route path="/index" element={<Navigate to="/" replace />} />
+          <Route path="/product" element={<Navigate to="/shop" replace />} />
+          <Route path="/product/:slug" element={<RedirectProductToShop />} />
           <Route path="/pay/:planId" element={<PaymentPlanPay />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
