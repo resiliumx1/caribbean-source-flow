@@ -12,7 +12,7 @@ const FOOTER_LINKS = {
   learn: [
     { label: "Webinars", href: "/webinars", external: false },
     { label: "Herbal Physician Course", href: "https://mountkailashslu.com/hsek-application/", external: true },
-    { label: "MKRC School", href: "https://schools.mountkailashslu.com/", external: true },
+    { label: "MKRC School", href: "https://herbalphysicianschoolmountkailash.netlify.app", external: true },
     { label: "Consultations", href: "https://mountkailashslu.com/", external: true },
   ],
   connect: [

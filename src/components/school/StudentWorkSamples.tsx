@@ -82,7 +82,7 @@ export function StudentWorkSamples() {
 
         <div className="text-center">
           <a
-            href="https://schools.mountkailashslu.com/wp-content/uploads/2024/12/HSEK-Brochure.pdf"
+            href="https://herbalphysicianschoolmountkailash.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
           >

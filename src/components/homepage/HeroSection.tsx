@@ -48,7 +48,7 @@ const pillars = [
     title: "Herbal Physician School",
     description: "Master-level clinical certification",
     cta: "Start Training",
-    route: "https://mount-kailash-school-temp.netlify.app",
+    route: "https://herbalphysicianschoolmountkailash.netlify.app",
     external: true,
     image: pillarSchool,
     icon: GraduationCap,

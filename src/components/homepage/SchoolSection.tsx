@@ -64,7 +64,7 @@ export function SchoolSection() {
 
         {/* Single Featured Card */}
         <a
-          href="https://mount-kailash-school-temp.netlify.app"
+          href="https://herbalphysicianschoolmountkailash.netlify.app"
           target="_blank"
           rel="noopener noreferrer"
           className="group block rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
