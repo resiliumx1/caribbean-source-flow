@@ -148,7 +148,7 @@ export function CourseDetailHero() {
                 </div>
 
                 <a
-                  href="https://schools.mountkailashslu.com/hsek-application/"
+                  href="https://herbalphysicianschoolmountkailash.netlify.app"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block mb-3"
@@ -201,7 +201,7 @@ export function CourseDetailHero() {
             <div className="text-xs text-muted-foreground">4 payment plans available</div>
           </div>
           <a
-            href="https://schools.mountkailashslu.com/hsek-application/"
+            href="https://herbalphysicianschoolmountkailash.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
           >

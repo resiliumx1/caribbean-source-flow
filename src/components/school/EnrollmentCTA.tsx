@@ -26,7 +26,7 @@ export function EnrollmentCTA() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="https://schools.mountkailashslu.com/hsek-application/"
+              href="https://herbalphysicianschoolmountkailash.netlify.app"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -36,7 +36,7 @@ export function EnrollmentCTA() {
               </Button>
             </a>
             <a
-              href="https://schools.mountkailashslu.com/wp-content/uploads/2024/12/HSEK-Brochure.pdf"
+              href="https://herbalphysicianschoolmountkailash.netlify.app"
               target="_blank"
               rel="noopener noreferrer"
             >

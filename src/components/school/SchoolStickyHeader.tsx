@@ -40,7 +40,7 @@ export function SchoolStickyHeader() {
           </p>
         </div>
         <a
-          href="https://schools.mountkailashslu.com/hsek-application/"
+          href="https://herbalphysicianschoolmountkailash.netlify.app"
           target="_blank"
           rel="noopener noreferrer"
         >

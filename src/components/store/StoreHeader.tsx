@@ -10,7 +10,7 @@ import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 
-const SCHOOL_URL = "https://mount-kailash-school-temp.netlify.app";
+const SCHOOL_URL = "https://herbalphysicianschoolmountkailash.netlify.app";
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },

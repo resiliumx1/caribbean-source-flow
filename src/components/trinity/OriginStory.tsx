@@ -94,7 +94,7 @@ export function OriginStory() {
               />
             </div>
             <a
-              href="https://mount-kailash-school-temp.netlify.app"
+              href="https://herbalphysicianschoolmountkailash.netlify.app"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full transition-all hover:bg-[#c9a84c] hover:text-[#090909]"

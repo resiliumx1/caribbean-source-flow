@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Download, Users, Award, Infinity, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import heroImage from "@/assets/herb-processing.webp";
 
 const trustItems = [
@@ -69,14 +68,18 @@ export function SchoolHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <Link to="/school/herbal-physician-course">
+            <a
+              href="https://herbalphysicianschoolmountkailash.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button variant="hero" size="xl" className="w-full sm:w-auto gap-2">
                 Apply Now — Next Cohort March 2026
                 <ArrowRight className="w-5 h-5" />
               </Button>
-            </Link>
+            </a>
             <a
-              href="https://schools.mountkailashslu.com/wp-content/uploads/2024/12/HSEK-Brochure.pdf"
+              href="https://herbalphysicianschoolmountkailash.netlify.app"
               target="_blank"
               rel="noopener noreferrer"
             >

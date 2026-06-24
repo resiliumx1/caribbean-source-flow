@@ -1,11 +1,10 @@
-import { Link } from "react-router-dom";
 import { FooterVine } from "@/components/decorative/BotanicalVine";
 
 const NAV = [
-  { label: "Shop", href: "/shop" },
-  { label: "Retreats", href: "/retreats" },
-  { label: "School", href: "/school/herbal-physician" },
-  { label: "Webinars", href: "/webinars" },
+  { label: "Shop", href: "/shop", external: false },
+  { label: "Retreats", href: "/retreats", external: false },
+  { label: "School", href: "https://herbalphysicianschoolmountkailash.netlify.app", external: true },
+  { label: "Webinars", href: "/webinars", external: false },
 ];
 
 export default function WebinarFooter() {
@@ -17,16 +16,29 @@ export default function WebinarFooter() {
           MKRC
         </span>
         <nav className="flex gap-6">
-          {NAV.map((n) => (
-            <Link
-              key={n.label}
-              to={n.href}
-              className="font-jost font-light text-sm transition-colors duration-200 hover:brightness-125"
-              style={{ color: "var(--site-text-primary)", textDecoration: "none" }}
-            >
-              {n.label}
-            </Link>
-          ))}
+          {NAV.map((n) =>
+            n.external ? (
+              <a
+                key={n.label}
+                href={n.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-jost font-light text-sm transition-colors duration-200 hover:brightness-125"
+                style={{ color: "var(--site-text-primary)", textDecoration: "none" }}
+              >
+                {n.label}
+              </a>
+            ) : (
+              <a
+                key={n.label}
+                href={n.href}
+                className="font-jost font-light text-sm transition-colors duration-200 hover:brightness-125"
+                style={{ color: "var(--site-text-primary)", textDecoration: "none" }}
+              >
+                {n.label}
+              </a>
+            )
+          )}
         </nav>
         <span className="font-jost font-light text-xs" style={{ color: "var(--site-text-secondary)" }}>
           © Mount Kailash Rejuvenation Centre

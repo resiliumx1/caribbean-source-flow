@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Download, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
 export function SchoolEnrollCTA() {
   return (
@@ -40,14 +39,18 @@ export function SchoolEnrollCTA() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <Link to="/school/herbal-physician-course">
+            <a
+              href="https://herbalphysicianschoolmountkailash.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button variant="hero" size="xl" className="gap-2">
                 Register Now
                 <ArrowRight className="w-5 h-5" />
               </Button>
-            </Link>
+            </a>
             <a
-              href="https://schools.mountkailashslu.com/wp-content/uploads/2024/12/HSEK-Brochure.pdf"
+              href="https://herbalphysicianschoolmountkailash.netlify.app"
               target="_blank"
               rel="noopener noreferrer"
             >
