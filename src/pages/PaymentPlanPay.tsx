@@ -33,11 +33,10 @@ export default function PaymentPlanPay() {
 
   const load = async () => {
     if (!planId) return;
-    const { data, error } = await supabase
-      .from("payment_plans")
-      .select("id,customer_name,customer_email,package_name,total_amount,amount_paid,balance_remaining,min_payment,status")
-      .eq("id", planId)
-      .maybeSingle();
+    const { data: res, error } = await supabase.functions.invoke("get-payment-plan", {
+      body: { planId },
+    });
+    const data = (res as { plan?: Plan } | null)?.plan;
     if (error || !data) {
       setNotFound(true);
     } else {
