@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.authnet-plan-charge]
 verify_jwt = false
+
+[functions.get-payment-plan]
+verify_jwt = false
