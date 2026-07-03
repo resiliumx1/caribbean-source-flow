@@ -23,3 +23,15 @@ verify_jwt = false
 
 [functions.paypal-plan-webhook]
 verify_jwt = false
+
+[functions.authnet-config]
+verify_jwt = false
+
+[functions.authnet-charge]
+verify_jwt = false
+
+[functions.authnet-retreat-charge]
+verify_jwt = false
+
+[functions.authnet-plan-charge]
+verify_jwt = false

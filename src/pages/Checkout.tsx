@@ -1,6 +1,6 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, Lock, RefreshCw } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,7 +11,7 @@ import { useStore } from "@/lib/store-context";
 import { useToast } from "@/hooks/use-toast";
 import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { supabase } from "@/integrations/supabase/client";
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { AuthorizeNetCardForm, type OpaqueData } from "@/components/payments/AuthorizeNetCardForm";
 
 const COUNTRIES: Array<{ code: string; name: string }> = [
   { code: "LC", name: "Saint Lucia" },
@@ -45,22 +45,6 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [{ isResolved }] = usePayPalScriptReducer();
-
-  // --- Retry state ---
-  // `pendingPayPalOrderId` caches the PayPal order created on the first attempt
-  // so that retrying after an SDK error reuses the SAME PayPal order (no
-  // duplicate order on PayPal's side, same amount/currency). It is invalidated
-  // whenever the cart, delivery method, or total changes.
-  const pendingPayPalOrderIdRef = useRef<string | null>(null);
-  // When PayPal capture succeeded but our backend save failed, we keep the
-  // capture details so the customer can retry the SAVE without re-paying.
-  const [pendingCapture, setPendingCapture] = useState<{
-    orderID: string;
-    captureID: string;
-  } | null>(null);
-  const [retryingSave, setRetryingSave] = useState(false);
-  const [showRetryButton, setShowRetryButton] = useState(false);
 
   const [form, setForm] = useState({
     customer_name: "",
@@ -114,12 +98,6 @@ export default function Checkout() {
   const totalUsd = subtotalUsd + shippingUsd;
   const totalXcd = subtotalXcd + shippingXcd;
 
-  // Invalidate the cached PayPal order when anything affecting amount changes.
-  // This forces createOrder() to mint a fresh PayPal order with the new total.
-  useEffect(() => {
-    pendingPayPalOrderIdRef.current = null;
-  }, [totalUsd, form.delivery_type, cartCount]);
-
   const subtotalPrices = formatPriceBoth(subtotalUsd, subtotalXcd);
   const shippingPrices = formatPriceBoth(shippingUsd, shippingXcd);
   const prices = formatPriceBoth(totalUsd, totalXcd);
@@ -141,15 +119,13 @@ export default function Checkout() {
 
   const canPay = isFormValid && agreedToTerms && cartItems.length > 0 && !isProcessing;
 
-  // Shared helper: POST the captured PayPal order to our edge function.
-  // Used both on initial onApprove and on "Retry saving order" clicks.
-  const submitOrderToBackend = async (
-    paypalOrderId: string,
-    captureId: string
-  ) => {
+  // Called by <AuthorizeNetCardForm> after the browser tokenizes the card.
+  const handleAuthNetToken = async ({ opaqueData }: { opaqueData: OpaqueData }) => {
+    setIsProcessing(true);
+    try {
     const { data: sessionData } = await supabase.auth.getSession();
     const res = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/paypal-checkout`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/authnet-charge`,
       {
         method: "POST",
         headers: {
@@ -166,32 +142,15 @@ export default function Checkout() {
             quantity: i.quantity,
           })),
           form,
-          paypal_order_id: paypalOrderId,
-          paypal_capture_id: captureId,
+            opaqueData,
           currency_used: currency,
         }),
       }
     );
     const result = await res.json().catch(() => ({}));
     if (!res.ok || !result?.order_number) {
-      throw new Error(
-        result?.error || "Payment captured but order could not be saved."
-      );
+        throw new Error(result?.error || "Payment could not be completed.");
     }
-    return result as { order_number: string; order_id: string };
-  };
-
-  const handleRetrySave = async () => {
-    if (!pendingCapture) return;
-    setRetryingSave(true);
-    setIsProcessing(true);
-    try {
-      const result = await submitOrderToBackend(
-        pendingCapture.orderID,
-        pendingCapture.captureID
-      );
-      setPendingCapture(null);
-      pendingPayPalOrderIdRef.current = null;
       clearCart();
       toast({
         title: "Order placed!",
@@ -200,13 +159,14 @@ export default function Checkout() {
       navigate(`/order-confirmation/${result.order_number}`);
     } catch (err: any) {
       toast({
-        title: "⚠️ Still couldn't save your order",
-        description: `${err?.message ?? "save failed"}. Your PayPal Transaction ID is ${pendingCapture.captureID} — please email info@mountkailashslu.com with this ID so we can finalize manually. Do NOT pay again.`,
+        title: "Payment failed",
+        description:
+          `${err?.message ?? "Payment failed."} If the charge went through but you don't see a confirmation, email info@mountkailashslu.com.`,
         variant: "destructive",
-        duration: 60000,
+        duration: 20000,
       });
+      throw err; // let the form clear its "processing" state
     } finally {
-      setRetryingSave(false);
       setIsProcessing(false);
     }
   };
@@ -494,238 +454,25 @@ export default function Checkout() {
                     </span>
                   </label>
 
-                  {/* PayPal buttons */}
-                  <div className="relative pt-1 min-h-[48px]">
+                  {/* Authorize.net card form */}
+                  <div className="relative pt-1">
                     {!canPay && (
-                      <div
-                        className="absolute inset-0 z-10 bg-background/70 backdrop-blur-[1px] rounded-md flex items-center justify-center pointer-events-none"
-                        aria-hidden="true"
-                      >
-                        <p className="text-xs text-muted-foreground text-center px-4">
-                          {!isFormValid
-                            ? "Complete your contact & delivery details above."
-                            : !agreedToTerms
-                            ? "Please agree to the Terms & Privacy Policy."
-                            : ""}
-                        </p>
-                      </div>
-                    )}
-                    {!isResolved ? (
-                      <div className="h-12 flex items-center justify-center text-sm text-muted-foreground">
-                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        Loading secure payment…
-                      </div>
-                    ) : (
-                      <PayPalButtons
-                        disabled={!canPay}
-                        forceReRender={[totalUsd, currency, form.delivery_type]}
-                        style={{
-                          layout: "vertical",
-                          color: "gold",
-                          shape: "rect",
-                          label: "paypal",
-                        }}
-                        createOrder={async (_data, actions) => {
-                          // If a previous attempt already minted a PayPal order
-                          // (and the cart hasn't changed), reuse the SAME order
-                          // id so the customer isn't re-charged a duplicate.
-                          if (pendingPayPalOrderIdRef.current) {
-                            return pendingPayPalOrderIdRef.current;
-                          }
-                          const id = await actions.order.create({
-                            intent: "CAPTURE",
-                            purchase_units: [
-                              {
-                                amount: {
-                                  value: totalUsd.toFixed(2),
-                                  currency_code: "USD",
-                                },
-                                description: "Mount Kailash Order",
-                              },
-                            ],
-                          });
-                          pendingPayPalOrderIdRef.current = id;
-                          setShowRetryButton(false);
-                          return id;
-                        }}
-                        onApprove={async (data, actions) => {
-                          if (!actions.order) return;
-                          setIsProcessing(true);
-                          let captureId: string | undefined;
-                          try {
-                            const details = await actions.order.capture();
-                            captureId =
-                              (details as any)?.purchase_units?.[0]?.payments
-                                ?.captures?.[0]?.id || data.orderID;
-
-                            const result = await submitOrderToBackend(
-                              data.orderID,
-                              captureId!
-                            );
-
-                            // Success → clear retry caches and navigate.
-                            pendingPayPalOrderIdRef.current = null;
-                            setPendingCapture(null);
-                            setShowRetryButton(false);
-                            clearCart();
-                            toast({
-                              title: "Order placed!",
-                              description: `Confirmation #${result.order_number}`,
-                            });
-                            navigate(`/order-confirmation/${result.order_number}`);
-                          } catch (err: any) {
-                            // 🚨 PayPal already captured — money taken but order not saved.
-                            // Surface the capture ID VERY loudly so the customer can share it.
-                            console.error(
-                              "\n========================================================\n" +
-                                "🚨 PAYPAL CAPTURED BUT ORDER NOT SAVED 🚨\n" +
-                                `PayPal Transaction ID: ${captureId ?? "(unknown)"}\n` +
-                                `PayPal Order ID:       ${data.orderID}\n` +
-                                `Customer Email:        ${form.email}\n` +
-                                `Error:                 ${err?.message}\n` +
-                                "Email info@mountkailashslu.com with the Transaction ID.\n" +
-                                "========================================================\n"
-                            );
-                            // Preserve capture so the customer can retry SAVE
-                            // without paying again.
-                            if (captureId) {
-                              setPendingCapture({
-                                orderID: data.orderID,
-                                captureID: captureId,
-                              });
-                            }
-                            const txnLine = captureId
-                              ? `Your PayPal Transaction ID: ${captureId}. `
-                              : "";
-                            toast({
-                              title: "⚠️ Payment received but order didn't save",
-                              description:
-                                `${txnLine}Tap "Retry saving order" below — your payment will NOT be charged again. If it keeps failing, email info@mountkailashslu.com with this ID. (${err?.message ?? "save failed"})`,
-                              variant: "destructive",
-                              duration: 60000,
-                            });
-                            setIsProcessing(false);
-                          }
-                        }}
-                        onError={(err) => {
-                          const anyErr = err as any;
-                          const errMessage =
-                            anyErr?.message ||
-                            anyErr?.toString?.() ||
-                            "Unknown PayPal SDK error";
-                          const errName = anyErr?.name || null;
-                          const debugId =
-                            anyErr?.debug_id ||
-                            anyErr?.details?.[0]?.debug_id ||
-                            anyErr?.paymentSource?.debug_id ||
-                            null;
-                          console.error(
-                            "PayPal SDK error:",
-                            { name: errName, message: errMessage, debug_id: debugId },
-                            err
-                          );
-                          // Fire-and-forget — never block the UI on logging.
-                          fetch(
-                            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/log-payment-attempt`,
-                            {
-                              method: "POST",
-                              headers: {
-                                "Content-Type": "application/json",
-                                apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-                                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-                              },
-                              body: JSON.stringify({
-                                stage: "paypal_sdk_error",
-                                error_name: errName,
-                                error_message: errMessage,
-                                paypal_debug_id: debugId,
-                                paypal_order_id: pendingPayPalOrderIdRef.current,
-                                cart_total_usd: totalUsd,
-                                customer_email: form.email || null,
-                                payload: {
-                                  delivery_type: form.delivery_type,
-                                  country: form.country,
-                                  item_count: cartCount,
-                                },
-                              }),
-                            }
-                          ).catch(() => {});
-                          const friendly =
-                            /window closed|popup|closed by user/i.test(errMessage)
-                              ? "The PayPal window was closed before payment finished. Please try again."
-                              : "PayPal couldn't complete the payment. This usually means the card was declined or the PayPal window was closed. Try again, use a different card, or pay from your PayPal balance. If this keeps happening, email info@mountkailashslu.com" +
-                                (debugId ? ` and quote debug id ${debugId}.` : ".");
-                          // The PayPal order id is still valid — keep it so the
-                          // next click on the PayPal button reuses the same
-                          // order instead of creating a duplicate.
-                          setShowRetryButton(true);
-                          toast({
-                            title: "Payment didn't go through",
-                            description: friendly,
-                            variant: "destructive",
-                            duration: 20000,
-                          });
-                          setIsProcessing(false);
-                        }}
-                        onCancel={() => {
-                          toast({
-                            title: "Payment cancelled",
-                            description: "Payment cancelled. Your cart is saved.",
-                          });
-                          // Cached order is still usable — leave it for retry.
-                          setShowRetryButton(true);
-                          setIsProcessing(false);
-                        }}
-                      />
-                    )}
-                  </div>
-
-                  {/* Helper line clarifying the card option in the PayPal stack */}
-                  {isResolved && (
-                    <p className="text-xs text-muted-foreground text-center -mt-1">
-                      The black <strong>Debit or Credit Card</strong> button accepts
-                      cards without a PayPal account.
-                    </p>
-                  )}
-
-                  {/* Retry banners */}
-                  {pendingCapture ? (
-                    <div className="rounded-lg border border-amber-400/40 bg-amber-50/60 dark:bg-amber-950/30 p-3 text-sm space-y-2">
-                      <p className="text-foreground">
-                        Your payment was received (Transaction{" "}
-                        <span className="font-mono">{pendingCapture.captureID}</span>),
-                        but we couldn't save your order. You will <strong>not</strong> be
-                        charged again.
+                      <p className="text-xs text-muted-foreground text-center px-4 pb-2">
+                        {!isFormValid
+                          ? "Complete your contact & delivery details above."
+                          : !agreedToTerms
+                          ? "Please agree to the Terms & Privacy Policy."
+                          : ""}
                       </p>
-                      <Button
-                        type="button"
-                        onClick={handleRetrySave}
-                        disabled={retryingSave}
-                        className="w-full"
-                      >
-                        {retryingSave ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                            Retrying…
-                          </>
-                        ) : (
-                          <>
-                            <RefreshCw className="w-4 h-4 mr-2" />
-                            Retry saving order
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  ) : showRetryButton && pendingPayPalOrderIdRef.current ? (
-                    <p className="text-xs text-muted-foreground text-center">
-                      Tap the PayPal button above to retry — your previous PayPal
-                      checkout is still open, so you won't be double-charged.
-                    </p>
-                  ) : null}
-
-                  <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
-                    <Lock className="w-3 h-3" />
-                    <span>Secure checkout — payments processed by PayPal</span>
+                    )}
+                    <AuthorizeNetCardForm
+                      amountUsd={totalUsd}
+                      disabled={!canPay}
+                      processing={isProcessing}
+                      defaultCardholderName={form.customer_name}
+                      defaultZip={form.postal_code}
+                      onToken={handleAuthNetToken}
+                    />
                   </div>
                 </div>
               </div>
