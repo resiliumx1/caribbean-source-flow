@@ -1,13 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Loader2, Lock } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { AuthorizeNetCardForm, type OpaqueData } from "@/components/payments/AuthorizeNetCardForm";
 import { SEOHead } from "@/components/SEOHead";
 import { useRetreatTypes, useRetreatDates, useSoloPricingTiers, calculateSoloPrice } from "@/hooks/use-retreats";
 import { format, addDays } from "date-fns";
@@ -20,7 +19,6 @@ export default function RetreatBooking() {
 
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [{ isResolved }] = usePayPalScriptReducer();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { data: types = [] } = useRetreatTypes();
@@ -243,111 +241,73 @@ export default function RetreatBooking() {
                 )}
               </div>
 
-              <div className="relative min-h-[48px]">
+              <div className="relative">
                 {!canPay && (
-                  <div className="absolute inset-0 z-10 bg-background/70 backdrop-blur-[1px] rounded-md flex items-center justify-center pointer-events-none">
-                    <p className="text-xs text-muted-foreground text-center px-4">
-                      Complete your details to continue.
-                    </p>
-                  </div>
+                  <p className="text-xs text-muted-foreground text-center px-4 pb-2">
+                    Complete your details to continue.
+                  </p>
                 )}
-                {!isResolved ? (
-                  <div className="h-12 flex items-center justify-center text-sm text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" /> Loading secure payment…
-                  </div>
-                ) : (
-                  <PayPalButtons
-                    disabled={!canPay}
-                    forceReRender={[amountDue, paymentOption, guests, nights, startDate]}
-                    style={{ layout: "vertical", color: "gold", shape: "rect", label: "paypal" }}
-                    createOrder={(_data, actions) =>
-                      actions.order.create({
-                        intent: "CAPTURE",
-                        purchase_units: [
-                          {
-                            amount: { value: amountDue.toFixed(2), currency_code: "USD" },
-                            description: `Mount Kailash — ${retreatType.name}`,
+                <AuthorizeNetCardForm
+                  amountUsd={amountDue}
+                  disabled={!canPay}
+                  processing={isProcessing}
+                  defaultCardholderName={form.contact_name}
+                  onToken={async ({ opaqueData }: { opaqueData: OpaqueData }) => {
+                    setIsProcessing(true);
+                    try {
+                      const { data: sessionData } = await supabase.auth.getSession();
+                      const res = await fetch(
+                        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/authnet-retreat-charge`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                            Authorization: `Bearer ${
+                              sessionData?.session?.access_token ||
+                              import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+                            }`,
                           },
-                        ],
-                      })
-                    }
-                    onApprove={async (data, actions) => {
-                      if (!actions.order) return;
-                      setIsProcessing(true);
-                      let captureId: string | undefined;
-                      try {
-                        const details = await actions.order.capture();
-                        captureId =
-                          (details as any)?.purchase_units?.[0]?.payments?.captures?.[0]?.id ||
-                          data.orderID;
-
-                        const { data: sessionData } = await supabase.auth.getSession();
-                        const res = await fetch(
-                          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/retreat-checkout`,
-                          {
-                            method: "POST",
-                            headers: {
-                              "Content-Type": "application/json",
-                              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-                              Authorization: `Bearer ${
-                                sessionData?.session?.access_token ||
-                                import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
-                              }`,
-                            },
-                            body: JSON.stringify({
-                              retreat_type_id: retreatType.id,
-                              retreat_date_id: groupDate?.id ?? null,
-                              start_date: startDate,
-                              end_date: endDate,
-                              guest_count: guests,
-                              payment_option: paymentOption,
-                              paypal_order_id: data.orderID,
-                              paypal_capture_id: captureId,
-                              paypal_capture_amount_usd: amountDue,
-                              contact_name: form.contact_name,
-                              contact_email: form.contact_email,
-                              contact_phone: form.contact_phone,
-                              special_requests: form.special_requests,
-                            }),
-                          }
-                        );
-                        const result = await res.json().catch(() => ({}));
-                        if (!res.ok || !result?.booking_id) {
-                          throw new Error(result?.error || "Booking failed to save.");
+                          body: JSON.stringify({
+                            retreat_type_id: retreatType.id,
+                            retreat_date_id: groupDate?.id ?? null,
+                            start_date: startDate,
+                            end_date: endDate,
+                            guest_count: guests,
+                            payment_option: paymentOption,
+                            opaqueData,
+                            contact_name: form.contact_name,
+                            contact_email: form.contact_email,
+                            contact_phone: form.contact_phone,
+                            special_requests: form.special_requests,
+                          }),
                         }
-                        toast({
-                          title: "Retreat booked!",
-                          description:
-                            balance > 0
-                              ? `Deposit received. Balance of $${balance.toFixed(2)} due before arrival.`
-                              : "Payment received in full.",
-                        });
-                        navigate("/retreats?booked=1");
-                      } catch (err: any) {
-                        console.error("retreat-checkout error", err, captureId);
-                        toast({
-                          title: "⚠️ Payment received but booking didn't save",
-                          description: `PayPal Transaction ID: ${captureId ?? "(unknown)"}. Email info@mountkailashslu.com — do NOT pay again.`,
-                          variant: "destructive",
-                          duration: 60000,
-                        });
-                        setIsProcessing(false);
+                      );
+                      const result = await res.json().catch(() => ({}));
+                      if (!res.ok || !result?.booking_id) {
+                        throw new Error(result?.error || "Booking failed.");
                       }
-                    }}
-                    onError={(err) => {
-                      console.error("PayPal error:", err);
-                      toast({ title: "Payment failed", description: "Please try again.", variant: "destructive" });
+                      toast({
+                        title: "Retreat booked!",
+                        description:
+                          balance > 0
+                            ? `Deposit received. Balance of $${balance.toFixed(2)} due before arrival.`
+                            : "Payment received in full.",
+                      });
+                      navigate("/retreats?booked=1");
+                    } catch (err: any) {
+                      toast({
+                        title: "Payment failed",
+                        description: err?.message || "Please try again.",
+                        variant: "destructive",
+                        duration: 20000,
+                      });
+                      throw err;
+                    } finally {
                       setIsProcessing(false);
-                    }}
-                    onCancel={() => {
-                      toast({ title: "Payment cancelled" });
-                      setIsProcessing(false);
-                    }}
-                  />
-                )}
-              </div>
-              <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
-                <Lock className="w-3 h-3" /> Secure checkout — payments processed by PayPal
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>
