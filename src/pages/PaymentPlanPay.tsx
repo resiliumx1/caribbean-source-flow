@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { PayPalButtons } from "@paypal/react-paypal-js";
+import { AuthorizeNetCardForm, type OpaqueData } from "@/components/payments/AuthorizeNetCardForm";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Helmet } from "react-helmet-async";
@@ -16,6 +16,7 @@ type Plan = {
   balance_remaining: number;
   min_payment: number | null;
   status: string;
+  customer_email?: string | null;
 };
 
 const fmt = (n: number | string) => `$${Number(n).toFixed(2)}`;
@@ -34,7 +35,7 @@ export default function PaymentPlanPay() {
     if (!planId) return;
     const { data, error } = await supabase
       .from("payment_plans")
-      .select("id,customer_name,package_name,total_amount,amount_paid,balance_remaining,min_payment,status")
+      .select("id,customer_name,customer_email,package_name,total_amount,amount_paid,balance_remaining,min_payment,status")
       .eq("id", planId)
       .maybeSingle();
     if (error || !data) {
@@ -223,51 +224,36 @@ export default function PaymentPlanPay() {
                 )}
 
                 {validAmount ? (
-                  <div style={{ opacity: processing ? 0.6 : 1, pointerEvents: processing ? "none" : "auto" }}>
-                    <PayPalButtons
-                      key={amount}
-                      style={{ layout: "vertical", color: "gold", shape: "rect", label: "pay" }}
-                      createOrder={async () => {
-                        setError(null);
-                        const { data, error } = await supabase.functions.invoke("create-paypal-plan-order", {
-                          body: { planId: plan.id, requestedAmount: amtNum },
+                  <AuthorizeNetCardForm
+                    amountUsd={amtNum}
+                    processing={processing}
+                    defaultCardholderName={plan.customer_name}
+                    onToken={async ({ opaqueData, cardholderName }: { opaqueData: OpaqueData; cardholderName: string }) => {
+                      setError(null);
+                      setProcessing(true);
+                      try {
+                        const { data: res, error } = await supabase.functions.invoke("authnet-plan-charge", {
+                          body: {
+                            planId: plan.id,
+                            requestedAmount: amtNum,
+                            opaqueData,
+                            cardholderName,
+                            email: plan.customer_email ?? undefined,
+                          },
                         });
-                        if (error || !data?.orderID) {
-                          setError(data?.error || error?.message || "Could not start payment");
-                          throw new Error(data?.error || error?.message || "create order failed");
+                        if (error || !res?.success) {
+                          const msg = res?.error || error?.message || "Payment failed.";
+                          setError(msg);
+                          throw new Error(msg);
                         }
-                        return data.orderID as string;
-                      }}
-                      onApprove={async (data) => {
-                        setProcessing(true);
-                        try {
-                          const { data: res, error } = await supabase.functions.invoke("capture-paypal-plan-order", {
-                            body: { orderID: data.orderID },
-                          });
-                          if (error || !res?.success) {
-                            setError(res?.error || error?.message || "Capture failed");
-                          } else {
-                            if (res.plan) setPlan(res.plan);
-                            setReceipt({ amount: Number(res.amount) });
-                            // Safety net: refetch from DB so the webhook path
-                            // (or any concurrent capture) is reflected too.
-                            load();
-                          }
-                        } finally {
-                          setProcessing(false);
-                        }
-                      }}
-                      onCancel={() => {
+                        if (res.plan) setPlan(res.plan);
+                        setReceipt({ amount: Number(res.amount) });
+                        load();
+                      } finally {
                         setProcessing(false);
-                        setError("Payment was cancelled. You can try again when you're ready.");
-                      }}
-                      onError={(err) => {
-                        console.error("PayPal error", err);
-                        setError("PayPal encountered an error. Please try again.");
-                        setProcessing(false);
-                      }}
-                    />
-                  </div>
+                      }
+                    }}
+                  />
                 ) : (
                   <div className="rounded-md border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
                     Enter an amount between {fmt(Math.min(min, remaining))} and {fmt(remaining)} to continue.
@@ -276,7 +262,7 @@ export default function PaymentPlanPay() {
 
                 <div className="mt-5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
                   <ShieldCheck className="h-3.5 w-3.5" />
-                  Encrypted &amp; processed securely by PayPal
+                  Encrypted &amp; processed securely by Authorize.net
                 </div>
               </>
             )}
