@@ -57,7 +57,7 @@ export default function LearnArticle() {
   const seoDesc =
     article.meta_description ||
     article.excerpt ||
-    `${article.title} — an article from Mount Kailash on Caribbean bush medicine and traditional wellness.`;
+    `${article.title} — an article from Mount Kailash on Caribbean wellness medicine and traditional wellness.`;
 
   return (
     <main className="min-h-screen bg-background">

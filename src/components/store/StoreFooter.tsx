@@ -39,7 +39,7 @@ export function StoreFooter() {
             </div>
             <p className="text-sm text-primary-foreground/80 mb-4">
               100% natural herbal remedies from the rainforests of St. Lucia. 
-              Non-GMO, vegan formulations. 21+ years of bush medicine tradition.
+              Non-GMO, vegan formulations. 21+ years of wellness medicine tradition.
             </p>
           </div>
 
@@ -202,7 +202,7 @@ export function StoreFooter() {
               © {new Date().getFullYear()} Mount Kailash Rejuvenation Centre. All rights reserved.
             </p>
             <p className="text-xs max-w-xl text-center md:text-right">
-              Traditional use based on St. Lucian bush medicine practices under the guidance
+              Traditional use based on St. Lucian wellness medicine practices under the guidance
               of Rt Hon Priest Kailash K Leonce.
             </p>
           </div>

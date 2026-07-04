@@ -196,7 +196,7 @@ const part2Modules: Module[] = [
       { title: "Herbal Product Formulation Workshop", type: "recording" },
       { title: "Manufacturing & Labelling Practical", type: "recording" },
       { title: "Clinical Case Studies", type: "recording" },
-      { title: "Bush Medicine Walk with Priest Kailash", type: "recording" },
+      { title: "Wellness Medicine Walk with Priest Kailash", type: "recording" },
     ],
   },
   {

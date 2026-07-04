@@ -282,7 +282,7 @@ export default function Shop() {
   return (
     <div className="min-h-screen" style={{ background: "var(--site-bg-primary)", scrollBehavior: "smooth" }}>
       <SEOHead
-        title="The Apothecary — Herbal Tinctures, Sea Moss & Bush Medicine | Mount Kailash"
+        title="The Apothecary — Herbal Tinctures, Sea Moss & Wellness Medicine | Mount Kailash"
         description="Hand-formulated herbal tinctures, sea moss, capsules and teas from mineral-rich Saint Lucia botanicals. Single-origin, practitioner-grade, 3-day US delivery."
         path="/shop"
         ogImage={shopHero}
@@ -292,9 +292,9 @@ export default function Shop() {
           "@type": "CollectionPage",
           name: "Mount Kailash Herbal Apothecary",
           description:
-            "Caribbean herbal tinctures, capsules, teas, and raw bush medicine hand-formulated in Saint Lucia.",
+            "Caribbean herbal tinctures, capsules, teas, and raw wellness medicine hand-formulated in Saint Lucia.",
           url: "https://mountkailashslu.com/shop",
-          about: { "@type": "Thing", name: "Caribbean Bush Medicine" },
+          about: { "@type": "Thing", name: "Caribbean Wellness Medicine" },
         }}
       />
       <ShopHero />

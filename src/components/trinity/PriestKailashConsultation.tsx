@@ -65,7 +65,7 @@ export function PriestKailashConsultation() {
             </h2>
 
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: '#c5bfb3', lineHeight: 1.8, marginBottom: '32px', maxWidth: '560px' }}>
-              Priest Kailash offers one-on-one herbal consultations for individuals seeking personalised wellness protocols. Drawing from 21 years of clinical bush medicine practice, each session is tailored to your body, your history, and your goals.
+              Priest Kailash offers one-on-one herbal consultations for individuals seeking personalised wellness protocols. Drawing from 21 years of clinical wellness medicine practice, each session is tailored to your body, your history, and your goals.
             </p>
 
             {/* Credential pills */}

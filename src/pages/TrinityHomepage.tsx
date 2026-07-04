@@ -100,10 +100,10 @@ const TrinityHomepage = () => {
       )}
 
       <Helmet>
-        <title>Mount Kailash Rejuvenation Centre — Clinical Bush Medicine, Retreats & Herbal School, Saint Lucia</title>
-        <meta name="description" content="Caribbean clinical bush medicine from Soufrière, Saint Lucia. Shop herbal tinctures and sea moss, book a healing retreat, or train as an herbal physician with Priest Kailash." />
-        <meta property="og:title" content="Mount Kailash Rejuvenation Centre — Clinical Bush Medicine, Retreats & Herbal School, Saint Lucia" />
-        <meta property="og:description" content="Caribbean clinical bush medicine from Soufrière, Saint Lucia. Shop herbal tinctures and sea moss, book a healing retreat, or train as an herbal physician with Priest Kailash." />
+        <title>Mount Kailash Rejuvenation Centre — Clinical Wellness Medicine, Retreats & Herbal School, Saint Lucia</title>
+        <meta name="description" content="Caribbean clinical wellness medicine from Soufrière, Saint Lucia. Shop herbal tinctures and sea moss, book a healing retreat, or train as an herbal physician with Priest Kailash." />
+        <meta property="og:title" content="Mount Kailash Rejuvenation Centre — Clinical Wellness Medicine, Retreats & Herbal School, Saint Lucia" />
+        <meta property="og:description" content="Caribbean clinical wellness medicine from Soufrière, Saint Lucia. Shop herbal tinctures and sea moss, book a healing retreat, or train as an herbal physician with Priest Kailash." />
         <meta property="og:url" content={`${SITE_URL}/`} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={`${SITE_URL}/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg`} />
@@ -111,16 +111,16 @@ const TrinityHomepage = () => {
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="The Answer tincture — Mount Kailash Rejuvenation Centre" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Mount Kailash Rejuvenation Centre — Clinical Bush Medicine, Retreats & Herbal School, Saint Lucia" />
-        <meta name="twitter:description" content="Caribbean clinical bush medicine from Soufrière, Saint Lucia. Shop herbal tinctures and sea moss, book a healing retreat, or train as an herbal physician with Priest Kailash." />
+        <meta name="twitter:title" content="Mount Kailash Rejuvenation Centre — Clinical Wellness Medicine, Retreats & Herbal School, Saint Lucia" />
+        <meta name="twitter:description" content="Caribbean clinical wellness medicine from Soufrière, Saint Lucia. Shop herbal tinctures and sea moss, book a healing retreat, or train as an herbal physician with Priest Kailash." />
         <meta name="twitter:image" content={`${SITE_URL}/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg`} />
         <link rel="canonical" href={`${SITE_URL}/`} />
       </Helmet>
 
       <HeroSection />
       <DirectAnswer
-        question="What is clinical bush medicine?"
-        answer="Clinical bush medicine is the traditional Caribbean practice of formulating, prescribing and overseeing wildcrafted herbal remedies in a structured clinical setting. At Mount Kailash in Soufrière, Saint Lucia, Rt. Hon. Priest Kailash K. Leonce blends generations of bush medicine knowledge with intake consultations, batch-tracked tinctures and supervised retreats to support everyday wellness."
+        question="What is clinical wellness medicine?"
+        answer="Clinical wellness medicine is the traditional Caribbean practice of formulating, prescribing and overseeing wildcrafted herbal remedies in a structured clinical setting. At Mount Kailash in Soufrière, Saint Lucia, Rt. Hon. Priest Kailash K. Leonce blends generations of wellness medicine knowledge with intake consultations, batch-tracked tinctures and supervised retreats to support everyday wellness."
       />
       <Suspense fallback={<SectionFallback />}>
         <SourceStory />

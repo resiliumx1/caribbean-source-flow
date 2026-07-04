@@ -49,7 +49,7 @@ export function LeadInstructorFeature() {
                 </div>
 
                 <blockquote className="pl-4 border-l-3 border-accent italic text-foreground/80 text-sm leading-relaxed">
-                  "Western medicine treats symptoms. Bush medicine addresses terrain—the cellular 
+                  "Western medicine treats symptoms. Wellness medicine addresses terrain—the cellular 
                   environment where disease takes root. We don't fight the body; we restore its intelligence."
                 </blockquote>
               </div>

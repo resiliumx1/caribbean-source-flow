@@ -37,7 +37,7 @@ export function PriestKailashBio() {
 
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', lineHeight: 1.8, marginBottom: '28px' }}>
               <p className="mb-4">
-                For over two decades, Priest Kailash has welcomed people from around the world into the rainforests of Saint Lucia. His approach weaves traditional Caribbean bush medicine with deep reverence for nature — creating experiences that restore, educate, and inspire.
+                For over two decades, Priest Kailash has welcomed people from around the world into the rainforests of Saint Lucia. His approach weaves traditional Caribbean wellness medicine with deep reverence for nature — creating experiences that restore, educate, and inspire.
               </p>
               <p>
                 Whether guiding a group through a morning herb harvest or sitting with you one-on-one, his warmth and knowledge make every guest feel at home in the healing process.

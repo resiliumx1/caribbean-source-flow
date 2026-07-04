@@ -227,8 +227,8 @@ async function loadRetreats(): Promise<RetreatRow[]> {
 const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> = [
   {
     path: "/shop",
-    title: "Shop — Mount Kailash Apothecary | Caribbean Herbal Tinctures, Sea Moss & Bush Medicine",
-    description: "Browse the Mount Kailash apothecary: herbal tinctures, sea moss, capsules, teas, and traditional Caribbean bush medicine, hand-formulated in Saint Lucia.",
+    title: "Shop — Mount Kailash Apothecary | Caribbean Herbal Tinctures, Sea Moss & Wellness Medicine",
+    description: "Browse the Mount Kailash apothecary: herbal tinctures, sea moss, capsules, teas, and traditional Caribbean wellness medicine, hand-formulated in Saint Lucia.",
   },
   {
     path: "/the-answer",
@@ -237,17 +237,17 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
   },
   {
     path: "/webinars",
-    title: "Webinars — Live & On-Demand Bush Medicine with Priest Kailash | Mount Kailash",
-    description: "Free and paid webinars on clinical bush medicine, herbal protocols, and healing practices led by Rt. Hon. Priest Kailash K. Leonce.",
+    title: "Webinars — Live & On-Demand Wellness Medicine with Priest Kailash | Mount Kailash",
+    description: "Free and paid webinars on clinical wellness medicine, herbal protocols, and healing practices led by Rt. Hon. Priest Kailash K. Leonce.",
   },
   {
     path: "/retreats",
     title: "Healing Retreats in Saint Lucia — 7-Day Cellular Detox & Wellness Immersion | Mount Kailash",
-    description: "7-day immersive wellness retreats in the volcanic highlands of Saint Lucia. Daily herbal feasts, bush medicine protocols, and clinical consultations with Priest Kailash.",
+    description: "7-day immersive wellness retreats in the volcanic highlands of Saint Lucia. Daily herbal feasts, wellness medicine protocols, and clinical consultations with Priest Kailash.",
   },
   {
     path: "/school/herbal-physician",
-    title: "School of Bush Medicine — Clinical Herbal Physician Certification | Mount Kailash",
+    title: "School of Wellness Medicine — Clinical Herbal Physician Certification | Mount Kailash",
     description: "Train as a Clinical Herbal Physician with Mount Kailash. Cohorts up to 50 students, 500+ graduates worldwide. Apply to the next intake.",
   },
   {
@@ -258,7 +258,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
   {
     path: "/learn",
     title: "Learn — Caribbean Herbal Medicine Library | Mount Kailash",
-    description: "Articles and guides on Caribbean bush medicine, clinical herbal protocols, and traditional formulations from Mount Kailash Rejuvenation Centre.",
+    description: "Articles and guides on Caribbean wellness medicine, clinical herbal protocols, and traditional formulations from Mount Kailash Rejuvenation Centre.",
   },
 ];
 

@@ -31,13 +31,13 @@ export function OriginStory() {
             </span>
 
             <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 'clamp(2rem, 3.5vw, 40px)', color: 'var(--site-text-primary)', marginBottom: '24px', lineHeight: 1.2 }}>
-              Where Traditional Bush Medicine Meets Clinical Precision
+              Where Traditional Wellness Medicine Meets Clinical Precision
             </h2>
 
             <div className="space-y-4 mb-8" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '16px', color: 'var(--site-text-muted)', lineHeight: 1.7 }}>
               <p>
                 For over two decades, Rt Hon Priest Kailash K Leonce
-                has cultivated the art of St. Lucian bush medicine in the shadow
+                has cultivated the art of St. Lucian wellness medicine in the shadow
                 where organically mineral rich soil yields herbs of extraordinary
                 potency.
               </p>
