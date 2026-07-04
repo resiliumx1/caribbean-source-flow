@@ -44,7 +44,7 @@ export function HomepageFooter() {
                 lineHeight: 1.6,
               }}
             >
-              Traditional St. Lucian bush medicine for cellular wellness. 21+
+              Traditional St. Lucian wellness medicine for cellular wellness. 21+
               years of clinical practice.
             </p>
             <a

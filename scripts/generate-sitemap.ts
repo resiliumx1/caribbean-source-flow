@@ -168,7 +168,7 @@ Sitemap: ${BASE_URL}/sitemap.xml
 
 const LLMS = `# Mount Kailash Rejuvenation Centre
 
-> Caribbean clinical bush medicine from Soufrière, Saint Lucia, led by Rt. Hon. Priest Kailash K. Leonce. 21+ years of practice, 500+ herbal physicians trained, 43,000+ bottles formulated annually, 3-day US delivery.
+> Caribbean clinical wellness medicine from Soufrière, Saint Lucia, led by Rt. Hon. Priest Kailash K. Leonce. 21+ years of practice, 500+ herbal physicians trained, 43,000+ bottles formulated annually, 3-day US delivery.
 
 ## Pages
 
@@ -177,7 +177,7 @@ const LLMS = `# Mount Kailash Rejuvenation Centre
 - [The Answer](${BASE_URL}/the-answer): Signature immune tincture with Anamu, Vervain, and Soursop leaves — steeped 21 days in oak barrels.
 - [Webinars](${BASE_URL}/webinars): Free live and on-demand herbal medicine webinars with Priest Kailash Leonce.
 - [Healing Retreats](${BASE_URL}/retreats): 7-day immersive cellular detox and wellness retreats in the volcanic highlands of Saint Lucia.
-- [School of Bush Medicine](${BASE_URL}/school/herbal-physician): Clinical bush medicine training program; 500+ graduates worldwide.
+- [School of Wellness Medicine](${BASE_URL}/school/herbal-physician): Clinical wellness medicine training program; 500+ graduates worldwide.
 - [Wholesale](${BASE_URL}/wholesale): Bulk botanical supply for clinics, retailers, and wellness brands; Miami warehouse, 3-day US delivery.
 `;
 

@@ -6,7 +6,7 @@ export function PriestKailashQuote() {
           "
         </span>
         <blockquote style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontStyle: 'italic', fontSize: 'clamp(1.5rem, 3vw, 32px)', color: '#f2ead8', lineHeight: 1.5, marginBottom: '24px' }}>
-          "Western medicine treats symptoms. Bush medicine addresses
+          "Western medicine treats symptoms. Wellness medicine addresses
           terrain — the cellular environment where disease takes root."
         </blockquote>
         <cite style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-gold)', fontStyle: 'normal' }}>

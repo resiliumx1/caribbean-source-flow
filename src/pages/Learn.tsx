@@ -12,7 +12,7 @@ export default function Learn() {
     name: "Mount Kailash Learn",
     url: "https://mountkailashslu.com/learn",
     description:
-      "Articles on Caribbean clinical bush medicine, herbal formulations and traditional wellness practice from Mount Kailash Rejuvenation Centre.",
+      "Articles on Caribbean clinical wellness medicine, herbal formulations and traditional wellness practice from Mount Kailash Rejuvenation Centre.",
     publisher: {
       "@type": "Organization",
       name: "Mount Kailash Rejuvenation Centre",
@@ -30,8 +30,8 @@ export default function Learn() {
   return (
     <main className="min-h-screen bg-background">
       <SEOHead
-        title="Learn — Articles on Caribbean Bush Medicine | Mount Kailash"
-        description="Plain-language articles on Caribbean clinical bush medicine, herbal formulations, and traditional wellness practice from Mount Kailash Rejuvenation Centre."
+        title="Learn — Articles on Caribbean Wellness Medicine | Mount Kailash"
+        description="Plain-language articles on Caribbean clinical wellness medicine, herbal formulations, and traditional wellness practice from Mount Kailash Rejuvenation Centre."
         path="/learn"
         breadcrumbs={[{ name: "Learn", path: "/learn" }]}
         schema={collectionSchema}
@@ -58,7 +58,7 @@ export default function Learn() {
               margin: "0 auto",
             }}
           >
-            Plain-language articles on Caribbean clinical bush medicine, herbal formulations
+            Plain-language articles on Caribbean clinical wellness medicine, herbal formulations
             and traditional wellness practice, from the team at Mount Kailash.
           </p>
         </header>

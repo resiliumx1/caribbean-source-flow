@@ -8,7 +8,7 @@ const EXCHANGE_RATE = 2.70;
 const whatsappNumber = "+13059429407";
 
 const groupIncludes = [
-  "Daily bush medicine workshops",
+  "Daily wellness medicine workshops",
   "Traditional plant-based meals",
   "Tropical rainforest excursions",
   "Personal wellness consultation",

@@ -55,7 +55,7 @@ export function ShopHero() {
             color: "#F5F1E8",
           }}
         >
-          <span className="sr-only">Shop Caribbean Bush Medicine Tinctures & Herbal Remedies — </span>
+          <span className="sr-only">Shop Caribbean Wellness Medicine Tinctures & Herbal Remedies — </span>
           Rejuvenation Starts Here
         </h1>
 

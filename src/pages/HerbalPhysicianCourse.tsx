@@ -22,11 +22,11 @@ export default function HerbalPhysicianCourse() {
     "@type": "Course",
     name: "Clinical Herbal Physician Certification",
     description:
-      "A cohort-based certification program training students as clinical herbal physicians in Caribbean bush medicine, led by Rt. Hon. Priest Kailash K. Leonce. Over 500 herbal physicians trained.",
+      "A cohort-based certification program training students as clinical herbal physicians in Caribbean wellness medicine, led by Rt. Hon. Priest Kailash K. Leonce. Over 500 herbal physicians trained.",
     url: "https://mountkailashslu.com/school/herbal-physician",
     provider: {
       "@type": "Organization",
-      name: "Mount Kailash School of Bush Medicine",
+      name: "Mount Kailash School of Wellness Medicine",
       sameAs: "https://mountkailashslu.com/school/herbal-physician",
     },
     hasCourseInstance: {
@@ -55,8 +55,8 @@ export default function HerbalPhysicianCourse() {
   return (
     <>
       <SEOHead
-        title="Clinical Herbal Physician Certification | Mount Kailash School of Bush Medicine"
-        description="Train as a clinical herbal physician with Priest Kailash. 500+ graduates. Cohort-based certification in Caribbean clinical bush medicine."
+        title="Clinical Herbal Physician Certification | Mount Kailash School of Wellness Medicine"
+        description="Train as a clinical herbal physician with Priest Kailash. 500+ graduates. Cohort-based certification in Caribbean clinical wellness medicine."
         path="/school/herbal-physician"
         breadcrumbs={getBreadcrumbs("school")}
         schema={courseSchema}

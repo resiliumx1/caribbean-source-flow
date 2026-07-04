@@ -17,7 +17,7 @@ const instructors: Instructor[] = [
     name: "Rt Hon Priest Kailash K Leonce",
     title: "Grand Master Herbal Physician",
     credentials: "Lead Instructor & Founder, HSEK",
-    bio: "A 21+ year master herbalist and founder of Mount Kailash Rejuvenation Centre and the Herbal School of Esoteric Knowledge. Author of 'The New Herbal Manual,' Priest Kailash has trained over 500 herbalists and is recognized by the St. Lucia Tourism Authority as an Official Cultural Heritage Partner. His approach blends traditional Caribbean bush medicine with modern scientific methodology.",
+    bio: "A 21+ year master herbalist and founder of Mount Kailash Rejuvenation Centre and the Herbal School of Esoteric Knowledge. Author of 'The New Herbal Manual,' Priest Kailash has trained over 500 herbalists and is recognized by the St. Lucia Tourism Authority as an Official Cultural Heritage Partner. His approach blends traditional Caribbean wellness medicine with modern scientific methodology.",
     photoUrl: "https://schools.mountkailashslu.com/wp-content/uploads/2024/09/priest-kailash-instructor.jpg",
     initials: "PK",
     featured: true,

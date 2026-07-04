@@ -14,7 +14,7 @@ const productCategories = [
   },
   {
     id: "bush",
-    title: "Traditional Bush Medicine",
+    title: "Traditional Wellness Medicine",
     icon: Leaf,
     image: bushMedicineBasket,
     specs: ["Soursop Leaves (Whole & Powder)", "Guinea Hen Weed (Anamu)", "Gully Root, Blue Vervaine, Cassia"],

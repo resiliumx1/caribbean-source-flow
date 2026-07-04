@@ -311,7 +311,7 @@ export function HeroSection() {
                     fontSize: "clamp(40px, min(5.4vw, 9.2vh), 82px)",
                   }}
                 >
-                  <span className="sr-only">Mount Kailash Rejuvenation Centre — Caribbean Bush Medicine, Wellness Retreats & Herbal School in Saint Lucia. </span>
+                  <span className="sr-only">Mount Kailash Rejuvenation Centre — Caribbean Wellness Medicine, Wellness Retreats & Herbal School in Saint Lucia. </span>
                   <span className="hero-gold-word">Re</span>claim Your{" "}
                   <span className="hero-gold-word">Balance</span>.
                   <span className="block mt-0.5 lg:mt-1">

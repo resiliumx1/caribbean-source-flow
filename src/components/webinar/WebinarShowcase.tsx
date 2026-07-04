@@ -6,7 +6,7 @@ const CATEGORY_META: Record<string, { label: string; emoji: string; description:
   women: { label: "Women's Health", emoji: "🌸", description: "Fertility, hormonal balance, fibroids, PCOS, and reproductive wellness." },
   men: { label: "Men's Health", emoji: "💪", description: "Prostate health, testosterone, and men's vitality protocols." },
   nutrition: { label: "Nutrition", emoji: "🩸", description: "Blood-building, alkaline diets, fasting, and Caribbean superfoods." },
-  herbal: { label: "Herbal Medicine", emoji: "🌿", description: "Bush medicine, tinctures, cupping, and plant-based healing." },
+  herbal: { label: "Herbal Medicine", emoji: "🌿", description: "Wellness medicine, tinctures, cupping, and plant-based healing." },
   detox: { label: "Detox", emoji: "🧹", description: "Parasite cleansing, colon health, and full-body detox protocols." },
   mental: { label: "Mental Wellness", emoji: "🧠", description: "Stress relief, sleep, anxiety, and nervous system support." },
   general: { label: "General", emoji: "🎥", description: "General wellness topics and live Q&A sessions." },

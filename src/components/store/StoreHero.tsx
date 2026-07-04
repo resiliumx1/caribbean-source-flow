@@ -30,7 +30,7 @@ export function StoreHero() {
           </h1>
 
           <p className="hero-subtitle text-cream/90 mb-8 max-w-2xl">
-            Hand-harvested by bush medicine practitioners, naturally fermented for 
+            Hand-harvested by wellness medicine practitioners, naturally fermented for 
             potency, and shipped directly from our rainforest facility to your doorstep.
           </p>
 

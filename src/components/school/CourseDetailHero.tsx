@@ -86,7 +86,7 @@ export function CourseDetailHero() {
                 </span>
               </div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-3">
-                Herbal Physician Certification Course — Mount Kailash School of Bush Medicine
+                Herbal Physician Certification Course — Mount Kailash School of Wellness Medicine
               </h1>
               <p
                 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400 }}

@@ -25,7 +25,7 @@ export function UnifiedFooter() {
               </div>
             </div>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: '14px', color: 'var(--site-footer-muted)', marginBottom: '16px', lineHeight: 1.6 }}>
-              Traditional St. Lucian bush medicine for cellular wellness. 21+ years of clinical practice.
+              Traditional St. Lucian wellness medicine for cellular wellness. 21+ years of clinical practice.
             </p>
             <a
               href={`https://wa.me/${whatsappNumber.replace(/\+/g, "")}?text=${whatsappMessage}`}

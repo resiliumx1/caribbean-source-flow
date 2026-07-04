@@ -4,7 +4,7 @@ const experiences = [
   {
     icon: Leaf,
     title: "Learn",
-    subtitle: "Bush Medicine Workshops",
+    subtitle: "Wellness Medicine Workshops",
     description: "Harvest herbs from organically mineral rich soil and learn traditional preparation methods passed down through generations.",
   },
   {

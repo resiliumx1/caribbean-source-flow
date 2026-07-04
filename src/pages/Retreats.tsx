@@ -101,7 +101,7 @@ const Retreats = () => {
       "@type": "TouristAttraction",
       name: "Mount Kailash Wellness Retreats",
       description:
-        "7-day immersive wellness retreats in the volcanic highlands of Saint Lucia, with daily herbal feasts and clinical bush medicine protocols.",
+        "7-day immersive wellness retreats in the volcanic highlands of Saint Lucia, with daily herbal feasts and clinical wellness medicine protocols.",
       url: "https://mountkailashslu.com/retreats",
       address: { "@type": "PostalAddress", addressLocality: "Soufriere", addressCountry: "LC" },
     },
@@ -121,7 +121,7 @@ const Retreats = () => {
       <RetreatsHero />
       <DirectAnswer
         question="What is a Mount Kailash healing retreat?"
-        answer="A Mount Kailash healing retreat is a seven-day immersive wellness stay in the volcanic highlands of Soufrière, Saint Lucia. Guests follow a guided traditional bush medicine protocol with daily herbal feasts, steams, plant walks and a one-to-one consultation with Rt. Hon. Priest Kailash K. Leonce, paced for first-timers and seasoned wellness travellers alike."
+        answer="A Mount Kailash healing retreat is a seven-day immersive wellness stay in the volcanic highlands of Soufrière, Saint Lucia. Guests follow a guided traditional wellness medicine protocol with daily herbal feasts, steams, plant walks and a one-to-one consultation with Rt. Hon. Priest Kailash K. Leonce, paced for first-timers and seasoned wellness travellers alike."
       />
       <FadeInStagger delay={0.1}>
         <RetreatPathSplit />
