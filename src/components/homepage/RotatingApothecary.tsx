@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStore } from "@/lib/store-context";
 import { VineVariationB } from "@/components/decorative/BotanicalVine";
 import { useMarquee } from "@/hooks/use-marquee";
+import { SaleBadge } from "@/components/store/SaleBadge";
 
 export function RotatingApothecary() {
   const { currency } = useStore();
@@ -121,6 +122,16 @@ export function RotatingApothecary() {
           {items.map((product, i) => {
             const price = currency === "XCD" ? product.price_xcd : product.price_usd;
             const symbol = currency === "XCD" ? "EC$" : "$";
+            const originalPrice =
+              currency === "XCD"
+                ? (product as any).original_price_xcd
+                : (product as any).original_price_usd;
+            const isOnSale = !!originalPrice && originalPrice > price;
+            const discountPct = isOnSale
+              ? Math.round(((originalPrice - price) / originalPrice) * 100)
+              : 0;
+            const saleLabel =
+              (product as any).promotion_badge || (isOnSale ? `${discountPct}% OFF` : "");
             return (
               <Link
                 key={product.id + "-" + i}
@@ -136,9 +147,14 @@ export function RotatingApothecary() {
               >
                 {/* Image */}
                 <div
-                  className="aspect-square overflow-hidden"
+                  className="aspect-square overflow-hidden relative"
                   style={{ background: "var(--site-img-bg)" }}
                 >
+                  {isOnSale && (
+                    <div className="absolute top-3 left-3 z-10">
+                      <SaleBadge label={saleLabel} size="sm" />
+                    </div>
+                  )}
                   <img
                     src={product.image_url || "/placeholder.svg"}
                     alt={product.name}
@@ -178,15 +194,32 @@ export function RotatingApothecary() {
                     </p>
                   )}
                   <div
-                    style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 600,
-                      fontSize: "16px",
-                      color: "var(--site-text-primary)",
-                      marginBottom: "12px",
-                    }}
+                    className="flex items-baseline gap-2"
+                    style={{ marginBottom: "12px" }}
                   >
-                    {symbol}{price.toFixed(2)}
+                    <span
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        color: isOnSale ? "#b91c1c" : "var(--site-text-primary)",
+                      }}
+                    >
+                      {symbol}{price.toFixed(2)}
+                    </span>
+                    {isOnSale && (
+                      <span
+                        style={{
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontWeight: 500,
+                          fontSize: "13px",
+                          color: "var(--site-text-muted)",
+                          textDecoration: "line-through",
+                        }}
+                      >
+                        {symbol}{originalPrice.toFixed(2)}
+                      </span>
+                    )}
                   </div>
                   <div
                     className="w-full text-center py-2.5 rounded-md text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
