@@ -9,6 +9,7 @@ import { ProductGallery } from "@/components/store/ProductGallery";
 import { VariantSelector } from "@/components/store/VariantSelector";
 
 import { RelatedProducts } from "@/components/store/RelatedProducts";
+import { SaleBadge } from "@/components/store/SaleBadge";
 import { ReviewSection } from "@/components/reviews/ReviewSection";
 import { CompareButton } from "@/components/store/CompareButton";
 import { FDADisclaimer } from "@/components/FDADisclaimer";
@@ -208,16 +209,25 @@ export default function ProductDetail() {
 
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-10">
-                {/* Promotion badge */}
-                {promotionBadge && (
+                {/* Sale / promotion badge */}
+                {originalPriceUsd && originalPriceUsd > currentPriceUsd ? (
+                  <SaleBadge
+                    label={
+                      promotionBadge && !["savings", "popular", "limited"].includes(promotionBadge)
+                        ? promotionBadge
+                        : `${Math.round(((originalPriceUsd - currentPriceUsd) / originalPriceUsd) * 100)}% OFF`
+                    }
+                    size="lg"
+                  />
+                ) : promotionBadge ? (
                   <Badge className="bg-accent text-accent-foreground gap-1">
                     <Sparkles className="w-3 h-3" />
-                    {promotionBadge === "savings" ? "Hot Deal" : 
-                     promotionBadge === "popular" ? "Popular" : 
+                    {promotionBadge === "savings" ? "Hot Deal" :
+                     promotionBadge === "popular" ? "Popular" :
                      promotionBadge === "limited" ? "Limited" : promotionBadge}
                   </Badge>
-                )}
-                {product.badge && !promotionBadge && (
+                ) : null}
+                {product.badge && !promotionBadge && !originalPriceUsd && (
                   <Badge variant="default" className={product.badge === "best_seller" ? "bg-orange-500 text-white" : ""}>
                     {product.badge === "best_seller" ? "Best Seller" :
                      product.badge === "fermented" ? "Fermented" :

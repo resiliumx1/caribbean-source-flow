@@ -3,6 +3,7 @@ import { ShoppingCart, Star, Plus } from "lucide-react";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import { ProductPlaceholder } from "./ProductPlaceholder";
+import { SaleBadge } from "./SaleBadge";
 import type { Product } from "@/hooks/use-products";
 
 interface ProductCardProps {
@@ -14,6 +15,17 @@ export function ProductCard({ product, style }: ProductCardProps) {
   const { formatPriceBoth } = useStore();
   const { addToCart, isAddingToCart } = useCart();
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
+  const originalPriceUsd = (product as any).original_price_usd as number | null;
+  const originalPriceXcd = (product as any).original_price_xcd as number | null;
+  const isOnSale = !!originalPriceUsd && originalPriceUsd > product.price_usd;
+  const originalPrices = isOnSale
+    ? formatPriceBoth(originalPriceUsd!, originalPriceXcd || 0)
+    : null;
+  const discountPct = isOnSale
+    ? Math.round(((originalPriceUsd! - product.price_usd) / originalPriceUsd!) * 100)
+    : 0;
+  const promotionBadge = (product as any).promotion_badge as string | null;
+  const saleLabel = promotionBadge || (isOnSale ? `${discountPct}% OFF` : "");
 
   const hash = parseInt(product.id.slice(-4), 16) % 231;
   const reviewCount = 30 + hash;
@@ -75,6 +87,13 @@ export function ProductCard({ product, style }: ProductCardProps) {
           className="absolute top-2 left-2 w-2.5 h-2.5 rounded-full"
           style={{ background: formDot, border: "1px solid rgba(255,255,255,0.3)" }}
         />
+
+        {/* Sale badge */}
+        {isOnSale && product.stock_status === "in_stock" && (
+          <div className="absolute top-2 right-2 z-10">
+            <SaleBadge label={saleLabel} size="sm" />
+          </div>
+        )}
       </Link>
 
       {/* Content — flex-grow to push price to bottom */}
@@ -119,16 +138,31 @@ export function ProductCard({ product, style }: ProductCardProps) {
 
         {/* Price row — pushed to bottom */}
         <div className="flex items-center justify-between mt-auto pt-2">
-          <span
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: "15px",
-              color: "var(--site-text-primary)",
-            }}
-          >
-            {prices.primary}
-          </span>
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 700,
+                fontSize: "15px",
+                color: isOnSale ? "#b91c1c" : "var(--site-text-primary)",
+              }}
+            >
+              {prices.primary}
+            </span>
+            {isOnSale && originalPrices && (
+              <span
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  fontSize: "12px",
+                  color: "var(--site-text-muted)",
+                  textDecoration: "line-through",
+                }}
+              >
+                {originalPrices.primary}
+              </span>
+            )}
+          </div>
 
           {/* Desktop: small quick-add circle */}
           <button
