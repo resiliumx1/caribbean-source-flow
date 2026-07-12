@@ -4,6 +4,7 @@ import { useProduct } from "@/hooks/use-products";
 import { useStore } from "@/lib/store-context";
 import { useCart } from "@/hooks/use-cart";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SaleBadge } from "./SaleBadge";
 import theAnswerImg from "@/assets/the-answer-chronixx-studio.webp";
 
 export function FeaturedProduct() {
@@ -29,6 +30,17 @@ export function FeaturedProduct() {
   if (!product) return null;
 
   const prices = formatPriceBoth(product.price_usd, product.price_xcd);
+  const originalPriceUsd = (product as any).original_price_usd as number | null;
+  const originalPriceXcd = (product as any).original_price_xcd as number | null;
+  const isOnSale = !!originalPriceUsd && originalPriceUsd > product.price_usd;
+  const originalPrices = isOnSale
+    ? formatPriceBoth(originalPriceUsd!, originalPriceXcd || 0)
+    : null;
+  const discountPct = isOnSale
+    ? Math.round(((originalPriceUsd! - product.price_usd) / originalPriceUsd!) * 100)
+    : 0;
+  const promotionBadge = (product as any).promotion_badge as string | null;
+  const saleLabel = promotionBadge || (isOnSale ? `${discountPct}% OFF` : "");
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -54,27 +66,30 @@ export function FeaturedProduct() {
           }}
         />
 
-        {/* Badge */}
-        <div
-          className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-          style={{
-            background: "rgba(212,163,115,0.15)",
-            border: "1px solid rgba(212,163,115,0.3)",
-          }}
-        >
-          <Star className="w-3.5 h-3.5 fill-current" style={{ color: "#d4a373" }} />
-          <span
+        {/* Badges */}
+        <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
+          {isOnSale && <SaleBadge label={saleLabel} size="lg" />}
+          <div
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
             style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "#d4a373",
+              background: "rgba(212,163,115,0.15)",
+              border: "1px solid rgba(212,163,115,0.3)",
             }}
           >
-            Flagship Product
-          </span>
+            <Star className="w-3.5 h-3.5 fill-current" style={{ color: "#d4a373" }} />
+            <span
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "#d4a373",
+              }}
+            >
+              Flagship Product
+            </span>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-0">
@@ -134,19 +149,50 @@ export function FeaturedProduct() {
             </p>
 
             <div className="mb-6">
-              <span
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 28,
-                  color: "#d4a373",
-                }}
-              >
-                {prices.primary}
-              </span>
-              <span className="ml-3" style={{ fontSize: 14, color: "rgba(245,241,232,0.45)" }}>
-                {prices.secondary}
-              </span>
+              <div className="flex items-baseline gap-3 flex-wrap">
+                <span
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 32,
+                    color: "#d4a373",
+                  }}
+                >
+                  {prices.primary}
+                </span>
+                {isOnSale && originalPrices && (
+                  <span
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontWeight: 500,
+                      fontSize: 18,
+                      color: "rgba(245,241,232,0.5)",
+                      textDecoration: "line-through",
+                      textDecorationColor: "#d4a373",
+                    }}
+                  >
+                    {originalPrices.primary}
+                  </span>
+                )}
+                <span style={{ fontSize: 14, color: "rgba(245,241,232,0.45)" }}>
+                  {prices.secondary}
+                </span>
+              </div>
+              {isOnSale && (
+                <p
+                  className="mt-2"
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: "#d4a373",
+                  }}
+                >
+                  Limited Time — Save {discountPct}%
+                </p>
+              )}
             </div>
 
             <button
