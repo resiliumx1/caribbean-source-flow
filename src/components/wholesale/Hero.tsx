@@ -82,21 +82,21 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
           </div>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row flex-wrap items-start gap-3">
             <a
               href={`https://wa.me/13059429407?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full font-medium transition-all hover:brightness-110 hover:scale-[1.02]"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full transition-all hover:brightness-110 hover:scale-[1.02] shadow-md"
               style={{
                 background: "var(--site-gold)",
                 color: "#0F281E",
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600,
-                fontSize: "16px",
+                fontSize: "14px",
               }}
             >
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="w-4 h-4" />
               Speak With Our Sourcing Team
             </a>
 
@@ -105,17 +105,17 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
               download="Mount-Kailash-Product-Catalogue.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full border-2 transition-all hover:bg-white/10"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full transition-all hover:brightness-110 hover:scale-[1.02] shadow-md"
               style={{
-                borderColor: "var(--site-hero-text-on-dark)",
-                color: "var(--site-hero-text-on-dark)",
+                background: "var(--site-hero-text-on-dark)",
+                color: "var(--site-green-dark)",
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 500,
-                fontSize: "16px",
+                fontWeight: 600,
+                fontSize: "14px",
               }}
             >
-              <Download className="w-5 h-5" />
-              Download Product Catalogue
+              <Download className="w-4 h-4" />
+              Product Catalogue
             </a>
 
             <a
@@ -123,17 +123,17 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
               download="MKRC_Bulk_Pricing_Final.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full border-2 transition-all hover:bg-white/10"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full transition-all hover:brightness-110 hover:scale-[1.02] shadow-md"
               style={{
-                borderColor: "var(--site-gold)",
-                color: "var(--site-gold)",
+                background: "var(--site-hero-text-on-dark)",
+                color: "var(--site-green-dark)",
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 500,
-                fontSize: "16px",
+                fontWeight: 600,
+                fontSize: "14px",
               }}
             >
-              <Download className="w-5 h-5" />
-              Download Bulk Pricing
+              <Download className="w-4 h-4" />
+              Bulk Pricing
             </a>
           </div>
         </div>
