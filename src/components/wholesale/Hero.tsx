@@ -1,6 +1,6 @@
 import { ArrowRight, Download, MessageCircle } from "lucide-react";
-import priestHarvesting from "@/assets/priest-kailash-harvesting.webp";
 import warehouseImage from "@/assets/wholesale-warehouse-hero.webp";
+import bulkPricingPdf from "@/assets/MKRC_Bulk_Pricing_Final.pdf.asset.json";
 
 interface HeroProps {
   onScrollToForm: () => void;
@@ -116,6 +116,24 @@ export const Hero = ({ onScrollToForm }: HeroProps) => {
             >
               <Download className="w-5 h-5" />
               Download Product Catalogue
+            </a>
+
+            <a
+              href={bulkPricingPdf.url}
+              download="MKRC_Bulk_Pricing_Final.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full border-2 transition-all hover:bg-white/10"
+              style={{
+                borderColor: "var(--site-gold)",
+                color: "var(--site-gold)",
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 500,
+                fontSize: "16px",
+              }}
+            >
+              <Download className="w-5 h-5" />
+              Download Bulk Pricing
             </a>
           </div>
         </div>
