@@ -1,6 +1,6 @@
 import { ArrowRight, Download, MessageCircle } from "lucide-react";
-import priestHarvesting from "@/assets/priest-kailash-harvesting.webp";
 import warehouseImage from "@/assets/wholesale-warehouse-hero.webp";
+import bulkPricingPdf from "@/assets/MKRC_Bulk_Pricing_Final.pdf.asset.json";
 
 interface HeroProps {
   onScrollToForm: () => void;
