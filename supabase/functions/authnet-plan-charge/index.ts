@@ -53,9 +53,9 @@ Deno.serve(async (req) => {
       billTo: {
         firstName,
         lastName,
-        email: (email || "").toLowerCase().trim().slice(0, 255) || undefined,
         country: "US",
       },
+      customerEmail: (email || "").toLowerCase().trim() || undefined,
     });
 
     // Idempotent write
