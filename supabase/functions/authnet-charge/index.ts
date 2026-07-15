@@ -128,9 +128,9 @@ Deno.serve(async (req) => {
         state: (payload.form.state_province || "").slice(0, 40) || undefined,
         zip: (payload.form.postal_code || "").slice(0, 20) || undefined,
         country: (payload.form.country || "LC").slice(0, 60),
-        email: payload.form.email.toLowerCase().trim().slice(0, 255),
-        phoneNumber: (payload.form.phone || "").slice(0, 25) || undefined,
+        phoneNumber: (payload.form.phone || "").replace(/[^\d+\-() ]/g, "").slice(0, 25) || undefined,
       },
+      customerEmail: payload.form.email.toLowerCase().trim(),
     });
 
     const orderInsert = {

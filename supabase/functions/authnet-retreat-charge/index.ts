@@ -97,10 +97,10 @@ Deno.serve(async (req) => {
       billTo: {
         firstName,
         lastName,
-        email: payload.contact_email.toLowerCase().trim().slice(0, 255),
-        phoneNumber: (payload.contact_phone || "").slice(0, 25) || undefined,
         country: "US",
+        phoneNumber: (payload.contact_phone || "").replace(/[^\d+\-() ]/g, "").slice(0, 25) || undefined,
       },
+      customerEmail: payload.contact_email.toLowerCase().trim(),
     });
 
     const { data: booking, error: bookErr } = await supabase
