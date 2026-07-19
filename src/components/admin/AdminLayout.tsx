@@ -16,6 +16,7 @@ const NAV_LINKS = [
   { label: 'Webinars', href: '/admin/webinars' },
   { label: 'Analytics', href: '/admin/analytics' },
   { label: 'Payment Plans', href: '/admin/payment-plans' },
+  { label: 'Wholesale Leads', href: '/admin/wholesale-leads' },
   { label: 'Notifications', href: '/admin/notifications' },
 ];
 
