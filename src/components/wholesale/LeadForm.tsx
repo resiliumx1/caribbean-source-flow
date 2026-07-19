@@ -360,16 +360,89 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
                   marginBottom: "6px",
                 }}
               >
-                Tell Us What You're Looking For *
+                Estimated Monthly Volume
+              </label>
+              <select
+                value={form.volume}
+                onChange={(e) => setForm({ ...form, volume: e.target.value })}
+                className="wholesale-form-input"
+                style={{ appearance: "auto" }}
+              >
+                <option value="">Select volume range</option>
+                {volumeOptions.map((v) => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Field 5 - Products */}
+            <div>
+              <label
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  fontSize: "12px",
+                  color: "#0a1f0a",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  display: "block",
+                  marginBottom: "8px",
+                }}
+              >
+                Products of Interest
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {productOptions.map((p) => {
+                  const active = form.products.includes(p);
+                  return (
+                    <button
+                      type="button"
+                      key={p}
+                      onClick={() => toggleProduct(p)}
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        padding: "8px 14px",
+                        borderRadius: "999px",
+                        border: active ? "1px solid #0a1f0a" : "1px solid #D1D5DB",
+                        background: active ? "#0a1f0a" : "#fff",
+                        color: active ? "#F5F5DC" : "#0a1f0a",
+                        minHeight: "36px",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Field 6 - Intent */}
+            <div>
+              <label
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  fontSize: "12px",
+                  color: "#0a1f0a",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  display: "block",
+                  marginBottom: "6px",
+                }}
+              >
+                Short Intent Note *
               </label>
               <textarea
-                placeholder="Specific formulations, monthly volume estimates, white-label requirements, or questions about our supply process..."
+                placeholder="Briefly tell us your goals, timeline, or any custom requirements..."
                 value={form.needs}
                 onChange={(e) => setForm({ ...form, needs: e.target.value })}
-                rows={5}
+                rows={4}
                 required
                 className="wholesale-form-input"
-                style={{ minHeight: "120px", resize: "vertical" }}
+                style={{ minHeight: "100px", resize: "vertical" }}
               />
             </div>
           </div>
@@ -395,7 +468,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                Request Wholesale Access
+                Send via WhatsApp
                 <ArrowRight className="w-5 h-5" />
               </>
             )}
