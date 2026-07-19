@@ -1,6 +1,9 @@
 import { useState, forwardRef } from "react";
 import { ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+const WHATSAPP_NUMBER = "13059429407";
 
 const businessTypes = [
   "Wellness Clinic / Practitioner",
@@ -12,6 +15,25 @@ const businessTypes = [
   "Other",
 ];
 
+const volumeOptions = [
+  "Sample / Trial order",
+  "Under 50 units / month",
+  "50 – 200 units / month",
+  "200 – 1,000 units / month",
+  "1,000+ units / month",
+  "Not sure yet",
+];
+
+const productOptions = [
+  "The Answer",
+  "Kingly Tea Bundle",
+  "Foy Duran",
+  "Vervain",
+  "Soursop Leaves",
+  "Full catalogue",
+  "White label / custom formulation",
+];
+
 export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -21,17 +43,103 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
     companyName: "",
     email: "",
     businessType: "",
+    volume: "",
+    products: [] as string[],
     needs: "",
   });
+
+  const toggleProduct = (name: string) => {
+    setForm((f) => ({
+      ...f,
+      products: f.products.includes(name)
+        ? f.products.filter((p) => p !== name)
+        : [...f.products, name],
+    }));
+  };
+
+  const buildWhatsAppMessage = () => {
+    const lines = [
+      "Hello Mount Kailash — wholesale inquiry",
+      "",
+      `Business: ${form.companyName}`,
+      `Email: ${form.email}`,
+      `Business type: ${form.businessType}`,
+      `Estimated volume: ${form.volume || "Not specified"}`,
+      `Products of interest: ${form.products.length ? form.products.join(", ") : "Not specified"}`,
+      "",
+      `Notes: ${form.needs}`,
+    ];
+    return encodeURIComponent(lines.join("\n"));
+  };
+
+  const trackConversion = () => {
+    try {
+      const w = window as any;
+      if (typeof w.gtag === "function") {
+        w.gtag("event", "generate_lead", {
+          event_category: "wholesale",
+          event_label: form.businessType,
+          value: 1,
+        });
+      }
+      if (Array.isArray(w.dataLayer)) {
+        w.dataLayer.push({
+          event: "wholesale_lead",
+          business_type: form.businessType,
+          volume: form.volume,
+          products: form.products,
+        });
+      }
+      if (typeof w.fbq === "function") {
+        w.fbq("track", "Lead", { content_category: "wholesale" });
+      }
+    } catch (_) {
+      /* no-op */
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.companyName || !form.email || !form.businessType || !form.needs) return;
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1200));
+
+    const needsWithMeta = [
+      form.needs,
+      "",
+      `Volume: ${form.volume || "Not specified"}`,
+      `Products: ${form.products.length ? form.products.join(", ") : "Not specified"}`,
+    ].join("\n");
+
+    const { error } = await supabase.from("wholesale_leads").insert({
+      company_name: form.companyName.trim(),
+      email: form.email.trim(),
+      business_type: form.businessType,
+      needs: needsWithMeta,
+      source: typeof window !== "undefined" ? window.location.pathname : "wholesale",
+      whatsapp_sent: true,
+    });
+
+    if (error) {
+      setIsSubmitting(false);
+      toast({
+        title: "Something went wrong",
+        description: "Please try again or WhatsApp us directly.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    trackConversion();
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMessage()}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+
     setIsSubmitting(false);
     setIsSubmitted(true);
-    toast({ title: "Inquiry Received", description: "Our partnership team will be in touch within 24 hours." });
+    toast({
+      title: "Inquiry sent",
+      description: "Opening WhatsApp to complete your message.",
+    });
   };
 
   if (isSubmitted) {
@@ -252,16 +360,89 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
                   marginBottom: "6px",
                 }}
               >
-                Tell Us What You're Looking For *
+                Estimated Monthly Volume
+              </label>
+              <select
+                value={form.volume}
+                onChange={(e) => setForm({ ...form, volume: e.target.value })}
+                className="wholesale-form-input"
+                style={{ appearance: "auto" }}
+              >
+                <option value="">Select volume range</option>
+                {volumeOptions.map((v) => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Field 5 - Products */}
+            <div>
+              <label
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  fontSize: "12px",
+                  color: "#0a1f0a",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  display: "block",
+                  marginBottom: "8px",
+                }}
+              >
+                Products of Interest
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {productOptions.map((p) => {
+                  const active = form.products.includes(p);
+                  return (
+                    <button
+                      type="button"
+                      key={p}
+                      onClick={() => toggleProduct(p)}
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        padding: "8px 14px",
+                        borderRadius: "999px",
+                        border: active ? "1px solid #0a1f0a" : "1px solid #D1D5DB",
+                        background: active ? "#0a1f0a" : "#fff",
+                        color: active ? "#F5F5DC" : "#0a1f0a",
+                        minHeight: "36px",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Field 6 - Intent */}
+            <div>
+              <label
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  fontSize: "12px",
+                  color: "#0a1f0a",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  display: "block",
+                  marginBottom: "6px",
+                }}
+              >
+                Short Intent Note *
               </label>
               <textarea
-                placeholder="Specific formulations, monthly volume estimates, white-label requirements, or questions about our supply process..."
+                placeholder="Briefly tell us your goals, timeline, or any custom requirements..."
                 value={form.needs}
                 onChange={(e) => setForm({ ...form, needs: e.target.value })}
-                rows={5}
+                rows={4}
                 required
                 className="wholesale-form-input"
-                style={{ minHeight: "120px", resize: "vertical" }}
+                style={{ minHeight: "100px", resize: "vertical" }}
               />
             </div>
           </div>
@@ -287,7 +468,7 @@ export const LeadForm = forwardRef<HTMLDivElement>((_, ref) => {
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                Request Wholesale Access
+                Send via WhatsApp
                 <ArrowRight className="w-5 h-5" />
               </>
             )}
