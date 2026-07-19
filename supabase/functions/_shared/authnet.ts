@@ -66,8 +66,9 @@ export async function chargeCard(args: ChargeArgs): Promise<ChargeResult> {
               description: args.description?.slice(0, 255),
             }
           : undefined,
-        billTo: args.billTo,
+        // Authorize.net XSD requires customer BEFORE billTo
         customer: args.customerEmail ? { email: args.customerEmail.slice(0, 255) } : undefined,
+        billTo: args.billTo,
       },
     },
   };
