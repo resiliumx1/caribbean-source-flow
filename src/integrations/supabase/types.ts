@@ -1658,6 +1658,7 @@ export type Database = {
       }
       wholesale_leads: {
         Row: {
+          admin_notes: string | null
           business_type: string | null
           company_name: string
           created_at: string
@@ -1665,9 +1666,12 @@ export type Database = {
           id: string
           needs: string | null
           source: string | null
+          status: Database["public"]["Enums"]["wholesale_lead_status"]
+          updated_at: string
           whatsapp_sent: boolean | null
         }
         Insert: {
+          admin_notes?: string | null
           business_type?: string | null
           company_name: string
           created_at?: string
@@ -1675,9 +1679,12 @@ export type Database = {
           id?: string
           needs?: string | null
           source?: string | null
+          status?: Database["public"]["Enums"]["wholesale_lead_status"]
+          updated_at?: string
           whatsapp_sent?: boolean | null
         }
         Update: {
+          admin_notes?: string | null
           business_type?: string | null
           company_name?: string
           created_at?: string
@@ -1685,6 +1692,8 @@ export type Database = {
           id?: string
           needs?: string | null
           source?: string | null
+          status?: Database["public"]["Enums"]["wholesale_lead_status"]
+          updated_at?: string
           whatsapp_sent?: boolean | null
         }
         Relationships: []
@@ -1796,7 +1805,12 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      wholesale_lead_status:
+        | "new"
+        | "contacted"
+        | "qualified"
+        | "converted"
+        | "lost"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1923,6 +1937,14 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      wholesale_lead_status: [
+        "new",
+        "contacted",
+        "qualified",
+        "converted",
+        "lost",
+      ],
+    },
   },
 } as const
