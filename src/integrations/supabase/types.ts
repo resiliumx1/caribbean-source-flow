@@ -1656,6 +1656,39 @@ export type Database = {
         }
         Relationships: []
       }
+      wholesale_leads: {
+        Row: {
+          business_type: string | null
+          company_name: string
+          created_at: string
+          email: string
+          id: string
+          needs: string | null
+          source: string | null
+          whatsapp_sent: boolean | null
+        }
+        Insert: {
+          business_type?: string | null
+          company_name: string
+          created_at?: string
+          email: string
+          id?: string
+          needs?: string | null
+          source?: string | null
+          whatsapp_sent?: boolean | null
+        }
+        Update: {
+          business_type?: string | null
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          needs?: string | null
+          source?: string | null
+          whatsapp_sent?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       reviews_public: {
