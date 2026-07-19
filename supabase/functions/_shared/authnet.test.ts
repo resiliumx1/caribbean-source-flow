@@ -197,7 +197,9 @@ Deno.test("payment plan: charged amount is capped at remaining balance", async (
 });
 
 Deno.test("payment plan: fractional requested amounts round to 2dp", async () => {
-  const amt = planAmount(80.005, 5680);
+  // 80.015 rounds up to 80.02, 80.014 rounds down to 80.01.
+  assertEquals(planAmount(80.015, 5680), 80.02);
+  const amt = planAmount(80.014, 5680);
   assertEquals(amt, 80.01);
   const req = await chargeAndCapture(amt);
   assertEquals(req.amount, "80.01");
