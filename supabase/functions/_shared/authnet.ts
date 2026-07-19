@@ -188,6 +188,90 @@ export interface ChargeResult {
   accountType: string;            // Visa/Mastercard/…
 }
 
+/**
+ * Error thrown when Authorize.net declines or rejects a charge.
+ * `message` is safe to show to the customer; raw decline metadata
+ * (codes, AVS/CVV, transId) is preserved for support/debugging logs.
+ */
+export class AuthnetChargeError extends Error {
+  reasonCode: string;
+  reasonText: string;
+  avsResultCode?: string;
+  cvvResultCode?: string;
+  transId?: string;
+  raw: unknown;
+  constructor(friendly: string, details: {
+    reasonCode: string;
+    reasonText: string;
+    avsResultCode?: string;
+    cvvResultCode?: string;
+    transId?: string;
+    raw: unknown;
+  }) {
+    super(friendly);
+    this.name = "AuthnetChargeError";
+    this.reasonCode = details.reasonCode;
+    this.reasonText = details.reasonText;
+    this.avsResultCode = details.avsResultCode;
+    this.cvvResultCode = details.cvvResultCode;
+    this.transId = details.transId;
+    this.raw = details.raw;
+  }
+}
+
+/**
+ * Map an Authorize.net reason/error code to a plain-language message the
+ * customer can act on. Unknown codes fall back to a generic decline notice
+ * — the raw code is always logged separately for support.
+ * Reference: https://developer.authorize.net/api/reference/responseCodes.html
+ */
+export function friendlyDeclineMessage(
+  reasonCode: string,
+  reasonText: string,
+): string {
+  switch (String(reasonCode)) {
+    case "2":   // General decline
+    case "3":   // Referral / no reason given
+    case "4":   // Pick up card
+      return "Your card was declined. Please contact your bank or try a different card.";
+    case "6":
+      return "That card number looks invalid. Please double-check the digits and try again.";
+    case "7":
+    case "8":
+      return "The card expiration date is invalid or the card has expired. Please try another card.";
+    case "17":
+    case "28":
+      return "We don't accept this card type. Please try a Visa, Mastercard, American Express, or Discover card.";
+    case "27":
+      return "Your billing address didn't match what your bank has on file. Please review the address and try again.";
+    case "37":
+      return "That card number is invalid. Please re-enter your card details.";
+    case "44":
+    case "45":
+    case "65":
+    case "78":
+      return "The security code (CVV) didn't match. Please double-check the 3–4 digit code on your card.";
+    case "54":
+      return "Refunds can only be issued to the original card used for the purchase.";
+    case "128":
+      return "Your bank has blocked this transaction. Please contact your bank or try a different card.";
+    case "200": case "201": case "202": case "203": case "204": case "205":
+    case "206": case "207": case "208": case "209": case "210":
+      return "Your card was declined by the processor. Please contact your bank or try a different card.";
+    case "11":
+      return "This looks like a duplicate transaction. If you already paid, please check your email for a receipt before retrying.";
+    case "13":
+    case "19": case "20": case "21": case "22": case "23":
+    case "25": case "26":
+      return "We're having trouble reaching the payment processor. Please try again in a moment.";
+    default:
+      // Return the processor's own message if it exists and looks user-safe,
+      // otherwise a generic notice.
+      if (reasonText && reasonText.length < 160) return reasonText;
+      return "Your payment could not be completed. Please try again or use a different card.";
+  }
+}
+
 export async function chargeCard(args: ChargeArgs): Promise<ChargeResult> {
   const apiLoginId = Deno.env.get("AUTHORIZENET_API_LOGIN_ID");
   const transactionKey = Deno.env.get("AUTHORIZENET_TRANSACTION_KEY");
@@ -217,11 +301,36 @@ export async function chargeCard(args: ChargeArgs): Promise<ChargeResult> {
   const approved = tr?.responseCode === "1";
 
   if (!approved) {
-    const errMsg =
+    const rawCode =
+      tr?.errors?.[0]?.errorCode ||
+      json?.messages?.message?.[0]?.code ||
+      "";
+    const rawText =
       tr?.errors?.[0]?.errorText ||
       json?.messages?.message?.[0]?.text ||
       "Payment was declined.";
-    throw new Error(errMsg);
+    const avs = tr?.avsResultCode ? String(tr.avsResultCode) : undefined;
+    const cvv = tr?.cvvResultCode ? String(tr.cvvResultCode) : undefined;
+    const transId = tr?.transId ? String(tr.transId) : undefined;
+
+    // Structured log for support — never shown to the customer.
+    console.error("[authnet decline]", JSON.stringify({
+      reasonCode: rawCode,
+      reasonText: rawText,
+      avsResultCode: avs,
+      cvvResultCode: cvv,
+      transId,
+      responseCode: tr?.responseCode,
+    }));
+
+    throw new AuthnetChargeError(friendlyDeclineMessage(String(rawCode), String(rawText)), {
+      reasonCode: String(rawCode),
+      reasonText: String(rawText),
+      avsResultCode: avs,
+      cvvResultCode: cvv,
+      transId,
+      raw: { transactionResponse: tr, messages: json?.messages },
+    });
   }
   if (!topOk && !tr?.transId) {
     throw new Error("Payment did not complete.");
