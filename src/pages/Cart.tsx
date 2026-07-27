@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Minus, Plus, Trash2, MessageCircle, Leaf, Lock } from "lucide-react";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { WhatsAppFloat } from "@/components/store/WhatsAppFloat";
@@ -6,10 +7,52 @@ import { ProductPlaceholder } from "@/components/store/ProductPlaceholder";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Cart() {
-  const { cartItems, cartCount, updateQuantity, removeFromCart, isLoading } = useCart();
+  const { cartItems, cartCount, updateQuantity, removeFromCart, isLoading, addToCart } = useCart();
   const { formatPrice, formatPriceBoth, whatsappNumber, isLocalVisitor, currency } = useStore();
+  const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const recoverId = searchParams.get("recover");
+  const restoredRef = useRef(false);
+  const [restoring, setRestoring] = useState(!!recoverId);
+
+  // Recovery link: rebuild the saved bag for the shopper.
+  useEffect(() => {
+    if (!recoverId || restoredRef.current) return;
+    restoredRef.current = true;
+    (async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/capture-abandoned-cart?cartId=${encodeURIComponent(recoverId)}`,
+          {
+            headers: {
+              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+          }
+        );
+        const json = await res.json();
+        const items: Array<{ product_id?: string; quantity?: number }> = json?.cart?.items ?? [];
+        if (!res.ok || items.length === 0) throw new Error("empty");
+        items.forEach((i) => {
+          if (i.product_id) addToCart({ productId: i.product_id, quantity: Number(i.quantity) || 1 });
+        });
+        toast({ title: "Welcome back", description: "We've restored the items you left behind." });
+      } catch {
+        toast({
+          title: "We couldn't restore that bag",
+          description: "The saved cart may have expired. Browse the shop to start again.",
+          variant: "destructive",
+        });
+      } finally {
+        setRestoring(false);
+        searchParams.delete("recover");
+        setSearchParams(searchParams, { replace: true });
+      }
+    })();
+  }, [recoverId, addToCart, toast, searchParams, setSearchParams]);
 
   const subtotalUsd = cartItems.reduce((sum, item) => {
     if (!item.product) return sum;
@@ -27,12 +70,12 @@ export default function Cart() {
     `Hi, I'm ready to checkout but have a question about my order.`
   );
 
-  if (isLoading) {
+  if (isLoading || restoring) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <main className="container mx-auto px-4 py-8 pt-24 flex-1">
           <h1 className="text-3xl font-serif font-bold text-foreground mb-8">Shopping Bag</h1>
-          <p className="text-muted-foreground">Loading your cart...</p>
+          <p className="text-muted-foreground">{restoring ? "Restoring your saved bag…" : "Loading your cart..."}</p>
         </main>
       </div>
     );

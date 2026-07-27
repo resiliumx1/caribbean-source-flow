@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -133,6 +133,46 @@ export default function Checkout() {
   const canPay = isFormValid && agreedToTerms && cartItems.length > 0 && !isProcessing;
 
   // Called by <AuthorizeNetCardForm> after the browser tokenizes the card.
+  // Capture the cart for recovery once we have a usable email (debounced).
+  const capturedRef = useRef<string>("");
+  useEffect(() => {
+    if (!isEmailValid || cartItems.length === 0) return;
+    const signature = `${form.email}|${form.customer_name}|${form.phone}|${cartItems
+      .map((i) => `${i.product_id}x${i.quantity}`)
+      .join(",")}`;
+    if (capturedRef.current === signature) return;
+    const t = setTimeout(async () => {
+      capturedRef.current = signature;
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/capture-abandoned-cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            email: form.email,
+            customer_name: form.customer_name,
+            phone: form.phone,
+            user_id: sessionData?.session?.user?.id ?? null,
+            subtotal_usd: subtotalUsd,
+            items: cartItems.map((i) => ({
+              product_id: i.product_id,
+              name: i.product?.name ?? "",
+              quantity: i.quantity,
+              price_usd: i.product?.price_usd ?? 0,
+            })),
+          }),
+        });
+      } catch {
+        /* recovery capture is best-effort */
+      }
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [form.email, form.customer_name, form.phone, isEmailValid, cartItems, subtotalUsd]);
+
   const applyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
     if (!code) return;

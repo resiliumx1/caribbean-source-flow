@@ -62,6 +62,7 @@ const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 const PaymentPlanPay = lazy(() => import("./pages/PaymentPlanPay"));
 const AdminPaymentPlans = lazy(() => import("./pages/AdminPaymentPlans"));
 const AdminCoupons = lazy(() => import("./pages/AdminCoupons"));
+const AdminAbandonedCarts = lazy(() => import("./pages/AdminAbandonedCarts"));
 const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
 const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
 
@@ -186,6 +187,7 @@ function AppContent() {
             <Route path="wholesale-leads" element={<AdminWholesaleLeads />} />
             <Route path="payment-alerts" element={<AdminPaymentAlerts />} />
             <Route path="coupons" element={<AdminCoupons />} />
+            <Route path="abandoned-carts" element={<AdminAbandonedCarts />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

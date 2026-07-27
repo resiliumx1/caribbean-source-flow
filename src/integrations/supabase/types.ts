@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       abandoned_carts: {
         Row: {
+          admin_notes: string | null
           created_at: string
           customer_name: string | null
           email: string | null
@@ -25,11 +26,14 @@ export type Database = {
           phone: string | null
           recovered: boolean
           recovered_order_id: string | null
+          recovery_sent_at: string | null
+          recovery_sent_count: number
           subtotal_usd: number
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          admin_notes?: string | null
           created_at?: string
           customer_name?: string | null
           email?: string | null
@@ -39,11 +43,14 @@ export type Database = {
           phone?: string | null
           recovered?: boolean
           recovered_order_id?: string | null
+          recovery_sent_at?: string | null
+          recovery_sent_count?: number
           subtotal_usd?: number
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          admin_notes?: string | null
           created_at?: string
           customer_name?: string | null
           email?: string | null
@@ -53,6 +60,8 @@ export type Database = {
           phone?: string | null
           recovered?: boolean
           recovered_order_id?: string | null
+          recovery_sent_at?: string | null
+          recovery_sent_count?: number
           subtotal_usd?: number
           updated_at?: string
           user_id?: string | null
