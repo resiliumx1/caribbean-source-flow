@@ -133,7 +133,25 @@ Deno.serve(async (req) => {
     );
 
     // Helper functions
-    const stripHtml = (html: string) => html.replace(/<[^>]*>/g, "").trim();
+    const decodeEntities = (s: string) =>
+      s
+        .replace(/&nbsp;|&#160;/g, " ")
+        .replace(/&#8217;|&rsquo;/g, "\u2019")
+        .replace(/&#8216;|&lsquo;/g, "\u2018")
+        .replace(/&#8220;|&ldquo;/g, "\u201C")
+        .replace(/&#8221;|&rdquo;/g, "\u201D")
+        .replace(/&#8211;/g, "\u2013")
+        .replace(/&#8212;/g, "\u2014")
+        .replace(/&#0?39;|&apos;/g, "'")
+        .replace(/&quot;/g, '"')
+        .replace(/&hellip;/g, "\u2026")
+        .replace(/&amp;|&#38;/g, "&")
+        .replace(/&#(\d+);/g, (_m, d) => String.fromCodePoint(Number(d)))
+        .replace(/[ \t]+/g, " ")
+        .replace(/\n{3,}/g, "\n\n");
+
+    const stripHtml = (html: string) =>
+      decodeEntities((html || "").replace(/<[^>]*>/g, "")).trim();
 
     // Normalize a product name for fuzzy matching:
     // lowercase, decode common HTML entities, strip punctuation, collapse whitespace.
