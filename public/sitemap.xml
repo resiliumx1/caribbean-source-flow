@@ -61,12 +61,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mountkailashslu.com/shop/moon-cycle-tea</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://mountkailashslu.com/shop/the-answer</loc>
     <lastmod>2026-07-14</lastmod>
     <changefreq>weekly</changefreq>
@@ -75,6 +69,12 @@
   <url>
     <loc>https://mountkailashslu.com/shop/digestive-rescue</loc>
     <lastmod>2026-04-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mountkailashslu.com/shop/moon-cycle-tea</loc>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -103,18 +103,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mountkailashslu.com/shop/tranquility</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mountkailashslu.com/shop/soursop-leaves</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://mountkailashslu.com/shop/st-johns-bush</loc>
     <lastmod>2026-04-04</lastmod>
     <changefreq>weekly</changefreq>
@@ -139,12 +127,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mountkailashslu.com/shop/kingly-tea-bundle</loc>
-    <lastmod>2026-06-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://mountkailashslu.com/shop/detox-bundle</loc>
     <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -153,6 +135,12 @@
   <url>
     <loc>https://mountkailashslu.com/shop/free-flow</loc>
     <lastmod>2026-05-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mountkailashslu.com/shop/kingly-tea-bundle</loc>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -169,6 +157,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://mountkailashslu.com/shop/tranquility</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://mountkailashslu.com/shop/virility-male-balance-capsules</loc>
     <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -181,14 +175,26 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://mountkailashslu.com/shop/soursop-leaves</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://mountkailashslu.com/shop/bulk-cassia-alata-king-of-the-forest</loc>
     <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://mountkailashslu.com/shop/pure-green</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://mountkailashslu.com/shop/urinary-cleanse-tea</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -212,7 +218,7 @@
   </url>
   <url>
     <loc>https://mountkailashslu.com/shop/blue-vervaine</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -235,19 +241,13 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mountkailashslu.com/shop/bulk-st-johns-bush-justicia-secunda</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://mountkailashslu.com/shop/medina-tea</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mountkailashslu.com/shop/red-raspberry-leaf</loc>
+    <loc>https://mountkailashslu.com/shop/bulk-st-johns-bush-justicia-secunda</loc>
     <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -259,26 +259,32 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://mountkailashslu.com/shop/red-raspberry-leaf</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://mountkailashslu.com/shop/virili-tea</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://mountkailashslu.com/shop/prostate-health-bundle</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://mountkailashslu.com/shop/male-vitality-package</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://mountkailashslu.com/shop/st-john-bush-justicia-secunda</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -301,26 +307,26 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mountkailashslu.com/shop/gully-root-leaves</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://mountkailashslu.com/shop/bulk-red-raspberry-leaf-rubus-idaeus</loc>
     <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://mountkailashslu.com/shop/gully-root-leaves</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://mountkailashslu.com/shop/male-potency-kit</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://mountkailashslu.com/shop/queenly-tea-bundle</loc>
-    <lastmod>2026-05-22</lastmod>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -349,19 +355,13 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mountkailashslu.com/shop/pure-green</loc>
-    <lastmod>2026-05-22</lastmod>
+    <loc>https://mountkailashslu.com/shop/feminine-balance-kit</loc>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://mountkailashslu.com/shop/bulk-gully-root-anamu-leaves</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mountkailashslu.com/shop/feminine-balance-kit</loc>
     <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
