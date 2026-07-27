@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Bar,
-  BarChart,
   CartesianGrid,
   Legend,
   Line,
@@ -142,5 +141,3 @@ export default function CartRecoveryChart() {
     </div>
   );
 }
-
-export { BarChart };
