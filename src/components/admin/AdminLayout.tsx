@@ -18,6 +18,7 @@ const NAV_LINKS = [
   { label: 'Payment Plans', href: '/admin/payment-plans' },
   { label: 'Wholesale Leads', href: '/admin/wholesale-leads' },
   { label: 'Payment Alerts', href: '/admin/payment-alerts' },
+  { label: 'Discount Codes', href: '/admin/coupons' },
   { label: 'Notifications', href: '/admin/notifications' },
 ];
 
