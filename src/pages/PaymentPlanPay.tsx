@@ -229,15 +229,95 @@ export default function PaymentPlanPay() {
                   </div>
                 )}
 
+                {schedule ? (
+                  <div className="mb-4 p-3 rounded-lg border border-border bg-muted/40 text-sm flex items-start gap-2">
+                    <RefreshCw className="h-4 w-4 mt-0.5" style={{ color: "#1b4332" }} />
+                    <div>
+                      Automatic instalments of <strong>{fmt(schedule.amount)}</strong> are set up ({schedule.cadence})
+                      {schedule.next_run_date ? `, next on ${schedule.next_run_date}` : ""}. You can still make an extra
+                      payment below at any time.
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mb-4 grid gap-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      {([["once", "Pay once"], ["auto", "Automatic instalments"]] as const).map(([value, label]) => (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => { setMode(value); setError(null); }}
+                          className="rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors"
+                          style={{
+                            borderColor: mode === value ? "#1b4332" : "hsl(var(--border))",
+                            background: mode === value ? "#1b433212" : "transparent",
+                            color: mode === value ? "#1b4332" : "inherit",
+                          }}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                    {mode === "auto" && (
+                      <div className="rounded-lg border border-border p-3 space-y-2">
+                        <Label className="text-sm font-medium inline-flex items-center gap-1.5">
+                          <CalendarClock className="h-3.5 w-3.5" /> Charge this amount
+                        </Label>
+                        <Select value={cadence} onValueChange={(v) => setCadence(v as typeof cadence)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="weekly">Every week</SelectItem>
+                            <SelectItem value="biweekly">Every 2 weeks</SelectItem>
+                            <SelectItem value="monthly">Every month</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          Your card is charged {fmt(amtNum || 0)} starting tomorrow until the balance of{" "}
+                          {fmt(remaining)} is cleared. You can cancel any time by contacting us.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {autoDone && (
+                  <div className="mb-4 p-3 rounded-lg border text-sm" style={{ background: "#dcfce7", borderColor: "#bbf7d0", color: "#166534" }}>
+                    Automatic instalments are now active. You'll receive a receipt after each payment.
+                  </div>
+                )}
+
                 {validAmount ? (
                   <AuthorizeNetCardForm
                     amountUsd={amtNum}
                     processing={processing}
                     defaultCardholderName={plan.customer_name}
+                    buttonLabel={mode === "auto" && !schedule
+                      ? `Start ${cadence} payments of $${amtNum.toFixed(2)}`
+                      : undefined}
                     onToken={async ({ opaqueData, cardholderName }: { opaqueData: OpaqueData; cardholderName: string }) => {
                       setError(null);
                       setProcessing(true);
                       try {
+                        if (mode === "auto" && !schedule) {
+                          const { data: res, error } = await supabase.functions.invoke("plan-autobill", {
+                            body: {
+                              action: "setup",
+                              planId: plan.id,
+                              amount: amtNum,
+                              cadence,
+                              opaqueData,
+                              cardholderName,
+                              email: plan.customer_email ?? undefined,
+                            },
+                          });
+                          if (error || !res?.success) {
+                            const msg = res?.error || error?.message || "Could not set up automatic payments.";
+                            setError(msg);
+                            throw new Error(msg);
+                          }
+                          setAutoDone(true);
+                          load();
+                          return;
+                        }
                         const { data: res, error } = await supabase.functions.invoke("authnet-plan-charge", {
                           body: {
                             planId: plan.id,
