@@ -15,6 +15,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import CartRecoveryChart from "@/components/admin/CartRecoveryChart";
+import CartRecoverySettings from "@/components/admin/CartRecoverySettings";
 import {
   Copy,
   Mail,
@@ -44,6 +46,10 @@ type Cart = {
   recovery_sent_at: string | null;
   recovery_sent_count: number;
   admin_notes: string | null;
+  reminder_stage: number | null;
+  last_reminder_at: string | null;
+  webhook_synced_at: string | null;
+  webhook_last_status: string | null;
 };
 
 const money = (n: number | string) => `$${Number(n || 0).toFixed(2)}`;
@@ -72,6 +78,7 @@ export default function AdminAbandonedCarts() {
   const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
   const [expanded, setExpanded] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -169,6 +176,15 @@ export default function AdminAbandonedCarts() {
         </Button>
       </div>
 
+      <CartRecoveryChart />
+
+      <div>
+        <Button variant="outline" onClick={() => setShowSettings((v) => !v)}>
+          {showSettings ? "Hide automation settings" : "Automation, templates & CRM sync"}
+        </Button>
+      </div>
+      {showSettings && <CartRecoverySettings onRan={load} />}
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: "Open carts", value: String(stats.open) },
@@ -246,6 +262,15 @@ export default function AdminAbandonedCarts() {
                   <p className="text-xs text-muted-foreground">
                     Last seen {when(cart.last_seen_at)}
                     {cart.recovery_sent_at ? ` · last contacted ${when(cart.recovery_sent_at)}` : ""}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Reminder stage {cart.reminder_stage ?? 0}
+                    {" · CRM "}
+                    {cart.webhook_last_status
+                      ? `${cart.webhook_last_status.startsWith("ok") ? "synced" : cart.webhook_last_status} ${when(
+                          cart.webhook_synced_at
+                        )}`
+                      : "not synced"}
                   </p>
                 </div>
                 <div className="text-right">

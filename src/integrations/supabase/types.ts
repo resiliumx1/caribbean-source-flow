@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      abandoned_cart_events: {
+        Row: {
+          cart_id: string | null
+          channel: string | null
+          created_at: string
+          detail: string | null
+          event_type: string
+          id: string
+          value_usd: number
+        }
+        Insert: {
+          cart_id?: string | null
+          channel?: string | null
+          created_at?: string
+          detail?: string | null
+          event_type: string
+          id?: string
+          value_usd?: number
+        }
+        Update: {
+          cart_id?: string | null
+          channel?: string | null
+          created_at?: string
+          detail?: string | null
+          event_type?: string
+          id?: string
+          value_usd?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "abandoned_cart_events_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "abandoned_carts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       abandoned_carts: {
         Row: {
           admin_notes: string | null
@@ -22,15 +60,19 @@ export type Database = {
           email: string | null
           id: string
           items: Json
+          last_reminder_at: string | null
           last_seen_at: string
           phone: string | null
           recovered: boolean
           recovered_order_id: string | null
           recovery_sent_at: string | null
           recovery_sent_count: number
+          reminder_stage: number
           subtotal_usd: number
           updated_at: string
           user_id: string | null
+          webhook_last_status: string | null
+          webhook_synced_at: string | null
         }
         Insert: {
           admin_notes?: string | null
@@ -39,15 +81,19 @@ export type Database = {
           email?: string | null
           id?: string
           items?: Json
+          last_reminder_at?: string | null
           last_seen_at?: string
           phone?: string | null
           recovered?: boolean
           recovered_order_id?: string | null
           recovery_sent_at?: string | null
           recovery_sent_count?: number
+          reminder_stage?: number
           subtotal_usd?: number
           updated_at?: string
           user_id?: string | null
+          webhook_last_status?: string | null
+          webhook_synced_at?: string | null
         }
         Update: {
           admin_notes?: string | null
@@ -56,15 +102,19 @@ export type Database = {
           email?: string | null
           id?: string
           items?: Json
+          last_reminder_at?: string | null
           last_seen_at?: string
           phone?: string | null
           recovered?: boolean
           recovered_order_id?: string | null
           recovery_sent_at?: string | null
           recovery_sent_count?: number
+          reminder_stage?: number
           subtotal_usd?: number
           updated_at?: string
           user_id?: string | null
+          webhook_last_status?: string | null
+          webhook_synced_at?: string | null
         }
         Relationships: [
           {
