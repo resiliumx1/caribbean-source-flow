@@ -256,6 +256,7 @@ export default function AdminLayout() {
                     {NAV_LINKS.map((link) => {
                       const isActive = location.pathname.startsWith(link.href);
                       const isNotif = link.href === '/admin/notifications';
+                      const mBadge = isNotif ? unread : link.href === '/admin/payment-alerts' ? paymentAlerts : 0;
                       return (
                         <Link
                           key={link.href}
@@ -270,9 +271,9 @@ export default function AdminLayout() {
                           }}
                         >
                           <span>{link.label}</span>
-                          {isNotif && unread > 0 && (
+                          {mBadge > 0 && (
                             <span className="inline-flex items-center justify-center min-w-[20px] h-[20px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
-                              {unread > 99 ? '99+' : unread}
+                              {mBadge > 99 ? '99+' : mBadge}
                             </span>
                           )}
                         </Link>
