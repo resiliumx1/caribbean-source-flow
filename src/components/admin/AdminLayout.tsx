@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { label: 'Analytics', href: '/admin/analytics' },
   { label: 'Payment Plans', href: '/admin/payment-plans' },
   { label: 'Wholesale Leads', href: '/admin/wholesale-leads' },
+  { label: 'Payment Alerts', href: '/admin/payment-alerts' },
   { label: 'Notifications', href: '/admin/notifications' },
 ];
 
@@ -56,6 +57,7 @@ export default function AdminLayout() {
   const [unread, setUnread] = useState(0);
   const [recent, setRecent] = useState<Notification[]>([]);
   const [bellOpen, setBellOpen] = useState(false);
+  const [paymentAlerts, setPaymentAlerts] = useState(0);
   const bellRef = useRef<HTMLDivElement | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -63,18 +65,21 @@ export default function AdminLayout() {
     if (!isAdmin) return;
     let active = true;
     const fetchData = async () => {
-      const [{ count }, { data }] = await Promise.all([
+      const [{ count }, { data }, alerts] = await Promise.all([
         supabase.from("notifications").select("id", { count: "exact", head: true }).eq("is_read", false),
         supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(6),
+        supabase.from("failed_order_alerts").select("id", { count: "exact", head: true }).eq("resolved", false),
       ]);
       if (!active) return;
       setUnread(count || 0);
       setRecent((data as Notification[]) || []);
+      setPaymentAlerts(alerts.count || 0);
     };
     fetchData();
     const channel = supabase
       .channel("notifications-bell")
       .on("postgres_changes", { event: "*", schema: "public", table: "notifications" }, fetchData)
+      .on("postgres_changes", { event: "*", schema: "public", table: "failed_order_alerts" }, fetchData)
       .subscribe();
     return () => { active = false; supabase.removeChannel(channel); };
   }, [isAdmin]);
@@ -146,12 +151,13 @@ export default function AdminLayout() {
               {NAV_LINKS.map((link) => {
                 const isActive = location.pathname.startsWith(link.href);
                 const isNotif = link.href === '/admin/notifications';
+                const badge = isNotif ? unread : link.href === '/admin/payment-alerts' ? paymentAlerts : 0;
                 return (
                   <Link key={link.href} to={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors inline-flex items-center gap-1.5" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
                     {link.label}
-                    {isNotif && unread > 0 && (
+                    {badge > 0 && (
                       <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
-                        {unread > 99 ? '99+' : unread}
+                        {badge > 99 ? '99+' : badge}
                       </span>
                     )}
                   </Link>
@@ -250,6 +256,7 @@ export default function AdminLayout() {
                     {NAV_LINKS.map((link) => {
                       const isActive = location.pathname.startsWith(link.href);
                       const isNotif = link.href === '/admin/notifications';
+                      const mBadge = isNotif ? unread : link.href === '/admin/payment-alerts' ? paymentAlerts : 0;
                       return (
                         <Link
                           key={link.href}
@@ -264,9 +271,9 @@ export default function AdminLayout() {
                           }}
                         >
                           <span>{link.label}</span>
-                          {isNotif && unread > 0 && (
+                          {mBadge > 0 && (
                             <span className="inline-flex items-center justify-center min-w-[20px] h-[20px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
-                              {unread > 99 ? '99+' : unread}
+                              {mBadge > 99 ? '99+' : mBadge}
                             </span>
                           )}
                         </Link>
@@ -304,6 +311,18 @@ export default function AdminLayout() {
 
       {/* Admin Content */}
       <main className="container mx-auto px-4 py-8">
+        {paymentAlerts > 0 && !location.pathname.startsWith('/admin/payment-alerts') && (
+          <Link
+            to="/admin/payment-alerts"
+            className="mb-6 flex items-center gap-3 rounded-lg border p-4 text-sm"
+            style={{ borderColor: 'hsl(var(--destructive) / 0.4)', background: 'hsl(var(--destructive) / 0.08)' }}
+          >
+            <AlertTriangle className="h-4 w-4 flex-shrink-0 text-destructive" />
+            <span className="text-foreground">
+              <strong>{paymentAlerts}</strong> payment{paymentAlerts !== 1 ? 's were' : ' was'} captured without creating an order. Review now →
+            </span>
+          </Link>
+        )}
         <Outlet />
       </main>
     </div>

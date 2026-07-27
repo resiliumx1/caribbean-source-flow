@@ -62,6 +62,7 @@ const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 const PaymentPlanPay = lazy(() => import("./pages/PaymentPlanPay"));
 const AdminPaymentPlans = lazy(() => import("./pages/AdminPaymentPlans"));
 const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
+const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
 
 const queryClient = new QueryClient();
 
@@ -182,6 +183,7 @@ function AppContent() {
             <Route path="notifications" element={<AdminNotifications />} />
             <Route path="payment-plans" element={<AdminPaymentPlans />} />
             <Route path="wholesale-leads" element={<AdminWholesaleLeads />} />
+            <Route path="payment-alerts" element={<AdminPaymentAlerts />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

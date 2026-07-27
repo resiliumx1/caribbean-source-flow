@@ -9,6 +9,23 @@ const corsHeaders = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  const logWebhookFailure = async (errorName: string, message: string, payload: unknown) => {
+    try {
+      const admin = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      );
+      await admin.from("payment_attempts").insert({
+        stage: "webhook_paypal_plan",
+        error_name: errorName,
+        error_message: message,
+        payload: payload ?? null,
+      });
+    } catch (e) {
+      console.error("Failed to log webhook failure:", e);
+    }
+  };
+
   try {
     const event = await req.json();
     const eventType = event?.event_type as string | undefined;
@@ -25,6 +42,7 @@ Deno.serve(async (req) => {
     const planId = (resource?.custom_id ?? resource?.supplementary_data?.related_ids?.custom_id) as string | undefined;
 
     if (!captureId || !planId || !(amount > 0)) {
+      await logWebhookFailure("MissingCaptureData", "Webhook received without capture id, plan id or amount", event);
       return new Response(JSON.stringify({ error: "Missing capture data" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -67,6 +85,7 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     console.error("paypal-plan-webhook error:", err);
+    await logWebhookFailure("WebhookProcessingError", (err as Error).message, null);
     return new Response(JSON.stringify({ error: (err as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
