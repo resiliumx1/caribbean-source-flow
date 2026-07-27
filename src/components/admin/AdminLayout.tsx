@@ -151,12 +151,13 @@ export default function AdminLayout() {
               {NAV_LINKS.map((link) => {
                 const isActive = location.pathname.startsWith(link.href);
                 const isNotif = link.href === '/admin/notifications';
+                const badge = isNotif ? unread : link.href === '/admin/payment-alerts' ? paymentAlerts : 0;
                 return (
                   <Link key={link.href} to={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors inline-flex items-center gap-1.5" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
                     {link.label}
-                    {isNotif && unread > 0 && (
+                    {badge > 0 && (
                       <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
-                        {unread > 99 ? '99+' : unread}
+                        {badge > 99 ? '99+' : badge}
                       </span>
                     )}
                   </Link>
