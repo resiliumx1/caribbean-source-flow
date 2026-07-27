@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { label: 'Analytics', href: '/admin/analytics' },
   { label: 'Payment Plans', href: '/admin/payment-plans' },
   { label: 'Wholesale Leads', href: '/admin/wholesale-leads' },
+  { label: 'Payment Alerts', href: '/admin/payment-alerts' },
   { label: 'Notifications', href: '/admin/notifications' },
 ];
 
@@ -56,6 +57,7 @@ export default function AdminLayout() {
   const [unread, setUnread] = useState(0);
   const [recent, setRecent] = useState<Notification[]>([]);
   const [bellOpen, setBellOpen] = useState(false);
+  const [paymentAlerts, setPaymentAlerts] = useState(0);
   const bellRef = useRef<HTMLDivElement | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -63,18 +65,21 @@ export default function AdminLayout() {
     if (!isAdmin) return;
     let active = true;
     const fetchData = async () => {
-      const [{ count }, { data }] = await Promise.all([
+      const [{ count }, { data }, alerts] = await Promise.all([
         supabase.from("notifications").select("id", { count: "exact", head: true }).eq("is_read", false),
         supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(6),
+        supabase.from("failed_order_alerts").select("id", { count: "exact", head: true }).eq("resolved", false),
       ]);
       if (!active) return;
       setUnread(count || 0);
       setRecent((data as Notification[]) || []);
+      setPaymentAlerts(alerts.count || 0);
     };
     fetchData();
     const channel = supabase
       .channel("notifications-bell")
       .on("postgres_changes", { event: "*", schema: "public", table: "notifications" }, fetchData)
+      .on("postgres_changes", { event: "*", schema: "public", table: "failed_order_alerts" }, fetchData)
       .subscribe();
     return () => { active = false; supabase.removeChannel(channel); };
   }, [isAdmin]);
