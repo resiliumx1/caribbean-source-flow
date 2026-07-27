@@ -256,11 +256,19 @@ Deno.serve(async (req) => {
 
     // Close out any abandoned cart captured for this shopper.
     try {
-      await supabase
+      const { data: closed } = await supabase
         .from("abandoned_carts")
         .update({ recovered: true, recovered_order_id: order.id })
         .eq("email", String(orderInsert.email || "").toLowerCase())
-        .eq("recovered", false);
+        .eq("recovered", false)
+        .select("*");
+      for (const cart of closed ?? []) {
+        await logCartEvent(supabase, cart.id, "recovered", {
+          detail: order.id,
+          valueUsd: Number(order.total_usd ?? cart.subtotal_usd ?? 0),
+        });
+        await syncCartToCrm(supabase, "cart_recovered", cart);
+      }
     } catch (e) {
       console.error("abandoned cart close failed:", e);
     }
