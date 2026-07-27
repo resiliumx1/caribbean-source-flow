@@ -229,6 +229,31 @@ Deno.serve(async (req) => {
       throw itemsErr;
     }
 
+    // Record coupon redemption + decrement tracked inventory (non-fatal).
+    try {
+      if (appliedCoupon) {
+        await supabase.from("coupon_redemptions").insert({
+          coupon_id: appliedCoupon.id,
+          order_id: order.id,
+          email: orderInsert.email,
+          discount_usd,
+        });
+        await supabase.from("coupons")
+          .update({ used_count: Number(appliedCoupon.used_count) + 1 })
+          .eq("id", appliedCoupon.id);
+      }
+      for (const row of itemRows) {
+        const p: any = productMap.get(row.product_id);
+        if (p?.track_inventory) {
+          await supabase.from("products")
+            .update({ stock_quantity: Math.max(0, Number(p.stock_quantity) - row.quantity) })
+            .eq("id", p.id);
+        }
+      }
+    } catch (e) {
+      console.error("post-order bookkeeping failed:", e);
+    }
+
     // Fire-and-forget notifications
     try {
       await supabase.functions.invoke("send-order-emails", {
