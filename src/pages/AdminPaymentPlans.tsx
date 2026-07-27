@@ -1,34 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Copy, Plus, Loader2 } from "lucide-react";
+import { Copy, Plus, Loader2, Search, Eye } from "lucide-react";
+import PaymentPlanDetail, { type Plan } from "@/components/admin/PaymentPlanDetail";
 
 const PUBLIC_SITE_ORIGIN = "https://www.mountkailashslu.com";
 const buildPayLink = (id: string) => `${PUBLIC_SITE_ORIGIN}/pay/${id}`;
-
-type Plan = {
-  id: string;
-  customer_name: string;
-  customer_email: string;
-  package_name: string;
-  total_amount: number;
-  amount_paid: number;
-  balance_remaining: number;
-  min_payment: number | null;
-  status: string;
-  created_at: string;
-};
 
 function fmt(n: number | string) {
   return `$${Number(n).toFixed(2)}`;
@@ -39,6 +23,10 @@ export default function AdminPaymentPlans() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [view, setView] = useState<"active" | "archived">("active");
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<Plan | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [form, setForm] = useState({
     customer_name: "",
     customer_email: "",
@@ -54,13 +42,27 @@ export default function AdminPaymentPlans() {
       .select("*")
       .order("created_at", { ascending: false });
     if (error) toast.error(error.message);
-    setPlans((data as Plan[]) || []);
+    const rows = (data as Plan[]) || [];
+    setPlans(rows);
+    setSelected((prev) => (prev ? rows.find((r) => r.id === prev.id) ?? null : null));
     setLoading(false);
   };
 
   useEffect(() => {
     load();
   }, []);
+
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return plans
+      .filter((p) => (view === "archived" ? !!p.archived_at : !p.archived_at))
+      .filter((p) =>
+        !q ||
+        p.customer_name.toLowerCase().includes(q) ||
+        p.customer_email.toLowerCase().includes(q) ||
+        p.package_name.toLowerCase().includes(q),
+      );
+  }, [plans, view, query]);
 
   const submit = async () => {
     const total = Number(form.total_amount);
@@ -82,20 +84,32 @@ export default function AdminPaymentPlans() {
       })
       .select()
       .single();
+    if (error) { setSaving(false); return toast.error(error.message); }
+
+    const { data: session } = await supabase.auth.getUser();
+    await supabase.from("payment_plan_audit").insert({
+      plan_id: data.id,
+      action: "plan_created",
+      changes: { total_amount: total, min_payment: min, package_name: form.package_name.trim() },
+      actor_id: session?.user?.id ?? null,
+      actor_email: session?.user?.email ?? null,
+    });
     setSaving(false);
-    if (error) return toast.error(error.message);
     setOpen(false);
     setForm({ customer_name: "", customer_email: "", package_name: "", total_amount: "", min_payment: "" });
-    const link = buildPayLink(data.id);
-    await navigator.clipboard.writeText(link).catch(() => {});
+    await navigator.clipboard.writeText(buildPayLink(data.id)).catch(() => {});
     toast.success("Plan created — link copied to clipboard");
     load();
   };
 
   const copyLink = async (id: string) => {
-    const link = buildPayLink(id);
-    await navigator.clipboard.writeText(link).catch(() => {});
+    await navigator.clipboard.writeText(buildPayLink(id)).catch(() => {});
     toast.success("Payment link copied");
+  };
+
+  const openDetail = (p: Plan) => {
+    setSelected(p);
+    setDetailOpen(true);
   };
 
   return (
@@ -104,7 +118,7 @@ export default function AdminPaymentPlans() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Payment Plans</h1>
           <p className="text-sm text-muted-foreground">
-            Create installment plans and share a payment link with the customer.
+            Create instalment plans, share payment links, review logs and issue refunds.
           </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -150,6 +164,20 @@ export default function AdminPaymentPlans() {
         </Dialog>
       </div>
 
+      <div className="flex flex-wrap items-center gap-3">
+        <Tabs value={view} onValueChange={(v) => setView(v as "active" | "archived")}>
+          <TabsList>
+            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="archived">Archived</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className="relative flex-1 min-w-[220px] max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input className="pl-9" placeholder="Search customer, email or package"
+            value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
+      </div>
+
       <div className="rounded-lg border border-border bg-card overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
@@ -160,16 +188,19 @@ export default function AdminPaymentPlans() {
               <th className="px-4 py-3 font-semibold text-right">Paid</th>
               <th className="px-4 py-3 font-semibold text-right">Remaining</th>
               <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold">Link</th>
+              <th className="px-4 py-3 font-semibold text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>
-            ) : plans.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">No payment plans yet.</td></tr>
-            ) : plans.map((p) => (
-              <tr key={p.id} className="border-t border-border">
+            ) : visible.length === 0 ? (
+              <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
+                {view === "archived" ? "No archived plans." : "No payment plans yet."}
+              </td></tr>
+            ) : visible.map((p) => (
+              <tr key={p.id} className="border-t border-border hover:bg-muted/30 cursor-pointer"
+                onClick={() => openDetail(p)}>
                 <td className="px-4 py-3">
                   <div className="font-medium text-foreground">{p.customer_name}</div>
                   <div className="text-xs text-muted-foreground">{p.customer_email}</div>
@@ -190,15 +221,29 @@ export default function AdminPaymentPlans() {
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => copyLink(p.id)}>
-                    <Copy className="h-3.5 w-3.5" /> Copy
-                  </Button>
+                  <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                    <Button size="sm" variant="outline" className="gap-1.5" onClick={() => openDetail(p)}>
+                      <Eye className="h-3.5 w-3.5" /> View
+                    </Button>
+                    {!p.archived_at && (
+                      <Button size="sm" variant="outline" className="gap-1.5" onClick={() => copyLink(p.id)}>
+                        <Copy className="h-3.5 w-3.5" /> Copy
+                      </Button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <PaymentPlanDetail
+        plan={selected}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onChanged={load}
+      />
     </div>
   );
 }
