@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { logCartEvent, syncCartToCrm } from "../_shared/cart-recovery.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -70,6 +71,7 @@ Deno.serve(async (req) => {
     if (existing) {
       const { error } = await supabase.from("abandoned_carts").update(row).eq("id", existing.id);
       if (error) throw error;
+      await syncCartToCrm(supabase, "cart_updated", { id: existing.id, ...row });
       return json({ id: existing.id });
     }
 
@@ -79,6 +81,8 @@ Deno.serve(async (req) => {
       .select("id")
       .single();
     if (error) throw error;
+    await logCartEvent(supabase, inserted.id, "captured", { valueUsd: row.subtotal_usd });
+    await syncCartToCrm(supabase, "cart_captured", { id: inserted.id, ...row });
     return json({ id: inserted.id });
   } catch (e) {
     console.error("capture-abandoned-cart error:", e);
