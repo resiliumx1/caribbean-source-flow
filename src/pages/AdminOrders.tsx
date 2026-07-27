@@ -527,9 +527,17 @@ function DrawerContent({
                 <span className="text-foreground">Total</span>
                 <span className="text-foreground tabular-nums">${total.toFixed(2)} <span className="text-sm font-normal text-muted-foreground">USD</span></span>
               </div>
+              {Number(order.refunded_usd ?? 0) > 0 && (
+                <div className="flex justify-between text-sm text-destructive">
+                  <span>Refunded</span>
+                  <span className="tabular-nums">−${Number(order.refunded_usd).toFixed(2)}</span>
+                </div>
+              )}
             </div>
           </div>
         </section>
+
+        <OrderRefundPanel order={order} onRefunded={onRefunded} />
 
         {/* Customer */}
         <section>
