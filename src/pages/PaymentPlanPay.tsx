@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthorizeNetCardForm, type OpaqueData } from "@/components/payments/AuthorizeNetCardForm";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Helmet } from "react-helmet-async";
-import { CheckCircle2, Loader2, ShieldCheck, Lock } from "lucide-react";
+import { CheckCircle2, Loader2, ShieldCheck, Lock, CalendarClock, RefreshCw } from "lucide-react";
 
 type Plan = {
   id: string;
@@ -30,17 +31,23 @@ export default function PaymentPlanPay() {
   const [processing, setProcessing] = useState(false);
   const [receipt, setReceipt] = useState<{ amount: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"once" | "auto">("once");
+  const [cadence, setCadence] = useState<"weekly" | "biweekly" | "monthly">("monthly");
+  const [schedule, setSchedule] = useState<{ amount: number; cadence: string; next_run_date: string | null } | null>(null);
+  const [autoDone, setAutoDone] = useState(false);
 
   const load = async () => {
     if (!planId) return;
     const { data: res, error } = await supabase.functions.invoke("get-payment-plan", {
       body: { planId },
     });
-    const data = (res as { plan?: Plan } | null)?.plan;
+    const payload = res as { plan?: Plan; schedule?: typeof schedule } | null;
+    const data = payload?.plan;
     if (error || !data) {
       setNotFound(true);
     } else {
       setPlan(data as Plan);
+      setSchedule(payload?.schedule ?? null);
       setAmount(Number(data.balance_remaining).toFixed(2));
     }
     setLoading(false);
