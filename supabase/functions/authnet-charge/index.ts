@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
+import { logCartEvent, syncCartToCrm } from "../_shared/cart-recovery.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
