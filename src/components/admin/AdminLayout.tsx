@@ -311,6 +311,18 @@ export default function AdminLayout() {
 
       {/* Admin Content */}
       <main className="container mx-auto px-4 py-8">
+        {paymentAlerts > 0 && !location.pathname.startsWith('/admin/payment-alerts') && (
+          <Link
+            to="/admin/payment-alerts"
+            className="mb-6 flex items-center gap-3 rounded-lg border p-4 text-sm"
+            style={{ borderColor: 'hsl(var(--destructive) / 0.4)', background: 'hsl(var(--destructive) / 0.08)' }}
+          >
+            <AlertTriangle className="h-4 w-4 flex-shrink-0 text-destructive" />
+            <span className="text-foreground">
+              <strong>{paymentAlerts}</strong> payment{paymentAlerts !== 1 ? 's were' : ' was'} captured without creating an order. Review now →
+            </span>
+          </Link>
+        )}
         <Outlet />
       </main>
     </div>
