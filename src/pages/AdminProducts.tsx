@@ -580,6 +580,43 @@ export default function AdminProducts() {
                     {BADGE_OPTIONS.map((b) => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                <div className="mt-2 rounded-md border border-border p-2 space-y-2">
+                  <label className="flex items-center gap-2 text-xs cursor-pointer select-none">
+                    <Checkbox
+                      checked={!!(product as any).track_inventory}
+                      onCheckedChange={(checked) =>
+                        updateProduct.mutate({
+                          id: product.id,
+                          updates: { track_inventory: !!checked },
+                        })
+                      }
+                    />
+                    <span className="text-muted-foreground">Track stock quantity</span>
+                  </label>
+                  {(product as any).track_inventory && (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min={0}
+                        defaultValue={Number((product as any).stock_quantity ?? 0)}
+                        aria-label={`Stock quantity for ${product.name}`}
+                        className="h-8 w-24 rounded-md border border-border bg-background px-2 text-xs"
+                        onBlur={(e) =>
+                          updateProduct.mutate({
+                            id: product.id,
+                            updates: { stock_quantity: Math.max(0, Number(e.target.value) || 0) },
+                          })
+                        }
+                      />
+                      <span className="text-xs text-muted-foreground">
+                        in stock
+                        {Number((product as any).stock_quantity ?? 0) <= Number((product as any).low_stock_threshold ?? 5)
+                          ? " · low"
+                          : ""}
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <label className="flex items-center gap-2 mt-2 text-xs cursor-pointer select-none">
                   <Checkbox
                     checked={!!(product as any).is_digital}

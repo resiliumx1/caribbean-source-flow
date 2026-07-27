@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Search, Truck, Save, Mail, X, Copy, Check, ExternalLink } from "lucide-react";
+import OrderRefundPanel from "@/components/admin/OrderRefundPanel";
 import { useToast } from "@/hooks/use-toast";
 import WooLegacyOrders from "@/components/admin/WooLegacyOrders";
 
@@ -431,6 +432,7 @@ export default function AdminOrders() {
               resending={resending}
               onResend={() => resendConfirmation(selected.id)}
               onClose={() => setSelectedId(null)}
+              onRefunded={fetchOrders}
             />
           </aside>
         </div>
@@ -444,7 +446,7 @@ export default function AdminOrders() {
 function DrawerContent({
   order, items, formatDateTime, formatAddress,
   editing, editData, setEditData, startEdit, cancelEdit, saveEdit, saving,
-  resending, onResend, onClose,
+  resending, onResend, onClose, onRefunded,
 }: any) {
   const payment = (order.payment_status || "unpaid").toLowerCase();
   const fulfillment = (order.fulfillment_status || order.status || "unfulfilled").toLowerCase();
@@ -527,9 +529,17 @@ function DrawerContent({
                 <span className="text-foreground">Total</span>
                 <span className="text-foreground tabular-nums">${total.toFixed(2)} <span className="text-sm font-normal text-muted-foreground">USD</span></span>
               </div>
+              {Number(order.refunded_usd ?? 0) > 0 && (
+                <div className="flex justify-between text-sm text-destructive">
+                  <span>Refunded</span>
+                  <span className="tabular-nums">−${Number(order.refunded_usd).toFixed(2)}</span>
+                </div>
+              )}
             </div>
           </div>
         </section>
+
+        <OrderRefundPanel order={order} onRefunded={onRefunded} />
 
         {/* Customer */}
         <section>

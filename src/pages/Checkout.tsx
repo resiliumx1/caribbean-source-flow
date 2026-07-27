@@ -60,6 +60,11 @@ export default function Checkout() {
     customer_notes: "",
   });
 
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<any | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [checkingCoupon, setCheckingCoupon] = useState(false);
+
   const update = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -95,10 +100,18 @@ export default function Checkout() {
     }
   }
 
-  const totalUsd = subtotalUsd + shippingUsd;
-  const totalXcd = subtotalXcd + shippingXcd;
+  const discountUsd = appliedCoupon
+    ? appliedCoupon.discount_type === "percent"
+      ? +(subtotalUsd * (Number(appliedCoupon.discount_value) / 100)).toFixed(2)
+      : Math.min(Number(appliedCoupon.discount_value), subtotalUsd)
+    : 0;
+  const discountXcd = +(discountUsd * 2.7).toFixed(2);
+
+  const totalUsd = +(subtotalUsd - discountUsd + shippingUsd).toFixed(2);
+  const totalXcd = +(subtotalXcd - discountXcd + shippingXcd).toFixed(2);
 
   const subtotalPrices = formatPriceBoth(subtotalUsd, subtotalXcd);
+  const discountPrices = formatPriceBoth(discountUsd, discountXcd);
   const shippingPrices = formatPriceBoth(shippingUsd, shippingXcd);
   const prices = formatPriceBoth(totalUsd, totalXcd);
 
@@ -120,6 +133,32 @@ export default function Checkout() {
   const canPay = isFormValid && agreedToTerms && cartItems.length > 0 && !isProcessing;
 
   // Called by <AuthorizeNetCardForm> after the browser tokenizes the card.
+  const applyCoupon = async () => {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return;
+    setCheckingCoupon(true);
+    setCouponError(null);
+    const { data } = await supabase
+      .from("coupons").select("*").ilike("code", code).maybeSingle();
+    setCheckingCoupon(false);
+    const now = Date.now();
+    const valid =
+      data &&
+      data.is_active &&
+      (!data.starts_at || new Date(data.starts_at).getTime() <= now) &&
+      (!data.expires_at || new Date(data.expires_at).getTime() >= now) &&
+      (!data.max_uses || Number(data.used_count) < Number(data.max_uses));
+    if (!valid) {
+      setAppliedCoupon(null);
+      return setCouponError("That code isn't valid or has expired.");
+    }
+    if (subtotalUsd < Number(data.min_order_usd ?? 0)) {
+      setAppliedCoupon(null);
+      return setCouponError(`This code needs a minimum order of $${Number(data.min_order_usd).toFixed(2)}.`);
+    }
+    setAppliedCoupon(data);
+  };
+
   const handleAuthNetToken = async ({ opaqueData }: { opaqueData: OpaqueData }) => {
     setIsProcessing(true);
     try {
@@ -144,6 +183,7 @@ export default function Checkout() {
           form,
             opaqueData,
           currency_used: currency,
+          coupon_code: appliedCoupon?.code ?? undefined,
         }),
       }
     );
@@ -402,10 +442,44 @@ export default function Checkout() {
                   </div>
 
                   <div className="border-t border-border pt-4 space-y-2">
+                    <div className="pb-2">
+                      <div className="flex gap-2">
+                        <input
+                          value={couponCode}
+                          onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(null); }}
+                          placeholder="Discount code"
+                          aria-label="Discount code"
+                          className="flex-1 h-11 rounded-md border border-border bg-background px-3 text-sm uppercase"
+                        />
+                        <button
+                          type="button"
+                          onClick={applyCoupon}
+                          disabled={checkingCoupon || !couponCode.trim()}
+                          className="h-11 px-4 rounded-md border border-border text-sm font-medium disabled:opacity-50"
+                        >
+                          {checkingCoupon ? "Checking…" : appliedCoupon ? "Applied" : "Apply"}
+                        </button>
+                      </div>
+                      {couponError && <p className="text-xs text-destructive mt-1.5">{couponError}</p>}
+                      {appliedCoupon && (
+                        <p className="text-xs mt-1.5" style={{ color: "#15803d" }}>
+                          {appliedCoupon.code} applied
+                          {appliedCoupon.discount_type === "percent"
+                            ? ` — ${Number(appliedCoupon.discount_value)}% off`
+                            : ` — $${Number(appliedCoupon.discount_value).toFixed(2)} off`}
+                        </p>
+                      )}
+                    </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Subtotal</span>
                       <span>{subtotalPrices.primary}</span>
                     </div>
+                    {appliedCoupon && (
+                      <div className="flex justify-between text-sm" style={{ color: "#15803d" }}>
+                        <span>Discount ({appliedCoupon.code})</span>
+                        <span>−{discountPrices.primary}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Shipping</span>
                       <span>

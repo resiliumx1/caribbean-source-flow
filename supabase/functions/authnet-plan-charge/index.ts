@@ -34,6 +34,7 @@ Deno.serve(async (req) => {
       .from("payment_plans").select("*").eq("id", planId).maybeSingle();
     if (error) throw error;
     if (!plan) throw new Error("Plan not found");
+    if (plan.archived_at) throw new Error("This payment plan is no longer available.");
     if (plan.status !== "active") throw new Error("Plan is not active");
 
     const remaining = Number(plan.balance_remaining);
@@ -69,7 +70,15 @@ Deno.serve(async (req) => {
     } else {
       const { error: insErr } = await supabase
         .from("payments")
-        .insert({ plan_id: planId, amount, paypal_capture_id: charge.transId });
+        .insert({
+          plan_id: planId,
+          amount,
+          paypal_capture_id: charge.transId,
+          type: "payment",
+          status: "succeeded",
+          card_last4: String(charge.accountNumber ?? "").replace(/[^0-9]/g, "").slice(-4) || null,
+          card_type: charge.accountType || null,
+        });
       if (insErr && !String(insErr.message || "").toLowerCase().includes("duplicate")) throw insErr;
 
       const { data: applied, error: applyErr } = await supabase.rpc("apply_payment", {

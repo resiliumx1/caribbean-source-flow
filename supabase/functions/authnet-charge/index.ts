@@ -29,6 +29,7 @@ interface CheckoutPayload {
   };
   opaqueData: OpaqueData;
   currency_used: "USD" | "XCD";
+  coupon_code?: string;
 }
 
 Deno.serve(async (req) => {
@@ -72,7 +73,7 @@ Deno.serve(async (req) => {
     const productIds = [...new Set(payload.items.map((i) => i.product_id))];
     const { data: products, error: prodErr } = await supabase
       .from("products")
-      .select("id, name, price_usd, price_xcd, is_digital")
+      .select("id, name, price_usd, price_xcd, is_digital, category_id, track_inventory, stock_quantity")
       .in("id", productIds);
     if (prodErr) throw prodErr;
     if (!products || products.length !== productIds.length) {
@@ -87,6 +88,11 @@ Deno.serve(async (req) => {
       const p: any = productMap.get(line.product_id);
       if (!p) throw new Error(`Product not found: ${line.product_id}`);
       const qty = Math.max(1, Math.floor(line.quantity));
+      if (p.track_inventory && Number(p.stock_quantity) < qty) {
+        throw new Error(
+          `${p.name} only has ${Math.max(0, Number(p.stock_quantity))} left in stock. Please adjust your cart.`,
+        );
+      }
       subtotal_usd += Number(p.price_usd) * qty;
       subtotal_xcd += Number(p.price_xcd) * qty;
       if (!p.is_digital) hasPhysical = true;
@@ -111,8 +117,48 @@ Deno.serve(async (req) => {
         shipping_xcd = +(30 * EXCHANGE).toFixed(2);
       }
     }
-    const total_usd = +(subtotal_usd + shipping_usd).toFixed(2);
-    const total_xcd = +(subtotal_xcd + shipping_xcd).toFixed(2);
+    // ---- Coupon (re-validated server-side) ----
+    let discount_usd = 0;
+    let appliedCoupon: any = null;
+    const code = (payload.coupon_code || "").trim().toUpperCase();
+    if (code) {
+      const { data: coupon } = await supabase
+        .from("coupons").select("*").ilike("code", code).maybeSingle();
+      const now = Date.now();
+      const valid =
+        coupon &&
+        coupon.is_active &&
+        (!coupon.starts_at || new Date(coupon.starts_at).getTime() <= now) &&
+        (!coupon.expires_at || new Date(coupon.expires_at).getTime() >= now) &&
+        (!coupon.max_uses || Number(coupon.used_count) < Number(coupon.max_uses)) &&
+        subtotal_usd >= Number(coupon.min_order_usd ?? 0);
+      if (!valid) throw new Error("That discount code is not valid for this order.");
+
+      const scoped: string[] = (coupon.product_ids ?? []).length || (coupon.category_ids ?? []).length
+        ? itemRows
+            .filter((r) => {
+              const p: any = productMap.get(r.product_id);
+              return (coupon.product_ids ?? []).includes(p.id) ||
+                (coupon.category_ids ?? []).includes(p.category_id);
+            })
+            .map((r) => r.product_id)
+        : itemRows.map((r) => r.product_id);
+
+      const eligibleSubtotal = itemRows
+        .filter((r) => scoped.includes(r.product_id))
+        .reduce((s, r) => s + r.price_usd * r.quantity, 0);
+      if (eligibleSubtotal <= 0) throw new Error("That discount code doesn't apply to the items in your cart.");
+
+      discount_usd = coupon.discount_type === "percent"
+        ? +(eligibleSubtotal * (Number(coupon.discount_value) / 100)).toFixed(2)
+        : Math.min(Number(coupon.discount_value), eligibleSubtotal);
+      discount_usd = Math.min(discount_usd, subtotal_usd);
+      appliedCoupon = coupon;
+    }
+
+    const total_usd = +(subtotal_usd - discount_usd + shipping_usd).toFixed(2);
+    const total_xcd = +((subtotal_xcd - discount_usd * EXCHANGE) + shipping_xcd).toFixed(2);
+    if (total_usd <= 0) throw new Error("Order total must be greater than zero.");
 
     // Charge card via Authorize.net
     const { firstName, lastName } = splitName(payload.form.customer_name);
@@ -157,6 +203,8 @@ Deno.serve(async (req) => {
       payment_transaction_id: charge.transId,
       status: "pending",
       customer_notes: payload.form.customer_notes || null,
+      discount_usd,
+      coupon_code: appliedCoupon?.code ?? null,
     };
 
     const { data: order, error: orderErr } = await supabase
@@ -179,6 +227,31 @@ Deno.serve(async (req) => {
       await supabase.from("orders").delete().eq("id", order.id);
       await logFailedOrder(supabase, payload, orderInsert, charge.transId, `order_items: ${itemsErr.message}`);
       throw itemsErr;
+    }
+
+    // Record coupon redemption + decrement tracked inventory (non-fatal).
+    try {
+      if (appliedCoupon) {
+        await supabase.from("coupon_redemptions").insert({
+          coupon_id: appliedCoupon.id,
+          order_id: order.id,
+          email: orderInsert.email,
+          discount_usd,
+        });
+        await supabase.from("coupons")
+          .update({ used_count: Number(appliedCoupon.used_count) + 1 })
+          .eq("id", appliedCoupon.id);
+      }
+      for (const row of itemRows) {
+        const p: any = productMap.get(row.product_id);
+        if (p?.track_inventory) {
+          await supabase.from("products")
+            .update({ stock_quantity: Math.max(0, Number(p.stock_quantity) - row.quantity) })
+            .eq("id", p.id);
+        }
+      }
+    } catch (e) {
+      console.error("post-order bookkeeping failed:", e);
     }
 
     // Fire-and-forget notifications

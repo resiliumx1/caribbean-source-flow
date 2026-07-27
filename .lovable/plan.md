@@ -1,59 +1,56 @@
-## Is the claim true?
+# Payment Plans + Store Operations Upgrade
 
-**Partially yes.** The shop is a Vite SPA — `index.html` ships an empty `<div id="root">` and React Router renders `/shop` and `/shop/:slug` client-side. Implications:
+Delivered in four phases so each piece can be tested before the next lands.
 
-- **Modern search engines (Google, Bing)** *do* execute JS and can index SPA pages. We already help them: `react-helmet-async` injects per-route `<title>`, description, canonical, OG tags, and JSON-LD via `SEOHead`, and `public/sitemap.xml` is regenerated at build time with one entry per active product (`/shop/<slug>`).
-- **Non-JS fetchers** — ChatGPT's URL fetch tool, Perplexity's crawler in lite mode, Slack/LinkedIn/Facebook link unfurlers, many AI agents — see only the static `index.html`. Right now that file has a generic title/description and **no product-specific metadata**, so they get nothing useful for any product page. That matches exactly what the user reported.
-- "The Answer" and a couple of others appear to work because they're cached on third-party sites or were scraped when JS-rendered.
+---
 
-So the user's diagnosis is correct for the AI/non-JS-crawler audience. The fix is to serve real HTML for product (and other key) pages instead of an empty shell.
+## Phase 1 — Payment plan management
 
-## Proposed fix: prerender product + key marketing pages at build time
+**Detail view.** Clicking a plan row opens a full detail panel showing customer info, package, totals, progress, and a **payment log**: every payment with date/time, amount, card type and last 4, transaction ID, and outcome (succeeded / refunded / partially refunded / failed). Failed and declined attempts are shown too, so you can immediately see if a customer's payment errored out and why (decline reason is already captured server-side).
 
-Add `vite-plugin-prerender-spa` (or `react-snap`) to the build. At `vite build` time, after the normal SPA bundle is produced, Puppeteer loads each listed route against the built output, waits for React + Helmet to hydrate, then writes the fully-rendered HTML to `dist/<route>/index.html`. Lovable hosting's SPA fallback keeps working for everything else; for prerendered routes the static HTML is served first, so non-JS crawlers see the real title, description, OG image, JSON-LD, product name, price, and description — while users still get the live React app once JS loads.
+**Edit.** Admins can edit customer name, email, package name, total amount, minimum payment, and status. Changing the total automatically recalculates the remaining balance from payments actually recorded — it never silently loses paid history. Every edit is written to an audit log (who, when, what changed).
 
-### Routes to prerender
+**Archive + restore.** Delete becomes archive: a confirmation dialog ("Are you sure? This hides the plan and disables its payment link") archives the plan, hides it from the default list, and disables the public `/pay/:id` page. An **Archived** filter shows archived plans with a Restore button. Payment history is always preserved.
 
-Pull the list dynamically in `scripts/generate-prerender-routes.ts` (mirrors `scripts/generate-sitemap.ts`):
+**Health check.** A banner on the plans list flags any plan whose recorded payments don't reconcile with its balance, plus any recent failed charge attempts, so errored payments surface instead of hiding.
 
-- `/`, `/shop`, `/the-answer`, `/webinars`, `/retreats`, `/school/herbal-physician`, `/wholesale`, `/learn`
-- `/shop/<slug>` for every active product
-- `/retreats/book/<slug>` for every active retreat
-- `/learn/<slug>` for every published article
+---
 
-(Skip `/cart`, `/checkout`, `/account/*`, `/admin/*`, `/login`, `/pay/*` — already `noindex` or auth-gated.)
+## Phase 2 — Real refunds (Authorize.net)
 
-### Wire-up
+- Each payment row gets a **Refund** action: full or partial amount, a required reason (dropdown: duplicate charge, customer request, service not rendered, fraud, other) and an optional admin note.
+- A new `authnet-refund` edge function issues a genuine Authorize.net refund. If the transaction hasn't settled yet, Authorize.net can't refund it — the function automatically issues a **void** instead and labels it as such.
+- Refunds are recorded as their own entries, the plan's paid amount and balance adjust back, and a paid plan reverts to active if a refund reopens a balance.
+- Note: Authorize.net requires the card's last 4 digits to refund. We already receive them at charge time but don't store them, so from now on they're saved (masked only — never full card data). **Payments taken before this change cannot be refunded in-app** and must be refunded in the Authorize.net portal; the UI will say so explicitly rather than failing silently.
+- The same refund flow is wired into shop orders (Phase 4).
 
-```text
-package.json
-  "prebuild": "bunx tsx scripts/generate-sitemap.ts && bunx tsx scripts/generate-prerender-routes.ts"
-  "build": "vite build"
-  "postbuild": "bunx tsx scripts/prerender.ts"   # runs Puppeteer over dist/
-```
+---
 
-`scripts/prerender.ts` serves `dist/` on a local port, visits each route headlessly with a 1s settle for Helmet, and writes `dist/<route>/index.html`. Build still falls back to SPA for anything not prerendered.
+## Phase 3 — Auto-billing on payment plans
 
-### What this fixes
+- Optional per plan: choose an amount and a cadence (weekly / bi-weekly / monthly) and an end condition (until balance is zero).
+- The customer authorizes it once on the `/pay/:id` page — clear consent text showing amount, frequency, and total remaining.
+- Implemented with Authorize.net's recurring billing (ARB) so card details stay with Authorize.net, never our database.
+- Admin can pause, resume, change the amount, or cancel a schedule; each auto-charge appears in the payment log like any other payment, and a failed auto-charge raises a Payment Alert.
+- Shop product subscriptions are explicitly **not** part of this — the existing no-subscriptions rule for the store stays.
 
-- ChatGPT/Claude/Perplexity URL fetchers can read every product page.
-- Slack/LinkedIn/Facebook/WhatsApp link previews show the correct product image + description (today they all show the generic OG default).
-- Search engines get instant HTML instead of waiting for the JS-rendering queue — faster, more reliable indexing.
-- No runtime cost, no server needed — pure build-time output. Hosting stays static.
+---
 
-### What this doesn't change
+## Phase 4 — WooCommerce-style store features
 
-- Lovable Cloud, Supabase, RLS, product data, admin flows, styling — untouched.
-- SPA behavior in the browser is identical post-hydration.
+**Coupons / discount codes** — admin-managed codes with percent or fixed amount, minimum order value, expiry date, total and per-customer usage limits, and optional product/category scope. Applied at checkout with live validation, shown as a discount line, and stored on the order.
 
-### Risks / caveats
+**Inventory / stock control** — per-product (and per-variant) stock quantity, a low-stock threshold with admin alerts, automatic decrement on paid orders and increment on refund, and automatic out-of-stock display plus checkout blocking at zero. Products can opt out of stock tracking.
 
-- Build time goes up (~5–10s per prerendered route × ~50 products = roughly 5 extra minutes). Acceptable for the SEO/AI-visibility gain; can be parallelized.
-- If a product is added/edited, the change appears to crawlers only after the next publish. The live site is unaffected.
-- Prices fetched client-side from Supabase won't be in the prerendered HTML unless we also fetch them at build time. Worth doing for product pages — we already query products in the sitemap script and can extend it to seed initial HTML.
+**Order refunds & editing** — refund shop orders (full or partial, with reason) through the same Authorize.net flow, and edit order line items, quantities, and shipping with totals recalculated and every change recorded in the order history.
 
-## Out of scope (ask if you want any)
+**Abandoned carts & customer records** — carts that sit unpaid are captured with contact details where known and listed in admin with a recovery link. A customer view aggregates each buyer's orders, payment plans, lifetime spend, and last activity.
 
-- Switching to full SSR (Next.js / Remix) — much bigger lift, not needed for this problem.
-- Image OG generation per product (currently uses one site-wide OG image).
-- Pre-rendering admin or account pages.
+---
+
+## Technical notes
+
+- Database: add `archived_at`, `archived_by`, `notes` to `payment_plans`; add `status`, `type`, `card_last4`, `card_type`, `refunded_amount`, `parent_payment_id`, `reason`, `created_by` to `payments` (and rename usage of `paypal_capture_id` to a provider-neutral transaction id, keeping the column for compatibility). New tables: `payment_plan_audit`, `coupons`, `coupon_redemptions`, `order_refunds`, `abandoned_carts`, `plan_billing_schedules`. Products gain `stock_quantity`, `low_stock_threshold`, `track_inventory`.
+- All new tables get GRANTs plus admin-only RLS via the existing `is_admin()` function; balance changes stay inside security-definer functions (`apply_payment`, new `apply_refund`) so totals can't drift.
+- New edge functions: `authnet-refund`, `plan-autobill` (scheduled), `authnet-arb` for subscription setup. All reuse the existing shared `authnet.ts` helper with its XSD ordering validator and retry logic.
+- The public `/pay/:id` page and `get-payment-plan` function are updated to reject archived plans.

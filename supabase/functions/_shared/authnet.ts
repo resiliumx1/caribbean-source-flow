@@ -386,3 +386,217 @@ export function splitName(full: string | undefined | null): { firstName: string;
     lastName: parts.slice(1).join(" ").slice(0, 50),
   };
 }
+// ============================================================================
+// Refunds / voids
+// ============================================================================
+
+function merchantAuth() {
+  const name = Deno.env.get("AUTHORIZENET_API_LOGIN_ID");
+  const transactionKey = Deno.env.get("AUTHORIZENET_TRANSACTION_KEY");
+  if (!name || !transactionKey) {
+    throw new Error("Authorize.net credentials are not configured.");
+  }
+  return { name, transactionKey };
+}
+
+export interface TransactionDetails {
+  transId: string;
+  status: string;              // e.g. capturedPendingSettlement, settledSuccessfully
+  settleAmount: number;
+  cardLast4?: string;
+  cardType?: string;
+  settled: boolean;
+  voidable: boolean;
+}
+
+/** Look up a transaction so we know whether to refund (settled) or void. */
+export async function getTransactionDetails(transId: string): Promise<TransactionDetails> {
+  const json = await postWithRetry(JSON.stringify({
+    getTransactionDetailsRequest: {
+      merchantAuthentication: merchantAuth(),
+      transId: String(transId),
+    },
+  }));
+
+  const tx = json?.transaction;
+  if (!tx) {
+    const msg = json?.messages?.message?.[0]?.text || "Transaction not found at Authorize.net.";
+    throw new Error(msg);
+  }
+  const masked = String(tx?.payment?.creditCard?.cardNumber ?? "");
+  const status = String(tx.transactionStatus ?? "");
+  return {
+    transId: String(tx.transId ?? transId),
+    status,
+    settleAmount: Number(tx.settleAmount ?? tx.authAmount ?? 0),
+    cardLast4: masked ? masked.replace(/[^0-9]/g, "").slice(-4) : undefined,
+    cardType: tx?.payment?.creditCard?.cardType ? String(tx.payment.creditCard.cardType) : undefined,
+    settled: status === "settledSuccessfully",
+    voidable: status === "capturedPendingSettlement" || status === "authorizedPendingCapture",
+  };
+}
+
+export interface RefundResult {
+  kind: "refund" | "void";
+  transId: string;
+  amount: number;
+  cardLast4?: string;
+  cardType?: string;
+}
+
+function assertTransactionOk(json: any, action: string): any {
+  const tr = json?.transactionResponse;
+  const approved = tr?.responseCode === "1";
+  if (!approved) {
+    const rawCode = tr?.errors?.[0]?.errorCode || json?.messages?.message?.[0]?.code || "";
+    const rawText = tr?.errors?.[0]?.errorText || json?.messages?.message?.[0]?.text ||
+      `${action} was declined.`;
+    console.error(`[authnet ${action} failed]`, JSON.stringify({ rawCode, rawText, tr }));
+    throw new AuthnetChargeError(friendlyDeclineMessage(String(rawCode), String(rawText)), {
+      reasonCode: String(rawCode),
+      reasonText: String(rawText),
+      transId: tr?.transId ? String(tr.transId) : undefined,
+      raw: { transactionResponse: tr, messages: json?.messages },
+    });
+  }
+  return tr;
+}
+
+/**
+ * Refund (settled) or void (unsettled) a prior Authorize.net transaction.
+ * Amount is ignored for voids — Authorize.net voids the full transaction.
+ */
+export async function refundOrVoid(args: {
+  transId: string;
+  amount: number;
+  cardLast4?: string;
+}): Promise<RefundResult> {
+  const details = await getTransactionDetails(args.transId);
+  const last4 = args.cardLast4 || details.cardLast4;
+
+  if (details.voidable) {
+    const json = await postWithRetry(JSON.stringify({
+      createTransactionRequest: {
+        merchantAuthentication: merchantAuth(),
+        transactionRequest: {
+          transactionType: "voidTransaction",
+          refTransId: String(args.transId),
+        },
+      },
+    }));
+    const tr = assertTransactionOk(json, "void");
+    return {
+      kind: "void",
+      transId: String(tr.transId ?? args.transId),
+      amount: details.settleAmount || args.amount,
+      cardLast4: last4,
+      cardType: details.cardType,
+    };
+  }
+
+  if (!last4) {
+    throw new Error(
+      "This payment can't be refunded automatically because the card's last 4 digits aren't on file. Please refund it in the Authorize.net portal.",
+    );
+  }
+
+  const amount = Number(args.amount);
+  if (!Number.isFinite(amount) || amount <= 0) throw new Error("Invalid refund amount.");
+
+  const tx = orderedObject({
+    transactionType: "refundTransaction",
+    amount: amount.toFixed(2),
+    currencyCode: "USD",
+    payment: {
+      creditCard: { cardNumber: last4, expirationDate: "XXXX" },
+    },
+    refTransId: String(args.transId),
+  } as Record<string, unknown>, TX_REQUEST_ORDER);
+  validateOrder(tx, TX_REQUEST_ORDER, "transactionRequest(refund)");
+
+  const json = await postWithRetry(JSON.stringify({
+    createTransactionRequest: {
+      merchantAuthentication: merchantAuth(),
+      transactionRequest: tx,
+    },
+  }));
+  const tr = assertTransactionOk(json, "refund");
+  return {
+    kind: "refund",
+    transId: String(tr.transId ?? ""),
+    amount,
+    cardLast4: last4,
+    cardType: details.cardType,
+  };
+}
+
+// ============================================================================
+// Recurring billing (ARB)
+// ============================================================================
+
+export interface ArbArgs {
+  name: string;                 // subscription name (<=50)
+  amount: number;
+  intervalLength: number;       // 7 / 14 for days, 1 for months
+  intervalUnit: "days" | "months";
+  startDate: string;            // YYYY-MM-DD
+  totalOccurrences: number;
+  opaqueData: OpaqueData;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
+
+export async function createSubscription(args: ArbArgs): Promise<string> {
+  const json = await postWithRetry(JSON.stringify({
+    ARBCreateSubscriptionRequest: {
+      merchantAuthentication: merchantAuth(),
+      subscription: {
+        name: args.name.slice(0, 50),
+        paymentSchedule: {
+          interval: { length: args.intervalLength, unit: args.intervalUnit },
+          startDate: args.startDate,
+          totalOccurrences: args.totalOccurrences,
+        },
+        amount: Number(args.amount).toFixed(2),
+        payment: { opaqueData: args.opaqueData },
+        customer: args.email ? { email: args.email.slice(0, 255) } : undefined,
+        billTo: {
+          firstName: (args.firstName || "Customer").slice(0, 50),
+          lastName: (args.lastName || "").slice(0, 50),
+        },
+      },
+    },
+  }));
+  const id = json?.subscriptionId;
+  if (!id) {
+    const msg = json?.messages?.message?.[0]?.text || "Could not set up automatic payments.";
+    console.error("[authnet ARB create failed]", JSON.stringify(json?.messages));
+    throw new Error(msg);
+  }
+  return String(id);
+}
+
+export async function cancelSubscription(subscriptionId: string): Promise<void> {
+  const json = await postWithRetry(JSON.stringify({
+    ARBCancelSubscriptionRequest: {
+      merchantAuthentication: merchantAuth(),
+      subscriptionId: String(subscriptionId),
+    },
+  }));
+  if (json?.messages?.resultCode !== "Ok") {
+    const msg = json?.messages?.message?.[0]?.text || "Could not cancel the subscription.";
+    throw new Error(msg);
+  }
+}
+
+/** List transactions Authorize.net has run for a subscription (for syncing). */
+export async function getSubscriptionStatus(subscriptionId: string): Promise<any> {
+  return await postWithRetry(JSON.stringify({
+    ARBGetSubscriptionRequest: {
+      merchantAuthentication: merchantAuth(),
+      subscriptionId: String(subscriptionId),
+      includeTransactions: true,
+    },
+  }));
+}

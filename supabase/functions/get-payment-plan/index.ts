@@ -18,16 +18,24 @@ Deno.serve(async (req) => {
     );
     const { data, error } = await supabase
       .from("payment_plans")
-      .select("id,customer_name,customer_email,package_name,total_amount,amount_paid,balance_remaining,min_payment,status")
+      .select("id,customer_name,customer_email,package_name,total_amount,amount_paid,balance_remaining,min_payment,status,archived_at")
       .eq("id", planId)
       .maybeSingle();
-    if (error || !data) {
+    if (error || !data || data.archived_at) {
       return new Response(JSON.stringify({ error: "Not found" }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    return new Response(JSON.stringify({ plan: data }), {
+    const { data: schedule } = await supabase
+      .from("plan_billing_schedules")
+      .select("id,amount,cadence,status,next_run_date")
+      .eq("plan_id", planId)
+      .eq("status", "active")
+      .maybeSingle();
+
+    const { archived_at: _archived, ...plan } = data as Record<string, unknown>;
+    return new Response(JSON.stringify({ plan, schedule: schedule ?? null }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
