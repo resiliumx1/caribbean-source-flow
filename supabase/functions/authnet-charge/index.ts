@@ -254,6 +254,17 @@ Deno.serve(async (req) => {
       console.error("post-order bookkeeping failed:", e);
     }
 
+    // Close out any abandoned cart captured for this shopper.
+    try {
+      await supabase
+        .from("abandoned_carts")
+        .update({ recovered: true, recovered_order_id: order.id })
+        .eq("email", String(orderInsert.email || "").toLowerCase())
+        .eq("recovered", false);
+    } catch (e) {
+      console.error("abandoned cart close failed:", e);
+    }
+
     // Fire-and-forget notifications
     try {
       await supabase.functions.invoke("send-order-emails", {
