@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LeafDivider, LotusMark, CornerVine } from "./ornaments";
 import { useWceFaqs, useWceSettings } from "./useWceData";
+import { Reveal } from "./motion";
 
 const PARTNERS = ["Mount Kailash", "Kamila's Kitchen", "Jah9", "LifeCraft in Jamaica", "The Ubuntu Movement"];
 
@@ -12,7 +13,8 @@ export function WceFaqSection() {
   return (
     <section className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
       <div className="mx-auto max-w-4xl text-center">
-        <LotusMark size={34} className="mx-auto" />
+        <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
+        <Reveal index={1}>
         <h2 className="mt-8 text-[clamp(2rem,5vw,3.2rem)]" style={{ color: "var(--wce-forest)" }}>
           Frequently Asked Questions
         </h2>
@@ -20,13 +22,15 @@ export function WceFaqSection() {
           Choose the pathway that fits your journey.
         </p>
         <LeafDivider className="mt-10" />
+        </Reveal>
 
         <div className="mt-14 space-y-4 text-left">
-          {(faqs ?? []).map((f) => {
+          {(faqs ?? []).map((f, i) => {
             const isOpen = open === f.id;
             return (
-              <div
+              <Reveal
                 key={f.id}
+                index={Math.min(i, 5)}
                 style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}
               >
                 <h3>
@@ -38,17 +42,23 @@ export function WceFaqSection() {
                     style={{ minHeight: 56, color: "var(--wce-forest)" }}
                   >
                     <span className="text-base sm:text-lg" style={{ fontFamily: "var(--wce-display)" }}>{f.question}</span>
-                    <span aria-hidden="true" className="text-lg" style={{ color: "var(--wce-gold-deep)" }}>
-                      {isOpen ? "−" : "+"}
+                    <span
+                      aria-hidden="true"
+                      className={`wce-faq-icon text-lg ${isOpen ? "is-open" : ""}`}
+                      style={{ color: "var(--wce-gold-deep)" }}
+                    >
+                      +
                     </span>
                   </button>
                 </h3>
-                {isOpen && f.answer && (
-                  <p className="px-6 pb-6 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.75)" }}>
-                    {f.answer}
-                  </p>
-                )}
-              </div>
+                <div className={`wce-faq-panel ${isOpen ? "is-open" : ""}`}>
+                  <div>
+                    <p className="px-6 pb-6 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.75)" }}>
+                      {f.answer}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
             );
           })}
         </div>
@@ -65,14 +75,22 @@ export function WceFinalCta() {
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-50" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-50" />
       <div className="mx-auto max-w-4xl">
-        <LotusMark size={38} className="mx-auto" />
+        <Reveal><LotusMark size={38} className="mx-auto" /></Reveal>
+        <Reveal index={1}>
         <h2 className="mt-8 text-[clamp(2rem,5.2vw,3.4rem)] leading-tight" style={{ color: "var(--wce-cream)" }}>
           Choose Your Pathway and Join Us in Saint Lucia
         </h2>
+        </Reveal>
         <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap">
-          <a href="#pathways" className="wce-btn wce-btn-gold w-full sm:w-auto">Book In-Person Symposium</a>
-          <a href="#pathways" className="wce-btn wce-btn-gold w-full sm:w-auto">Get Online Access</a>
-          <a href="#apply" className="wce-btn wce-btn-gold w-full sm:w-auto">Apply for the Retreat</a>
+          <Reveal index={0} className="w-full sm:w-auto">
+            <a href="#pathways" className="wce-btn wce-btn-gold wce-shimmer-btn w-full sm:w-auto">Book In-Person Symposium</a>
+          </Reveal>
+          <Reveal index={1} className="w-full sm:w-auto">
+            <a href="#pathways" className="wce-btn wce-btn-gold w-full sm:w-auto">Get Online Access</a>
+          </Reveal>
+          <Reveal index={2} className="w-full sm:w-auto">
+            <a href="#apply" className="wce-btn wce-btn-gold w-full sm:w-auto">Apply for the Retreat</a>
+          </Reveal>
         </div>
         <LeafDivider className="mt-16" />
         <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.8)", letterSpacing: "0.22em" }}>
