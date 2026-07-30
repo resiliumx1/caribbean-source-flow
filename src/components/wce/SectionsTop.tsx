@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
 import { useWcePathways, useWceSpeakers, useWceSettings, pathwayFeatures } from "./useWceData";
 import { WceHeroMedia, WceHeroParticles } from "./HeroMedia";
-import { Reveal, useCountUp, useIsTouch, useWceReducedMotion } from "./motion";
+import { Reveal, useCountUp, useInView, useIsTouch, useWceReducedMotion } from "./motion";
 
 const PARTNERS = [
   "Mount Kailash",
@@ -232,7 +233,11 @@ export function WcePathwaysSection() {
                     ))}
                   </ul>
 
-                  <a href="#apply" className="wce-btn wce-btn-gold relative mt-10 w-full">
+                  <a
+                    href="#apply"
+                    className="wce-btn wce-btn-gold relative mt-10 w-full"
+                    onClick={() => dataLayerPush("pathway_click", { pathway_key: p.key, pathway_label: p.label })}
+                  >
                     {cta}
                   </a>
                 </article>
@@ -328,11 +333,21 @@ function SpeakerTile({ speaker }: { speaker: { id: string; name: string; theme: 
 
 export function WceSpeakersSection() {
   const { data: speakers } = useWceSpeakers();
+  const { ref: sectionRef, inView } = useInView<HTMLElement>();
+  const fired = useRef(false);
+
+  useEffect(() => {
+    if (inView && !fired.current) {
+      fired.current = true;
+      dataLayerPush("speaker_view");
+    }
+  }, [inView]);
+
   const featured = speakers?.find((s) => s.is_featured) ?? null;
   const rest = (speakers ?? []).filter((s) => s.id !== featured?.id);
 
   return (
-    <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+    <section ref={sectionRef} className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
       <div className="mx-auto max-w-6xl text-center">
         <Reveal><LotusMark size={38} className="mx-auto" /></Reveal>
         <Reveal index={1}>
