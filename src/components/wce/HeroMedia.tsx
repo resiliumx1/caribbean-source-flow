@@ -1,23 +1,54 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import heroVideo from "@/assets/wce-hero.mp4.asset.json";
 import heroPoster from "@/assets/wce-hero-poster.jpg.asset.json";
 import { useIsMobile, useParallax, useWceReducedData, useWceReducedMotion } from "./motion";
+
+/** True below ~1024px, where 16:9 footage must letterbox instead of crop. */
+function useNarrowViewport() {
+  const [narrow, setNarrow] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const on = () => setNarrow(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return narrow;
+}
 
 /** Hero background: parallaxed video, or a static poster under reduced motion/data. */
 export function WceHeroMedia() {
   const reducedMotion = useWceReducedMotion();
   const reducedData = useWceReducedData();
   const staticOnly = reducedMotion || reducedData;
-  const parallaxRef = useParallax<HTMLDivElement>(0.5);
+  const parallaxRef = useParallax<HTMLDivElement>(0.2);
+  const narrow = useNarrowViewport();
+  const fit = narrow ? "contain" : "cover";
 
   return (
-    <div data-wce-video-slot aria-hidden="true" className="absolute inset-0 overflow-hidden">
-      <div ref={parallaxRef} className="absolute inset-0 -top-[15%] h-[130%] will-change-transform">
+    <div
+      data-wce-video-slot
+      aria-hidden="true"
+      className="absolute inset-0 overflow-hidden"
+      style={{ backgroundColor: "#0f2a1d" }}
+    >
+      <div
+        ref={parallaxRef}
+        className={`absolute inset-0 will-change-transform ${narrow ? "" : "-top-[6%] h-[112%]"}`}
+      >
         {staticOnly ? (
-          <img src={heroPoster.url} alt="" className="h-full w-full object-cover" />
+          <img
+            src={heroPoster.url}
+            alt=""
+            className="h-full w-full"
+            style={{ objectFit: fit, objectPosition: "center center" }}
+          />
         ) : (
           <video
-            className="h-full w-full object-cover"
+            className="h-full w-full"
+            style={{ objectFit: fit, objectPosition: "center center" }}
             src={heroVideo.url}
             poster={heroPoster.url}
             muted
