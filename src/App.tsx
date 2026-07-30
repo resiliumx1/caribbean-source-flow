@@ -134,6 +134,9 @@ function AppContent() {
   );
   const isAdminRoute = location.pathname.startsWith("/admin");
 
+  // Google Tag Manager / Meta Pixel container (IDs live in src/lib/tracking.ts)
+  useEffect(() => { initTracking(); }, []);
+
   const RedirectProductToShop = () => {
     const { slug } = useParams();
     return <Navigate to={`/shop/${slug}`} replace />;
