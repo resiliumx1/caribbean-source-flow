@@ -1,3 +1,7 @@
+import { useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { dataLayerPush, pixelTrack } from "@/lib/tracking";
+import { useWceAttribution } from "./useWceAttribution";
 import { LeafDivider, LotusMark, CompassMandala, CornerVine, EmblemSymposium, EmblemRetreat, EmblemLifecraft, EmblemCeremony } from "./ornaments";
 import { useWceMedia, useWcePathways } from "./useWceData";
 import { Reveal, useInView, useParallax, useWceReducedMotion } from "./motion";
@@ -32,7 +36,17 @@ export function WceMediaSection() {
               className="wce-reel group relative overflow-hidden"
               style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px", background: "var(--wce-forest-mid)" }}
             >
-              <div className="relative aspect-[4/3] w-full">
+              <a
+                href={m.video_url ?? "#"}
+                target={m.video_url ? "_blank" : undefined}
+                rel={m.video_url ? "noopener noreferrer" : undefined}
+                onClick={(e) => {
+                  if (!m.video_url) { e.preventDefault(); return; }
+                  dataLayerPush("video_play", { video_title: m.title, video_url: m.video_url });
+                }}
+                aria-label={m.title ? `Play ${m.title}` : "Play highlight reel"}
+                className="relative block aspect-[4/3] w-full"
+              >
                 {m.thumbnail_url ? (
                   <img src={m.thumbnail_url} alt={m.title ?? "Highlight reel"} className="h-full w-full object-cover" loading="lazy" decoding="async" />
                 ) : (
@@ -52,7 +66,7 @@ export function WceMediaSection() {
                     </svg>
                   </span>
                 </span>
-              </div>
+              </a>
               <p
                 className="px-4 py-4 text-[0.68rem] uppercase"
                 style={{ color: "var(--wce-cream)", letterSpacing: "0.2em", borderTop: "1px solid rgba(201,162,39,0.3)" }}
@@ -172,8 +186,114 @@ export function WceRetreatBand() {
 }
 
 /* ---------------- 8. APPLICATION FORM ---------------- */
+type FieldErrors = { full_name?: string; email?: string };
+
+const MIN_FORM_SECONDS = 3; // spam guard: humans take longer than this to fill the form
+
 export function WceApplicationForm() {
   const { data: pathways } = useWcePathways();
+  const attribution = useWceAttribution();
+  const mountedAt = useRef(Date.now());
+
+  const [values, setValues] = useState({
+    full_name: "",
+    email: "",
+    whatsapp: "",
+    country: "",
+    pathway_interest: "",
+    reason: "",
+    preferred_contact: "",
+    consent_marketing: false,
+    company: "", // honeypot — must stay empty
+  });
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const set = (k: keyof typeof values) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) => {
+    const target = e.target as HTMLInputElement;
+    setValues((v) => ({ ...v, [k]: target.type === "checkbox" ? target.checked : target.value }));
+  };
+
+  const validate = (): FieldErrors => {
+    const next: FieldErrors = {};
+    if (!values.full_name.trim()) next.full_name = "Please share your name so we know who to greet.";
+    if (!values.email.trim()) next.email = "We need an email address to reply to you.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(values.email.trim()))
+      next.email = "That email address does not look quite right.";
+    return next;
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+
+    const next = validate();
+    setErrors(next);
+    if (Object.keys(next).length) return;
+
+    /* --- Spam protection ---------------------------------------------------
+       Cloudflare Turnstile needs a site key, which we do not have yet.
+       Until one is supplied we use a honeypot field + a minimum time-on-form
+       check. TURNSTILE DROP-IN POINT: render <div class="cf-turnstile"
+       data-sitekey={TURNSTILE_SITE_KEY} /> above the submit button, and send
+       the resulting token to a verifying edge function here.
+    ----------------------------------------------------------------------- */
+    const elapsed = (Date.now() - mountedAt.current) / 1000;
+    if (values.company.trim() || elapsed < MIN_FORM_SECONDS) {
+      setSubmitted(true); // silently accept for bots, nothing is stored
+      return;
+    }
+
+    setSubmitting(true);
+    const { error } = await supabase.from("wce_leads").insert({
+      full_name: values.full_name.trim(),
+      email: values.email.trim(),
+      whatsapp: values.whatsapp.trim() || null,
+      country: values.country.trim() || null,
+      pathway_interest: values.pathway_interest || null,
+      reason: values.reason.trim() || null,
+      preferred_contact: values.preferred_contact || null,
+      utm_source: attribution.utm_source,
+      utm_medium: attribution.utm_medium,
+      utm_campaign: attribution.utm_campaign,
+      utm_content: attribution.utm_content,
+      utm_term: attribution.utm_term,
+      referral_code: attribution.referral_code,
+      landing_path: attribution.landing_path,
+      referrer: attribution.referrer,
+      user_agent: attribution.user_agent,
+      consent_marketing: values.consent_marketing,
+      consent_timestamp: values.consent_marketing ? new Date().toISOString() : null,
+    });
+    setSubmitting(false);
+
+    if (error) {
+      setFormError("We could not send your application just now. Please try again in a moment.");
+      return;
+    }
+
+    dataLayerPush("lead_submit", {
+      pathway_interest: values.pathway_interest || null,
+      referral_code: attribution.referral_code,
+    });
+    pixelTrack("Lead", {
+      content_name: "WCE 2026 Application",
+      pathway_interest: values.pathway_interest || null,
+      referral_code: attribution.referral_code,
+    });
+    setSubmitted(true);
+  };
+
+  const contactLabel =
+    values.preferred_contact === "whatsapp" ? "WhatsApp"
+    : values.preferred_contact === "phone" ? "phone"
+    : "email";
+
+  const errStyle: React.CSSProperties = { color: "var(--wce-gold-light)", opacity: 0.85 };
 
   return (
     <section id="apply" className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
@@ -203,30 +323,61 @@ export function WceApplicationForm() {
         </div>
 
         {/* Right — dark form panel */}
-        <div className="px-8 py-16 sm:px-14" style={{ background: "var(--wce-forest)" }}>
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <div className="wce-form-panel px-8 py-16 sm:px-14" style={{ background: "var(--wce-forest)" }}>
+          {submitted ? (
+            <div className="wce-form-confirm flex min-h-[26rem] flex-col items-center justify-center text-center" role="status" aria-live="polite">
+              <LotusMark size={54} />
+              <h3 className="mt-8 text-[clamp(1.7rem,3.6vw,2.4rem)]" style={{ color: "var(--wce-cream)" }}>
+                Thank You — Your Application Is In
+              </h3>
+              <p className="mt-6 max-w-sm text-sm leading-relaxed" style={{ color: "rgba(245,239,224,0.8)" }}>
+                Our team will be in touch personally by {contactLabel} to talk through your goals and the next
+                steps for Caribbean Wellness Saint Lucia 2026.
+              </p>
+              <LeafDivider className="mt-10 w-full max-w-xs" />
+            </div>
+          ) : (
+          <form className="space-y-6" onSubmit={onSubmit} noValidate>
+            {/* Honeypot — hidden from humans, tempting to bots */}
+            <div aria-hidden="true" className="absolute h-0 w-0 overflow-hidden opacity-0">
+              <label htmlFor="wce-company">Company</label>
+              <input id="wce-company" name="company" tabIndex={-1} autoComplete="off" value={values.company} onChange={set("company")} />
+            </div>
+
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <label className="wce-label" htmlFor="wce-name">Full Name</label>
-                <input id="wce-name" className="wce-field" type="text" placeholder="Enter your full name" autoComplete="name" />
+                <input
+                  id="wce-name" className="wce-field" type="text" placeholder="Enter your full name" autoComplete="name"
+                  value={values.full_name} onChange={set("full_name")}
+                  aria-invalid={!!errors.full_name} aria-describedby={errors.full_name ? "wce-name-err" : undefined}
+                />
+                {errors.full_name && <p id="wce-name-err" className="mt-2 text-xs" style={errStyle}>{errors.full_name}</p>}
               </div>
               <div>
                 <label className="wce-label" htmlFor="wce-email">Email Address</label>
-                <input id="wce-email" className="wce-field" type="email" placeholder="Enter your email address" autoComplete="email" />
+                <input
+                  id="wce-email" className="wce-field" type="email" placeholder="Enter your email address" autoComplete="email"
+                  value={values.email} onChange={set("email")}
+                  aria-invalid={!!errors.email} aria-describedby={errors.email ? "wce-email-err" : undefined}
+                />
+                {errors.email && <p id="wce-email-err" className="mt-2 text-xs" style={errStyle}>{errors.email}</p>}
               </div>
               <div>
                 <label className="wce-label" htmlFor="wce-phone">Phone / WhatsApp</label>
-                <input id="wce-phone" className="wce-field" type="tel" placeholder="Enter your phone number" autoComplete="tel" />
+                <input id="wce-phone" className="wce-field" type="tel" placeholder="Enter your phone number" autoComplete="tel"
+                  value={values.whatsapp} onChange={set("whatsapp")} />
               </div>
               <div>
                 <label className="wce-label" htmlFor="wce-country">Country</label>
-                <input id="wce-country" className="wce-field" type="text" placeholder="Enter your country or city" autoComplete="country-name" />
+                <input id="wce-country" className="wce-field" type="text" placeholder="Enter your country or city" autoComplete="country-name"
+                  value={values.country} onChange={set("country")} />
               </div>
             </div>
 
             <div>
               <label className="wce-label" htmlFor="wce-pathway">Which pathway are you most interested in?</label>
-              <select id="wce-pathway" className="wce-field" defaultValue="">
+              <select id="wce-pathway" className="wce-field" value={values.pathway_interest} onChange={set("pathway_interest")}>
                 <option value="" disabled>Select your preferred experience</option>
                 {(pathways ?? []).map((p) => (
                   <option key={p.id} value={p.key}>{p.label}</option>
@@ -236,12 +387,13 @@ export function WceApplicationForm() {
 
             <div>
               <label className="wce-label" htmlFor="wce-message">What excites you most about the retreat?</label>
-              <textarea id="wce-message" className="wce-field" rows={4} placeholder="Share what inspires you" />
+              <textarea id="wce-message" className="wce-field" rows={4} placeholder="Share what inspires you"
+                value={values.reason} onChange={set("reason")} />
             </div>
 
             <div>
               <label className="wce-label" htmlFor="wce-contact">Preferred Contact Method</label>
-              <select id="wce-contact" className="wce-field" defaultValue="">
+              <select id="wce-contact" className="wce-field" value={values.preferred_contact} onChange={set("preferred_contact")}>
                 <option value="" disabled>Select your preferred contact method</option>
                 <option value="email">Email</option>
                 <option value="whatsapp">WhatsApp</option>
@@ -250,15 +402,21 @@ export function WceApplicationForm() {
             </div>
 
             <label className="flex items-start gap-3 text-xs leading-relaxed" style={{ color: "rgba(245,239,224,0.75)" }}>
-              <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[var(--wce-gold)]" />
+              <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[var(--wce-gold)]"
+                checked={values.consent_marketing} onChange={set("consent_marketing")} />
               <span>Yes, keep me updated about Caribbean Wellness Saint Lucia 2026 and Mount Kailash offerings.</span>
             </label>
 
-            <button type="submit" className="wce-btn wce-btn-gold w-full">Submit Retreat Application</button>
+            {formError && <p className="text-xs" style={errStyle}>{formError}</p>}
+
+            <button type="submit" className="wce-btn wce-btn-gold w-full" disabled={submitting} style={submitting ? { opacity: 0.65, cursor: "wait" } : undefined}>
+              {submitting ? "Sending your application…" : "Submit Retreat Application"}
+            </button>
             <p className="text-center text-[0.68rem]" style={{ color: "rgba(245,239,224,0.55)" }}>
               We respect your privacy. Your information is secure with us.
             </p>
           </form>
+          )}
         </div>
       </Reveal>
     </section>
