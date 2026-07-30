@@ -27,7 +27,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center lg:h-[calc(100vw/1.756)] lg:max-h-[100svh] lg:min-h-[620px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
@@ -157,7 +157,7 @@ export function WcePathwaysSection() {
         </Reveal>
         <Reveal index={2}>
           <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
-            Three ways to experience transformation.
+            Limited spaces available for each pathway.
           </p>
           <LeafDivider className="mt-10" />
         </Reveal>
