@@ -12,6 +12,7 @@ import { PAYPAL_CLIENT_ID } from "@/lib/paypal";
 import { StoreProvider } from "@/lib/store-context";
 import { ComparisonProvider } from "@/lib/comparison-context";
 import { StoreHeader } from "@/components/store/StoreHeader";
+import { initTracking } from "@/lib/tracking";
 import { CompareBar } from "@/components/store/CompareBar";
 import CookieConsent from "@/components/CookieConsent";
 import ComingSoon from "@/components/ComingSoon";
