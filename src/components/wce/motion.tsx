@@ -53,7 +53,7 @@ export function useIsTouch() {
 }
 
 /** Fires once when the element scrolls into view. */
-export function useInView<T extends HTMLElement>(rootMargin = "-10% 0px -10% 0px") {
+export function useInView<T extends Element = HTMLElement>(rootMargin = "-10% 0px -10% 0px") {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
