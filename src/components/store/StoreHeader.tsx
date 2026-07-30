@@ -169,7 +169,7 @@ export function StoreHeader() {
                       : 'text-foreground hover:text-primary'
                   }`}
                 >
-                  {link.label}
+                  {link.label === WCE_LABEL ? <WceNavLabel /> : link.label}
                 </Link>
               );
             })}
@@ -245,7 +245,8 @@ export function StoreHeader() {
                           isActive ? 'text-primary' : 'text-foreground hover:text-primary'
                         }`}
                       >
-                        {isActive && "→ "}{link.label}
+                        {isActive && "→ "}
+                        {link.label === WCE_LABEL ? <WceNavLabel /> : link.label}
                       </Link>
                     );
                   })}
