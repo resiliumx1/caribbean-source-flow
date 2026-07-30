@@ -21,7 +21,7 @@ export default function WCE2026() {
   const pageViewFired = useRef(false);
 
   useEffect(() => {
-    if (pageViewFired.current) return;
+    if (pageViewFired.current || !attribution.user_agent) return; // wait for UTM capture
     pageViewFired.current = true;
     dataLayerPush("page_view", {
       page_path: "/wce-2026",
@@ -29,7 +29,7 @@ export default function WCE2026() {
       utm_source: attribution.utm_source,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [attribution.utm_source]);
+  }, [attribution.user_agent, attribution.utm_source]);
 
   const name = settings?.hero_headline?.trim() || "Caribbean Wellness Saint Lucia 2026";
   const description =
