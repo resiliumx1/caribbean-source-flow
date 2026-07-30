@@ -36,7 +36,17 @@ export function WceMediaSection() {
               className="wce-reel group relative overflow-hidden"
               style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px", background: "var(--wce-forest-mid)" }}
             >
-              <div className="relative aspect-[4/3] w-full">
+              <a
+                href={m.video_url ?? "#"}
+                target={m.video_url ? "_blank" : undefined}
+                rel={m.video_url ? "noopener noreferrer" : undefined}
+                onClick={(e) => {
+                  if (!m.video_url) { e.preventDefault(); return; }
+                  dataLayerPush("video_play", { video_title: m.title, video_url: m.video_url });
+                }}
+                aria-label={m.title ? `Play ${m.title}` : "Play highlight reel"}
+                className="relative block aspect-[4/3] w-full"
+              >
                 {m.thumbnail_url ? (
                   <img src={m.thumbnail_url} alt={m.title ?? "Highlight reel"} className="h-full w-full object-cover" loading="lazy" decoding="async" />
                 ) : (
@@ -56,7 +66,7 @@ export function WceMediaSection() {
                     </svg>
                   </span>
                 </span>
-              </div>
+              </a>
               <p
                 className="px-4 py-4 text-[0.68rem] uppercase"
                 style={{ color: "var(--wce-cream)", letterSpacing: "0.2em", borderTop: "1px solid rgba(201,162,39,0.3)" }}
