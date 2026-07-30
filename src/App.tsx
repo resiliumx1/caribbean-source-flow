@@ -65,6 +65,8 @@ const AdminCoupons = lazy(() => import("./pages/AdminCoupons"));
 const AdminAbandonedCarts = lazy(() => import("./pages/AdminAbandonedCarts"));
 const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
 const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
+const AdminWCE = lazy(() => import("./pages/AdminWCE"));
+const WCE2026 = lazy(() => import("./pages/WCE2026"));
 
 const queryClient = new QueryClient();
 
@@ -160,6 +162,7 @@ function AppContent() {
           <Route path="/learn/:slug" element={<LearnArticle />} />
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/goddess" element={<GoddessCard />} />
+          <Route path="/wce-2026" element={<WCE2026 />} />
           <Route path="/account" element={<CustomerAccountPage />} />
           <Route path="/account/orders" element={<MyOrders />} />
           <Route path="/account/orders/:orderNumber" element={<MyOrderDetail />} />
@@ -188,6 +191,7 @@ function AppContent() {
             <Route path="payment-alerts" element={<AdminPaymentAlerts />} />
             <Route path="coupons" element={<AdminCoupons />} />
             <Route path="abandoned-carts" element={<AdminAbandonedCarts />} />
+            <Route path="wce" element={<AdminWCE />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
