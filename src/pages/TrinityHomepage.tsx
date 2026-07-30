@@ -7,6 +7,7 @@ import { useState } from "react";
 import { GateEntrance, isReturningVisitor } from "@/components/gate-entrance";
 import { SITE_URL } from "@/lib/site-config";
 import { DirectAnswer } from "@/components/DirectAnswer";
+import { WcePopup } from "@/components/wce/WcePopup";
 
 // Lazy load below-fold sections
 const SourceStory = lazy(() => import("@/components/homepage/SourceStory").then(m => ({ default: m.SourceStory })));
