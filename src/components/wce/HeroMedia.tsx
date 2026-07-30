@@ -4,11 +4,11 @@ import heroPoster from "@/assets/wce-hero-poster.jpg.asset.json";
 import { useIsMobile, useParallax, useWceReducedData, useWceReducedMotion } from "./motion";
 
 /**
- * Cover (with a light parallax overscale) only when the viewport is wider than
- * the footage plus the overscale headroom — otherwise the 16:9 frame letterboxes
- * so both Pitons always stay in shot.
+ * From 1024px up the hero section itself takes the footage aspect ratio, so the
+ * video can cover edge to edge with effectively no cropping. Below that the
+ * frame letterboxes (both Pitons stay in shot) over a blurred poster fill.
  */
-const COVER_QUERY = "(min-width: 1024px) and (min-aspect-ratio: 2/1)";
+const COVER_QUERY = "(min-width: 1024px)";
 
 function useCoverMode() {
   const [cover, setCover] = useState(
@@ -29,7 +29,7 @@ export function WceHeroMedia() {
   const reducedMotion = useWceReducedMotion();
   const reducedData = useWceReducedData();
   const staticOnly = reducedMotion || reducedData;
-  const parallaxRef = useParallax<HTMLDivElement>(0.2);
+  const parallaxRef = useParallax<HTMLDivElement>(0.12);
   const cover = useCoverMode();
   const fit = cover ? "cover" : "contain";
 
@@ -40,6 +40,18 @@ export function WceHeroMedia() {
       className="absolute inset-0 overflow-hidden"
       style={{ backgroundColor: "#0f2a1d" }}
     >
+      {!cover && (
+        <>
+          <img
+            src={heroPoster.url}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full scale-125 object-cover"
+            style={{ filter: "blur(38px) saturate(0.9)", objectPosition: "center center" }}
+          />
+          <div className="absolute inset-0" style={{ background: "rgba(15,42,29,0.55)" }} />
+        </>
+      )}
       <div
         ref={cover ? parallaxRef : undefined}
         className={`absolute inset-0 will-change-transform ${cover ? "-top-[6%] h-[112%]" : ""}`}
