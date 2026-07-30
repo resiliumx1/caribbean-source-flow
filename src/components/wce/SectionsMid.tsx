@@ -1,5 +1,6 @@
 import { LeafDivider, LotusMark, CompassMandala, CornerVine, EmblemSymposium, EmblemRetreat, EmblemLifecraft, EmblemCeremony } from "./ornaments";
 import { useWceMedia, useWcePathways } from "./useWceData";
+import { Reveal, useInView, useParallax, useWceReducedMotion } from "./motion";
 
 /* ---------------- 5. HIGHLIGHT REELS ---------------- */
 export function WceMediaSection() {
@@ -8,7 +9,8 @@ export function WceMediaSection() {
   return (
     <section className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
       <div className="mx-auto max-w-6xl text-center">
-        <LotusMark size={34} className="mx-auto" />
+        <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
+        <Reveal index={1}>
         <h2
           className="mt-8 text-[clamp(1.7rem,4.2vw,2.8rem)] uppercase"
           style={{ color: "var(--wce-forest)", letterSpacing: "0.12em" }}
@@ -19,12 +21,15 @@ export function WceMediaSection() {
           From previous staging
         </p>
         <LeafDivider className="mt-10" />
+        </Reveal>
 
         <ul className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {(media ?? []).map((m) => (
-            <li
+          {(media ?? []).map((m, i) => (
+            <Reveal
+              as="li"
               key={m.id}
-              className="group relative overflow-hidden"
+              index={i}
+              className="wce-reel group relative overflow-hidden"
               style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px", background: "var(--wce-forest-mid)" }}
             >
               <div className="relative aspect-[4/3] w-full">
@@ -39,7 +44,7 @@ export function WceMediaSection() {
                 )}
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span
-                    className="flex h-14 w-14 items-center justify-center rounded-full"
+                    className="wce-play flex h-14 w-14 items-center justify-center rounded-full"
                     style={{ border: "1px solid var(--wce-gold)", background: "rgba(15,42,29,0.55)" }}
                   >
                     <svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true">
@@ -54,7 +59,7 @@ export function WceMediaSection() {
               >
                 {m.title}
               </p>
-            </li>
+            </Reveal>
           ))}
         </ul>
       </div>
@@ -71,37 +76,42 @@ const ACTIVITIES = [
 ];
 
 export function WceActivitiesSection() {
+  const { ref: lineRef, inView: lineIn } = useInView<HTMLSpanElement>();
+  const reduced = useWceReducedMotion();
   return (
     <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
       <CornerVine className="pointer-events-none absolute left-0 top-8 opacity-40" />
       <CornerVine flip className="pointer-events-none absolute right-0 top-8 opacity-40" />
       <div className="mx-auto max-w-6xl text-center">
-        <LotusMark size={34} className="mx-auto" />
+        <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
+        <Reveal index={1}>
         <h2 className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]" style={{ color: "var(--wce-forest)" }}>
           Caribbean Wellness Experience Activities
         </h2>
         <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
           A transformational journey of learning, connection, and renewal in Saint Lucia.
         </p>
+        </Reveal>
 
         <div className="relative mt-20">
           <span
+            ref={lineRef}
             aria-hidden="true"
-            className="absolute left-[12%] right-[12%] top-11 hidden h-px lg:block"
+            className={`wce-connect-line ${reduced || lineIn ? "is-drawn" : ""} absolute left-[12%] right-[12%] top-11 hidden h-px lg:block`}
             style={{ background: "linear-gradient(to right, transparent, var(--wce-gold), transparent)" }}
           />
           <ul className="relative grid gap-14 sm:grid-cols-2 lg:grid-cols-4">
-            {ACTIVITIES.map(({ Emblem, label, copy }) => (
-              <li key={label} className="flex flex-col items-center text-center">
+            {ACTIVITIES.map(({ Emblem, label, copy }, i) => (
+              <Reveal as="li" key={label} index={i} className="flex flex-col items-center text-center">
                 <span
                   className="flex h-[88px] w-[88px] items-center justify-center rounded-full"
                   style={{ background: "var(--wce-cream-warm)" }}
                 >
-                  <Emblem />
+                  <Emblem delay={i * 150} />
                 </span>
                 <h3 className="mt-6 text-xl" style={{ color: "var(--wce-forest)" }}>{label}</h3>
                 <p className="mt-3 max-w-[15rem] text-sm" style={{ color: "rgba(26,26,20,0.68)" }}>{copy}</p>
-              </li>
+              </Reveal>
             ))}
           </ul>
         </div>
@@ -119,35 +129,37 @@ const RETREAT_POINTS = [
 ];
 
 export function WceRetreatBand() {
+  const bandRef = useParallax<HTMLDivElement>(0.18);
   return (
     <section className="relative overflow-hidden px-6 py-24 text-center sm:py-32" style={{ background: "var(--wce-forest)" }}>
       <div
+        ref={bandRef}
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute -inset-y-[25%] inset-x-0 will-change-transform"
         style={{ background: "radial-gradient(70% 60% at 50% 50%, rgba(45,74,53,0.6), transparent 70%)" }}
       />
       <div className="relative mx-auto flex max-w-3xl flex-col items-center">
-        <CompassMandala className="opacity-90" />
-        <p className="wce-eyebrow mt-10" style={{ color: "var(--wce-gold)" }}>
+        <CompassMandala className="wce-mandala-spin opacity-90" />
+        <Reveal><p className="wce-eyebrow mt-10" style={{ color: "var(--wce-gold)" }}>
           Caribbean Wellness Saint Lucia 2026
-        </p>
-        <h2 className="mt-6 text-[clamp(1.9rem,4.8vw,3.2rem)]" style={{ color: "var(--wce-cream)" }}>
+        </p></Reveal>
+        <Reveal index={1}><h2 className="mt-6 text-[clamp(1.9rem,4.8vw,3.2rem)]" style={{ color: "var(--wce-cream)" }}>
           Apply for the 6 Day Fortification Retreat &amp; LifeCraft Experience
-        </h2>
+        </h2></Reveal>
         <p className="mt-6 text-base italic" style={{ color: "var(--wce-gold-light)", fontFamily: "var(--wce-display)", fontSize: "1.3rem" }}>
           Step away. Go deeper. Return renewed.
         </p>
 
         <ul className="mt-12 space-y-4 text-left">
-          {RETREAT_POINTS.map((p) => (
-            <li key={p} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
+          {RETREAT_POINTS.map((p, i) => (
+            <Reveal as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
               <span aria-hidden="true" style={{ color: "var(--wce-gold)" }}>✦</span>
               <span>{p}</span>
-            </li>
+            </Reveal>
           ))}
         </ul>
 
-        <a href="#apply" className="wce-btn wce-btn-gold mt-14">Apply for the Retreat</a>
+        <Reveal><a href="#apply" className="wce-btn wce-btn-gold mt-14">Apply for the Retreat</a></Reveal>
 
         <LeafDivider className="mt-16 w-full max-w-md" />
         <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.7)", letterSpacing: "0.2em" }}>
@@ -165,7 +177,7 @@ export function WceApplicationForm() {
 
   return (
     <section id="apply" className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
-      <div className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-2" style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}>
+      <Reveal className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-2" style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}>
         {/* Left — cream panel */}
         <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-14 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
           <CornerVine className="pointer-events-none absolute -left-2 bottom-0 opacity-40" />
@@ -248,7 +260,7 @@ export function WceApplicationForm() {
             </p>
           </form>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
