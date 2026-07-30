@@ -151,6 +151,7 @@ const TrinityHomepage = () => {
 
       <GoddessWhatsApp />
       <ConsultationToast />
+      <WcePopup />
     </main>
   );
 };
