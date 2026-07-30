@@ -3,19 +3,25 @@ import heroVideo from "@/assets/wce-hero.mp4.asset.json";
 import heroPoster from "@/assets/wce-hero-poster.jpg.asset.json";
 import { useIsMobile, useParallax, useWceReducedData, useWceReducedMotion } from "./motion";
 
-/** True below ~1024px, where 16:9 footage must letterbox instead of crop. */
-function useNarrowViewport() {
-  const [narrow, setNarrow] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches,
+/**
+ * Cover (with a light parallax overscale) only when the viewport is wider than
+ * the footage plus the overscale headroom — otherwise the 16:9 frame letterboxes
+ * so both Pitons always stay in shot.
+ */
+const COVER_QUERY = "(min-width: 1024px) and (min-aspect-ratio: 2/1)";
+
+function useCoverMode() {
+  const [cover, setCover] = useState(
+    () => typeof window !== "undefined" && window.matchMedia(COVER_QUERY).matches,
   );
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 1023px)");
-    const on = () => setNarrow(mq.matches);
+    const mq = window.matchMedia(COVER_QUERY);
+    const on = () => setCover(mq.matches);
     on();
     mq.addEventListener("change", on);
     return () => mq.removeEventListener("change", on);
   }, []);
-  return narrow;
+  return cover;
 }
 
 /** Hero background: parallaxed video, or a static poster under reduced motion/data. */
@@ -24,8 +30,8 @@ export function WceHeroMedia() {
   const reducedData = useWceReducedData();
   const staticOnly = reducedMotion || reducedData;
   const parallaxRef = useParallax<HTMLDivElement>(0.2);
-  const narrow = useNarrowViewport();
-  const fit = narrow ? "contain" : "cover";
+  const cover = useCoverMode();
+  const fit = cover ? "cover" : "contain";
 
   return (
     <div
@@ -35,8 +41,8 @@ export function WceHeroMedia() {
       style={{ backgroundColor: "#0f2a1d" }}
     >
       <div
-        ref={parallaxRef}
-        className={`absolute inset-0 will-change-transform ${narrow ? "" : "-top-[6%] h-[112%]"}`}
+        ref={cover ? parallaxRef : undefined}
+        className={`absolute inset-0 will-change-transform ${cover ? "-top-[6%] h-[112%]" : ""}`}
       >
         {staticOnly ? (
           <img
