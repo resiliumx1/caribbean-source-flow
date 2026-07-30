@@ -2252,6 +2252,7 @@ export type Database = {
         Args: { p_email: string; p_product_id: string }
         Returns: boolean
       }
+      clean_product_text: { Args: { t: string }; Returns: string }
       is_admin: { Args: never; Returns: boolean }
       is_order_owner_or_admin: {
         Args: { target_order_id: string }
