@@ -1,0 +1,118 @@
+/* Caribbean Wellness Experience 2026 — route-scoped theme.
+   All tokens live under .wce-root; global design tokens are untouched. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+.wce-root {
+  --wce-forest: #0F2A1D;
+  --wce-forest-mid: #1B3A29;
+  --wce-moss: #2D4A35;
+  --wce-gold: #C9A227;
+  --wce-gold-light: #E4C766;
+  --wce-gold-deep: #9A7B1C;
+  --wce-cream: #F5EFE0;
+  --wce-cream-warm: #EFE5D0;
+  --wce-ink: #1A1A14;
+
+  --wce-display: 'Cormorant Garamond', Georgia, serif;
+  --wce-body: 'Inter', system-ui, sans-serif;
+
+  background: var(--wce-cream);
+  color: var(--wce-ink);
+  font-family: var(--wce-body);
+  font-weight: 300;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wce-root h1,
+.wce-root h2,
+.wce-root h3,
+.wce-root .wce-display {
+  font-family: var(--wce-display);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+}
+
+/* Eyebrow / label lettering */
+.wce-eyebrow {
+  font-family: var(--wce-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.wce-root ::selection { background: var(--wce-gold); color: var(--wce-forest); }
+
+/* Buttons */
+.wce-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.9rem 2rem;
+  border-radius: 2px;
+  font-family: var(--wce-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: background-color .3s ease, color .3s ease, border-color .3s ease;
+}
+.wce-btn-gold {
+  background: linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold));
+  color: var(--wce-forest);
+  border: 1px solid var(--wce-gold-deep);
+}
+.wce-btn-gold:hover { background: var(--wce-gold-deep); color: var(--wce-cream); }
+.wce-btn-outline {
+  background: transparent;
+  color: var(--wce-gold-light);
+  border: 1px solid var(--wce-gold);
+}
+.wce-btn-outline:hover { background: var(--wce-gold); color: var(--wce-forest); }
+
+.wce-root a:focus-visible,
+.wce-root button:focus-visible,
+.wce-root input:focus-visible,
+.wce-root select:focus-visible,
+.wce-root textarea:focus-visible {
+  outline: 2px solid var(--wce-gold-light);
+  outline-offset: 3px;
+}
+
+/* Oversized outlined year numeral */
+.wce-year {
+  font-family: var(--wce-display);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: 0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--wce-gold-light);
+  text-shadow: 0 0 40px rgba(201, 162, 39, 0.28);
+}
+
+/* Form fields */
+.wce-field {
+  width: 100%;
+  min-height: 48px;
+  background: rgba(245, 239, 224, 0.06);
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  border-radius: 2px;
+  padding: 0.75rem 1rem;
+  color: var(--wce-cream);
+  font-family: var(--wce-body);
+  font-size: 0.9rem;
+}
+.wce-field::placeholder { color: rgba(245, 239, 224, 0.4); }
+.wce-field option { color: var(--wce-ink); }
+.wce-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wce-gold-light);
+}
