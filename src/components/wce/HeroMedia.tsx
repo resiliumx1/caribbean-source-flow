@@ -8,7 +8,7 @@ import { useIsMobile, useParallax, useWceReducedData, useWceReducedMotion } from
  * video can cover edge to edge with effectively no cropping. Below that the
  * frame letterboxes (both Pitons stay in shot) over a blurred poster fill.
  */
-const COVER_QUERY = "(min-width: 1024px)";
+const COVER_QUERY = "(min-width: 1280px)";
 
 function useCoverMode() {
   const [cover, setCover] = useState(
