@@ -27,7 +27,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center lg:h-[calc(100vw/1.756)] lg:max-h-[100svh] lg:min-h-[620px]"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[700px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
