@@ -143,7 +143,7 @@ export function WcePathwaysSection() {
                 {isRetreat && (
                   <div
                     aria-hidden="true"
-                    className="absolute -right-14 top-6 w-48 rotate-45 py-1.5 text-center text-[0.55rem] uppercase"
+                    className="absolute -right-12 top-9 w-52 rotate-45 py-1.5 text-center text-[0.55rem] uppercase"
                     style={{ background: "var(--wce-gold)", color: "var(--wce-forest)", letterSpacing: "0.2em", fontWeight: 600 }}
                   >
                     Applications Open
