@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { WceThemeProvider } from "@/components/wce/WceThemeProvider";
 import { WceHero, WcePartnerStrip, WcePathwaysSection, WceSpeakersSection } from "@/components/wce/SectionsTop";
@@ -18,7 +18,11 @@ export default function WCE2026() {
   const { data: pathways } = useWcePathways();
   const attribution = useWceAttribution();
 
+  const pageViewFired = useRef(false);
+
   useEffect(() => {
+    if (pageViewFired.current) return;
+    pageViewFired.current = true;
     dataLayerPush("page_view", {
       page_path: "/wce-2026",
       page_title: "Caribbean Wellness Saint Lucia 2026",
