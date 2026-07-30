@@ -2042,6 +2042,306 @@ export type Database = {
           },
         ]
       }
+      wce_faqs: {
+        Row: {
+          answer: string | null
+          created_at: string
+          display_order: number
+          id: string
+          published: boolean
+          question: string
+        }
+        Insert: {
+          answer?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          published?: boolean
+          question: string
+        }
+        Update: {
+          answer?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          published?: boolean
+          question?: string
+        }
+        Relationships: []
+      }
+      wce_leads: {
+        Row: {
+          consent_marketing: boolean
+          consent_timestamp: string | null
+          country: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          ip_address: string | null
+          landing_path: string | null
+          notes: string | null
+          pathway_interest: string | null
+          preferred_contact: string | null
+          reason: string | null
+          referral_code: string | null
+          referrer: string | null
+          status: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          consent_marketing?: boolean
+          consent_timestamp?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          ip_address?: string | null
+          landing_path?: string | null
+          notes?: string | null
+          pathway_interest?: string | null
+          preferred_contact?: string | null
+          reason?: string | null
+          referral_code?: string | null
+          referrer?: string | null
+          status?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          consent_marketing?: boolean
+          consent_timestamp?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          ip_address?: string | null
+          landing_path?: string | null
+          notes?: string | null
+          pathway_interest?: string | null
+          preferred_contact?: string | null
+          reason?: string | null
+          referral_code?: string | null
+          referrer?: string | null
+          status?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      wce_media: {
+        Row: {
+          category: string | null
+          created_at: string
+          display_order: number
+          id: string
+          published: boolean
+          thumbnail_url: string | null
+          title: string | null
+          video_url: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          published?: boolean
+          thumbnail_url?: string | null
+          title?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          published?: boolean
+          thumbnail_url?: string | null
+          title?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      wce_pathways: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          currency: string
+          display_order: number
+          features: Json
+          id: string
+          is_highlighted: boolean
+          is_open: boolean
+          key: string
+          label: string
+          price: number
+          sold_count: number
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          currency?: string
+          display_order?: number
+          features?: Json
+          id?: string
+          is_highlighted?: boolean
+          is_open?: boolean
+          key: string
+          label: string
+          price?: number
+          sold_count?: number
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          currency?: string
+          display_order?: number
+          features?: Json
+          id?: string
+          is_highlighted?: boolean
+          is_open?: boolean
+          key?: string
+          label?: string
+          price?: number
+          sold_count?: number
+        }
+        Relationships: []
+      }
+      wce_referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          discount_percent: number
+          id: string
+          is_active: boolean
+          owner_name: string | null
+          owner_type: string | null
+          use_count: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_active?: boolean
+          owner_name?: string | null
+          owner_type?: string | null
+          use_count?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_active?: boolean
+          owner_name?: string | null
+          owner_type?: string | null
+          use_count?: number
+        }
+        Relationships: []
+      }
+      wce_settings: {
+        Row: {
+          created_at: string
+          event_dates: string | null
+          hero_headline: string | null
+          hero_subline: string | null
+          id: string
+          popup_cta_text: string | null
+          popup_enabled: boolean
+          popup_flyer_url: string | null
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_dates?: string | null
+          hero_headline?: string | null
+          hero_subline?: string | null
+          id?: string
+          popup_cta_text?: string | null
+          popup_enabled?: boolean
+          popup_flyer_url?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_dates?: string | null
+          hero_headline?: string | null
+          hero_subline?: string | null
+          id?: string
+          popup_cta_text?: string | null
+          popup_enabled?: boolean
+          popup_flyer_url?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      wce_speakers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_featured: boolean
+          name: string
+          portrait_url: string | null
+          published: boolean
+          session_time: string | null
+          session_title: string | null
+          theme: string | null
+          title: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          name: string
+          portrait_url?: string | null
+          published?: boolean
+          session_time?: string | null
+          session_title?: string | null
+          theme?: string | null
+          title?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          name?: string
+          portrait_url?: string | null
+          published?: boolean
+          session_time?: string | null
+          session_title?: string | null
+          theme?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
       webinar_videos: {
         Row: {
           category: string
@@ -2252,6 +2552,7 @@ export type Database = {
         Args: { p_email: string; p_product_id: string }
         Returns: boolean
       }
+      clean_product_text: { Args: { t: string }; Returns: string }
       is_admin: { Args: never; Returns: boolean }
       is_order_owner_or_admin: {
         Args: { target_order_id: string }

@@ -20,6 +20,7 @@ const NAV_LINKS = [
   { label: 'Payment Alerts', href: '/admin/payment-alerts' },
   { label: 'Discount Codes', href: '/admin/coupons' },
   { label: 'Abandoned Carts', href: '/admin/abandoned-carts' },
+  { label: 'WCE 2026', href: '/admin/wce' },
   { label: 'Notifications', href: '/admin/notifications' },
 ];
 
