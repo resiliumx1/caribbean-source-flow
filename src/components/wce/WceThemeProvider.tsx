@@ -8,10 +8,19 @@ import { useWceReducedMotion } from "./motion";
 export function WceThemeProvider({ children }: { children: React.ReactNode }) {
   const reduced = useWceReducedMotion();
 
-  // Route-scoped: let the site header float transparently over the hero.
+  // Route-scoped: the site header floats transparently over the hero, then
+  // returns to its solid state once the hero has scrolled past.
   useEffect(() => {
-    document.body.classList.add("wce-transparent-header");
-    return () => document.body.classList.remove("wce-transparent-header");
+    const onScroll = () => {
+      const overHero = window.scrollY < window.innerHeight * 0.8;
+      document.body.classList.toggle("wce-transparent-header", overHero);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      document.body.classList.remove("wce-transparent-header");
+    };
   }, []);
 
   useEffect(() => {
