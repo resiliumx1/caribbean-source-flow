@@ -358,7 +358,7 @@ function PortraitCircle({
             src={url}
             alt={name}
             className="wce-portrait-img h-full w-full object-cover"
-            style={{ objectPosition: "50% 20%" }}
+            style={{ objectPosition: "50% 34%" }}
             loading="lazy"
             decoding="async"
           />
