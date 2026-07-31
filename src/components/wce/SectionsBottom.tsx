@@ -84,23 +84,37 @@ export function WceFinalCta() {
     <section className="relative overflow-hidden px-6 py-24 text-center sm:py-32" style={{ background: "var(--wce-forest)" }}>
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-50" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-50" />
-      <div className="mx-auto max-w-4xl">
-        <Reveal><LotusMark size={38} className="mx-auto" /></Reveal>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+      >
+        <FlowerOfLifeMark size={520} opacity={0.1} />
+      </span>
+      <div className="relative mx-auto max-w-4xl">
+        <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
+        <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
         <h2 className="mt-8 text-[clamp(2rem,5.2vw,3.4rem)] leading-tight" style={{ color: "var(--wce-cream)" }}>
           Choose Your Pathway and Join Us in Saint Lucia
         </h2>
         </Reveal>
-        <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap">
-          <Reveal index={0} className="w-full sm:w-auto">
-            <a href="#pathways" className="wce-btn wce-btn-gold wce-shimmer-btn w-full sm:w-auto">Book In-Person Symposium</a>
-          </Reveal>
-          <Reveal index={1} className="w-full sm:w-auto">
-            <a href="#pathways" className="wce-btn wce-btn-gold w-full sm:w-auto">Get Online Access</a>
-          </Reveal>
-          <Reveal index={2} className="w-full sm:w-auto">
-            <a href="#apply" className="wce-btn wce-btn-gold w-full sm:w-auto">Apply for the Retreat</a>
-          </Reveal>
+        <DiamondRule className="mx-auto mt-10 max-w-[13rem]" />
+        <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap">
+          {[
+            { label: "Book In-Person Symposium", href: "#pathways", shimmer: true },
+            { label: "Get Online Access", href: "#pathways", shimmer: false },
+            { label: "Apply for the Retreat", href: "#apply", shimmer: false },
+          ].map((b, i) => (
+            <Reveal key={b.label} index={i} className="w-full sm:w-auto">
+              <a
+                href={b.href}
+                className={`wce-btn wce-btn-gold ${b.shimmer ? "wce-shimmer-btn" : ""} w-full sm:w-auto`}
+              >
+                <LeafIcon tone="var(--wce-forest)" size={13} />
+                <span>{b.label}</span>
+              </a>
+            </Reveal>
+          ))}
         </div>
         <LeafDivider className="mt-16" />
         <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.8)", letterSpacing: "0.22em" }}>
