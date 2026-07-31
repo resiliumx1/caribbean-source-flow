@@ -406,34 +406,43 @@ export function WceApplicationForm() {
   const errStyle: React.CSSProperties = { color: "var(--wce-gold-light)", opacity: 0.85 };
 
   return (
-    <section id="apply" className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
-      <Reveal className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-2" style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}>
+    <section id="apply" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <Reveal
+        className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-[0.78fr_1.22fr]"
+        style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px" }}
+      >
         {/* Left — cream panel */}
-        <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-14 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
+        <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-12 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
+          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={96} />
           <CornerVine className="pointer-events-none absolute -left-2 bottom-0 opacity-40" />
-          <p className="wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Caribbean Wellness Saint Lucia 2026</p>
-          <h2 className="mt-6 text-[clamp(1.9rem,4.4vw,2.9rem)] leading-tight" style={{ color: "var(--wce-forest)" }}>
+          <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Caribbean Wellness Saint Lucia 2026</p>
+          <h2 className="relative mt-6 text-[clamp(1.8rem,4vw,2.5rem)] leading-tight" style={{ color: "var(--wce-forest)" }}>
             Retreat Application / Lead Form
           </h2>
-          <p className="mt-6 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(26,26,20,0.7)" }}>
+          <DiamondRule className="relative mt-7 max-w-[9rem] lg:mx-0" />
+          <p className="relative mt-7 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(26,26,20,0.7)" }}>
             Tell us about your interest and our team will follow up personally to discuss your goals, confirm
             availability and guide you through the next steps.
           </p>
-          <ul className="mt-12 flex flex-wrap justify-center gap-6 lg:justify-start">
+          <ul className="relative mt-12 flex flex-col items-center gap-5 lg:items-start">
             {["Sacred. Natural. Transformative.", "Holistic Wellness Experiences", "Saint Lucia Awaits You"].map((t) => (
               <li
                 key={t}
-                className="max-w-[10rem] text-[0.6rem] uppercase leading-relaxed"
+                className="flex items-center gap-2.5 text-[0.6rem] uppercase leading-relaxed"
                 style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.18em" }}
               >
-                {t}
+                <LeafIcon tone="var(--wce-gold-deep)" />
+                <span>{t}</span>
               </li>
             ))}
           </ul>
         </div>
 
         {/* Right — dark form panel */}
-        <div className="wce-form-panel px-8 py-16 sm:px-14" style={{ background: "var(--wce-forest)" }}>
+        <div className="wce-form-panel relative px-8 py-16 sm:px-12" style={{ background: "var(--wce-forest)" }}>
+          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} light size={110} />
+          <div className="relative">
           {submitted ? (
             <div className="wce-form-confirm flex min-h-[26rem] flex-col items-center justify-center text-center" role="status" aria-live="polite">
               <LotusMark size={54} />
@@ -483,37 +492,34 @@ export function WceApplicationForm() {
                 <input id="wce-country" className="wce-field" type="text" placeholder="Enter your country or city" autoComplete="country-name"
                   value={values.country} onChange={set("country")} />
               </div>
-            </div>
-
-            <div>
-              <label className="wce-label" htmlFor="wce-pathway">Which pathway are you most interested in?</label>
-              <select
-                id="wce-pathway"
-                className={`wce-field ${pathwayFlash ? "wce-field-flash" : ""}`}
-                value={values.pathway_interest}
-                onChange={set("pathway_interest")}
-              >
-                <option value="" disabled>Select your preferred experience</option>
-                {(pathways ?? []).map((p) => (
-                  <option key={p.id} value={p.key}>{p.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="wce-label" htmlFor="wce-message">What excites you most about the retreat?</label>
-              <textarea id="wce-message" className="wce-field" rows={4} placeholder="Share what inspires you"
-                value={values.reason} onChange={set("reason")} />
-            </div>
-
-            <div>
-              <label className="wce-label" htmlFor="wce-contact">Preferred Contact Method</label>
-              <select id="wce-contact" className="wce-field" value={values.preferred_contact} onChange={set("preferred_contact")}>
-                <option value="" disabled>Select your preferred contact method</option>
-                <option value="email">Email</option>
-                <option value="whatsapp">WhatsApp</option>
-                <option value="phone">Phone call</option>
-              </select>
+              <div>
+                <label className="wce-label" htmlFor="wce-pathway">Pathway of interest</label>
+                <select
+                  id="wce-pathway"
+                  className={`wce-field ${pathwayFlash ? "wce-field-flash" : ""}`}
+                  value={values.pathway_interest}
+                  onChange={set("pathway_interest")}
+                >
+                  <option value="" disabled>Select your preferred experience</option>
+                  {(pathways ?? []).map((p) => (
+                    <option key={p.id} value={p.key}>{p.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="wce-label" htmlFor="wce-contact">Preferred Contact Method</label>
+                <select id="wce-contact" className="wce-field" value={values.preferred_contact} onChange={set("preferred_contact")}>
+                  <option value="" disabled>Select your preferred contact method</option>
+                  <option value="email">Email</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="phone">Phone call</option>
+                </select>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="wce-label" htmlFor="wce-message">What excites you most about the retreat?</label>
+                <textarea id="wce-message" className="wce-field" rows={4} placeholder="Share what inspires you"
+                  value={values.reason} onChange={set("reason")} />
+              </div>
             </div>
 
             <label className="flex items-start gap-3 text-xs leading-relaxed" style={{ color: "rgba(245,239,224,0.75)" }}>
@@ -532,6 +538,7 @@ export function WceApplicationForm() {
             </p>
           </form>
           )}
+          </div>
         </div>
       </Reveal>
     </section>
