@@ -470,11 +470,15 @@ export function WceSpeakersSection() {
   const featured = speakers?.find((s) => s.is_featured) ?? null;
   const rest = ((speakers ?? []) as Speaker[]).filter((s) => s.id !== featured?.id);
   const selected = rest.find((s) => s.id === selectedId) ?? null;
+  const [showAllSessions, setShowAllSessions] = useState(false);
 
   return (
-    <section id="speakers" ref={sectionRef} className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+    <section id="speakers" ref={sectionRef} className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <EdgeFoliage side="right" opacity={0.12} />
       <div className="mx-auto max-w-6xl text-center">
-        <Reveal><LotusMark size={38} className="mx-auto" /></Reveal>
+        <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
+        <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
           <h2
             className="mt-8 text-[clamp(2rem,5vw,3.4rem)] uppercase"
@@ -518,7 +522,7 @@ export function WceSpeakersSection() {
         )}
 
         <LayoutGroup>
-          <ul className="mt-16 grid grid-cols-2 gap-x-6 gap-y-12 sm:mt-20 sm:grid-cols-3 lg:grid-cols-6">
+          <ul className="mt-16 grid grid-cols-2 gap-x-5 gap-y-12 sm:mt-20 sm:grid-cols-3 lg:grid-cols-6">
             {rest.map((s, i) => (
               <Reveal key={s.id} as="li" index={i % 6}>
                 <SpeakerTile
@@ -535,6 +539,53 @@ export function WceSpeakersSection() {
             {selected && <SpeakerDetail key={selected.id} speaker={selected} onClose={() => setSelectedId(null)} />}
           </AnimatePresence>
         </LayoutGroup>
+
+        {rest.length > 0 && (
+          <div className="mt-16">
+            <button
+              type="button"
+              onClick={() => setShowAllSessions((v) => !v)}
+              aria-expanded={showAllSessions}
+              className="wce-btn wce-btn-outline-forest wce-btn-pill mx-auto"
+            >
+              {showAllSessions ? "Hide Speaker Sessions" : "Explore Speaker Sessions"}
+            </button>
+
+            {showAllSessions && (
+              <ul className="mt-12 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
+                {rest.map((s) => (
+                  <li
+                    key={s.id}
+                    className="px-7 py-8"
+                    style={{
+                      background: "var(--wce-cream)",
+                      border: "1px solid rgba(201,162,39,0.45)",
+                      borderRadius: "2px",
+                    }}
+                  >
+                    <p className="text-[1.15rem]" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-forest)" }}>
+                      {s.name}
+                    </p>
+                    {s.title && (
+                      <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-deep)" }}>{s.title}</p>
+                    )}
+                    <DiamondRule className="mt-5 max-w-[7rem]" tone="rgba(201,162,39,0.85)" />
+                    {s.theme && (
+                      <p className="mt-4 italic" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-deep)" }}>
+                        {s.theme}
+                      </p>
+                    )}
+                    {(s.session_title || s.bio) && (
+                      <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.72)" }}>
+                        {s.session_title || s.bio}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );
