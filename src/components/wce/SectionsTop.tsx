@@ -40,28 +40,31 @@ export function WceHero() {
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-70 sm:right-10 sm:top-10" />
 
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center">
+      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
         <div className={cls("mb-10")} style={stage(0)}>
           <LotusMark size={46} />
         </div>
 
         <h1
-          className={cls("wce-display text-[clamp(1.5rem,5.4vw,3.1rem)] uppercase")}
-          style={{ color: "var(--wce-gold-light)", letterSpacing: "0.16em", ...stage(0.2) }}
+          className={cls("wce-display wce-hero-title text-[clamp(1.4rem,4.4vw,2.75rem)] uppercase")}
+          style={{ letterSpacing: "0.17em", lineHeight: 1.28, ...stage(0.2) }}
         >
           Caribbean Wellness<br className="sm:hidden" /> Saint Lucia
         </h1>
 
         <span
-          className={`wce-year relative mt-8 inline-block text-[clamp(5rem,20vw,13rem)] ${reduced ? "" : "wce-stage-year"}`}
+          className={`relative mt-6 inline-block ${reduced ? "" : "wce-stage-year"}`}
           style={reduced ? undefined : { animationDelay: "0.45s" }}
         >
-          2026
-          {!reduced && <span aria-hidden="true" className="wce-year-shimmer">2026</span>}
+          {!reduced && <span aria-hidden="true" className="wce-year-halo" />}
+          <span className="wce-year relative inline-block text-[clamp(5.5rem,21vw,14rem)]">
+            2026
+            {!reduced && <span aria-hidden="true" className="wce-year-shimmer">2026</span>}
+          </span>
         </span>
 
         <p
-          className={cls("wce-eyebrow mt-8")}
+          className={cls("wce-eyebrow wce-rule-label mt-8")}
           style={{ color: "var(--wce-cream)", letterSpacing: "0.42em", ...stage(0.65) }}
         >
           {dates}
