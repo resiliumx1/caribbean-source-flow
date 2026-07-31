@@ -42,16 +42,19 @@ function Draw({
 }
 
 export function LeafDivider({ className = "" }: { className?: string }) {
+  const reduced = useWceReducedMotion();
+  const { ref, inView } = useInView<HTMLDivElement>();
+  const drawn = reduced || inView ? "is-drawn" : "";
   return (
-    <div className={`flex items-center justify-center gap-4 ${className}`} aria-hidden="true">
-      <span className="h-px w-16 sm:w-28 bg-gradient-to-r from-transparent to-[var(--wce-gold)]/60" />
+    <div ref={ref} className={`flex items-center justify-center gap-4 ${className}`} aria-hidden="true">
+      <span className={`wce-divider-rule left ${drawn} h-px w-16 sm:w-28 bg-gradient-to-r from-transparent to-[var(--wce-gold)]/60`} />
       <Draw width={64} height={20} viewBox="0 0 64 20">
         <path pathLength={1} d="M32 3c-5 3.5-8 5.5-8 7s3 3.5 8 7c5-3.5 8-5.5 8-7s-3-3.5-8-7z" stroke="var(--wce-gold)" strokeWidth="1" />
         <path pathLength={1} d="M32 3v14M24 10h16" stroke="var(--wce-gold)" strokeWidth="0.6" opacity="0.7" />
         <circle pathLength={1} cx="14" cy="10" r="2" stroke="var(--wce-gold)" strokeWidth="0.8" />
         <circle pathLength={1} cx="50" cy="10" r="2" stroke="var(--wce-gold)" strokeWidth="0.8" />
       </Draw>
-      <span className="h-px w-16 sm:w-28 bg-gradient-to-l from-transparent to-[var(--wce-gold)]/60" />
+      <span className={`wce-divider-rule right ${drawn} h-px w-16 sm:w-28 bg-gradient-to-l from-transparent to-[var(--wce-gold)]/60`} />
     </div>
   );
 }

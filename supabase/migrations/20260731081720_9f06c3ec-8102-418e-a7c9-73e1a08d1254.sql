@@ -1,0 +1,1 @@
+update public.wce_pathways set label='6 Day Fortification Retreat & LifeCraft Experience (In Person)' where key='retreat';

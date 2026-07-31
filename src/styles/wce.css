@@ -72,7 +72,7 @@
   color: var(--wce-gold-light);
   border: 1px solid var(--wce-gold);
 }
-.wce-btn-outline:hover { background: var(--wce-gold); color: var(--wce-forest); }
+.wce-btn-outline:hover { color: var(--wce-forest); }
 .wce-btn-forest {
   background: var(--wce-forest);
   color: var(--wce-cream);
@@ -84,7 +84,47 @@
   color: var(--wce-forest);
   border: 1px solid rgba(15, 42, 29, 0.45);
 }
-.wce-btn-outline-forest:hover { background: var(--wce-forest); color: var(--wce-cream); border-color: var(--wce-forest); }
+.wce-btn-outline-forest:hover { color: var(--wce-cream); border-color: var(--wce-forest); }
+
+/* --- Button micro-interactions --- */
+.wce-btn { position: relative; overflow: hidden; isolation: isolate; }
+.wce-btn { transform: translateY(0); transition: background-color .3s ease, color .3s ease, border-color .3s ease, transform .3s cubic-bezier(0.22,1,0.36,1), box-shadow .3s ease, filter .6s ease; }
+
+/* Gold buttons: a soft gradient sweeps left → right on hover */
+.wce-btn-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent 0%, rgba(255,252,235,0.85) 45%, transparent 90%);
+  transform: translateX(-110%);
+  transition: transform .6s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .wce-btn-gold:hover { background: linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold)); color: var(--wce-forest); transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 10px 22px -14px rgba(154,123,28,0.9); }
+  .wce-btn-gold:hover::before { transform: translateX(110%); }
+  .wce-btn-forest:hover { transform: translateY(-2px); }
+}
+.wce-btn-gold:active, .wce-btn-forest:active, .wce-btn-outline:active, .wce-btn-outline-forest:active { transform: translateY(0); }
+
+/* Outline buttons fill from the bottom up */
+.wce-btn-outline::before, .wce-btn-outline-forest::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  transition: transform .45s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+}
+.wce-btn-outline::before { background: var(--wce-gold); }
+.wce-btn-outline-forest::before { background: var(--wce-forest); }
+@media (hover: hover) {
+  .wce-btn-outline:hover::before, .wce-btn-outline-forest:hover::before { transform: scaleY(1); }
+  .wce-btn-outline:hover, .wce-btn-outline-forest:hover { transform: translateY(-2px); }
+}
 /* Pill variant used for the speaker-sessions toggle */
 .wce-btn-pill { border-radius: 9999px; padding: 0.75rem 1.75rem; }
 
@@ -219,6 +259,38 @@
 }
 
 /* ============ MOTION ============ */
+
+/* Masked heading reveal */
+.wce-mask-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+.wce-mask-inner {
+  display: block;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+/* Divider that draws outward from its centre */
+.wce-divider-rule {
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.wce-divider-rule.left { transform-origin: right center; }
+.wce-divider-rule.right { transform-origin: left center; }
+.wce-divider-rule.is-drawn { transform: scaleX(1); }
+
+/* Subtle gradient bleed where a cream section meets a dark one */
+.wce-bleed {
+  position: absolute;
+  left: 0; right: 0;
+  height: 90px;
+  pointer-events: none;
+  z-index: 0;
+}
+.wce-bleed-top { top: 0; background: linear-gradient(to bottom, rgba(245,239,224,0.10), transparent); }
+.wce-bleed-bottom { bottom: 0; background: linear-gradient(to top, rgba(245,239,224,0.08), transparent); }
 
 /* SVG draw-in (paths carry pathLength="1") */
 .wce-draw [stroke] {
@@ -368,6 +440,8 @@
   .wce-connect-line { transform: scaleX(1) !important; }
   .wce-portrait-img { filter: none !important; }
   .wce-mote { display: none; }
+  .wce-mask-inner { transform: none !important; opacity: 1 !important; }
+  .wce-divider-rule { transform: scaleX(1) !important; }
 }
 
 /* Application form → confirmation state */
@@ -501,7 +575,10 @@
 
 /* ============ SECTION SURFACES ============ */
 .wce-surface { position: relative; overflow: hidden; isolation: isolate; }
-.wce-surface > * { position: relative; z-index: 1; }
+/* Content sits above the decorative layer, but absolutely-positioned
+   ornaments must keep their own positioning (otherwise they enter the flow). */
+.wce-surface > :not(.absolute) { position: relative; z-index: 1; }
+.wce-surface > .absolute { z-index: 1; }
 .wce-surface > .wce-surface-bg { z-index: 0; }
 
 /* Hairline gold divider between cream sections */

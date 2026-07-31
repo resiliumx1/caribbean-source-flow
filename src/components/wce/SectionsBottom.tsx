@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { LeafDivider, LotusMark, CornerVine } from "./ornaments";
 import { useWceFaqs, useWceSettings } from "./useWceData";
-import { Reveal } from "./motion";
+import { Reveal, MaskedHeading, useSectionLift } from "./motion";
 import { FaqSkeleton } from "./Skeletons";
-import { FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, GoldFlourish, DiamondRule, LeafIcon } from "./decor";
+import { FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, GoldFlourish, DiamondRule, LeafIcon, EdgeBleed } from "./decor";
+import { LoveEmblem } from "./LoveEmblem";
 
 const PARTNERS = ["Mount Kailash", "Kamila's Kitchen", "Jah9", "LifeCraft in Jamaica", "The Ubuntu Movement"];
 
@@ -11,18 +12,21 @@ const PARTNERS = ["Mount Kailash", "Kamila's Kitchen", "Jah9", "LifeCraft in Jam
 export function WceFaqSection() {
   const { data: faqs, isLoading } = useWceFaqs();
   const [open, setOpen] = useState<string | null>(null);
+  const lift = useSectionLift<HTMLElement>();
 
   return (
-    <section id="faq" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+    <section ref={lift.ref} id="faq" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <EdgeFoliage side="right" opacity={0.12} />
       <div className="mx-auto max-w-5xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
         <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
+        <MaskedHeading
+          lines={["Frequently Asked Questions"]}
+          className="mt-8 text-[clamp(2rem,5vw,3.2rem)]"
+          style={{ color: "var(--wce-forest)" }}
+        />
         <Reveal index={1}>
-        <h2 className="mt-8 text-[clamp(2rem,5vw,3.2rem)]" style={{ color: "var(--wce-forest)" }}>
-          Frequently Asked Questions
-        </h2>
         <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
           Everything you need to know before you join us in Saint Lucia.
         </p>
@@ -82,6 +86,7 @@ export function WceFinalCta() {
   const { data: settings } = useWceSettings();
   return (
     <section className="relative overflow-hidden px-6 py-24 text-center sm:py-32" style={{ background: "var(--wce-forest)" }}>
+      <EdgeBleed position="top" />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-50" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-50" />
       <span
@@ -93,11 +98,11 @@ export function WceFinalCta() {
       <div className="relative mx-auto max-w-4xl">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
-        <Reveal index={1}>
-        <h2 className="mt-8 text-[clamp(2rem,5.2vw,3.4rem)] leading-tight" style={{ color: "var(--wce-cream)" }}>
-          Choose Your Pathway and Join Us in Saint Lucia
-        </h2>
-        </Reveal>
+        <MaskedHeading
+          lines={["Choose Your Pathway and", "Join Us in Saint Lucia"]}
+          className="mt-8 text-[clamp(2rem,5.2vw,3.4rem)] leading-tight"
+          style={{ color: "var(--wce-cream)" }}
+        />
         <DiamondRule className="mx-auto mt-10 max-w-[13rem]" />
         <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
           {[
@@ -156,6 +161,7 @@ export function WceFooter() {
             Caribbean<br />Wellness<br />Saint Lucia
           </p>
           <p className="wce-eyebrow mt-4" style={{ color: "rgba(245,239,224,0.8)" }}>11–17 October 2026</p>
+          <LoveEmblem size={210} className="mx-auto mt-8 md:mx-0" />
         </div>
 
         <div>
@@ -173,6 +179,7 @@ export function WceFooter() {
             <li><a href="#pathways" className="hover:underline">Pathways</a></li>
             <li><a href="#speakers" className="hover:underline">Visionary Leaders</a></li>
             <li><a href="#activities" className="hover:underline">Activities</a></li>
+            <li><a href="#ceremony" className="hover:underline">Ceremony</a></li>
             <li><a href="#apply" className="hover:underline">Apply</a></li>
             <li><a href="#faq" className="hover:underline">FAQ</a></li>
           </ul>
