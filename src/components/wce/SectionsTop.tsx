@@ -539,24 +539,41 @@ export function WceSpeakersSection() {
         {featured && (
           <Reveal index={2}>
             <div
-              className="mt-16 flex flex-col items-center gap-10 px-6 py-12 text-center sm:px-12 md:flex-row md:text-left"
-              style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}
+              className="relative mt-16 flex flex-col items-center gap-10 overflow-hidden px-6 py-14 text-center sm:px-14 md:flex-row md:gap-14 md:text-left"
+              style={{
+                background: "linear-gradient(140deg, var(--wce-forest) 0%, var(--wce-forest-mid) 100%)",
+                border: "1px solid var(--wce-gold)",
+                borderRadius: "3px",
+                boxShadow: "0 30px 70px -40px rgba(15,42,29,0.75)",
+              }}
+              data-wce-dark
             >
+              <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={120} />
+              <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
               <ClipReveal direction="up" className="-m-5 p-5">
                 <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
               </ClipReveal>
-              <div className="md:flex-1">
-                <p className="wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Living anchor of the week</p>
-                <h3 className="mt-4 text-[clamp(1.8rem,3.6vw,2.6rem)]" style={{ color: "var(--wce-forest)" }}>
+              <div className="relative md:flex-1">
+                <p className="wce-eyebrow" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.32em" }}>
+                  Living anchor of the week
+                </p>
+                <h3 className="mt-4 text-[clamp(2rem,4.2vw,3rem)] leading-tight" style={{ color: "var(--wce-cream)" }}>
                   {featured.name}
                 </h3>
+                <DiamondRule className="mx-auto mt-5 max-w-[9rem] md:mx-0" tone="var(--wce-gold)" />
+                <p
+                  className="mt-5 text-[0.68rem] uppercase"
+                  style={{ color: "var(--wce-gold-light)", letterSpacing: "0.24em" }}
+                >
+                  {featured.title?.trim() || "Grand Master Herbal Physician · Founder, Mount Kailash"}
+                </p>
                 {featured.theme && (
-                  <p className="mt-3 text-sm italic" style={{ color: "var(--wce-gold-deep)", fontFamily: "var(--wce-display)", fontSize: "1.15rem" }}>
+                  <p className="mt-4 italic" style={{ color: "var(--wce-gold)", fontFamily: "var(--wce-display)", fontSize: "1.3rem" }}>
                     {featured.theme}
                   </p>
                 )}
                 {featured.session_title && (
-                  <p className="mt-5 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.75)" }}>
+                  <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.82)" }}>
                     {featured.session_title}
                   </p>
                 )}
