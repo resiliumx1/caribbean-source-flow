@@ -99,16 +99,16 @@ export function WceFinalCta() {
         </h2>
         </Reveal>
         <DiamondRule className="mx-auto mt-10 max-w-[13rem]" />
-        <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap">
+        <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
           {[
             { label: "Book In-Person Symposium", href: "#pathways", shimmer: true },
             { label: "Get Online Access", href: "#pathways", shimmer: false },
             { label: "Apply for the Retreat", href: "#apply", shimmer: false },
           ].map((b, i) => (
-            <Reveal key={b.label} index={i} className="w-full sm:w-auto">
+            <Reveal key={b.label} index={i} className="w-full">
               <a
                 href={b.href}
-                className={`wce-btn wce-btn-gold ${b.shimmer ? "wce-shimmer-btn" : ""} w-full sm:w-auto`}
+                className={`wce-btn wce-btn-gold ${b.shimmer ? "wce-shimmer-btn" : ""} h-full w-full text-center`}
               >
                 <LeafIcon tone="var(--wce-forest)" size={13} />
                 <span>{b.label}</span>
