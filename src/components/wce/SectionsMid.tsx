@@ -177,7 +177,7 @@ export function WceCeremonySection() {
       <span
         ref={medallionRef}
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 will-change-transform"
+        className="pointer-events-none absolute left-1/2 top-1/2 -ml-[310px] -mt-[310px] will-change-transform"
       >
         <FlowerOfLifeMark size={620} opacity={0.09} />
       </span>

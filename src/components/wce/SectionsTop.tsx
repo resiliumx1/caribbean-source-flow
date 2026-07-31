@@ -172,7 +172,7 @@ function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolea
       className="relative mx-auto flex max-w-[22ch] flex-col justify-center text-[1.35rem] leading-snug"
       style={{
         color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)",
-        minHeight: "4.8rem",
+        minHeight: "6.6rem",
       }}
     />
   );
