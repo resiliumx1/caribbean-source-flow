@@ -517,3 +517,18 @@ body.wce-transparent-header header[class*="fixed"] {
   box-shadow: none !important;
   backdrop-filter: none !important;
 }
+
+/* Header contents must read against the dark hero */
+body.wce-transparent-header header[class*="fixed"] a,
+body.wce-transparent-header header[class*="fixed"] span,
+body.wce-transparent-header header[class*="fixed"] button {
+  color: var(--wce-cream, #F5EFE0);
+}
+body.wce-transparent-header header[class*="fixed"] .wce-nav-item,
+body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
+  color: #E4C766;
+}
+body.wce-transparent-header header[class*="fixed"] a:hover,
+body.wce-transparent-header header[class*="fixed"] a:hover span {
+  color: #E4C766;
+}
