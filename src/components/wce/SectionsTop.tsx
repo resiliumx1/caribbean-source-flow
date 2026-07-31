@@ -153,7 +153,7 @@ function PathwayPrice({ currency, price }: { currency: string; price: number }) 
 }
 
 export function WcePathwaysSection() {
-  const { data: pathways } = useWcePathways();
+  const { data: pathways, isLoading } = useWcePathways();
 
   return (
     <section id="pathways" className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
@@ -171,6 +171,9 @@ export function WcePathwaysSection() {
           <LeafDivider className="mt-10" />
         </Reveal>
 
+        {isLoading && <PathwayCardsSkeleton />}
+
+        {!isLoading && (
         <div className="mt-16 grid gap-8 sm:mt-20 lg:grid-cols-3">
           {(pathways ?? []).map((p, i) => {
             const isRetreat = p.key === "retreat";
@@ -245,7 +248,11 @@ export function WcePathwaysSection() {
                   <a
                     href="#apply"
                     className="wce-btn wce-btn-gold relative mt-10 w-full"
-                    onClick={() => dataLayerPush("pathway_click", { pathway_key: p.key, pathway_label: p.label })}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dataLayerPush("pathway_click", { pathway_key: p.key, pathway_label: p.label });
+                      selectPathway(p.key);
+                    }}
                   >
                     {cta}
                   </a>
@@ -254,6 +261,7 @@ export function WcePathwaysSection() {
             );
           })}
         </div>
+        )}
       </div>
     </section>
   );
