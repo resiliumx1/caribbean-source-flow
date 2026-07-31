@@ -24,7 +24,7 @@ export function WceFaqSection() {
           Frequently Asked Questions
         </h2>
         <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
-          Choose the pathway that fits your journey.
+          Everything you need to know before you join us in Saint Lucia.
         </p>
         <LeafDivider className="mt-10" />
         </Reveal>
