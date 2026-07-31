@@ -477,6 +477,7 @@ function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => 
 export function WceSpeakersSection() {
   const { data: speakers, isLoading } = useWceSpeakers();
   const { ref: sectionRef, inView } = useInView<HTMLElement>();
+  const lift = useSectionLift<HTMLElement>();
   const fired = useRef(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -493,19 +494,18 @@ export function WceSpeakersSection() {
   const [showAllSessions, setShowAllSessions] = useState(false);
 
   return (
-    <section id="speakers" ref={sectionRef} className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+    <section id="speakers" ref={sectionRef} className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <EdgeFoliage side="right" opacity={0.12} />
       <div className="mx-auto max-w-6xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
+        <MaskedHeading
+          lines={["Visionary Leaders"]}
+          className="mt-8 text-[clamp(2rem,5vw,3.4rem)] uppercase"
+          style={{ color: "var(--wce-forest)", letterSpacing: "0.1em" }}
+        />
         <Reveal index={1}>
-          <h2
-            className="mt-8 text-[clamp(2rem,5vw,3.4rem)] uppercase"
-            style={{ color: "var(--wce-forest)", letterSpacing: "0.1em" }}
-          >
-            Visionary Leaders
-          </h2>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
             Guided by voices in wellness, medicine, movement, sovereignty, leadership, transformation, and restoration.
           </p>
@@ -520,7 +520,9 @@ export function WceSpeakersSection() {
               className="mt-16 flex flex-col items-center gap-10 px-6 py-12 text-center sm:px-12 md:flex-row md:text-left"
               style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}
             >
-              <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
+              <ClipReveal direction="up" className="rounded-full">
+                <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
+              </ClipReveal>
               <div className="md:flex-1">
                 <p className="wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Living anchor of the week</p>
                 <h3 className="mt-4 text-[clamp(1.8rem,3.6vw,2.6rem)]" style={{ color: "var(--wce-forest)" }}>
