@@ -164,40 +164,113 @@ const RETREAT_POINTS = [
   "Limited spaces for a personalized journey",
 ];
 
+const RETREAT_VALUES = [
+  { Icon: RitualIcon, label: "Holistic Wellness" },
+  { Icon: ConnectionIcon, label: "Meaningful Connection" },
+  { Icon: TransformationIcon, label: "Lasting Transformation" },
+];
+
 export function WceRetreatBand() {
   const bandRef = useParallax<HTMLDivElement>(0.18);
   return (
-    <section className="relative overflow-hidden px-6 py-24 text-center sm:py-32" style={{ background: "var(--wce-forest)" }}>
+    <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-forest)" }}>
       <div
         ref={bandRef}
         aria-hidden="true"
         className="pointer-events-none absolute -inset-y-[25%] inset-x-0 will-change-transform"
         style={{ background: "radial-gradient(70% 60% at 50% 50%, rgba(45,74,53,0.6), transparent 70%)" }}
       />
-      <div className="relative mx-auto flex max-w-3xl flex-col items-center">
-        <CompassMandala className="wce-mandala-spin opacity-90" />
-        <Reveal><p className="wce-eyebrow mt-10" style={{ color: "var(--wce-gold)" }}>
-          Caribbean Wellness Saint Lucia 2026
-        </p></Reveal>
-        <Reveal index={1}><h2 className="mt-6 text-[clamp(1.9rem,4.8vw,3.2rem)]" style={{ color: "var(--wce-cream)" }}>
-          Apply for the 6 Day Fortification Retreat &amp; LifeCraft Experience
-        </h2></Reveal>
-        <p className="mt-6 text-base italic" style={{ color: "var(--wce-gold-light)", fontFamily: "var(--wce-display)", fontSize: "1.3rem" }}>
-          Step away. Go deeper. Return renewed.
-        </p>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.05} light />
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
+        {/* Left — copy */}
+        <div className="text-center lg:text-left">
+          <Reveal>
+            <p className="wce-eyebrow" style={{ color: "var(--wce-gold)" }}>
+              Caribbean Wellness Saint Lucia 2026
+            </p>
+          </Reveal>
+          <Reveal index={1}>
+            <h2 className="mt-6 text-[clamp(1.9rem,4.4vw,3rem)]" style={{ color: "var(--wce-cream)" }}>
+              Apply for the 6 Day Fortification Retreat &amp; LifeCraft Experience
+            </h2>
+          </Reveal>
+          <p
+            className="mt-5 italic"
+            style={{ color: "var(--wce-gold-light)", fontFamily: "var(--wce-display)", fontSize: "1.3rem" }}
+          >
+            Step away. Go deeper. Return renewed.
+          </p>
 
-        <ul className="mt-12 space-y-4 text-left">
-          {RETREAT_POINTS.map((p, i) => (
-            <Reveal as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
-              <span aria-hidden="true" style={{ color: "var(--wce-gold)" }}>✦</span>
-              <span>{p}</span>
-            </Reveal>
-          ))}
-        </ul>
+          <DiamondRule className="mt-8 max-w-[13rem] lg:mx-0" />
 
-        <Reveal><a href="#apply" className="wce-btn wce-btn-gold mt-14">Apply for the Retreat</a></Reveal>
+          <ul className="mx-auto mt-9 max-w-md space-y-3.5 text-left">
+            {RETREAT_POINTS.map((p, i) => (
+              <Reveal as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
+                <CheckMark tone="var(--wce-gold-light)" />
+                <span>{p}</span>
+              </Reveal>
+            ))}
+          </ul>
 
-        <LeafDivider className="mt-16 w-full max-w-md" />
+          <ul className="mt-11 flex flex-wrap justify-center gap-x-10 gap-y-6 lg:justify-start">
+            {RETREAT_VALUES.map(({ Icon, label }) => (
+              <li key={label} className="flex flex-col items-center gap-2.5 lg:items-start">
+                <Icon />
+                <span
+                  className="text-[0.6rem] uppercase"
+                  style={{ color: "rgba(245,239,224,0.75)", letterSpacing: "0.2em" }}
+                >
+                  {label}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <Reveal>
+            <a href="#apply" className="wce-btn wce-btn-gold mt-12 w-full sm:w-auto">Apply for the Retreat</a>
+          </Reveal>
+          <p className="mt-6 text-sm italic" style={{ color: "rgba(245,239,224,0.6)", fontFamily: "var(--wce-display)", fontSize: "1.05rem" }}>
+            Limited spaces. Applications reviewed personally.
+          </p>
+        </div>
+
+        {/* Right — landscape image with an overlapping mandala */}
+        <Reveal index={2} className="relative">
+          <div
+            className="relative overflow-hidden"
+            style={{ border: "1px solid rgba(201,162,39,0.55)", borderRadius: "2px" }}
+          >
+            <img
+              src={retreatImage.url}
+              alt="Saint Lucia retreat landscape at Mount Kailash Rejuvenation Centre"
+              className="h-full w-full object-cover"
+              style={{ aspectRatio: "4 / 3" }}
+              loading="lazy"
+              decoding="async"
+            />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{ background: "linear-gradient(200deg, rgba(15,42,29,0.35), rgba(15,42,29,0.72))" }}
+            />
+          </div>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          >
+            <CompassMandala className="wce-mandala-spin opacity-90" />
+          </span>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-5 -top-5 hidden lg:block"
+          >
+            <FlowerOfLifeMark size={150} opacity={0.35} />
+          </span>
+        </Reveal>
+      </div>
+
+      <div className="relative mx-auto mt-20 max-w-3xl text-center">
+        <LeafDivider className="mx-auto w-full max-w-md" />
         <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.7)", letterSpacing: "0.2em" }}>
           Holistic Wellness <span style={{ color: "var(--wce-gold)" }}>|</span> Meaningful Connection{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span> Lasting Transformation
