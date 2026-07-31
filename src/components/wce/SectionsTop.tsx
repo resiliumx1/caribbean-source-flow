@@ -40,13 +40,13 @@ export function WceHero() {
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-70 sm:right-10 sm:top-10" />
 
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center">
+      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
         <div className={cls("mb-10")} style={stage(0)}>
           <LotusMark size={46} />
         </div>
 
         <h1
-          className={cls("wce-display wce-hero-title text-[clamp(1.5rem,5.4vw,3.1rem)] uppercase")}
+          className={cls("wce-display wce-hero-title text-[clamp(1.4rem,4.4vw,2.75rem)] uppercase")}
           style={{ letterSpacing: "0.17em", lineHeight: 1.28, ...stage(0.2) }}
         >
           Caribbean Wellness<br className="sm:hidden" /> Saint Lucia
