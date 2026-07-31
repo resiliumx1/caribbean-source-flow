@@ -266,3 +266,258 @@ export function WcePathwaysSection() {
     </section>
   );
 }
+
+/* ---------------- 4. VISIONARY LEADERS ---------------- */
+type Speaker = {
+  id: string;
+  name: string;
+  title?: string | null;
+  theme: string | null;
+  bio?: string | null;
+  session_title?: string | null;
+  session_time?: string | null;
+  portrait_url: string | null;
+};
+
+function PortraitCircle({
+  url,
+  name,
+  size,
+  ring,
+  glow,
+}: {
+  url: string | null;
+  name: string;
+  size: "lg" | "md" | "sm";
+  ring?: boolean;
+  glow?: boolean;
+}) {
+  const dim =
+    size === "lg" ? "h-44 w-44 sm:h-56 sm:w-56"
+    : size === "md" ? "h-36 w-36 sm:h-44 sm:w-44"
+    : "h-28 w-28 sm:h-32 sm:w-32";
+  return (
+    <div className="relative shrink-0">
+      {ring && (
+        <span
+          aria-hidden="true"
+          className="wce-ring-slow pointer-events-none absolute -inset-4 rounded-full"
+          style={{ border: "1px dashed rgba(201,162,39,0.55)" }}
+        />
+      )}
+      {glow && <span aria-hidden="true" className="wce-portrait-glow" />}
+      <div
+        className={`${dim} wce-speaker-ring relative flex items-center justify-center rounded-full`}
+        style={{
+          border: "1px solid var(--wce-gold)",
+          boxShadow: "0 0 0 6px rgba(201,162,39,0.12)",
+          background: "linear-gradient(160deg, rgba(45,74,53,0.14), rgba(201,162,39,0.12))",
+          overflow: "hidden",
+        }}
+      >
+        {url ? (
+          <img src={url} alt={name} className="wce-portrait-img h-full w-full object-cover" loading="lazy" decoding="async" />
+        ) : (
+          <span
+            className="wce-display text-3xl"
+            style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.08em" }}
+            aria-hidden="true"
+          >
+            {name.split(" ").filter(Boolean).slice(-2).map((w) => w[0]).join("")}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Restrained hover: 8px lift, ring rotation, portrait scale + saturation, warm glow.
+ *  Deliberately no 3D / perspective transform — nothing ever inverts. */
+function SpeakerTile({
+  speaker,
+  selected,
+  dimmed,
+  onSelect,
+}: {
+  speaker: Speaker;
+  selected: boolean;
+  dimmed: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-expanded={selected}
+      className={`wce-speaker flex w-full flex-col items-center text-center ${dimmed ? "wce-speaker-dim" : ""}`}
+    >
+      <PortraitCircle url={speaker.portrait_url} name={speaker.name} size="sm" glow />
+      <div className="wce-speaker-meta">
+        <p className="wce-speaker-name mt-5 text-sm font-medium" style={{ color: "var(--wce-forest)" }}>
+          {speaker.name}
+        </p>
+        {speaker.theme && (
+          <p className="wce-speaker-theme mt-1 text-xs italic" style={{ color: "rgba(26,26,20,0.6)" }}>
+            {speaker.theme}
+          </p>
+        )}
+      </div>
+    </button>
+  );
+}
+
+function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => void }) {
+  const reduced = useWceReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDown);
+    ref.current?.focus();
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDown);
+    };
+  }, [onClose]);
+
+  const hasDetail = !!(speaker.bio?.trim() || speaker.session_title?.trim() || speaker.theme?.trim());
+
+  return (
+    <motion.div
+      layout
+      ref={ref}
+      tabIndex={-1}
+      role="region"
+      aria-label={`${speaker.name} details`}
+      initial={reduced ? false : { opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduced ? undefined : { opacity: 0, y: 8 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className="mt-12 flex flex-col items-center gap-10 px-6 py-12 text-left sm:px-12 md:flex-row"
+      style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.45)", borderRadius: "3px" }}
+    >
+      <PortraitCircle url={speaker.portrait_url} name={speaker.name} size="md" ring />
+      <div className="md:flex-1">
+        <h3 className="text-[clamp(1.5rem,3vw,2.2rem)]" style={{ color: "var(--wce-forest)" }}>{speaker.name}</h3>
+        {speaker.title && (
+          <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-deep)" }}>{speaker.title}</p>
+        )}
+        {speaker.theme && (
+          <p className="mt-4 italic" style={{ color: "var(--wce-gold-deep)", fontFamily: "var(--wce-display)", fontSize: "1.15rem" }}>
+            {speaker.theme}
+          </p>
+        )}
+        {speaker.session_title && (
+          <p className="mt-4 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.8)" }}>
+            {speaker.session_title}
+            {speaker.session_time ? ` · ${speaker.session_time}` : ""}
+          </p>
+        )}
+        {speaker.bio?.trim() && (
+          <p className="mt-5 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.72)" }}>{speaker.bio}</p>
+        )}
+        {!hasDetail && (
+          <p className="mt-4 text-sm" style={{ color: "rgba(26,26,20,0.6)" }}>Session details coming soon.</p>
+        )}
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-8 text-[0.66rem] uppercase"
+          style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.22em", minHeight: 44 }}
+        >
+          Close
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+export function WceSpeakersSection() {
+  const { data: speakers, isLoading } = useWceSpeakers();
+  const { ref: sectionRef, inView } = useInView<HTMLElement>();
+  const fired = useRef(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (inView && !fired.current) {
+      fired.current = true;
+      dataLayerPush("speaker_view");
+    }
+  }, [inView]);
+
+  const featured = speakers?.find((s) => s.is_featured) ?? null;
+  const rest = ((speakers ?? []) as Speaker[]).filter((s) => s.id !== featured?.id);
+  const selected = rest.find((s) => s.id === selectedId) ?? null;
+
+  return (
+    <section id="speakers" ref={sectionRef} className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+      <div className="mx-auto max-w-6xl text-center">
+        <Reveal><LotusMark size={38} className="mx-auto" /></Reveal>
+        <Reveal index={1}>
+          <h2
+            className="mt-8 text-[clamp(2rem,5vw,3.4rem)] uppercase"
+            style={{ color: "var(--wce-forest)", letterSpacing: "0.1em" }}
+          >
+            Visionary Leaders
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
+            Guided by voices in wellness, medicine, movement, sovereignty, leadership, transformation, and restoration.
+          </p>
+          <LeafDivider className="mt-10" />
+        </Reveal>
+
+        {isLoading && <SpeakersSkeleton />}
+
+        {featured && (
+          <Reveal index={2}>
+            <div
+              className="mt-16 flex flex-col items-center gap-10 px-6 py-12 text-center sm:px-12 md:flex-row md:text-left"
+              style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}
+            >
+              <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
+              <div className="md:flex-1">
+                <p className="wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Living anchor of the week</p>
+                <h3 className="mt-4 text-[clamp(1.8rem,3.6vw,2.6rem)]" style={{ color: "var(--wce-forest)" }}>
+                  {featured.name}
+                </h3>
+                {featured.theme && (
+                  <p className="mt-3 text-sm italic" style={{ color: "var(--wce-gold-deep)", fontFamily: "var(--wce-display)", fontSize: "1.15rem" }}>
+                    {featured.theme}
+                  </p>
+                )}
+                {featured.session_title && (
+                  <p className="mt-5 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.75)" }}>
+                    {featured.session_title}
+                  </p>
+                )}
+              </div>
+            </div>
+          </Reveal>
+        )}
+
+        <LayoutGroup>
+          <ul className="mt-16 grid grid-cols-2 gap-x-6 gap-y-12 sm:mt-20 sm:grid-cols-3 lg:grid-cols-6">
+            {rest.map((s, i) => (
+              <Reveal key={s.id} as="li" index={i % 6}>
+                <SpeakerTile
+                  speaker={s}
+                  selected={selectedId === s.id}
+                  dimmed={!!selectedId && selectedId !== s.id}
+                  onSelect={() => setSelectedId((cur) => (cur === s.id ? null : s.id))}
+                />
+              </Reveal>
+            ))}
+          </ul>
+
+          <AnimatePresence initial={false}>
+            {selected && <SpeakerDetail key={selected.id} speaker={selected} onClose={() => setSelectedId(null)} />}
+          </AnimatePresence>
+        </LayoutGroup>
+      </div>
+    </section>
+  );
+}
