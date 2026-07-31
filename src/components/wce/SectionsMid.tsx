@@ -214,6 +214,21 @@ export function WceApplicationForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [pathwayFlash, setPathwayFlash] = useState(false);
+
+  // A pathway card CTA (or the sticky bar) can preselect the pathway field.
+  useEffect(() => {
+    const onSelect = (e: Event) => {
+      const key = (e as CustomEvent<string>).detail;
+      if (!key) return;
+      setValues((v) => ({ ...v, pathway_interest: key }));
+      setPathwayFlash(false);
+      requestAnimationFrame(() => setPathwayFlash(true));
+      window.setTimeout(() => setPathwayFlash(false), 1900);
+    };
+    window.addEventListener(WCE_PATHWAY_EVENT, onSelect);
+    return () => window.removeEventListener(WCE_PATHWAY_EVENT, onSelect);
+  }, []);
 
   const set = (k: keyof typeof values) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -381,7 +396,12 @@ export function WceApplicationForm() {
 
             <div>
               <label className="wce-label" htmlFor="wce-pathway">Which pathway are you most interested in?</label>
-              <select id="wce-pathway" className="wce-field" value={values.pathway_interest} onChange={set("pathway_interest")}>
+              <select
+                id="wce-pathway"
+                className={`wce-field ${pathwayFlash ? "wce-field-flash" : ""}`}
+                value={values.pathway_interest}
+                onChange={set("pathway_interest")}
+              >
                 <option value="" disabled>Select your preferred experience</option>
                 {(pathways ?? []).map((p) => (
                   <option key={p.id} value={p.key}>{p.label}</option>
