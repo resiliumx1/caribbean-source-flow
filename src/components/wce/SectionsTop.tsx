@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
+import { FlowerOfLifeField, EdgeFoliage, DiamondRule, GoldFlourish, CheckMark } from "./decor";
 import { useWcePathways, useWceSpeakers, useWceSettings, pathwayFeatures } from "./useWceData";
 import { WceHeroMedia, WceHeroParticles } from "./HeroMedia";
 import { Reveal, useCountUp, useInView, useWceReducedMotion } from "./motion";
@@ -156,9 +157,13 @@ export function WcePathwaysSection() {
   const { data: pathways, isLoading } = useWcePathways();
 
   return (
-    <section id="pathways" className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
-      <div className="mx-auto max-w-6xl text-center">
-        <Reveal><LotusMark size={38} className="mx-auto" /></Reveal>
+    <section id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <EdgeFoliage side="left" opacity={0.13} />
+      <EdgeFoliage side="right" opacity={0.13} />
+      <div className="mx-auto max-w-5xl text-center">
+        <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
+        <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
           <h2 className="mt-8 text-[clamp(2rem,5vw,3.4rem)]" style={{ color: "var(--wce-forest)" }}>
             Choose Your Experience Pathway
@@ -174,7 +179,7 @@ export function WcePathwaysSection() {
         {isLoading && <PathwayCardsSkeleton />}
 
         {!isLoading && (
-        <div className="mt-16 grid gap-8 sm:mt-20 lg:grid-cols-3">
+        <div className="mx-auto mt-20 grid max-w-5xl gap-7 sm:mt-24 lg:grid-cols-3">
           {(pathways ?? []).map((p, i) => {
             const isRetreat = p.key === "retreat";
             const features = pathwayFeatures(p.features);
@@ -183,49 +188,55 @@ export function WcePathwaysSection() {
               : p.key === "online"
               ? "Get Online Access"
               : "Reserve Spot";
+            const ctaClass = isRetreat
+              ? "wce-btn-outline"
+              : p.key === "online"
+              ? "wce-btn-gold"
+              : "wce-btn-forest";
             return (
               <Reveal key={p.id} index={i} className="h-full">
-                <article
-                  className="wce-card relative flex h-full flex-col overflow-hidden px-8 py-12 text-center"
-                  style={{
-                    background: isRetreat ? "var(--wce-forest)" : "var(--wce-cream-warm)",
-                    border: `1px solid ${isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.4)"}`,
-                    borderRadius: "3px",
-                  }}
-                >
-                  {isRetreat && <span aria-hidden="true" className="wce-breathe" />}
-                  {isRetreat && (
-                    <div
-                      aria-hidden="true"
-                      className="absolute -right-12 top-9 w-52 rotate-45 py-1.5 text-center text-[0.55rem] uppercase"
-                      style={{ background: "var(--wce-gold)", color: "var(--wce-forest)", letterSpacing: "0.2em", fontWeight: 600 }}
-                    >
-                      Applications Open
-                    </div>
-                  )}
-                  <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
-
+                <div className="relative h-full pt-6">
+                  {/* Numbered badge straddles the card's top edge */}
                   <span
-                    className="wce-card-badge relative mx-auto flex h-12 w-12 items-center justify-center rounded-full text-lg"
+                    className="wce-card-badge absolute left-1/2 top-0 z-10 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full text-[1.05rem]"
                     style={{
                       fontFamily: "var(--wce-display)",
-                      border: "1px solid var(--wce-gold)",
-                      background: isRetreat ? "transparent" : "var(--wce-gold)",
-                      color: isRetreat ? "var(--wce-gold-light)" : "var(--wce-forest)",
+                      border: "1px solid var(--wce-gold-deep)",
+                      background: "linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold))",
+                      color: "var(--wce-forest)",
                     }}
                   >
                     {i + 1}
                   </span>
+                <article
+                  className="wce-card relative flex h-full flex-col overflow-hidden px-7 pb-10 pt-14 text-center"
+                  style={{
+                    background: isRetreat ? "var(--wce-forest)" : "var(--wce-cream-warm)",
+                    border: `1px solid ${isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.4)"}`,
+                    borderRadius: "2px",
+                  }}
+                >
+                  {isRetreat && <span aria-hidden="true" className="wce-breathe" />}
+                  {!isRetreat && <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={96} />}
+                  {isRetreat && (
+                    <div aria-hidden="true" className="wce-ribbon"><span>Premium</span></div>
+                  )}
+                  <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
 
                   <h3
-                    className="relative mt-8 text-[1.55rem] leading-snug"
+                    className="relative mx-auto max-w-[20ch] text-[1.35rem] leading-snug"
                     style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)" }}
                   >
                     {p.label}
                   </h3>
 
+                  <DiamondRule
+                    className="relative mx-auto mt-6 max-w-[9rem]"
+                    tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"}
+                  />
+
                   <p
-                    className="relative mt-6 text-[0.68rem] uppercase"
+                    className="relative mt-5 text-[0.63rem] uppercase"
                     style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(26,26,20,0.55)", letterSpacing: "0.24em" }}
                   >
                     {isRetreat ? "Applications Open" : p.key === "in_person" ? "Starting at" : "Full access"}
@@ -236,27 +247,35 @@ export function WcePathwaysSection() {
                     </div>
                   )}
 
-                  <ul className="relative mx-auto mt-8 space-y-3 text-left text-sm">
+                  <DiamondRule
+                    className="relative mx-auto mt-6 max-w-[9rem]"
+                    tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"}
+                  />
+
+                  <ul className="relative mx-auto mt-8 space-y-3 text-left text-[0.85rem] leading-relaxed">
                     {features.map((f) => (
                       <li key={f} className="flex items-start gap-3" style={{ color: isRetreat ? "rgba(245,239,224,0.85)" : "rgba(26,26,20,0.78)" }}>
-                        <span aria-hidden="true" style={{ color: "var(--wce-gold)" }}>✦</span>
+                        <CheckMark tone={isRetreat ? "var(--wce-gold-light)" : "var(--wce-gold-deep)"} />
                         <span>{f}</span>
                       </li>
                     ))}
                   </ul>
 
-                  <a
-                    href="#apply"
-                    className="wce-btn wce-btn-gold relative mt-10 w-full"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      dataLayerPush("pathway_click", { pathway_key: p.key, pathway_label: p.label });
-                      selectPathway(p.key);
-                    }}
-                  >
-                    {cta}
-                  </a>
+                  <div className="relative mt-auto pt-10">
+                    <a
+                      href="#apply"
+                      className={`wce-btn ${ctaClass} w-full`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        dataLayerPush("pathway_click", { pathway_key: p.key, pathway_label: p.label });
+                        selectPathway(p.key);
+                      }}
+                    >
+                      {cta}
+                    </a>
+                  </div>
                 </article>
+                </div>
               </Reveal>
             );
           })}
@@ -452,11 +471,15 @@ export function WceSpeakersSection() {
   const featured = speakers?.find((s) => s.is_featured) ?? null;
   const rest = ((speakers ?? []) as Speaker[]).filter((s) => s.id !== featured?.id);
   const selected = rest.find((s) => s.id === selectedId) ?? null;
+  const [showAllSessions, setShowAllSessions] = useState(false);
 
   return (
-    <section id="speakers" ref={sectionRef} className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+    <section id="speakers" ref={sectionRef} className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <EdgeFoliage side="right" opacity={0.12} />
       <div className="mx-auto max-w-6xl text-center">
-        <Reveal><LotusMark size={38} className="mx-auto" /></Reveal>
+        <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
+        <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
           <h2
             className="mt-8 text-[clamp(2rem,5vw,3.4rem)] uppercase"
@@ -500,7 +523,7 @@ export function WceSpeakersSection() {
         )}
 
         <LayoutGroup>
-          <ul className="mt-16 grid grid-cols-2 gap-x-6 gap-y-12 sm:mt-20 sm:grid-cols-3 lg:grid-cols-6">
+          <ul className="mt-16 grid grid-cols-2 gap-x-5 gap-y-12 sm:mt-20 sm:grid-cols-3 lg:grid-cols-6">
             {rest.map((s, i) => (
               <Reveal key={s.id} as="li" index={i % 6}>
                 <SpeakerTile
@@ -517,6 +540,53 @@ export function WceSpeakersSection() {
             {selected && <SpeakerDetail key={selected.id} speaker={selected} onClose={() => setSelectedId(null)} />}
           </AnimatePresence>
         </LayoutGroup>
+
+        {rest.length > 0 && (
+          <div className="mt-16">
+            <button
+              type="button"
+              onClick={() => setShowAllSessions((v) => !v)}
+              aria-expanded={showAllSessions}
+              className="wce-btn wce-btn-outline-forest wce-btn-pill mx-auto"
+            >
+              {showAllSessions ? "Hide Speaker Sessions" : "Explore Speaker Sessions"}
+            </button>
+
+            {showAllSessions && (
+              <ul className="mt-12 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
+                {rest.map((s) => (
+                  <li
+                    key={s.id}
+                    className="px-7 py-8"
+                    style={{
+                      background: "var(--wce-cream)",
+                      border: "1px solid rgba(201,162,39,0.45)",
+                      borderRadius: "2px",
+                    }}
+                  >
+                    <p className="text-[1.15rem]" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-forest)" }}>
+                      {s.name}
+                    </p>
+                    {s.title && (
+                      <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-deep)" }}>{s.title}</p>
+                    )}
+                    <DiamondRule className="mt-5 max-w-[7rem]" tone="rgba(201,162,39,0.85)" />
+                    {s.theme && (
+                      <p className="mt-4 italic" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-deep)" }}>
+                        {s.theme}
+                      </p>
+                    )}
+                    {(s.session_title || s.bio) && (
+                      <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.72)" }}>
+                        {s.session_title || s.bio}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

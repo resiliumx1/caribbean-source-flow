@@ -6,6 +6,11 @@ import { LeafDivider, LotusMark, CompassMandala, CornerVine, EmblemSymposium, Em
 import { useWceMedia, useWcePathways } from "./useWceData";
 import { Reveal, useInView, useParallax, useWceReducedMotion } from "./motion";
 import { WCE_PATHWAY_EVENT } from "./pathway-select";
+import {
+  FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, DiamondRule, GoldFlourish,
+  LeafIcon, CheckMark, RitualIcon, ConnectionIcon, TransformationIcon,
+} from "./decor";
+import retreatImage from "@/assets/wce-retreat-landscape.jpg";
 
 /* ---------------- 5. HIGHLIGHT REELS ---------------- */
 export function WceMediaSection() {
@@ -15,9 +20,11 @@ export function WceMediaSection() {
   if (!media || media.length === 0) return null;
 
   return (
-    <section className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
+    <section className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
       <div className="mx-auto max-w-6xl text-center">
-        <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
+        <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
+        <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
         <h2
           className="mt-8 text-[clamp(1.7rem,4.2vw,2.8rem)] uppercase"
@@ -31,14 +38,14 @@ export function WceMediaSection() {
         <LeafDivider className="mt-10" />
         </Reveal>
 
-        <ul className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-16 grid gap-6 sm:grid-cols-2">
           {(media ?? []).map((m, i) => (
             <Reveal
               as="li"
               key={m.id}
               index={i}
               className="wce-reel group relative overflow-hidden"
-              style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px", background: "var(--wce-forest-mid)" }}
+              style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px", background: "var(--wce-forest-mid)" }}
             >
               <a
                 href={m.video_url ?? "#"}
@@ -49,7 +56,7 @@ export function WceMediaSection() {
                   dataLayerPush("video_play", { video_title: m.title, video_url: m.video_url });
                 }}
                 aria-label={m.title ? `Play ${m.title}` : "Play highlight reel"}
-                className="relative block aspect-[4/3] w-full"
+                className="relative block aspect-[16/9] w-full"
               >
                 {m.thumbnail_url ? (
                   <img src={m.thumbnail_url} alt={m.title ?? "Highlight reel"} className="h-full w-full object-cover" loading="lazy" decoding="async" />
@@ -62,20 +69,21 @@ export function WceMediaSection() {
                 )}
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span
-                    className="wce-play flex h-14 w-14 items-center justify-center rounded-full"
-                    style={{ border: "1px solid var(--wce-gold)", background: "rgba(15,42,29,0.55)" }}
+                    className="wce-play flex h-16 w-16 items-center justify-center rounded-full"
+                    style={{ border: "1px solid var(--wce-gold)", background: "rgba(15,42,29,0.45)", backdropFilter: "blur(2px)" }}
                   >
-                    <svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true">
+                    <svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true" className="ml-1">
                       <path d="M2 2l14 8-14 8V2z" fill="var(--wce-gold-light)" />
                     </svg>
                   </span>
                 </span>
               </a>
               <p
-                className="px-4 py-4 text-[0.68rem] uppercase"
-                style={{ color: "var(--wce-cream)", letterSpacing: "0.2em", borderTop: "1px solid rgba(201,162,39,0.3)" }}
+                className="flex items-center justify-center gap-2.5 px-4 py-4 text-[0.66rem] uppercase"
+                style={{ color: "var(--wce-cream)", letterSpacing: "0.22em", borderTop: "1px solid rgba(201,162,39,0.3)" }}
               >
-                {m.title}
+                <LeafIcon />
+                <span>{m.title}</span>
               </p>
             </Reveal>
           ))}
@@ -97,11 +105,14 @@ export function WceActivitiesSection() {
   const { ref: lineRef, inView: lineIn } = useInView<HTMLSpanElement>();
   const reduced = useWceReducedMotion();
   return (
-    <section id="activities" className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+    <section id="activities" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <EdgeFoliage side="left" opacity={0.12} />
       <CornerVine className="pointer-events-none absolute left-0 top-8 opacity-40" />
       <CornerVine flip className="pointer-events-none absolute right-0 top-8 opacity-40" />
       <div className="mx-auto max-w-6xl text-center">
-        <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
+        <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
+        <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
         <h2 className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]" style={{ color: "var(--wce-forest)" }}>
           Caribbean Wellness Experience Activities
@@ -109,9 +120,16 @@ export function WceActivitiesSection() {
         <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
           A transformational journey of learning, connection, and renewal in Saint Lucia.
         </p>
+        <DiamondRule className="mx-auto mt-8 max-w-[11rem]" />
         </Reveal>
 
-        <div className="relative mt-20">
+        <Reveal index={2}>
+          <p className="wce-eyebrow mt-16" style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.34em" }}>
+            Four Pillars of the Week
+          </p>
+        </Reveal>
+
+        <div className="relative mt-12">
           <span
             ref={lineRef}
             aria-hidden="true"
@@ -146,40 +164,115 @@ const RETREAT_POINTS = [
   "Limited spaces for a personalized journey",
 ];
 
+const RETREAT_VALUES = [
+  { Icon: RitualIcon, label: "Holistic Wellness" },
+  { Icon: ConnectionIcon, label: "Meaningful Connection" },
+  { Icon: TransformationIcon, label: "Lasting Transformation" },
+];
+
 export function WceRetreatBand() {
   const bandRef = useParallax<HTMLDivElement>(0.18);
   return (
-    <section className="relative overflow-hidden px-6 py-24 text-center sm:py-32" style={{ background: "var(--wce-forest)" }}>
+    <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-forest)" }}>
       <div
         ref={bandRef}
         aria-hidden="true"
         className="pointer-events-none absolute -inset-y-[25%] inset-x-0 will-change-transform"
         style={{ background: "radial-gradient(70% 60% at 50% 50%, rgba(45,74,53,0.6), transparent 70%)" }}
       />
-      <div className="relative mx-auto flex max-w-3xl flex-col items-center">
-        <CompassMandala className="wce-mandala-spin opacity-90" />
-        <Reveal><p className="wce-eyebrow mt-10" style={{ color: "var(--wce-gold)" }}>
-          Caribbean Wellness Saint Lucia 2026
-        </p></Reveal>
-        <Reveal index={1}><h2 className="mt-6 text-[clamp(1.9rem,4.8vw,3.2rem)]" style={{ color: "var(--wce-cream)" }}>
-          Apply for the 6 Day Fortification Retreat &amp; LifeCraft Experience
-        </h2></Reveal>
-        <p className="mt-6 text-base italic" style={{ color: "var(--wce-gold-light)", fontFamily: "var(--wce-display)", fontSize: "1.3rem" }}>
-          Step away. Go deeper. Return renewed.
-        </p>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.05} light />
+      <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
+        {/* Left — copy */}
+        <div className="text-center lg:text-left">
+          <Reveal>
+            <p className="wce-eyebrow" style={{ color: "var(--wce-gold)" }}>
+              Caribbean Wellness Saint Lucia 2026
+            </p>
+          </Reveal>
+          <Reveal index={1}>
+            <h2 className="mt-6 text-[clamp(1.9rem,4.4vw,3rem)]" style={{ color: "var(--wce-cream)" }}>
+              Apply for the 6 Day Fortification Retreat &amp; LifeCraft Experience
+            </h2>
+          </Reveal>
+          <p
+            className="mt-5 italic"
+            style={{ color: "var(--wce-gold-light)", fontFamily: "var(--wce-display)", fontSize: "1.3rem" }}
+          >
+            Step away. Go deeper. Return renewed.
+          </p>
 
-        <ul className="mt-12 space-y-4 text-left">
-          {RETREAT_POINTS.map((p, i) => (
-            <Reveal as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
-              <span aria-hidden="true" style={{ color: "var(--wce-gold)" }}>✦</span>
-              <span>{p}</span>
-            </Reveal>
-          ))}
-        </ul>
+          <DiamondRule className="mt-8 max-w-[13rem] lg:mx-0" />
 
-        <Reveal><a href="#apply" className="wce-btn wce-btn-gold mt-14">Apply for the Retreat</a></Reveal>
+          <ul className="mx-auto mt-9 max-w-md space-y-3.5 text-left">
+            {RETREAT_POINTS.map((p, i) => (
+              <Reveal as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
+                <CheckMark tone="var(--wce-gold-light)" />
+                <span>{p}</span>
+              </Reveal>
+            ))}
+          </ul>
 
-        <LeafDivider className="mt-16 w-full max-w-md" />
+          <ul className="mt-11 flex flex-wrap justify-center gap-x-10 gap-y-6 lg:justify-start">
+            {RETREAT_VALUES.map(({ Icon, label }) => (
+              <li key={label} className="flex flex-col items-center gap-2.5 lg:items-start">
+                <Icon />
+                <span
+                  className="text-[0.6rem] uppercase"
+                  style={{ color: "rgba(245,239,224,0.75)", letterSpacing: "0.2em" }}
+                >
+                  {label}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <Reveal>
+            <a href="#apply" className="wce-btn wce-btn-gold mt-12 w-full sm:w-auto">Apply for the Retreat</a>
+          </Reveal>
+          <p className="mt-6 text-sm italic" style={{ color: "rgba(245,239,224,0.6)", fontFamily: "var(--wce-display)", fontSize: "1.05rem" }}>
+            Limited spaces. Applications reviewed personally.
+          </p>
+        </div>
+
+        {/* Right — landscape image with an overlapping mandala */}
+        <Reveal index={2} className="relative">
+          <div
+            className="relative overflow-hidden"
+            style={{ border: "1px solid rgba(201,162,39,0.55)", borderRadius: "2px" }}
+          >
+            <img
+              src={retreatImage}
+              alt="Saint Lucia retreat landscape at Mount Kailash Rejuvenation Centre"
+              className="h-full w-full object-cover"
+              style={{ aspectRatio: "4 / 3" }}
+              width={1280}
+              height={960}
+              loading="lazy"
+              decoding="async"
+            />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{ background: "linear-gradient(200deg, rgba(15,42,29,0.35), rgba(15,42,29,0.72))" }}
+            />
+          </div>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          >
+            <CompassMandala className="wce-mandala-spin opacity-90" />
+          </span>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-5 -top-5 hidden lg:block"
+          >
+            <FlowerOfLifeMark size={150} opacity={0.35} />
+          </span>
+        </Reveal>
+      </div>
+
+      <div className="relative mx-auto mt-20 max-w-3xl text-center">
+        <LeafDivider className="mx-auto w-full max-w-md" />
         <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.7)", letterSpacing: "0.2em" }}>
           Holistic Wellness <span style={{ color: "var(--wce-gold)" }}>|</span> Meaningful Connection{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span> Lasting Transformation
@@ -315,34 +408,43 @@ export function WceApplicationForm() {
   const errStyle: React.CSSProperties = { color: "var(--wce-gold-light)", opacity: 0.85 };
 
   return (
-    <section id="apply" className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
-      <Reveal className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-2" style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}>
+    <section id="apply" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <Reveal
+        className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-[0.78fr_1.22fr]"
+        style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px" }}
+      >
         {/* Left — cream panel */}
-        <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-14 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
+        <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-12 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
+          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={96} />
           <CornerVine className="pointer-events-none absolute -left-2 bottom-0 opacity-40" />
-          <p className="wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Caribbean Wellness Saint Lucia 2026</p>
-          <h2 className="mt-6 text-[clamp(1.9rem,4.4vw,2.9rem)] leading-tight" style={{ color: "var(--wce-forest)" }}>
+          <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Caribbean Wellness Saint Lucia 2026</p>
+          <h2 className="relative mt-6 text-[clamp(1.8rem,4vw,2.5rem)] leading-tight" style={{ color: "var(--wce-forest)" }}>
             Retreat Application / Lead Form
           </h2>
-          <p className="mt-6 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(26,26,20,0.7)" }}>
+          <DiamondRule className="relative mt-7 max-w-[9rem] lg:mx-0" />
+          <p className="relative mt-7 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(26,26,20,0.7)" }}>
             Tell us about your interest and our team will follow up personally to discuss your goals, confirm
             availability and guide you through the next steps.
           </p>
-          <ul className="mt-12 flex flex-wrap justify-center gap-6 lg:justify-start">
+          <ul className="relative mt-12 flex flex-col items-center gap-5 lg:items-start">
             {["Sacred. Natural. Transformative.", "Holistic Wellness Experiences", "Saint Lucia Awaits You"].map((t) => (
               <li
                 key={t}
-                className="max-w-[10rem] text-[0.6rem] uppercase leading-relaxed"
+                className="flex items-center gap-2.5 text-[0.6rem] uppercase leading-relaxed"
                 style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.18em" }}
               >
-                {t}
+                <LeafIcon tone="var(--wce-gold-deep)" />
+                <span>{t}</span>
               </li>
             ))}
           </ul>
         </div>
 
         {/* Right — dark form panel */}
-        <div className="wce-form-panel px-8 py-16 sm:px-14" style={{ background: "var(--wce-forest)" }}>
+        <div className="wce-form-panel relative px-8 py-16 sm:px-12" style={{ background: "var(--wce-forest)" }}>
+          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} light size={110} />
+          <div className="relative">
           {submitted ? (
             <div className="wce-form-confirm flex min-h-[26rem] flex-col items-center justify-center text-center" role="status" aria-live="polite">
               <LotusMark size={54} />
@@ -392,37 +494,34 @@ export function WceApplicationForm() {
                 <input id="wce-country" className="wce-field" type="text" placeholder="Enter your country or city" autoComplete="country-name"
                   value={values.country} onChange={set("country")} />
               </div>
-            </div>
-
-            <div>
-              <label className="wce-label" htmlFor="wce-pathway">Which pathway are you most interested in?</label>
-              <select
-                id="wce-pathway"
-                className={`wce-field ${pathwayFlash ? "wce-field-flash" : ""}`}
-                value={values.pathway_interest}
-                onChange={set("pathway_interest")}
-              >
-                <option value="" disabled>Select your preferred experience</option>
-                {(pathways ?? []).map((p) => (
-                  <option key={p.id} value={p.key}>{p.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="wce-label" htmlFor="wce-message">What excites you most about the retreat?</label>
-              <textarea id="wce-message" className="wce-field" rows={4} placeholder="Share what inspires you"
-                value={values.reason} onChange={set("reason")} />
-            </div>
-
-            <div>
-              <label className="wce-label" htmlFor="wce-contact">Preferred Contact Method</label>
-              <select id="wce-contact" className="wce-field" value={values.preferred_contact} onChange={set("preferred_contact")}>
-                <option value="" disabled>Select your preferred contact method</option>
-                <option value="email">Email</option>
-                <option value="whatsapp">WhatsApp</option>
-                <option value="phone">Phone call</option>
-              </select>
+              <div>
+                <label className="wce-label" htmlFor="wce-pathway">Pathway of interest</label>
+                <select
+                  id="wce-pathway"
+                  className={`wce-field ${pathwayFlash ? "wce-field-flash" : ""}`}
+                  value={values.pathway_interest}
+                  onChange={set("pathway_interest")}
+                >
+                  <option value="" disabled>Select your preferred experience</option>
+                  {(pathways ?? []).map((p) => (
+                    <option key={p.id} value={p.key}>{p.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="wce-label" htmlFor="wce-contact">Preferred Contact Method</label>
+                <select id="wce-contact" className="wce-field" value={values.preferred_contact} onChange={set("preferred_contact")}>
+                  <option value="" disabled>Select your preferred contact method</option>
+                  <option value="email">Email</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="phone">Phone call</option>
+                </select>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="wce-label" htmlFor="wce-message">What excites you most about the retreat?</label>
+                <textarea id="wce-message" className="wce-field" rows={4} placeholder="Share what inspires you"
+                  value={values.reason} onChange={set("reason")} />
+              </div>
             </div>
 
             <label className="flex items-start gap-3 text-xs leading-relaxed" style={{ color: "rgba(245,239,224,0.75)" }}>
@@ -441,6 +540,7 @@ export function WceApplicationForm() {
             </p>
           </form>
           )}
+          </div>
         </div>
       </Reveal>
     </section>

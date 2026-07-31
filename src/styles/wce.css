@@ -73,6 +73,44 @@
   border: 1px solid var(--wce-gold);
 }
 .wce-btn-outline:hover { background: var(--wce-gold); color: var(--wce-forest); }
+.wce-btn-forest {
+  background: var(--wce-forest);
+  color: var(--wce-cream);
+  border: 1px solid var(--wce-forest);
+}
+.wce-btn-forest:hover { background: var(--wce-moss); border-color: var(--wce-moss); }
+.wce-btn-outline-forest {
+  background: transparent;
+  color: var(--wce-forest);
+  border: 1px solid rgba(15, 42, 29, 0.45);
+}
+.wce-btn-outline-forest:hover { background: var(--wce-forest); color: var(--wce-cream); border-color: var(--wce-forest); }
+/* Pill variant used for the speaker-sessions toggle */
+.wce-btn-pill { border-radius: 9999px; padding: 0.75rem 1.75rem; }
+
+/* Corner ribbon (pathway card 3) */
+.wce-ribbon {
+  position: absolute;
+  top: 0; right: 0;
+  width: 150px; height: 150px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.wce-ribbon span {
+  position: absolute;
+  top: 26px; right: -38px;
+  width: 170px;
+  transform: rotate(45deg);
+  text-align: center;
+  padding: 0.3rem 0;
+  background: linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold));
+  color: var(--wce-forest);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 18px -8px rgba(0,0,0,0.5);
+}
 
 .wce-root a:focus-visible,
 .wce-root button:focus-visible,
@@ -153,18 +191,22 @@
   filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
 }
 
-/* Form fields */
+/* Form fields — dark translucent fill with a gold underline */
 .wce-field {
   width: 100%;
   min-height: 48px;
-  background: rgba(245, 239, 224, 0.06);
-  border: 1px solid rgba(201, 162, 39, 0.35);
-  border-radius: 2px;
-  padding: 0.75rem 1rem;
+  background: rgba(10, 26, 18, 0.45);
+  border: 1px solid transparent;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.55);
+  border-radius: 2px 2px 0 0;
+  padding: 0.75rem 0.9rem;
   color: var(--wce-cream);
   font-family: var(--wce-body);
   font-size: 0.9rem;
+  transition: border-color .25s ease, background-color .25s ease;
 }
+.wce-field:hover { background: rgba(10, 26, 18, 0.6); }
+.wce-field:focus { outline: none; border-bottom-color: var(--wce-gold-light); background: rgba(10, 26, 18, 0.7); }
 .wce-field::placeholder { color: rgba(245, 239, 224, 0.4); }
 .wce-field option { color: var(--wce-ink); }
 .wce-label {
@@ -385,7 +427,7 @@
 /* ============ STICKY SUB-NAV ============ */
 .wce-subnav {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 64px; left: 0; right: 0;
   z-index: 55;
   display: none;
   justify-content: center;
@@ -445,4 +487,48 @@
 @media (prefers-reduced-motion: reduce) {
   .wce-sticky-cta, .wce-subnav { transition: none !important; }
   .wce-skeleton { animation: none; opacity: .6; }
+}
+
+/* ============ FAQ CARDS ============ */
+.wce-faq-card {
+  background: rgba(255, 253, 247, 0.72);
+  border: 1px solid rgba(201, 162, 39, 0.5);
+  border-radius: 2px;
+  transition: border-color .3s ease, box-shadow .3s ease, background-color .3s ease;
+}
+.wce-faq-card:hover { border-color: var(--wce-gold); box-shadow: 0 14px 34px -26px rgba(15,42,29,0.7); }
+.wce-faq-card.is-open { background: rgba(255, 253, 247, 0.95); border-color: var(--wce-gold); }
+
+/* ============ SECTION SURFACES ============ */
+.wce-surface { position: relative; overflow: hidden; isolation: isolate; }
+.wce-surface > * { position: relative; z-index: 1; }
+.wce-surface > .wce-surface-bg { z-index: 0; }
+
+/* Hairline gold divider between cream sections */
+.wce-hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,162,39,0.45), transparent);
+}
+
+/* Transparent site header on the WCE route */
+body.wce-transparent-header header[class*="fixed"] {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Header contents must read against the dark hero */
+body.wce-transparent-header header[class*="fixed"] a,
+body.wce-transparent-header header[class*="fixed"] span,
+body.wce-transparent-header header[class*="fixed"] button {
+  color: var(--wce-cream, #F5EFE0);
+}
+body.wce-transparent-header header[class*="fixed"] .wce-nav-item,
+body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
+  color: #E4C766;
+}
+body.wce-transparent-header header[class*="fixed"] a:hover,
+body.wce-transparent-header header[class*="fixed"] a:hover span {
+  color: #E4C766;
 }
