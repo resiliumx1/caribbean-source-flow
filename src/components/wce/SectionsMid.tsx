@@ -10,7 +10,7 @@ import {
   FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, DiamondRule, GoldFlourish,
   LeafIcon, CheckMark, RitualIcon, ConnectionIcon, TransformationIcon,
 } from "./decor";
-import retreatImage from "@/assets/fortification-retreat.jpg.asset.json";
+import retreatImage from "@/assets/wce-retreat-landscape.jpg";
 
 /* ---------------- 5. HIGHLIGHT REELS ---------------- */
 export function WceMediaSection() {
@@ -241,10 +241,12 @@ export function WceRetreatBand() {
             style={{ border: "1px solid rgba(201,162,39,0.55)", borderRadius: "2px" }}
           >
             <img
-              src={retreatImage.url}
+              src={retreatImage}
               alt="Saint Lucia retreat landscape at Mount Kailash Rejuvenation Centre"
               className="h-full w-full object-cover"
               style={{ aspectRatio: "4 / 3" }}
+              width={1280}
+              height={960}
               loading="lazy"
               decoding="async"
             />
