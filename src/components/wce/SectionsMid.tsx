@@ -4,34 +4,38 @@ import { dataLayerPush, pixelTrack } from "@/lib/tracking";
 import { useWceAttribution } from "./useWceAttribution";
 import { LeafDivider, LotusMark, CompassMandala, CornerVine, EmblemSymposium, EmblemRetreat, EmblemLifecraft, EmblemCeremony } from "./ornaments";
 import { useWceMedia, useWcePathways } from "./useWceData";
-import { Reveal, useInView, useParallax, useWceReducedMotion } from "./motion";
+import {
+  Reveal, useInView, useParallax, useWceReducedMotion,
+  MaskedHeading, ClipReveal, SlideInItem, useCounterRotate, useSectionLift,
+} from "./motion";
 import { WCE_PATHWAY_EVENT } from "./pathway-select";
 import {
   FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, DiamondRule, GoldFlourish,
-  LeafIcon, CheckMark, RitualIcon, ConnectionIcon, TransformationIcon,
+  LeafIcon, CheckMark, RitualIcon, ConnectionIcon, TransformationIcon, EdgeBleed,
 } from "./decor";
+import { LoveEmblem } from "./LoveEmblem";
 import retreatImage from "@/assets/wce-retreat-landscape.jpg";
 
 /* ---------------- 5. HIGHLIGHT REELS ---------------- */
 export function WceMediaSection() {
   const { data: media } = useWceMedia();
+  const lift = useSectionLift<HTMLElement>();
 
   // No published rows yet — hide the section entirely rather than showing empty cards.
   if (!media || media.length === 0) return null;
 
   return (
-    <section className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+    <section ref={lift.ref} className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)", ...lift.style }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <div className="mx-auto max-w-6xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
         <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
-        <Reveal index={1}>
-        <h2
+        <MaskedHeading
+          lines={["Conference Highlight Reels"]}
           className="mt-8 text-[clamp(1.7rem,4.2vw,2.8rem)] uppercase"
           style={{ color: "var(--wce-forest)", letterSpacing: "0.12em" }}
-        >
-          Conference Highlight Reels
-        </h2>
+        />
+        <Reveal index={1}>
         <p className="mt-4 text-sm italic" style={{ color: "rgba(26,26,20,0.6)", fontFamily: "var(--wce-display)", fontSize: "1.1rem" }}>
           From previous staging
         </p>
@@ -40,10 +44,11 @@ export function WceMediaSection() {
 
         <ul className="mt-16 grid gap-6 sm:grid-cols-2">
           {(media ?? []).map((m, i) => (
-            <Reveal
+            <ClipReveal
               as="li"
               key={m.id}
-              index={i}
+              direction={i % 2 === 0 ? "left" : "right"}
+              delay={i * 90}
               className="wce-reel group relative overflow-hidden"
               style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px", background: "var(--wce-forest-mid)" }}
             >
@@ -85,7 +90,7 @@ export function WceMediaSection() {
                 <LeafIcon />
                 <span>{m.title}</span>
               </p>
-            </Reveal>
+            </ClipReveal>
           ))}
         </ul>
       </div>
@@ -104,19 +109,22 @@ const ACTIVITIES = [
 export function WceActivitiesSection() {
   const { ref: lineRef, inView: lineIn } = useInView<HTMLSpanElement>();
   const reduced = useWceReducedMotion();
+  const lift = useSectionLift<HTMLElement>();
   return (
-    <section id="activities" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+    <section ref={lift.ref} id="activities" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <EdgeFoliage side="left" opacity={0.12} />
       <CornerVine className="pointer-events-none absolute left-0 top-8 opacity-40" />
       <CornerVine flip className="pointer-events-none absolute right-0 top-8 opacity-40" />
       <div className="mx-auto max-w-6xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
         <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
+        <MaskedHeading
+          lines={["Caribbean Wellness Experience", "Activities"]}
+          className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]"
+          style={{ color: "var(--wce-forest)" }}
+        />
         <Reveal index={1}>
-        <h2 className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]" style={{ color: "var(--wce-forest)" }}>
-          Caribbean Wellness Experience Activities
-        </h2>
         <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
           A transformational journey of learning, connection, and renewal in Saint Lucia.
         </p>
@@ -138,7 +146,7 @@ export function WceActivitiesSection() {
           />
           <ul className="relative grid gap-14 sm:grid-cols-2 lg:grid-cols-4">
             {ACTIVITIES.map(({ Emblem, label, copy }, i) => (
-              <Reveal as="li" key={label} index={i} className="flex flex-col items-center text-center">
+              <SlideInItem as="li" key={label} index={i} className="flex flex-col items-center text-center">
                 <span
                   className="flex h-[88px] w-[88px] items-center justify-center rounded-full"
                   style={{ background: "var(--wce-cream-warm)" }}
@@ -147,11 +155,84 @@ export function WceActivitiesSection() {
                 </span>
                 <h3 className="mt-6 text-xl" style={{ color: "var(--wce-forest)" }}>{label}</h3>
                 <p className="mt-3 max-w-[15rem] text-sm" style={{ color: "rgba(26,26,20,0.68)" }}>{copy}</p>
-              </Reveal>
+              </SlideInItem>
             ))}
           </ul>
         </div>
       </div>
+    </section>
+  );
+}
+
+/* ---------------- 6b. SPECIAL CEREMONY ---------------- */
+export function WceCeremonySection() {
+  const medallionRef = useCounterRotate<HTMLSpanElement>(6);
+  return (
+    <section
+      id="ceremony"
+      className="relative overflow-hidden px-6 py-24 text-center sm:py-32"
+      style={{ background: "var(--wce-forest)" }}
+    >
+      <EdgeBleed position="top" />
+      <span
+        ref={medallionRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 will-change-transform"
+      >
+        <FlowerOfLifeMark size={620} opacity={0.09} />
+      </span>
+      <CornerVine className="pointer-events-none absolute left-4 top-6 opacity-45" />
+      <CornerVine flip className="pointer-events-none absolute right-4 top-6 opacity-45" />
+
+      <div className="relative mx-auto max-w-3xl">
+        <Reveal>
+          <p className="wce-eyebrow" style={{ color: "var(--wce-gold)" }}>A Sacred Milestone</p>
+        </Reveal>
+
+        <DiamondRule className="mx-auto mt-8 max-w-[11rem]" />
+
+        <MaskedHeading
+          lines={["Special Ceremony"]}
+          className="mt-8 text-[clamp(2rem,5vw,3.4rem)]"
+          style={{ color: "var(--wce-cream)" }}
+        />
+
+        <MaskedHeading
+          as="p"
+          lines={["Graduation of The Mount Kailash Herbal", "School of Esoteric Knowledge"]}
+          delay={140}
+          className="mx-auto mt-5 max-w-2xl italic"
+          style={{
+            color: "var(--wce-gold-light)",
+            fontFamily: "var(--wce-display)",
+            fontSize: "clamp(1.15rem, 2.6vw, 1.6rem)",
+            lineHeight: 1.45,
+          }}
+        />
+
+        <DiamondRule className="mx-auto mt-8 max-w-[11rem]" />
+
+        <Reveal index={1}>
+          <p className="mx-auto mt-9 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.82)" }}>
+            We gather to honour the graduating herbal physicians — those who have studied the plants, the soil and
+            the discipline of care. The ceremony marks the passing on of traditional knowledge from teacher to
+            practitioner, and welcomes a new generation into service.
+          </p>
+        </Reveal>
+
+        <Reveal index={2}>
+          <span className="mt-14 flex justify-center">
+            <EmblemCeremony />
+          </span>
+        </Reveal>
+
+        <Reveal index={3}>
+          <span className="mt-12 flex justify-center">
+            <LoveEmblem size={250} />
+          </span>
+        </Reveal>
+      </div>
+      <EdgeBleed position="bottom" />
     </section>
   );
 }
@@ -172,8 +253,10 @@ const RETREAT_VALUES = [
 
 export function WceRetreatBand() {
   const bandRef = useParallax<HTMLDivElement>(0.18);
+  const mandalaRef = useCounterRotate<HTMLSpanElement>(8);
   return (
     <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-forest)" }}>
+      <EdgeBleed position="top" />
       <div
         ref={bandRef}
         aria-hidden="true"
@@ -189,11 +272,11 @@ export function WceRetreatBand() {
               Caribbean Wellness Saint Lucia 2026
             </p>
           </Reveal>
-          <Reveal index={1}>
-            <h2 className="mt-6 text-[clamp(1.9rem,4.4vw,3rem)]" style={{ color: "var(--wce-cream)" }}>
-              Apply for the 6 Day Fortification Retreat &amp; LifeCraft Experience
-            </h2>
-          </Reveal>
+          <MaskedHeading
+            lines={["Apply for the 6 Day Fortification", "Retreat & LifeCraft Experience"]}
+            className="mt-6 text-[clamp(1.9rem,4.4vw,3rem)]"
+            style={{ color: "var(--wce-cream)" }}
+          />
           <p
             className="mt-5 italic"
             style={{ color: "var(--wce-gold-light)", fontFamily: "var(--wce-display)", fontSize: "1.3rem" }}
@@ -205,10 +288,10 @@ export function WceRetreatBand() {
 
           <ul className="mx-auto mt-9 max-w-md space-y-3.5 text-left">
             {RETREAT_POINTS.map((p, i) => (
-              <Reveal as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
+              <SlideInItem as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
                 <CheckMark tone="var(--wce-gold-light)" />
                 <span>{p}</span>
-              </Reveal>
+              </SlideInItem>
             ))}
           </ul>
 
@@ -235,8 +318,9 @@ export function WceRetreatBand() {
         </div>
 
         {/* Right — landscape image with an overlapping mandala */}
-        <Reveal index={2} className="relative">
-          <div
+        <div className="relative">
+          <ClipReveal
+            direction="right"
             className="relative overflow-hidden"
             style={{ border: "1px solid rgba(201,162,39,0.55)", borderRadius: "2px" }}
           >
@@ -255,10 +339,11 @@ export function WceRetreatBand() {
               className="pointer-events-none absolute inset-0"
               style={{ background: "linear-gradient(200deg, rgba(15,42,29,0.35), rgba(15,42,29,0.72))" }}
             />
-          </div>
+          </ClipReveal>
           <span
+            ref={mandalaRef}
             aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="pointer-events-none absolute left-1/2 top-1/2 -ml-[95px] -mt-[95px] will-change-transform"
           >
             <CompassMandala className="wce-mandala-spin opacity-90" />
           </span>
@@ -268,7 +353,7 @@ export function WceRetreatBand() {
           >
             <FlowerOfLifeMark size={150} opacity={0.35} />
           </span>
-        </Reveal>
+        </div>
       </div>
 
       <div className="relative mx-auto mt-20 max-w-3xl text-center">
@@ -409,7 +494,7 @@ export function WceApplicationForm() {
 
   return (
     <section id="apply" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <Reveal
         className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-[0.78fr_1.22fr]"
         style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px" }}
