@@ -12,6 +12,7 @@ const LINKS = [
 /** Desktop-only anchor rail that appears past the hero and tracks the section in view. */
 export function WceSubNav() {
   const [visible, setVisible] = useState(false);
+  const [top, setTop] = useState(64);
   const [active, setActive] = useState<string>("pathways");
 
   useEffect(() => {
@@ -19,6 +20,23 @@ export function WceSubNav() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Sit flush beneath the real site header, whatever height it renders at,
+  // so the two navigation rows can never overlap.
+  useEffect(() => {
+    const measure = () => {
+      const header = document.querySelector("header");
+      const h = header ? Math.round(header.getBoundingClientRect().height) : 0;
+      setTop(h > 0 ? h : 64);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    const id = window.setInterval(measure, 500);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.clearInterval(id);
+    };
   }, []);
 
   useEffect(() => {
@@ -48,7 +66,11 @@ export function WceSubNav() {
   };
 
   return (
-    <nav className={`wce-subnav ${visible ? "is-visible" : ""}`} aria-label="Section navigation">
+    <nav
+      className={`wce-subnav ${visible ? "is-visible" : ""}`}
+      style={{ top }}
+      aria-label="Section navigation"
+    >
       {LINKS.map((l) => (
         <a
           key={l.id}

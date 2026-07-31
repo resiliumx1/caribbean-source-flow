@@ -510,11 +510,19 @@
   background: rgba(15,42,29,0.82);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(201,162,39,0.35);
-  transform: translateY(-110%);
-  transition: transform .35s cubic-bezier(0.22,1,0.36,1);
+  transform: translateY(-120%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform .35s cubic-bezier(0.22,1,0.36,1), opacity .3s ease, visibility .3s linear;
 }
 @media (min-width: 768px) { .wce-subnav { display: flex; } }
-.wce-subnav.is-visible { transform: translateY(0); }
+.wce-subnav.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
 .wce-subnav a {
   font-family: var(--wce-body);
   font-size: 0.66rem;

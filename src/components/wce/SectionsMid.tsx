@@ -21,8 +21,10 @@ export function WceMediaSection() {
   const { data: media } = useWceMedia();
   const lift = useSectionLift<HTMLElement>();
 
-  // No published rows yet — hide the section entirely rather than showing empty cards.
-  if (!media || media.length === 0) return null;
+  // Only rows with real footage are worth showing; placeholder rows with no
+  // video or thumbnail would render as empty cards, so the section hides instead.
+  const reels = (media ?? []).filter((m) => !!m.video_url || !!m.thumbnail_url);
+  if (reels.length === 0) return null;
 
   return (
     <section ref={lift.ref} className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)", ...lift.style }}>
@@ -43,7 +45,7 @@ export function WceMediaSection() {
         </Reveal>
 
         <ul className="mt-16 grid gap-6 sm:grid-cols-2">
-          {(media ?? []).map((m, i) => (
+          {reels.map((m, i) => (
             <ClipReveal
               as="li"
               key={m.id}

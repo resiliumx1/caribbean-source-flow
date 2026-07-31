@@ -35,7 +35,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[780px]"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-[clamp(3.5rem,7vh,5rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
@@ -49,8 +49,8 @@ export function WceHero() {
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-70 sm:right-10 sm:top-10" />
 
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
-        <div className={cls("mb-10")} style={stage(0)}>
-          <LotusMark size={46} />
+        <div className={cls("mb-[clamp(1rem,2.2vh,2.5rem)]")} style={stage(0)}>
+          <LotusMark size={40} />
         </div>
 
         <h1
@@ -61,24 +61,24 @@ export function WceHero() {
         </h1>
 
         <span
-          className={`relative mt-6 inline-block ${reduced ? "" : "wce-stage-year"}`}
+          className={`relative mt-[clamp(0.5rem,1.4vh,1.5rem)] inline-block ${reduced ? "" : "wce-stage-year"}`}
           style={reduced ? undefined : { animationDelay: "0.45s" }}
         >
           {!reduced && <span aria-hidden="true" className="wce-year-halo" />}
-          <span className="wce-year relative inline-block text-[clamp(5.5rem,21vw,14rem)]">
+          <span className="wce-year relative inline-block text-[clamp(4.5rem,16vw,11rem)]">
             2026
             {!reduced && <span aria-hidden="true" className="wce-year-shimmer">2026</span>}
           </span>
         </span>
 
         <p
-          className={cls("wce-eyebrow wce-rule-label mt-8")}
+          className={cls("wce-eyebrow wce-rule-label mt-[clamp(1rem,2.4vh,2rem)]")}
           style={{ color: "var(--wce-cream)", letterSpacing: "0.42em", ...stage(0.65) }}
         >
           {dates}
         </p>
 
-        <div className={cls("my-10 w-full max-w-sm")} style={stage(0.72)}>
+        <div className={cls("my-[clamp(1rem,2.6vh,2.5rem)] w-full max-w-sm")} style={stage(0.72)}>
           <LeafDivider />
         </div>
 
@@ -90,15 +90,15 @@ export function WceHero() {
           <span style={{ color: "var(--wce-gold)" }}>|</span> Lifecraft Experience
         </p>
 
-        <p className={cls("wce-eyebrow mt-10")} style={{ color: "var(--wce-gold)", ...stage(0.9) }}>
+        <p className={cls("wce-eyebrow mt-[clamp(1rem,2.6vh,2.5rem)]")} style={{ color: "var(--wce-gold)", ...stage(0.9) }}>
           {venue}
         </p>
 
-        <WceCountdown className={cls("mt-10")} />
+        <WceCountdown className={cls("mt-[clamp(1rem,2.8vh,2.5rem)]")} />
 
         {/* CTAs render fully interactive from first paint; only opacity is animated. */}
         <div
-          className="mt-14 flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
+          className="mt-[clamp(1.5rem,3.4vh,3.5rem)] flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
           style={
             reduced
               ? undefined
@@ -331,9 +331,9 @@ function PortraitCircle({
   glow?: boolean;
 }) {
   const dim =
-    size === "lg" ? "h-44 w-44 sm:h-56 sm:w-56"
+    size === "lg" ? "h-48 w-48 sm:h-60 sm:w-60 lg:h-72 lg:w-72"
     : size === "md" ? "h-36 w-36 sm:h-44 sm:w-44"
-    : "h-28 w-28 sm:h-32 sm:w-32";
+    : "h-32 w-32 sm:h-36 sm:w-36 lg:h-[9.5rem] lg:w-[9.5rem]";
   return (
     <div className="relative shrink-0">
       {ring && (
@@ -354,7 +354,14 @@ function PortraitCircle({
         }}
       >
         {url ? (
-          <img src={url} alt={name} className="wce-portrait-img h-full w-full object-cover" loading="lazy" decoding="async" />
+          <img
+            src={url}
+            alt={name}
+            className="wce-portrait-img h-full w-full object-cover"
+            style={{ objectPosition: "50% 42%" }}
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <span
             className="wce-display text-3xl"
@@ -391,11 +398,26 @@ function SpeakerTile({
     >
       <PortraitCircle url={speaker.portrait_url} name={speaker.name} size="sm" glow />
       <div className="wce-speaker-meta">
-        <p className="wce-speaker-name mt-5 text-sm font-medium" style={{ color: "var(--wce-forest)" }}>
+        <p
+          className="wce-speaker-name mt-6 text-[1.05rem] leading-tight sm:text-[1.15rem]"
+          style={{ fontFamily: "var(--wce-display)", color: "var(--wce-forest)" }}
+        >
           {speaker.name}
         </p>
+        <DiamondRule className="mx-auto mt-3 max-w-[3.6rem]" tone="rgba(201,162,39,0.9)" />
+        {speaker.title && (
+          <p
+            className="mt-3 text-[0.6rem] uppercase"
+            style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.2em" }}
+          >
+            {speaker.title}
+          </p>
+        )}
         {speaker.theme && (
-          <p className="wce-speaker-theme mt-1 text-xs italic" style={{ color: "rgba(26,26,20,0.6)" }}>
+          <p
+            className="wce-speaker-theme mt-2 text-[0.62rem] uppercase"
+            style={{ color: "rgba(26,26,20,0.65)", letterSpacing: "0.22em" }}
+          >
             {speaker.theme}
           </p>
         )}
@@ -517,24 +539,41 @@ export function WceSpeakersSection() {
         {featured && (
           <Reveal index={2}>
             <div
-              className="mt-16 flex flex-col items-center gap-10 px-6 py-12 text-center sm:px-12 md:flex-row md:text-left"
-              style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}
+              className="relative mt-16 flex flex-col items-center gap-10 overflow-hidden px-6 py-14 text-center sm:px-14 md:flex-row md:gap-14 md:text-left"
+              style={{
+                background: "linear-gradient(140deg, var(--wce-forest) 0%, var(--wce-forest-mid) 100%)",
+                border: "1px solid var(--wce-gold)",
+                borderRadius: "3px",
+                boxShadow: "0 30px 70px -40px rgba(15,42,29,0.75)",
+              }}
+              data-wce-dark
             >
-              <ClipReveal direction="up" className="-m-5 p-5">
+              <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={120} />
+              <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
+              <div className="relative">
                 <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
-              </ClipReveal>
-              <div className="md:flex-1">
-                <p className="wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Living anchor of the week</p>
-                <h3 className="mt-4 text-[clamp(1.8rem,3.6vw,2.6rem)]" style={{ color: "var(--wce-forest)" }}>
+              </div>
+              <div className="relative md:flex-1">
+                <p className="wce-eyebrow" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.32em" }}>
+                  Living anchor of the week
+                </p>
+                <h3 className="mt-4 text-[clamp(2rem,4.2vw,3rem)] leading-tight" style={{ color: "var(--wce-cream)" }}>
                   {featured.name}
                 </h3>
+                <DiamondRule className="mx-auto mt-5 max-w-[9rem] md:mx-0" tone="var(--wce-gold)" />
+                <p
+                  className="mt-5 text-[0.68rem] uppercase"
+                  style={{ color: "var(--wce-gold-light)", letterSpacing: "0.24em" }}
+                >
+                  {featured.title?.trim() || "Grand Master Herbal Physician · Founder, Mount Kailash"}
+                </p>
                 {featured.theme && (
-                  <p className="mt-3 text-sm italic" style={{ color: "var(--wce-gold-deep)", fontFamily: "var(--wce-display)", fontSize: "1.15rem" }}>
+                  <p className="mt-4 italic" style={{ color: "var(--wce-gold)", fontFamily: "var(--wce-display)", fontSize: "1.3rem" }}>
                     {featured.theme}
                   </p>
                 )}
                 {featured.session_title && (
-                  <p className="mt-5 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.75)" }}>
+                  <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.82)" }}>
                     {featured.session_title}
                   </p>
                 )}
