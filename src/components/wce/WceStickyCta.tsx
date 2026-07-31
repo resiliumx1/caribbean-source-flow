@@ -16,9 +16,11 @@ export function WceStickyCta() {
   useEffect(() => {
     const el = document.getElementById("apply");
     if (!el || typeof IntersectionObserver === "undefined") return;
+    // Tall section: watch the middle band of the viewport so the bar hides only
+    // once the form actually occupies the screen.
     const io = new IntersectionObserver(
       (entries) => setFormInView(entries.some((e) => e.isIntersecting)),
-      { threshold: 0.05 },
+      { threshold: 0, rootMargin: "-35% 0px -20% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
