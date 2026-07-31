@@ -247,16 +247,40 @@
 .wce-ring-slow { animation: wce-spin 60s linear infinite; }
 .wce-mandala-spin { animation: wce-spin 90s linear infinite; }
 
-/* Speaker portrait hover */
-.wce-portrait-img { transition: transform .6s cubic-bezier(0.22,1,0.36,1), filter .6s ease; filter: saturate(0.65); }
-.wce-speaker { transition: transform .35s cubic-bezier(0.22,1,0.36,1); transform-style: preserve-3d; }
-.wce-speaker-meta { transition: transform .5s cubic-bezier(0.22,1,0.36,1), opacity .5s ease; }
-@media (hover: hover) {
-  .wce-speaker:hover .wce-portrait-img { transform: scale(1.05); filter: saturate(1); }
-  .wce-speaker:hover .wce-speaker-ring { transform: rotate(180deg); }
-  .wce-speaker:hover .wce-speaker-meta { transform: translateY(-6px); }
+/* Speaker portrait hover — lift + ring rotate only. No 3D / perspective. */
+.wce-portrait-img { transition: transform .45s cubic-bezier(0.22,1,0.36,1), filter .45s ease; filter: saturate(0.6); }
+.wce-speaker { transition: transform .3s cubic-bezier(0.22,1,0.36,1); }
+.wce-speaker-meta { transition: transform .3s cubic-bezier(0.22,1,0.36,1), opacity .3s ease; }
+.wce-speaker-ring { transition: transform .3s cubic-bezier(0.22,1,0.36,1), border-color .3s ease, box-shadow .3s ease; }
+.wce-speaker-name { transition: color .3s ease; }
+.wce-speaker-theme { transition: opacity .3s ease, transform .3s ease; opacity: .7; }
+.wce-portrait-glow {
+  position: absolute; inset: -14%;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(201,162,39,0.55), transparent 68%);
+  filter: blur(18px);
+  opacity: 0;
+  transition: opacity .3s ease;
 }
-.wce-speaker-ring { transition: transform 1.2s cubic-bezier(0.22,1,0.36,1); }
+@media (hover: hover) {
+  .wce-speaker:hover, .wce-speaker:focus-visible { transform: translateY(-8px); }
+  .wce-speaker:hover .wce-portrait-img,
+  .wce-speaker:focus-visible .wce-portrait-img { transform: scale(1.06); filter: saturate(1); }
+  .wce-speaker:hover .wce-speaker-ring,
+  .wce-speaker:focus-visible .wce-speaker-ring {
+    transform: rotate(12deg);
+    border-color: var(--wce-gold-light);
+    box-shadow: 0 0 0 6px rgba(228,199,102,0.18);
+  }
+  .wce-speaker:hover .wce-portrait-glow,
+  .wce-speaker:focus-visible .wce-portrait-glow { opacity: 1; }
+  .wce-speaker:hover .wce-speaker-name,
+  .wce-speaker:focus-visible .wce-speaker-name { color: var(--wce-gold-deep); }
+  .wce-speaker:hover .wce-speaker-theme,
+  .wce-speaker:focus-visible .wce-speaker-theme { opacity: 1; transform: translateY(-2px); }
+}
+.wce-speaker-dim { opacity: .4; transform: scale(.94); }
 
 /* Highlight reel cards */
 @keyframes wce-play-pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(228,199,102,0.45); } 100% { transform: scale(1); box-shadow: 0 0 0 18px rgba(228,199,102,0); } }
