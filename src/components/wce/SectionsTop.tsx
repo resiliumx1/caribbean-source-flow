@@ -90,6 +90,8 @@ export function WceHero() {
           {venue}
         </p>
 
+        <WceCountdown className={cls("mt-10")} />
+
         {/* CTAs render fully interactive from first paint; only opacity is animated. */}
         <div
           className="mt-14 flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
