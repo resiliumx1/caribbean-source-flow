@@ -157,6 +157,28 @@ function PathwayPrice({ currency, price }: { currency: string; price: number }) 
 }
 
 export function WcePathwaysSection() {
+  return <PathwaysInner />;
+}
+
+/** Card heading: the mode reads on its own line, exactly as the flyer sets it. */
+function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolean }) {
+  const match = label.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+  const lines = match ? [match[1], `(${match[2]})`] : [label];
+  return (
+    <MaskedHeading
+      as="h3"
+      lines={lines}
+      stagger={80}
+      className="relative mx-auto flex max-w-[22ch] flex-col justify-center text-[1.35rem] leading-snug"
+      style={{
+        color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)",
+        minHeight: "4.8rem",
+      }}
+    />
+  );
+}
+
+function PathwaysInner() {
   const { data: pathways, isLoading } = useWcePathways();
   const lift = useSectionLift<HTMLElement>();
 
