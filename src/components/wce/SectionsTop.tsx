@@ -49,8 +49,8 @@ export function WceHero() {
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-70 sm:right-10 sm:top-10" />
 
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
-        <div className={cls("mb-10")} style={stage(0)}>
-          <LotusMark size={46} />
+        <div className={cls("mb-[clamp(1rem,2.2vh,2.5rem)]")} style={stage(0)}>
+          <LotusMark size={40} />
         </div>
 
         <h1
@@ -61,24 +61,24 @@ export function WceHero() {
         </h1>
 
         <span
-          className={`relative mt-6 inline-block ${reduced ? "" : "wce-stage-year"}`}
+          className={`relative mt-[clamp(0.5rem,1.4vh,1.5rem)] inline-block ${reduced ? "" : "wce-stage-year"}`}
           style={reduced ? undefined : { animationDelay: "0.45s" }}
         >
           {!reduced && <span aria-hidden="true" className="wce-year-halo" />}
-          <span className="wce-year relative inline-block text-[clamp(5.5rem,21vw,14rem)]">
+          <span className="wce-year relative inline-block text-[clamp(4.5rem,16vw,11rem)]">
             2026
             {!reduced && <span aria-hidden="true" className="wce-year-shimmer">2026</span>}
           </span>
         </span>
 
         <p
-          className={cls("wce-eyebrow wce-rule-label mt-8")}
+          className={cls("wce-eyebrow wce-rule-label mt-[clamp(1rem,2.4vh,2rem)]")}
           style={{ color: "var(--wce-cream)", letterSpacing: "0.42em", ...stage(0.65) }}
         >
           {dates}
         </p>
 
-        <div className={cls("my-10 w-full max-w-sm")} style={stage(0.72)}>
+        <div className={cls("my-[clamp(1rem,2.6vh,2.5rem)] w-full max-w-sm")} style={stage(0.72)}>
           <LeafDivider />
         </div>
 
@@ -90,15 +90,15 @@ export function WceHero() {
           <span style={{ color: "var(--wce-gold)" }}>|</span> Lifecraft Experience
         </p>
 
-        <p className={cls("wce-eyebrow mt-10")} style={{ color: "var(--wce-gold)", ...stage(0.9) }}>
+        <p className={cls("wce-eyebrow mt-[clamp(1rem,2.6vh,2.5rem)]")} style={{ color: "var(--wce-gold)", ...stage(0.9) }}>
           {venue}
         </p>
 
-        <WceCountdown className={cls("mt-10")} />
+        <WceCountdown className={cls("mt-[clamp(1rem,2.8vh,2.5rem)]")} />
 
         {/* CTAs render fully interactive from first paint; only opacity is animated. */}
         <div
-          className="mt-14 flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
+          className="mt-[clamp(1.5rem,3.4vh,3.5rem)] flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
           style={
             reduced
               ? undefined
