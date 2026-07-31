@@ -1,14 +1,18 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { dataLayerPush, pixelTrack } from "@/lib/tracking";
 import { useWceAttribution } from "./useWceAttribution";
 import { LeafDivider, LotusMark, CompassMandala, CornerVine, EmblemSymposium, EmblemRetreat, EmblemLifecraft, EmblemCeremony } from "./ornaments";
 import { useWceMedia, useWcePathways } from "./useWceData";
 import { Reveal, useInView, useParallax, useWceReducedMotion } from "./motion";
+import { WCE_PATHWAY_EVENT } from "./pathway-select";
 
 /* ---------------- 5. HIGHLIGHT REELS ---------------- */
 export function WceMediaSection() {
   const { data: media } = useWceMedia();
+
+  // No published rows yet — hide the section entirely rather than showing empty cards.
+  if (!media || media.length === 0) return null;
 
   return (
     <section className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
@@ -93,7 +97,7 @@ export function WceActivitiesSection() {
   const { ref: lineRef, inView: lineIn } = useInView<HTMLSpanElement>();
   const reduced = useWceReducedMotion();
   return (
-    <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+    <section id="activities" className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
       <CornerVine className="pointer-events-none absolute left-0 top-8 opacity-40" />
       <CornerVine flip className="pointer-events-none absolute right-0 top-8 opacity-40" />
       <div className="mx-auto max-w-6xl text-center">
