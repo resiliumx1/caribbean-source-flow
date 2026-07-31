@@ -5,7 +5,10 @@ import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
 import { FlowerOfLifeField, EdgeFoliage, DiamondRule, GoldFlourish, CheckMark } from "./decor";
 import { useWcePathways, useWceSpeakers, useWceSettings, pathwayFeatures } from "./useWceData";
 import { WceHeroMedia, WceHeroParticles } from "./HeroMedia";
-import { Reveal, useCountUp, useInView, useWceReducedMotion } from "./motion";
+import {
+  Reveal, useCountUp, useInView, useWceReducedMotion,
+  MaskedHeading, ClipReveal, SlideInItem, useSectionLift,
+} from "./motion";
 import { WceCountdown } from "./WceCountdown";
 import { selectPathway } from "./pathway-select";
 import { PathwayCardsSkeleton, SpeakersSkeleton } from "./Skeletons";
@@ -119,12 +122,12 @@ export function WcePartnerStrip() {
       aria-label="Event partners"
     >
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6">
-        <Reveal>
+        <Reveal gate>
           <p className="wce-eyebrow" style={{ color: "var(--wce-gold)", letterSpacing: "0.4em" }}>Powered by</p>
         </Reveal>
         <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
           {PARTNERS.map((p, i) => (
-            <Reveal key={p} as="li" index={i}>
+            <Reveal key={p} as="li" index={i} gate>
               <span
                 className="text-[0.72rem] uppercase sm:text-xs"
                 style={{ color: "rgba(245,239,224,0.85)", letterSpacing: "0.24em" }}
@@ -155,20 +158,21 @@ function PathwayPrice({ currency, price }: { currency: string; price: number }) 
 
 export function WcePathwaysSection() {
   const { data: pathways, isLoading } = useWcePathways();
+  const lift = useSectionLift<HTMLElement>();
 
   return (
-    <section id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+    <section ref={lift.ref} id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)", ...lift.style }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <EdgeFoliage side="left" opacity={0.13} />
       <EdgeFoliage side="right" opacity={0.13} />
       <div className="mx-auto max-w-5xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
-        <Reveal index={1}>
-          <h2 className="mt-8 text-[clamp(2rem,5vw,3.4rem)]" style={{ color: "var(--wce-forest)" }}>
-            Choose Your Experience Pathway
-          </h2>
-        </Reveal>
+        <MaskedHeading
+          lines={["Choose Your Experience Pathway"]}
+          className="mt-8 text-[clamp(2rem,5vw,3.4rem)]"
+          style={{ color: "var(--wce-forest)" }}
+        />
         <Reveal index={2}>
           <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
             Three ways to experience transformation.
@@ -223,15 +227,7 @@ export function WcePathwaysSection() {
                   )}
                   <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
 
-                  <h3
-                    className="relative mx-auto flex max-w-[20ch] items-center justify-center text-[1.35rem] leading-snug"
-                    style={{
-                      color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)",
-                      minHeight: "4.8rem",
-                    }}
-                  >
-                    {p.label}
-                  </h3>
+                  <PathwayHeading label={p.label} isRetreat={isRetreat} />
 
                   <DiamondRule
                     className="relative mx-auto mt-6 max-w-[9rem]"
@@ -254,11 +250,11 @@ export function WcePathwaysSection() {
                   />
 
                   <ul className="relative mx-auto mt-8 space-y-3 text-left text-[0.85rem] leading-relaxed">
-                    {features.map((f) => (
-                      <li key={f} className="flex items-start gap-3" style={{ color: isRetreat ? "rgba(245,239,224,0.85)" : "rgba(26,26,20,0.78)" }}>
+                    {features.map((f, fi) => (
+                      <SlideInItem as="li" key={f} index={fi} className="flex items-start gap-3" style={{ color: isRetreat ? "rgba(245,239,224,0.85)" : "rgba(26,26,20,0.78)" }}>
                         <CheckMark tone={isRetreat ? "var(--wce-gold-light)" : "var(--wce-gold-deep)"} />
                         <span>{f}</span>
-                      </li>
+                      </SlideInItem>
                     ))}
                   </ul>
 
