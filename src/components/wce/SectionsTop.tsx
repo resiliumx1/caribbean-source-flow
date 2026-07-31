@@ -550,9 +550,9 @@ export function WceSpeakersSection() {
             >
               <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={120} />
               <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
-              <ClipReveal direction="up" className="-m-5 p-5">
+              <div className="relative">
                 <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
-              </ClipReveal>
+              </div>
               <div className="relative md:flex-1">
                 <p className="wce-eyebrow" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.32em" }}>
                   Living anchor of the week
