@@ -88,7 +88,6 @@
 
 /* --- Button micro-interactions --- */
 .wce-btn { position: relative; overflow: hidden; isolation: isolate; }
-.wce-btn > * { position: relative; z-index: 2; }
 .wce-btn { transform: translateY(0); transition: background-color .3s ease, color .3s ease, border-color .3s ease, transform .3s cubic-bezier(0.22,1,0.36,1), box-shadow .3s ease, filter .6s ease; }
 
 /* Gold buttons: a soft gradient sweeps left → right on hover */
@@ -96,7 +95,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: -1;
   background: linear-gradient(100deg, transparent 0%, rgba(255,252,235,0.85) 45%, transparent 90%);
   transform: translateX(-110%);
   transition: transform .6s cubic-bezier(0.22,1,0.36,1);
@@ -114,7 +113,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: -1;
   transform: scaleY(0);
   transform-origin: bottom center;
   transition: transform .45s cubic-bezier(0.22,1,0.36,1);
