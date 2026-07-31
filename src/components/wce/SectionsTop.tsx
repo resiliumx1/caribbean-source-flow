@@ -35,7 +35,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[780px]"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-[clamp(4.5rem,9vh,6rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
@@ -331,9 +331,9 @@ function PortraitCircle({
   glow?: boolean;
 }) {
   const dim =
-    size === "lg" ? "h-44 w-44 sm:h-56 sm:w-56"
+    size === "lg" ? "h-48 w-48 sm:h-60 sm:w-60 lg:h-72 lg:w-72"
     : size === "md" ? "h-36 w-36 sm:h-44 sm:w-44"
-    : "h-28 w-28 sm:h-32 sm:w-32";
+    : "h-32 w-32 sm:h-36 sm:w-36 lg:h-[9.5rem] lg:w-[9.5rem]";
   return (
     <div className="relative shrink-0">
       {ring && (
@@ -354,7 +354,14 @@ function PortraitCircle({
         }}
       >
         {url ? (
-          <img src={url} alt={name} className="wce-portrait-img h-full w-full object-cover" loading="lazy" decoding="async" />
+          <img
+            src={url}
+            alt={name}
+            className="wce-portrait-img h-full w-full object-cover"
+            style={{ objectPosition: "50% 20%" }}
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <span
             className="wce-display text-3xl"
@@ -391,11 +398,26 @@ function SpeakerTile({
     >
       <PortraitCircle url={speaker.portrait_url} name={speaker.name} size="sm" glow />
       <div className="wce-speaker-meta">
-        <p className="wce-speaker-name mt-5 text-sm font-medium" style={{ color: "var(--wce-forest)" }}>
+        <p
+          className="wce-speaker-name mt-6 text-[1.05rem] leading-tight sm:text-[1.15rem]"
+          style={{ fontFamily: "var(--wce-display)", color: "var(--wce-forest)" }}
+        >
           {speaker.name}
         </p>
+        <DiamondRule className="mx-auto mt-3 max-w-[3.6rem]" tone="rgba(201,162,39,0.9)" />
+        {speaker.title && (
+          <p
+            className="mt-3 text-[0.6rem] uppercase"
+            style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.2em" }}
+          >
+            {speaker.title}
+          </p>
+        )}
         {speaker.theme && (
-          <p className="wce-speaker-theme mt-1 text-xs italic" style={{ color: "rgba(26,26,20,0.6)" }}>
+          <p
+            className="wce-speaker-theme mt-2 text-[0.62rem] uppercase"
+            style={{ color: "rgba(26,26,20,0.65)", letterSpacing: "0.22em" }}
+          >
             {speaker.theme}
           </p>
         )}
