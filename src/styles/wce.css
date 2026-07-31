@@ -247,16 +247,40 @@
 .wce-ring-slow { animation: wce-spin 60s linear infinite; }
 .wce-mandala-spin { animation: wce-spin 90s linear infinite; }
 
-/* Speaker portrait hover */
-.wce-portrait-img { transition: transform .6s cubic-bezier(0.22,1,0.36,1), filter .6s ease; filter: saturate(0.65); }
-.wce-speaker { transition: transform .35s cubic-bezier(0.22,1,0.36,1); transform-style: preserve-3d; }
-.wce-speaker-meta { transition: transform .5s cubic-bezier(0.22,1,0.36,1), opacity .5s ease; }
-@media (hover: hover) {
-  .wce-speaker:hover .wce-portrait-img { transform: scale(1.05); filter: saturate(1); }
-  .wce-speaker:hover .wce-speaker-ring { transform: rotate(180deg); }
-  .wce-speaker:hover .wce-speaker-meta { transform: translateY(-6px); }
+/* Speaker portrait hover — lift + ring rotate only. No 3D / perspective. */
+.wce-portrait-img { transition: transform .45s cubic-bezier(0.22,1,0.36,1), filter .45s ease; filter: saturate(0.6); }
+.wce-speaker { transition: transform .3s cubic-bezier(0.22,1,0.36,1); }
+.wce-speaker-meta { transition: transform .3s cubic-bezier(0.22,1,0.36,1), opacity .3s ease; }
+.wce-speaker-ring { transition: transform .3s cubic-bezier(0.22,1,0.36,1), border-color .3s ease, box-shadow .3s ease; }
+.wce-speaker-name { transition: color .3s ease; }
+.wce-speaker-theme { transition: opacity .3s ease, transform .3s ease; opacity: .7; }
+.wce-portrait-glow {
+  position: absolute; inset: -14%;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(201,162,39,0.55), transparent 68%);
+  filter: blur(18px);
+  opacity: 0;
+  transition: opacity .3s ease;
 }
-.wce-speaker-ring { transition: transform 1.2s cubic-bezier(0.22,1,0.36,1); }
+@media (hover: hover) {
+  .wce-speaker:hover, .wce-speaker:focus-visible { transform: translateY(-8px); }
+  .wce-speaker:hover .wce-portrait-img,
+  .wce-speaker:focus-visible .wce-portrait-img { transform: scale(1.06); filter: saturate(1); }
+  .wce-speaker:hover .wce-speaker-ring,
+  .wce-speaker:focus-visible .wce-speaker-ring {
+    transform: rotate(12deg);
+    border-color: var(--wce-gold-light);
+    box-shadow: 0 0 0 6px rgba(228,199,102,0.18);
+  }
+  .wce-speaker:hover .wce-portrait-glow,
+  .wce-speaker:focus-visible .wce-portrait-glow { opacity: 1; }
+  .wce-speaker:hover .wce-speaker-name,
+  .wce-speaker:focus-visible .wce-speaker-name { color: var(--wce-gold-deep); }
+  .wce-speaker:hover .wce-speaker-theme,
+  .wce-speaker:focus-visible .wce-speaker-theme { opacity: 1; transform: translateY(-2px); }
+}
+.wce-speaker-dim { opacity: .4; transform: scale(.94); }
 
 /* Highlight reel cards */
 @keyframes wce-play-pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(228,199,102,0.45); } 100% { transform: scale(1); box-shadow: 0 0 0 18px rgba(228,199,102,0); } }
@@ -313,4 +337,112 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .wce-form-confirm { animation: none; }
+}
+
+/* ============ COUNTDOWN ============ */
+.wce-count-block {
+  min-width: 74px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(201,162,39,0.6);
+  border-radius: 2px;
+  background: rgba(15,42,29,0.35);
+  backdrop-filter: blur(3px);
+}
+.wce-count-value {
+  display: block;
+  font-family: var(--wce-display);
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: var(--wce-gold-light);
+  font-variant-numeric: tabular-nums;
+}
+.wce-count-label {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.52rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(245,239,224,0.7);
+}
+
+/* ============ STICKY MOBILE CTA ============ */
+.wce-sticky-cta {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.7rem 0.8rem calc(0.7rem + env(safe-area-inset-bottom));
+  background: var(--wce-forest);
+  border-top: 1px solid var(--wce-gold);
+  transform: translateY(110%);
+  transition: transform .35s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-sticky-cta.is-visible { transform: translateY(0); }
+.wce-sticky-cta .wce-btn { flex: 1; padding: 0.8rem 0.6rem; font-size: 0.62rem; letter-spacing: 0.14em; }
+@media (min-width: 768px) { .wce-sticky-cta { display: none; } }
+
+/* ============ STICKY SUB-NAV ============ */
+.wce-subnav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 55;
+  display: none;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.75rem 1rem;
+  background: rgba(15,42,29,0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(201,162,39,0.35);
+  transform: translateY(-110%);
+  transition: transform .35s cubic-bezier(0.22,1,0.36,1);
+}
+@media (min-width: 768px) { .wce-subnav { display: flex; } }
+.wce-subnav.is-visible { transform: translateY(0); }
+.wce-subnav a {
+  font-family: var(--wce-body);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245,239,224,0.75);
+  padding: 0.35rem 0.2rem;
+  border-bottom: 1px solid transparent;
+  transition: color .25s ease, border-color .25s ease;
+}
+.wce-subnav a:hover { color: var(--wce-gold-light); }
+.wce-subnav a.is-active { color: var(--wce-gold-light); border-bottom-color: var(--wce-gold); }
+
+/* ============ SKELETONS ============ */
+@keyframes wce-skeleton-pulse { 0%,100% { opacity: .45; } 50% { opacity: .85; } }
+.wce-skeleton {
+  background: linear-gradient(100deg, rgba(201,162,39,0.10), rgba(45,74,53,0.16), rgba(201,162,39,0.10));
+  border-radius: 3px;
+  animation: wce-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+/* ============ FIELD HIGHLIGHT (pathway preselect) ============ */
+.wce-field-flash {
+  animation: wce-field-flash 1.8s ease-out 1;
+}
+@keyframes wce-field-flash {
+  0%, 60% { box-shadow: 0 0 0 3px rgba(228,199,102,0.55); border-color: var(--wce-gold-light); }
+  100% { box-shadow: 0 0 0 0 rgba(228,199,102,0); }
+}
+
+/* ============ FOCUS VISIBILITY ============ */
+.wce-root :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--wce-gold-deep);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.wce-root [data-wce-dark] :is(a, button, input, select, textarea, [tabindex]):focus-visible,
+.wce-sticky-cta :is(a, button):focus-visible,
+.wce-subnav a:focus-visible {
+  outline: 2px solid var(--wce-gold-light);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wce-sticky-cta, .wce-subnav { transition: none !important; }
+  .wce-skeleton { animation: none; opacity: .6; }
 }

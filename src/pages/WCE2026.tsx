@@ -5,6 +5,8 @@ import { WceHero, WcePartnerStrip, WcePathwaysSection, WceSpeakersSection } from
 import { WceMediaSection, WceActivitiesSection, WceRetreatBand, WceApplicationForm } from "@/components/wce/SectionsMid";
 import { WceFaqSection, WceFinalCta, WceFooter } from "@/components/wce/SectionsBottom";
 import { useWcePathways, useWceSettings, pathwayFeatures } from "@/components/wce/useWceData";
+import { WceSubNav } from "@/components/wce/WceSubNav";
+import { WceStickyCta } from "@/components/wce/WceStickyCta";
 import { useWceAttribution } from "@/components/wce/useWceAttribution";
 import { dataLayerPush } from "@/lib/tracking";
 import { SITE_URL } from "@/lib/site-config";
@@ -98,6 +100,7 @@ export default function WCE2026() {
 
         <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
       </Helmet>
+      <WceSubNav />
       <main>
         <WceHero />
         <WcePartnerStrip />
@@ -111,6 +114,7 @@ export default function WCE2026() {
         <WceFinalCta />
       </main>
       <WceFooter />
+      <WceStickyCta />
     </WceThemeProvider>
   );
 }

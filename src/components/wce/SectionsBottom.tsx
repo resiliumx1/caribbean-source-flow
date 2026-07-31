@@ -2,16 +2,17 @@ import { useState } from "react";
 import { LeafDivider, LotusMark, CornerVine } from "./ornaments";
 import { useWceFaqs, useWceSettings } from "./useWceData";
 import { Reveal } from "./motion";
+import { FaqSkeleton } from "./Skeletons";
 
 const PARTNERS = ["Mount Kailash", "Kamila's Kitchen", "Jah9", "LifeCraft in Jamaica", "The Ubuntu Movement"];
 
 /* ---------------- 9. FAQ ---------------- */
 export function WceFaqSection() {
-  const { data: faqs } = useWceFaqs();
+  const { data: faqs, isLoading } = useWceFaqs();
   const [open, setOpen] = useState<string | null>(null);
 
   return (
-    <section className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+    <section id="faq" className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
       <div className="mx-auto max-w-4xl text-center">
         <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
         <Reveal index={1}>
@@ -23,6 +24,8 @@ export function WceFaqSection() {
         </p>
         <LeafDivider className="mt-10" />
         </Reveal>
+
+        {isLoading && <FaqSkeleton />}
 
         <div className="mt-14 space-y-4 text-left">
           {(faqs ?? []).map((f, i) => {
