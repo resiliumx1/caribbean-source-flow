@@ -6,6 +6,11 @@ import { LeafDivider, LotusMark, CompassMandala, CornerVine, EmblemSymposium, Em
 import { useWceMedia, useWcePathways } from "./useWceData";
 import { Reveal, useInView, useParallax, useWceReducedMotion } from "./motion";
 import { WCE_PATHWAY_EVENT } from "./pathway-select";
+import {
+  FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, DiamondRule, GoldFlourish,
+  LeafIcon, CheckMark, RitualIcon, ConnectionIcon, TransformationIcon,
+} from "./decor";
+import retreatImage from "@/assets/fortification-retreat.jpg.asset.json";
 
 /* ---------------- 5. HIGHLIGHT REELS ---------------- */
 export function WceMediaSection() {
@@ -15,9 +20,11 @@ export function WceMediaSection() {
   if (!media || media.length === 0) return null;
 
   return (
-    <section className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
+    <section className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
       <div className="mx-auto max-w-6xl text-center">
-        <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
+        <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
+        <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
         <h2
           className="mt-8 text-[clamp(1.7rem,4.2vw,2.8rem)] uppercase"
@@ -31,14 +38,14 @@ export function WceMediaSection() {
         <LeafDivider className="mt-10" />
         </Reveal>
 
-        <ul className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-16 grid gap-6 sm:grid-cols-2">
           {(media ?? []).map((m, i) => (
             <Reveal
               as="li"
               key={m.id}
               index={i}
               className="wce-reel group relative overflow-hidden"
-              style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px", background: "var(--wce-forest-mid)" }}
+              style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px", background: "var(--wce-forest-mid)" }}
             >
               <a
                 href={m.video_url ?? "#"}
@@ -49,7 +56,7 @@ export function WceMediaSection() {
                   dataLayerPush("video_play", { video_title: m.title, video_url: m.video_url });
                 }}
                 aria-label={m.title ? `Play ${m.title}` : "Play highlight reel"}
-                className="relative block aspect-[4/3] w-full"
+                className="relative block aspect-[16/9] w-full"
               >
                 {m.thumbnail_url ? (
                   <img src={m.thumbnail_url} alt={m.title ?? "Highlight reel"} className="h-full w-full object-cover" loading="lazy" decoding="async" />
@@ -62,20 +69,21 @@ export function WceMediaSection() {
                 )}
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span
-                    className="wce-play flex h-14 w-14 items-center justify-center rounded-full"
-                    style={{ border: "1px solid var(--wce-gold)", background: "rgba(15,42,29,0.55)" }}
+                    className="wce-play flex h-16 w-16 items-center justify-center rounded-full"
+                    style={{ border: "1px solid var(--wce-gold)", background: "rgba(15,42,29,0.45)", backdropFilter: "blur(2px)" }}
                   >
-                    <svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true">
+                    <svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true" className="ml-1">
                       <path d="M2 2l14 8-14 8V2z" fill="var(--wce-gold-light)" />
                     </svg>
                   </span>
                 </span>
               </a>
               <p
-                className="px-4 py-4 text-[0.68rem] uppercase"
-                style={{ color: "var(--wce-cream)", letterSpacing: "0.2em", borderTop: "1px solid rgba(201,162,39,0.3)" }}
+                className="flex items-center justify-center gap-2.5 px-4 py-4 text-[0.66rem] uppercase"
+                style={{ color: "var(--wce-cream)", letterSpacing: "0.22em", borderTop: "1px solid rgba(201,162,39,0.3)" }}
               >
-                {m.title}
+                <LeafIcon />
+                <span>{m.title}</span>
               </p>
             </Reveal>
           ))}
