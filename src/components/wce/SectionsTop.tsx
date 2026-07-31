@@ -1,9 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
 import { useWcePathways, useWceSpeakers, useWceSettings, pathwayFeatures } from "./useWceData";
 import { WceHeroMedia, WceHeroParticles } from "./HeroMedia";
-import { Reveal, useCountUp, useInView, useIsTouch, useWceReducedMotion } from "./motion";
+import { Reveal, useCountUp, useInView, useWceReducedMotion } from "./motion";
+import { WceCountdown } from "./WceCountdown";
+import { selectPathway } from "./pathway-select";
+import { PathwayCardsSkeleton, SpeakersSkeleton } from "./Skeletons";
 
 const PARTNERS = [
   "Mount Kailash",
