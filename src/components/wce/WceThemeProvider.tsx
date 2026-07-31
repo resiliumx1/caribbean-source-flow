@@ -25,7 +25,15 @@ export function WceThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (reduced) return;
-    const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+    // Touch devices keep their native momentum; only pointer scrolling is smoothed.
+    const touch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    if (touch) return;
+    const lenis = new Lenis({
+      lerp: 0.085,
+      wheelMultiplier: 0.9,
+      smoothWheel: true,
+      syncTouch: false,
+    });
     let frame = 0;
     const raf = (time: number) => {
       lenis.raf(time);

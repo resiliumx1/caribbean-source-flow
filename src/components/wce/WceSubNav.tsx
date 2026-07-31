@@ -4,6 +4,7 @@ const LINKS = [
   { id: "pathways", label: "Pathways" },
   { id: "speakers", label: "Speakers" },
   { id: "activities", label: "Activities" },
+  { id: "ceremony", label: "Ceremony" },
   { id: "apply", label: "Apply" },
   { id: "faq", label: "FAQ" },
 ];
