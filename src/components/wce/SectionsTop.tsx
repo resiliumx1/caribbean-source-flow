@@ -520,7 +520,7 @@ export function WceSpeakersSection() {
               className="mt-16 flex flex-col items-center gap-10 px-6 py-12 text-center sm:px-12 md:flex-row md:text-left"
               style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}
             >
-              <ClipReveal direction="up" className="rounded-full">
+              <ClipReveal direction="up" className="-m-5 p-5">
                 <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
               </ClipReveal>
               <div className="md:flex-1">
