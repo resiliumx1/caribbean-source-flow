@@ -56,6 +56,7 @@ export function StoreHeader() {
   const { whatsappNumber, isLocalVisitor } = useStore();
   const location = useLocation();
   const prevCountRef = useRef(cartCount);
+  const hydratedRef = useRef(false);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
 
@@ -76,10 +77,17 @@ export function StoreHeader() {
   }, [isHomepage]);
 
   useEffect(() => {
-    if (cartCount !== prevCountRef.current && cartCount > 0) {
-      setCartBounce(true);
-      const timeout = setTimeout(() => setCartBounce(false), 600);
+    // Skip the first settled value (cart hydrating from storage / server)
+    if (!hydratedRef.current) {
+      hydratedRef.current = true;
       prevCountRef.current = cartCount;
+      return;
+    }
+    // Animate once, only when items are actually added
+    if (cartCount > prevCountRef.current) {
+      prevCountRef.current = cartCount;
+      setCartBounce(true);
+      const timeout = setTimeout(() => setCartBounce(false), 700);
       return () => clearTimeout(timeout);
     }
     prevCountRef.current = cartCount;
