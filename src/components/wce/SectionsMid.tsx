@@ -105,11 +105,14 @@ export function WceActivitiesSection() {
   const { ref: lineRef, inView: lineIn } = useInView<HTMLSpanElement>();
   const reduced = useWceReducedMotion();
   return (
-    <section id="activities" className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+    <section id="activities" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <EdgeFoliage side="left" opacity={0.12} />
       <CornerVine className="pointer-events-none absolute left-0 top-8 opacity-40" />
       <CornerVine flip className="pointer-events-none absolute right-0 top-8 opacity-40" />
       <div className="mx-auto max-w-6xl text-center">
-        <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
+        <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
+        <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
         <h2 className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]" style={{ color: "var(--wce-forest)" }}>
           Caribbean Wellness Experience Activities
@@ -117,9 +120,16 @@ export function WceActivitiesSection() {
         <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
           A transformational journey of learning, connection, and renewal in Saint Lucia.
         </p>
+        <DiamondRule className="mx-auto mt-8 max-w-[11rem]" />
         </Reveal>
 
-        <div className="relative mt-20">
+        <Reveal index={2}>
+          <p className="wce-eyebrow mt-16" style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.34em" }}>
+            Four Pillars of the Week
+          </p>
+        </Reveal>
+
+        <div className="relative mt-12">
           <span
             ref={lineRef}
             aria-hidden="true"
