@@ -427,7 +427,7 @@
 /* ============ STICKY SUB-NAV ============ */
 .wce-subnav {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 64px; left: 0; right: 0;
   z-index: 55;
   display: none;
   justify-content: center;
