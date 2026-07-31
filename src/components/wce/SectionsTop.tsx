@@ -160,7 +160,7 @@ export function WcePathwaysSection() {
         </Reveal>
         <Reveal index={2}>
           <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
-            Limited spaces available for each pathway.
+            Three ways to experience transformation.
           </p>
           <LeafDivider className="mt-10" />
         </Reveal>
