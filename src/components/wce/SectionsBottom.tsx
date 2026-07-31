@@ -3,6 +3,7 @@ import { LeafDivider, LotusMark, CornerVine } from "./ornaments";
 import { useWceFaqs, useWceSettings } from "./useWceData";
 import { Reveal } from "./motion";
 import { FaqSkeleton } from "./Skeletons";
+import { FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, GoldFlourish, DiamondRule, LeafIcon } from "./decor";
 
 const PARTNERS = ["Mount Kailash", "Kamila's Kitchen", "Jah9", "LifeCraft in Jamaica", "The Ubuntu Movement"];
 
@@ -12,9 +13,12 @@ export function WceFaqSection() {
   const [open, setOpen] = useState<string | null>(null);
 
   return (
-    <section id="faq" className="px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
-      <div className="mx-auto max-w-4xl text-center">
-        <Reveal><LotusMark size={34} className="mx-auto" /></Reveal>
+    <section id="faq" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)" }}>
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} />
+      <EdgeFoliage side="right" opacity={0.12} />
+      <div className="mx-auto max-w-5xl text-center">
+        <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
+        <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
         <Reveal index={1}>
         <h2 className="mt-8 text-[clamp(2rem,5vw,3.2rem)]" style={{ color: "var(--wce-forest)" }}>
           Frequently Asked Questions
@@ -27,14 +31,14 @@ export function WceFaqSection() {
 
         {isLoading && <FaqSkeleton />}
 
-        <div className="mt-14 space-y-4 text-left">
+        <div className="mt-14 grid gap-5 text-left md:grid-cols-2">
           {(faqs ?? []).map((f, i) => {
             const isOpen = open === f.id;
             return (
               <Reveal
                 key={f.id}
                 index={Math.min(i, 5)}
-                style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.4)", borderRadius: "3px" }}
+                className={`wce-faq-card h-full ${isOpen ? "is-open" : ""}`}
               >
                 <h3>
                   <button
@@ -44,11 +48,11 @@ export function WceFaqSection() {
                     className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left"
                     style={{ minHeight: 56, color: "var(--wce-forest)" }}
                   >
-                    <span className="text-base sm:text-lg" style={{ fontFamily: "var(--wce-display)" }}>{f.question}</span>
+                    <span className="text-[1.02rem] leading-snug sm:text-lg" style={{ fontFamily: "var(--wce-display)" }}>{f.question}</span>
                     <span
                       aria-hidden="true"
-                      className={`wce-faq-icon text-lg ${isOpen ? "is-open" : ""}`}
-                      style={{ color: "var(--wce-gold-deep)" }}
+                      className={`wce-faq-icon flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-base ${isOpen ? "is-open" : ""}`}
+                      style={{ color: "var(--wce-gold-deep)", border: "1px solid rgba(201,162,39,0.6)" }}
                     >
                       +
                     </span>
@@ -56,9 +60,12 @@ export function WceFaqSection() {
                 </h3>
                 <div className={`wce-faq-panel ${isOpen ? "is-open" : ""}`}>
                   <div>
-                    <p className="px-6 pb-6 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.75)" }}>
-                      {f.answer}
-                    </p>
+                    <div className="px-6 pb-6">
+                      <DiamondRule className="mb-4 max-w-[6rem]" tone="rgba(201,162,39,0.7)" />
+                      <p className="text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.75)" }}>
+                        {f.answer}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Reveal>
