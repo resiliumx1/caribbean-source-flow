@@ -8,6 +8,12 @@ import { useWceReducedMotion } from "./motion";
 export function WceThemeProvider({ children }: { children: React.ReactNode }) {
   const reduced = useWceReducedMotion();
 
+  // Route-scoped: let the site header float transparently over the hero.
+  useEffect(() => {
+    document.body.classList.add("wce-transparent-header");
+    return () => document.body.classList.remove("wce-transparent-header");
+  }, []);
+
   useEffect(() => {
     if (reduced) return;
     const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
