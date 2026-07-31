@@ -575,7 +575,10 @@
 
 /* ============ SECTION SURFACES ============ */
 .wce-surface { position: relative; overflow: hidden; isolation: isolate; }
-.wce-surface > * { position: relative; z-index: 1; }
+/* Content sits above the decorative layer, but absolutely-positioned
+   ornaments must keep their own positioning (otherwise they enter the flow). */
+.wce-surface > :not(.absolute) { position: relative; z-index: 1; }
+.wce-surface > .absolute { z-index: 1; }
 .wce-surface > .wce-surface-bg { z-index: 0; }
 
 /* Hairline gold divider between cream sections */
