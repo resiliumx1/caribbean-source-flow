@@ -145,7 +145,12 @@
 
 /* Headline metallic wash */
 .wce-hero-title {
-  background: linear-gradient(180deg, #fbf3d8 0%, #edd characters 0%, #e6c977 55%, #c9a227 100%);
+  background: linear-gradient(180deg, #fdf6e0 0%, #ecd695 52%, #c9a227 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  text-shadow: none;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
 }
 
 /* Form fields */
