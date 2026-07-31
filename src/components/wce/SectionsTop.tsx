@@ -224,7 +224,7 @@ export function WcePathwaysSection() {
                   <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
 
                   <h3
-                    className="relative mx-auto max-w-[15ch] text-[1.4rem] leading-snug"
+                    className="relative mx-auto max-w-[20ch] text-[1.35rem] leading-snug"
                     style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)" }}
                   >
                     {p.label}
@@ -264,7 +264,7 @@ export function WcePathwaysSection() {
                   <a
                     href="#apply"
                     className={`wce-btn ${ctaClass} relative mt-auto w-full`}
-                    style={{ marginTop: "2.5rem" }}
+                    style={{ marginTop: "auto" }}
                     onClick={(e) => {
                       e.preventDefault();
                       dataLayerPush("pathway_click", { pathway_key: p.key, pathway_label: p.label });
