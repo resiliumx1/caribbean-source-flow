@@ -199,7 +199,12 @@ export function StoreHeader() {
             </Button>
 
             <Link to="/cart" className="relative" aria-label="Shopping cart">
-              <Button variant="ghost" size="icon" aria-label="View cart" className={cartBounce ? "animate-bounce" : ""}>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="View cart"
+                className={cartBounce ? "animate-bounce [animation-iteration-count:2]" : ""}
+              >
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
                   <Badge
