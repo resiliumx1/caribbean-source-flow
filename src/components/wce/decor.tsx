@@ -1,6 +1,7 @@
 /** Shared decorative primitives for the WCE 2026 page.
  *  Purely presentational — every element is aria-hidden and non-interactive. */
 import { CSSProperties } from "react";
+import { useDrift } from "./motion";
 
 /* ---------- Flower of life ---------- */
 const FOL_R = 30;
@@ -28,22 +29,28 @@ export function FlowerOfLifeField({
   light = false,
   className = "",
   style,
+  drift = false,
 }: {
   opacity?: number;
   size?: number;
   light?: boolean;
   className?: string;
   style?: CSSProperties;
+  /** Scroll-linked slow drift, so the watermark lags behind the content. */
+  drift?: boolean;
 }) {
+  const driftRef = useDrift<HTMLSpanElement>(0.12);
   return (
     <span
+      ref={drift ? driftRef : undefined}
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-0 ${className}`}
+      className={`pointer-events-none absolute inset-x-0 ${drift ? "-inset-y-[14%]" : "inset-y-0"} ${className}`}
       style={{
         opacity,
         backgroundImage: `url("data:image/svg+xml,${light ? FOL_LIGHT : FOL_GOLD}")`,
         backgroundSize: `${size}px auto`,
         backgroundRepeat: "repeat",
+        willChange: drift ? "transform" : undefined,
         ...style,
       }}
     />
@@ -102,18 +109,26 @@ function FoliageArt() {
 }
 
 /** Soft gold botanical silhouettes bleeding in from a section edge. Desktop only. */
-export function EdgeFoliage({ side = "left", opacity = 0.16, className = "" }: {
-  side?: "left" | "right"; opacity?: number; className?: string;
+export function EdgeFoliage({ side = "left", opacity = 0.16, className = "", drift = true }: {
+  side?: "left" | "right"; opacity?: number; className?: string; drift?: boolean;
 }) {
+  const driftRef = useDrift<HTMLSpanElement>(0.14);
   return (
     <span
       aria-hidden="true"
       className={`pointer-events-none absolute top-1/2 hidden -translate-y-1/2 lg:block ${side === "left" ? "left-0" : "right-0"} ${className}`}
       style={{ opacity, transform: `translateY(-50%) ${side === "right" ? "scaleX(-1)" : ""}` }}
     >
-      <FoliageArt />
+      <span ref={drift ? driftRef : undefined} className="block will-change-transform">
+        <FoliageArt />
+      </span>
     </span>
   );
+}
+
+/** Soft gradient bleed used where a cream section meets a dark one. */
+export function EdgeBleed({ position = "top" }: { position?: "top" | "bottom" }) {
+  return <span aria-hidden="true" className={`wce-bleed wce-bleed-${position}`} />;
 }
 
 /* ---------- Rules, flourishes, icons ---------- */
