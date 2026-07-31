@@ -224,8 +224,11 @@ export function WcePathwaysSection() {
                   <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
 
                   <h3
-                    className="relative mx-auto max-w-[20ch] text-[1.35rem] leading-snug"
-                    style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)" }}
+                    className="relative mx-auto flex max-w-[20ch] items-center justify-center text-[1.35rem] leading-snug"
+                    style={{
+                      color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)",
+                      minHeight: "4.8rem",
+                    }}
                   >
                     {p.label}
                   </h3>
@@ -241,11 +244,9 @@ export function WcePathwaysSection() {
                   >
                     {isRetreat ? "Applications Open" : p.key === "in_person" ? "Starting at" : "Full access"}
                   </p>
-                  {!isRetreat && (
-                    <div className="relative">
-                      <PathwayPrice currency={p.currency} price={Number(p.price)} />
-                    </div>
-                  )}
+                  <div className="relative flex items-center justify-center" style={{ minHeight: "4.6rem" }}>
+                    {!isRetreat && <PathwayPrice currency={p.currency} price={Number(p.price)} />}
+                  </div>
 
                   <DiamondRule
                     className="relative mx-auto mt-6 max-w-[9rem]"
