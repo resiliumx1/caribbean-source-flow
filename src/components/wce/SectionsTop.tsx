@@ -261,18 +261,19 @@ export function WcePathwaysSection() {
                     ))}
                   </ul>
 
-                  <a
-                    href="#apply"
-                    className={`wce-btn ${ctaClass} relative mt-auto w-full`}
-                    style={{ marginTop: "auto" }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      dataLayerPush("pathway_click", { pathway_key: p.key, pathway_label: p.label });
-                      selectPathway(p.key);
-                    }}
-                  >
-                    {cta}
-                  </a>
+                  <div className="relative mt-auto pt-10">
+                    <a
+                      href="#apply"
+                      className={`wce-btn ${ctaClass} w-full`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        dataLayerPush("pathway_click", { pathway_key: p.key, pathway_label: p.label });
+                        selectPathway(p.key);
+                      }}
+                    >
+                      {cta}
+                    </a>
+                  </div>
                 </article>
                 </div>
               </Reveal>
