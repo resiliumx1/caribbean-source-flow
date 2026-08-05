@@ -575,6 +575,32 @@ export default function Checkout() {
                             : ` — $${Number(appliedCoupon.discount_value).toFixed(2)} off`}
                         </p>
                       )}
+                      <div className="flex gap-2 mt-3">
+                        <input
+                          value={referralCode}
+                          onChange={(e) => { setReferralCode(e.target.value.toUpperCase()); setReferralError(null); }}
+                          placeholder="Referral code"
+                          aria-label="Referral code"
+                          className="flex-1 h-11 rounded-md border border-border bg-background px-3 text-sm uppercase"
+                        />
+                        <button
+                          type="button"
+                          onClick={applyReferral}
+                          disabled={checkingReferral || !referralCode.trim()}
+                          className="h-11 px-4 rounded-md border border-border text-sm font-medium disabled:opacity-50"
+                        >
+                          {checkingReferral ? "Checking…" : referral ? "Added" : "Add"}
+                        </button>
+                      </div>
+                      {referralError && <p className="text-xs text-destructive mt-1.5">{referralError}</p>}
+                      {referral && (
+                        <p className="text-xs mt-1.5 text-muted-foreground">
+                          {referral.code} recorded
+                          {referral.discount_percent > 0
+                            ? ` — ${referral.discount_percent}% partner rate, applied at fulfilment if a matching store coupon exists.`
+                            : "."}
+                        </p>
+                      )}
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Subtotal</span>
