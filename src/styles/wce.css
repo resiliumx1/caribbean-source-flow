@@ -1245,7 +1245,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
    ========================================================================== */
 .wce-flyer-overlay {
   position: fixed; inset: 0;
-  z-index: 90;
+  z-index: 99000;
   background: rgba(9, 20, 14, 0.72);
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
@@ -1294,7 +1294,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-flyer-lockup {
   position: relative;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
   gap: clamp(0.9rem, 2.4vw, 2rem);
@@ -1320,7 +1320,8 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   color: var(--wce-gold-text);
 }
 .wce-flyer-tagline i { font-style: normal; color: var(--wce-gold); padding: 0 0.2rem; }
-.wce-flyer-year { width: clamp(9rem, 22vw, 15rem); }
+.wce-flyer-year { width: clamp(7rem, 20vw, 13rem); flex: 0 0 auto; }
+.wce-flyer-wordmark { flex: 0 1 auto; }
 .wce-flyer-vrule {
   width: 1px;
   align-self: stretch;
@@ -1482,6 +1483,9 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   .wce-flyer-stage { grid-template-columns: 1fr; justify-items: center; gap: 1.1rem; }
   .wce-flyer-themeword { order: -1; align-items: center; text-align: center; }
   .wce-flyer-emblem { order: 3; }
+  .wce-flyer-lockup { flex-wrap: wrap; justify-content: center; }
+  .wce-flyer-wordmark { align-items: center; text-align: center; }
+  .wce-flyer-vrule { display: none; }
   .wce-flyer-arrow.left { left: 6px; }
   .wce-flyer-arrow.right { right: 6px; }
 }
