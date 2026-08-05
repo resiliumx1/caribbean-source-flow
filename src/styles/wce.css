@@ -883,20 +883,21 @@ body.wce-transparent-header header[class*="fixed"] { position: fixed; isolation:
 
 /* Cream lockup + labels with a soft dark shadow for the bright sky */
 body.wce-transparent-header header[class*="fixed"] :is(a, span, button, p, h1, h2, strong, svg) {
-  color: var(--wce-cream, #F5EFE0);
+  color: var(--wce-cream, #F5EFE0) !important;
   text-shadow: 0 1px 10px rgba(6, 20, 12, 0.75), 0 0 2px rgba(6, 20, 12, 0.5);
 }
 body.wce-transparent-header header[class*="fixed"] svg {
   stroke: currentColor;
   filter: drop-shadow(0 1px 6px rgba(6, 20, 12, 0.8));
 }
-body.wce-transparent-header header[class*="fixed"] img {
-  filter: brightness(0) invert(1) drop-shadow(0 1px 6px rgba(6, 20, 12, 0.8));
-}
 body.wce-transparent-header header[class*="fixed"] .wce-nav-item,
 body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
-  color: #E4C766;
+  color: #E4C766 !important;
 }
+
+/* Secondary hero CTA reads with a cream label on a gold border */
+.wce-hero-ctas .wce-btn-outline { color: var(--wce-cream); border-color: var(--wce-gold); }
+.wce-hero-ctas .wce-btn-outline:hover { color: var(--wce-forest); }
 
 /* ============ HERO CTA PAIR ============ */
 .wce-hero-ctas {
