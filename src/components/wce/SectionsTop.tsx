@@ -45,7 +45,7 @@ export function WceHero() {
       <div
         aria-hidden="true"
         className="absolute inset-x-0 bottom-0 h-2/3"
-        style={{ background: "linear-gradient(to top, #0F2A1D 12%, rgba(15,42,29,0.65) 55%, transparent 100%)" }}
+        style={{ background: "linear-gradient(to top, #0F2A1D 14%, rgba(15,42,29,0.86) 42%, rgba(15,42,29,0.6) 68%, rgba(15,42,29,0.22) 100%)" }}
       />
       <WceHeroParticles />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
@@ -127,7 +127,7 @@ export function WcePartnerStrip() {
             <Reveal key={p} as="li" index={i} gate>
               <span
                 className="text-[0.72rem] uppercase sm:text-xs"
-                style={{ color: "rgba(245,239,224,0.85)", letterSpacing: "0.24em" }}
+                style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.24em" }}
               >
                 {p}
               </span>
@@ -151,8 +151,8 @@ function PathwaysInner() {
   return (
     <section ref={lift.ref} id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="left" opacity={0.13} />
-      <EdgeFoliage side="right" opacity={0.13} />
+      <EdgeFoliage side="left" opacity={0.04} />
+      <EdgeFoliage side="right" opacity={0.04} />
       <div className="mx-auto max-w-5xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
@@ -162,7 +162,7 @@ function PathwaysInner() {
           style={{ color: "var(--wce-forest)" }}
         />
         <Reveal index={2}>
-          <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
+          <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
             Three ways to experience transformation.
           </p>
           <LeafDivider className="mt-10" />
@@ -251,7 +251,7 @@ function PortraitCircle({
         ) : (
           <span
             className="wce-display text-3xl"
-            style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.08em" }}
+            style={{ color: "var(--wce-gold-text)", letterSpacing: "0.08em" }}
             aria-hidden="true"
           >
             {name.split(" ").filter(Boolean).slice(-2).map((w) => w[0]).join("")}
@@ -294,7 +294,7 @@ function SpeakerTile({
         {speaker.title && (
           <p
             className="mt-3 text-[0.6rem] uppercase"
-            style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.2em" }}
+            style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}
           >
             {speaker.title}
           </p>
@@ -302,7 +302,7 @@ function SpeakerTile({
         {speaker.theme && (
           <p
             className="wce-speaker-theme mt-2 text-[0.62rem] uppercase"
-            style={{ color: "rgba(26,26,20,0.65)", letterSpacing: "0.22em" }}
+            style={{ color: "rgba(26,26,20,0.86)", letterSpacing: "0.22em" }}
           >
             {speaker.theme}
           </p>
@@ -344,36 +344,36 @@ function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => 
       exit={reduced ? undefined : { opacity: 0, y: 8 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className="mt-12 flex flex-col items-center gap-10 px-6 py-12 text-left sm:px-12 md:flex-row"
-      style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.45)", borderRadius: "3px" }}
+      style={{ background: "#FDFAF2", border: "1px solid rgba(201,162,39,0.7)", borderRadius: "3px", boxShadow: "0 18px 40px -28px rgba(122,96,17,0.45)" }}
     >
       <PortraitCircle url={speaker.portrait_url} name={speaker.name} size="md" ring />
       <div className="md:flex-1">
         <h3 className="text-[clamp(1.5rem,3vw,2.2rem)]" style={{ color: "var(--wce-forest)" }}>{speaker.name}</h3>
         {speaker.title && (
-          <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-deep)" }}>{speaker.title}</p>
+          <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-text)" }}>{speaker.title}</p>
         )}
         {speaker.theme && (
-          <p className="mt-4 italic" style={{ color: "var(--wce-gold-deep)", fontFamily: "var(--wce-display)", fontSize: "1.15rem" }}>
+          <p className="mt-4 italic" style={{ color: "var(--wce-gold-text)", fontFamily: "var(--wce-display)", fontSize: "1.15rem" }}>
             {speaker.theme}
           </p>
         )}
         {speaker.session_title && (
-          <p className="mt-4 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.8)" }}>
+          <p className="mt-4 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.9)" }}>
             {speaker.session_title}
             {speaker.session_time ? ` · ${speaker.session_time}` : ""}
           </p>
         )}
         {speaker.bio?.trim() && (
-          <p className="mt-5 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.72)" }}>{speaker.bio}</p>
+          <p className="mt-5 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.88)" }}>{speaker.bio}</p>
         )}
         {!hasDetail && (
-          <p className="mt-4 text-sm" style={{ color: "rgba(26,26,20,0.6)" }}>Session details coming soon.</p>
+          <p className="mt-4 text-sm" style={{ color: "rgba(26,26,20,0.84)" }}>Session details coming soon.</p>
         )}
         <button
           type="button"
           onClick={onClose}
           className="mt-8 text-[0.66rem] uppercase"
-          style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.22em", minHeight: 44 }}
+          style={{ color: "var(--wce-gold-text)", letterSpacing: "0.22em", minHeight: 44 }}
         >
           Close
         </button>
@@ -404,7 +404,7 @@ export function WceSpeakersSection() {
   return (
     <section id="speakers" ref={sectionRef} className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="right" opacity={0.12} />
+      <EdgeFoliage side="right" opacity={0.04} />
       <div className="mx-auto max-w-6xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
@@ -414,7 +414,7 @@ export function WceSpeakersSection() {
           style={{ color: "var(--wce-forest)", letterSpacing: "0.1em" }}
         />
         <Reveal index={1}>
-          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
             Guided by voices in wellness, medicine, movement, sovereignty, leadership, transformation, and restoration.
           </p>
           <LeafDivider className="mt-10" />
@@ -434,7 +434,7 @@ export function WceSpeakersSection() {
               }}
               data-wce-dark
             >
-              <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={120} />
+              <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.06} size={120} />
               <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
               <div className="relative">
                 <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
@@ -459,7 +459,7 @@ export function WceSpeakersSection() {
                   </p>
                 )}
                 {featured.session_title && (
-                  <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.82)" }}>
+                  <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.9)" }}>
                     {featured.session_title}
                   </p>
                 )}
@@ -514,16 +514,16 @@ export function WceSpeakersSection() {
                       {s.name}
                     </p>
                     {s.title && (
-                      <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-deep)" }}>{s.title}</p>
+                      <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-text)" }}>{s.title}</p>
                     )}
                     <DiamondRule className="mt-5 max-w-[7rem]" tone="rgba(201,162,39,0.85)" />
                     {s.theme && (
-                      <p className="mt-4 italic" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-deep)" }}>
+                      <p className="mt-4 italic" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-text)" }}>
                         {s.theme}
                       </p>
                     )}
                     {(s.session_title || s.bio) && (
-                      <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.72)" }}>
+                      <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.88)" }}>
                         {s.session_title || s.bio}
                       </p>
                     )}

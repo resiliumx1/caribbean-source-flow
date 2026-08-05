@@ -38,7 +38,7 @@ export function WceMediaSection() {
           style={{ color: "var(--wce-forest)", letterSpacing: "0.12em" }}
         />
         <Reveal index={1}>
-        <p className="mt-4 text-sm italic" style={{ color: "rgba(26,26,20,0.6)", fontFamily: "var(--wce-display)", fontSize: "1.1rem" }}>
+        <p className="mt-4 text-sm italic" style={{ color: "rgba(26,26,20,0.84)", fontFamily: "var(--wce-display)", fontSize: "1.1rem" }}>
           From previous staging
         </p>
         <LeafDivider className="mt-10" />
@@ -52,7 +52,7 @@ export function WceMediaSection() {
               direction={i % 2 === 0 ? "left" : "right"}
               delay={i * 90}
               className="wce-reel group relative overflow-hidden"
-              style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px", background: "var(--wce-forest-mid)" }}
+              style={{ border: "1px solid rgba(201,162,39,0.65)", borderRadius: "2px", background: "var(--wce-forest-mid)", boxShadow: "0 18px 38px -28px rgba(15,42,29,0.6)" }}
             >
               <a
                 href={m.video_url ?? "#"}
@@ -115,7 +115,7 @@ export function WceActivitiesSection() {
   return (
     <section ref={lift.ref} id="activities" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="left" opacity={0.12} />
+      <EdgeFoliage side="left" opacity={0.04} />
       <CornerVine className="pointer-events-none absolute left-0 top-8 opacity-40" />
       <CornerVine flip className="pointer-events-none absolute right-0 top-8 opacity-40" />
       <div className="mx-auto max-w-6xl text-center">
@@ -127,14 +127,14 @@ export function WceActivitiesSection() {
           style={{ color: "var(--wce-forest)" }}
         />
         <Reveal index={1}>
-        <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
+        <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
           A transformational journey of learning, connection, and renewal in Saint Lucia.
         </p>
         <DiamondRule className="mx-auto mt-8 max-w-[11rem]" />
         </Reveal>
 
         <Reveal index={2}>
-          <p className="wce-eyebrow mt-16" style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.34em" }}>
+          <p className="wce-eyebrow mt-16" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.34em" }}>
             Four Pillars of the Week
           </p>
         </Reveal>
@@ -151,12 +151,12 @@ export function WceActivitiesSection() {
               <SlideInItem as="li" key={label} index={i} className="flex flex-col items-center text-center">
                 <span
                   className="flex h-[88px] w-[88px] items-center justify-center rounded-full"
-                  style={{ background: "var(--wce-cream-warm)" }}
+                  style={{ background: "#FBF6EA" }}
                 >
                   <Emblem delay={i * 150} />
                 </span>
                 <h3 className="mt-6 text-xl" style={{ color: "var(--wce-forest)" }}>{label}</h3>
-                <p className="mt-3 max-w-[15rem] text-sm" style={{ color: "rgba(26,26,20,0.68)" }}>{copy}</p>
+                <p className="mt-3 max-w-[15rem] text-sm" style={{ color: "rgba(26,26,20,0.88)" }}>{copy}</p>
               </SlideInItem>
             ))}
           </ul>
@@ -181,7 +181,7 @@ export function WceCeremonySection() {
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-1/2 -ml-[310px] -mt-[310px] will-change-transform"
       >
-        <FlowerOfLifeMark size={620} opacity={0.09} />
+        <FlowerOfLifeMark size={620} opacity={0.06} />
       </span>
       <CornerVine className="pointer-events-none absolute left-4 top-6 opacity-45" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-6 opacity-45" />
@@ -215,7 +215,7 @@ export function WceCeremonySection() {
         <DiamondRule className="mx-auto mt-8 max-w-[11rem]" />
 
         <Reveal index={1}>
-          <p className="mx-auto mt-9 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.82)" }}>
+          <p className="mx-auto mt-9 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.9)" }}>
             We gather to honour the graduating herbal physicians — those who have studied the plants, the soil and
             the discipline of care. The ceremony marks the passing on of traditional knowledge from teacher to
             practitioner, and welcomes a new generation into service.
@@ -257,7 +257,7 @@ export function WceRetreatBand() {
   const bandRef = useParallax<HTMLDivElement>(0.18);
   const mandalaRef = useCounterRotate<HTMLSpanElement>(8);
   return (
-    <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-forest)" }}>
+    <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-forest-mid)", borderTop: "1px solid rgba(201,162,39,0.45)" }}>
       <EdgeBleed position="top" />
       <div
         ref={bandRef}
@@ -265,7 +265,7 @@ export function WceRetreatBand() {
         className="pointer-events-none absolute -inset-y-[25%] inset-x-0 will-change-transform"
         style={{ background: "radial-gradient(70% 60% at 50% 50%, rgba(45,74,53,0.6), transparent 70%)" }}
       />
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.05} light />
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.045} light />
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
         {/* Left — copy */}
         <div className="text-center lg:text-left">
@@ -290,7 +290,7 @@ export function WceRetreatBand() {
 
           <ul className="mx-auto mt-9 max-w-md space-y-3.5 text-left">
             {RETREAT_POINTS.map((p, i) => (
-              <SlideInItem as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
+              <SlideInItem as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.92)" }}>
                 <CheckMark tone="var(--wce-gold-light)" />
                 <span>{p}</span>
               </SlideInItem>
@@ -303,7 +303,7 @@ export function WceRetreatBand() {
                 <Icon />
                 <span
                   className="text-[0.6rem] uppercase"
-                  style={{ color: "rgba(245,239,224,0.75)", letterSpacing: "0.2em" }}
+                  style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.2em" }}
                 >
                   {label}
                 </span>
@@ -314,7 +314,7 @@ export function WceRetreatBand() {
           <Reveal>
             <a href="#apply" className="wce-btn wce-btn-gold mt-12 w-full sm:w-auto">Apply for the Retreat</a>
           </Reveal>
-          <p className="mt-6 text-sm italic" style={{ color: "rgba(245,239,224,0.6)", fontFamily: "var(--wce-display)", fontSize: "1.05rem" }}>
+          <p className="mt-6 text-sm italic" style={{ color: "rgba(245,239,224,0.84)", fontFamily: "var(--wce-display)", fontSize: "1.05rem" }}>
             Limited spaces. Applications reviewed personally.
           </p>
         </div>
@@ -353,14 +353,14 @@ export function WceRetreatBand() {
             aria-hidden="true"
             className="pointer-events-none absolute -right-5 -top-5 hidden lg:block"
           >
-            <FlowerOfLifeMark size={150} opacity={0.35} />
+            <FlowerOfLifeMark size={150} opacity={0.12} />
           </span>
         </div>
       </div>
 
       <div className="relative mx-auto mt-20 max-w-3xl text-center">
         <LeafDivider className="mx-auto w-full max-w-md" />
-        <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.7)", letterSpacing: "0.2em" }}>
+        <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.86)", letterSpacing: "0.2em" }}>
           Holistic Wellness <span style={{ color: "var(--wce-gold)" }}>|</span> Meaningful Connection{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span> Lasting Transformation
         </p>
@@ -492,25 +492,25 @@ export function WceApplicationForm() {
     : values.preferred_contact === "phone" ? "phone"
     : "email";
 
-  const errStyle: React.CSSProperties = { color: "var(--wce-gold-light)", opacity: 0.85 };
+  const errStyle: React.CSSProperties = { color: "#F2D98A", opacity: 1 };
 
   return (
     <section id="apply" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <Reveal
         className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-[0.78fr_1.22fr]"
-        style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px" }}
+        style={{ border: "1px solid rgba(201,162,39,0.7)", borderRadius: "2px", boxShadow: "0 22px 48px -30px rgba(122,96,17,0.4)" }}
       >
         {/* Left — cream panel */}
         <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-12 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
-          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={96} />
+          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.04} size={96} />
           <CornerVine className="pointer-events-none absolute -left-2 bottom-0 opacity-40" />
-          <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Caribbean Wellness Saint Lucia 2026</p>
+          <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-text)" }}>Caribbean Wellness Saint Lucia 2026</p>
           <h2 className="relative mt-6 text-[clamp(1.8rem,4vw,2.5rem)] leading-tight" style={{ color: "var(--wce-forest)" }}>
             Retreat Application / Lead Form
           </h2>
           <DiamondRule className="relative mt-7 max-w-[9rem] lg:mx-0" />
-          <p className="relative mt-7 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(26,26,20,0.7)" }}>
+          <p className="relative mt-7 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(26,26,20,0.88)" }}>
             Tell us about your interest and our team will follow up personally to discuss your goals, confirm
             availability and guide you through the next steps.
           </p>
@@ -519,9 +519,9 @@ export function WceApplicationForm() {
               <li
                 key={t}
                 className="flex items-center gap-2.5 text-[0.6rem] uppercase leading-relaxed"
-                style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.18em" }}
+                style={{ color: "var(--wce-gold-text)", letterSpacing: "0.18em" }}
               >
-                <LeafIcon tone="var(--wce-gold-deep)" />
+                <LeafIcon tone="var(--wce-gold-text)" />
                 <span>{t}</span>
               </li>
             ))}
@@ -529,7 +529,7 @@ export function WceApplicationForm() {
         </div>
 
         {/* Right — dark form panel */}
-        <div className="wce-form-panel relative px-8 py-16 sm:px-12" style={{ background: "var(--wce-forest)" }}>
+        <div className="wce-form-panel relative px-8 py-16 sm:px-12" style={{ background: "var(--wce-forest)", borderLeft: "1px solid rgba(201,162,39,0.5)" }}>
           <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} light size={110} />
           <div className="relative">
           {submitted ? (
@@ -538,7 +538,7 @@ export function WceApplicationForm() {
               <h3 className="mt-8 text-[clamp(1.7rem,3.6vw,2.4rem)]" style={{ color: "var(--wce-cream)" }}>
                 Thank You — Your Application Is In
               </h3>
-              <p className="mt-6 max-w-sm text-sm leading-relaxed" style={{ color: "rgba(245,239,224,0.8)" }}>
+              <p className="mt-6 max-w-sm text-sm leading-relaxed" style={{ color: "rgba(245,239,224,0.9)" }}>
                 Our team will be in touch personally by {contactLabel} to talk through your goals and the next
                 steps for Caribbean Wellness Saint Lucia 2026.
               </p>
@@ -611,7 +611,7 @@ export function WceApplicationForm() {
               </div>
             </div>
 
-            <label className="flex items-start gap-3 text-xs leading-relaxed" style={{ color: "rgba(245,239,224,0.75)" }}>
+            <label className="flex items-start gap-3 text-xs leading-relaxed" style={{ color: "rgba(245,239,224,0.92)" }}>
               <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[var(--wce-gold)]"
                 checked={values.consent_marketing} onChange={set("consent_marketing")} />
               <span>Yes, keep me updated about Caribbean Wellness Saint Lucia 2026 and Mount Kailash offerings.</span>
@@ -622,7 +622,7 @@ export function WceApplicationForm() {
             <button type="submit" className="wce-btn wce-btn-gold w-full" disabled={submitting} style={submitting ? { opacity: 0.65, cursor: "wait" } : undefined}>
               {submitting ? "Sending your application…" : "Submit Retreat Application"}
             </button>
-            <p className="text-center text-[0.68rem]" style={{ color: "rgba(245,239,224,0.55)" }}>
+            <p className="text-center text-[0.68rem]" style={{ color: "rgba(245,239,224,0.84)" }}>
               We respect your privacy. Your information is secure with us.
             </p>
           </form>
