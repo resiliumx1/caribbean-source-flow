@@ -226,7 +226,7 @@
 /* Headline — flyer lettering: heavy geometric sans in flat gold */
 .wce-hero-title {
   font-family: var(--wce-flyer) !important;
-  font-weight: 800;
+  font-weight: 800 !important;
   color: #C9A227 !important;
   text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
   line-height: 0.86;
