@@ -575,7 +575,8 @@ export default function Checkout() {
                             : ` — $${Number(appliedCoupon.discount_value).toFixed(2)} off`}
                         </p>
                       )}
-                      <div className="flex gap-2 mt-3">
+                      <p className="text-xs text-muted-foreground mt-3">Referral / partner code</p>
+                      <div className="flex gap-2 mt-1.5">
                         <input
                           value={referralCode}
                           onChange={(e) => { setReferralCode(e.target.value.toUpperCase()); setReferralError(null); }}
