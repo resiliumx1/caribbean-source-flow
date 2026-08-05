@@ -38,7 +38,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[110px] pt-[clamp(3.5rem,7vh,5rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[130px] pt-[clamp(2.5rem,5vh,4rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
@@ -77,7 +77,7 @@ export function WceHero() {
           className="mt-[clamp(0.7rem,1.8vh,1.3rem)]"
           style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.45s both" }}
         >
-          <LoveEmblem size={220} variant="cream" />
+          <LoveEmblem size={200} variant="cream" />
         </div>
 
         <div className={cls("my-[clamp(0.8rem,2vh,1.6rem)] w-full max-w-sm")} style={stage(0.95)}>
