@@ -1056,7 +1056,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-pcta.is-flash { animation: wce-pcta-flash 250ms ease-out 1; }
 
 @media (prefers-reduced-motion: reduce) {
-  .wce-path-slot { opacity: 1 !important; transform: translateY(0) !important; }
+  .wce-path-slot { opacity: 1 !important; transform: translateY(var(--wce-ascent, 0px)) !important; }
   .wce-path-card .wce-path-bloom { opacity: 0.05 !important; }
   .wce-path-vine { opacity: 0.5; }
   .wce-path-vine [stroke], .wce-path-bloomflower [stroke] { stroke-dashoffset: 0 !important; }
