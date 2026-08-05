@@ -502,7 +502,7 @@ export function WceApplicationForm() {
         style={{ border: "1px solid rgba(201,162,39,0.7)", borderRadius: "2px", boxShadow: "0 22px 48px -30px rgba(122,96,17,0.4)" }}
       >
         {/* Left — cream panel */}
-        <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-12 lg:text-left" style={{ background: "#FBF6EA" }}>
+        <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-12 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
           <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.04} size={96} />
           <CornerVine className="pointer-events-none absolute -left-2 bottom-0 opacity-40" />
           <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-text)" }}>Caribbean Wellness Saint Lucia 2026</p>
