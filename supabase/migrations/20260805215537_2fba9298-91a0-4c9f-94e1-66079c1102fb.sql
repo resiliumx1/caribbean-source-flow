@@ -1,0 +1,1 @@
+ALTER TABLE public.wce_speakers ADD COLUMN IF NOT EXISTS prefix text;
