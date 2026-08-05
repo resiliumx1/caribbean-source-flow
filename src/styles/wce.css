@@ -405,8 +405,12 @@
   border-top: 1px solid rgba(201, 162, 39, 0.55);
   overflow: hidden;
 }
-.wce-partner-kicker {
+.wce-partner-kicker-col {
   flex: 0 0 auto;
+  padding-right: clamp(1rem, 2.5vw, 2.25rem);
+}
+.wce-partner-kicker {
+  display: block;
   font-family: var(--wce-banner);
   font-weight: 700;
   font-size: 0.6rem;
@@ -414,39 +418,43 @@
   text-transform: uppercase;
   color: var(--wce-gold);
 }
-.wce-partner-viewport { flex: 1 1 auto; overflow: hidden; }
+.wce-partner-viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 46px, #000 calc(100% - 46px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 46px, #000 calc(100% - 46px), transparent 100%);
+}
 .wce-partner-track { display: flex; width: max-content; animation: wce-marquee 40s linear infinite; }
 .wce-partner-band:hover .wce-partner-track { animation-play-state: paused; }
 .wce-partner-set,
-.wce-partner-static { display: flex; align-items: center; gap: clamp(1rem, 2.4vw, 2.2rem); padding-right: clamp(1rem, 2.4vw, 2.2rem); }
+.wce-partner-static { display: flex; align-items: center; gap: 72px; padding-right: 72px; }
 .wce-partner-static { justify-content: center; flex: 1 1 auto; flex-wrap: wrap; padding-right: 0; }
 .wce-partner-tile {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 130px;
-  height: 56px;
-  padding: 0 0.5rem;
-  border: 1px solid rgba(201, 162, 39, 0.7);
-  border-radius: 8px;
-  text-align: center;
+  opacity: 0.85;
+  transition: opacity .3s ease;
 }
+.wce-partner-tile:hover { opacity: 1; }
 .wce-partner-name {
   font-family: var(--wce-banner);
   font-weight: 600;
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   line-height: 1.25;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--wce-gold);
 }
-.wce-partner-logo { max-height: 40px; max-width: 112px; object-fit: contain; }
+.wce-partner-logo { height: 52px; width: auto; object-fit: contain; }
 @keyframes wce-marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 @media (max-width: 640px) {
-  .wce-partner-tile { width: 100px; height: 44px; }
-  .wce-partner-name { font-size: 0.48rem; letter-spacing: 0.1em; }
-  .wce-partner-logo { max-height: 32px; max-width: 86px; }
+  .wce-partner-set, .wce-partner-static { gap: 44px; padding-right: 44px; }
+  .wce-partner-static { padding-right: 0; }
+  .wce-partner-logo { height: 36px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wce-partner-track { animation: none; }
@@ -678,33 +686,50 @@
   .wce-form-confirm { animation: none; }
 }
 
-/* ============ COUNTDOWN ============ */
+/* ============ COUNTDOWN — inline figures split by gold hairlines ============ */
+.wce-count-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
 .wce-count-block {
-  min-width: 74px;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid rgba(201,162,39,0.6);
-  border-radius: 2px;
-  background: rgba(15,42,29,0.35);
-  backdrop-filter: blur(3px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  padding: 0 clamp(0.9rem, 2vw, 1.6rem);
+  text-align: center;
+}
+.wce-count-rule {
+  position: absolute;
+  left: 0;
+  top: 12%;
+  bottom: 12%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(201,162,39,0.75) 22%, rgba(201,162,39,0.75) 78%, transparent);
 }
 .wce-count-value {
   display: block;
   font-family: var(--wce-flyer);
   font-weight: 600;
-  font-size: 1.6rem;
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
   line-height: 1.1;
   color: var(--wce-gold-light);
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 3px 14px rgba(0,0,0,0.5);
 }
 .wce-count-label {
   display: block;
   margin-top: 0.25rem;
   font-family: var(--wce-flyer);
   font-weight: 500;
-  font-size: 0.52rem;
+  font-size: 0.56rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(245,239,224,0.7);
+  color: rgba(245,239,224,0.82);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.55);
 }
 
 /* ============ STICKY MOBILE CTA ============ */
