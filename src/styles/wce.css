@@ -11,11 +11,13 @@
   --wce-gold: #C9A227;
   --wce-gold-light: #E4C766;
   --wce-gold-deep: #9A7B1C;
-  /* Text-safe gold for small type on light panels (4.6:1 on cream).
-     The brighter --wce-gold stays for ornament, borders, rules and large display type. */
-  --wce-gold-text: #8A6D14;
+  /* Text-safe gold for small type on light panels: 5.2:1 on --wce-cream,
+     4.6:1 on --wce-cream-warm. A shade deeper than the requested #8A6D14,
+     which only reached 3.6:1 on the deeper warm cream. The brighter
+     --wce-gold stays for ornament, borders, rules and large display type. */
+  --wce-gold-text: #7A5E0E;
   --wce-cream: #F5EFE0;
-  --wce-cream-warm: #EADCC2;
+  --wce-cream-warm: #EBDFC7;
   --wce-ink-body: rgba(26, 26, 20, 0.88);
   --wce-ink-soft: rgba(26, 26, 20, 0.8);
   --wce-cream-body: rgba(245, 239, 224, 0.9);
