@@ -2,6 +2,7 @@
    All tokens live under .wce-root; global design tokens are untouched. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap');
 
 .wce-root {
   --wce-forest: #0F2A1D;
@@ -17,6 +18,7 @@
   --wce-display: 'Cormorant Garamond', Georgia, serif;
   --wce-body: 'Inter', system-ui, sans-serif;
   --wce-flyer: 'Jost', 'DM Sans', system-ui, sans-serif;
+  --wce-banner: 'Montserrat', 'Jost', system-ui, sans-serif;
 
   background: var(--wce-cream);
   color: var(--wce-ink);
@@ -304,6 +306,164 @@
   background: radial-gradient(ellipse at center, rgba(15, 42, 29, 0.95) 0%, rgba(15, 42, 29, 0.72) 46%, transparent 76%);
 }
 
+/* ============ BANNER HERO LOCKUP (Montserrat, hero only) ============ */
+.wce-banner-lockup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.8rem, 2.4vw, 2.4rem);
+}
+.wce-banner-title {
+  font-family: var(--wce-banner) !important;
+  font-weight: 800 !important;
+  font-size: clamp(1.3rem, 3.5vw, 2.85rem);
+  line-height: 0.92 !important;
+  letter-spacing: -0.015em !important;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--wce-gold);
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+.wce-banner-title-line { display: block; }
+
+.wce-year-svg {
+  width: clamp(9rem, 27vw, 20rem);
+  height: auto;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.5));
+}
+.wce-year-svg text {
+  font-family: var(--wce-banner);
+  font-weight: 700;
+  font-size: 140px;
+  letter-spacing: 2px;
+  stroke-dasharray: 2400;
+  stroke-dashoffset: 2400;
+  transition: stroke-dashoffset 900ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+.wce-year-svg.is-drawn text { stroke-dashoffset: 0; }
+
+.wce-banner-dates { display: flex; align-items: stretch; gap: clamp(0.6rem, 1.4vw, 1.2rem); }
+.wce-banner-daterule {
+  width: 2px;
+  align-self: stretch;
+  background: linear-gradient(180deg, rgba(201,162,39,0.2), var(--wce-gold) 20%, var(--wce-gold) 80%, rgba(201,162,39,0.2));
+}
+.wce-banner-datestack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  font-family: var(--wce-banner);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--wce-gold);
+  line-height: 0.92;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+.wce-banner-day { font-size: clamp(1.6rem, 4.2vw, 3.2rem); letter-spacing: -0.01em; }
+.wce-banner-month { font-size: clamp(0.95rem, 2.3vw, 1.75rem); letter-spacing: 0.02em; }
+.wce-banner-bar {
+  margin-top: 0.5rem;
+  height: 6px;
+  width: 100%;
+  background: var(--wce-forest);
+  transform-origin: left center;
+}
+
+.wce-banner-subline {
+  font-family: var(--wce-banner);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(0.6rem, 1.35vw, 1rem);
+  letter-spacing: 0.16em;
+  color: #071409;
+  text-shadow: 0 1px 10px rgba(245, 239, 224, 0.35);
+}
+.wce-banner-subline .sep { color: var(--wce-gold); }
+.wce-banner-venue {
+  font-family: var(--wce-banner);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(0.55rem, 1.15vw, 0.88rem);
+  letter-spacing: 0.2em;
+  color: var(--wce-gold);
+  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 1023px) {
+  .wce-banner-lockup { flex-direction: column; align-items: center; gap: 0.5rem; }
+  .wce-banner-title { text-align: center; font-size: clamp(1.5rem, 7.6vw, 2.4rem); }
+  .wce-year-svg { width: min(78vw, 22rem); }
+  .wce-banner-datestack { align-items: center; text-align: center; }
+  .wce-banner-daterule { display: none; }
+  .wce-banner-day { font-size: clamp(1.7rem, 8.4vw, 2.6rem); }
+  .wce-banner-month { font-size: clamp(1rem, 4.6vw, 1.5rem); }
+}
+
+/* ============ PARTNER MARQUEE ============ */
+.wce-partner-band {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 5;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 2rem);
+  padding: 0 clamp(0.9rem, 3vw, 2.5rem);
+  background: rgba(15, 42, 29, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(201, 162, 39, 0.55);
+  overflow: hidden;
+}
+.wce-partner-kicker {
+  flex: 0 0 auto;
+  font-family: var(--wce-banner);
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--wce-gold);
+}
+.wce-partner-viewport { flex: 1 1 auto; overflow: hidden; }
+.wce-partner-track { display: flex; width: max-content; animation: wce-marquee 40s linear infinite; }
+.wce-partner-band:hover .wce-partner-track { animation-play-state: paused; }
+.wce-partner-set,
+.wce-partner-static { display: flex; align-items: center; gap: clamp(1rem, 2.4vw, 2.2rem); padding-right: clamp(1rem, 2.4vw, 2.2rem); }
+.wce-partner-static { justify-content: center; flex: 1 1 auto; flex-wrap: wrap; padding-right: 0; }
+.wce-partner-tile {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 130px;
+  height: 56px;
+  padding: 0 0.5rem;
+  border: 1px solid rgba(201, 162, 39, 0.7);
+  border-radius: 8px;
+  text-align: center;
+}
+.wce-partner-name {
+  font-family: var(--wce-banner);
+  font-weight: 600;
+  font-size: 0.56rem;
+  line-height: 1.25;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wce-gold);
+}
+.wce-partner-logo { max-height: 40px; max-width: 112px; object-fit: contain; }
+@keyframes wce-marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+@media (max-width: 640px) {
+  .wce-partner-tile { width: 100px; height: 44px; }
+  .wce-partner-name { font-size: 0.48rem; letter-spacing: 0.1em; }
+  .wce-partner-logo { max-height: 32px; max-width: 86px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wce-partner-track { animation: none; }
+  .wce-year-svg text { transition: none; stroke-dashoffset: 0; }
+}
+
 /* Form fields — dark translucent fill with a gold underline */
 .wce-field {
   width: 100%;
@@ -379,6 +539,8 @@
 @keyframes wce-scale-in { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: scale(1); } }
 .wce-stage { animation: wce-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .wce-stage-year { animation: wce-scale-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes wce-rise-up { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+@keyframes wce-wipe-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 /* Gold shimmer sweeping across the year */
 @keyframes wce-shimmer-sweep { 0% { background-position: -140% 0; } 55%, 100% { background-position: 260% 0; } }

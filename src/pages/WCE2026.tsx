@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { WceThemeProvider } from "@/components/wce/WceThemeProvider";
-import { WceHero, WcePartnerStrip, WcePathwaysSection, WceSpeakersSection } from "@/components/wce/SectionsTop";
+import { WceHero, WcePathwaysSection, WceSpeakersSection } from "@/components/wce/SectionsTop";
 import { WceMediaSection, WceActivitiesSection, WceCeremonySection, WceRetreatBand, WceApplicationForm } from "@/components/wce/SectionsMid";
 import { WceFaqSection, WceFinalCta, WceFooter } from "@/components/wce/SectionsBottom";
 import { useWcePathways, useWceSettings, pathwayFeatures } from "@/components/wce/useWceData";
@@ -103,7 +103,6 @@ export default function WCE2026() {
       <WceSubNav />
       <main>
         <WceHero />
-        <WcePartnerStrip />
         <WcePathwaysSection />
         <WceSpeakersSection />
         <WceMediaSection />
