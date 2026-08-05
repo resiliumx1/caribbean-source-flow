@@ -27,7 +27,7 @@ export function WceFaqSection() {
           style={{ color: "var(--wce-forest)" }}
         />
         <Reveal index={1}>
-        <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
+        <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
           Everything you need to know before you join us in Saint Lucia.
         </p>
         <LeafDivider className="mt-10" />
@@ -56,7 +56,7 @@ export function WceFaqSection() {
                     <span
                       aria-hidden="true"
                       className={`wce-faq-icon flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-base ${isOpen ? "is-open" : ""}`}
-                      style={{ color: "var(--wce-gold-deep)", border: "1px solid rgba(201,162,39,0.6)" }}
+                      style={{ color: "var(--wce-gold-text)", border: "1px solid rgba(201,162,39,0.6)" }}
                     >
                       +
                     </span>
@@ -66,7 +66,7 @@ export function WceFaqSection() {
                   <div>
                     <div className="px-6 pb-6">
                       <DiamondRule className="mb-4 max-w-[6rem]" tone="rgba(201,162,39,0.7)" />
-                      <p className="text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.75)" }}>
+                      <p className="text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.88)" }}>
                         {f.answer}
                       </p>
                     </div>
@@ -122,7 +122,7 @@ export function WceFinalCta() {
           ))}
         </div>
         <LeafDivider className="mt-16" />
-        <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.8)", letterSpacing: "0.22em" }}>
+        <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.9)", letterSpacing: "0.22em" }}>
           {(settings?.event_dates ?? "11-17 October 2026").toUpperCase()}{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span>{" "}
           {(settings?.venue ?? "Mount Kailash Rejuvenation Centre, St. Lucia").toUpperCase()}
@@ -146,7 +146,7 @@ export function WceFooter() {
             <li
               key={p}
               className="text-[0.68rem] uppercase"
-              style={{ color: "rgba(245,239,224,0.8)", letterSpacing: "0.22em" }}
+              style={{ color: "rgba(245,239,224,0.9)", letterSpacing: "0.22em" }}
             >
               {p}
             </li>
@@ -160,13 +160,13 @@ export function WceFooter() {
           <p className="wce-display text-2xl uppercase" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.14em", lineHeight: 1.3 }}>
             Caribbean<br />Wellness<br />Saint Lucia
           </p>
-          <p className="wce-eyebrow mt-4" style={{ color: "rgba(245,239,224,0.8)" }}>11–17 October 2026</p>
+          <p className="wce-eyebrow mt-4" style={{ color: "rgba(245,239,224,0.9)" }}>11–17 October 2026</p>
           <LoveEmblem size={230} className="mx-auto mt-8 md:mx-0" />
         </div>
 
         <div>
           <p className="wce-eyebrow" style={{ color: "var(--wce-gold)" }}>Contact</p>
-          <address className="mt-5 not-italic text-sm leading-loose" style={{ color: "rgba(245,239,224,0.8)" }}>
+          <address className="mt-5 not-italic text-sm leading-loose" style={{ color: "rgba(245,239,224,0.9)" }}>
             <a href="tel:+17587223660" className="block hover:underline">1 (758) 722 3660</a>
             <a href="mailto:info@mountkailashlu.com" className="block hover:underline">info@mountkailashlu.com</a>
             <span className="block">Mount Kailash Rejuvenation Centre, St. Lucia</span>
@@ -175,7 +175,7 @@ export function WceFooter() {
 
         <div>
           <p className="wce-eyebrow" style={{ color: "var(--wce-gold)" }}>The Experience</p>
-          <ul className="mt-5 space-y-2 text-xs uppercase" style={{ color: "rgba(245,239,224,0.75)", letterSpacing: "0.18em" }}>
+          <ul className="mt-5 space-y-2 text-xs uppercase" style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.18em" }}>
             <li><a href="#pathways" className="hover:underline">Pathways</a></li>
             <li><a href="#speakers" className="hover:underline">Visionary Leaders</a></li>
             <li><a href="#activities" className="hover:underline">Activities</a></li>
@@ -189,7 +189,7 @@ export function WceFooter() {
       <div className="wce-hairline mx-auto mt-16 max-w-6xl" />
       <p
         className="mx-auto mt-8 max-w-4xl text-center text-[0.6rem] uppercase leading-loose"
-        style={{ color: "rgba(245,239,224,0.6)", letterSpacing: "0.2em" }}
+        style={{ color: "rgba(245,239,224,0.84)", letterSpacing: "0.2em" }}
       >
         Clinical Wellness Medicine · Herbal Practice · Volcanic Highlands · Restoration · Food · Herbs · Discipline · Family · Care
       </p>

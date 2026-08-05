@@ -127,7 +127,7 @@ export function WcePartnerStrip() {
             <Reveal key={p} as="li" index={i} gate>
               <span
                 className="text-[0.72rem] uppercase sm:text-xs"
-                style={{ color: "rgba(245,239,224,0.85)", letterSpacing: "0.24em" }}
+                style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.24em" }}
               >
                 {p}
               </span>
@@ -162,7 +162,7 @@ function PathwaysInner() {
           style={{ color: "var(--wce-forest)" }}
         />
         <Reveal index={2}>
-          <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
+          <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
             Three ways to experience transformation.
           </p>
           <LeafDivider className="mt-10" />
@@ -251,7 +251,7 @@ function PortraitCircle({
         ) : (
           <span
             className="wce-display text-3xl"
-            style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.08em" }}
+            style={{ color: "var(--wce-gold-text)", letterSpacing: "0.08em" }}
             aria-hidden="true"
           >
             {name.split(" ").filter(Boolean).slice(-2).map((w) => w[0]).join("")}
@@ -294,7 +294,7 @@ function SpeakerTile({
         {speaker.title && (
           <p
             className="mt-3 text-[0.6rem] uppercase"
-            style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.2em" }}
+            style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}
           >
             {speaker.title}
           </p>
@@ -302,7 +302,7 @@ function SpeakerTile({
         {speaker.theme && (
           <p
             className="wce-speaker-theme mt-2 text-[0.62rem] uppercase"
-            style={{ color: "rgba(26,26,20,0.65)", letterSpacing: "0.22em" }}
+            style={{ color: "rgba(26,26,20,0.86)", letterSpacing: "0.22em" }}
           >
             {speaker.theme}
           </p>
@@ -350,30 +350,30 @@ function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => 
       <div className="md:flex-1">
         <h3 className="text-[clamp(1.5rem,3vw,2.2rem)]" style={{ color: "var(--wce-forest)" }}>{speaker.name}</h3>
         {speaker.title && (
-          <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-deep)" }}>{speaker.title}</p>
+          <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-text)" }}>{speaker.title}</p>
         )}
         {speaker.theme && (
-          <p className="mt-4 italic" style={{ color: "var(--wce-gold-deep)", fontFamily: "var(--wce-display)", fontSize: "1.15rem" }}>
+          <p className="mt-4 italic" style={{ color: "var(--wce-gold-text)", fontFamily: "var(--wce-display)", fontSize: "1.15rem" }}>
             {speaker.theme}
           </p>
         )}
         {speaker.session_title && (
-          <p className="mt-4 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.8)" }}>
+          <p className="mt-4 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.9)" }}>
             {speaker.session_title}
             {speaker.session_time ? ` · ${speaker.session_time}` : ""}
           </p>
         )}
         {speaker.bio?.trim() && (
-          <p className="mt-5 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.72)" }}>{speaker.bio}</p>
+          <p className="mt-5 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.88)" }}>{speaker.bio}</p>
         )}
         {!hasDetail && (
-          <p className="mt-4 text-sm" style={{ color: "rgba(26,26,20,0.6)" }}>Session details coming soon.</p>
+          <p className="mt-4 text-sm" style={{ color: "rgba(26,26,20,0.84)" }}>Session details coming soon.</p>
         )}
         <button
           type="button"
           onClick={onClose}
           className="mt-8 text-[0.66rem] uppercase"
-          style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.22em", minHeight: 44 }}
+          style={{ color: "var(--wce-gold-text)", letterSpacing: "0.22em", minHeight: 44 }}
         >
           Close
         </button>
@@ -414,7 +414,7 @@ export function WceSpeakersSection() {
           style={{ color: "var(--wce-forest)", letterSpacing: "0.1em" }}
         />
         <Reveal index={1}>
-          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
             Guided by voices in wellness, medicine, movement, sovereignty, leadership, transformation, and restoration.
           </p>
           <LeafDivider className="mt-10" />
@@ -459,7 +459,7 @@ export function WceSpeakersSection() {
                   </p>
                 )}
                 {featured.session_title && (
-                  <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.82)" }}>
+                  <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.9)" }}>
                     {featured.session_title}
                   </p>
                 )}
@@ -514,16 +514,16 @@ export function WceSpeakersSection() {
                       {s.name}
                     </p>
                     {s.title && (
-                      <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-deep)" }}>{s.title}</p>
+                      <p className="wce-eyebrow mt-2" style={{ color: "var(--wce-gold-text)" }}>{s.title}</p>
                     )}
                     <DiamondRule className="mt-5 max-w-[7rem]" tone="rgba(201,162,39,0.85)" />
                     {s.theme && (
-                      <p className="mt-4 italic" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-deep)" }}>
+                      <p className="mt-4 italic" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-text)" }}>
                         {s.theme}
                       </p>
                     )}
                     {(s.session_title || s.bio) && (
-                      <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.72)" }}>
+                      <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.88)" }}>
                         {s.session_title || s.bio}
                       </p>
                     )}

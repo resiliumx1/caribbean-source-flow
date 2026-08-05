@@ -112,7 +112,7 @@ function DrawnCheck({ tone, drawn, delay }: { tone: string; drawn: boolean; dela
 function PathwayPrice({ currency, price }: { currency: string; price: number }) {
   const { ref, value } = useCountUp(price);
   return (
-    <p ref={ref} className="mt-2 text-[2.4rem]" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-deep)" }}>
+    <p ref={ref} className="mt-2 text-[2.4rem]" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-text)" }}>
       {currency} {value.toFixed(0)}
     </p>
   );
@@ -256,7 +256,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
 
           <p
             className="relative mt-5 text-[0.63rem] uppercase"
-            style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(26,26,20,0.55)", letterSpacing: "0.24em" }}
+            style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(26,26,20,0.9)", letterSpacing: "0.24em" }}
           >
             {isRetreat ? "Applications Open" : pathwayKey === "in_person" ? "Starting at" : "Full access"}
           </p>
@@ -272,7 +272,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
                 key={f}
                 className="flex items-start gap-3"
                 style={{
-                  color: isRetreat ? "rgba(245,239,224,0.88)" : "rgba(26,26,20,0.82)",
+                  color: isRetreat ? "rgba(245,239,224,0.92)" : "rgba(26,26,20,0.9)",
                   opacity: entered ? 1 : 0,
                   transform: entered ? "translateX(0)" : "translateX(-12px)",
                   transition: reduced
@@ -281,7 +281,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
                 }}
               >
                 <DrawnCheck
-                  tone={isRetreat ? "var(--wce-gold-light)" : "var(--wce-gold-deep)"}
+                  tone={isRetreat ? "var(--wce-gold-light)" : "var(--wce-gold-text)"}
                   drawn={entered}
                   delay={index * 140 + 120 + fi * 70}
                 />

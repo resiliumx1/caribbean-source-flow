@@ -38,7 +38,7 @@ export function WceMediaSection() {
           style={{ color: "var(--wce-forest)", letterSpacing: "0.12em" }}
         />
         <Reveal index={1}>
-        <p className="mt-4 text-sm italic" style={{ color: "rgba(26,26,20,0.6)", fontFamily: "var(--wce-display)", fontSize: "1.1rem" }}>
+        <p className="mt-4 text-sm italic" style={{ color: "rgba(26,26,20,0.84)", fontFamily: "var(--wce-display)", fontSize: "1.1rem" }}>
           From previous staging
         </p>
         <LeafDivider className="mt-10" />
@@ -127,14 +127,14 @@ export function WceActivitiesSection() {
           style={{ color: "var(--wce-forest)" }}
         />
         <Reveal index={1}>
-        <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.7)" }}>
+        <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
           A transformational journey of learning, connection, and renewal in Saint Lucia.
         </p>
         <DiamondRule className="mx-auto mt-8 max-w-[11rem]" />
         </Reveal>
 
         <Reveal index={2}>
-          <p className="wce-eyebrow mt-16" style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.34em" }}>
+          <p className="wce-eyebrow mt-16" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.34em" }}>
             Four Pillars of the Week
           </p>
         </Reveal>
@@ -156,7 +156,7 @@ export function WceActivitiesSection() {
                   <Emblem delay={i * 150} />
                 </span>
                 <h3 className="mt-6 text-xl" style={{ color: "var(--wce-forest)" }}>{label}</h3>
-                <p className="mt-3 max-w-[15rem] text-sm" style={{ color: "rgba(26,26,20,0.68)" }}>{copy}</p>
+                <p className="mt-3 max-w-[15rem] text-sm" style={{ color: "rgba(26,26,20,0.88)" }}>{copy}</p>
               </SlideInItem>
             ))}
           </ul>
@@ -215,7 +215,7 @@ export function WceCeremonySection() {
         <DiamondRule className="mx-auto mt-8 max-w-[11rem]" />
 
         <Reveal index={1}>
-          <p className="mx-auto mt-9 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.82)" }}>
+          <p className="mx-auto mt-9 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.9)" }}>
             We gather to honour the graduating herbal physicians — those who have studied the plants, the soil and
             the discipline of care. The ceremony marks the passing on of traditional knowledge from teacher to
             practitioner, and welcomes a new generation into service.
@@ -290,7 +290,7 @@ export function WceRetreatBand() {
 
           <ul className="mx-auto mt-9 max-w-md space-y-3.5 text-left">
             {RETREAT_POINTS.map((p, i) => (
-              <SlideInItem as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.85)" }}>
+              <SlideInItem as="li" key={p} index={i} className="flex items-start gap-3 text-sm" style={{ color: "rgba(245,239,224,0.92)" }}>
                 <CheckMark tone="var(--wce-gold-light)" />
                 <span>{p}</span>
               </SlideInItem>
@@ -303,7 +303,7 @@ export function WceRetreatBand() {
                 <Icon />
                 <span
                   className="text-[0.6rem] uppercase"
-                  style={{ color: "rgba(245,239,224,0.75)", letterSpacing: "0.2em" }}
+                  style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.2em" }}
                 >
                   {label}
                 </span>
@@ -314,7 +314,7 @@ export function WceRetreatBand() {
           <Reveal>
             <a href="#apply" className="wce-btn wce-btn-gold mt-12 w-full sm:w-auto">Apply for the Retreat</a>
           </Reveal>
-          <p className="mt-6 text-sm italic" style={{ color: "rgba(245,239,224,0.6)", fontFamily: "var(--wce-display)", fontSize: "1.05rem" }}>
+          <p className="mt-6 text-sm italic" style={{ color: "rgba(245,239,224,0.84)", fontFamily: "var(--wce-display)", fontSize: "1.05rem" }}>
             Limited spaces. Applications reviewed personally.
           </p>
         </div>
@@ -360,7 +360,7 @@ export function WceRetreatBand() {
 
       <div className="relative mx-auto mt-20 max-w-3xl text-center">
         <LeafDivider className="mx-auto w-full max-w-md" />
-        <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.7)", letterSpacing: "0.2em" }}>
+        <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.86)", letterSpacing: "0.2em" }}>
           Holistic Wellness <span style={{ color: "var(--wce-gold)" }}>|</span> Meaningful Connection{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span> Lasting Transformation
         </p>
@@ -505,12 +505,12 @@ export function WceApplicationForm() {
         <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-12 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
           <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={96} />
           <CornerVine className="pointer-events-none absolute -left-2 bottom-0 opacity-40" />
-          <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-deep)" }}>Caribbean Wellness Saint Lucia 2026</p>
+          <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-text)" }}>Caribbean Wellness Saint Lucia 2026</p>
           <h2 className="relative mt-6 text-[clamp(1.8rem,4vw,2.5rem)] leading-tight" style={{ color: "var(--wce-forest)" }}>
             Retreat Application / Lead Form
           </h2>
           <DiamondRule className="relative mt-7 max-w-[9rem] lg:mx-0" />
-          <p className="relative mt-7 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(26,26,20,0.7)" }}>
+          <p className="relative mt-7 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(26,26,20,0.88)" }}>
             Tell us about your interest and our team will follow up personally to discuss your goals, confirm
             availability and guide you through the next steps.
           </p>
@@ -519,9 +519,9 @@ export function WceApplicationForm() {
               <li
                 key={t}
                 className="flex items-center gap-2.5 text-[0.6rem] uppercase leading-relaxed"
-                style={{ color: "var(--wce-gold-deep)", letterSpacing: "0.18em" }}
+                style={{ color: "var(--wce-gold-text)", letterSpacing: "0.18em" }}
               >
-                <LeafIcon tone="var(--wce-gold-deep)" />
+                <LeafIcon tone="var(--wce-gold-text)" />
                 <span>{t}</span>
               </li>
             ))}
@@ -538,7 +538,7 @@ export function WceApplicationForm() {
               <h3 className="mt-8 text-[clamp(1.7rem,3.6vw,2.4rem)]" style={{ color: "var(--wce-cream)" }}>
                 Thank You — Your Application Is In
               </h3>
-              <p className="mt-6 max-w-sm text-sm leading-relaxed" style={{ color: "rgba(245,239,224,0.8)" }}>
+              <p className="mt-6 max-w-sm text-sm leading-relaxed" style={{ color: "rgba(245,239,224,0.9)" }}>
                 Our team will be in touch personally by {contactLabel} to talk through your goals and the next
                 steps for Caribbean Wellness Saint Lucia 2026.
               </p>
@@ -611,7 +611,7 @@ export function WceApplicationForm() {
               </div>
             </div>
 
-            <label className="flex items-start gap-3 text-xs leading-relaxed" style={{ color: "rgba(245,239,224,0.75)" }}>
+            <label className="flex items-start gap-3 text-xs leading-relaxed" style={{ color: "rgba(245,239,224,0.92)" }}>
               <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[var(--wce-gold)]"
                 checked={values.consent_marketing} onChange={set("consent_marketing")} />
               <span>Yes, keep me updated about Caribbean Wellness Saint Lucia 2026 and Mount Kailash offerings.</span>
@@ -622,7 +622,7 @@ export function WceApplicationForm() {
             <button type="submit" className="wce-btn wce-btn-gold w-full" disabled={submitting} style={submitting ? { opacity: 0.65, cursor: "wait" } : undefined}>
               {submitting ? "Sending your application…" : "Submit Retreat Application"}
             </button>
-            <p className="text-center text-[0.68rem]" style={{ color: "rgba(245,239,224,0.55)" }}>
+            <p className="text-center text-[0.68rem]" style={{ color: "rgba(245,239,224,0.84)" }}>
               We respect your privacy. Your information is secure with us.
             </p>
           </form>
