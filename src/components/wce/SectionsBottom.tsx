@@ -17,7 +17,7 @@ export function WceFaqSection() {
   return (
     <section ref={lift.ref} id="faq" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="right" opacity={0.12} />
+      <EdgeFoliage side="right" opacity={0.04} />
       <div className="mx-auto max-w-5xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
         <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
@@ -56,7 +56,7 @@ export function WceFaqSection() {
                     <span
                       aria-hidden="true"
                       className={`wce-faq-icon flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-base ${isOpen ? "is-open" : ""}`}
-                      style={{ color: "var(--wce-gold-text)", border: "1px solid rgba(201,162,39,0.6)" }}
+                      style={{ color: "var(--wce-gold-text)", border: "1px solid rgba(201,162,39,0.85)" }}
                     >
                       +
                     </span>
@@ -93,7 +93,7 @@ export function WceFinalCta() {
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
       >
-        <FlowerOfLifeMark size={520} opacity={0.1} />
+        <FlowerOfLifeMark size={520} opacity={0.06} />
       </span>
       <div className="relative mx-auto max-w-4xl">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>

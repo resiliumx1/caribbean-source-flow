@@ -52,7 +52,7 @@ export function WceMediaSection() {
               direction={i % 2 === 0 ? "left" : "right"}
               delay={i * 90}
               className="wce-reel group relative overflow-hidden"
-              style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px", background: "var(--wce-forest-mid)" }}
+              style={{ border: "1px solid rgba(201,162,39,0.65)", borderRadius: "2px", background: "var(--wce-forest-mid)", boxShadow: "0 18px 38px -28px rgba(15,42,29,0.6)" }}
             >
               <a
                 href={m.video_url ?? "#"}
@@ -115,7 +115,7 @@ export function WceActivitiesSection() {
   return (
     <section ref={lift.ref} id="activities" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="left" opacity={0.12} />
+      <EdgeFoliage side="left" opacity={0.04} />
       <CornerVine className="pointer-events-none absolute left-0 top-8 opacity-40" />
       <CornerVine flip className="pointer-events-none absolute right-0 top-8 opacity-40" />
       <div className="mx-auto max-w-6xl text-center">
@@ -151,7 +151,7 @@ export function WceActivitiesSection() {
               <SlideInItem as="li" key={label} index={i} className="flex flex-col items-center text-center">
                 <span
                   className="flex h-[88px] w-[88px] items-center justify-center rounded-full"
-                  style={{ background: "var(--wce-cream-warm)" }}
+                  style={{ background: "#FBF6EA" }}
                 >
                   <Emblem delay={i * 150} />
                 </span>
@@ -181,7 +181,7 @@ export function WceCeremonySection() {
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-1/2 -ml-[310px] -mt-[310px] will-change-transform"
       >
-        <FlowerOfLifeMark size={620} opacity={0.09} />
+        <FlowerOfLifeMark size={620} opacity={0.06} />
       </span>
       <CornerVine className="pointer-events-none absolute left-4 top-6 opacity-45" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-6 opacity-45" />
@@ -257,7 +257,7 @@ export function WceRetreatBand() {
   const bandRef = useParallax<HTMLDivElement>(0.18);
   const mandalaRef = useCounterRotate<HTMLSpanElement>(8);
   return (
-    <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-forest)" }}>
+    <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--wce-forest-mid)", borderTop: "1px solid rgba(201,162,39,0.45)" }}>
       <EdgeBleed position="top" />
       <div
         ref={bandRef}
@@ -265,7 +265,7 @@ export function WceRetreatBand() {
         className="pointer-events-none absolute -inset-y-[25%] inset-x-0 will-change-transform"
         style={{ background: "radial-gradient(70% 60% at 50% 50%, rgba(45,74,53,0.6), transparent 70%)" }}
       />
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.05} light />
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.06} light />
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
         {/* Left — copy */}
         <div className="text-center lg:text-left">
@@ -353,7 +353,7 @@ export function WceRetreatBand() {
             aria-hidden="true"
             className="pointer-events-none absolute -right-5 -top-5 hidden lg:block"
           >
-            <FlowerOfLifeMark size={150} opacity={0.35} />
+            <FlowerOfLifeMark size={150} opacity={0.12} />
           </span>
         </div>
       </div>
@@ -492,18 +492,18 @@ export function WceApplicationForm() {
     : values.preferred_contact === "phone" ? "phone"
     : "email";
 
-  const errStyle: React.CSSProperties = { color: "var(--wce-gold-light)", opacity: 0.85 };
+  const errStyle: React.CSSProperties = { color: "#F2D98A", opacity: 1 };
 
   return (
     <section id="apply" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)" }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <Reveal
         className="mx-auto grid max-w-6xl overflow-hidden lg:grid-cols-[0.78fr_1.22fr]"
-        style={{ border: "1px solid rgba(201,162,39,0.4)", borderRadius: "2px" }}
+        style={{ border: "1px solid rgba(201,162,39,0.7)", borderRadius: "2px", boxShadow: "0 22px 48px -30px rgba(122,96,17,0.4)" }}
       >
         {/* Left — cream panel */}
-        <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-12 lg:text-left" style={{ background: "var(--wce-cream-warm)" }}>
-          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={96} />
+        <div className="relative flex flex-col justify-center px-8 py-16 text-center sm:px-12 lg:text-left" style={{ background: "#FBF6EA" }}>
+          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.04} size={96} />
           <CornerVine className="pointer-events-none absolute -left-2 bottom-0 opacity-40" />
           <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-text)" }}>Caribbean Wellness Saint Lucia 2026</p>
           <h2 className="relative mt-6 text-[clamp(1.8rem,4vw,2.5rem)] leading-tight" style={{ color: "var(--wce-forest)" }}>
@@ -529,8 +529,8 @@ export function WceApplicationForm() {
         </div>
 
         {/* Right — dark form panel */}
-        <div className="wce-form-panel relative px-8 py-16 sm:px-12" style={{ background: "var(--wce-forest)" }}>
-          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} light size={110} />
+        <div className="wce-form-panel relative px-8 py-16 sm:px-12" style={{ background: "var(--wce-forest)", borderLeft: "1px solid rgba(201,162,39,0.5)" }}>
+          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.06} light size={110} />
           <div className="relative">
           {submitted ? (
             <div className="wce-form-confirm flex min-h-[26rem] flex-col items-center justify-center text-center" role="status" aria-live="polite">
