@@ -1,58 +1,17 @@
-/** Banner-accurate hero lockup: three-line title, concentric outlined "2026",
+/** Banner-accurate hero lockup: three-line title, nested-outline "2026",
  *  and the stacked date block with its forest-green bar. Montserrat throughout. */
 import { useEffect, useState } from "react";
-import { useWceReducedMotion } from "./motion";
-
-/** "2026" drawn as three nested gold outlines — no fill at any point. */
-export function WceYearOutline({ className = "" }: { className?: string }) {
-  const reduced = useWceReducedMotion();
-  const [drawn, setDrawn] = useState(reduced);
-
-  useEffect(() => {
-    if (reduced) { setDrawn(true); return; }
-    const t = window.setTimeout(() => setDrawn(true), 340);
-    return () => window.clearTimeout(t);
-  }, [reduced]);
-
-  // Outer ring first, then the two inset rings.
-  const rings = [
-    { scale: 1, width: 2.6, delay: 0 },
-    { scale: 0.945, width: 2.2, delay: 180 },
-    { scale: 0.89, width: 1.9, delay: 360 },
-  ];
-
-  return (
-    <svg
-      viewBox="0 0 420 170"
-      role="img"
-      aria-label="2026"
-      className={`wce-year-svg ${drawn ? "is-drawn" : ""} ${className}`}
-    >
-      <g>
-        {rings.map((r, i) => (
-          <g key={i} transform={`translate(210 83) scale(${r.scale}) translate(-210 -83)`}>
-            <text
-              x="210"
-              y="132"
-              textAnchor="middle"
-              fill="none"
-              stroke="var(--wce-gold)"
-              strokeWidth={r.width / r.scale}
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              style={{ transitionDelay: `${r.delay}ms` }}
-            >
-              2026
-            </text>
-          </g>
-        ))}
-      </g>
-    </svg>
-  );
-}
+import { Year2026 } from "./Year2026";
 
 export function WceTitleLockup({ reduced }: { reduced: boolean }) {
   const lines = ["Caribbean", "Wellness", "Saint Lucia"];
+  // The year draws on as the second stage-in step, after the title lines slide up.
+  const [yearStart, setYearStart] = useState(reduced);
+  useEffect(() => {
+    if (reduced) { setYearStart(true); return; }
+    const t = window.setTimeout(() => setYearStart(true), 340);
+    return () => window.clearTimeout(t);
+  }, [reduced]);
   return (
     <div className="wce-banner-lockup">
       {/* Left: stacked title */}
@@ -73,8 +32,10 @@ export function WceTitleLockup({ reduced }: { reduced: boolean }) {
         ))}
       </h1>
 
-      {/* Centre: outlined year */}
-      <WceYearOutline />
+      {/* Centre: nested-outline year */}
+      <div className="wce-year-wrap">
+        <Year2026 animate={!reduced} start={yearStart} />
+      </div>
 
       {/* Right: rule + dates + green bar */}
       <div className="wce-banner-dates">
