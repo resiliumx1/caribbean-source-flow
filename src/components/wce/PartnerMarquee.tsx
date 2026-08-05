@@ -1,6 +1,11 @@
 /** Partner band pinned to the bottom of the hero: "POWERED BY" plus a slow,
  *  seamless right-to-left marquee of partner logo tiles. */
 import { useWceReducedMotion } from "./motion";
+import logoMountKailash from "@/assets/partner-mount-kailash.png.asset.json";
+import logoKamilas from "@/assets/partner-kamilas-kitchen.png.asset.json";
+import logoJah9 from "@/assets/partner-jah9.png.asset.json";
+import logoLifecraft from "@/assets/partner-lifecraft-jamaica.png.asset.json";
+import logoUbuntu from "@/assets/partner-ubuntu-movement.png.asset.json";
 
 export interface WcePartner {
   name: string;
@@ -8,14 +13,14 @@ export interface WcePartner {
 }
 
 export const WCE_PARTNERS: WcePartner[] = [
-  { name: "Mount Kailash" },
-  { name: "Kamila's Kitchen" },
-  { name: "Jah9" },
-  { name: "LifeCraft in Jamaica" },
-  { name: "The Ubuntu Movement" },
+  { name: "Mount Kailash", logoUrl: logoMountKailash.url },
+  { name: "Kamila's Kitchen", logoUrl: logoKamilas.url },
+  { name: "Jah9", logoUrl: logoJah9.url },
+  { name: "LifeCraft in Jamaica", logoUrl: logoLifecraft.url },
+  { name: "The Ubuntu Movement", logoUrl: logoUbuntu.url },
 ];
 
-/** One tile: renders the supplied logo when present, a gold-outlined placeholder otherwise. */
+/** One tile: bare artwork on the bar — no border, no fill. Falls back to the name as text. */
 export function WcePartnerTile({ name, logoUrl }: WcePartner) {
   return (
     <div className="wce-partner-tile" title={name}>
@@ -33,7 +38,9 @@ export function WcePartnerMarquee({ partners = WCE_PARTNERS }: { partners?: WceP
 
   return (
     <div className="wce-partner-band" aria-label="Powered by">
-      <span className="wce-partner-kicker">Powered by</span>
+      <div className="wce-partner-kicker-col">
+        <span className="wce-partner-kicker">Powered by</span>
+      </div>
       {reduced ? (
         <div className="wce-partner-static">
           {partners.map((p) => (
