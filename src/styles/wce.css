@@ -924,3 +924,142 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 @media (prefers-reduced-motion: reduce) {
   .wce-hero-cta-enter { animation: none; }
 }
+
+/* ============ PATHWAY CARDS — ascent + threshold ============ */
+.wce-path-slot { --wce-ascent: 0px; will-change: transform, opacity; }
+@media (min-width: 1024px) {
+  .wce-path-slot-2 { --wce-ascent: -28px; }
+  .wce-path-slot-3 { --wce-ascent: -56px; }
+  .wce-path-row { padding-top: 28px; }
+}
+
+.wce-path-card {
+  background: var(--wce-cream-warm);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  border-radius: 2px;
+  box-shadow: 0 8px 24px -20px rgba(15, 42, 29, 0.45);
+  transition: transform .5s cubic-bezier(0.22,1,0.36,1), box-shadow .5s ease, border-color .5s ease;
+}
+.wce-path-card.is-retreat { background: var(--wce-forest); border-color: var(--wce-gold); }
+
+/* gold bloom from behind the numbered badge */
+.wce-path-bloom {
+  position: absolute;
+  inset: -30% -20% auto -20%;
+  height: 150%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(58% 46% at 50% 8%, rgba(201,162,39,0.95), rgba(201,162,39,0.35) 45%, transparent 74%);
+  transition: opacity 600ms cubic-bezier(0.22,1,0.36,1);
+  mix-blend-mode: normal;
+}
+.wce-path-card.is-retreat .wce-path-bloom { opacity: 0.05; }
+.wce-path-shell.is-crossed .wce-path-bloom { opacity: 0.12; }
+
+/* mountain-arch watermark, lower portion of the card */
+.wce-path-arch-wrap {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 40%;
+  pointer-events: none;
+  opacity: 0.05;
+}
+.wce-path-arch { width: 100%; height: 100%; }
+
+/* corner vines draw in on threshold */
+.wce-path-vine { position: absolute; pointer-events: none; opacity: 0.5; }
+.wce-path-vine-tl { left: -6px; top: -6px; }
+.wce-path-vine-br { right: -6px; bottom: -6px; transform: rotate(180deg); }
+.wce-path-vine [stroke] { transition-duration: 500ms; }
+
+/* card 3 blooming geometry */
+.wce-path-bloomwrap {
+  position: absolute;
+  left: 50%; top: -46px;
+  width: 240px; height: 240px;
+  margin-left: -120px;
+  pointer-events: none;
+  opacity: 0.16;
+}
+.wce-path-bloomflower { width: 100%; height: 100%; transition: transform 1.2s cubic-bezier(0.22,1,0.36,1); }
+.wce-path-bloomflower [stroke] { transition-duration: 1200ms; }
+.wce-path-bloomflower.is-turning { transform: rotate(24deg); }
+
+/* elevation hairline beneath the card */
+.wce-path-elev {
+  position: absolute;
+  left: 0; right: 0; bottom: -10px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--wce-gold-light) 18%, var(--wce-gold) 82%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 400ms cubic-bezier(0.22,1,0.36,1);
+}
+.wce-path-badge { transition: transform .5s cubic-bezier(0.22,1,0.36,1), filter .5s ease; }
+
+@media (hover: hover) {
+  .wce-path-shell:hover .wce-path-card { transform: translateY(-8px); box-shadow: 0 24px 52px -26px rgba(15,42,29,0.5); border-color: var(--wce-gold-light); }
+  .wce-path-shell:hover .wce-path-elev { transform: scaleX(1); }
+  .wce-path-shell:hover .wce-path-badge { transform: translateX(-50%) rotate(4deg); filter: brightness(1.12); }
+}
+.wce-path-shell.is-crossed .wce-path-elev { transform: scaleX(1); }
+
+/* ---- tiered pathway CTAs ---- */
+.wce-pcta { position: relative; overflow: hidden; isolation: isolate; }
+.wce-pcta-label, .wce-pcta-arrow { position: relative; z-index: 1; transition: color .4s ease, transform .4s cubic-bezier(0.22,1,0.36,1); }
+.wce-pcta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.wce-pcta:active { transform: translateY(1px); }
+
+/* card 1 — forest with a gold sweep, 600ms */
+.wce-pcta-forest { background: var(--wce-forest); color: var(--wce-cream); border: 1px solid var(--wce-forest); }
+.wce-pcta-forest::after {
+  background: linear-gradient(100deg, transparent 0%, rgba(201,162,39,0.9) 45%, rgba(228,199,102,0.55) 65%, transparent 100%);
+  transform: translateX(-110%);
+  transition: transform 600ms cubic-bezier(0.22,1,0.36,1);
+}
+/* card 2 — gold with a lighter, quicker sweep, 450ms */
+.wce-pcta-gold { background: linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold)); color: var(--wce-forest); border: 1px solid var(--wce-gold-deep); }
+.wce-pcta-gold::after {
+  background: linear-gradient(100deg, transparent 0%, rgba(255,252,235,0.9) 45%, transparent 90%);
+  transform: translateX(-110%);
+  transition: transform 450ms cubic-bezier(0.22,1,0.36,1);
+}
+/* card 3 — outlined gold filling from the bottom up, 500ms */
+.wce-pcta-outline { background: transparent; color: var(--wce-gold-light); border: 1px solid var(--wce-gold); }
+.wce-pcta-outline::after {
+  background: var(--wce-gold);
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  transition: transform 500ms cubic-bezier(0.22,1,0.36,1);
+}
+@media (hover: hover) {
+  .wce-pcta-forest:hover::after, .wce-pcta-gold:hover::after { transform: translateX(110%); }
+  .wce-pcta-forest:hover .wce-pcta-label { color: #FFFDF3; }
+  .wce-pcta-outline:hover::after { transform: scaleY(1); }
+  .wce-pcta-outline:hover .wce-pcta-label, .wce-pcta-outline:hover .wce-pcta-arrow { color: var(--wce-forest); }
+  .wce-pcta-outline:hover .wce-pcta-arrow { transform: translateX(4px); }
+}
+
+/* click acknowledgement — the gold ring flashes once */
+@keyframes wce-pcta-flash {
+  0% { box-shadow: 0 0 0 0 rgba(228,199,102,0.85); }
+  55% { box-shadow: 0 0 0 5px rgba(228,199,102,0.55); }
+  100% { box-shadow: 0 0 0 0 rgba(228,199,102,0); }
+}
+.wce-pcta.is-flash { animation: wce-pcta-flash 250ms ease-out 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wce-path-slot { opacity: 1 !important; transform: translateY(0) !important; }
+  .wce-path-card .wce-path-bloom { opacity: 0.05 !important; }
+  .wce-path-vine { opacity: 0.5; }
+  .wce-path-vine [stroke], .wce-path-bloomflower [stroke] { stroke-dashoffset: 0 !important; }
+  .wce-path-bloomflower { transform: none !important; }
+  .wce-path-elev { transform: scaleX(1) !important; }
+}
