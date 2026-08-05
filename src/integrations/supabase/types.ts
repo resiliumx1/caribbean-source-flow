@@ -2180,6 +2180,60 @@ export type Database = {
         }
         Relationships: []
       }
+      wce_orders: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          email: string | null
+          id: string
+          order_number: string | null
+          pathway_key: string | null
+          referral_code: string | null
+          status: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          woo_order_id: number | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          email?: string | null
+          id?: string
+          order_number?: string | null
+          pathway_key?: string | null
+          referral_code?: string | null
+          status?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          woo_order_id?: number | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          email?: string | null
+          id?: string
+          order_number?: string | null
+          pathway_key?: string | null
+          referral_code?: string | null
+          status?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          woo_order_id?: number | null
+        }
+        Relationships: []
+      }
       wce_pathways: {
         Row: {
           capacity: number | null
@@ -2193,6 +2247,7 @@ export type Database = {
           key: string
           label: string
           price: number
+          product_id: string | null
           sold_count: number
         }
         Insert: {
@@ -2207,6 +2262,7 @@ export type Database = {
           key: string
           label: string
           price?: number
+          product_id?: string | null
           sold_count?: number
         }
         Update: {
@@ -2221,9 +2277,18 @@ export type Database = {
           key?: string
           label?: string
           price?: number
+          product_id?: string | null
           sold_count?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "wce_pathways_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wce_referral_codes: {
         Row: {
@@ -2232,6 +2297,8 @@ export type Database = {
           discount_percent: number
           id: string
           is_active: boolean
+          last_used_at: string | null
+          last_woo_coupon_found: boolean | null
           owner_name: string | null
           owner_type: string | null
           use_count: number
@@ -2242,6 +2309,8 @@ export type Database = {
           discount_percent?: number
           id?: string
           is_active?: boolean
+          last_used_at?: string | null
+          last_woo_coupon_found?: boolean | null
           owner_name?: string | null
           owner_type?: string | null
           use_count?: number
@@ -2252,6 +2321,8 @@ export type Database = {
           discount_percent?: number
           id?: string
           is_active?: boolean
+          last_used_at?: string | null
+          last_woo_coupon_found?: boolean | null
           owner_name?: string | null
           owner_type?: string | null
           use_count?: number

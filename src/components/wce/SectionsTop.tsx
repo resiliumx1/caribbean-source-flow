@@ -181,6 +181,7 @@ function PathwaysInner() {
               currency={p.currency}
               price={Number(p.price)}
               features={pathwayFeatures(p.features)}
+              productId={(p as { product_id?: string | null }).product_id ?? null}
             />
           ))}
         </div>

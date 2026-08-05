@@ -6,11 +6,13 @@ import WceReferralCodes from "@/components/admin/wce/WceReferralCodes";
 import WceFaqs from "@/components/admin/wce/WceFaqs";
 import WceMedia from "@/components/admin/wce/WceMedia";
 import WceSettings from "@/components/admin/wce/WceSettings";
+import WceOrders from "@/components/admin/wce/WceOrders";
 
 const TABS = [
   { key: "leads", label: "Leads", Component: WceLeads },
   { key: "speakers", label: "Speakers", Component: WceSpeakers },
   { key: "pathways", label: "Pathways", Component: WcePathways },
+  { key: "orders", label: "Orders", Component: WceOrders },
   { key: "referrals", label: "Referral Codes", Component: WceReferralCodes },
   { key: "faqs", label: "FAQs", Component: WceFaqs },
   { key: "media", label: "Media", Component: WceMedia },

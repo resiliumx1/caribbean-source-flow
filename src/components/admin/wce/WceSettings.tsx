@@ -88,6 +88,13 @@ export default function WceSettings() {
       </div>
       <ImageUploadField label="Popup flyer" folder="flyers" value={row.popup_flyer_url}
         onChange={(url) => patch({ popup_flyer_url: url })} />
+      <hr className="border-border" />
+      <p className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+        <strong className="text-foreground">Transactional email:</strong> order confirmation and processing emails are
+        sent by WooCommerce from the WordPress site — not from this app. Deliverability therefore depends on the
+        WordPress domain's SPF, DKIM and DMARC DNS records being configured correctly. If customers report missing
+        confirmations, check those records first.
+      </p>
       {saving && <p className="text-xs text-muted-foreground">Saving…</p>}
     </div>
   );

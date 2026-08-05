@@ -40,6 +40,12 @@ export async function createWooCommerceOrder(opts: {
   billing: WooBilling;
   customer_note?: string;
   return_url?: string;
+  /** UTM / referral values written to the Woo order's meta_data. */
+  attribution?: Record<string, string | null>;
+  /** Referral or promo code; applied as a Woo coupon when one matches. */
+  coupon_code?: string;
+  /** WCE pathway the purchase came from. */
+  pathway_key?: string;
 }): Promise<WooOrderResult> {
   if (!opts.items?.length) {
     throw new Error("Your cart is empty.");

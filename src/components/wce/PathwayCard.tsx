@@ -3,6 +3,9 @@
  *  Every effect is disabled under prefers-reduced-motion; on touch the
  *  bloom + vine draw fire once on scroll-into-view instead of on hover. */
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "@/hooks/use-cart";
+import { rememberPathway } from "@/lib/wce-attribution";
 import { dataLayerPush } from "@/lib/tracking";
 import { DiamondRule } from "./decor";
 import { MaskedHeading, useCountUp, useInView, useIsTouch, useWceReducedMotion } from "./motion";
@@ -137,14 +140,18 @@ export interface PathwayCardProps {
   currency: string;
   price: number;
   features: string[];
+  /** Linked shop product; when absent the CTA falls back to the application form. */
+  productId?: string | null;
 }
 
-export function PathwayCard({ index, pathwayKey, label, currency, price, features }: PathwayCardProps) {
+export function PathwayCard({ index, pathwayKey, label, currency, price, features, productId }: PathwayCardProps) {
   const reduced = useWceReducedMotion();
   const touch = useIsTouch();
   const { ref, inView } = useInView<HTMLDivElement>();
   const [hover, setHover] = useState(false);
   const [flash, setFlash] = useState(false);
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   const isRetreat = pathwayKey === "retreat";
   const entered = reduced || inView;
@@ -158,13 +165,37 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
   const onCta = (e: React.MouseEvent) => {
     e.preventDefault();
     dataLayerPush("pathway_click", { pathway_key: pathwayKey, pathway_label: label });
-    if (reduced) {
+
+    const purchasable = !isRetreat && !!productId;
+    if (!isRetreat && !productId) {
+      console.warn(
+        `[WCE] Pathway "${pathwayKey}" has no linked product — falling back to the application form.`
+      );
+    }
+
+    const act = () => {
+      if (purchasable) {
+        rememberPathway(pathwayKey);
+        dataLayerPush("begin_checkout", {
+          pathway_key: pathwayKey,
+          value: price,
+          currency,
+          items: [{ item_id: productId, item_name: label, price, quantity: 1 }],
+        });
+        addToCart({ productId: productId!, quantity: 1 });
+        navigate("/checkout");
+        return;
+      }
       selectPathway(pathwayKey);
+    };
+
+    if (reduced) {
+      act();
       return;
     }
     setFlash(true);
     window.setTimeout(() => setFlash(false), 250);
-    window.setTimeout(() => selectPathway(pathwayKey), 250);
+    window.setTimeout(act, 250);
   };
 
   return (
