@@ -67,35 +67,12 @@ export default function Checkout() {
   const [couponError, setCouponError] = useState<string | null>(null);
   const [checkingCoupon, setCheckingCoupon] = useState(false);
 
-  /* ---- Referral / promo code (WCE partners & affiliates) ---- */
-  const [referralCode, setReferralCode] = useState("");
-  const [referral, setReferral] = useState<{ code: string; discount_percent: number } | null>(null);
-  const [referralError, setReferralError] = useState<string | null>(null);
-  const [checkingReferral, setCheckingReferral] = useState(false);
-
-  // Prefill from a ?ref= code captured earlier in the session.
+  // Prefill the discount field from a ?ref= code captured earlier in the session.
+  // The server re-validates every code, so nothing here is trusted for pricing.
   useEffect(() => {
     const stored = readAttribution()?.referral_code;
-    if (stored) setReferralCode(stored.toUpperCase());
+    if (stored) setCouponCode(stored.toUpperCase());
   }, []);
-
-  const applyReferral = async () => {
-    const code = referralCode.trim().toUpperCase();
-    if (!code) return;
-    setCheckingReferral(true);
-    setReferralError(null);
-    const { data } = await supabase
-      .from("wce_referral_codes")
-      .select("code, discount_percent, is_active")
-      .ilike("code", code)
-      .maybeSingle();
-    setCheckingReferral(false);
-    if (!data?.is_active) {
-      setReferral(null);
-      return setReferralError("That referral code isn't recognised or is no longer active.");
-    }
-    setReferral({ code: data.code, discount_percent: Number(data.discount_percent) || 0 });
-  };
 
   const update = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -233,6 +210,8 @@ export default function Checkout() {
 
   const handleAuthNetToken = async ({ opaqueData }: { opaqueData: OpaqueData }) => {
     setIsProcessing(true);
+    const attribution = readAttribution();
+    const pathwayKey = readPathway();
     try {
     const { data: sessionData } = await supabase.auth.getSession();
     const res = await fetch(
@@ -256,6 +235,18 @@ export default function Checkout() {
             opaqueData,
           currency_used: currency,
           coupon_code: appliedCoupon?.code ?? undefined,
+          // Attribution only — never used for pricing.
+          attribution: attribution
+            ? {
+                utm_source: attribution.utm_source,
+                utm_medium: attribution.utm_medium,
+                utm_campaign: attribution.utm_campaign,
+                utm_content: attribution.utm_content,
+                utm_term: attribution.utm_term,
+                referral_code: appliedCoupon?.code ?? attribution.referral_code,
+                landing_path: attribution.landing_path,
+              }
+            : undefined,
         }),
       }
     );
@@ -264,37 +255,13 @@ export default function Checkout() {
         throw new Error(result?.error || "Payment could not be completed.");
     }
       clearCart();
-      // Attribution + revenue record (best effort — never blocks confirmation).
-      const attribution = readAttribution();
-      const pathwayKey = readPathway();
-      try {
-        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/wce-record-order`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            order_number: result.order_number,
-            email: form.email,
-            pathway_key: pathwayKey,
-            amount: totalUsd,
-            currency: "USD",
-            referral_code: referral?.code ?? attribution?.referral_code ?? null,
-            status: "paid",
-            attribution,
-          }),
-        });
-      } catch {
-        /* attribution capture is best-effort */
-      }
       dataLayerPush("purchase", {
+        order_number: result.order_number,
         transaction_id: result.order_number,
         value: totalUsd,
         currency: "USD",
         pathway_key: pathwayKey,
-        referral_code: referral?.code ?? attribution?.referral_code ?? null,
+        referral_code: appliedCoupon?.code ?? attribution?.referral_code ?? null,
         utm_source: attribution?.utm_source ?? null,
       });
       pixelTrack("Purchase", { value: totalUsd, currency: "USD" });
