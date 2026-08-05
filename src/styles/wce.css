@@ -1087,7 +1087,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   align-items: center;
   justify-content: center;
   overflow: hidden;                 /* clips the theme word off neighbours */
-  padding: 1.6rem 0.4rem 0.5rem;
+  padding: 2.5rem 0.4rem 0.5rem;
   width: 100%;
 }
 .wce-root .wce-speaker-stage-lg { overflow: visible; padding: 0; width: auto; }
