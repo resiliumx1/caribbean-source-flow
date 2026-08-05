@@ -54,8 +54,8 @@ export function WceHero() {
         </div>
 
         <h1
-          className={cls("wce-display wce-hero-title text-[clamp(1.4rem,4.4vw,2.75rem)] uppercase")}
-          style={{ letterSpacing: "0.17em", lineHeight: 1.28, ...stage(0.2) }}
+          className={cls("wce-hero-title text-[clamp(1.5rem,4.8vw,3rem)] uppercase")}
+          style={{ letterSpacing: "0.06em", lineHeight: 1.06, ...stage(0.2) }}
         >
           Caribbean Wellness<br className="sm:hidden" /> Saint Lucia
         </h1>
@@ -64,16 +64,26 @@ export function WceHero() {
           className={`relative mt-[clamp(0.5rem,1.4vh,1.5rem)] inline-block ${reduced ? "" : "wce-stage-year"}`}
           style={reduced ? undefined : { animationDelay: "0.45s" }}
         >
-          {!reduced && <span aria-hidden="true" className="wce-year-halo" />}
-          <span className="wce-year relative inline-block text-[clamp(4.5rem,16vw,11rem)]">
+          <span aria-hidden="true" className="wce-year-plate" />
+          <span className="wce-year-outline text-[clamp(4.5rem,16vw,11rem)]">
             2026
-            {!reduced && <span aria-hidden="true" className="wce-year-shimmer">2026</span>}
+            <span aria-hidden="true">2026</span>
+            <span aria-hidden="true">2026</span>
+            <span aria-hidden="true">2026</span>
+            <span aria-hidden="true">2026</span>
+            <span aria-hidden="true">2026</span>
           </span>
         </span>
 
         <p
-          className={cls("wce-eyebrow wce-rule-label mt-[clamp(1rem,2.4vh,2rem)]")}
-          style={{ color: "var(--wce-cream)", letterSpacing: "0.42em", ...stage(0.65) }}
+          className={cls("wce-rule-label mt-[clamp(1rem,2.4vh,2rem)] text-[clamp(1rem,2.4vw,1.5rem)] uppercase")}
+          style={{
+            fontFamily: "var(--wce-flyer)",
+            fontWeight: 700,
+            color: "#C9A227",
+            letterSpacing: "0.14em",
+            ...stage(0.65),
+          }}
         >
           {dates}
         </p>
@@ -83,14 +93,29 @@ export function WceHero() {
         </div>
 
         <p
-          className={cls("max-w-2xl text-[0.78rem] uppercase leading-loose sm:text-sm")}
-          style={{ color: "rgba(245,239,224,0.82)", letterSpacing: "0.2em", ...stage(0.78) }}
+          className={cls("max-w-2xl text-[0.85rem] leading-loose sm:text-base")}
+          style={{
+            fontFamily: "var(--wce-flyer)",
+            fontWeight: 400,
+            color: "#D9BE6B",
+            letterSpacing: "0.06em",
+            ...stage(0.78),
+          }}
         >
           Wellness Symposium <span style={{ color: "var(--wce-gold)" }}>|</span> Fortification Retreat{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span> Lifecraft Experience
         </p>
 
-        <p className={cls("wce-eyebrow mt-[clamp(1rem,2.6vh,2.5rem)]")} style={{ color: "var(--wce-gold)", ...stage(0.9) }}>
+        <p
+          className={cls("mt-[clamp(1rem,2.6vh,2.5rem)] text-[0.8rem] uppercase sm:text-sm")}
+          style={{
+            fontFamily: "var(--wce-flyer)",
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            color: "var(--wce-gold)",
+            ...stage(0.9),
+          }}
+        >
           {venue}
         </p>
 
