@@ -30,25 +30,21 @@ export function WceYearOutline({ className = "" }: { className?: string }) {
     >
       <g>
         {rings.map((r, i) => (
-          <text
-            key={i}
-            x="210"
-            y="132"
-            textAnchor="middle"
-            fill="none"
-            stroke="var(--wce-gold)"
-            strokeWidth={r.width}
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            style={{
-              transform: `scale(${r.scale})`,
-              transformBox: "fill-box",
-              transformOrigin: "center",
-              transitionDelay: `${r.delay}ms`,
-            }}
-          >
-            2026
-          </text>
+          <g key={i} transform={`translate(210 83) scale(${r.scale}) translate(-210 -83)`}>
+            <text
+              x="210"
+              y="132"
+              textAnchor="middle"
+              fill="none"
+              stroke="var(--wce-gold)"
+              strokeWidth={r.width / r.scale}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              style={{ transitionDelay: `${r.delay}ms` }}
+            >
+              2026
+            </text>
+          </g>
         ))}
       </g>
     </svg>
