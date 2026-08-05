@@ -120,12 +120,24 @@ Deno.serve(async (req) => {
     const adminFrom = fromFallback ? FROM_FALLBACK : FROM_ADMIN;
 
     if (emailType === "order_placed") {
+      // Digital-only orders (e.g. event tickets) have nothing to ship.
+      let digitalOnly = false;
+      try {
+        const ids = [...new Set((items ?? []).map((i: any) => i.product_id))];
+        if (ids.length) {
+          const { data: prods } = await supabase
+            .from("products").select("id, is_digital").in("id", ids);
+          digitalOnly = !!prods?.length && prods.every((p: any) => p.is_digital);
+        }
+      } catch (e) {
+        console.error("digital-only check failed:", e);
+      }
       const customerResult = await sendEmail({
         from: customerFrom,
         to: [order.email],
         reply_to: SUPPORT_EMAIL,
         subject: `Order Confirmed - ${order.order_number} | Mount Kailash`,
-        html: customerOrderPlacedHtml(order, items || []),
+        html: customerOrderPlacedHtml(order, items || [], digitalOnly),
       });
 
       let adminResult: any = null;
