@@ -230,7 +230,7 @@ export function WceCeremonySection() {
 
         <Reveal index={3}>
           <span className="mt-12 flex justify-center">
-            <LoveEmblem size={250} />
+            <LoveEmblem size={320} />
           </span>
         </Reveal>
       </div>
