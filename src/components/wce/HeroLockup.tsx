@@ -42,7 +42,8 @@ export function WceYearOutline({ className = "" }: { className?: string }) {
             strokeLinecap="round"
             style={{
               transform: `scale(${r.scale})`,
-              transformOrigin: "210px 92px",
+              transformBox: "fill-box",
+              transformOrigin: "center",
               transitionDelay: `${r.delay}ms`,
             }}
           >
