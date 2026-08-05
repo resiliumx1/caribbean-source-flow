@@ -2,18 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
-import { FlowerOfLifeField, EdgeFoliage, DiamondRule, GoldFlourish, CheckMark } from "./decor";
+import { FlowerOfLifeField, EdgeFoliage, DiamondRule, GoldFlourish } from "./decor";
 import { useWcePathways, useWceSpeakers, useWceSettings, pathwayFeatures } from "./useWceData";
 import { WceHeroMedia, WceHeroParticles } from "./HeroMedia";
 import {
-  Reveal, useCountUp, useInView, useWceReducedMotion,
-  MaskedHeading, ClipReveal, SlideInItem, useSectionLift,
+  Reveal, useInView, useWceReducedMotion,
+  MaskedHeading, ClipReveal, useSectionLift,
 } from "./motion";
 import { WceCountdown } from "./WceCountdown";
 import { WceTitleLockup } from "./HeroLockup";
 import { WcePartnerMarquee } from "./PartnerMarquee";
 import { LoveEmblem } from "./LoveEmblem";
-import { selectPathway } from "./pathway-select";
 import { PathwayCardsSkeleton, SpeakersSkeleton } from "./Skeletons";
 import { PathwayCard } from "./PathwayCard";
 
