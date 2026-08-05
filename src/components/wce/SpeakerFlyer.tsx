@@ -87,9 +87,8 @@ export function SpeakerFlyer({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: reduced ? 0.2 : 0.35, ease: EASE }}
-      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="wce-flyer-scroll">
+      <div className="wce-flyer-scroll" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
         <motion.div
           ref={panelRef}
           className="wce-flyer"
