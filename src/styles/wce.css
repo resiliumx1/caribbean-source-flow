@@ -326,22 +326,11 @@
 }
 .wce-banner-title-line { display: block; }
 
-.wce-year-svg {
-  width: clamp(9rem, 27vw, 20rem);
-  height: auto;
+.wce-year-wrap {
+  width: clamp(240px, 32vw, 460px);
   flex: 0 0 auto;
   filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.5));
 }
-.wce-year-svg text {
-  font-family: var(--wce-banner);
-  font-weight: 700;
-  font-size: 140px;
-  letter-spacing: 2px;
-  stroke-dasharray: 2400;
-  stroke-dashoffset: 2400;
-  transition: stroke-dashoffset 900ms cubic-bezier(0.33, 1, 0.68, 1);
-}
-.wce-year-svg.is-drawn text { stroke-dashoffset: 0; }
 
 .wce-banner-dates { display: flex; align-items: stretch; gap: clamp(0.6rem, 1.4vw, 1.2rem); }
 .wce-banner-daterule {
@@ -393,7 +382,7 @@
 @media (max-width: 1023px) {
   .wce-banner-lockup { flex-direction: column; align-items: center; gap: 0.5rem; }
   .wce-banner-title { text-align: center; font-size: clamp(1.5rem, 7.6vw, 2.4rem); }
-  .wce-year-svg { width: min(78vw, 22rem); }
+  .wce-year-wrap { width: min(80vw, 24rem); }
   .wce-banner-datestack { align-items: center; text-align: center; }
   .wce-banner-daterule { display: none; }
   .wce-banner-day { font-size: clamp(1.7rem, 8.4vw, 2.6rem); }
@@ -461,7 +450,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .wce-partner-track { animation: none; }
-  .wce-year-svg text { transition: none; stroke-dashoffset: 0; }
 }
 
 /* Form fields — dark translucent fill with a gold underline */
