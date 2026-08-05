@@ -275,7 +275,7 @@
   line-height: 0.78;
   letter-spacing: 0.005em;
   color: transparent;
-  -webkit-text-stroke: 0.100em #C9A227;
+  -webkit-text-stroke: 0.092em #C9A227;
   filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.45));
 }
 .wce-year-outline > span {
@@ -284,13 +284,13 @@
   color: transparent;
   pointer-events: none;
 }
-.wce-year-outline > span:nth-child(1) { -webkit-text-stroke: 0.086em #0F2A1D; }
-.wce-year-outline > span:nth-child(2) { -webkit-text-stroke: 0.072em #C9A227; }
-.wce-year-outline > span:nth-child(3) { -webkit-text-stroke: 0.058em #0F2A1D; }
-.wce-year-outline > span:nth-child(4) { -webkit-text-stroke: 0.044em #C9A227; }
-.wce-year-outline > span:nth-child(5) { -webkit-text-stroke: 0.030em #0F2A1D; }
-.wce-year-outline > span:nth-child(6) { -webkit-text-stroke: 0.016em #C9A227; }
-.wce-year-outline > span:nth-child(7) { -webkit-text-stroke: 0.004em #0F2A1D; }
+.wce-year-outline > span:nth-child(1) { -webkit-text-stroke: 0.079em #0F2A1D; }
+.wce-year-outline > span:nth-child(2) { -webkit-text-stroke: 0.066em #C9A227; }
+.wce-year-outline > span:nth-child(3) { -webkit-text-stroke: 0.053em #0F2A1D; }
+.wce-year-outline > span:nth-child(4) { -webkit-text-stroke: 0.040em #C9A227; }
+.wce-year-outline > span:nth-child(5) { -webkit-text-stroke: 0.027em #0F2A1D; }
+.wce-year-outline > span:nth-child(6) { -webkit-text-stroke: 0.014em #C9A227; }
+.wce-year-outline > span:nth-child(7) { -webkit-text-stroke: 0.003em #0F2A1D; }
 
 /* Dark plate keeping the outlined numeral legible over the footage */
 .wce-year-plate {

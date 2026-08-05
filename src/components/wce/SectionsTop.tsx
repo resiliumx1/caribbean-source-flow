@@ -92,7 +92,7 @@ export function WceHero() {
         </div>
 
         <p
-          className={cls("mt-[clamp(1.1rem,2.8vh,2.2rem)] text-[clamp(0.78rem,1.5vw,1.15rem)] uppercase")}
+          className={cls("mt-[clamp(0.8rem,2vh,1.5rem)] text-[clamp(0.78rem,1.5vw,1.15rem)] uppercase")}
           style={{
             fontFamily: "var(--wce-flyer)",
             fontWeight: 800,
@@ -104,11 +104,11 @@ export function WceHero() {
           {venue}
         </p>
 
-        <div className={cls("my-[clamp(0.9rem,2.4vh,2rem)] w-full max-w-sm")} style={stage(0.95)}>
+        <div className={cls("my-[clamp(0.8rem,2vh,1.6rem)] w-full max-w-sm")} style={stage(0.95)}>
           <LeafDivider />
         </div>
 
-        <WceCountdown className={cls("mt-[clamp(1rem,2.8vh,2.5rem)]")} />
+        <WceCountdown className={cls("mt-[clamp(0.5rem,1.6vh,1.4rem)]")} />
 
         {/* CTAs render fully interactive from first paint; only opacity is animated. */}
         <div
