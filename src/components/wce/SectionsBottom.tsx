@@ -161,7 +161,7 @@ export function WceFooter() {
             Caribbean<br />Wellness<br />Saint Lucia
           </p>
           <p className="wce-eyebrow mt-4" style={{ color: "rgba(245,239,224,0.8)" }}>11–17 October 2026</p>
-          <LoveEmblem size={210} className="mx-auto mt-8 md:mx-0" />
+          <LoveEmblem size={230} className="mx-auto mt-8 md:mx-0" />
         </div>
 
         <div>
