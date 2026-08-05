@@ -38,7 +38,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[190px] pt-[clamp(2.5rem,5vh,4rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[230px] pt-[clamp(2.5rem,5vh,4rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
