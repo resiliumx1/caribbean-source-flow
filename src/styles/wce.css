@@ -226,9 +226,44 @@
 /* Headline — flyer lettering: heavy geometric sans in flat gold */
 .wce-hero-title {
   font-family: var(--wce-flyer) !important;
-  font-weight: 800;
+  font-weight: 800 !important;
   color: #C9A227 !important;
-  text-shadow: 0 6px 22px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  line-height: 0.86;
+  letter-spacing: 0.005em;
+  text-align: left;
+}
+
+/* Flyer lockup: 3-line title + outlined year, vertical rule, stacked dates */
+.wce-lockup {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(0.9rem, 2.4vw, 2.2rem);
+}
+.wce-lockup-rule {
+  align-self: stretch;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(201,162,39,0.15), rgba(201,162,39,0.9) 22%, rgba(201,162,39,0.9) 78%, rgba(201,162,39,0.15));
+  margin-top: 0.15em;
+}
+.wce-lockup-dates {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: var(--wce-flyer);
+  font-weight: 800;
+  color: #C9A227;
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+.wce-hero-sub {
+  font-family: var(--wce-flyer);
+  font-weight: 400;
+  color: #C9A227;
+  letter-spacing: 0.005em;
+  text-align: left;
 }
 
 /* Flyer-style outlined "2026": concentric gold hairlines */
@@ -236,12 +271,12 @@
   position: relative;
   display: inline-block;
   font-family: var(--wce-flyer);
-  font-weight: 600;
-  line-height: 0.84;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  line-height: 0.78;
+  letter-spacing: 0.005em;
   color: transparent;
-  -webkit-text-stroke: 0.075em #C9A227;
-  filter: drop-shadow(0 0 26px rgba(201, 162, 39, 0.3)) drop-shadow(0 14px 30px rgba(0, 0, 0, 0.5));
+  -webkit-text-stroke: 0.092em #C9A227;
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.45));
 }
 .wce-year-outline > span {
   position: absolute;
@@ -249,22 +284,24 @@
   color: transparent;
   pointer-events: none;
 }
-.wce-year-outline > span:nth-child(1) { -webkit-text-stroke: 0.058em #10291B; }
-.wce-year-outline > span:nth-child(2) { -webkit-text-stroke: 0.042em #C9A227; }
-.wce-year-outline > span:nth-child(3) { -webkit-text-stroke: 0.028em #10291B; }
-.wce-year-outline > span:nth-child(4) { -webkit-text-stroke: 0.014em #C9A227; }
-.wce-year-outline > span:nth-child(5) { -webkit-text-stroke: 0.004em #10291B; }
+.wce-year-outline > span:nth-child(1) { -webkit-text-stroke: 0.079em #0F2A1D; }
+.wce-year-outline > span:nth-child(2) { -webkit-text-stroke: 0.066em #C9A227; }
+.wce-year-outline > span:nth-child(3) { -webkit-text-stroke: 0.053em #0F2A1D; }
+.wce-year-outline > span:nth-child(4) { -webkit-text-stroke: 0.040em #C9A227; }
+.wce-year-outline > span:nth-child(5) { -webkit-text-stroke: 0.027em #0F2A1D; }
+.wce-year-outline > span:nth-child(6) { -webkit-text-stroke: 0.014em #C9A227; }
+.wce-year-outline > span:nth-child(7) { -webkit-text-stroke: 0.003em #0F2A1D; }
 
 /* Dark plate keeping the outlined numeral legible over the footage */
 .wce-year-plate {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 165%;
+  width: 150%;
   aspect-ratio: 1.7 / 1;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(9, 26, 17, 0.8) 0%, rgba(9, 26, 17, 0.45) 45%, transparent 74%);
+  background: radial-gradient(ellipse at center, rgba(15, 42, 29, 0.95) 0%, rgba(15, 42, 29, 0.72) 46%, transparent 76%);
 }
 
 /* Form fields — dark translucent fill with a gold underline */

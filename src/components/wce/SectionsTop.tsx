@@ -48,70 +48,55 @@ export function WceHero() {
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-70 sm:right-10 sm:top-10" />
 
-      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
+      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center pt-[clamp(3rem,7vh,5.5rem)]">
         <div className={cls("mb-[clamp(1rem,2.2vh,2.5rem)]")} style={stage(0)}>
           <LotusMark size={40} />
         </div>
 
-        <h1
-          className={cls("wce-hero-title text-[clamp(1.5rem,4.8vw,3rem)] uppercase")}
-          style={{ letterSpacing: "0.06em", lineHeight: 1.06, ...stage(0.2) }}
-        >
-          Caribbean Wellness<br className="sm:hidden" /> Saint Lucia
-        </h1>
+        {/* Flyer lockup: title + outlined year | stacked dates */}
+        <div className={cls("wce-lockup flex-col sm:flex-row")} style={stage(0.2)}>
+          <div className="flex flex-col items-center sm:items-start">
+            <div className="flex items-start justify-center gap-[clamp(0.4rem,1.4vw,1.1rem)]">
+              <h1 className="wce-hero-title text-[clamp(1.35rem,4.1vw,3.05rem)] uppercase">
+                Caribbean<br />Wellness<br />Saint Lucia
+              </h1>
+              <span
+                className={`relative inline-block ${reduced ? "" : "wce-stage-year"}`}
+                style={reduced ? undefined : { animationDelay: "0.45s" }}
+              >
+                <span aria-hidden="true" className="wce-year-plate" />
+                <span className="wce-year-outline block text-[clamp(3.4rem,10.6vw,7.9rem)]">
+                  2026
+                  <span aria-hidden="true">2026</span>
+                  <span aria-hidden="true">2026</span>
+                  <span aria-hidden="true">2026</span>
+                  <span aria-hidden="true">2026</span>
+                  <span aria-hidden="true">2026</span>
+                  <span aria-hidden="true">2026</span>
+                  <span aria-hidden="true">2026</span>
+                </span>
+              </span>
+            </div>
+            <p className="wce-hero-sub mt-[clamp(0.35rem,1vh,0.7rem)] text-[clamp(0.7rem,1.55vw,1.1rem)]">
+              Wellness Symposium <span className="opacity-70">|</span> Fortification Retreat{" "}
+              <span className="opacity-70">|</span> Lifecraft Experience
+            </p>
+          </div>
 
-        <span
-          className={`relative mt-[clamp(0.5rem,1.4vh,1.5rem)] inline-block ${reduced ? "" : "wce-stage-year"}`}
-          style={reduced ? undefined : { animationDelay: "0.45s" }}
-        >
-          <span aria-hidden="true" className="wce-year-plate" />
-          <span className="wce-year-outline text-[clamp(4.5rem,16vw,11rem)]">
-            2026
-            <span aria-hidden="true">2026</span>
-            <span aria-hidden="true">2026</span>
-            <span aria-hidden="true">2026</span>
-            <span aria-hidden="true">2026</span>
-            <span aria-hidden="true">2026</span>
-          </span>
-        </span>
+          <span aria-hidden="true" className="wce-lockup-rule hidden sm:block" />
 
-        <p
-          className={cls("wce-rule-label mt-[clamp(1rem,2.4vh,2rem)] text-[clamp(1rem,2.4vw,1.5rem)] uppercase")}
-          style={{
-            fontFamily: "var(--wce-flyer)",
-            fontWeight: 700,
-            color: "#C9A227",
-            letterSpacing: "0.14em",
-            ...stage(0.65),
-          }}
-        >
-          {dates}
-        </p>
-
-        <div className={cls("my-[clamp(1rem,2.6vh,2.5rem)] w-full max-w-sm")} style={stage(0.72)}>
-          <LeafDivider />
+          <div className="wce-lockup-dates items-center sm:items-start">
+            <span className="text-[clamp(1.9rem,5.4vw,4.05rem)]">11-17</span>
+            <span className="text-[clamp(1.25rem,3.4vw,2.55rem)] uppercase">October</span>
+          </div>
         </div>
 
         <p
-          className={cls("max-w-2xl text-[0.85rem] leading-loose sm:text-base")}
+          className={cls("mt-[clamp(0.8rem,2vh,1.5rem)] text-[clamp(0.78rem,1.5vw,1.15rem)] uppercase")}
           style={{
             fontFamily: "var(--wce-flyer)",
-            fontWeight: 400,
-            color: "#D9BE6B",
-            letterSpacing: "0.06em",
-            ...stage(0.78),
-          }}
-        >
-          Wellness Symposium <span style={{ color: "var(--wce-gold)" }}>|</span> Fortification Retreat{" "}
-          <span style={{ color: "var(--wce-gold)" }}>|</span> Lifecraft Experience
-        </p>
-
-        <p
-          className={cls("mt-[clamp(1rem,2.6vh,2.5rem)] text-[0.8rem] uppercase sm:text-sm")}
-          style={{
-            fontFamily: "var(--wce-flyer)",
-            fontWeight: 700,
-            letterSpacing: "0.12em",
+            fontWeight: 800,
+            letterSpacing: "0.1em",
             color: "var(--wce-gold)",
             ...stage(0.9),
           }}
@@ -119,7 +104,11 @@ export function WceHero() {
           {venue}
         </p>
 
-        <WceCountdown className={cls("mt-[clamp(1rem,2.8vh,2.5rem)]")} />
+        <div className={cls("my-[clamp(0.8rem,2vh,1.6rem)] w-full max-w-sm")} style={stage(0.95)}>
+          <LeafDivider />
+        </div>
+
+        <WceCountdown className={cls("mt-[clamp(0.5rem,1.6vh,1.4rem)]")} />
 
         {/* CTAs render fully interactive from first paint; only opacity is animated. */}
         <div
