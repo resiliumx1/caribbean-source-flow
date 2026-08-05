@@ -502,7 +502,8 @@
 }
 .wce-count-value {
   display: block;
-  font-family: var(--wce-display);
+  font-family: var(--wce-flyer);
+  font-weight: 600;
   font-size: 1.6rem;
   line-height: 1.1;
   color: var(--wce-gold-light);
@@ -511,6 +512,8 @@
 .wce-count-label {
   display: block;
   margin-top: 0.25rem;
+  font-family: var(--wce-flyer);
+  font-weight: 500;
   font-size: 0.52rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
