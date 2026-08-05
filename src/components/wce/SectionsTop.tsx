@@ -10,6 +10,9 @@ import {
   MaskedHeading, ClipReveal, SlideInItem, useSectionLift,
 } from "./motion";
 import { WceCountdown } from "./WceCountdown";
+import { WceTitleLockup } from "./HeroLockup";
+import { WcePartnerMarquee } from "./PartnerMarquee";
+import { LoveEmblem } from "./LoveEmblem";
 import { selectPathway } from "./pathway-select";
 import { PathwayCardsSkeleton, SpeakersSkeleton } from "./Skeletons";
 
@@ -35,7 +38,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-[clamp(3.5rem,7vh,5rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[110px] pt-[clamp(3.5rem,7vh,5rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
@@ -53,56 +56,29 @@ export function WceHero() {
           <LotusMark size={40} />
         </div>
 
-        {/* Flyer lockup: title + outlined year | stacked dates */}
-        <div className={cls("wce-lockup flex-col sm:flex-row")} style={stage(0.2)}>
-          <div className="flex flex-col items-center sm:items-start">
-            <div className="flex items-start justify-center gap-[clamp(0.4rem,1.4vw,1.1rem)]">
-              <h1 className="wce-hero-title text-[clamp(1.35rem,4.1vw,3.05rem)] uppercase">
-                Caribbean<br />Wellness<br />Saint Lucia
-              </h1>
-              <span
-                className={`relative inline-block ${reduced ? "" : "wce-stage-year"}`}
-                style={reduced ? undefined : { animationDelay: "0.45s" }}
-              >
-                <span aria-hidden="true" className="wce-year-plate" />
-                <span className="wce-year-outline block text-[clamp(3.4rem,10.6vw,7.9rem)]">
-                  2026
-                  <span aria-hidden="true">2026</span>
-                  <span aria-hidden="true">2026</span>
-                  <span aria-hidden="true">2026</span>
-                  <span aria-hidden="true">2026</span>
-                  <span aria-hidden="true">2026</span>
-                  <span aria-hidden="true">2026</span>
-                  <span aria-hidden="true">2026</span>
-                </span>
-              </span>
-            </div>
-            <p className="wce-hero-sub mt-[clamp(0.35rem,1vh,0.7rem)] text-[clamp(0.7rem,1.55vw,1.1rem)]">
-              Wellness Symposium <span className="opacity-70">|</span> Fortification Retreat{" "}
-              <span className="opacity-70">|</span> Lifecraft Experience
-            </p>
-          </div>
-
-          <span aria-hidden="true" className="wce-lockup-rule hidden sm:block" />
-
-          <div className="wce-lockup-dates items-center sm:items-start">
-            <span className="text-[clamp(1.9rem,5.4vw,4.05rem)]">11-17</span>
-            <span className="text-[clamp(1.25rem,3.4vw,2.55rem)] uppercase">October</span>
-          </div>
-        </div>
+        {/* Banner lockup: title | outlined year | stacked dates + green bar */}
+        <WceTitleLockup reduced={reduced} />
 
         <p
-          className={cls("mt-[clamp(0.8rem,2vh,1.5rem)] text-[clamp(0.78rem,1.5vw,1.15rem)] uppercase")}
-          style={{
-            fontFamily: "var(--wce-flyer)",
-            fontWeight: 800,
-            letterSpacing: "0.1em",
-            color: "var(--wce-gold)",
-            ...stage(0.9),
-          }}
+          className="wce-banner-subline mt-[clamp(0.7rem,1.8vh,1.3rem)]"
+          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.3s both" }}
+        >
+          Holistic Symposium <span className="sep">|</span> Fortification Retreat{" "}
+          <span className="sep">|</span> LifeCraft Experience
+        </p>
+        <p
+          className="wce-banner-venue mt-[clamp(0.35rem,1vh,0.6rem)]"
+          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.3s both" }}
         >
           {venue}
         </p>
+
+        <div
+          className="mt-[clamp(0.7rem,1.8vh,1.3rem)]"
+          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.45s both" }}
+        >
+          <LoveEmblem size={220} variant="cream" />
+        </div>
 
         <div className={cls("my-[clamp(0.8rem,2vh,1.6rem)] w-full max-w-sm")} style={stage(0.95)}>
           <LeafDivider />
@@ -123,6 +99,8 @@ export function WceHero() {
           <a href="#apply" className="wce-btn wce-btn-outline w-full sm:w-auto">Apply for the Retreat</a>
         </div>
       </div>
+
+      <WcePartnerMarquee />
     </section>
   );
 }
