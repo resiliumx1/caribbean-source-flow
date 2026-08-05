@@ -38,7 +38,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[150px] pt-[clamp(2.5rem,5vh,4rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[230px] pt-[clamp(2.5rem,5vh,4rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
@@ -87,16 +87,21 @@ export function WceHero() {
         <WceCountdown className={cls("mt-[clamp(0.5rem,1.6vh,1.4rem)]")} />
 
         {/* CTAs render fully interactive from first paint; only opacity is animated. */}
-        <div
-          className="mt-[clamp(1.5rem,3.4vh,3.5rem)] flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
-          style={
-            reduced
-              ? undefined
-              : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1s both" }
-          }
-        >
-          <a href="#pathways" className="wce-btn wce-btn-gold w-full sm:w-auto">Choose Your Pathway</a>
-          <a href="#apply" className="wce-btn wce-btn-outline w-full sm:w-auto">Apply for the Retreat</a>
+        <div className="wce-hero-ctas mt-[clamp(1.75rem,3.6vh,3.25rem)] mb-[clamp(1rem,2vh,2rem)] w-full sm:w-auto">
+          <a
+            href="#pathways"
+            className={`wce-btn wce-btn-gold ${reduced ? "" : "wce-hero-cta-enter"}`}
+            style={reduced ? undefined : { animationDelay: "1.6s" }}
+          >
+            Choose Your Pathway
+          </a>
+          <a
+            href="#apply"
+            className={`wce-btn wce-btn-outline ${reduced ? "" : "wce-hero-cta-enter"}`}
+            style={reduced ? undefined : { animationDelay: "1.69s" }}
+          >
+            Apply for the Retreat
+          </a>
         </div>
       </div>
 

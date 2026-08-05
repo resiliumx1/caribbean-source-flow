@@ -26,11 +26,12 @@ export function WceCountdown({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`flex items-start justify-center gap-3 ${className}`}
+      className={`wce-count-row ${className}`}
       aria-label="Time remaining until the event begins"
     >
-      {parts(remaining).map((p) => (
-        <div key={p.label} className="wce-count-block text-center">
+      {parts(remaining).map((p, i) => (
+        <div key={p.label} className="wce-count-block">
+          {i > 0 && <span aria-hidden="true" className="wce-count-rule" />}
           <span className="wce-count-value">{String(p.value).padStart(2, "0")}</span>
           <span className="wce-count-label">{p.label}</span>
         </div>

@@ -405,8 +405,12 @@
   border-top: 1px solid rgba(201, 162, 39, 0.55);
   overflow: hidden;
 }
-.wce-partner-kicker {
+.wce-partner-kicker-col {
   flex: 0 0 auto;
+  padding-right: clamp(1rem, 2.5vw, 2.25rem);
+}
+.wce-partner-kicker {
+  display: block;
   font-family: var(--wce-banner);
   font-weight: 700;
   font-size: 0.6rem;
@@ -414,39 +418,43 @@
   text-transform: uppercase;
   color: var(--wce-gold);
 }
-.wce-partner-viewport { flex: 1 1 auto; overflow: hidden; }
+.wce-partner-viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 46px, #000 calc(100% - 46px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 46px, #000 calc(100% - 46px), transparent 100%);
+}
 .wce-partner-track { display: flex; width: max-content; animation: wce-marquee 40s linear infinite; }
 .wce-partner-band:hover .wce-partner-track { animation-play-state: paused; }
 .wce-partner-set,
-.wce-partner-static { display: flex; align-items: center; gap: clamp(1rem, 2.4vw, 2.2rem); padding-right: clamp(1rem, 2.4vw, 2.2rem); }
+.wce-partner-static { display: flex; align-items: center; gap: 72px; padding-right: 72px; }
 .wce-partner-static { justify-content: center; flex: 1 1 auto; flex-wrap: wrap; padding-right: 0; }
 .wce-partner-tile {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 130px;
-  height: 56px;
-  padding: 0 0.5rem;
-  border: 1px solid rgba(201, 162, 39, 0.7);
-  border-radius: 8px;
-  text-align: center;
+  opacity: 0.85;
+  transition: opacity .3s ease;
 }
+.wce-partner-tile:hover { opacity: 1; }
 .wce-partner-name {
   font-family: var(--wce-banner);
   font-weight: 600;
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   line-height: 1.25;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--wce-gold);
 }
-.wce-partner-logo { max-height: 40px; max-width: 112px; object-fit: contain; }
+.wce-partner-logo { height: 52px; width: auto; object-fit: contain; }
 @keyframes wce-marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 @media (max-width: 640px) {
-  .wce-partner-tile { width: 100px; height: 44px; }
-  .wce-partner-name { font-size: 0.48rem; letter-spacing: 0.1em; }
-  .wce-partner-logo { max-height: 32px; max-width: 86px; }
+  .wce-partner-set, .wce-partner-static { gap: 44px; padding-right: 44px; }
+  .wce-partner-static { padding-right: 0; }
+  .wce-partner-logo { height: 36px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wce-partner-track { animation: none; }
@@ -678,33 +686,50 @@
   .wce-form-confirm { animation: none; }
 }
 
-/* ============ COUNTDOWN ============ */
+/* ============ COUNTDOWN — inline figures split by gold hairlines ============ */
+.wce-count-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
 .wce-count-block {
-  min-width: 74px;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid rgba(201,162,39,0.6);
-  border-radius: 2px;
-  background: rgba(15,42,29,0.35);
-  backdrop-filter: blur(3px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  padding: 0 clamp(0.9rem, 2vw, 1.6rem);
+  text-align: center;
+}
+.wce-count-rule {
+  position: absolute;
+  left: 0;
+  top: 12%;
+  bottom: 12%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(201,162,39,0.75) 22%, rgba(201,162,39,0.75) 78%, transparent);
 }
 .wce-count-value {
   display: block;
   font-family: var(--wce-flyer);
   font-weight: 600;
-  font-size: 1.6rem;
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
   line-height: 1.1;
   color: var(--wce-gold-light);
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 3px 14px rgba(0,0,0,0.5);
 }
 .wce-count-label {
   display: block;
   margin-top: 0.25rem;
   font-family: var(--wce-flyer);
   font-weight: 500;
-  font-size: 0.52rem;
+  font-size: 0.56rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(245,239,224,0.7);
+  color: rgba(245,239,224,0.82);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.55);
 }
 
 /* ============ STICKY MOBILE CTA ============ */
@@ -842,4 +867,60 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 body.wce-transparent-header header[class*="fixed"] a:hover,
 body.wce-transparent-header header[class*="fixed"] a:hover span {
   color: #E4C766;
+}
+
+/* Subtle top-down scrim so the nav always has something to sit against */
+body.wce-transparent-header header[class*="fixed"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  bottom: -28px;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(15,42,29,0.55) 0%, rgba(15,42,29,0.28) 55%, transparent 100%);
+}
+body.wce-transparent-header header[class*="fixed"] { position: fixed; isolation: isolate; }
+
+/* Cream lockup + labels with a soft dark shadow for the bright sky */
+body.wce-transparent-header header[class*="fixed"] :is(a, span, button, p, h1, h2, strong, svg) {
+  color: var(--wce-cream, #F5EFE0) !important;
+  text-shadow: 0 1px 10px rgba(6, 20, 12, 0.75), 0 0 2px rgba(6, 20, 12, 0.5);
+}
+body.wce-transparent-header header[class*="fixed"] svg {
+  stroke: currentColor;
+  filter: drop-shadow(0 1px 6px rgba(6, 20, 12, 0.8));
+}
+body.wce-transparent-header header[class*="fixed"] .wce-nav-item,
+body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
+  color: #E4C766 !important;
+}
+
+/* Secondary hero CTA reads with a cream label on a gold border */
+.wce-hero-ctas .wce-btn-outline { color: var(--wce-cream); border-color: var(--wce-gold); }
+.wce-hero-ctas .wce-btn-outline:hover { color: var(--wce-forest); }
+
+/* ============ HERO CTA PAIR ============ */
+.wce-hero-ctas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.wce-hero-ctas .wce-btn {
+  min-height: 52px;
+  height: 52px;
+  min-width: 258px;
+  padding: 0 2rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  line-height: 1;
+}
+.wce-hero-cta-enter { animation: wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) both; }
+@media (max-width: 639px) {
+  .wce-hero-ctas { flex-direction: column; width: 100%; gap: 0.85rem; }
+  .wce-hero-ctas .wce-btn { width: 100%; min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wce-hero-cta-enter { animation: none; }
 }
