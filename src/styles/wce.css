@@ -1,6 +1,7 @@
 /* Caribbean Wellness Experience 2026 — route-scoped theme.
    All tokens live under .wce-root; global design tokens are untouched. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap');
 
 .wce-root {
   --wce-forest: #0F2A1D;
@@ -15,6 +16,7 @@
 
   --wce-display: 'Cormorant Garamond', Georgia, serif;
   --wce-body: 'Inter', system-ui, sans-serif;
+  --wce-flyer: 'Jost', 'DM Sans', system-ui, sans-serif;
 
   background: var(--wce-cream);
   color: var(--wce-ink);
