@@ -796,6 +796,7 @@ export type Database = {
           fulfillment_status: string | null
           id: string
           is_test: boolean
+          landing_path: string | null
           note: string | null
           order_number: string | null
           payment_method: string
@@ -803,6 +804,7 @@ export type Database = {
           payment_transaction_id: string | null
           phone: string | null
           postal_code: string | null
+          referral_code: string | null
           refunded_usd: number
           shipping_address: Json | null
           shipping_rate_id: string | null
@@ -818,6 +820,11 @@ export type Database = {
           tracking_number: string | null
           updated_at: string | null
           user_id: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
           whatsapp_notes: string | null
         }
         Insert: {
@@ -838,6 +845,7 @@ export type Database = {
           fulfillment_status?: string | null
           id?: string
           is_test?: boolean
+          landing_path?: string | null
           note?: string | null
           order_number?: string | null
           payment_method: string
@@ -845,6 +853,7 @@ export type Database = {
           payment_transaction_id?: string | null
           phone?: string | null
           postal_code?: string | null
+          referral_code?: string | null
           refunded_usd?: number
           shipping_address?: Json | null
           shipping_rate_id?: string | null
@@ -860,6 +869,11 @@ export type Database = {
           tracking_number?: string | null
           updated_at?: string | null
           user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
           whatsapp_notes?: string | null
         }
         Update: {
@@ -880,6 +894,7 @@ export type Database = {
           fulfillment_status?: string | null
           id?: string
           is_test?: boolean
+          landing_path?: string | null
           note?: string | null
           order_number?: string | null
           payment_method?: string
@@ -887,6 +902,7 @@ export type Database = {
           payment_transaction_id?: string | null
           phone?: string | null
           postal_code?: string | null
+          referral_code?: string | null
           refunded_usd?: number
           shipping_address?: Json | null
           shipping_rate_id?: string | null
@@ -902,6 +918,11 @@ export type Database = {
           tracking_number?: string | null
           updated_at?: string | null
           user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
           whatsapp_notes?: string | null
         }
         Relationships: [
@@ -2180,60 +2201,6 @@ export type Database = {
         }
         Relationships: []
       }
-      wce_orders: {
-        Row: {
-          amount: number
-          created_at: string
-          currency: string
-          email: string | null
-          id: string
-          order_number: string | null
-          pathway_key: string | null
-          referral_code: string | null
-          status: string
-          utm_campaign: string | null
-          utm_content: string | null
-          utm_medium: string | null
-          utm_source: string | null
-          utm_term: string | null
-          woo_order_id: number | null
-        }
-        Insert: {
-          amount?: number
-          created_at?: string
-          currency?: string
-          email?: string | null
-          id?: string
-          order_number?: string | null
-          pathway_key?: string | null
-          referral_code?: string | null
-          status?: string
-          utm_campaign?: string | null
-          utm_content?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-          utm_term?: string | null
-          woo_order_id?: number | null
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          currency?: string
-          email?: string | null
-          id?: string
-          order_number?: string | null
-          pathway_key?: string | null
-          referral_code?: string | null
-          status?: string
-          utm_campaign?: string | null
-          utm_content?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-          utm_term?: string | null
-          woo_order_id?: number | null
-        }
-        Relationships: []
-      }
       wce_pathways: {
         Row: {
           capacity: number | null
@@ -2293,41 +2260,49 @@ export type Database = {
       wce_referral_codes: {
         Row: {
           code: string
+          coupon_id: string | null
           created_at: string
           discount_percent: number
           id: string
           is_active: boolean
           last_used_at: string | null
-          last_woo_coupon_found: boolean | null
           owner_name: string | null
           owner_type: string | null
           use_count: number
         }
         Insert: {
           code: string
+          coupon_id?: string | null
           created_at?: string
           discount_percent?: number
           id?: string
           is_active?: boolean
           last_used_at?: string | null
-          last_woo_coupon_found?: boolean | null
           owner_name?: string | null
           owner_type?: string | null
           use_count?: number
         }
         Update: {
           code?: string
+          coupon_id?: string | null
           created_at?: string
           discount_percent?: number
           id?: string
           is_active?: boolean
           last_used_at?: string | null
-          last_woo_coupon_found?: boolean | null
           owner_name?: string | null
           owner_type?: string | null
           use_count?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "wce_referral_codes_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wce_settings: {
         Row: {
