@@ -14,6 +14,8 @@ type Code = {
   use_count: number;
   is_active: boolean;
   created_at: string;
+  last_woo_coupon_found: boolean | null;
+  last_used_at: string | null;
 };
 
 export default function WceReferralCodes() {
@@ -76,12 +78,13 @@ export default function WceReferralCodes() {
               <th className="p-3 text-left">Type</th>
               <th className="p-3 text-left">Discount</th>
               <th className="p-3 text-left">Uses</th>
+              <th className="p-3 text-left">Woo coupon</th>
               <th className="p-3 text-left">Status</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 && (
-              <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No codes yet.</td></tr>
+              <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No codes yet.</td></tr>
             )}
             {rows.map((c) => (
               <tr key={c.id} className="border-t border-border">
@@ -90,6 +93,15 @@ export default function WceReferralCodes() {
                 <td className="p-3">{c.owner_type || "—"}</td>
                 <td className="p-3">{c.discount_percent}%</td>
                 <td className="p-3 font-bold">{c.use_count}</td>
+                <td className="p-3 text-xs">
+                  {c.last_woo_coupon_found === null ? (
+                    <span className="text-muted-foreground">Not used yet</span>
+                  ) : c.last_woo_coupon_found ? (
+                    <span style={{ color: "#15803d" }}>Matched — discount applied</span>
+                  ) : (
+                    <span className="text-destructive">No Woo coupon — create it in WordPress</span>
+                  )}
+                </td>
                 <td className="p-3">
                   <Button variant={c.is_active ? "outline" : "secondary"} size="sm" onClick={() => toggle(c)}>
                     {c.is_active ? "Active — deactivate" : "Inactive — reactivate"}
