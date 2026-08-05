@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
 import { logCartEvent, syncCartToCrm } from "../_shared/cart-recovery.ts";
+import { sanitizeAttribution, type OrderAttribution } from "../_shared/attribution.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,6 +32,8 @@ interface CheckoutPayload {
   opaqueData: OpaqueData;
   currency_used: "USD" | "XCD";
   coupon_code?: string;
+  /** Marketing attribution only — never used for pricing. */
+  attribution?: OrderAttribution;
 }
 
 Deno.serve(async (req) => {
@@ -38,6 +41,7 @@ Deno.serve(async (req) => {
 
   try {
     const payload = (await req.json()) as CheckoutPayload;
+    const attribution = sanitizeAttribution(payload.attribution);
 
     if (!payload?.items?.length) throw new Error("Cart is empty.");
     if (!payload?.opaqueData?.dataValue) throw new Error("Missing payment token.");
@@ -206,6 +210,7 @@ Deno.serve(async (req) => {
       customer_notes: payload.form.customer_notes || null,
       discount_usd,
       coupon_code: appliedCoupon?.code ?? null,
+      ...attribution,
     };
 
     const { data: order, error: orderErr } = await supabase

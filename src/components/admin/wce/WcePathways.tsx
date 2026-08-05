@@ -22,7 +22,8 @@ type Pathway = {
 type ProductOption = {
   id: string;
   name: string;
-  woo_product_id: number | null;
+  price_usd: number;
+  is_digital: boolean;
 };
 
 export default function WcePathways() {
@@ -35,7 +36,7 @@ export default function WcePathways() {
     (async () => {
       const [{ data, error }, { data: prods }] = await Promise.all([
         supabase.from("wce_pathways").select("*").order("display_order", { ascending: true }),
-        supabase.from("products").select("id, name, woo_product_id").eq("is_active", true).order("name"),
+        supabase.from("products").select("id, name, price_usd, is_digital").eq("is_active", true).order("name"),
       ]);
       if (error) toast({ title: "Load failed", description: error.message, variant: "destructive" });
       setRows((data ?? []) as Pathway[]);
@@ -79,16 +80,16 @@ export default function WcePathways() {
             if (!p.product_id) {
               return (
                 <p className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
-                  No product linked — this tier cannot be purchased. Pick a product below, and make sure it is
-                  synced to WooCommerce.
+                  No product linked — this tier cannot be purchased yet. Pick a product below so the card's button can
+                  add it to the cart.
                 </p>
               );
             }
-            if (linked && !linked.woo_product_id) {
+            if (linked && !linked.is_digital) {
               return (
                 <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs" style={{ color: "#92400e" }}>
-                  "{linked.name}" has no WooCommerce product ID yet. Checkout will be refused for this tier until the
-                  product is created/synced in WordPress.
+                  "{linked.name}" is not marked digital, so checkout will add a 30 USD shipping charge to every ticket.
+                  Set the product to digital in Products.
                 </p>
               );
             }
@@ -106,7 +107,7 @@ export default function WcePathways() {
                 <option value="">— none (application only) —</option>
                 {products.map((pr) => (
                   <option key={pr.id} value={pr.id}>
-                    {pr.name}{pr.woo_product_id ? ` · woo #${pr.woo_product_id}` : " · not synced to Woo"}
+                    {pr.name} · ${Number(pr.price_usd).toFixed(2)}{pr.is_digital ? " · digital" : " · physical"}
                   </option>
                 ))}
               </select>

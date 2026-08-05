@@ -120,12 +120,24 @@ Deno.serve(async (req) => {
     const adminFrom = fromFallback ? FROM_FALLBACK : FROM_ADMIN;
 
     if (emailType === "order_placed") {
+      // Digital-only orders (e.g. event tickets) have nothing to ship.
+      let digitalOnly = false;
+      try {
+        const ids = [...new Set((items ?? []).map((i: any) => i.product_id))];
+        if (ids.length) {
+          const { data: prods } = await supabase
+            .from("products").select("id, is_digital").in("id", ids);
+          digitalOnly = !!prods?.length && prods.every((p: any) => p.is_digital);
+        }
+      } catch (e) {
+        console.error("digital-only check failed:", e);
+      }
       const customerResult = await sendEmail({
         from: customerFrom,
         to: [order.email],
         reply_to: SUPPORT_EMAIL,
         subject: `Order Confirmed - ${order.order_number} | Mount Kailash`,
-        html: customerOrderPlacedHtml(order, items || []),
+        html: customerOrderPlacedHtml(order, items || [], digitalOnly),
       });
 
       let adminResult: any = null;
@@ -309,15 +321,20 @@ function itemsTable(items: any[]): string {
   </table>`;
 }
 
-function customerOrderPlacedHtml(order: any, items: any[]): string {
+function customerOrderPlacedHtml(order: any, items: any[], digitalOnly = false): string {
   const subtotal = items.reduce((s, i) => s + Number(i.price_usd) * Number(i.quantity), 0);
+  const shippingLabel = Number(order.shipping_usd || 0) > 0
+    ? fmtMoney(order.shipping_usd)
+    : digitalOnly ? "Not required" : "FREE";
   const inner = `
     <tr><td style="padding:32px 28px 8px 28px;">
       <h1 style="margin:0 0 12px 0;font-family:Georgia,'Times New Roman',serif;color:${BRAND_DARK};font-size:26px;line-height:1.2;">
         Thank you, ${esc(order.customer_name)}!
       </h1>
       <p style="margin:0 0 8px 0;font-size:15px;line-height:1.6;color:${BRAND_TEXT};">
-        Your order has been received and is being prepared with care.
+        ${digitalOnly
+          ? "Your order is confirmed. Nothing needs to be shipped — we'll email your access details separately."
+          : "Your order has been received and is being prepared with care."}
       </p>
     </td></tr>
     <tr><td style="padding:16px 28px;">
@@ -335,21 +352,23 @@ function customerOrderPlacedHtml(order: any, items: any[]): string {
         ${itemsTable(items)}
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;">
           <tr><td style="font-size:14px;color:${BRAND_MUTED};padding:4px 8px;">Subtotal</td><td align="right" style="font-size:14px;padding:4px 8px;">${fmtMoney(subtotal)}</td></tr>
-          <tr><td style="font-size:14px;color:${BRAND_MUTED};padding:4px 8px;">Shipping</td><td align="right" style="font-size:14px;padding:4px 8px;color:${BRAND_DARK};font-weight:bold;">FREE</td></tr>
+          <tr><td style="font-size:14px;color:${BRAND_MUTED};padding:4px 8px;">Shipping</td><td align="right" style="font-size:14px;padding:4px 8px;color:${BRAND_DARK};font-weight:bold;">${shippingLabel}</td></tr>
           <tr><td style="font-size:16px;font-weight:bold;color:${BRAND_DARK};padding:8px;border-top:2px solid ${BRAND_GOLD};">Total (USD)</td><td align="right" style="font-size:18px;font-weight:bold;color:${BRAND_DARK};padding:8px;border-top:2px solid ${BRAND_GOLD};">${fmtMoney(order.total_usd)}</td></tr>
         </table>
       </div>
     </td></tr>
-    <tr><td style="padding:8px 28px;">
+    ${digitalOnly ? "" : `<tr><td style="padding:8px 28px;">
       <div style="font-size:11px;color:${BRAND_MUTED};text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">Shipping To</div>
       <div style="font-size:14px;line-height:1.6;color:${BRAND_TEXT};">${addressBlock(order)}</div>
-    </td></tr>
+    </td></tr>`}
     <tr><td style="padding:20px 28px;">
       <div style="background:${BRAND_CREAM};border-left:3px solid ${BRAND_GOLD};padding:14px 16px;border-radius:4px;">
         <div style="font-weight:bold;color:${BRAND_DARK};margin-bottom:6px;font-family:Georgia,serif;">What's next?</div>
         <div style="font-size:14px;line-height:1.6;color:${BRAND_TEXT};">
-          We'll send another email when your order ships with tracking details.<br>
-          Expected delivery: <strong>3–5 business days</strong> for US, <strong>5–10 days</strong> international.
+          ${digitalOnly
+            ? "Keep this email as your receipt. Access and joining details follow by email — no delivery is needed."
+            : `We'll send another email when your order ships with tracking details.<br>
+          Expected delivery: <strong>3–5 business days</strong> for US, <strong>5–10 days</strong> international.`}
         </div>
       </div>
     </td></tr>

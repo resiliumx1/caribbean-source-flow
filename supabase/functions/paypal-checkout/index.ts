@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyPaypalCapture } from "../_shared/paypal-verify.ts";
+import { sanitizeAttribution, type OrderAttribution } from "../_shared/attribution.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,6 +31,8 @@ interface CheckoutPayload {
   paypal_order_id: string;
   paypal_capture_id: string;
   currency_used: "USD" | "XCD";
+  /** Marketing attribution only — never used for pricing. */
+  attribution?: OrderAttribution;
 }
 
 Deno.serve(async (req) => {
@@ -39,6 +42,7 @@ Deno.serve(async (req) => {
 
   try {
     const payload = (await req.json()) as CheckoutPayload;
+    const attribution = sanitizeAttribution(payload.attribution);
 
     // Basic validation
     if (!payload?.items?.length) throw new Error("Cart is empty.");
@@ -163,6 +167,7 @@ Deno.serve(async (req) => {
       payment_transaction_id: payload.paypal_capture_id,
       status: "pending",
       customer_notes: payload.form.customer_notes || null,
+      ...attribution,
     };
 
     const { data: order, error: orderErr } = await supabase

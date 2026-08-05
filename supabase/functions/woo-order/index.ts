@@ -1,12 +1,4 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import {
-  attributionMetaData,
-  findActiveReferralCode,
-  markReferralUsed,
-  recordWceOrder,
-  sanitizeAttribution,
-  wooCouponExists,
-} from "../_shared/wce-attribution.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -25,12 +17,7 @@ Deno.serve(async (req) => {
 
     // Parse request body — guest checkout allowed (no auth required)
     const body = await req.json();
-    const { items, billing, customer_note, return_url, pathway_key } = body;
-    const attribution = sanitizeAttribution(body.attribution);
-    const couponCode =
-      typeof body.coupon_code === "string" && body.coupon_code.trim()
-        ? body.coupon_code.trim().toUpperCase().slice(0, 60)
-        : null;
+    const { items, billing, customer_note, return_url } = body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return new Response(
@@ -137,14 +124,6 @@ Deno.serve(async (req) => {
       };
     });
 
-    // Referral / promo code: only discounts when a matching Woo coupon exists.
-    let referralRow: any = null;
-    let wooCouponFound = false;
-    if (couponCode) {
-      referralRow = await findActiveReferralCode(adminClient, couponCode);
-      wooCouponFound = await wooCouponExists(normalizedUrl, wooKey, wooSecret, couponCode);
-    }
-
     // Create order in WooCommerce
     const orderData = {
       payment_method: "cod",
@@ -166,11 +145,6 @@ Deno.serve(async (req) => {
       customer_note: customer_note || "",
       // `pending` triggers WooCommerce's customer "order received" email.
       status: "pending",
-      meta_data: attributionMetaData(
-        { ...attribution, referral_code: couponCode ?? attribution.referral_code ?? null },
-        typeof pathway_key === "string" ? pathway_key.slice(0, 60) : null,
-      ),
-      ...(wooCouponFound ? { coupon_lines: [{ code: couponCode!.toLowerCase() }] } : {}),
     };
 
     const apiUrl =
@@ -195,20 +169,6 @@ Deno.serve(async (req) => {
       throw new Error("Order creation failed");
     }
 
-    // Post-success bookkeeping — best effort, never blocks the order.
-    await recordWceOrder(adminClient, {
-      woo_order_id: wooOrder.id,
-      order_number: String(wooOrder.number ?? wooOrder.id),
-      email: billing.email,
-      pathway_key: typeof pathway_key === "string" ? pathway_key.slice(0, 60) : null,
-      amount: Number(wooOrder.total ?? 0),
-      currency: wooOrder.currency || "USD",
-      referral_code: couponCode,
-      status: wooOrder.status || "pending",
-      attribution,
-    });
-    if (referralRow) await markReferralUsed(adminClient, referralRow, wooCouponFound);
-
     return new Response(
       JSON.stringify({
         success: true,
@@ -217,8 +177,6 @@ Deno.serve(async (req) => {
         order_key: wooOrder.order_key,
         total: wooOrder.total,
         currency: wooOrder.currency,
-        coupon_code: couponCode,
-        coupon_applied: wooCouponFound,
         payment_url: `${normalizedUrl}/checkout/order-pay/${wooOrder.id}/?pay_for_order=true&key=${wooOrder.order_key}${
           return_url ? `&return_url=${encodeURIComponent(return_url)}` : ""
         }`,
