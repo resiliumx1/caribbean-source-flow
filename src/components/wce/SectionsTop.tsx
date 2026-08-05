@@ -45,7 +45,7 @@ export function WceHero() {
       <div
         aria-hidden="true"
         className="absolute inset-x-0 bottom-0 h-2/3"
-        style={{ background: "linear-gradient(to top, #0F2A1D 12%, rgba(15,42,29,0.65) 55%, transparent 100%)" }}
+        style={{ background: "linear-gradient(to top, #0F2A1D 14%, rgba(15,42,29,0.86) 42%, rgba(15,42,29,0.6) 68%, rgba(15,42,29,0.22) 100%)" }}
       />
       <WceHeroParticles />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
@@ -151,8 +151,8 @@ function PathwaysInner() {
   return (
     <section ref={lift.ref} id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="left" opacity={0.13} />
-      <EdgeFoliage side="right" opacity={0.13} />
+      <EdgeFoliage side="left" opacity={0.04} />
+      <EdgeFoliage side="right" opacity={0.04} />
       <div className="mx-auto max-w-5xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
@@ -344,7 +344,7 @@ function SpeakerDetail({ speaker, onClose }: { speaker: Speaker; onClose: () => 
       exit={reduced ? undefined : { opacity: 0, y: 8 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className="mt-12 flex flex-col items-center gap-10 px-6 py-12 text-left sm:px-12 md:flex-row"
-      style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.45)", borderRadius: "3px" }}
+      style={{ background: "#FDFAF2", border: "1px solid rgba(201,162,39,0.7)", borderRadius: "3px", boxShadow: "0 18px 40px -28px rgba(122,96,17,0.45)" }}
     >
       <PortraitCircle url={speaker.portrait_url} name={speaker.name} size="md" ring />
       <div className="md:flex-1">
@@ -404,7 +404,7 @@ export function WceSpeakersSection() {
   return (
     <section id="speakers" ref={sectionRef} className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="right" opacity={0.12} />
+      <EdgeFoliage side="right" opacity={0.04} />
       <div className="mx-auto max-w-6xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
@@ -434,7 +434,7 @@ export function WceSpeakersSection() {
               }}
               data-wce-dark
             >
-              <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} size={120} />
+              <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.06} size={120} />
               <CornerVine className="pointer-events-none absolute -left-2 -bottom-2 opacity-40" />
               <div className="relative">
                 <PortraitCircle url={featured.portrait_url} name={featured.name} size="lg" ring />
