@@ -265,7 +265,7 @@ export function WceRetreatBand() {
         className="pointer-events-none absolute -inset-y-[25%] inset-x-0 will-change-transform"
         style={{ background: "radial-gradient(70% 60% at 50% 50%, rgba(45,74,53,0.6), transparent 70%)" }}
       />
-      <FlowerOfLifeField className="wce-surface-bg" opacity={0.06} light />
+      <FlowerOfLifeField className="wce-surface-bg" opacity={0.045} light />
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
         {/* Left — copy */}
         <div className="text-center lg:text-left">
@@ -530,7 +530,7 @@ export function WceApplicationForm() {
 
         {/* Right — dark form panel */}
         <div className="wce-form-panel relative px-8 py-16 sm:px-12" style={{ background: "var(--wce-forest)", borderLeft: "1px solid rgba(201,162,39,0.5)" }}>
-          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.06} light size={110} />
+          <FlowerOfLifeField className="wce-surface-bg absolute inset-0" opacity={0.05} light size={110} />
           <div className="relative">
           {submitted ? (
             <div className="wce-form-confirm flex min-h-[26rem] flex-col items-center justify-center text-center" role="status" aria-live="polite">
