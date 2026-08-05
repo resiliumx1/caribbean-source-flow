@@ -2352,6 +2352,7 @@ export type Database = {
           is_featured: boolean
           name: string
           portrait_url: string | null
+          prefix: string | null
           published: boolean
           session_time: string | null
           session_title: string | null
@@ -2366,6 +2367,7 @@ export type Database = {
           is_featured?: boolean
           name: string
           portrait_url?: string | null
+          prefix?: string | null
           published?: boolean
           session_time?: string | null
           session_title?: string | null
@@ -2380,6 +2382,7 @@ export type Database = {
           is_featured?: boolean
           name?: string
           portrait_url?: string | null
+          prefix?: string | null
           published?: boolean
           session_time?: string | null
           session_title?: string | null

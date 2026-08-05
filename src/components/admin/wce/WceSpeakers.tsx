@@ -8,6 +8,7 @@ import { inputCls, ImageUploadField, useDragReorder, DragHandle } from "./shared
 type Speaker = {
   id: string;
   name: string;
+  prefix: string | null;
   title: string | null;
   theme: string | null;
   bio: string | null;
@@ -84,6 +85,8 @@ export default function WceSpeakers() {
               <div className="grid flex-1 gap-3 md:grid-cols-2">
                 <input className={inputCls} defaultValue={s.name} placeholder="Name"
                   onBlur={(e) => e.target.value !== s.name && patch(s.id, { name: e.target.value })} />
+                <input className={inputCls} defaultValue={s.prefix ?? ""} placeholder="Prefix (e.g. Rt. Hon.)"
+                  onBlur={(e) => patch(s.id, { prefix: e.target.value })} />
                 <input className={inputCls} defaultValue={s.title ?? ""} placeholder="Title"
                   onBlur={(e) => patch(s.id, { title: e.target.value })} />
                 <input className={inputCls} defaultValue={s.theme ?? ""} placeholder="Theme"
