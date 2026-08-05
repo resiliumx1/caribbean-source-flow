@@ -1077,3 +1077,422 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   .wce-path-bloomflower { transform: none !important; }
   .wce-path-elev { transform: scaleX(1) !important; }
 }
+
+/* ==========================================================================
+   Speaker row — gilded ring ignition + theme-word reveal
+   ========================================================================== */
+.wce-root .wce-speaker-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;                 /* clips the theme word off neighbours */
+  padding: 1.6rem 0.4rem 0.5rem;
+  width: 100%;
+}
+.wce-root .wce-speaker-stage-lg { overflow: visible; padding: 0; width: auto; }
+
+.wce-root .wce-speaker-portrait-slot {
+  position: relative;
+  z-index: 2;
+  width: 8rem; height: 8rem;
+  border-radius: 9999px;
+}
+.wce-root .wce-speaker-portrait-slot.lg { width: 12rem; height: 12rem; }
+@media (min-width: 640px) {
+  .wce-root .wce-speaker-portrait-slot { width: 9rem; height: 9rem; }
+  .wce-root .wce-speaker-portrait-slot.lg { width: 15rem; height: 15rem; }
+}
+@media (min-width: 1024px) {
+  .wce-root .wce-speaker-portrait-slot { width: 9.5rem; height: 9.5rem; }
+  .wce-root .wce-speaker-portrait-slot.lg { width: 18rem; height: 18rem; }
+}
+.wce-root .wce-speaker-portrait-slot .wce-speaker-ring {
+  position: relative;
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid var(--wce-gold);
+  box-shadow: 0 0 0 6px rgba(201,162,39,0.12);
+  background: linear-gradient(160deg, rgba(45,74,53,0.14), rgba(201,162,39,0.12));
+}
+.wce-root .wce-speaker-portrait-slot .wce-portrait-img {
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%;
+}
+.wce-root .wce-speaker-initials {
+  font-family: var(--wce-display);
+  font-size: 1.8rem;
+  color: var(--wce-gold-text);
+  letter-spacing: 0.08em;
+}
+
+/* Gilded ring ignition: a bright arc travels once around the circumference. */
+.wce-root .wce-ring-ignite {
+  position: absolute; inset: -4px;
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 3;
+  background: conic-gradient(from 0deg,
+    rgba(255,248,214,0) 0deg,
+    rgba(255,248,214,0) 26deg,
+    rgba(255,248,214,0.95) 52deg,
+    rgba(228,199,102,0.6) 72deg,
+    rgba(255,248,214,0) 104deg,
+    rgba(255,248,214,0) 360deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
+}
+@keyframes wce-ring-ignite {
+  0%   { transform: rotate(0deg);   opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: rotate(360deg); opacity: 0; }
+}
+@media (hover: hover) {
+  .wce-speaker:hover .wce-ring-ignite,
+  .wce-speaker:focus-visible .wce-ring-ignite {
+    animation: wce-ring-ignite 700ms cubic-bezier(0.4,0,0.2,1) 1 both;
+  }
+}
+.wce-speaker.is-on .wce-ring-ignite {
+  animation: wce-ring-ignite 700ms cubic-bezier(0.4,0,0.2,1) 1 forwards;
+}
+
+/* Theme word behind + slightly above the portrait */
+.wce-root .wce-speaker-themeword {
+  position: absolute;
+  left: 50%; top: 0;
+  transform: translate(-50%, 0) scale(0.96);
+  z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center;
+  font-family: var(--wce-flyer);
+  font-weight: 800;
+  font-size: clamp(2.1rem, 4.4vw, 3.4rem);
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  color: var(--wce-gold);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s cubic-bezier(0.22,1,0.36,1), transform .6s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-root .wce-speaker-themeword.on-dark { color: var(--wce-gold-light); }
+@media (hover: hover) {
+  .wce-speaker:hover .wce-speaker-themeword,
+  .wce-speaker:focus-visible .wce-speaker-themeword { opacity: 0.12; transform: translate(-50%, -6px) scale(1); }
+}
+.wce-speaker.is-on .wce-speaker-themeword { opacity: 0.12; transform: translate(-50%, -6px) scale(1); }
+
+.wce-root .wce-speaker-name {
+  font-family: var(--wce-display);
+  color: var(--wce-forest);
+}
+.wce-root .wce-speaker-session {
+  margin-top: 0.6rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: rgba(26,26,20,0.82);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .4s ease, transform .4s cubic-bezier(0.22,1,0.36,1);
+}
+@media (hover: hover) {
+  .wce-speaker:hover .wce-speaker-session,
+  .wce-speaker:focus-visible .wce-speaker-session { opacity: 1; transform: translateY(0); }
+}
+.wce-speaker.is-on .wce-speaker-session { opacity: 1; transform: translateY(0); }
+
+/* Featured panel */
+.wce-root .wce-speaker-featured {
+  background: linear-gradient(140deg, var(--wce-forest) 0%, var(--wce-forest-mid) 100%);
+  border: 1px solid var(--wce-gold);
+  border-radius: 3px;
+  box-shadow: 0 30px 70px -40px rgba(15,42,29,0.75);
+}
+.wce-root .wce-featured-aura {
+  position: absolute; left: 50%; top: 50%;
+  width: 130%; height: 130%;
+  transform: translate(-50%, -50%) scale(0.7);
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(228,199,102,0.5), rgba(201,162,39,0) 68%);
+  filter: blur(26px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-root .wce-featured-petals {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) scale(0.72);
+  opacity: 0;
+  pointer-events: none;
+  color: var(--wce-gold-light);
+  transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+@media (hover: hover) {
+  .wce-speaker-featured:hover .wce-featured-aura,
+  .wce-speaker-featured:focus-visible .wce-featured-aura { opacity: 1; transform: translate(-50%,-50%) scale(1.05); }
+  .wce-speaker-featured:hover .wce-featured-petals,
+  .wce-speaker-featured:focus-visible .wce-featured-petals { opacity: 0.28; transform: translate(-50%,-50%) scale(1.12); }
+}
+.wce-speaker-featured.is-on .wce-featured-aura { opacity: 1; transform: translate(-50%,-50%) scale(1.05); }
+.wce-speaker-featured.is-on .wce-featured-petals { opacity: 0.28; transform: translate(-50%,-50%) scale(1.12); }
+
+/* ==========================================================================
+   Speaker flyer expansion
+   ========================================================================== */
+.wce-flyer-overlay {
+  position: fixed; inset: 0;
+  z-index: 90;
+  background: rgba(9, 20, 14, 0.72);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+.wce-flyer-scroll {
+  position: absolute; inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  justify-content: center;
+  padding: clamp(0px, 3vh, 40px) clamp(0px, 3vw, 32px);
+}
+.wce-flyer {
+  position: relative;
+  width: 100%;
+  max-width: 62rem;
+  height: fit-content;
+  background:
+    radial-gradient(120% 80% at 50% 0%, #FFFCF2 0%, var(--wce-cream) 58%, var(--wce-cream-warm) 100%);
+  border: 1px solid var(--wce-gold);
+  border-radius: 3px;
+  box-shadow: 0 40px 90px -40px rgba(9,20,14,0.8);
+  overflow: hidden;
+  outline: 1px solid rgba(201,162,39,0.35);
+  outline-offset: -8px;
+}
+.wce-flyer-close,
+.wce-flyer-arrow {
+  position: absolute;
+  z-index: 20;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px;
+  border-radius: 9999px;
+  border: 1px solid rgba(201,162,39,0.6);
+  background: rgba(255,253,243,0.9);
+  color: var(--wce-gold-text);
+  transition: background .25s ease, color .25s ease, transform .25s ease;
+}
+.wce-flyer-close { top: 12px; right: 12px; }
+.wce-flyer-arrow { top: 50%; transform: translateY(-50%); }
+.wce-flyer-arrow.left { left: 10px; }
+.wce-flyer-arrow.right { right: 10px; }
+@media (hover: hover) {
+  .wce-flyer-close:hover, .wce-flyer-arrow:hover { background: var(--wce-gold); color: var(--wce-forest); }
+}
+.wce-flyer-lockup {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.9rem, 2.4vw, 2rem);
+}
+.wce-flyer-wordmark {
+  display: flex; flex-direction: column;
+  align-items: flex-start;
+  font-family: var(--wce-banner);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 0.98;
+  font-size: clamp(1.1rem, 2.5vw, 1.85rem);
+  color: var(--wce-gold-deep);
+}
+.wce-flyer-tagline {
+  margin-top: 0.55rem;
+  font-family: var(--wce-body);
+  font-weight: 400;
+  font-size: clamp(0.55rem, 1.1vw, 0.7rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wce-gold-text);
+}
+.wce-flyer-tagline i { font-style: normal; color: var(--wce-gold); padding: 0 0.2rem; }
+.wce-flyer-year { width: clamp(9rem, 22vw, 15rem); }
+.wce-flyer-vrule {
+  width: 1px;
+  align-self: stretch;
+  min-height: 3.5rem;
+  background: linear-gradient(180deg, rgba(201,162,39,0.1), var(--wce-gold), rgba(201,162,39,0.1));
+}
+.wce-flyer-dates {
+  font-family: var(--wce-banner);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: clamp(0.8rem, 1.7vw, 1.2rem);
+  color: var(--wce-gold-deep);
+}
+.wce-flyer-venue {
+  margin-top: 1.6rem;
+  text-align: center;
+  font-family: var(--wce-flyer);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  font-size: clamp(0.62rem, 1.5vw, 0.9rem);
+  color: var(--wce-gold-text);
+}
+.wce-flyer-featuring {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-family: var(--wce-display);
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  color: var(--wce-gold-deep);
+}
+.wce-flyer-prefix {
+  text-align: center;
+  font-family: var(--wce-flyer);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: clamp(0.66rem, 1.4vw, 0.85rem);
+  color: var(--wce-gold-text);
+}
+.wce-root .wce-flyer-name {
+  margin-top: 0.2rem;
+  text-align: center;
+  font-family: var(--wce-flyer);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.02;
+  font-size: clamp(1.9rem, 6vw, 4rem);
+  color: var(--wce-gold-deep);
+}
+.wce-flyer-title {
+  margin-top: 0.4rem;
+  text-align: center;
+  font-family: var(--wce-display);
+  font-style: italic;
+  font-size: clamp(0.95rem, 2vw, 1.35rem);
+  color: var(--wce-gold-text);
+}
+.wce-flyer-stage {
+  position: relative;
+  margin-top: clamp(1.2rem, 3vw, 2.2rem);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 1.5rem);
+}
+.wce-flyer-themeword {
+  display: flex; flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  font-family: var(--wce-flyer);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.4rem, 4.4vw, 3.4rem);
+  color: var(--wce-gold-deep);
+}
+.wce-flyer-portrait { position: relative; justify-self: center; }
+.wce-flyer-portrait-mask {
+  position: relative;
+  width: clamp(11rem, 26vw, 18rem);
+  height: clamp(11rem, 26vw, 18rem);
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 2px solid var(--wce-gold);
+  box-shadow: 0 0 0 7px var(--wce-cream), 0 0 0 8px var(--wce-gold), 0 20px 40px -26px rgba(122,96,17,0.7);
+  background: linear-gradient(160deg, rgba(45,74,53,0.12), rgba(201,162,39,0.14));
+  display: flex; align-items: center; justify-content: center;
+}
+.wce-flyer-portrait-mask img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 40%;
+}
+.wce-flyer-initials {
+  font-family: var(--wce-display);
+  font-size: 3rem;
+  color: var(--wce-gold-text);
+}
+.wce-flyer-emblem { justify-self: center; }
+.wce-flyer-session {
+  margin-top: clamp(1.4rem, 3vw, 2.4rem);
+  text-align: center;
+  font-family: var(--wce-display);
+  font-size: clamp(1.05rem, 2.2vw, 1.5rem);
+  line-height: 1.4;
+  color: var(--wce-gold-text);
+}
+.wce-flyer-band {
+  position: relative;
+  z-index: 10;
+  margin-top: clamp(1.6rem, 4vw, 2.8rem);
+  padding: clamp(1.4rem, 3vw, 2.2rem) 1.25rem;
+  background: linear-gradient(140deg, var(--wce-forest) 0%, var(--wce-forest-mid) 100%);
+  border-top: 1px solid var(--wce-gold);
+  text-align: center;
+}
+.wce-flyer-band-title {
+  font-family: var(--wce-flyer);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: clamp(0.85rem, 2vw, 1.3rem);
+  color: var(--wce-gold-light);
+}
+.wce-flyer-band-ctas {
+  margin-top: 1.2rem;
+  display: flex; flex-wrap: wrap;
+  align-items: center; justify-content: center;
+  gap: 0.9rem;
+}
+.wce-flyer-footer {
+  position: relative;
+  z-index: 10;
+  display: flex; flex-wrap: wrap;
+  align-items: center; justify-content: center;
+  gap: 0.75rem 1.6rem;
+  padding: 1rem 1.25rem 1.2rem;
+  background: var(--wce-forest);
+  border-top: 1px solid rgba(201,162,39,0.35);
+}
+.wce-flyer-poweredby {
+  font-family: var(--wce-body);
+  font-size: 0.58rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--wce-gold-light);
+}
+.wce-flyer-partners { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem 1.5rem; }
+.wce-flyer-partners img { height: 34px; width: auto; object-fit: contain; opacity: 0.92; }
+.wce-flyer-partners span { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,239,224,0.85); }
+
+@media (max-width: 767px) {
+  .wce-flyer-scroll { padding: 0; }
+  .wce-flyer { min-height: 100%; max-width: none; border-radius: 0; border-left: 0; border-right: 0; }
+  .wce-flyer-stage { grid-template-columns: 1fr; justify-items: center; gap: 1.1rem; }
+  .wce-flyer-themeword { order: -1; align-items: center; text-align: center; }
+  .wce-flyer-emblem { order: 3; }
+  .wce-flyer-arrow.left { left: 6px; }
+  .wce-flyer-arrow.right { right: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wce-root .wce-speaker-themeword,
+  .wce-root .wce-speaker-session,
+  .wce-root .wce-featured-aura,
+  .wce-root .wce-featured-petals,
+  .wce-root .wce-ring-ignite { transition: none !important; animation: none !important; }
+  .wce-root .wce-speaker-themeword { opacity: 0.12; transform: translate(-50%, -6px) scale(1); }
+  .wce-root .wce-speaker-session { opacity: 1; transform: none; }
+  .wce-flyer-overlay { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
