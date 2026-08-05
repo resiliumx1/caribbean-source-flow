@@ -23,6 +23,7 @@ import { useProductVariants, type ProductVariant } from "@/hooks/use-product-var
 import { useReviewStats } from "@/hooks/use-reviews";
 import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
+import { decodeHtmlEntities } from "@/lib/utils";
 
 // Redirect map for renamed product slugs
 const SLUG_REDIRECTS: Record<string, string> = {
@@ -378,9 +379,10 @@ export default function ProductDetail() {
                 <h3 className="text-lg font-semibold text-foreground mb-3">
                   About This Formulation
                 </h3>
-                <p className="text-[15px] leading-relaxed text-foreground whitespace-pre-line">
-                  {product.description}
-                </p>
+                <div
+                  className="text-[15px] leading-relaxed text-foreground product-description"
+                  dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(product.description) }}
+                />
               </div>
             )}
 

@@ -8,6 +8,7 @@ import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/hooks/use-products";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { decodeHtmlEntities } from "@/lib/utils";
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -152,9 +153,10 @@ export function QuickViewModal({ product, open, onOpenChange }: QuickViewModalPr
 
             {/* Full description */}
             {product.description && (
-              <p className="text-sm text-muted-foreground mb-6 line-clamp-4">
-                {product.description}
-              </p>
+              <div
+                className="text-sm text-muted-foreground mb-6 line-clamp-4 product-description"
+                dangerouslySetInnerHTML={{ __html: decodeHtmlEntities(product.description) }}
+              />
             )}
 
             {/* Key Benefits checklist */}

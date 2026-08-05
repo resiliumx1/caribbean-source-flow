@@ -591,3 +591,15 @@ html:not(.dark) select option {
   object-fit: contain;
   padding: 6%;
 }
+
+/* Product descriptions are stored as HTML — preserve paragraph/strong spacing */
+.product-description p {
+  margin-bottom: 0.75rem;
+}
+.product-description p:last-child {
+  margin-bottom: 0;
+}
+.product-description strong {
+  font-weight: 600;
+  color: inherit;
+}
