@@ -140,39 +140,8 @@ export function WcePartnerStrip() {
 }
 
 /* ---------------- 3. PATHWAYS ---------------- */
-function PathwayPrice({ currency, price }: { currency: string; price: number }) {
-  const { ref, value } = useCountUp(price);
-  return (
-    <p
-      ref={ref}
-      className="mt-2 text-[2.4rem]"
-      style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-deep)" }}
-    >
-      {currency} {value.toFixed(0)}
-    </p>
-  );
-}
-
 export function WcePathwaysSection() {
   return <PathwaysInner />;
-}
-
-/** Card heading: the mode reads on its own line, exactly as the flyer sets it. */
-function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolean }) {
-  const match = label.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
-  const lines = match ? [match[1], `(${match[2]})`] : [label];
-  return (
-    <MaskedHeading
-      as="h3"
-      lines={lines}
-      stagger={80}
-      className="relative mx-auto flex max-w-[22ch] flex-col justify-center text-[1.35rem] leading-snug"
-      style={{
-        color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)",
-        minHeight: "6.6rem",
-      }}
-    />
-  );
 }
 
 function PathwaysInner() {
