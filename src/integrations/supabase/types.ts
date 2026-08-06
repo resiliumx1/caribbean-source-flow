@@ -2639,6 +2639,7 @@ export type Database = {
         Args: { target_order_id: string }
         Returns: boolean
       }
+      is_wce_order: { Args: { _order_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "wce_admin"
