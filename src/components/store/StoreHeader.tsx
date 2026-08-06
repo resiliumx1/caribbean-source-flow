@@ -59,6 +59,17 @@ export function StoreHeader() {
   const hydratedRef = useRef(false);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
+  const isWceRoute = location.pathname.startsWith("/wce-2026");
+
+  // The WCE hero uses Lenis smooth scrolling; pause it while the panel is open
+  // so the page underneath cannot scroll behind the menu.
+  useEffect(() => {
+    if (!isWceRoute) return;
+    window.dispatchEvent(new CustomEvent("wce:scroll-lock", { detail: mobileMenuOpen }));
+    return () => {
+      window.dispatchEvent(new CustomEvent("wce:scroll-lock", { detail: false }));
+    };
+  }, [isWceRoute, mobileMenuOpen]);
 
   // Gate visibility: hidden until gate-complete on homepage first visit
   const [headerVisible, setHeaderVisible] = useState(() => {
@@ -230,7 +241,12 @@ export function StoreHeader() {
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-72" aria-label="Mobile navigation">
+              <SheetContent
+                side="right"
+                className={`w-72 ${isWceRoute ? "wce-mobile-nav" : ""}`}
+                overlayClassName={isWceRoute ? "wce-mobile-nav-overlay" : undefined}
+                aria-label="Mobile navigation"
+              >
                 <nav className="flex flex-col gap-4 mt-8">
                   {NAV_LINKS.map((link) => {
                     if ('external' in link && link.external) {

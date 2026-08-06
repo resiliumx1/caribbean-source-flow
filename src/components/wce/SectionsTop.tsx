@@ -38,15 +38,12 @@ export function WceHero() {
   const cls = (base: string) => (reduced ? base : `${base} wce-stage`);
 
   return (
-    <section
-      className="wce-hero-section relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[230px] pt-[clamp(2.5rem,5vh,4rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
-      style={{ background: "var(--wce-forest)" }}
-    >
+    <section className="wce-hero-section relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[168px] pt-[clamp(2.5rem,5vh,4rem)] text-center sm:pb-[200px] xl:pb-[230px]">
       <WceHeroMedia />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-2/3"
-        style={{ background: "linear-gradient(to top, #0F2A1D 14%, rgba(15,42,29,0.86) 42%, rgba(15,42,29,0.6) 68%, rgba(15,42,29,0.22) 100%)" }}
+        className="absolute inset-x-0 bottom-0 h-[58%]"
+        style={{ background: "linear-gradient(to top, rgba(15,42,29,0.94) 0%, rgba(15,42,29,0.78) 30%, rgba(15,42,29,0.44) 62%, rgba(15,42,29,0) 100%)" }}
       />
       <WceHeroParticles />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
@@ -173,7 +170,7 @@ function PathwaysInner() {
         {isLoading && <PathwayCardsSkeleton />}
 
         {!isLoading && (
-        <div className="wce-path-row mx-auto mt-14 grid max-w-5xl gap-6 sm:mt-20 sm:gap-7 md:grid-cols-2 lg:grid-cols-3">
+        <div className="wce-path-row mx-auto mt-14 grid max-w-5xl gap-6 sm:mt-20 sm:gap-7 lg:grid-cols-3">
           {(pathways ?? []).map((p, i) => (
             <PathwayCard
               key={p.id}
