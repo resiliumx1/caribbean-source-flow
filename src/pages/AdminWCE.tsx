@@ -139,23 +139,20 @@ export default function AdminWCE() {
 
         {/* Nav + content */}
         <div className="wa-shell">
+          <button
+            type="button"
+            className="wa-btn wa-btn-ghost wa-nav-trigger"
+            onClick={() => setDrawer(true)}
+            aria-expanded={drawer}
+          >
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+              <Menu className="h-4 w-4" aria-hidden /> Sections
+            </span>
+            <span style={{ color: "var(--wa-cream)" }}>{active.label}</span>
+          </button>
+
           <nav aria-label="WCE admin sections" className="wa-nav">
-            {groups.map((g) => (
-              <div key={g.group} className="wa-nav-group">
-                <span className="wa-label">{g.group}</span>
-                {g.items.map(({ key, label, Icon }) => (
-                  <button
-                    key={key}
-                    type="button"
-                    className="wa-nav-item"
-                    aria-current={tab === key ? "page" : undefined}
-                    onClick={() => setTab(key)}
-                  >
-                    <Icon aria-hidden /> {label}
-                  </button>
-                ))}
-              </div>
-            ))}
+            {navItems()}
           </nav>
 
           <section aria-live="polite" style={{ minWidth: 0 }}>
@@ -163,6 +160,28 @@ export default function AdminWCE() {
           </section>
         </div>
       </div>
+
+      {drawer && createPortal(
+        <div
+          className="wa-drawer-veil wce-admin wce-root"
+          role="dialog"
+          aria-modal="true"
+          aria-label="WCE admin sections"
+          onClick={(e) => { if (e.target === e.currentTarget) setDrawer(false); }}
+        >
+          <div className="wa-drawer">
+            <div className="wa-drawer-head">
+              <span className="wa-label">Sections</span>
+              <button type="button" className="wa-icon-btn" onClick={() => setDrawer(false)} aria-label="Close sections menu">
+                <X className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+            {navItems(() => setDrawer(false))}
+          </div>
+        </div>,
+        document.body,
+      )}
     </div>
+    </ConfirmProvider>
   );
 }
