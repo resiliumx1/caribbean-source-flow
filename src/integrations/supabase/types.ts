@@ -2225,6 +2225,42 @@ export type Database = {
         }
         Relationships: []
       }
+      wce_organiser_invites: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          display_name: string | null
+          email: string
+          id: string
+          invited_at: string
+          invited_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          display_name?: string | null
+          email: string
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       wce_pathways: {
         Row: {
           capacity: number | null

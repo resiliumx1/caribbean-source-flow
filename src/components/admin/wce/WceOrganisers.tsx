@@ -1,148 +1,348 @@
-/** Full admins only: grant or revoke the narrow wce_admin role by email.
- *  Roles live in public.user_roles, which is writable only by full admins at the
- *  RLS level — a wce_admin hitting this table directly is refused. */
-import { useCallback, useEffect, useState } from "react";
+/** Full admins only: invite, revoke and re-invite WCE 2026 organisers.
+ *  Every privileged operation runs through the `wce-invite-organiser` edge
+ *  function, which re-checks full-admin status server-side. A wce_admin never
+ *  sees this section (AdminWCE omits it from the navigation entirely). */
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Loader2, Trash2, ShieldCheck } from "lucide-react";
-import { inputCls } from "./shared";
+import { Loader2, Trash2, ShieldCheck, Send, RotateCcw, Mail } from "lucide-react";
+import { SectionHeading, StatCard } from "./ui";
+import {
+  wceToast, useConfirm, InfoTip, TipLabel, CardsSkeleton, StatsSkeleton,
+  GuidedEmpty, SaveBadge, useSaveState, Expander,
+} from "./kit";
 
-type Organiser = { id: string; user_id: string; email: string; created_at: string };
+type Row = {
+  email: string;
+  display_name: string | null;
+  user_id: string | null;
+  role_id: string | null;
+  invited_at: string | null;
+  accepted_at: string | null;
+  status: "active" | "pending" | "revoked";
+};
 
 const db = supabase as any;
 
+function fmt(d: string | null) {
+  return d ? new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—";
+}
+
 export default function WceOrganisers() {
-  const { toast } = useToast();
-  const [rows, setRows] = useState<Organiser[]>([]);
+  const confirm = useConfirm();
+  const { state, message, run } = useSaveState();
+  const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data: roles, error } = await db
-        .from("user_roles")
-        .select("id, user_id, created_at")
-        .eq("role", "wce_admin")
-        .order("created_at", { ascending: true });
-      if (error) throw error;
+      const [rolesRes, invitesRes] = await Promise.all([
+        db.from("user_roles").select("id, user_id, created_at").eq("role", "wce_admin"),
+        db.from("wce_organiser_invites")
+          .select("email, display_name, invited_at, accepted_at, status")
+          .order("invited_at", { ascending: false }),
+      ]);
+      if (rolesRes.error) throw rolesRes.error;
+      if (invitesRes.error) throw invitesRes.error;
 
-      const ids = (roles ?? []).map((r: any) => r.user_id);
+      const roles = rolesRes.data ?? [];
+      const ids = roles.map((r: any) => r.user_id);
       let emails: Record<string, string> = {};
       if (ids.length) {
-        const { data: profiles } = await supabase
-          .from("profiles").select("id, email").in("id", ids);
-        emails = Object.fromEntries((profiles ?? []).map((p) => [p.id, p.email]));
+        const { data: profiles } = await supabase.from("profiles").select("id, email").in("id", ids);
+        emails = Object.fromEntries((profiles ?? []).map((p) => [p.id, (p.email ?? "").toLowerCase()]));
       }
-      setRows((roles ?? []).map((r: any) => ({ ...r, email: emails[r.user_id] ?? r.user_id })));
+
+      const map = new Map<string, Row>();
+      for (const inv of invitesRes.data ?? []) {
+        const key = (inv.email as string).toLowerCase();
+        map.set(key, {
+          email: key,
+          display_name: inv.display_name ?? null,
+          user_id: null,
+          role_id: null,
+          invited_at: inv.invited_at ?? null,
+          accepted_at: inv.accepted_at ?? null,
+          status: inv.status === "revoked" ? "revoked" : inv.status === "accepted" ? "active" : "pending",
+        });
+      }
+      for (const r of roles) {
+        const key = emails[r.user_id] || r.user_id;
+        const prior = map.get(key);
+        map.set(key, {
+          email: key,
+          display_name: prior?.display_name ?? null,
+          user_id: r.user_id,
+          role_id: r.id,
+          invited_at: prior?.invited_at ?? r.created_at,
+          accepted_at: prior?.accepted_at ?? null,
+          // Holding the role means access is live, whatever the invite says.
+          status: prior?.status === "pending" && !prior?.accepted_at ? "pending" : "active",
+        });
+      }
+
+      setRows(
+        Array.from(map.values()).sort((a, b) => {
+          const order = { active: 0, pending: 1, revoked: 2 } as const;
+          if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+          return (b.invited_at ?? "").localeCompare(a.invited_at ?? "");
+        }),
+      );
     } catch (e: any) {
-      toast({ variant: "destructive", title: "Could not load organisers", description: e.message });
+      wceToast({ title: "Could not load organisers", description: e?.message, tone: "error" });
     }
     setLoading(false);
-  }, [toast]);
+  }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { void load(); }, [load]);
 
-  const grant = async (e: React.FormEvent) => {
+  const call = async (
+    action: "invite" | "resend" | "revoke",
+    payload: { email: string; display_name?: string | null },
+  ) => {
+    const { data, error } = await supabase.functions.invoke("wce-invite-organiser", {
+      body: {
+        action,
+        email: payload.email,
+        display_name: payload.display_name ?? null,
+        redirect_to: `${window.location.origin}/wce-admin/accept`,
+      },
+    });
+    if (error) {
+      // Edge errors carry the JSON body in the response.
+      let msg = error.message;
+      try {
+        const body = await (error as any).context?.json?.();
+        if (body?.error) msg = body.error;
+      } catch { /* keep the transport message */ }
+      throw new Error(msg);
+    }
+    if (data?.error) throw new Error(data.error);
+    return data as { already_existed?: boolean; email_sent?: boolean };
+  };
+
+  const invite = async (e: React.FormEvent) => {
     e.preventDefault();
     const target = email.trim().toLowerCase();
     if (!target) return;
-    setSaving(true);
-    try {
-      const { data: profile, error: pErr } = await supabase
-        .from("profiles").select("id").ilike("email", target).maybeSingle();
-      if (pErr) throw pErr;
-      if (!profile) {
-        toast({
-          variant: "destructive",
-          title: "No account found",
-          description: "The person must already have an account on the site before they can be made an organiser.",
+    setBusy(target);
+    await run({
+      label: "Invitation",
+      write: async () => {
+        const res = await call("invite", { email: target, display_name: name.trim() || null });
+        wceToast({
+          title: res?.already_existed
+            ? "Existing account granted organiser access"
+            : "Invitation sent",
+          description: res?.already_existed
+            ? `${target} already had an account here, so they now hold organiser access. A set-password email has been sent.`
+            : `${target} will receive an email with a link to set their password.`,
         });
-        setSaving(false);
-        return;
-      }
-      const { error } = await db
-        .from("user_roles")
-        .upsert({ user_id: profile.id, role: "wce_admin" }, { onConflict: "user_id,role" });
-      if (error) throw error;
-      toast({ title: "Organiser access granted", description: target });
-      setEmail("");
-      await load();
-    } catch (e: any) {
-      toast({ variant: "destructive", title: "Could not grant access", description: e.message });
-    }
-    setSaving(false);
+        setEmail("");
+        setName("");
+      },
+      onDone: () => { void load(); },
+    });
+    setBusy(null);
   };
 
-  const revoke = async (row: Organiser) => {
-    if (!confirm(`Remove organiser access for ${row.email}?`)) return;
-    const { error } = await db.from("user_roles").delete().eq("id", row.id);
-    if (error) {
-      toast({ variant: "destructive", title: "Could not revoke access", description: error.message });
-      return;
-    }
-    toast({ title: "Organiser access revoked", description: row.email });
-    await load();
+  const resend = async (row: Row) => {
+    setBusy(row.email);
+    await run({
+      label: "Invitation",
+      write: async () => {
+        await call("resend", { email: row.email });
+        wceToast({ title: "Invitation resent", description: `A fresh link is on its way to ${row.email}.` });
+      },
+      onDone: () => { void load(); },
+    });
+    setBusy(null);
   };
+
+  const revoke = async (row: Row) => {
+    const ok = await confirm({
+      title: "Revoke organiser access?",
+      item: row.email,
+      body: "They will immediately lose access to the WCE organiser console. Their account stays, but signing in will no longer let them in.",
+      confirmLabel: "Revoke access",
+    });
+    if (!ok) return;
+    setBusy(row.email);
+    const snapshot = rows;
+    await run({
+      label: "Access change",
+      optimistic: () => setRows((p) => p.map((r) => (r.email === row.email ? { ...r, status: "revoked", role_id: null } : r))),
+      rollback: () => setRows(snapshot),
+      write: async () => {
+        await call("revoke", { email: row.email });
+        wceToast({ title: "Organiser access revoked", description: row.email });
+      },
+      onDone: () => { void load(); },
+    });
+    setBusy(null);
+  };
+
+  const counts = useMemo(() => ({
+    active: rows.filter((r) => r.status === "active").length,
+    pending: rows.filter((r) => r.status === "pending").length,
+    revoked: rows.filter((r) => r.status === "revoked").length,
+  }), [rows]);
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-lg border border-border bg-card p-4">
-        <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4" /> WCE Organisers
-        </h2>
-        <p className="text-xs text-muted-foreground mt-1">
-          Organisers can manage this WCE section and see WCE orders only. They cannot reach any
-          other part of the store admin, and cannot grant roles.
+    <div className="space-y-5">
+      <SectionHeading
+        title="Organisers"
+        sub="Invite the event team by email. Organisers see this console and WCE orders only — never the rest of the store admin, and they cannot invite anyone themselves."
+      />
+
+      {loading ? <StatsSkeleton count={3} /> : (
+        <div className="grid gap-3 sm:grid-cols-3">
+          <StatCard label="Active organisers" value={counts.active} accent="sage" hint="Can sign in right now" />
+          <StatCard label="Awaiting acceptance" value={counts.pending} accent="gold" hint="Invited, password not set" />
+          <StatCard label="Revoked" value={counts.revoked} accent="terracotta" hint="Access removed" />
+        </div>
+      )}
+
+      {/* Invite form */}
+      <form onSubmit={invite} className="wa-panel" style={{ display: "grid", gap: "0.9rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+          <h3 className="wa-serif" style={{ fontSize: "1.2rem", margin: 0 }}>
+            <ShieldCheck className="h-4 w-4" aria-hidden style={{ display: "inline", marginRight: 6, color: "var(--wa-gold)" }} />
+            Invite an organiser
+          </h3>
+          <SaveBadge state={state} message={message} />
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <TipLabel htmlFor="wce-inv-email" tip="We email this address a one-time link. They choose their own password — you never see or set it. Only addresses you invite here gain organiser access.">
+              Email address
+            </TipLabel>
+            <input
+              id="wce-inv-email"
+              type="email"
+              required
+              placeholder="organiser@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="wa-field-label" htmlFor="wce-inv-name">Name (optional)</label>
+            <input
+              id="wce-inv-name"
+              type="text"
+              placeholder="Full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <p className="wa-hint">
+          If the address already has an account on this site, we simply add organiser access to it and email them a
+          set-password link instead of a new invitation.
         </p>
 
-        <form onSubmit={grant} className="mt-4 flex flex-col sm:flex-row gap-2">
-          <input
-            type="email"
-            required
-            className={inputCls}
-            placeholder="organiser@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Button type="submit" disabled={saving} className="min-h-[44px] shrink-0">
-            {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-            Grant organiser access
-          </Button>
-        </form>
-      </div>
+        <div>
+          <button type="submit" className="wa-btn wa-btn-primary" disabled={busy !== null}>
+            {busy && state === "saving" ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Send className="h-4 w-4" aria-hidden />}
+            Send invitation
+          </button>
+        </div>
+      </form>
 
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        {loading ? (
-          <div className="p-8 flex justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-          </div>
-        ) : rows.length === 0 ? (
-          <p className="p-8 text-center text-sm text-muted-foreground">No organisers yet.</p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {rows.map((r) => (
-              <li key={r.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                <div className="min-w-0">
-                  <p className="text-sm text-foreground truncate">{r.email}</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    Added {new Date(r.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-                <button
-                  onClick={() => revoke(r)}
-                  className="text-destructive inline-flex items-center gap-1.5 text-xs min-h-[44px] px-2"
-                  aria-label={`Revoke organiser access for ${r.email}`}
-                >
-                  <Trash2 className="h-4 w-4" /> Revoke
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {/* Organisers & invites */}
+      {loading ? (
+        <CardsSkeleton count={3} lines={2} />
+      ) : rows.length === 0 ? (
+        <div className="wa-panel">
+          <GuidedEmpty
+            title="No organisers yet"
+            line="Invite your first team member using the form above. They will receive an email with a link to set a password, then land straight in this console."
+          />
+        </div>
+      ) : (
+        <div className="wa-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Invited</th>
+                <th>Accepted</th>
+                <th style={{ textAlign: "right" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.email}>
+                  <td data-label="Email">
+                    <div className="wa-strong" style={{ wordBreak: "break-word" }}>{r.email}</div>
+                    {r.display_name && <div className="wa-muted" style={{ fontSize: "0.8rem" }}>{r.display_name}</div>}
+                  </td>
+                  <td data-label="Status">
+                    <span
+                      className="wa-pill"
+                      data-tone={r.status === "active" ? "accepted" : r.status === "pending" ? "new" : "declined"}
+                    >
+                      {r.status === "active" ? "Active" : r.status === "pending" ? "Pending" : "Revoked"}
+                    </span>
+                  </td>
+                  <td data-label="Invited" className="whitespace-nowrap">{fmt(r.invited_at)}</td>
+                  <td data-label="Accepted" className="whitespace-nowrap">{fmt(r.accepted_at)}</td>
+                  <td data-label="Actions">
+                    <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
+                      {r.status !== "active" && (
+                        <button
+                          type="button"
+                          className="wa-btn wa-btn-ghost"
+                          style={{ padding: "0 0.75rem", fontSize: "0.72rem" }}
+                          disabled={busy === r.email}
+                          onClick={() => void resend(r)}
+                        >
+                          {busy === r.email ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden /> : <RotateCcw className="h-3.5 w-3.5" aria-hidden />}
+                          {r.status === "revoked" ? "Re-invite" : "Resend"}
+                        </button>
+                      )}
+                      {r.status !== "revoked" && (
+                        <button
+                          type="button"
+                          className="wa-btn wa-btn-danger"
+                          style={{ padding: "0 0.75rem", fontSize: "0.72rem" }}
+                          disabled={busy === r.email}
+                          onClick={() => void revoke(r)}
+                          aria-label={`Revoke organiser access for ${r.email}`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" aria-hidden /> Revoke
+                        </button>
+                      )}
+                      <InfoTip label="Revoking access">
+                        Removes their organiser role at once, so the console and WCE orders become unreachable for them.
+                        Their login still exists and nothing they entered is deleted — you can re-invite them later.
+                      </InfoTip>
+                    </div>
+                    <Expander label="What they can see">
+                      <p className="wa-hint">
+                        This console only: leads, WCE orders, referral codes, pathways, speakers, media, FAQs and
+                        event settings. No products, customers, store orders or payments.
+                      </p>
+                    </Expander>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <p className="wa-hint" style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
+        <Mail className="h-4 w-4" aria-hidden style={{ color: "var(--wa-gold)", flex: "none", marginTop: 2 }} />
+        Invitation links expire and can be used once. If someone says the link no longer works, use Resend.
+      </p>
     </div>
   );
 }
