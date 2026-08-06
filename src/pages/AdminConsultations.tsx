@@ -83,7 +83,7 @@ export default function AdminConsultations() {
     setSaving(true);
     const { error } = await supabase
       .from("consultation_settings")
-      .update({ value: settings as unknown as Record<string, unknown> })
+      .update({ value: settings as unknown as any })
       .eq("key", "consultation");
     setSaving(false);
     if (error) {
