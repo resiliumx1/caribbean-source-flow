@@ -101,7 +101,7 @@ function PathwayRow({
       label,
       optimistic: () => setRows((rs) => rs.map((r) => (r.id === p.id ? { ...r, ...values } : r))),
       rollback: () => setRows((rs) => rs.map((r) => (r.id === p.id ? prev : r))),
-      write: () => supabase.from("wce_pathways").update(values).eq("id", p.id),
+      write: async () => await supabase.from("wce_pathways").update(values).eq("id", p.id),
     });
   };
 
