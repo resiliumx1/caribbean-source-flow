@@ -685,7 +685,7 @@ export function WceApplicationForm() {
               <input id="wce-company" name="company" tabIndex={-1} autoComplete="off" value={values.company} onChange={set("company")} />
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="wce-form-grid grid gap-6 sm:grid-cols-2">
               <div>
                 <label className="wce-label" htmlFor="wce-name">Full Name</label>
                 <input
