@@ -199,19 +199,26 @@ export function SpeakerFlyer({
 
   return (
     <motion.div
+      ref={overlayRef}
       className="wce-flyer-overlay"
       role="dialog"
       aria-modal="true"
-      aria-label={`${speaker.name} — event flyer`}
+      aria-labelledby="wce-flyer-heading"
+      aria-describedby="wce-flyer-desc"
       initial={reduced ? { opacity: 0 } : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: reduced ? 0.2 : 0.35, ease: EASE }}
     >
-      <div className="wce-flyer-scroll" data-lenis-prevent onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div
+        className="wce-flyer-scroll"
+        data-lenis-prevent
+        onMouseDown={(e) => { if (e.target === e.currentTarget) requestClose(); }}
+      >
         <motion.div
           ref={panelRef}
           className="wce-flyer"
+          tabIndex={-1}
           initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.99 }}
@@ -225,13 +232,36 @@ export function SpeakerFlyer({
           <CornerVine flip className="pointer-events-none absolute bottom-3 left-3 rotate-180 opacity-60" />
           <CornerVine className="pointer-events-none absolute bottom-3 right-3 rotate-180 opacity-60" />
 
-          <button ref={closeRef} type="button" className="wce-flyer-close" onClick={onClose} aria-label="Close speaker flyer">
+          {/* Announces the speaker on open and on every arrow navigation. */}
+          <p className="sr-only" role="status" aria-live="polite">
+            {speaker.name}
+            {speaker.title?.trim() ? `, ${speaker.title}` : ""}
+            {position && total ? ` — speaker ${position} of ${total}` : ""}
+          </p>
+
+          <button
+            ref={closeRef}
+            type="button"
+            className="wce-flyer-close"
+            onClick={requestClose}
+            aria-label="Close speaker flyer"
+          >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
-          <button type="button" className="wce-flyer-arrow left" onClick={onPrev} aria-label="Previous speaker">
+          <button
+            type="button"
+            className="wce-flyer-arrow left"
+            onClick={onPrev}
+            aria-label={prevName ? `Previous speaker: ${prevName}` : "Previous speaker"}
+          >
             <ChevronLeft className="h-6 w-6" aria-hidden="true" />
           </button>
-          <button type="button" className="wce-flyer-arrow right" onClick={onNext} aria-label="Next speaker">
+          <button
+            type="button"
+            className="wce-flyer-arrow right"
+            onClick={onNext}
+            aria-label={nextName ? `Next speaker: ${nextName}` : "Next speaker"}
+          >
             <ChevronRight className="h-6 w-6" aria-hidden="true" />
           </button>
           <span aria-hidden="true" className={`wce-flyer-fade ${atBottom ? "is-hidden" : ""}`} />
@@ -273,7 +303,7 @@ export function SpeakerFlyer({
                 transition={{ duration: 0.3, ease: EASE }}
               >
                 {speaker.prefix?.trim() && <p className="wce-flyer-prefix">{speaker.prefix}</p>}
-                <h2 className="wce-flyer-name">{speaker.name}</h2>
+                <h2 id="wce-flyer-heading" className="wce-flyer-name">{speaker.name}</h2>
                 {speaker.title?.trim() && <p className="wce-flyer-title">“{speaker.title}”</p>}
               </motion.div>
             </AnimatePresence>
@@ -324,17 +354,29 @@ export function SpeakerFlyer({
               </AnimatePresence>
             )}
 
-            {speaker.bio?.trim() && <p className="wce-flyer-bio">{speaker.bio}</p>}
+            <p id="wce-flyer-desc" className={speaker.bio?.trim() ? "wce-flyer-bio" : "sr-only"}>
+              {speaker.bio?.trim()
+                ? speaker.bio
+                : `Event flyer for ${speaker.name}. Use the left and right arrow keys to move between speakers, or Escape to close.`}
+            </p>
           </div>
 
           {/* Reserve band */}
           <motion.div className="wce-flyer-band" {...rise(0.36)}>
             <p className="wce-flyer-band-title">Reserve Your Spot</p>
             <div className="wce-flyer-band-ctas">
-              <button type="button" className="wce-btn wce-btn-gold" onClick={() => jump("pathways")}>
+              <button
+                type="button"
+                className="wce-btn wce-btn-gold"
+                onClick={() => jump("pathways", "reserve", "Reserve Your Spot")}
+              >
                 Reserve Your Spot
               </button>
-              <button type="button" className="wce-btn wce-btn-outline" onClick={() => jump("apply")}>
+              <button
+                type="button"
+                className="wce-btn wce-btn-outline"
+                onClick={() => jump("apply", "apply", "Apply for the Retreat")}
+              >
                 Apply for the Retreat
               </button>
             </div>
