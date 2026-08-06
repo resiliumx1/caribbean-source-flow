@@ -257,9 +257,10 @@ export default function WceOrganisers() {
       />
 
       {loading ? <StatsSkeleton count={3} /> : (
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard label="Active organisers" value={counts.active} accent="sage" hint="Can sign in right now" />
-          <StatCard label="Awaiting acceptance" value={counts.pending} accent="gold" hint="Invited, password not set" />
+          <StatCard label="Awaiting acceptance" value={counts.pending} accent="gold" hint={`Link valid for ${INVITE_TTL_HOURS}h`} />
+          <StatCard label="Expired links" value={counts.expired} accent="gold" hint="Resend to reissue" />
           <StatCard label="Revoked" value={counts.revoked} accent="terracotta" hint="Access removed" />
         </div>
       )}
@@ -303,6 +304,7 @@ export default function WceOrganisers() {
         <p className="wa-hint">
           If the address already has an account on this site, we simply add organiser access to it and email them a
           set-password link instead of a new invitation.
+          {" "}Invitation links are valid for {INVITE_TTL_HOURS} hours — after that use Resend to issue a fresh one.
         </p>
 
         <div>
@@ -331,6 +333,7 @@ export default function WceOrganisers() {
                 <th>Email</th>
                 <th>Status</th>
                 <th>Invited</th>
+                <th>Link validity</th>
                 <th>Accepted</th>
                 <th style={{ textAlign: "right" }}>Actions</th>
               </tr>
@@ -345,26 +348,57 @@ export default function WceOrganisers() {
                   <td data-label="Status">
                     <span
                       className="wa-pill"
-                      data-tone={r.status === "active" ? "accepted" : r.status === "pending" ? "new" : "declined"}
+                      data-tone={
+                        r.status === "active" ? "accepted"
+                          : r.status === "pending" ? "new"
+                          : r.status === "expired" ? "pending"
+                          : "declined"
+                      }
                     >
-                      {r.status === "active" ? "Active" : r.status === "pending" ? "Pending" : "Revoked"}
+                      {r.status === "active" ? "Active"
+                        : r.status === "pending" ? "Pending"
+                        : r.status === "expired" ? "Link expired"
+                        : "Revoked"}
                     </span>
                   </td>
                   <td data-label="Invited" className="whitespace-nowrap">{fmt(r.invited_at)}</td>
+                  <td data-label="Link validity" className="whitespace-nowrap">
+                    {r.status === "pending" || r.status === "expired" ? (
+                      <>
+                        <span className={r.status === "expired" ? "wa-muted" : "wa-strong"} style={{ fontSize: "0.8rem" }}>
+                          {expiryLabel(r.expires_at) ?? "—"}
+                        </span>
+                        {r.resend_count > 0 && (
+                          <div className="wa-muted" style={{ fontSize: "0.72rem" }}>
+                            Resent {r.resend_count}×
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <span className="wa-muted">—</span>
+                    )}
+                  </td>
                   <td data-label="Accepted" className="whitespace-nowrap">{fmt(r.accepted_at)}</td>
                   <td data-label="Actions">
                     <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
                       {r.status !== "active" && (
                         <button
                           type="button"
-                          className="wa-btn wa-btn-ghost"
+                          className={r.status === "expired" ? "wa-btn wa-btn-primary" : "wa-btn wa-btn-ghost"}
                           style={{ padding: "0 0.75rem", fontSize: "0.72rem" }}
                           disabled={busy === r.email}
                           onClick={() => void resend(r)}
+                          aria-label={`Resend the organiser invitation for ${r.email}`}
                         >
                           {busy === r.email ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden /> : <RotateCcw className="h-3.5 w-3.5" aria-hidden />}
                           {r.status === "revoked" ? "Re-invite" : "Resend"}
                         </button>
+                      )}
+                      {(r.status === "pending" || r.status === "expired") && (
+                        <InfoTip label="Resending">
+                          Issues a brand-new link and restarts the {INVITE_TTL_HOURS}-hour window. Any link sent
+                          earlier stops working immediately, and the invitation stays under the same email address.
+                        </InfoTip>
                       )}
                       {r.status !== "revoked" && (
                         <button
@@ -399,7 +433,8 @@ export default function WceOrganisers() {
 
       <p className="wa-hint" style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
         <Mail className="h-4 w-4" aria-hidden style={{ color: "var(--wa-gold)", flex: "none", marginTop: 2 }} />
-        Invitation links expire and can be used once. If someone says the link no longer works, use Resend.
+        Invitation links can be used once and expire {INVITE_TTL_HOURS} hours after they are sent. If someone says the
+        link no longer works, use Resend — it reissues a fresh link and invalidates the old one.
       </p>
     </div>
   );
