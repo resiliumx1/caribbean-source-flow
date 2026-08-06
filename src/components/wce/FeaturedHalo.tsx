@@ -198,6 +198,10 @@ export function FeaturedHalo({ src, alt, className = "", animate = true }: Props
         pathLength={1}
         strokeDasharray="0.16 0.84"
       />
+      <circle className="wce-halo__ripple wce-halo__ripple--1" cx={CX} cy={CY} r={PR + 30}
+              fill="none" stroke="var(--wce-gold-light)" strokeWidth={2} opacity={0} />
+      <circle className="wce-halo__ripple wce-halo__ripple--2" cx={CX} cy={CY} r={PR + 30}
+              fill="none" stroke="var(--wce-gold)" strokeWidth={1.4} opacity={0} />
       <circle cx={CX} cy={CY} r={PR + 27} fill="none" stroke="var(--wce-gold)" strokeWidth={1.6} opacity={0.85} />
       <image
         href={src}
