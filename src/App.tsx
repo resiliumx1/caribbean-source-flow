@@ -104,7 +104,7 @@ queryClient.prefetchQuery({
 const COMING_SOON = false;
 
 // Pages that should NOT show the header
-const pagesWithoutHeader = ["/admin"];
+const pagesWithoutHeader = ["/admin", "/wce-admin"];
 
 // Loading fallback
 function PageLoader() {
