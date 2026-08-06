@@ -1758,3 +1758,31 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   .wce-btn-ripple { display: none !important; }
   .wce-botanical-a, .wce-botanical-b, .wce-botanical-c { transform: none !important; }
 }
+
+/* ==========================================================================
+   Responsive rhythm — tablet and mobile vertical compression
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .wce-root section:not(.wce-hero-section) {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+  .wce-root footer { padding-top: 3.75rem !important; padding-bottom: 3.75rem !important; }
+  .wce-root .wce-speaker-stage { padding-top: 1.75rem; }
+}
+
+@media (max-width: 639px) {
+  .wce-root section:not(.wce-hero-section) {
+    padding-top: 3.25rem !important;
+    padding-bottom: 3.25rem !important;
+  }
+  .wce-hero-section { padding-bottom: 156px !important; }
+  .wce-partner-band { height: 74px; }
+  .wce-hero-emblem img {
+    width: clamp(118px, 40vw, 168px) !important;
+    height: auto !important;
+  }
+  .wce-root .wce-speaker-stage { padding-top: 1.25rem; }
+  /* keep the last band clear of the sticky mobile CTA bar */
+  .wce-root footer { padding-bottom: 6.5rem !important; }
+}
