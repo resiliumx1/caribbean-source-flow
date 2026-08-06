@@ -8,6 +8,7 @@ import { useWceSpeakers } from "./useWceData";
 import { Reveal, useInView, useIsTouch, useWceReducedMotion, MaskedHeading, useSectionLift } from "./motion";
 import { SpeakersSkeleton } from "./Skeletons";
 import { SpeakerFlyer } from "./SpeakerFlyer";
+import { FeaturedHalo } from "./FeaturedHalo";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
 
@@ -130,20 +131,20 @@ function FeaturedSpeaker({
             <span key={`${l}-${i}`}>{l}</span>
           ))}
         </span>
-        <span aria-hidden="true" className="wce-featured-aura" />
-        <span aria-hidden="true" className="wce-featured-petals">
-          <FlowerOfLifeMark size={340} opacity={1} />
-        </span>
-        <span className="wce-speaker-portrait-slot lg">
-          <span aria-hidden="true" className="wce-ring-ignite" />
-          <span className="wce-speaker-ring">
-            {portrait ? (
-              <img src={portrait} alt={speaker.name} className="wce-portrait-img" decoding="async" />
-            ) : (
-              <span className="wce-speaker-initials">{speakerInitials(speaker.name)}</span>
-            )}
+        {portrait ? (
+          <span
+            className="relative block"
+            style={{ width: "clamp(280px, 34vw, 460px)", overflow: "visible" }}
+          >
+            <FeaturedHalo src={portrait} alt={speaker.name} animate={!reduced} />
           </span>
-        </span>
+        ) : (
+          <span className="wce-speaker-portrait-slot lg">
+            <span className="wce-speaker-ring">
+              <span className="wce-speaker-initials">{speakerInitials(speaker.name)}</span>
+            </span>
+          </span>
+        )}
       </div>
 
       <div className="relative md:flex-1">
