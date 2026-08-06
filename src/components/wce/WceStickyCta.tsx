@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { selectPathway } from "./pathway-select";
+import { trackWceCta } from "./cta-tracking";
 
 /** Mobile-only bottom action bar. Appears past the hero, hides while the form is in view. */
 export function WceStickyCta() {
@@ -36,6 +37,7 @@ export function WceStickyCta() {
         tabIndex={visible ? 0 : -1}
         onClick={(e) => {
           e.preventDefault();
+          trackWceCta("reserve", "sticky_bar", "Reserve Spot");
           document.getElementById("pathways")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }}
       >
@@ -45,7 +47,11 @@ export function WceStickyCta() {
         href="#apply"
         className="wce-btn wce-btn-outline"
         tabIndex={visible ? 0 : -1}
-        onClick={(e) => { e.preventDefault(); selectPathway("retreat"); }}
+        onClick={(e) => {
+          e.preventDefault();
+          trackWceCta("apply", "sticky_bar", "Apply for Retreat");
+          selectPathway("retreat");
+        }}
       >
         Apply for Retreat
       </a>
