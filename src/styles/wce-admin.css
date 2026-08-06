@@ -227,3 +227,16 @@
 @media (max-width: 520px) {
   .wce-admin .wa-body { padding: 1.1rem 0.85rem !important; }
 }
+
+/* Legibility guard: tabs still using store-admin utility classes must not render
+   light-on-light inside the dark console. */
+.wce-admin .bg-card,
+.wce-admin .bg-background,
+.wce-admin .bg-muted,
+.wce-admin .bg-muted\/50 { background-color: rgba(255, 255, 255, 0.04) !important; }
+.wce-admin .text-foreground { color: var(--wa-cream) !important; }
+.wce-admin .text-muted-foreground { color: var(--wa-cream-mute) !important; }
+.wce-admin .text-primary { color: var(--wa-gold-light) !important; }
+.wce-admin .border-border,
+.wce-admin .border { border-color: var(--wa-line) !important; }
+.wce-admin .text-destructive { color: var(--wa-terracotta) !important; }
