@@ -1789,3 +1789,108 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   /* keep the last band clear of the sticky mobile CTA bar */
   .wce-root footer { padding-bottom: 6.5rem !important; }
 }
+
+/* FeaturedHalo — append to wce.css */
+.wce-halo__rays,
+.wce-halo__geo,
+.wce-halo__orbit,
+.wce-halo__diamonds {
+  transform-box: view-box;
+  transform-origin: 450px 450px;
+  will-change: transform;
+}
+
+@keyframes wce-halo-cw  { to { transform: rotate(360deg); } }
+@keyframes wce-halo-ccw { to { transform: rotate(-360deg); } }
+
+.wce-halo[data-visible="true"] .wce-halo__rays     { animation: wce-halo-cw 120s linear infinite; }
+.wce-halo[data-visible="true"] .wce-halo__geo      { animation: wce-halo-ccw 240s linear infinite; }
+.wce-halo[data-visible="true"] .wce-halo__orbit,
+.wce-halo[data-visible="true"] .wce-halo__diamonds { animation: wce-halo-cw 90s linear infinite; }
+
+.wce-halo__rays path {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scaleY(0);
+  opacity: 0;
+  transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity   420ms ease-out;
+}
+.wce-halo[data-visible="true"] .wce-halo__rays path { transform: scaleY(1); }
+.wce-halo[data-visible="true"] .wce-halo__rays path:nth-child(odd)  { opacity: 0.85; }
+.wce-halo[data-visible="true"] .wce-halo__rays path:nth-child(even) { opacity: 0.45; }
+
+.wce-halo__geo,
+.wce-halo__orbit,
+.wce-halo__diamonds,
+.wce-halo__aura {
+  opacity: 0;
+  transition: opacity 1100ms ease-out 260ms;
+}
+.wce-halo[data-visible="true"] .wce-halo__geo      { opacity: 0.2; }
+.wce-halo[data-visible="true"] .wce-halo__orbit    { opacity: 0.75; }
+.wce-halo[data-visible="true"] .wce-halo__diamonds { opacity: 0.9; }
+.wce-halo[data-visible="true"] .wce-halo__aura     { opacity: 1; }
+
+.wce-halo__portrait {
+  opacity: 0;
+  transition: opacity 700ms ease-out 120ms;
+}
+.wce-halo[data-visible="true"] .wce-halo__portrait { opacity: 1; }
+
+.wce-halo__sweep {
+  transform-box: view-box;
+  transform-origin: 450px 450px;
+  opacity: 0;
+  pointer-events: none;
+}
+@keyframes wce-halo-ignite {
+  0%   { opacity: 0;   transform: rotate(0deg); }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0;   transform: rotate(360deg); }
+}
+.wce-halo:hover .wce-halo__sweep,
+.wce-halo:focus-visible .wce-halo__sweep {
+  animation: wce-halo-ignite 900ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes wce-halo-breathe {
+  0%, 100% { opacity: 1;    transform: scale(1); }
+  50%      { opacity: 0.82; transform: scale(1.03); }
+}
+.wce-halo:hover .wce-halo__aura {
+  transform-box: view-box;
+  transform-origin: 450px 450px;
+  animation: wce-halo-breathe 8s ease-in-out infinite;
+}
+
+.wce-halo--static .wce-halo__rays,
+.wce-halo--static .wce-halo__geo,
+.wce-halo--static .wce-halo__orbit,
+.wce-halo--static .wce-halo__diamonds,
+.wce-halo--static .wce-halo__aura,
+.wce-halo--static .wce-halo__sweep { animation: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wce-halo__rays,
+  .wce-halo__geo,
+  .wce-halo__orbit,
+  .wce-halo__diamonds,
+  .wce-halo__aura,
+  .wce-halo__sweep { animation: none !important; }
+  .wce-halo__rays path,
+  .wce-halo__geo,
+  .wce-halo__orbit,
+  .wce-halo__diamonds,
+  .wce-halo__aura,
+  .wce-halo__portrait { transition: none !important; }
+  .wce-halo__rays path { transform: scaleY(1); }
+}
+
+@media (max-width: 767px) {
+  .wce-halo[data-visible="true"] .wce-halo__rays,
+  .wce-halo[data-visible="true"] .wce-halo__geo,
+  .wce-halo[data-visible="true"] .wce-halo__orbit,
+  .wce-halo[data-visible="true"] .wce-halo__diamonds { animation: none; }
+}
