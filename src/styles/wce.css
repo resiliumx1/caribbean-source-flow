@@ -461,11 +461,13 @@
   color: var(--wce-gold);
 }
 .wce-partner-logo { height: 52px; width: auto; object-fit: contain; }
+.wce-partner-logo-round { height: 70px; aspect-ratio: 1 / 1; width: auto; }
 @keyframes wce-marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 @media (max-width: 640px) {
   .wce-partner-set, .wce-partner-static { gap: 44px; padding-right: 44px; }
   .wce-partner-static { padding-right: 0; }
   .wce-partner-logo { height: 36px; }
+  .wce-partner-logo-round { height: 50px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wce-partner-track { animation: none; }

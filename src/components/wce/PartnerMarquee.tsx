@@ -1,7 +1,7 @@
 /** Partner band pinned to the bottom of the hero: "POWERED BY" plus a slow,
  *  seamless right-to-left marquee of partner logo tiles. */
 import { useWceReducedMotion } from "./motion";
-import logoMountKailash from "@/assets/partner-mount-kailash.png.asset.json";
+import logoMountKailash from "@/assets/partner-mount-kailash-seal.png.asset.json";
 import logoKamilas from "@/assets/partner-kamilas-kitchen.png.asset.json";
 import logoJah9 from "@/assets/partner-jah9.png.asset.json";
 import logoLifecraft from "@/assets/partner-lifecraft-jamaica.png.asset.json";
@@ -10,10 +10,12 @@ import logoUbuntu from "@/assets/partner-ubuntu-movement.png.asset.json";
 export interface WcePartner {
   name: string;
   logoUrl?: string;
+  /** Circular seal artwork — sized larger so it reads at the same optical weight as wordmarks. */
+  round?: boolean;
 }
 
 export const WCE_PARTNERS: WcePartner[] = [
-  { name: "Mount Kailash", logoUrl: logoMountKailash.url },
+  { name: "Mount Kailash", logoUrl: logoMountKailash.url, round: true },
   { name: "Kamila's Kitchen", logoUrl: logoKamilas.url },
   { name: "Jah9", logoUrl: logoJah9.url },
   { name: "LifeCraft in Jamaica", logoUrl: logoLifecraft.url },
@@ -21,11 +23,17 @@ export const WCE_PARTNERS: WcePartner[] = [
 ];
 
 /** One tile: bare artwork on the bar — no border, no fill. Falls back to the name as text. */
-export function WcePartnerTile({ name, logoUrl }: WcePartner) {
+export function WcePartnerTile({ name, logoUrl, round }: WcePartner) {
   return (
     <div className="wce-partner-tile" title={name}>
       {logoUrl ? (
-        <img src={logoUrl} alt={name} loading="lazy" decoding="async" className="wce-partner-logo" />
+        <img
+          src={logoUrl}
+          alt={name}
+          loading="lazy"
+          decoding="async"
+          className={`wce-partner-logo${round ? " wce-partner-logo-round" : ""}`}
+        />
       ) : (
         <span className="wce-partner-name">{name}</span>
       )}
