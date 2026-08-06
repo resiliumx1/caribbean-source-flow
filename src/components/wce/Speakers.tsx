@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
-import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
+import { FlowerOfLifeField, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
 import { useWceSpeakers } from "./useWceData";
 import { Reveal, useInView, useIsTouch, useWceReducedMotion, MaskedHeading, useSectionLift } from "./motion";
 import { SpeakersSkeleton } from "./Skeletons";
