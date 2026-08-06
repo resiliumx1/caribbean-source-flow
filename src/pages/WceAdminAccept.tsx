@@ -69,15 +69,11 @@ export default function WceAdminAccept() {
       return;
     }
 
-    // Mark the invite accepted. Best-effort: organisers cannot read this table,
-    // so a permission error here must never block them from getting in.
-    const addr = (userRes.user?.email ?? email ?? "").toLowerCase();
-    if (addr) {
-      await (supabase as any)
-        .from("wce_organiser_invites")
-        .update({ status: "accepted", accepted_at: new Date().toISOString() })
-        .eq("email", addr);
-    }
+    // Mark the invite accepted through a security-definer helper: organisers have
+    // no read access to the invites table, so a direct update cannot be verified
+    // client-side. Best effort — a failure here must never block sign-in.
+    void userRes;
+    await (supabase as any).rpc("wce_accept_own_invite");
 
     setBusy(false);
     setPhase("done");
