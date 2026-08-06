@@ -414,10 +414,10 @@
 @media (max-width: 899px) {
   .wce-admin .wa-nav-trigger {
     display: inline-flex; align-items: center; gap: 0.55rem; width: 100%;
-    justify-content: space-between; margin-bottom: 1rem;
+    justify-content: space-between; margin-bottom: 0;
   }
   .wce-admin .wa-nav { display: none; }
-  .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: var(--wa-2); }
 }
 .wa-drawer-veil {
   position: fixed; inset: 0; z-index: 200; display: flex;
@@ -547,4 +547,204 @@
 @media (max-width: 767px) {
   .wce-admin form .grid { gap: 1rem; }
   .wce-admin .wa-panel { padding: 1.05rem; }
+}
+
+/* ================================================================
+   SURFACE HIERARCHY REBUILD
+   Rule: decoration belongs in the chrome, never behind data.
+   Tiers — app #0B1F15 · panel #122B1E · elevated #173626 (blurred)
+           table head #163223 · row hover gold 4% · borders gold 12%/8%
+   Contrast verified: cream 1.0 = 13.2:1, 0.72 = 7.5:1, 0.55 = 5.0:1,
+   gold = 6.3:1, gold-light = 9.1:1 on the panel surface. All pass AA.
+   ================================================================ */
+.wce-admin {
+  --wa-app: #0B1F15;
+  --wa-surface: #122B1E;
+  --wa-elevated: rgba(23, 54, 38, 0.86);
+  --wa-thead: #163223;
+  --wa-row-hover: rgba(201, 162, 39, 0.04);
+  --wa-edge: rgba(201, 162, 39, 0.12);
+  --wa-divider: rgba(201, 162, 39, 0.08);
+  --wa-cream-soft: rgba(245, 239, 224, 0.72);
+  --wa-cream-mute: rgba(245, 239, 224, 0.55);
+  --wa-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
+
+  /* accent tokens: full strength for text/strokes, 10% wash for fills */
+  --wa-accent-gold: #E4C766;   --wa-accent-gold-wash: rgba(228, 199, 102, 0.10);
+  --wa-accent-sage: #A7C9A2;   --wa-accent-sage-wash: rgba(167, 201, 162, 0.10);
+  --wa-accent-teal: #7FC7C1;   --wa-accent-teal-wash: rgba(127, 199, 193, 0.10);
+  --wa-accent-terra: #E7A98F;  --wa-accent-terra-wash: rgba(231, 169, 143, 0.10);
+
+  /* 8px spacing scale */
+  --wa-1: 8px; --wa-2: 16px; --wa-3: 24px; --wa-4: 32px; --wa-5: 40px;
+
+  /* flat app ground — no radial wash behind content */
+  background: var(--wa-app);
+  border-color: var(--wa-edge);
+  box-shadow: none;
+}
+
+/* --- chrome-only decoration -------------------------------------- */
+/* The full-page watermark is retired; texture is confined to the header
+   band and the sidebar, at 0.03 opacity. */
+.wce-admin .wa-watermark { display: none !important; }
+.wce-admin .wa-chrome-texture {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.03; z-index: 0; overflow: hidden;
+}
+.wce-admin .wa-header {
+  position: relative; overflow: hidden;
+  padding-bottom: var(--wa-3); margin-bottom: var(--wa-3);
+}
+.wce-admin .wa-header::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, var(--wa-gold), rgba(201, 162, 39, 0.24) 45%, transparent);
+}
+.wce-admin .wa-header > * { position: relative; z-index: 1; }
+.wce-admin .wa-body { padding: var(--wa-3) !important; }
+@media (max-width: 520px) {
+  .wce-admin .wa-body { padding: var(--wa-2) !important; }
+}
+
+/* --- panels, cards, charts --------------------------------------- */
+.wce-admin .wa-panel,
+.wce-admin .wa-stat,
+.wce-admin .wa-table-wrap {
+  background: var(--wa-surface);
+  border: 1px solid var(--wa-edge);
+  border-radius: 10px;
+  box-shadow: var(--wa-shadow);
+}
+.wce-admin .wa-panel { padding: var(--wa-3); }
+.wce-admin .wa-panel + .wa-panel { margin-top: var(--wa-2); }
+.wce-admin .wa-stat { padding: var(--wa-2) var(--wa-3); overflow: hidden; }
+/* stat tint stays a whisper in the corner, never a glow */
+.wce-admin .wa-stat::after { opacity: 0.35; }
+.wce-admin .wa-stat-figure { color: var(--wa-figure, var(--wa-accent-gold)); }
+.wce-admin .recharts-wrapper,
+.wce-admin .recharts-surface { background: transparent; }
+/* no decorative layer inside data panels */
+.wce-admin .wa-panel .wce-decor,
+.wce-admin .wa-panel .wa-chrome-texture,
+.wce-admin .wa-table-wrap .wa-chrome-texture { display: none !important; }
+
+/* --- text tiers --------------------------------------------------- */
+.wce-admin { color: var(--wa-cream); }
+.wce-admin p, .wce-admin li { color: var(--wa-cream-soft); font-size: 0.95rem; }
+.wce-admin .wa-muted,
+.wce-admin .wa-hint,
+.wce-admin .text-muted-foreground {
+  color: var(--wa-cream-mute) !important;
+  font-size: 0.875rem !important; /* never below 14px */
+}
+.wce-admin .wa-serif, .wce-admin h1, .wce-admin h2, .wce-admin h3 { color: var(--wa-cream); }
+/* gold is for headings, figures and accents — not body copy or cell values */
+.wce-admin tbody td { color: var(--wa-cream-soft); font-size: 0.9rem; }
+.wce-admin tbody td strong, .wce-admin tbody td .wa-strong { color: var(--wa-cream); }
+
+/* --- section headings -------------------------------------------- */
+.wce-admin .wa-section-rule {
+  height: 2px; width: 44px; border: 0; margin: 0.55rem 0 0.5rem;
+  background: linear-gradient(90deg, var(--wa-gold), rgba(201, 162, 39, 0.15));
+  border-radius: 2px;
+}
+
+/* --- tables ------------------------------------------------------- */
+.wce-admin .wa-table-wrap { max-height: min(70vh, 720px); overflow: auto; }
+.wce-admin thead tr { background: var(--wa-thead); }
+.wce-admin thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--wa-thead);
+  color: var(--wa-accent-gold);
+  border-bottom: 1px solid var(--wa-edge);
+  font-size: 0.68rem; letter-spacing: 0.16em;
+}
+.wce-admin thead th[aria-sort]::after {
+  content: "↕"; margin-left: 0.4rem; opacity: 0.5; font-size: 0.8em;
+}
+.wce-admin thead th[aria-sort="ascending"]::after  { content: "↑"; opacity: 1; }
+.wce-admin thead th[aria-sort="descending"]::after { content: "↓"; opacity: 1; }
+.wce-admin tbody tr { border-top: 1px solid var(--wa-divider); background: transparent; }
+.wce-admin tbody tr:nth-child(even) { background: transparent; }
+.wce-admin tbody tr:hover { background: var(--wa-row-hover); }
+.wce-admin tbody td, .wce-admin thead th { padding: 0.75rem 1rem; }
+
+/* --- sidebar as its own surface ---------------------------------- */
+.wce-admin .wa-shell { gap: var(--wa-3); }
+.wce-admin .wa-nav {
+  position: relative; overflow: hidden;
+  background: var(--wa-surface);
+  border: 1px solid var(--wa-edge); border-right-width: 1px;
+  border-radius: 10px; padding: var(--wa-2) 0.6rem;
+  box-shadow: var(--wa-shadow);
+  align-self: start;
+}
+.wce-admin .wa-nav > * { position: relative; z-index: 1; }
+.wce-admin .wa-nav-group { margin-bottom: var(--wa-2); }
+.wce-admin .wa-nav-item {
+  color: var(--wa-cream-soft); font-size: 0.9rem;
+  border-radius: 7px; box-shadow: none;
+}
+.wce-admin .wa-nav-item svg { color: rgba(228, 199, 102, 0.7); }
+.wce-admin .wa-nav-item:hover { background: var(--wa-row-hover); color: var(--wa-cream); }
+.wce-admin .wa-nav-item[aria-current="page"] {
+  background: #173626; border-color: var(--wa-edge);
+  color: var(--wa-cream); box-shadow: inset 3px 0 0 var(--wa-gold);
+}
+.wce-admin .wa-nav-item[aria-current="page"] svg { color: var(--wa-accent-gold); }
+@media (max-width: 899px) {
+  .wce-admin .wa-nav { display: none; }
+}
+
+/* --- elevated surfaces: modals, drawers, sheets, tooltips -------- */
+.wa-confirm-veil .wa-confirm,
+.wa-sheet-veil .wa-sheet,
+.wa-drawer-veil .wa-drawer,
+.wce-admin .wa-tip {
+  background: var(--wa-elevated) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-color: var(--wa-edge) !important;
+}
+.wce-admin select option { background: #173626; color: var(--wa-cream); }
+
+/* --- accents by meaning ------------------------------------------ */
+.wce-admin .wa-accent-gold  { color: var(--wa-accent-gold); }
+.wce-admin .wa-accent-sage  { color: var(--wa-accent-sage); }
+.wce-admin .wa-accent-teal  { color: var(--wa-accent-teal); }
+.wce-admin .wa-accent-terra { color: var(--wa-accent-terra); }
+.wce-admin .wa-pill[data-tone="new"]       { color: var(--wa-accent-gold);  background: var(--wa-accent-gold-wash); }
+.wce-admin .wa-pill[data-tone="contacted"] { color: var(--wa-accent-teal);  background: var(--wa-accent-teal-wash); }
+.wce-admin .wa-pill[data-tone="qualified"] { color: var(--wa-accent-sage);  background: var(--wa-accent-sage-wash); }
+.wce-admin .wa-pill[data-tone="accepted"]  { color: var(--wa-accent-sage);  background: rgba(167, 201, 162, 0.18); }
+.wce-admin .wa-pill[data-tone="declined"],
+.wce-admin .wa-pill[data-tone="expired"]   { color: var(--wa-accent-terra); background: var(--wa-accent-terra-wash); }
+.wce-admin .wa-pill[data-tone="neutral"]   { color: var(--wa-cream-soft);   background: rgba(245, 239, 224, 0.07); }
+
+/* --- fields on the new ground ----------------------------------- */
+.wce-admin input:not([type="file"]):not([type="checkbox"]),
+.wce-admin select,
+.wce-admin textarea {
+  background: #0E241A; border-color: rgba(201, 162, 39, 0.34);
+  box-shadow: none;
+}
+.wce-admin select { background-color: #0E241A; }
+.wce-admin input:focus, .wce-admin select:focus, .wce-admin textarea:focus {
+  background: #102A1E; box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.28);
+}
+/* visible keyboard focus on every control against the dark ground */
+.wce-admin :is(button, a, [tabindex], summary):focus-visible {
+  outline: 2px solid var(--wa-accent-gold); outline-offset: 2px; border-radius: 6px;
+}
+
+/* --- 8px rhythm -------------------------------------------------- */
+.wce-admin form .grid { gap: var(--wa-2) var(--wa-3); }
+.wce-admin .wa-filterbar, .wce-admin .wa-filters-inline { gap: var(--wa-1); }
+
+/* --- narrow-screen chrome tidy ------------------------------------ */
+@media (max-width: 899px) {
+  .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: var(--wa-2); }
+  .wce-admin .wa-header { flex-direction: column; align-items: flex-start !important; gap: var(--wa-2) !important; }
+  .wce-admin .wa-header > div:last-child { width: 100%; justify-content: space-between; }
+  .wce-admin .wa-nav-trigger { width: 100%; min-height: 48px; }
 }

@@ -99,13 +99,10 @@ export default function AdminWCE() {
   return (
     <ConfirmProvider>
     <div className="wce-admin wce-root">
-      <div className="wa-watermark" aria-hidden="true">
-        <FlowerOfLifeField opacity={1} />
-      </div>
-
-      <div className="wa-body" style={{ padding: "1.5rem" }}>
+      <div className="wa-body">
         {/* Header */}
         <header
+          className="wa-header"
           style={{
             display: "flex",
             flexWrap: "wrap",
@@ -114,6 +111,10 @@ export default function AdminWCE() {
             justifyContent: "space-between",
           }}
         >
+          {/* Decoration lives in the chrome only — never behind data. */}
+          <div className="wa-chrome-texture" aria-hidden="true">
+            <FlowerOfLifeField opacity={1} />
+          </div>
           <div>
             <p className="wa-label">Caribbean Wellness Experience</p>
             <h1 className="wa-serif" style={{ fontSize: "clamp(1.7rem, 4vw, 2.4rem)", margin: "0.15rem 0 0" }}>
@@ -135,8 +136,6 @@ export default function AdminWCE() {
           </div>
         </header>
 
-        <hr className="wa-rule" style={{ margin: "1.1rem 0 1.4rem" }} />
-
         {/* Nav + content */}
         <div className="wa-shell">
           <button
@@ -152,6 +151,9 @@ export default function AdminWCE() {
           </button>
 
           <nav aria-label="WCE admin sections" className="wa-nav">
+            <div className="wa-chrome-texture" aria-hidden="true">
+              <FlowerOfLifeField opacity={1} />
+            </div>
             {navItems()}
           </nav>
 

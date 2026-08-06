@@ -75,9 +75,25 @@ export function EmptyState({ title, line }: { title: string; line?: string }) {
 
 export function SectionHeading({ title, sub }: { title: string; sub?: string }) {
   return (
-    <div style={{ marginBottom: "0.9rem" }}>
+    <div style={{ marginBottom: "16px" }}>
       <h2 className="wa-serif" style={{ fontSize: "1.5rem", margin: 0 }}>{title}</h2>
-      {sub && <p className="wa-muted" style={{ fontSize: "0.82rem", marginTop: "0.2rem" }}>{sub}</p>}
+      <hr className="wa-section-rule" aria-hidden="true" />
+      {sub && <p className="wa-muted">{sub}</p>}
     </div>
   );
+}
+
+/** Readable date; relative wording for anything inside the last 3 days. */
+export function whenText(iso: string | null | undefined) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  const mins = Math.round((Date.now() - d.getTime()) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min${mins === 1 ? "" : "s"} ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs} hour${hrs === 1 ? "" : "s"} ago`;
+  const days = Math.round(hrs / 24);
+  if (days <= 3) return `${days} day${days === 1 ? "" : "s"} ago`;
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 }
