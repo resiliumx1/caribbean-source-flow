@@ -157,7 +157,10 @@ export default function WceOrganisers() {
       throw new Error(msg);
     }
     if (data?.error) throw new Error(data.error);
-    return data as { already_existed?: boolean; email_sent?: boolean; expires_at?: string | null };
+    return data as {
+      already_existed?: boolean; email_sent?: boolean; email_error?: string | null;
+      expires_at?: string | null;
+    };
   };
 
   const invite = async (e: React.FormEvent) => {
@@ -169,6 +172,18 @@ export default function WceOrganisers() {
       label: "Invitation",
       write: async () => {
         const res = await call("invite", { email: target, display_name: name.trim() || null });
+        if (res && res.email_sent === false) {
+          // Access was granted, but the message did not leave — say so plainly
+          // rather than claiming an invitation is on its way.
+          wceToast({
+            title: "Access granted, but the email did not send",
+            description: `${target} now holds organiser access. ${res.email_error ?? "The mail provider refused the message."} Use Resend to try again.`,
+            tone: "error",
+          });
+          setEmail("");
+          setName("");
+          return;
+        }
         wceToast({
           title: res?.already_existed
             ? "Existing account granted organiser access"
