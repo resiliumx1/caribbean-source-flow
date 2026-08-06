@@ -2165,3 +2165,11 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 .wce-seal-ring.is-static .wce-seal-circle,
 .wce-seal-ring.is-static .wce-seal-check { stroke-dashoffset: 0; }
 @keyframes wce-seal-draw { to { stroke-dashoffset: 0; } }
+
+/* Fail-safe: the seal strokes are visible by default; the keyframes supply the draw. */
+.wce-seal-ring .wce-seal-circle,
+.wce-seal-ring .wce-seal-check { stroke-dashoffset: 0; }
+.wce-seal-ring.is-drawing .wce-seal-circle { animation: wce-seal-circle 600ms cubic-bezier(0.22,1,0.36,1) both; }
+.wce-seal-ring.is-drawing .wce-seal-check { animation: wce-seal-check 300ms cubic-bezier(0.22,1,0.36,1) 600ms both; }
+@keyframes wce-seal-circle { from { stroke-dashoffset: 277; } to { stroke-dashoffset: 0; } }
+@keyframes wce-seal-check { from { stroke-dashoffset: 58; } to { stroke-dashoffset: 0; } }
