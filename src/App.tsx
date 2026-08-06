@@ -204,7 +204,7 @@ function AppContent() {
         </Routes>
       </Suspense>
       <CompareBar />
-      {!isAdminRoute && (
+      {!isAdminRoute && !isWceRoute && (
         <Suspense fallback={null}>
           <ChatWidget />
         </Suspense>
