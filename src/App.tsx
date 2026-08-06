@@ -135,7 +135,9 @@ function AppContent() {
   const showHeader = !pagesWithoutHeader.some(
     (path) => location.pathname.startsWith(path)
   );
-  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isAdminRoute =
+    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/wce-admin");
   const isWceRoute = location.pathname === "/wce-2026";
 
   // Google Tag Manager / Meta Pixel container (IDs live in src/lib/tracking.ts)

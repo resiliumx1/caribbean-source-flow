@@ -449,3 +449,102 @@
   .wce-admin .wa-table-wrap td select,
   .wce-admin .wa-table-wrap td textarea { min-width: 0 !important; width: 100%; }
 }
+
+/* ================================================================
+   Contrast, readability & spacing pass
+   Fields sit on a darker solid ground with brighter borders; body copy
+   gets a higher-contrast cream; panels and forms breathe more.
+   ================================================================ */
+.wce-admin {
+  --wa-cream-soft: rgba(245, 239, 224, 0.94);
+  --wa-cream-mute: rgba(245, 239, 224, 0.78);
+  --wa-field: #0B2015;
+  --wa-field-focus: #102A1B;
+  --wa-line: rgba(201, 162, 39, 0.3);
+}
+
+/* --- fields ------------------------------------------------------ */
+.wce-admin input:not([type="file"]):not([type="checkbox"]),
+.wce-admin select,
+.wce-admin textarea {
+  background: var(--wa-field);
+  border: 1px solid rgba(228, 199, 102, 0.45);
+  color: #FFFBF0;
+  border-radius: 7px;
+  padding: 0.6rem 0.8rem;
+  line-height: 1.45;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.35);
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+.wce-admin textarea { min-height: 108px; padding-top: 0.65rem; }
+.wce-admin input::placeholder,
+.wce-admin textarea::placeholder { color: rgba(245, 239, 224, 0.55); }
+.wce-admin input:hover:not(:disabled),
+.wce-admin select:hover:not(:disabled),
+.wce-admin textarea:hover:not(:disabled) { border-color: var(--wa-gold-light); }
+.wce-admin input:focus,
+.wce-admin select:focus,
+.wce-admin textarea:focus {
+  background: var(--wa-field-focus);
+  border-color: var(--wa-gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.24);
+  outline: none;
+}
+.wce-admin input:disabled,
+.wce-admin select:disabled,
+.wce-admin textarea:disabled { opacity: 0.55; cursor: not-allowed; }
+.wce-admin select { appearance: none; padding-right: 2.1rem;
+  background-image: linear-gradient(45deg, transparent 50%, var(--wa-gold-light) 50%),
+                    linear-gradient(135deg, var(--wa-gold-light) 50%, transparent 50%);
+  background-position: right 1rem center, right 0.72rem center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+.wce-admin select { background-color: var(--wa-field); }
+
+/* --- labels & helper copy --------------------------------------- */
+.wce-admin .wa-field-label,
+.wce-admin label {
+  color: #F0DFA4;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+}
+.wce-admin .wa-hint,
+.wce-admin .wa-muted,
+.wce-admin .text-muted-foreground { color: var(--wa-cream-mute) !important; }
+.wce-admin .wa-hint { margin-top: 0.35rem; }
+.wce-admin p, .wce-admin li { line-height: 1.6; }
+
+/* --- form rhythm ------------------------------------------------- */
+.wce-admin form .grid { gap: 1.15rem 1.25rem; }
+.wce-admin form .grid > div { gap: 0; }
+.wce-admin .wa-panel { padding: 1.35rem; border-radius: 10px; }
+.wce-admin .wa-panel + .wa-panel { margin-top: 1.15rem; }
+.wce-admin .wa-stat { padding: 1.15rem 1.25rem; border-radius: 10px; }
+
+/* --- tables ------------------------------------------------------ */
+.wce-admin table { font-size: 0.9rem; }
+.wce-admin thead th { padding: 0.8rem 0.95rem; font-size: 0.68rem; color: #F0DFA4; }
+.wce-admin tbody td { padding: 0.85rem 0.95rem; color: var(--wa-cream-soft); vertical-align: middle; }
+.wce-admin tbody tr { border-top: 1px solid rgba(245, 239, 224, 0.12); }
+.wce-admin tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.022); }
+.wce-admin tbody tr:hover { background: rgba(201, 162, 39, 0.1); }
+
+/* --- pills & badges: stronger legibility ------------------------- */
+.wce-admin .wa-pill { padding: 0.25rem 0.65rem; font-size: 0.7rem; letter-spacing: 0.08em; }
+.wce-admin .wa-savebadge { font-size: 0.78rem; }
+
+/* --- surfaces borrowed from the store admin --------------------- */
+.wce-admin .bg-card,
+.wce-admin .bg-background,
+.wce-admin .bg-muted,
+.wce-admin .bg-muted\/50 { background-color: rgba(8, 24, 15, 0.5) !important; }
+
+/* --- checkbox rows: align and space ----------------------------- */
+.wce-admin label:has(input[type="checkbox"]),
+.wce-admin .wa-check-row { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; }
+
+@media (max-width: 767px) {
+  .wce-admin form .grid { gap: 1rem; }
+  .wce-admin .wa-panel { padding: 1.05rem; }
+}
