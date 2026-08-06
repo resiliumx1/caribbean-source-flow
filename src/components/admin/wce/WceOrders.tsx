@@ -3,9 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
-import { inputCls } from "./shared";
+import { StatCard, StatusPill, EmptyState, SectionHeading } from "./ui";
 
 type Row = {
   id: string;
@@ -123,85 +122,96 @@ export default function WceOrders() {
     URL.revokeObjectURL(url);
   };
 
-  if (loading) return <Loader2 className="h-6 w-6 animate-spin text-primary" />;
+  if (loading)
+    return <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--wa-gold)" }} />;
 
   return (
-    <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">
-        Event revenue only — store orders containing a WCE pathway ticket. Full order details live in Orders.
-      </p>
+    <div className="space-y-5">
+      <SectionHeading
+        title="Event Orders"
+        sub="Store orders containing a WCE pathway ticket. Full order details live in the main Orders area."
+      />
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-xs uppercase text-muted-foreground">Event revenue</p>
-          <p className="text-2xl font-bold text-foreground">${revenue.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground">{filtered.length} orders</p>
-        </div>
-        <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-xs uppercase text-muted-foreground">By tier</p>
-          {Object.entries(countTiers()).map(([k, v]) => (
-            <p key={k} className="text-sm text-foreground">{k}: <strong>{v}</strong></p>
-          ))}
-          {filtered.length === 0 && <p className="text-sm text-muted-foreground">—</p>}
-        </div>
-        <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-xs uppercase text-muted-foreground">By UTM source</p>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Event revenue" value={`$${revenue.toFixed(2)}`} accent="gold"
+          hint={`${filtered.length} order${filtered.length === 1 ? "" : "s"}`} />
+        <StatCard label="Tickets by tier" accent="sage"
+          value={Object.values(countTiers()).reduce((a, b) => a + b, 0)}
+          hint={Object.entries(countTiers()).map(([k, v]) => `${k}: ${v}`).join(" · ") || "No tiers sold yet"} />
+        <StatCard label="Referred orders" accent="teal"
+          value={filtered.filter((r) => r.referral_code || r.coupon_code).length}
+          hint="Used a referral or discount code" />
+        <StatCard label="Awaiting payment" accent="terracotta"
+          value={filtered.filter((r) => (r.payment_status ?? "") !== "paid").length}
+          hint="Not yet marked paid" />
+      </div>
+
+      <div className="wa-panel">
+        <p className="wa-label" style={{ marginBottom: "0.5rem" }}>By UTM source</p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
           {Object.entries(countSources()).map(([k, v]) => (
-            <p key={k} className="text-sm text-foreground">{k}: <strong>{v}</strong></p>
+            <span key={k} className="wa-pill" data-tone="neutral">{k} · {v}</span>
           ))}
-          {filtered.length === 0 && <p className="text-sm text-muted-foreground">—</p>}
+          {filtered.length === 0 && <span className="wa-muted" style={{ fontSize: "0.8rem" }}>No attribution data yet.</span>}
         </div>
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
         <div>
-          <label className="text-xs text-muted-foreground">Tier</label>
-          <select className={inputCls} value={tier} onChange={(e) => setTier(e.target.value)}>
+          <label className="wa-label" style={{ display: "block", marginBottom: 4 }}>Tier</label>
+          <select value={tier} onChange={(e) => setTier(e.target.value)}>
             <option value="all">All tiers</option>
             {tiers.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">UTM source</label>
-          <select className={inputCls} value={source} onChange={(e) => setSource(e.target.value)}>
+          <label className="wa-label" style={{ display: "block", marginBottom: 4 }}>UTM source</label>
+          <select value={source} onChange={(e) => setSource(e.target.value)}>
             <option value="all">All sources</option>
             {sources.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
-        <Button variant="outline" className="gap-2" onClick={exportCsv} disabled={filtered.length === 0}>
+        <button type="button" className="wa-btn wa-btn-primary" onClick={exportCsv} disabled={filtered.length === 0}
+          style={filtered.length === 0 ? { opacity: 0.5, cursor: "not-allowed" } : undefined}>
           <Download className="h-4 w-4" /> Export CSV
-        </Button>
+        </button>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-card">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+      <div className="wa-table-wrap">
+        <table>
+          <thead>
             <tr>
-              <th className="p-3 text-left">Order</th>
-              <th className="p-3 text-left">Customer</th>
-              <th className="p-3 text-left">Tier</th>
-              <th className="p-3 text-left">Total</th>
-              <th className="p-3 text-left">Code</th>
-              <th className="p-3 text-left">UTM source</th>
-              <th className="p-3 text-left">Date</th>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Tier</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Code</th>
+              <th>UTM source</th>
+              <th>Date</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 && (
-              <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No event orders yet.</td></tr>
+              <tr>
+                <td colSpan={8}>
+                  <EmptyState title="No event orders yet" line="Orders appear here as soon as a pathway ticket is purchased." />
+                </td>
+              </tr>
             )}
             {filtered.map((r) => (
-              <tr key={r.id} className="border-t border-border">
-                <td className="p-3 font-mono font-bold text-foreground">{r.order_number ?? "—"}</td>
-                <td className="p-3">
-                  <div className="text-foreground">{r.customer_name}</div>
-                  <div className="text-xs text-muted-foreground">{r.email}</div>
+              <tr key={r.id}>
+                <td data-label="Order" className="font-mono wa-strong">{r.order_number ?? "—"}</td>
+                <td data-label="Customer">
+                  <div className="wa-strong">{r.customer_name}</div>
+                  <div className="text-xs wa-muted">{r.email}</div>
                 </td>
-                <td className="p-3">{r.tiers.join(", ") || "—"}</td>
-                <td className="p-3 font-medium">${Number(r.total_usd || 0).toFixed(2)}</td>
-                <td className="p-3 font-mono text-xs">{r.coupon_code ?? r.referral_code ?? "—"}</td>
-                <td className="p-3">{r.utm_source ?? "—"}</td>
-                <td className="p-3 text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</td>
+                <td data-label="Tier">{r.tiers.join(", ") || "—"}</td>
+                <td data-label="Total" className="wa-strong">${Number(r.total_usd || 0).toFixed(2)}</td>
+                <td data-label="Payment"><StatusPill status={r.payment_status ?? "—"} /></td>
+                <td data-label="Code" className="font-mono text-xs">{r.coupon_code ?? r.referral_code ?? "—"}</td>
+                <td data-label="UTM source">{r.utm_source ?? "—"}</td>
+                <td data-label="Date" className="wa-muted">{new Date(r.created_at).toLocaleDateString()}</td>
               </tr>
             ))}
           </tbody>
