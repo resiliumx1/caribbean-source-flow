@@ -1,0 +1,242 @@
+/* Scoped styling for the WCE 2026 organiser console. Everything lives under
+   .wce-admin so the rest of the store admin is untouched. */
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap");
+
+.wce-admin {
+  --wa-forest: #0F2A1D;
+  --wa-forest-mid: #173625;
+  --wa-panel: rgba(255, 255, 255, 0.035);
+  --wa-panel-strong: rgba(8, 24, 15, 0.55);
+  --wa-line: rgba(201, 162, 39, 0.22);
+  --wa-gold: #C9A227;
+  --wa-gold-light: #E4C766;
+  --wa-cream: #F5EFE0;
+  --wa-cream-soft: rgba(245, 239, 224, 0.82);
+  --wa-cream-mute: rgba(245, 239, 224, 0.6);
+  --wa-sage: #7FA07A;
+  --wa-teal: #3E8C87;
+  --wa-terracotta: #C87A5A;
+
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--wa-line);
+  background:
+    radial-gradient(120% 80% at 12% 0%, #1B3A29 0%, var(--wa-forest) 58%, #08180F 100%);
+  color: var(--wa-cream);
+  font-family: Inter, system-ui, sans-serif;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+.wce-admin .wa-serif {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.wce-admin .wa-label {
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wa-gold-light);
+  font-weight: 600;
+}
+.wce-admin h1, .wce-admin h2, .wce-admin h3 { color: var(--wa-cream); }
+.wce-admin p, .wce-admin span, .wce-admin div, .wce-admin td, .wce-admin li { color: inherit; }
+.wce-admin .wa-muted { color: var(--wa-cream-mute); }
+
+/* Watermark */
+.wce-admin .wa-watermark {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.05;
+}
+
+.wce-admin .wa-body { position: relative; z-index: 1; }
+
+/* Header rule: gold fading to transparent */
+.wce-admin .wa-rule {
+  height: 1px; border: 0;
+  background: linear-gradient(90deg, var(--wa-gold), rgba(201, 162, 39, 0.28) 45%, transparent);
+}
+
+/* Navigation */
+.wce-admin .wa-nav-group { margin-bottom: 1.1rem; }
+.wce-admin .wa-nav-group > .wa-label { padding: 0 0.6rem 0.45rem; display: block; opacity: 0.75; }
+.wce-admin .wa-nav-item {
+  display: flex; align-items: center; gap: 0.6rem; width: 100%;
+  min-height: 44px; padding: 0.5rem 0.7rem; border-radius: 6px;
+  font-size: 0.86rem; font-weight: 500; color: var(--wa-cream-soft);
+  border: 1px solid transparent; background: transparent;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+  text-align: left;
+}
+.wce-admin .wa-nav-item:hover { background: rgba(201, 162, 39, 0.09); color: var(--wa-cream); }
+.wce-admin .wa-nav-item svg { color: var(--wa-gold); width: 16px; height: 16px; flex: none; }
+.wce-admin .wa-nav-item[aria-current="page"] {
+  background: linear-gradient(90deg, rgba(201, 162, 39, 0.2), rgba(201, 162, 39, 0.04));
+  border-color: var(--wa-line); color: var(--wa-cream); font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--wa-gold);
+}
+
+/* Panels & cards */
+.wce-admin .wa-panel {
+  background: var(--wa-panel); border: 1px solid var(--wa-line);
+  border-radius: 8px; padding: 1rem;
+}
+.wce-admin .wa-stat {
+  position: relative; overflow: hidden;
+  border: 1px solid var(--wa-line); border-radius: 8px; padding: 1rem 1.1rem;
+  background: var(--wa-panel);
+}
+.wce-admin .wa-stat::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(110% 120% at 100% 0%, var(--wa-tint, transparent) 0%, transparent 70%);
+  opacity: 0.5;
+}
+.wce-admin .wa-stat-figure {
+  font-family: "Cormorant Garamond", Georgia, serif; font-weight: 700;
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem); line-height: 1.05;
+  color: var(--wa-figure, var(--wa-gold-light));
+}
+.wce-admin .wa-trend { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; }
+
+/* Tables */
+.wce-admin .wa-table-wrap {
+  border: 1px solid var(--wa-line); border-radius: 8px; overflow: auto;
+  background: rgba(8, 24, 15, 0.35);
+}
+.wce-admin table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.wce-admin thead tr { background: rgba(23, 54, 37, 0.9); }
+.wce-admin thead th {
+  text-align: left; padding: 0.7rem 0.8rem;
+  font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--wa-gold-light); font-weight: 700; white-space: nowrap;
+  border-bottom: 1px solid var(--wa-line);
+}
+.wce-admin tbody tr { border-top: 1px solid rgba(245, 239, 224, 0.08); transition: background 160ms ease; }
+.wce-admin tbody tr:hover { background: rgba(201, 162, 39, 0.07); }
+.wce-admin tbody td { padding: 0.7rem 0.8rem; color: var(--wa-cream-soft); vertical-align: top; }
+.wce-admin tbody td strong, .wce-admin tbody td .wa-strong { color: var(--wa-cream); font-weight: 600; }
+
+/* Status pills */
+.wce-admin .wa-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.2rem 0.6rem; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  border: 1px solid currentColor; white-space: nowrap;
+}
+.wce-admin .wa-pill[data-tone="new"]        { color: #E4C766; background: rgba(201,162,39,0.14); }
+.wce-admin .wa-pill[data-tone="contacted"]  { color: #7FC7C1; background: rgba(62,140,135,0.16); }
+.wce-admin .wa-pill[data-tone="qualified"]  { color: #A7C9A2; background: rgba(127,160,122,0.18); }
+.wce-admin .wa-pill[data-tone="accepted"]   { color: #BFE3B7; background: rgba(127,160,122,0.26); }
+.wce-admin .wa-pill[data-tone="declined"]   { color: #E7A98F; background: rgba(200,122,90,0.18); }
+.wce-admin .wa-pill[data-tone="neutral"]    { color: rgba(245,239,224,0.72); background: rgba(245,239,224,0.07); }
+
+/* Controls */
+.wce-admin input:not([type="file"]),
+.wce-admin select,
+.wce-admin textarea {
+  width: 100%; min-height: 40px; border-radius: 5px;
+  border: 1px solid rgba(201, 162, 39, 0.34);
+  background: rgba(245, 239, 224, 0.06);
+  color: var(--wa-cream); padding: 0.5rem 0.7rem;
+  font-family: Inter, system-ui, sans-serif; font-size: 0.85rem;
+}
+.wce-admin select option { background: #12301F; color: var(--wa-cream); }
+.wce-admin input:focus-visible,
+.wce-admin select:focus-visible,
+.wce-admin textarea:focus-visible {
+  outline: 2px solid var(--wa-gold); outline-offset: 1px;
+  border-color: var(--wa-gold);
+}
+.wce-admin label { color: var(--wa-gold-light); }
+
+/* Buttons */
+.wce-admin .wa-btn {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 44px; padding: 0 1.1rem; border-radius: 4px;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  cursor: pointer; transition: transform 140ms ease, box-shadow 200ms ease;
+}
+.wce-admin .wa-btn:active { transform: translateY(1px) scale(0.99); }
+.wce-admin .wa-btn-primary {
+  background: linear-gradient(180deg, var(--wa-gold-light), var(--wa-gold));
+  color: #0F2A1D; border: 1px solid #9A7B1C;
+}
+.wce-admin .wa-btn-primary::before {
+  content: ""; position: absolute; inset: 0; transform: translateX(-120%);
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.55), transparent);
+}
+.wce-admin .wa-btn-primary:hover::before { transform: translateX(120%); transition: transform 700ms ease; }
+.wce-admin .wa-btn-ghost {
+  background: transparent; color: var(--wa-gold-light); border: 1px solid var(--wa-gold);
+}
+.wce-admin .wa-btn-ghost:hover { background: rgba(201, 162, 39, 0.12); }
+
+/* Buttons rendered by shadcn inside the console */
+.wce-admin button[class*="border-input"],
+.wce-admin .wa-body button[class*="bg-primary"] {
+  background: transparent; color: var(--wa-gold-light);
+  border-color: var(--wa-gold); min-height: 44px;
+}
+
+/* Empty states */
+.wce-admin .wa-empty { text-align: center; padding: 2.4rem 1rem; color: var(--wa-cream-mute); }
+.wce-admin .wa-empty svg { margin: 0 auto 0.75rem; color: var(--wa-gold); opacity: 0.85; }
+
+/* Responsive: tables become stacked cards */
+@media (max-width: 767px) {
+  .wce-admin .wa-table-wrap { border: 0; background: transparent; overflow: visible; }
+  .wce-admin .wa-table-wrap thead { display: none; }
+  .wce-admin .wa-table-wrap table,
+  .wce-admin .wa-table-wrap tbody,
+  .wce-admin .wa-table-wrap tr,
+  .wce-admin .wa-table-wrap td { display: block; width: 100%; }
+  .wce-admin .wa-table-wrap tr {
+    border: 1px solid var(--wa-line); border-radius: 8px;
+    background: rgba(8, 24, 15, 0.45); padding: 0.35rem 0.2rem; margin-bottom: 0.75rem;
+  }
+  .wce-admin .wa-table-wrap td { border: 0; padding: 0.4rem 0.8rem; }
+  .wce-admin .wa-table-wrap td[data-label]::before {
+    content: attr(data-label);
+    display: block; margin-bottom: 0.2rem;
+    font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--wa-gold-light); font-weight: 700;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wce-admin * { transition: none !important; animation: none !important; }
+  .wce-admin .wa-btn-primary::before { display: none; }
+}
+
+/* Shell layout: side nav on desktop, horizontal scroller on small screens */
+.wce-admin .wa-shell { display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 1.5rem; }
+.wce-admin .wa-nav {
+  border-right: 1px solid var(--wa-line); padding-right: 0.9rem;
+}
+@media (max-width: 900px) {
+  .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .wce-admin .wa-nav {
+    border-right: 0; border-bottom: 1px solid var(--wa-line);
+    padding: 0 0 0.75rem; display: flex; gap: 0.9rem; overflow-x: auto;
+  }
+  .wce-admin .wa-nav-group { margin: 0; display: flex; align-items: center; gap: 0.35rem; }
+  .wce-admin .wa-nav-group > .wa-label { padding: 0 0.3rem 0 0; white-space: nowrap; }
+  .wce-admin .wa-nav-item { white-space: nowrap; width: auto; }
+}
+@media (max-width: 520px) {
+  .wce-admin .wa-body { padding: 1.1rem 0.85rem !important; }
+}
+
+/* Legibility guard: tabs still using store-admin utility classes must not render
+   light-on-light inside the dark console. */
+.wce-admin .bg-card,
+.wce-admin .bg-background,
+.wce-admin .bg-muted,
+.wce-admin .bg-muted\/50 { background-color: rgba(255, 255, 255, 0.04) !important; }
+.wce-admin .text-foreground { color: var(--wa-cream) !important; }
+.wce-admin .text-muted-foreground { color: var(--wa-cream-mute) !important; }
+.wce-admin .text-primary { color: var(--wa-gold-light) !important; }
+.wce-admin .border-border,
+.wce-admin .border { border-color: var(--wa-line) !important; }
+.wce-admin .text-destructive { color: var(--wa-terracotta) !important; }

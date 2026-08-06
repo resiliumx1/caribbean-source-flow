@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWceAccess } from "@/hooks/use-wce-access";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Users, Mic2, Route as RouteIcon, ShoppingBag, Ticket, HelpCircle,
+  Image as ImageIcon, Settings as SettingsIcon, ShieldCheck, LogOut,
+} from "lucide-react";
 import WceLeads from "@/components/admin/wce/WceLeads";
 import WceSpeakers from "@/components/admin/wce/WceSpeakers";
 import WcePathways from "@/components/admin/wce/WcePathways";
@@ -9,57 +15,124 @@ import WceMedia from "@/components/admin/wce/WceMedia";
 import WceSettings from "@/components/admin/wce/WceSettings";
 import WceOrders from "@/components/admin/wce/WceOrders";
 import WceOrganisers from "@/components/admin/wce/WceOrganisers";
+import { FlowerOfLifeField } from "@/components/wce/decor";
+import "@/styles/wce.css";
+import "@/styles/wce-admin.css";
 
-const TABS = [
-  { key: "leads", label: "Leads", Component: WceLeads },
-  { key: "speakers", label: "Speakers", Component: WceSpeakers },
-  { key: "pathways", label: "Pathways", Component: WcePathways },
-  { key: "orders", label: "Orders", Component: WceOrders },
-  { key: "referrals", label: "Referral Codes", Component: WceReferralCodes },
-  { key: "faqs", label: "FAQs", Component: WceFaqs },
-  { key: "media", label: "Media", Component: WceMedia },
-  { key: "settings", label: "Settings", Component: WceSettings },
+const GROUPS = [
+  {
+    group: "Audience",
+    items: [
+      { key: "leads", label: "Leads", Icon: Users, Component: WceLeads },
+      { key: "orders", label: "Orders", Icon: ShoppingBag, Component: WceOrders },
+      { key: "referrals", label: "Referral Codes", Icon: Ticket, Component: WceReferralCodes },
+    ],
+  },
+  {
+    group: "Programme",
+    items: [
+      { key: "pathways", label: "Pathways", Icon: RouteIcon, Component: WcePathways },
+      { key: "speakers", label: "Speakers", Icon: Mic2, Component: WceSpeakers },
+      { key: "media", label: "Media", Icon: ImageIcon, Component: WceMedia },
+      { key: "faqs", label: "FAQs", Icon: HelpCircle, Component: WceFaqs },
+    ],
+  },
+  {
+    group: "Configuration",
+    items: [{ key: "settings", label: "Settings", Icon: SettingsIcon, Component: WceSettings }],
+  },
 ];
 
 // Only full store admins may manage who has organiser access.
-const ADMIN_ONLY_TABS = [
-  { key: "organisers", label: "Organisers", Component: WceOrganisers },
-];
+const ADMIN_GROUP = {
+  group: "Access",
+  items: [{ key: "organisers", label: "Organisers", Icon: ShieldCheck, Component: WceOrganisers }],
+};
 
 export default function AdminWCE() {
-  const { isFullAdmin } = useWceAccess();
+  const { isFullAdmin, user } = useWceAccess();
+  const navigate = useNavigate();
   const [tab, setTab] = useState<string>("leads");
-  const tabs = useMemo(
-    () => (isFullAdmin ? [...TABS, ...ADMIN_ONLY_TABS] : TABS),
+
+  const groups = useMemo(
+    () => (isFullAdmin ? [...GROUPS, ADMIN_GROUP] : GROUPS),
     [isFullAdmin],
   );
-  const Active = tabs.find((t) => t.key === tab)?.Component ?? WceLeads;
+  const all = groups.flatMap((g) => g.items);
+  const active = all.find((t) => t.key === tab) ?? all[0];
+  const Active = active.Component;
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/wce-admin/login", { replace: true });
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Caribbean Wellness Experience 2026</h1>
-        <p className="text-sm text-muted-foreground">Event content, pathways and lead management.</p>
+    <div className="wce-admin wce-root">
+      <div className="wa-watermark" aria-hidden="true">
+        <FlowerOfLifeField opacity={1} />
       </div>
 
-      <div className="flex flex-wrap gap-1 border-b border-border">
-        {tabs.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className="px-4 py-2 text-sm min-h-[44px]"
-            style={{
-              fontWeight: tab === t.key ? 700 : 500,
-              color: tab === t.key ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
-              borderBottom: tab === t.key ? "2px solid hsl(var(--primary))" : "2px solid transparent",
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <div className="wa-body" style={{ padding: "1.5rem" }}>
+        {/* Header */}
+        <header
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "1rem",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <p className="wa-label">Caribbean Wellness Experience</p>
+            <h1 className="wa-serif" style={{ fontSize: "clamp(1.7rem, 4vw, 2.4rem)", margin: "0.15rem 0 0" }}>
+              Organiser Console <span style={{ color: "var(--wa-gold)" }}>2026</span>
+            </h1>
+            <p className="wa-muted" style={{ fontSize: "0.8rem", marginTop: "0.2rem" }}>
+              1 – 8 August 2026 · Saint Lucia
+            </p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+            {user?.email && (
+              <span className="wa-muted" style={{ fontSize: "0.78rem" }}>
+                Signed in as <span style={{ color: "var(--wa-cream)" }}>{user.email}</span>
+              </span>
+            )}
+            <button type="button" className="wa-btn wa-btn-ghost" onClick={signOut}>
+              <LogOut className="h-4 w-4" /> Sign out
+            </button>
+          </div>
+        </header>
 
-      <Active />
+        <hr className="wa-rule" style={{ margin: "1.1rem 0 1.4rem" }} />
+
+        {/* Nav + content */}
+        <div className="wa-shell">
+          <nav aria-label="WCE admin sections" className="wa-nav">
+            {groups.map((g) => (
+              <div key={g.group} className="wa-nav-group">
+                <span className="wa-label">{g.group}</span>
+                {g.items.map(({ key, label, Icon }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className="wa-nav-item"
+                    aria-current={tab === key ? "page" : undefined}
+                    onClick={() => setTab(key)}
+                  >
+                    <Icon aria-hidden /> {label}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </nav>
+
+          <section aria-live="polite" style={{ minWidth: 0 }}>
+            <Active />
+          </section>
+        </div>
+      </div>
     </div>
   );
 }
