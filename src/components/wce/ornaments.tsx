@@ -85,6 +85,44 @@ export function LotusMark({ size = 40, className = "" }: { size?: number; classN
   );
 }
 
+/** Double-hairline gold frame with vines drawing into all four corners. */
+export function OrnateFrame({ className = "", inset = 0 }: { className?: string; inset?: number }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`wce-ornate-frame ${className}`}
+      style={inset ? { inset } : undefined}
+    >
+      <span className="wce-ornate-frame-line" />
+      <span className="wce-ornate-frame-line inner" />
+      <CornerVine className="wce-ornate-vine tl" />
+      <CornerVine flip className="wce-ornate-vine tr" />
+      <CornerVine flip className="wce-ornate-vine bl" />
+      <CornerVine className="wce-ornate-vine br" />
+    </span>
+  );
+}
+
+/** Slim ring of ticks that sits outside the compass mandala and counter-rotates. */
+export function MandalaOuterRing({ size = 250, className = "" }: { size?: number; className?: string }) {
+  const ticks = Array.from({ length: 48 }, (_, i) => i * 7.5);
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 200 200" fill="none" aria-hidden="true">
+      <circle cx="100" cy="100" r="97" stroke="var(--wce-gold)" strokeWidth="0.5" opacity="0.4" />
+      <circle cx="100" cy="100" r="88" stroke="var(--wce-gold)" strokeWidth="0.4" opacity="0.25" />
+      {ticks.map((deg) => (
+        <line
+          key={deg}
+          x1="100" y1="88" x2="100" y2={deg % 45 === 0 ? 80 : 84}
+          stroke="var(--wce-gold)" strokeWidth={deg % 45 === 0 ? 0.9 : 0.45}
+          opacity={deg % 45 === 0 ? 0.75 : 0.35}
+          transform={`rotate(${deg} 100 100)`}
+        />
+      ))}
+    </svg>
+  );
+}
+
 export function CompassMandala({ size = 190, className = "" }: { size?: number; className?: string }) {
   const rays = Array.from({ length: 24 }, (_, i) => i * 15);
   return (

@@ -44,6 +44,9 @@ export function SpeakerFlyer({
   nextName,
   position,
   total,
+  direction = 1,
+  roster = [],
+  onSelect,
 }: {
   speaker: WceSpeaker;
   onClose: () => void;
@@ -55,6 +58,11 @@ export function SpeakerFlyer({
   /** 1-based position used by the live region announcement. */
   position?: number;
   total?: number;
+  /** Direction of the last navigation: 1 forward, -1 back. Drives the card turn. */
+  direction?: 1 | -1;
+  /** Full speaker order, for the progress dots and adjacent-portrait preloading. */
+  roster?: WceSpeaker[];
+  onSelect?: (id: string) => void;
 }) {
   const reduced = useWceReducedMotion();
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -67,6 +75,21 @@ export function SpeakerFlyer({
   const [atBottom, setAtBottom] = useState(true);
   const [imgFailed, setImgFailed] = useState(false);
   const portrait = speakerPortrait(speaker.name, speaker.portrait_url);
+  /** Bumped on every speaker change so the ring ignition replays. */
+  const [igniteKey, setIgniteKey] = useState(0);
+  useEffect(() => { setIgniteKey((n) => n + 1); }, [speaker.id]);
+
+  /* Preload the neighbouring portraits so the circle is never blank mid-turn. */
+  useEffect(() => {
+    if (!roster.length) return;
+    const i = roster.findIndex((s) => s.id === speaker.id);
+    if (i < 0) return;
+    for (const d of [-1, 1]) {
+      const n = roster[(i + d + roster.length) % roster.length];
+      const url = n && speakerPortrait(n.name, n.portrait_url);
+      if (url) { const img = new Image(); img.decoding = "async"; img.src = url; }
+    }
+  }, [roster, speaker.id]);
 
   const requestClose = useCallback(() => {
     closingRef.current = true;
@@ -197,6 +220,27 @@ export function SpeakerFlyer({
           transition: { duration: 0.5, delay, ease: EASE },
         };
 
+  /* Card-turn: outgoing text leaves in the direction of travel, incoming text
+     arrives from the opposite side, staggered. Reduced motion → 150ms crossfade. */
+  const turn = (stagger = 0) =>
+    reduced
+      ? {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          exit: { opacity: 0, transition: { duration: 0.15 } },
+          transition: { duration: 0.15 },
+        }
+      : {
+          initial: { opacity: 0, x: 48 * direction },
+          animate: { opacity: 1, x: 0 },
+          exit: {
+            opacity: 0,
+            x: -48 * direction,
+            transition: { duration: 0.26, delay: stagger * 0.6, ease: "easeIn" as const },
+          },
+          transition: { duration: 0.38, delay: stagger, ease: EASE },
+        };
+
   return (
     <motion.div
       ref={overlayRef}
@@ -297,10 +341,7 @@ export function SpeakerFlyer({
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={`name-${speaker.id}`}
-                initial={reduced ? false : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduced ? undefined : { opacity: 0, y: -8 }}
-                transition={{ duration: 0.3, ease: EASE }}
+                {...turn(0)}
               >
                 {speaker.prefix?.trim() && <p className="wce-flyer-prefix">{speaker.prefix}</p>}
                 <h2 id="wce-flyer-heading" className="wce-flyer-name">{speaker.name}</h2>
@@ -310,26 +351,54 @@ export function SpeakerFlyer({
 
             {/* Theme word | portrait | emblem */}
             <div className="wce-flyer-stage">
-              <motion.div className="wce-flyer-themeword" aria-hidden="true" {...rise(0.24)}>
-                {lines.map((l, i) => (
-                  <span key={`${l}-${i}`}>{l}</span>
-                ))}
-              </motion.div>
+              {/* Theme word crossfades on a slower curve so it lags the rest. */}
+              <div className="wce-flyer-themeword-slot" aria-hidden="true">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={`theme-${speaker.id}`}
+                    className="wce-flyer-themeword"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, transition: { duration: reduced ? 0.15 : 0.5, ease: EASE } }}
+                    transition={{ duration: reduced ? 0.15 : 0.5, ease: EASE }}
+                  >
+                    {lines.map((l, i) => (
+                      <span key={`${l}-${i}`}>{l}</span>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
               <div className="wce-flyer-portrait">
                 <span aria-hidden="true" className="wce-flyer-portrait-ring" />
+                <span key={igniteKey} aria-hidden="true" className="wce-flyer-ring-ignite" />
                 <div className="wce-flyer-portrait-mask">
-                  {portrait && !imgFailed ? (
-                    <img
-                      key={portrait}
-                      src={portrait}
-                      alt={speaker.name}
-                      decoding="async"
-                      onError={() => setImgFailed(true)}
-                    />
-                  ) : (
-                    <span className="wce-flyer-initials">{speakerInitials(speaker.name)}</span>
-                  )}
+                  {/* The circle stays anchored; only the person inside it changes. */}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={`portrait-${speaker.id}`}
+                      className="wce-flyer-portrait-layer"
+                      initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 1.06 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={
+                        reduced
+                          ? { opacity: 0, transition: { duration: 0.15 } }
+                          : { opacity: 0, scale: 0.94, transition: { duration: 0.26, ease: "easeIn" } }
+                      }
+                      transition={{ duration: reduced ? 0.15 : 0.38, ease: EASE }}
+                    >
+                      {portrait && !imgFailed ? (
+                        <img
+                          src={portrait}
+                          alt={speaker.name}
+                          decoding="async"
+                          onError={() => setImgFailed(true)}
+                        />
+                      ) : (
+                        <span className="wce-flyer-initials">{speakerInitials(speaker.name)}</span>
+                      )}
+                    </motion.span>
+                  </AnimatePresence>
                 </div>
               </div>
 
@@ -343,10 +412,7 @@ export function SpeakerFlyer({
                 <motion.p
                   key={`session-${speaker.id}`}
                   className="wce-flyer-session"
-                  initial={reduced ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={reduced ? undefined : { opacity: 0, y: -6 }}
-                  transition={{ duration: 0.3, ease: EASE }}
+                  {...turn(0.06)}
                 >
                   {speaker.session_title}
                   {speaker.session_time?.trim() ? ` · ${speaker.session_time}` : ""}
@@ -397,6 +463,27 @@ export function SpeakerFlyer({
               ))}
             </ul>
           </div>
+
+          {/* Progress dots — jump straight to any speaker */}
+          {roster.length > 1 && (
+            <nav className="wce-flyer-dots" aria-label="Speakers">
+              {roster.map((s, i) => {
+                const active = s.id === speaker.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    className={`wce-flyer-dot ${active ? "is-active" : ""}`}
+                    aria-label={`Speaker ${i + 1} of ${roster.length}: ${s.name}`}
+                    aria-current={active ? "true" : undefined}
+                    onClick={() => onSelect?.(s.id)}
+                  >
+                    <span aria-hidden="true" />
+                  </button>
+                );
+              })}
+            </nav>
+          )}
           </div>
         </motion.div>
       </div>
