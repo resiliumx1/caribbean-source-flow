@@ -19,6 +19,60 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 /** Invitation links stay valid for 12 hours; after that a resend is required. */
 const INVITE_TTL_HOURS = 12;
 
+const RESEND_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
+const MAIL_FROM = "Mount Kailash <orders@mountkailashslu.com>";
+
+/** Deliver the organiser link through Resend.
+ *
+ *  The built-in auth mailer has a low hourly cap shared with every password
+ *  reset on the site, so a few invitations in a row fail with
+ *  "email rate limit exceeded". Generating the link and sending it ourselves
+ *  keeps invitations working and lets us brand the message.
+ */
+async function sendInviteEmail(to: string, link: string, name: string | null, existing: boolean) {
+  if (!RESEND_KEY) return { sent: false, error: "No mail provider configured." };
+  const greeting = name ? `Hello ${name},` : "Hello,";
+  const intro = existing
+    ? "Your existing Mount Kailash account has been given organiser access to the Caribbean Wellness Experience 2026 console. Use the button below to set a password and sign in."
+    : "You have been invited to help run the Caribbean Wellness Experience 2026. Use the button below to choose a password and open the organiser console.";
+  const html = `<!doctype html><html><body style="margin:0;background:#0B2114;padding:32px 16px;font-family:Helvetica,Arial,sans-serif;color:#F5EFE0">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#123020;border:1px solid rgba(201,162,39,0.35);border-radius:8px">
+      <tr><td style="padding:28px 28px 8px">
+        <p style="margin:0;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#C9A227">Caribbean Wellness Experience</p>
+        <h1 style="margin:8px 0 0;font-size:24px;font-weight:600;color:#F5EFE0">Organiser access</h1>
+      </td></tr>
+      <tr><td style="padding:8px 28px 0;font-size:15px;line-height:1.6">
+        <p style="margin:0 0 12px">${greeting}</p>
+        <p style="margin:0 0 20px">${intro}</p>
+        <p style="margin:0 0 22px">
+          <a href="${link}" style="display:inline-block;background:#C9A227;color:#0B2114;font-weight:700;text-decoration:none;padding:14px 22px;border-radius:4px">Set your password</a>
+        </p>
+        <p style="margin:0 0 8px;font-size:13px;color:rgba(245,239,224,0.75)">This link can be used once and expires in ${INVITE_TTL_HOURS} hours. If it stops working, ask a site administrator to resend your invitation.</p>
+        <p style="margin:0;font-size:12px;color:rgba(245,239,224,0.55);word-break:break-all">${link}</p>
+      </td></tr>
+      <tr><td style="padding:22px 28px 26px;font-size:12px;color:rgba(245,239,224,0.55)">Mount Kailash Rejuvenation Centre · Saint Lucia</td></tr>
+    </table>
+  </td></tr></table></body></html>`;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${RESEND_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: MAIL_FROM,
+      to: [to],
+      subject: "Your Caribbean Wellness Experience 2026 organiser access",
+      html,
+    }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    console.error(`Resend invite failed [${res.status}]: ${detail}`);
+    return { sent: false, error: `Mail provider error (${res.status}): ${detail}` };
+  }
+  return { sent: true, error: null as string | null };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -96,34 +150,49 @@ Deno.serve(async (req) => {
     let userId = existing?.id ?? null;
     let alreadyExisted = Boolean(existing);
     let emailSent = false;
+    let mailError: string | null = null;
     const name = displayName ?? (prior?.display_name as string | null) ?? null;
 
     if (!existing) {
-      const { data, error } = await svc.auth.admin.inviteUserByEmail(email, {
-        redirectTo: redirectTo || undefined,
-        data: name ? { full_name: name } : undefined,
+      // Create the account without sending anything, then generate the link and
+      // deliver it ourselves — the built-in invite mailer is rate limited.
+      const { data: created, error: createErr } = await svc.auth.admin.createUser({
+        email,
+        email_confirm: true,
+        user_metadata: name ? { full_name: name } : undefined,
       });
-      if (error) {
-        // Race: created between our lookup and the invite.
+      if (createErr) {
+        // Race: created between our lookup and this call.
         const retry = await findUserByEmail(svc, email);
-        if (!retry) return json({ error: error.message }, 400);
+        if (!retry) return json({ error: createErr.message }, 400);
         userId = retry.id;
         alreadyExisted = true;
       } else {
-        userId = data.user?.id ?? null;
-        emailSent = true;
+        userId = created.user?.id ?? null;
       }
-    } else {
-      // The account already exists. Send a set-password (recovery) email so they
-      // can choose a password and land on the accept screen. inviteUserByEmail
-      // refuses existing users, so recovery is the correct channel here.
-      const { error } = await svc.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectTo || undefined,
-      });
-      emailSent = !error;
     }
 
     if (!userId) return json({ error: "Could not resolve the invited account." }, 500);
+
+    // One channel for both cases: a recovery link lets them set a password and
+    // land on the accept screen. generateLink does not send an email itself.
+    const { data: linkData, error: linkErr } = await svc.auth.admin.generateLink({
+      type: "recovery",
+      email,
+      options: { redirectTo: redirectTo || undefined },
+    });
+    if (linkErr) {
+      mailError = linkErr.message;
+    } else {
+      const link = linkData?.properties?.action_link;
+      if (link) {
+        const out = await sendInviteEmail(email, link, name, alreadyExisted);
+        emailSent = out.sent;
+        mailError = out.error;
+      } else {
+        mailError = "Could not generate the invitation link.";
+      }
+    }
 
     // Grant the narrow organiser role.
     const { error: roleErr } = await svc.from("user_roles")
@@ -162,6 +231,7 @@ Deno.serve(async (req) => {
       email,
       already_existed: alreadyExisted,
       email_sent: emailSent,
+      email_error: mailError,
       expires_at: record.expires_at,
       expires_in_hours: preAccepted ? null : INVITE_TTL_HOURS,
       invite,
