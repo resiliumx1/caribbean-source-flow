@@ -9,6 +9,7 @@ import {
   MaskedHeading, ClipReveal, SlideInItem, useCounterRotate, useSectionLift,
 } from "./motion";
 import { WCE_PATHWAY_EVENT } from "./pathway-select";
+import { trackWceCta } from "./cta-tracking";
 import {
   FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, DiamondRule, GoldFlourish,
   LeafIcon, CheckMark, RitualIcon, ConnectionIcon, TransformationIcon, EdgeBleed,
@@ -312,7 +313,13 @@ export function WceRetreatBand() {
           </ul>
 
           <Reveal>
-            <a href="#apply" className="wce-btn wce-btn-gold mt-12 w-full sm:w-auto">Apply for the Retreat</a>
+            <a
+              href="#apply"
+              className="wce-btn wce-btn-gold mt-12 w-full sm:w-auto"
+              onClick={() => trackWceCta("apply", "retreat_section", "Apply for the Retreat")}
+            >
+              Apply for the Retreat
+            </a>
           </Reveal>
           <p className="mt-6 text-sm italic" style={{ color: "rgba(245,239,224,0.84)", fontFamily: "var(--wce-display)", fontSize: "1.05rem" }}>
             Limited spaces. Applications reviewed personally.

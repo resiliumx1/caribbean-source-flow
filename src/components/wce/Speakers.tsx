@@ -11,6 +11,7 @@ import { SpeakerFlyer } from "./SpeakerFlyer";
 import { FeaturedHalo } from "./FeaturedHalo";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
+import { trackWceCta } from "./cta-tracking";
 
 /** One row tile: gilded ring ignition + translucent theme word behind the portrait. */
 function SpeakerTile({
@@ -195,6 +196,11 @@ export function WceSpeakersSection() {
   const featured = speakers.find((s) => s.is_featured) ?? null;
   const rest = speakers.filter((s) => s.id !== featured?.id);
   const open = speakers.find((s) => s.id === openId) ?? null;
+  const openIndex = open ? speakers.findIndex((s) => s.id === open.id) : -1;
+  const neighbour = (dir: 1 | -1) =>
+    openIndex >= 0 && speakers.length > 1
+      ? speakers[(openIndex + dir + speakers.length) % speakers.length]?.name
+      : undefined;
 
   const step = useCallback(
     (dir: 1 | -1) => {
@@ -269,7 +275,10 @@ export function WceSpeakersSection() {
             <div className="mt-16">
               <button
                 type="button"
-                onClick={() => setOpenId(speakers[0].id)}
+                onClick={() => {
+                  trackWceCta("explore", "speakers", "Explore Speaker Sessions");
+                  setOpenId(speakers[0].id);
+                }}
                 className="wce-btn wce-btn-outline-forest wce-btn-pill mx-auto"
               >
                 Explore Speaker Sessions
@@ -287,6 +296,10 @@ export function WceSpeakersSection() {
             onClose={close}
             onPrev={() => step(-1)}
             onNext={() => step(1)}
+            prevName={neighbour(-1)}
+            nextName={neighbour(1)}
+            position={openIndex >= 0 ? openIndex + 1 : undefined}
+            total={speakers.length}
           />
         )}
       </AnimatePresence>

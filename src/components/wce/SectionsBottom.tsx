@@ -5,6 +5,7 @@ import { Reveal, MaskedHeading, useSectionLift } from "./motion";
 import { FaqSkeleton } from "./Skeletons";
 import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, GoldFlourish, DiamondRule, LeafIcon, EdgeBleed } from "./decor";
 import { LoveEmblem } from "./LoveEmblem";
+import { trackWceCta, WceCtaIntent } from "./cta-tracking";
 
 const PARTNERS = ["Mount Kailash", "Kamila's Kitchen", "Jah9", "LifeCraft in Jamaica", "The Ubuntu Movement"];
 
@@ -106,14 +107,15 @@ export function WceFinalCta() {
         <DiamondRule className="mx-auto mt-10 max-w-[13rem]" />
         <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
           {[
-            { label: "Book In-Person Symposium", href: "#pathways", shimmer: true },
-            { label: "Get Online Access", href: "#pathways", shimmer: false },
-            { label: "Apply for the Retreat", href: "#apply", shimmer: false },
+            { label: "Book In-Person Symposium", href: "#pathways", shimmer: true, intent: "reserve" as WceCtaIntent },
+            { label: "Get Online Access", href: "#pathways", shimmer: false, intent: "online" as WceCtaIntent },
+            { label: "Apply for the Retreat", href: "#apply", shimmer: false, intent: "apply" as WceCtaIntent },
           ].map((b, i) => (
             <Reveal key={b.label} index={i} className="w-full">
               <a
                 href={b.href}
                 className={`wce-btn wce-btn-gold ${b.shimmer ? "wce-shimmer-btn" : ""} h-full w-full text-center`}
+                onClick={() => trackWceCta(b.intent, "final_band", b.label)}
               >
                 <LeafIcon tone="var(--wce-forest)" size={13} />
                 <span>{b.label}</span>

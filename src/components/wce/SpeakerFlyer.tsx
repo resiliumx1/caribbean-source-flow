@@ -12,8 +12,23 @@ import { FlowerOfLifeField, EdgeFoliage, DiamondRule } from "./decor";
 import { useWceReducedMotion } from "./motion";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
+import { trackWceCta } from "./cta-tracking";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+const FOCUSABLE =
+  'a[href], area[href], button, input, select, textarea, iframe, [tabindex]:not([tabindex="-1"])';
+
+/** Tabbable, currently-rendered controls inside the flyer, in DOM order. */
+function focusables(root: HTMLElement): HTMLElement[] {
+  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+    (el) =>
+      !el.hasAttribute("disabled") &&
+      el.getAttribute("aria-hidden") !== "true" &&
+      el.tabIndex !== -1 &&
+      (el.offsetWidth > 0 || el.offsetHeight > 0 || el === document.activeElement),
+  );
+}
 
 function scrollToId(id: string) {
   const el = document.getElementById(id);
@@ -25,19 +40,38 @@ export function SpeakerFlyer({
   onClose,
   onPrev,
   onNext,
+  prevName,
+  nextName,
+  position,
+  total,
 }: {
   speaker: WceSpeaker;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
+  /** Names of the neighbouring speakers, so the arrows announce their target. */
+  prevName?: string;
+  nextName?: string;
+  /** 1-based position used by the live region announcement. */
+  position?: number;
+  total?: number;
 }) {
   const reduced = useWceReducedMotion();
+  const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  /** Set the moment a close is requested: the flyer stays mounted through its
+   *  exit animation, and the trap must not fight the caller restoring focus. */
+  const closingRef = useRef(false);
   const [atBottom, setAtBottom] = useState(true);
   const [imgFailed, setImgFailed] = useState(false);
   const portrait = speakerPortrait(speaker.name, speaker.portrait_url);
+
+  const requestClose = useCallback(() => {
+    closingRef.current = true;
+    onClose();
+  }, [onClose]);
 
   useEffect(() => { setImgFailed(false); }, [portrait]);
 
@@ -70,31 +104,88 @@ export function SpeakerFlyer({
     };
   }, []);
 
-  /* Keyboard: Escape, arrows, Tab trap */
+  /* Hide the rest of the page from assistive tech while the flyer is open, so a
+     screen reader cannot wander out of the dialog. Walks up from the overlay and
+     hides each ancestor's siblings, restoring their previous values on close.
+     Live regions (toasts) are left alone so announcements still reach the user. */
   useEffect(() => {
-    closeRef.current?.focus();
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+    const touched: Array<[Element, string | null]> = [];
+    let node: HTMLElement | null = overlay;
+    while (node && node !== document.body) {
+      const parent: HTMLElement | null = node.parentElement;
+      if (!parent) break;
+      for (const sib of Array.from(parent.children)) {
+        if (sib === node) continue;
+        if (sib.tagName === "SCRIPT" || sib.tagName === "STYLE" || sib.tagName === "LINK") continue;
+        if (sib.matches("[aria-live]") || sib.querySelector("[aria-live]")) continue;
+        touched.push([sib, sib.getAttribute("aria-hidden")]);
+        sib.setAttribute("aria-hidden", "true");
+      }
+      node = parent;
+    }
+    return () => {
+      for (const [el, prev] of touched) {
+        if (prev === null) el.removeAttribute("aria-hidden");
+        else el.setAttribute("aria-hidden", prev);
+      }
+    };
+  }, []);
+
+  /* Focus management: move focus in on open, keep Tab and programmatic focus
+     inside the panel, and let Escape / arrows drive the dialog. */
+  useEffect(() => {
+    const root = panelRef.current;
+    // Land on the close button so the first Tab press is predictable.
+    (closeRef.current ?? root)?.focus();
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { e.preventDefault(); onClose(); return; }
+      if (closingRef.current) return;
+      if (e.key === "Escape") { e.preventDefault(); requestClose(); return; }
       if (e.key === "ArrowLeft") { e.preventDefault(); onPrev(); return; }
       if (e.key === "ArrowRight") { e.preventDefault(); onNext(); return; }
       if (e.key !== "Tab") return;
-      const root = panelRef.current;
-      if (!root) return;
-      const items = Array.from(
-        root.querySelectorAll<HTMLElement>('button, [href], input, [tabindex]:not([tabindex="-1"])')
-      ).filter((el) => !el.hasAttribute("disabled"));
-      if (!items.length) return;
+
+      const panel = panelRef.current;
+      if (!panel) return;
+      const items = focusables(panel);
+      if (!items.length) { e.preventDefault(); panel.focus(); return; }
       const first = items[0];
       const last = items[items.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-      else if (!root.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose, onPrev, onNext]);
+      const active = document.activeElement;
 
-  const jump = useCallback((id: string) => { onClose(); setTimeout(() => scrollToId(id), 60); }, [onClose]);
+      if (!panel.contains(active)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); }
+      else if (e.shiftKey && active === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); }
+    };
+
+    // Catches focus arriving from anywhere else (mouse, browser find, AT cursor).
+    const onFocusIn = (e: FocusEvent) => {
+      if (closingRef.current) return;
+      const panel = panelRef.current;
+      const target = e.target as Node | null;
+      if (!panel || !target || panel.contains(target)) return;
+      const items = focusables(panel);
+      (items[0] ?? panel).focus();
+    };
+
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("focusin", onFocusIn);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("focusin", onFocusIn);
+    };
+  }, [requestClose, onPrev, onNext]);
+
+  const jump = useCallback(
+    (id: string, intent: "reserve" | "apply", label: string) => {
+      trackWceCta(intent, "speaker_flyer", label, { speaker_name: speaker.name });
+      requestClose();
+      setTimeout(() => scrollToId(id), 60);
+    },
+    [requestClose, speaker.name],
+  );
 
   const lines = themeLines(speaker.theme);
   const rise = (delay: number) =>
@@ -108,19 +199,26 @@ export function SpeakerFlyer({
 
   return (
     <motion.div
+      ref={overlayRef}
       className="wce-flyer-overlay"
       role="dialog"
       aria-modal="true"
-      aria-label={`${speaker.name} — event flyer`}
+      aria-labelledby="wce-flyer-heading"
+      aria-describedby="wce-flyer-desc"
       initial={reduced ? { opacity: 0 } : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: reduced ? 0.2 : 0.35, ease: EASE }}
     >
-      <div className="wce-flyer-scroll" data-lenis-prevent onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div
+        className="wce-flyer-scroll"
+        data-lenis-prevent
+        onMouseDown={(e) => { if (e.target === e.currentTarget) requestClose(); }}
+      >
         <motion.div
           ref={panelRef}
           className="wce-flyer"
+          tabIndex={-1}
           initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.99 }}
@@ -134,13 +232,36 @@ export function SpeakerFlyer({
           <CornerVine flip className="pointer-events-none absolute bottom-3 left-3 rotate-180 opacity-60" />
           <CornerVine className="pointer-events-none absolute bottom-3 right-3 rotate-180 opacity-60" />
 
-          <button ref={closeRef} type="button" className="wce-flyer-close" onClick={onClose} aria-label="Close speaker flyer">
+          {/* Announces the speaker on open and on every arrow navigation. */}
+          <p className="sr-only" role="status" aria-live="polite">
+            {speaker.name}
+            {speaker.title?.trim() ? `, ${speaker.title}` : ""}
+            {position && total ? ` — speaker ${position} of ${total}` : ""}
+          </p>
+
+          <button
+            ref={closeRef}
+            type="button"
+            className="wce-flyer-close"
+            onClick={requestClose}
+            aria-label="Close speaker flyer"
+          >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
-          <button type="button" className="wce-flyer-arrow left" onClick={onPrev} aria-label="Previous speaker">
+          <button
+            type="button"
+            className="wce-flyer-arrow left"
+            onClick={onPrev}
+            aria-label={prevName ? `Previous speaker: ${prevName}` : "Previous speaker"}
+          >
             <ChevronLeft className="h-6 w-6" aria-hidden="true" />
           </button>
-          <button type="button" className="wce-flyer-arrow right" onClick={onNext} aria-label="Next speaker">
+          <button
+            type="button"
+            className="wce-flyer-arrow right"
+            onClick={onNext}
+            aria-label={nextName ? `Next speaker: ${nextName}` : "Next speaker"}
+          >
             <ChevronRight className="h-6 w-6" aria-hidden="true" />
           </button>
           <span aria-hidden="true" className={`wce-flyer-fade ${atBottom ? "is-hidden" : ""}`} />
@@ -182,7 +303,7 @@ export function SpeakerFlyer({
                 transition={{ duration: 0.3, ease: EASE }}
               >
                 {speaker.prefix?.trim() && <p className="wce-flyer-prefix">{speaker.prefix}</p>}
-                <h2 className="wce-flyer-name">{speaker.name}</h2>
+                <h2 id="wce-flyer-heading" className="wce-flyer-name">{speaker.name}</h2>
                 {speaker.title?.trim() && <p className="wce-flyer-title">“{speaker.title}”</p>}
               </motion.div>
             </AnimatePresence>
@@ -233,17 +354,29 @@ export function SpeakerFlyer({
               </AnimatePresence>
             )}
 
-            {speaker.bio?.trim() && <p className="wce-flyer-bio">{speaker.bio}</p>}
+            <p id="wce-flyer-desc" className={speaker.bio?.trim() ? "wce-flyer-bio" : "sr-only"}>
+              {speaker.bio?.trim()
+                ? speaker.bio
+                : `Event flyer for ${speaker.name}. Use the left and right arrow keys to move between speakers, or Escape to close.`}
+            </p>
           </div>
 
           {/* Reserve band */}
           <motion.div className="wce-flyer-band" {...rise(0.36)}>
             <p className="wce-flyer-band-title">Reserve Your Spot</p>
             <div className="wce-flyer-band-ctas">
-              <button type="button" className="wce-btn wce-btn-gold" onClick={() => jump("pathways")}>
+              <button
+                type="button"
+                className="wce-btn wce-btn-gold"
+                onClick={() => jump("pathways", "reserve", "Reserve Your Spot")}
+              >
                 Reserve Your Spot
               </button>
-              <button type="button" className="wce-btn wce-btn-outline" onClick={() => jump("apply")}>
+              <button
+                type="button"
+                className="wce-btn wce-btn-outline"
+                onClick={() => jump("apply", "apply", "Apply for the Retreat")}
+              >
                 Apply for the Retreat
               </button>
             </div>
