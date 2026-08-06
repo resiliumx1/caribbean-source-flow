@@ -417,7 +417,7 @@
     justify-content: space-between; margin-bottom: 1rem;
   }
   .wce-admin .wa-nav { display: none; }
-  .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: var(--wa-2); }
 }
 .wa-drawer-veil {
   position: fixed; inset: 0; z-index: 200; display: flex;
@@ -740,3 +740,11 @@
 /* --- 8px rhythm -------------------------------------------------- */
 .wce-admin form .grid { gap: var(--wa-2) var(--wa-3); }
 .wce-admin .wa-filterbar, .wce-admin .wa-filters-inline { gap: var(--wa-1); }
+
+/* --- narrow-screen chrome tidy ------------------------------------ */
+@media (max-width: 899px) {
+  .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: var(--wa-2); }
+  .wce-admin .wa-header { flex-direction: column; align-items: flex-start !important; gap: var(--wa-2) !important; }
+  .wce-admin .wa-header > div:last-child { width: 100%; justify-content: space-between; }
+  .wce-admin .wa-nav-trigger { width: 100%; min-height: 48px; }
+}
