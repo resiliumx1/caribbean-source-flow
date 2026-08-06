@@ -1,6 +1,6 @@
 /** Visionary Leaders — featured panel, the row of six, and the flyer expansion. */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
 import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
@@ -16,17 +16,14 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /** One row tile: gilded ring ignition + translucent theme word behind the portrait. */
 function SpeakerTile({
   speaker,
-  hidePortrait,
   onOpen,
   cardRef,
 }: {
   speaker: WceSpeaker;
-  hidePortrait: boolean;
   onOpen: () => void;
   cardRef: (el: HTMLButtonElement | null) => void;
 }) {
   const touch = useIsTouch();
-  const reduced = useWceReducedMotion();
   const { ref, inView } = useInView<HTMLSpanElement>();
   // No hover on touch: ignite + reveal the theme word once on scroll-in, then hold.
   const held = touch && (inView || reduced);
@@ -53,17 +50,10 @@ function SpeakerTile({
             <span key={`${l}-${i}`}>{l}</span>
           ))}
         </span>
-        {hidePortrait ? (
-          <span className="wce-speaker-portrait-slot" aria-hidden="true" />
-        ) : (
-          <motion.div
-            layoutId={`wce-portrait-${speaker.id}`}
-            className="wce-speaker-portrait-slot"
-            transition={{ duration: reduced ? 0 : 0.55, ease: EASE }}
-          >
+          <span className="wce-speaker-portrait-slot">
             <span aria-hidden="true" className="wce-portrait-glow" />
             <span aria-hidden="true" className="wce-ring-ignite" />
-            <div className="wce-speaker-ring">
+            <span className="wce-speaker-ring">
               {portrait ? (
                 <img
                   src={portrait}
@@ -75,9 +65,8 @@ function SpeakerTile({
               ) : (
                 <span className="wce-speaker-initials" aria-hidden="true">{speakerInitials(speaker.name)}</span>
               )}
-            </div>
-          </motion.div>
-        )}
+            </span>
+          </span>
       </span>
 
       <span className="wce-speaker-meta">
