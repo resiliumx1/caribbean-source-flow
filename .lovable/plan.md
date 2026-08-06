@@ -1,6 +1,6 @@
 # Self-hosted consultation booking system
 
-Replaces the Calendly redirect with a fully branded booking system on the main site. Nothing under /wce-2026 or the WCE admin is touched.
+Replaces the Calendly redirect with a fully branded booking system on the main Mount Kailash site, for Rt. Hon. Priest Kailash's own consultation practice. It has no connection to WCE 2026: nothing under /wce-2026 or the WCE admin is touched, and no WCE branding, colour variables, or event references appear in the wizard, homepage section, emails, .ics files, or admin. Emails send from the Mount Kailash identity.
 
 ## What already exists (inspected)
 
@@ -20,7 +20,8 @@ Because this is large, it lands in reviewable stages. Each stage is verified bef
 - New tables: `consultation_services`, `consultation_practitioners`, `consultation_availability`, `consultation_availability_overrides`, `consultation_intake_questions`.
 - Enable `btree_gist` and add an `EXCLUDE USING gist` constraint so two overlapping bookings for one practitioner in `pending_payment` or `confirmed` cannot both exist.
 - RLS: public read on active services, practitioners, availability, overrides and intake questions; admin-only writes. **No anonymous read on bookings at all** — all customer access goes through edge functions. Grants written per table.
-- Seed one practitioner (Priest Kailash, America/St_Lucia) and one service from the current settings (Private Healing Consultation, 30 min, $150) so nothing regresses.
+- Seed **Rt. Hon. Priest Kailash** (herbal physician and founder of Mount Kailash Rejuvenation Centre, America/St_Lucia) as the primary and only active practitioner, plus one service from the current settings (Private Healing Consultation, 30 min, $150). The table stays multi-practitioner for later additions.
+- Consultation tables are gated on the existing full-admin check `public.is_admin()`. `has_wce_access` is never used, so a wce_admin has no path to consultations or their customer data.
 
 ### Stage 2 — Availability and booking engine
 - `consultation-availability`: expands recurring weekly windows over a date range, applies date overrides with precedence, slices into slots stepped by duration plus buffers, removes slots overlapping existing bookings including their buffers, applies min notice, max advance and max per day, and returns UTC instants. All timezone maths via a proper IANA library, so daylight saving is handled.
@@ -31,6 +32,7 @@ Because this is large, it lands in reviewable stages. Each stage is verified bef
 
 ### Stage 3 — Public booking wizard at /consultations
 Six steps, matching the site's design system: service, practitioner (auto-skipped when there is one), date and time, details plus intake questions, review with discount code and Authorize.net payment, confirmation with reference, add-to-calendar, Zoom link and manage link.
+- With one active practitioner the practitioner step is skipped entirely and no "choose a practitioner" language appears anywhere.
 - Visitor timezone detected automatically and changeable, practitioner's local time shown as a secondary line.
 - Progress indicator, lossless back navigation, state in sessionStorage, slots re-fetched periodically, UTM and `?ref=` captured on entry.
 - Built mobile-first. `/consultations/manage/:token` for reschedule and cancel with the policy shown.
@@ -42,9 +44,15 @@ Six steps, matching the site's design system: service, practitioner (auto-skippe
 - `.ics` generated with VTIMEZONE, a stable UID per booking and an incrementing SEQUENCE so reschedules update rather than duplicate.
 
 ### Stage 5 — Admin and account
+
+The consultation admin lives under the main `/admin` and is full-admin only.
 - `/admin/consultations` extended into tabs: dashboard strip (today, upcoming, this week, revenue, no-show rate), calendar with day/week/month and practitioner selector colour-coded by status, bookings list with filters, search and CSV export, booking detail (reschedule, cancel, complete, no-show, resend, Zoom link, internal notes), services CRUD with intake questions, practitioners CRUD with photo upload, and availability editing as a weekly grid plus override calendar.
 - Manual booking creation for phone enquiries with an option to skip payment.
 - `/account` gains a Consultations section with upcoming and past bookings linking to their manage pages.
+
+## Homepage section
+
+The homepage block is framed personally rather than as a generic booking tool: heading "Consult with Rt. Hon. Priest Kailash", his photograph, his standing as a herbal physician, and what a consultation with him involves. The generic practitioner trust strip is dropped in favour of a proper feature panel for him. Main-site design system only.
 
 ## Technical notes
 
