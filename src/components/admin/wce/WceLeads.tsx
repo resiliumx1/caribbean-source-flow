@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
 import { inputCls } from "./shared";
+import { StatCard, StatusPill, EmptyState, SectionHeading, ACCENTS } from "./ui";
+import {
+  AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell,
+} from "recharts";
 
 const STATUSES = ["new", "contacted", "qualified", "accepted", "declined"] as const;
 type Status = (typeof STATUSES)[number];
@@ -82,6 +85,41 @@ export default function WceLeads() {
     return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
   }, [leads]);
 
+  /** Leads per day for the last 30 days. */
+  const overTime = useMemo(() => {
+    const days: { date: string; label: string; leads: number }[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - i);
+      days.push({
+        date: d.toISOString().slice(0, 10),
+        label: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+        leads: 0,
+      });
+    }
+    const idx = new Map(days.map((d, i) => [d.date, i]));
+    for (const l of leads) {
+      const key = new Date(l.created_at).toISOString().slice(0, 10);
+      const i = idx.get(key);
+      if (i !== undefined) days[i].leads += 1;
+    }
+    return days;
+  }, [leads]);
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {};
+    for (const l of leads) c[l.status] = (c[l.status] ?? 0) + 1;
+    return c;
+  }, [leads]);
+
+  const last7 = overTime.slice(-7).reduce((s, d) => s + d.leads, 0);
+  const prev7 = overTime.slice(-14, -7).reduce((s, d) => s + d.leads, 0);
+  const trendDir = last7 > prev7 ? "up" : last7 < prev7 ? "down" : "flat";
+  const qualified = (counts.qualified ?? 0) + (counts.accepted ?? 0);
+  const conversion = leads.length ? Math.round((qualified / leads.length) * 100) : 0;
+  const sourceSeries = [ACCENTS.gold.series, ACCENTS.sage.series, ACCENTS.teal.series, ACCENTS.terracotta.series];
+
   const patch = async (id: string, values: Partial<Lead>) => {
     setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...values } : l)));
     const { error } = await supabase.from("wce_leads").update(values).eq("id", id);
@@ -104,22 +142,77 @@ export default function WceLeads() {
     URL.revokeObjectURL(url);
   };
 
-  if (loading) return <Loader2 className="h-6 w-6 animate-spin text-primary" />;
+  if (loading)
+    return <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--wa-gold)" }} />;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2 rounded-lg border border-border bg-card p-3">
-        <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground self-center mr-2">
-          Leads by source
-        </span>
-        <span className="rounded-full border border-border px-3 py-1 text-xs font-bold text-foreground">
-          Total: {leads.length}
-        </span>
-        {bySource.map(([src, n]) => (
-          <span key={src} className="rounded-full border border-border px-3 py-1 text-xs text-foreground">
-            {src}: <strong>{n}</strong>
-          </span>
-        ))}
+    <div className="space-y-5">
+      <SectionHeading title="Leads" sub="Applications from the /wce-2026 landing page, with campaign attribution." />
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Total leads" value={leads.length} accent="sage"
+          trend={{ direction: trendDir as any, text: `${last7} in the last 7 days` }} />
+        <StatCard label="Qualified & accepted" value={qualified} accent="gold" hint="Ready for the team" />
+        <StatCard label="Conversion" value={`${conversion}%`} accent="teal" hint="Of all leads received" />
+        <StatCard label="Needs attention" value={counts.new ?? 0} accent="terracotta" hint="Still marked new" />
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-[1.6fr_1fr]">
+        <div className="wa-panel">
+          <p className="wa-label" style={{ marginBottom: "0.6rem" }}>Leads over time · 30 days</p>
+          <div style={{ height: 210 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={overTime} margin={{ top: 4, right: 8, bottom: 0, left: -18 }}>
+                <defs>
+                  <linearGradient id="waLeadFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={ACCENTS.sage.series} stopOpacity={0.55} />
+                    <stop offset="100%" stopColor={ACCENTS.sage.series} stopOpacity={0.04} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="rgba(245,239,224,0.08)" vertical={false} />
+                <XAxis dataKey="label" tick={{ fill: "rgba(245,239,224,0.6)", fontSize: 10 }}
+                  interval={4} stroke="rgba(201,162,39,0.3)" />
+                <YAxis allowDecimals={false} tick={{ fill: "rgba(245,239,224,0.6)", fontSize: 10 }}
+                  stroke="rgba(201,162,39,0.3)" />
+                <Tooltip
+                  contentStyle={{ background: "#0F2A1D", border: "1px solid rgba(201,162,39,0.4)", color: "#F5EFE0", fontSize: 12 }}
+                  labelStyle={{ color: "#E4C766" }}
+                />
+                <Area type="monotone" dataKey="leads" stroke={ACCENTS.sage.series} strokeWidth={2}
+                  fill="url(#waLeadFill)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="wa-panel">
+          <p className="wa-label" style={{ marginBottom: "0.6rem" }}>Leads by UTM source</p>
+          {bySource.length === 0 ? (
+            <EmptyState title="No attribution yet" line="Campaign sources appear here once leads arrive." />
+          ) : (
+            <div style={{ height: 210 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={bySource.slice(0, 6).map(([source, leads]) => ({ source, leads }))}
+                  layout="vertical" margin={{ top: 4, right: 12, bottom: 0, left: 8 }}>
+                  <CartesianGrid stroke="rgba(245,239,224,0.08)" horizontal={false} />
+                  <XAxis type="number" allowDecimals={false}
+                    tick={{ fill: "rgba(245,239,224,0.6)", fontSize: 10 }} stroke="rgba(201,162,39,0.3)" />
+                  <YAxis type="category" dataKey="source" width={78}
+                    tick={{ fill: "rgba(245,239,224,0.75)", fontSize: 10 }} stroke="rgba(201,162,39,0.3)" />
+                  <Tooltip
+                    contentStyle={{ background: "#0F2A1D", border: "1px solid rgba(201,162,39,0.4)", color: "#F5EFE0", fontSize: 12 }}
+                    labelStyle={{ color: "#E4C766" }}
+                  />
+                  <Bar dataKey="leads" radius={[0, 3, 3, 0]}>
+                    {bySource.slice(0, 6).map((_, i) => (
+                      <Cell key={i} fill={sourceSeries[i % sourceSeries.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -135,54 +228,61 @@ export default function WceLeads() {
           <option value="all">All pathways</option>
           {pathways.map((p) => <option key={p} value={p}>{p}</option>)}
         </select>
-        <Button variant="outline" size="sm" className="gap-2" onClick={exportCsv}>
+        <button type="button" className="wa-btn wa-btn-primary" onClick={exportCsv}>
           <Download className="h-4 w-4" /> Export CSV
-        </Button>
+        </button>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-card">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+      <div className="wa-table-wrap">
+        <table>
+          <thead>
             <tr>
-              <th className="p-3 text-left">Date</th>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-left">Contact</th>
-              <th className="p-3 text-left">Country</th>
-              <th className="p-3 text-left">Pathway</th>
-              <th className="p-3 text-left">Source</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-left">Notes</th>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Country</th>
+              <th>Pathway</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Notes</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 && (
-              <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">No leads yet.</td></tr>
+              <tr>
+                <td colSpan={8}>
+                  <EmptyState title="No leads to show" line="Adjust the filters, or share the landing page to start gathering applications." />
+                </td>
+              </tr>
             )}
             {filtered.map((l) => (
-              <tr key={l.id} className="border-t border-border align-top">
-                <td className="p-3 whitespace-nowrap text-xs text-muted-foreground">
+              <tr key={l.id}>
+                <td data-label="Date" className="whitespace-nowrap text-xs">
                   {new Date(l.created_at).toLocaleDateString()}
                 </td>
-                <td className="p-3 font-medium text-foreground">{l.full_name || "—"}</td>
-                <td className="p-3 text-xs text-muted-foreground">
+                <td data-label="Name" className="wa-strong">{l.full_name || "—"}</td>
+                <td data-label="Contact" className="text-xs">
                   <div>{l.email || "—"}</div>
                   <div>{l.whatsapp || ""}</div>
                 </td>
-                <td className="p-3 text-xs">{l.country || "—"}</td>
-                <td className="p-3 text-xs">{l.pathway_interest || "—"}</td>
-                <td className="p-3 text-xs">{l.utm_source || "direct"}</td>
-                <td className="p-3">
+                <td data-label="Country" className="text-xs">{l.country || "—"}</td>
+                <td data-label="Pathway" className="text-xs">{l.pathway_interest || "—"}</td>
+                <td data-label="Source" className="text-xs">{l.utm_source || "direct"}</td>
+                <td data-label="Status">
+                  <div style={{ marginBottom: "0.35rem" }}><StatusPill status={l.status} /></div>
                   <select
-                    className={inputCls + " min-w-[130px] py-1"}
+                    aria-label="Change lead status"
+                    className="min-w-[130px]"
                     value={l.status}
                     onChange={(e) => patch(l.id, { status: e.target.value })}
                   >
                     {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </td>
-                <td className="p-3">
+                <td data-label="Notes">
                   <textarea
-                    className={inputCls + " min-w-[200px]"}
+                    aria-label="Lead notes"
+                    className="min-w-[200px]"
                     rows={2}
                     defaultValue={l.notes ?? ""}
                     onBlur={(e) => {
