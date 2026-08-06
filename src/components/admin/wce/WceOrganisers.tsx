@@ -18,13 +18,33 @@ type Row = {
   role_id: string | null;
   invited_at: string | null;
   accepted_at: string | null;
-  status: "active" | "pending" | "revoked";
+  expires_at: string | null;
+  resend_count: number;
+  status: "active" | "pending" | "expired" | "revoked";
 };
 
 const db = supabase as any;
 
+/** Invitation links are valid for 12 hours; after that a resend is required. */
+const INVITE_TTL_HOURS = 12;
+
 function fmt(d: string | null) {
   return d ? new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—";
+}
+
+/** "expires in 7h 20m" / "expired 2h ago" for a pending invitation window. */
+function expiryLabel(expiresAt: string | null) {
+  if (!expiresAt) return null;
+  const diff = new Date(expiresAt).getTime() - Date.now();
+  const mins = Math.round(Math.abs(diff) / 60000);
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  const span = h > 0 ? `${h}h ${m}m` : `${m}m`;
+  return diff > 0 ? `Expires in ${span}` : `Expired ${span} ago`;
+}
+
+function isExpired(expiresAt: string | null) {
+  return Boolean(expiresAt) && new Date(expiresAt as string).getTime() <= Date.now();
 }
 
 export default function WceOrganisers() {
@@ -35,6 +55,12 @@ export default function WceOrganisers() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
+  // Re-render each minute so the countdown and expiry pills stay truthful.
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setTick((t) => t + 1), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -42,7 +68,7 @@ export default function WceOrganisers() {
       const [rolesRes, invitesRes] = await Promise.all([
         db.from("user_roles").select("id, user_id, created_at").eq("role", "wce_admin"),
         db.from("wce_organiser_invites")
-          .select("email, display_name, invited_at, accepted_at, status")
+          .select("email, display_name, invited_at, accepted_at, status, expires_at, resend_count")
           .order("invited_at", { ascending: false }),
       ]);
       if (rolesRes.error) throw rolesRes.error;
@@ -59,6 +85,9 @@ export default function WceOrganisers() {
       const map = new Map<string, Row>();
       for (const inv of invitesRes.data ?? []) {
         const key = (inv.email as string).toLowerCase();
+        const expires = inv.expires_at ?? null;
+        const base =
+          inv.status === "revoked" ? "revoked" : inv.status === "accepted" ? "active" : "pending";
         map.set(key, {
           email: key,
           display_name: inv.display_name ?? null,
@@ -66,7 +95,9 @@ export default function WceOrganisers() {
           role_id: null,
           invited_at: inv.invited_at ?? null,
           accepted_at: inv.accepted_at ?? null,
-          status: inv.status === "revoked" ? "revoked" : inv.status === "accepted" ? "active" : "pending",
+          expires_at: expires,
+          resend_count: Number(inv.resend_count ?? 0),
+          status: base === "pending" && isExpired(expires) ? "expired" : (base as Row["status"]),
         });
       }
       for (const r of roles) {
@@ -79,14 +110,19 @@ export default function WceOrganisers() {
           role_id: r.id,
           invited_at: prior?.invited_at ?? r.created_at,
           accepted_at: prior?.accepted_at ?? null,
+          expires_at: prior?.expires_at ?? null,
+          resend_count: prior?.resend_count ?? 0,
           // Holding the role means access is live, whatever the invite says.
-          status: prior?.status === "pending" && !prior?.accepted_at ? "pending" : "active",
+          status:
+            (prior?.status === "pending" || prior?.status === "expired") && !prior?.accepted_at
+              ? (prior.status as Row["status"])
+              : "active",
         });
       }
 
       setRows(
         Array.from(map.values()).sort((a, b) => {
-          const order = { active: 0, pending: 1, revoked: 2 } as const;
+          const order = { active: 0, pending: 1, expired: 2, revoked: 3 } as const;
           if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
           return (b.invited_at ?? "").localeCompare(a.invited_at ?? "");
         }),
@@ -121,7 +157,7 @@ export default function WceOrganisers() {
       throw new Error(msg);
     }
     if (data?.error) throw new Error(data.error);
-    return data as { already_existed?: boolean; email_sent?: boolean };
+    return data as { already_existed?: boolean; email_sent?: boolean; expires_at?: string | null };
   };
 
   const invite = async (e: React.FormEvent) => {
@@ -139,7 +175,7 @@ export default function WceOrganisers() {
             : "Invitation sent",
           description: res?.already_existed
             ? `${target} already had an account here, so they now hold organiser access. A set-password email has been sent.`
-            : `${target} will receive an email with a link to set their password.`,
+            : `${target} will receive an email with a link to set their password. The link is valid for ${INVITE_TTL_HOURS} hours.`,
         });
         setEmail("");
         setName("");
@@ -151,11 +187,32 @@ export default function WceOrganisers() {
 
   const resend = async (row: Row) => {
     setBusy(row.email);
+    const snapshot = rows;
+    const optimisticExpiry = new Date(Date.now() + INVITE_TTL_HOURS * 3600_000).toISOString();
     await run({
       label: "Invitation",
+      optimistic: () =>
+        setRows((p) =>
+          p.map((r) =>
+            r.email === row.email
+              ? {
+                  ...r,
+                  status: "pending",
+                  invited_at: new Date().toISOString(),
+                  accepted_at: null,
+                  expires_at: optimisticExpiry,
+                  resend_count: r.resend_count + 1,
+                }
+              : r,
+          ),
+        ),
+      rollback: () => setRows(snapshot),
       write: async () => {
-        await call("resend", { email: row.email });
-        wceToast({ title: "Invitation resent", description: `A fresh link is on its way to ${row.email}.` });
+        await call("resend", { email: row.email, display_name: row.display_name });
+        wceToast({
+          title: "Invitation resent",
+          description: `A fresh link is on its way to ${row.email}. Any earlier link stops working, and this one is valid for ${INVITE_TTL_HOURS} hours.`,
+        });
       },
       onDone: () => { void load(); },
     });
@@ -188,6 +245,7 @@ export default function WceOrganisers() {
   const counts = useMemo(() => ({
     active: rows.filter((r) => r.status === "active").length,
     pending: rows.filter((r) => r.status === "pending").length,
+    expired: rows.filter((r) => r.status === "expired").length,
     revoked: rows.filter((r) => r.status === "revoked").length,
   }), [rows]);
 
