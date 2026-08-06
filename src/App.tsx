@@ -203,6 +203,7 @@ function AppContent() {
             <Route path="payment-alerts" element={<AdminPaymentAlerts />} />
             <Route path="coupons" element={<AdminCoupons />} />
             <Route path="abandoned-carts" element={<AdminAbandonedCarts />} />
+            <Route path="consultations" element={<AdminConsultations />} />
             <Route path="wce" element={<AdminWCE />} />
           </Route>
           <Route path="*" element={<NotFound />} />
