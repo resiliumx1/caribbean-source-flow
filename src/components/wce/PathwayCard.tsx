@@ -107,8 +107,8 @@ function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolea
       as="h3"
       lines={lines}
       stagger={80}
-      className="relative mx-auto flex max-w-[22ch] flex-col justify-center text-[1.35rem] leading-snug"
-      style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)", minHeight: "6.6rem" }}
+      className="wce-path-heading relative mx-auto flex max-w-[22ch] flex-col justify-center text-[1.35rem] leading-snug"
+      style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)" }}
     />
   );
 }
@@ -216,7 +216,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
         </span>
 
         <article
-          className={`wce-path-card wce-path-card-${tier} relative flex h-full flex-col overflow-hidden px-7 pb-10 pt-14 text-center ${isRetreat ? "is-retreat" : ""}`}
+          className={`wce-path-card wce-path-card-${tier} relative flex h-full flex-col overflow-hidden px-6 pb-8 pt-12 text-center sm:px-7 sm:pb-10 sm:pt-14 ${isRetreat ? "is-retreat" : ""}`}
         >
           {/* gold bloom — light entering, never a colour change */}
           <span aria-hidden="true" className="wce-path-bloom" />
@@ -236,21 +236,21 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
 
           <PathwayHeading label={label} isRetreat={isRetreat} />
 
-          <DiamondRule className="relative mx-auto mt-6 max-w-[9rem]" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
+          <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
 
           <p
-            className="relative mt-5 text-[0.63rem] uppercase"
+            className="relative mt-4 text-[0.63rem] uppercase sm:mt-5"
             style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(26,26,20,0.9)", letterSpacing: "0.24em" }}
           >
             {isRetreat ? "Applications Open" : pathwayKey === "in_person" ? "Starting at" : "Full access"}
           </p>
-          <div className="relative flex items-center justify-center" style={{ minHeight: "4.6rem" }}>
+          <div className="relative flex items-center justify-center" style={{ minHeight: "3.8rem" }}>
             {!isRetreat && <PathwayPrice currency={currency} price={price} />}
           </div>
 
-          <DiamondRule className="relative mx-auto mt-6 max-w-[9rem]" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
+          <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
 
-          <ul className="relative mx-auto mt-8 space-y-3 text-left text-[0.85rem] leading-relaxed">
+          <ul className="relative mx-auto mt-6 space-y-2.5 text-left text-[0.85rem] leading-relaxed sm:mt-8 sm:space-y-3">
             {features.map((f, fi) => (
               <li
                 key={f}
@@ -274,7 +274,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
             ))}
           </ul>
 
-          <div className="relative mt-auto pt-10">
+          <div className="relative mt-auto pt-8 sm:pt-10">
             <a
               href="#apply"
               className={`wce-btn wce-pcta ${ctaClass} w-full ${flash ? "is-flash" : ""}`}

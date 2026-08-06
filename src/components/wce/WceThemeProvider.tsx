@@ -40,8 +40,15 @@ export function WceThemeProvider({ children }: { children: React.ReactNode }) {
       frame = requestAnimationFrame(raf);
     };
     frame = requestAnimationFrame(raf);
+    const onLock = (e: Event) => {
+      const locked = (e as CustomEvent<boolean>).detail;
+      if (locked) lenis.stop();
+      else lenis.start();
+    };
+    window.addEventListener("wce:scroll-lock", onLock as EventListener);
     return () => {
       cancelAnimationFrame(frame);
+      window.removeEventListener("wce:scroll-lock", onLock as EventListener);
       lenis.destroy();
     };
   }, [reduced]);

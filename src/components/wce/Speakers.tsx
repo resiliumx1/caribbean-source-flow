@@ -1,6 +1,6 @@
 /** Visionary Leaders — featured panel, the row of six, and the flyer expansion. */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
 import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
@@ -11,17 +11,13 @@ import { SpeakerFlyer } from "./SpeakerFlyer";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
-
 /** One row tile: gilded ring ignition + translucent theme word behind the portrait. */
 function SpeakerTile({
   speaker,
-  hidePortrait,
   onOpen,
   cardRef,
 }: {
   speaker: WceSpeaker;
-  hidePortrait: boolean;
   onOpen: () => void;
   cardRef: (el: HTMLButtonElement | null) => void;
 }) {
@@ -53,17 +49,10 @@ function SpeakerTile({
             <span key={`${l}-${i}`}>{l}</span>
           ))}
         </span>
-        {hidePortrait ? (
-          <span className="wce-speaker-portrait-slot" aria-hidden="true" />
-        ) : (
-          <motion.div
-            layoutId={`wce-portrait-${speaker.id}`}
-            className="wce-speaker-portrait-slot"
-            transition={{ duration: reduced ? 0 : 0.55, ease: EASE }}
-          >
+          <span className="wce-speaker-portrait-slot">
             <span aria-hidden="true" className="wce-portrait-glow" />
             <span aria-hidden="true" className="wce-ring-ignite" />
-            <div className="wce-speaker-ring">
+            <span className="wce-speaker-ring">
               {portrait ? (
                 <img
                   src={portrait}
@@ -75,9 +64,8 @@ function SpeakerTile({
               ) : (
                 <span className="wce-speaker-initials" aria-hidden="true">{speakerInitials(speaker.name)}</span>
               )}
-            </div>
-          </motion.div>
-        )}
+            </span>
+          </span>
       </span>
 
       <span className="wce-speaker-meta">
@@ -113,12 +101,10 @@ function SpeakerTile({
 /** Featured panel — same treatment plus the aura bloom and outward petal draw. */
 function FeaturedSpeaker({
   speaker,
-  hidePortrait,
   onOpen,
   cardRef,
 }: {
   speaker: WceSpeaker;
-  hidePortrait: boolean;
   onOpen: () => void;
   cardRef: (el: HTMLButtonElement | null) => void;
 }) {
@@ -148,24 +134,16 @@ function FeaturedSpeaker({
         <span aria-hidden="true" className="wce-featured-petals">
           <FlowerOfLifeMark size={340} opacity={1} />
         </span>
-        {hidePortrait ? (
-          <span className="wce-speaker-portrait-slot lg" aria-hidden="true" />
-        ) : (
-          <motion.div
-            layoutId={`wce-portrait-${speaker.id}`}
-            className="wce-speaker-portrait-slot lg"
-            transition={{ duration: reduced ? 0 : 0.55, ease: EASE }}
-          >
-            <span aria-hidden="true" className="wce-ring-ignite" />
-            <div className="wce-speaker-ring">
-              {portrait ? (
-                <img src={portrait} alt={speaker.name} className="wce-portrait-img" decoding="async" />
-              ) : (
-                <span className="wce-speaker-initials">{speakerInitials(speaker.name)}</span>
-              )}
-            </div>
-          </motion.div>
-        )}
+        <span className="wce-speaker-portrait-slot lg">
+          <span aria-hidden="true" className="wce-ring-ignite" />
+          <span className="wce-speaker-ring">
+            {portrait ? (
+              <img src={portrait} alt={speaker.name} className="wce-portrait-img" decoding="async" />
+            ) : (
+              <span className="wce-speaker-initials">{speakerInitials(speaker.name)}</span>
+            )}
+          </span>
+        </span>
       </div>
 
       <div className="relative md:flex-1">
@@ -238,7 +216,7 @@ export function WceSpeakersSection() {
   const setCardRef = (id: string) => (el: HTMLButtonElement | null) => { cards.current[id] = el; };
 
   return (
-    <LayoutGroup>
+    <>
       <section
         id="speakers"
         ref={sectionRef}
@@ -268,7 +246,6 @@ export function WceSpeakersSection() {
             <Reveal index={2}>
               <FeaturedSpeaker
                 speaker={featured}
-                hidePortrait={openId === featured.id}
                 onOpen={() => setOpenId(featured.id)}
                 cardRef={setCardRef(featured.id)}
               />
@@ -280,7 +257,6 @@ export function WceSpeakersSection() {
               <Reveal key={s.id} as="li" index={i % 6}>
                 <SpeakerTile
                   speaker={s}
-                  hidePortrait={openId === s.id}
                   onOpen={() => setOpenId(s.id)}
                   cardRef={setCardRef(s.id)}
                 />
@@ -313,6 +289,6 @@ export function WceSpeakersSection() {
           />
         )}
       </AnimatePresence>
-    </LayoutGroup>
+    </>
   );
 }

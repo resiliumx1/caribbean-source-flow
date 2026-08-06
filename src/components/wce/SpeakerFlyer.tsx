@@ -36,7 +36,10 @@ export function SpeakerFlyer({
   const closeRef = useRef<HTMLButtonElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const [atBottom, setAtBottom] = useState(true);
+  const [imgFailed, setImgFailed] = useState(false);
   const portrait = speakerPortrait(speaker.name, speaker.portrait_url);
+
+  useEffect(() => { setImgFailed(false); }, [portrait]);
 
   /* Scroll affordance: fade the bottom edge until the panel is scrolled through */
   const measure = useCallback(() => {
@@ -52,11 +55,19 @@ export function SpeakerFlyer({
     return () => window.removeEventListener("resize", measure);
   }, [measure, speaker.id]);
 
-  /* Body scroll lock */
+  /* Page scroll lock — also pauses the Lenis smooth-scroll driver so the wheel
+     acts on the flyer instead of the page behind it. */
   useEffect(() => {
-    const prev = document.body.style.overflow;
+    const body = document.body.style.overflow;
+    const html = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+    document.documentElement.style.overflow = "hidden";
+    window.dispatchEvent(new CustomEvent("wce:scroll-lock", { detail: true }));
+    return () => {
+      document.body.style.overflow = body;
+      document.documentElement.style.overflow = html;
+      window.dispatchEvent(new CustomEvent("wce:scroll-lock", { detail: false }));
+    };
   }, []);
 
   /* Keyboard: Escape, arrows, Tab trap */
@@ -106,7 +117,7 @@ export function SpeakerFlyer({
       exit={{ opacity: 0 }}
       transition={{ duration: reduced ? 0.2 : 0.35, ease: EASE }}
     >
-      <div className="wce-flyer-scroll" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="wce-flyer-scroll" data-lenis-prevent onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
         <motion.div
           ref={panelRef}
           className="wce-flyer"
@@ -134,7 +145,7 @@ export function SpeakerFlyer({
           </button>
           <span aria-hidden="true" className={`wce-flyer-fade ${atBottom ? "is-hidden" : ""}`} />
 
-          <div ref={bodyRef} className="wce-flyer-body" onScroll={measure}>
+          <div ref={bodyRef} className="wce-flyer-body" data-lenis-prevent onScroll={measure}>
           <div className="relative z-10 px-5 pb-0 pt-14 sm:px-10 sm:pt-12">
             {/* Top lockup */}
             <motion.div className="wce-flyer-lockup" {...rise(0.05)}>
@@ -184,27 +195,22 @@ export function SpeakerFlyer({
                 ))}
               </motion.div>
 
-              <motion.div layoutId={`wce-portrait-${speaker.id}`} className="wce-flyer-portrait" transition={{ duration: reduced ? 0 : 0.55, ease: EASE }}>
+              <div className="wce-flyer-portrait">
                 <span aria-hidden="true" className="wce-flyer-portrait-ring" />
                 <div className="wce-flyer-portrait-mask">
-                  <AnimatePresence mode="wait" initial={false}>
-                    {portrait ? (
-                      <motion.img
-                        key={portrait}
-                        src={portrait}
-                        alt={speaker.name}
-                        initial={reduced ? false : { opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={reduced ? undefined : { opacity: 0 }}
-                        transition={{ duration: 0.35 }}
-                        decoding="async"
-                      />
-                    ) : (
-                      <span key="initials" className="wce-flyer-initials">{speakerInitials(speaker.name)}</span>
-                    )}
-                  </AnimatePresence>
+                  {portrait && !imgFailed ? (
+                    <img
+                      key={portrait}
+                      src={portrait}
+                      alt={speaker.name}
+                      decoding="async"
+                      onError={() => setImgFailed(true)}
+                    />
+                  ) : (
+                    <span className="wce-flyer-initials">{speakerInitials(speaker.name)}</span>
+                  )}
                 </div>
-              </motion.div>
+              </div>
 
               <motion.div className="wce-flyer-emblem" {...rise(0.3)}>
                 <LoveEmblem size={190} variant="color" />

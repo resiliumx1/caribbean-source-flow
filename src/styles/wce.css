@@ -1254,17 +1254,20 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 .wce-flyer-scroll {
   position: absolute; inset: 0;
-  overflow-y: auto;
+  overflow: hidden;
   overscroll-behavior: contain;
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: clamp(0px, 3vh, 40px) clamp(0px, 3vw, 32px);
 }
 .wce-flyer {
   position: relative;
   width: 100%;
   max-width: 62rem;
-  height: fit-content;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
   background:
     radial-gradient(120% 80% at 50% 0%, #FFFCF2 0%, var(--wce-cream) 58%, var(--wce-cream-warm) 100%);
   border: 1px solid var(--wce-gold);
@@ -1481,7 +1484,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 
 @media (max-width: 767px) {
   .wce-flyer-scroll { padding: 0; }
-  .wce-flyer { min-height: 100%; max-width: none; border-radius: 0; border-left: 0; border-right: 0; }
+  .wce-flyer { height: 100%; max-width: none; border-radius: 0; border-left: 0; border-right: 0; }
   .wce-flyer-stage { grid-template-columns: 1fr; justify-items: center; gap: 1.1rem; }
   .wce-flyer-themeword { order: -1; align-items: center; text-align: center; }
   .wce-flyer-emblem { order: 3; }
@@ -1715,7 +1718,8 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-root .wce-flyer { max-height: 92svh; height: auto; overflow: hidden; }
 .wce-flyer-body {
   position: relative;
-  max-height: 92svh;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -1743,7 +1747,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 @media (max-width: 767px) {
   .wce-root .wce-flyer { max-height: 100svh; min-height: 100svh; }
-  .wce-flyer-body { max-height: 100svh; }
+  .wce-flyer-body { max-height: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1753,4 +1757,35 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   .wce-root .wce-card-scrim { transition: none !important; }
   .wce-btn-ripple { display: none !important; }
   .wce-botanical-a, .wce-botanical-b, .wce-botanical-c { transform: none !important; }
+}
+
+/* ==========================================================================
+   Responsive rhythm — tablet and mobile vertical compression
+   ========================================================================== */
+.wce-root .wce-path-heading { min-height: 6.6rem; }
+
+@media (max-width: 1023px) {
+  .wce-root section:not(.wce-hero-section) {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+  .wce-root .wce-path-heading { min-height: 4.6rem; }
+  .wce-root footer { padding-top: 3.75rem !important; padding-bottom: 3.75rem !important; }
+  .wce-root .wce-speaker-stage { padding-top: 1.75rem; }
+}
+
+@media (max-width: 639px) {
+  .wce-root section:not(.wce-hero-section) {
+    padding-top: 3.25rem !important;
+    padding-bottom: 3.25rem !important;
+  }
+  .wce-hero-section { padding-bottom: 156px !important; }
+  .wce-partner-band { height: 74px; }
+  .wce-hero-emblem img {
+    width: clamp(118px, 40vw, 168px) !important;
+    height: auto !important;
+  }
+  .wce-root .wce-speaker-stage { padding-top: 1.25rem; }
+  /* keep the last band clear of the sticky mobile CTA bar */
+  .wce-root footer { padding-bottom: 6.5rem !important; }
 }
