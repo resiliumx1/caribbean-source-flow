@@ -2297,3 +2297,11 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
   .wce-grad-draw path, .wce-grad-draw circle, .wce-grad-draw line, .wce-grad-draw polyline { transition: none; stroke-dashoffset: 0; }
   .wce-grad-cohort > span { transition: none; opacity: 1; transform: none; }
 }
+
+/* Row tiles are narrow: keep the View Flyer label on one line */
+.wce-root .wce-speaker:not(.wce-speaker-featured) .wce-viewflyer {
+  width: 100%;
+  padding: 0.7rem 0.5rem;
+  letter-spacing: 0.08em;
+  gap: 0.4rem;
+}

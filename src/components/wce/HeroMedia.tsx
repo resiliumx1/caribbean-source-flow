@@ -20,6 +20,7 @@ export function WceHeroMedia() {
       data-wce-video-slot
       aria-hidden="true"
       className="absolute inset-0 overflow-hidden"
+      style={{ background: "radial-gradient(120% 90% at 50% 20%, #2C5138 0%, #17351F 55%, #0C2116 100%)" }}
     >
       {/* Blurred poster underlay — never a flat colour. */}
       <img
