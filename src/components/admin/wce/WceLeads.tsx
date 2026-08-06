@@ -59,7 +59,7 @@ function LeadStatusCell({ lead, onChanged }: { lead: Lead; onChanged: (values: P
     await run({
       label: "Status",
       optimistic: () => onChanged({ status: next }),
-      write: () => supabase.from("wce_leads").update({ status: next }).eq("id", lead.id),
+      write: async () => await supabase.from("wce_leads").update({ status: next }).eq("id", lead.id),
       rollback: () => onChanged({ status: prev }),
     });
   };
