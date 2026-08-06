@@ -351,7 +351,7 @@ export default function WceOrganisers() {
                       data-tone={
                         r.status === "active" ? "accepted"
                           : r.status === "pending" ? "new"
-                          : r.status === "expired" ? "pending"
+                          : r.status === "expired" ? "expired"
                           : "declined"
                       }
                     >
