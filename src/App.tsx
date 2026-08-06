@@ -67,6 +67,7 @@ const AdminAbandonedCarts = lazy(() => import("./pages/AdminAbandonedCarts"));
 const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
 const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
 const AdminWCE = lazy(() => import("./pages/AdminWCE"));
+const AdminConsultations = lazy(() => import("./pages/AdminConsultations"));
 const WceAdminLogin = lazy(() => import("./pages/WceAdminLogin"));
 const WceAdminAccept = lazy(() => import("./pages/WceAdminAccept"));
 const WCE2026 = lazy(() => import("./pages/WCE2026"));
