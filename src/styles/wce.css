@@ -2186,3 +2186,114 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 .wce-seal-ring.is-drawing .wce-seal-check { animation: wce-seal-check 300ms cubic-bezier(0.22,1,0.36,1) 600ms both; }
 @keyframes wce-seal-circle { from { stroke-dashoffset: 277; } to { stroke-dashoffset: 0; } }
 @keyframes wce-seal-check { from { stroke-dashoffset: 58; } to { stroke-dashoffset: 0; } }
+
+/* ============================================================
+   ACCESSIBILITY PASS — legibility, focus, tap targets
+   ============================================================ */
+.wce-root p,
+.wce-root li { line-height: 1.55; }
+.wce-root :is(a, button, [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid var(--wce-gold-light);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.wce-root [data-wce-dark] :is(a, button):focus-visible { outline-color: #FFF6D6; }
+/* Decorative layers must never sit close enough to copy to erode contrast */
+.wce-root .wce-surface-bg { opacity: 0.045 !important; }
+.wce-root .wce-botanical-backdrop { opacity: 0.055 !important; }
+
+/* ============================================================
+   VIEW FLYER — the primary action on every speaker card
+   ============================================================ */
+.wce-viewflyer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--wce-gold-deep, #7A5E0E);
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold));
+  color: var(--wce-forest);
+  font-family: var(--wce-body);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 22px -16px rgba(122, 96, 17, 0.85);
+}
+.wce-viewflyer::after {
+  content: "";
+  position: absolute; inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 253, 240, 0.75) 50%, transparent 80%);
+  transition: transform .7s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-speaker:hover .wce-viewflyer::after,
+.wce-speaker:focus-visible .wce-viewflyer::after,
+.wce-viewflyer:hover::after { transform: translateX(120%); }
+.wce-viewflyer-lg { padding: 0.95rem 2rem; font-size: 0.9rem; letter-spacing: 0.2em; }
+.wce-viewflyer svg { flex: 0 0 auto; }
+
+/* Affordance appearing over the portrait itself */
+.wce-portrait-affordance {
+  position: absolute;
+  left: 50%; bottom: 8%;
+  transform: translate(-50%, 8px);
+  z-index: 6;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.9);
+  background: rgba(9, 20, 14, 0.82);
+  color: #F5EFE0;
+  font-size: 0.875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-speaker:hover .wce-portrait-affordance,
+.wce-speaker:focus-visible .wce-portrait-affordance,
+.wce-speaker.is-on .wce-portrait-affordance { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) {
+  .wce-viewflyer::after { transition: none; }
+  .wce-portrait-affordance { transition: none; }
+}
+
+/* ============================================================
+   GRADUATION CEREMONY — laurels, scroll, cohort procession
+   ============================================================ */
+.wce-grad-draw path,
+.wce-grad-draw circle,
+.wce-grad-draw line,
+.wce-grad-draw polyline {
+  stroke-dasharray: var(--len, 400);
+  stroke-dashoffset: var(--len, 400);
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-grad-draw[data-in="true"] path,
+.wce-grad-draw[data-in="true"] circle,
+.wce-grad-draw[data-in="true"] line,
+.wce-grad-draw[data-in="true"] polyline { stroke-dashoffset: 0; }
+.wce-grad-cohort { display: flex; align-items: flex-end; justify-content: center; gap: clamp(0.4rem, 1.6vw, 1rem); flex-wrap: wrap; }
+.wce-grad-cohort > span { opacity: 0; transform: translateY(10px); transition: opacity .6s ease, transform .6s cubic-bezier(0.22,1,0.36,1); }
+.wce-grad-cohort[data-in="true"] > span { opacity: 1; transform: none; }
+.wce-grad-details { display: grid; gap: 2rem; margin-top: 3.5rem; }
+@media (min-width: 768px) { .wce-grad-details { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.wce-grad-detail-label {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wce-gold-light);
+}
+.wce-grad-detail-copy { margin-top: 0.5rem; font-size: 1rem; line-height: 1.55; color: rgba(245, 239, 224, 0.9); }
+@media (prefers-reduced-motion: reduce) {
+  .wce-grad-draw path, .wce-grad-draw circle, .wce-grad-draw line, .wce-grad-draw polyline { transition: none; stroke-dashoffset: 0; }
+  .wce-grad-cohort > span { transition: none; opacity: 1; transform: none; }
+}
