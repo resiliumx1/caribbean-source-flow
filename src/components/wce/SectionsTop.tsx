@@ -38,7 +38,7 @@ export function WceHero() {
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[230px] pt-[clamp(2.5rem,5vh,4rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
+      className="wce-hero-section relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[230px] pt-[clamp(2.5rem,5vh,4rem)] text-center xl:h-[calc(100vw/1.756)] xl:max-h-[100svh] xl:min-h-[720px]"
       style={{ background: "var(--wce-forest)" }}
     >
       <WceHeroMedia />
@@ -51,7 +51,7 @@ export function WceHero() {
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-70 sm:right-10 sm:top-10" />
 
-      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center pt-[clamp(3rem,7vh,5.5rem)]">
+      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center pt-[clamp(1.5rem,7vh,5.5rem)]">
         <div className={cls("mb-[clamp(1rem,2.2vh,2.5rem)]")} style={stage(0)}>
           <LotusMark size={40} />
         </div>
@@ -74,7 +74,7 @@ export function WceHero() {
         </p>
 
         <div
-          className="mt-[clamp(0.7rem,1.8vh,1.3rem)]"
+          className="wce-hero-emblem mt-[clamp(0.7rem,1.8vh,1.3rem)]"
           style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.45s both" }}
         >
           <LoveEmblem size={200} variant="cream" />
