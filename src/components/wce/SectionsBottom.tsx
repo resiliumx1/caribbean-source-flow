@@ -5,9 +5,16 @@ import { Reveal, MaskedHeading, useSectionLift } from "./motion";
 import { FaqSkeleton } from "./Skeletons";
 import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, GoldFlourish, DiamondRule, LeafIcon, EdgeBleed } from "./decor";
 import { LoveEmblem } from "./LoveEmblem";
+import { WCE_PARTNERS } from "./PartnerMarquee";
 import { trackWceCta, WceCtaIntent } from "./cta-tracking";
 
-const PARTNERS = ["Mount Kailash", "Kamila's Kitchen", "Jah9", "LifeCraft in Jamaica", "The Ubuntu Movement"];
+const FOOTER_NAV = [
+  { label: "Pathways", href: "#pathways" },
+  { label: "Speakers", href: "#speakers" },
+  { label: "Ceremony", href: "#ceremony" },
+  { label: "Apply", href: "#apply" },
+  { label: "FAQ", href: "#faq" },
+];
 
 /* ---------------- 9. FAQ ---------------- */
 export function WceFaqSection() {
@@ -136,62 +143,71 @@ export function WceFinalCta() {
 
 /* ---------------- 11. FOOTER ---------------- */
 export function WceFooter() {
+  const { data: settings } = useWceSettings();
   return (
     <footer className="wce-surface px-6 py-20" style={{ background: "var(--wce-forest-mid)", borderTop: "1px solid rgba(201,162,39,0.3)" }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} light />
 
-      {/* Partner row */}
-      <div className="mx-auto max-w-6xl text-center">
-        <p className="wce-eyebrow" style={{ color: "var(--wce-gold)", letterSpacing: "0.4em" }}>Powered by</p>
-        <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-          {PARTNERS.map((p) => (
-            <li
-              key={p}
-              className="text-[0.68rem] uppercase"
-              style={{ color: "rgba(245,239,224,0.9)", letterSpacing: "0.22em" }}
-            >
-              {p}
-            </li>
-          ))}
-        </ul>
-        <LeafDivider className="mx-auto mt-12 w-full max-w-2xl" />
+      {/* Emblem band */}
+      <div className="mx-auto flex max-w-5xl items-center justify-center gap-6">
+        <DiamondRule className="hidden flex-1 sm:block" tone="rgba(201,162,39,0.75)" />
+        <LoveEmblem size={220} className="shrink-0" />
+        <DiamondRule className="hidden flex-1 sm:block" tone="rgba(201,162,39,0.75)" />
       </div>
 
-      <div className="mx-auto mt-14 grid max-w-6xl items-start gap-12 text-center md:grid-cols-[1.1fr_1fr_1fr] md:text-left">
-        <div>
+      <div className="wce-footer-grid mx-auto mt-16 max-w-6xl">
+        {/* Lockup */}
+        <div className="wce-footer-col">
           <p className="wce-display text-2xl uppercase" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.14em", lineHeight: 1.3 }}>
             Caribbean<br />Wellness<br />Saint Lucia
           </p>
-          <p className="wce-eyebrow mt-4" style={{ color: "rgba(245,239,224,0.9)" }}>11–17 October 2026</p>
-          <LoveEmblem size={230} className="mx-auto mt-8 md:mx-0" />
+          <p className="wce-footer-line mt-5">{settings?.event_dates ?? "11–17 October 2026"}</p>
+          <p className="wce-footer-line mt-2">{settings?.venue ?? "Mount Kailash Rejuvenation Centre, St. Lucia"}</p>
         </div>
 
-        <div>
-          <p className="wce-eyebrow" style={{ color: "var(--wce-gold)" }}>Contact</p>
-          <address className="mt-5 not-italic text-sm leading-loose" style={{ color: "rgba(245,239,224,0.9)" }}>
-            <a href="tel:+17587223660" className="block hover:underline">1 (758) 722 3660</a>
-            <a href="mailto:info@mountkailashlu.com" className="block hover:underline">info@mountkailashlu.com</a>
-            <span className="block">Mount Kailash Rejuvenation Centre, St. Lucia</span>
+        {/* Navigation */}
+        <div className="wce-footer-col">
+          <p className="wce-footer-head">The Experience</p>
+          <ul className="wce-footer-nav">
+            {FOOTER_NAV.map((n) => (
+              <li key={n.label}><a href={n.href}>{n.label}</a></li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Contact */}
+        <div className="wce-footer-col">
+          <p className="wce-footer-head">Contact</p>
+          <address className="wce-footer-contact not-italic">
+            <a href="mailto:info@mountkailashlu.com">info@mountkailashlu.com</a>
+            <a href="tel:+17587223660">1 (758) 722 3660</a>
           </address>
         </div>
 
-        <div>
-          <p className="wce-eyebrow" style={{ color: "var(--wce-gold)" }}>The Experience</p>
-          <ul className="mt-5 space-y-2 text-xs uppercase" style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.18em" }}>
-            <li><a href="#pathways" className="hover:underline">Pathways</a></li>
-            <li><a href="#speakers" className="hover:underline">Visionary Leaders</a></li>
-            <li><a href="#activities" className="hover:underline">Activities</a></li>
-            <li><a href="#ceremony" className="hover:underline">Ceremony</a></li>
-            <li><a href="#apply" className="hover:underline">Apply</a></li>
-            <li><a href="#faq" className="hover:underline">FAQ</a></li>
+        {/* Partners */}
+        <div className="wce-footer-col">
+          <p className="wce-footer-head">Proudly Partnered With</p>
+          <ul className="wce-footer-partners">
+            {WCE_PARTNERS.map((p) => (
+              <li key={p.name}>
+                {p.logoUrl ? (
+                  <img src={p.logoUrl} alt={p.name} loading="lazy" decoding="async" className={p.round ? "is-round" : undefined} />
+                ) : (
+                  <span>{p.name}</span>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
 
       <div className="wce-hairline mx-auto mt-16 max-w-6xl" />
+      <p className="mt-8 text-center text-[0.72rem]" style={{ color: "rgba(245,239,224,0.9)" }}>
+        © 2026 Caribbean Wellness Experience · Mount Kailash Rejuvenation Centre
+      </p>
       <p
-        className="mx-auto mt-8 max-w-4xl text-center text-[0.6rem] uppercase leading-loose"
-        style={{ color: "rgba(245,239,224,0.84)", letterSpacing: "0.2em" }}
+        className="mx-auto mt-4 max-w-4xl text-center text-[0.58rem] uppercase leading-loose"
+        style={{ color: "rgba(201,162,39,0.72)", letterSpacing: "0.26em" }}
       >
         Clinical Wellness Medicine · Herbal Practice · Volcanic Highlands · Restoration · Food · Herbs · Discipline · Family · Care
       </p>

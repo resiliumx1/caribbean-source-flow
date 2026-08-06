@@ -184,6 +184,7 @@ export function WceSpeakersSection() {
   const fired = useRef(false);
   const cards = useRef<Record<string, HTMLButtonElement | null>>({});
   const [openId, setOpenId] = useState<string | null>(null);
+  const [direction, setDirection] = useState<1 | -1>(1);
 
   useEffect(() => {
     if (inView && !fired.current) {
@@ -204,11 +205,27 @@ export function WceSpeakersSection() {
 
   const step = useCallback(
     (dir: 1 | -1) => {
+      setDirection(dir);
       setOpenId((cur) => {
         if (!cur || !speakers.length) return cur;
         const i = speakers.findIndex((s) => s.id === cur);
         const next = (i + dir + speakers.length) % speakers.length;
         return speakers[next].id;
+      });
+    },
+    [speakers]
+  );
+
+  /** Dot navigation: travel direction is inferred from the index delta. */
+  const jumpTo = useCallback(
+    (id: string) => {
+      setOpenId((cur) => {
+        if (!cur) return id;
+        const from = speakers.findIndex((s) => s.id === cur);
+        const to = speakers.findIndex((s) => s.id === id);
+        if (to < 0 || to === from) return cur;
+        setDirection(to > from ? 1 : -1);
+        return id;
       });
     },
     [speakers]
@@ -300,6 +317,9 @@ export function WceSpeakersSection() {
             nextName={neighbour(1)}
             position={openIndex >= 0 ? openIndex + 1 : undefined}
             total={speakers.length}
+            direction={direction}
+            roster={speakers}
+            onSelect={jumpTo}
           />
         )}
       </AnimatePresence>
