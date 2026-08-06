@@ -131,6 +131,156 @@ export function EdgeBleed({ position = "top" }: { position?: "top" | "bottom" })
   return <span aria-hidden="true" className={`wce-bleed wce-bleed-${position}`} />;
 }
 
+/* ---------- Layered botanical backdrop ---------- */
+
+/** A broad palm frond silhouette. */
+function FrondArt({ tone }: { tone: string }) {
+  return (
+    <svg width="360" height="560" viewBox="0 0 360 560" fill="none" aria-hidden="true">
+      <g stroke={tone} strokeWidth="1.1" fill="none">
+        <path d="M18 8C120 120 176 300 190 552" />
+        {Array.from({ length: 11 }).map((_, i) => {
+          const y = 40 + i * 46;
+          const x = 26 + i * 15;
+          const len = 150 - i * 6;
+          return (
+            <g key={i}>
+              <path d={`M${x} ${y}c${len * 0.55} -${len * 0.4} ${len} -${len * 0.2} ${len} ${len * 0.16}c-${len * 0.6} ${len * 0.2} -${len * 0.85} ${len * 0.02} -${len} -${len * 0.16}z`} />
+              <path d={`M${x} ${y + 18}c-${len * 0.5} -${len * 0.3} -${len * 0.8} -${len * 0.1} -${len * 0.8} ${len * 0.2}c${len * 0.5} ${len * 0.16} ${len * 0.7} 0 ${len * 0.8} -${len * 0.2}z`} opacity="0.7" />
+            </g>
+          );
+        })}
+      </g>
+    </svg>
+  );
+}
+
+/** A monstera-like leaf cluster silhouette. */
+function LeafClusterArt({ tone }: { tone: string }) {
+  return (
+    <svg width="320" height="380" viewBox="0 0 320 380" fill="none" aria-hidden="true">
+      <g stroke={tone} strokeWidth="1.1" fill="none">
+        <path d="M160 372C150 260 120 190 40 130" />
+        <path d="M164 372c8-110 34-180 112-236" />
+        <path d="M40 128c-24-48-6-92 40-104 26 44 18 88-40 104z" />
+        <path d="M276 136c26-46 10-92-36-106-28 44-20 88 36 106z" />
+        <path d="M96 214c-40-16-58-58-38-98 44 12 62 52 38 98z" />
+        <path d="M222 220c40-18 56-60 34-98-44 14-60 54-34 98z" />
+        <path d="M158 168c-30-30-30-76 2-104 30 28 30 74-2 104z" />
+      </g>
+    </svg>
+  );
+}
+
+/** Heliconia / bird-of-paradise stems. */
+function StemArt({ tone }: { tone: string }) {
+  return (
+    <svg width="260" height="440" viewBox="0 0 260 440" fill="none" aria-hidden="true">
+      <g stroke={tone} strokeWidth="1.1" fill="none">
+        <path d="M40 436C60 300 90 210 172 120" />
+        <path d="M172 120c-16-34-4-66 30-80 14 38 4 68-30 80z" />
+        <path d="M132 190c-34-8-52-38-42-72 34 6 52 36 42 72z" />
+        <path d="M104 262c34-10 52-42 40-76-34 8-50 40-40 76z" />
+        <path d="M74 340c-32-10-48-40-38-72 32 8 48 38 38 72z" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Layered botanical silhouettes for a leafy, cultivated-garden feel behind a
+ * section. Overlapping gold and sage forms, drifting slightly slower than the
+ * content, plus a soft warm vignette at the outer edges. Desktop only.
+ */
+export function BotanicalBackdrop({
+  intensity = 1,
+  side = "both",
+  vignette = true,
+  onDark = false,
+}: {
+  /** Multiplies the base opacities (0.05–0.07 range). */
+  intensity?: number;
+  side?: "both" | "left" | "right";
+  vignette?: boolean;
+  onDark?: boolean;
+}) {
+  const slow = useDrift<HTMLSpanElement>(0.08);
+  const slower = useDrift<HTMLSpanElement>(0.05);
+  const gold = onDark ? "var(--wce-gold-light)" : "var(--wce-gold)";
+  const sage = onDark ? "var(--wce-gold-light)" : "var(--wce-moss)";
+  const o = (v: number) => Math.min(0.09, v * intensity);
+
+  return (
+    <span aria-hidden="true" className="wce-botanical">
+      {side !== "right" && (
+        <span className="wce-botanical-left">
+          <span ref={slow} className="wce-botanical-a" style={{ opacity: o(0.07) }}>
+            <FrondArt tone={gold} />
+          </span>
+          <span ref={slower} className="wce-botanical-b" style={{ opacity: o(0.055) }}>
+            <LeafClusterArt tone={sage} />
+          </span>
+        </span>
+      )}
+      {side !== "left" && (
+        <span className="wce-botanical-right">
+          <span className="wce-botanical-a" style={{ opacity: o(0.065) }}>
+            <FrondArt tone={sage} />
+          </span>
+          <span className="wce-botanical-c" style={{ opacity: o(0.05) }}>
+            <StemArt tone={gold} />
+          </span>
+        </span>
+      )}
+      {vignette && <span className={`wce-vignette ${onDark ? "on-dark" : ""}`} />}
+    </span>
+  );
+}
+
+/* ---------- Pathway watermarks ---------- */
+
+/** Single peak — the In Person tier. */
+export function PeakMark({ tone = "var(--wce-forest)" }: { tone?: string }) {
+  return (
+    <svg viewBox="0 0 200 100" fill="none" preserveAspectRatio="none" aria-hidden="true" className="h-full w-full">
+      <g stroke={tone} strokeWidth="1.2" fill="none">
+        <path d="M0 100 L100 8 L200 100" />
+        <path d="M62 100 L100 42 L138 100" opacity="0.7" />
+        <path d="M84 26 L100 8 L116 26" opacity="0.5" />
+      </g>
+    </svg>
+  );
+}
+
+/** Broadcast waves — the Online tier. */
+export function WaveMark({ tone = "var(--wce-forest)" }: { tone?: string }) {
+  return (
+    <svg viewBox="0 0 200 100" fill="none" preserveAspectRatio="none" aria-hidden="true" className="h-full w-full">
+      <g stroke={tone} strokeWidth="1.2" fill="none">
+        {[18, 34, 50, 66, 82].map((r, i) => (
+          <path key={r} d={`M${100 - r * 1.6} 100a${r * 1.6} ${r} 0 0 1 ${r * 3.2} 0`} opacity={0.85 - i * 0.12} />
+        ))}
+        <circle cx="100" cy="100" r="4" />
+        <path d="M0 100h200" opacity="0.4" />
+      </g>
+    </svg>
+  );
+}
+
+/** Full range — the Retreat tier. */
+export function RangeMark({ tone = "var(--wce-gold)" }: { tone?: string }) {
+  return (
+    <svg viewBox="0 0 200 100" fill="none" preserveAspectRatio="none" aria-hidden="true" className="h-full w-full">
+      <g stroke={tone} strokeWidth="1.2" fill="none">
+        <path d="M-4 100 L34 46 L62 74 L96 22 L134 78 L162 52 L204 100" />
+        <path d="M-4 100 L28 66 L58 88 L92 50 L128 92 L160 70 L204 100" opacity="0.6" />
+        <path d="M86 34 L96 22 L106 34" opacity="0.5" />
+        <path d="M26 58 L34 46 L42 58" opacity="0.4" />
+      </g>
+    </svg>
+  );
+}
+
 /* ---------- Rules, flourishes, icons ---------- */
 
 /** Thin gold rule with a small diamond at its centre. */

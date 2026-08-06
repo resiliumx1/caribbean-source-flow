@@ -10,7 +10,7 @@ import {
 } from "./motion";
 import { WCE_PATHWAY_EVENT } from "./pathway-select";
 import {
-  FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, DiamondRule, GoldFlourish,
+  FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, DiamondRule, GoldFlourish,
   LeafIcon, CheckMark, RitualIcon, ConnectionIcon, TransformationIcon, EdgeBleed,
 } from "./decor";
 import { LoveEmblem } from "./LoveEmblem";
@@ -115,7 +115,7 @@ export function WceActivitiesSection() {
   return (
     <section ref={lift.ref} id="activities" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="left" opacity={0.04} />
+      <BotanicalBackdrop />
       <CornerVine className="pointer-events-none absolute left-0 top-8 opacity-40" />
       <CornerVine flip className="pointer-events-none absolute right-0 top-8 opacity-40" />
       <div className="mx-auto max-w-6xl text-center">

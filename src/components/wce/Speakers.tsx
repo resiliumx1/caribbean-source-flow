@@ -3,12 +3,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
-import { FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, DiamondRule, GoldFlourish } from "./decor";
+import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
 import { useWceSpeakers } from "./useWceData";
 import { Reveal, useInView, useIsTouch, useWceReducedMotion, MaskedHeading, useSectionLift } from "./motion";
 import { SpeakersSkeleton } from "./Skeletons";
 import { SpeakerFlyer } from "./SpeakerFlyer";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
+import { speakerPortrait } from "./speaker-portraits";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -26,19 +27,27 @@ function SpeakerTile({
 }) {
   const touch = useIsTouch();
   const reduced = useWceReducedMotion();
-  const { ref, inView } = useInView<HTMLDivElement>();
+  const { ref, inView } = useInView<HTMLSpanElement>();
   // No hover on touch: ignite + reveal the theme word once on scroll-in, then hold.
   const held = touch && (inView || reduced);
   const lines = themeLines(speaker.theme);
+  const portrait = speakerPortrait(speaker.name, speaker.portrait_url);
 
   return (
     <button
       type="button"
       ref={cardRef}
       onClick={onOpen}
-      className={`wce-speaker flex w-full flex-col items-center text-center ${held ? "is-on" : ""}`}
+      className={`wce-speaker wce-card ${held ? "is-on" : ""}`}
     >
-      <div ref={ref} className="wce-speaker-stage">
+      {/* Hover state: the face becomes the card. */}
+      <span aria-hidden="true" className="wce-card-fill">
+        {portrait && <img src={portrait} alt="" loading="lazy" decoding="async" />}
+      </span>
+      <span aria-hidden="true" className="wce-card-scrim" />
+
+      <span className="wce-card-rest">
+      <span ref={ref} className="wce-speaker-stage">
         <span className="wce-speaker-themeword" aria-hidden="true">
           {lines.map((l, i) => (
             <span key={`${l}-${i}`}>{l}</span>
@@ -55,9 +64,9 @@ function SpeakerTile({
             <span aria-hidden="true" className="wce-portrait-glow" />
             <span aria-hidden="true" className="wce-ring-ignite" />
             <div className="wce-speaker-ring">
-              {speaker.portrait_url ? (
+              {portrait ? (
                 <img
-                  src={speaker.portrait_url}
+                  src={portrait}
                   alt={speaker.name}
                   className="wce-portrait-img"
                   loading="lazy"
@@ -69,27 +78,34 @@ function SpeakerTile({
             </div>
           </motion.div>
         )}
-      </div>
+      </span>
 
-      <div className="wce-speaker-meta">
-        <p className="wce-speaker-name mt-6 text-[1.05rem] leading-tight sm:text-[1.15rem]">
+      <span className="wce-speaker-meta">
+        {speaker.theme && (
+          <span className="wce-card-theme">{speaker.theme}</span>
+        )}
+        <p className="wce-speaker-name mt-2 text-[1rem] leading-tight sm:text-[1.08rem]">
           {speaker.prefix ? `${speaker.prefix} ` : ""}{speaker.name}
         </p>
-        <DiamondRule className="mx-auto mt-3 max-w-[3.6rem]" tone="rgba(201,162,39,0.9)" />
+        <DiamondRule className="mx-auto mt-2 max-w-[3.2rem]" tone="rgba(201,162,39,0.9)" />
         {speaker.title && (
-          <p className="mt-3 text-[0.6rem] uppercase" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}>
+          <p className="mt-2 text-[0.58rem] uppercase" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}>
             {speaker.title}
           </p>
         )}
-        {speaker.theme && (
-          <p className="wce-speaker-theme mt-2 text-[0.62rem] uppercase" style={{ color: "rgba(26,26,20,0.86)", letterSpacing: "0.22em" }}>
-            {speaker.theme}
-          </p>
-        )}
+      </span>
+      </span>
+
+      {/* Overlay label, legible over the photograph */}
+      <span className="wce-card-over">
+        {speaker.theme && <span className="wce-card-over-theme">{speaker.theme}</span>}
+        <span className="wce-card-over-name">
+          {speaker.prefix ? `${speaker.prefix} ` : ""}{speaker.name}
+        </span>
         {speaker.session_title?.trim() && (
-          <p className="wce-speaker-session">{speaker.session_title}</p>
+          <span className="wce-card-over-session">{speaker.session_title}</span>
         )}
-      </div>
+      </span>
     </button>
   );
 }
@@ -110,6 +126,7 @@ function FeaturedSpeaker({
   const reduced = useWceReducedMotion();
   const { ref, inView } = useInView<HTMLDivElement>();
   const held = touch && (inView || reduced);
+  const portrait = speakerPortrait(speaker.name, speaker.portrait_url);
 
   return (
     <button
@@ -141,8 +158,8 @@ function FeaturedSpeaker({
           >
             <span aria-hidden="true" className="wce-ring-ignite" />
             <div className="wce-speaker-ring">
-              {speaker.portrait_url ? (
-                <img src={speaker.portrait_url} alt={speaker.name} className="wce-portrait-img" decoding="async" />
+              {portrait ? (
+                <img src={portrait} alt={speaker.name} className="wce-portrait-img" decoding="async" />
               ) : (
                 <span className="wce-speaker-initials">{speakerInitials(speaker.name)}</span>
               )}
@@ -229,7 +246,7 @@ export function WceSpeakersSection() {
         style={{ background: "var(--wce-cream-warm)", ...lift.style }}
       >
         <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-        <EdgeFoliage side="right" opacity={0.04} />
+        <BotanicalBackdrop intensity={1.05} />
         <div className="mx-auto max-w-6xl text-center">
           <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
           <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
