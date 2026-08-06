@@ -414,7 +414,7 @@
 @media (max-width: 899px) {
   .wce-admin .wa-nav-trigger {
     display: inline-flex; align-items: center; gap: 0.55rem; width: 100%;
-    justify-content: space-between; margin-bottom: 1rem;
+    justify-content: space-between; margin-bottom: 0;
   }
   .wce-admin .wa-nav { display: none; }
   .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: var(--wa-2); }
