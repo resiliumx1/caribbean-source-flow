@@ -50,7 +50,7 @@
 /* Eyebrow / label lettering */
 .wce-eyebrow {
   font-family: var(--wce-body);
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -68,7 +68,7 @@
   padding: 0.9rem 2rem;
   border-radius: 2px;
   font-family: var(--wce-body);
-  font-size: 0.72rem;
+  font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -158,7 +158,7 @@
   padding: 0.3rem 0;
   background: linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold));
   color: var(--wce-forest);
-  font-size: 0.56rem;
+  font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -239,7 +239,7 @@
   font-family: var(--wce-flyer) !important;
   font-weight: 800 !important;
   color: #C9A227 !important;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
   line-height: 0.86;
   letter-spacing: 0.005em;
   text-align: left;
@@ -267,7 +267,7 @@
   color: #C9A227;
   line-height: 0.9;
   letter-spacing: 0.01em;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-hero-sub {
   font-family: var(--wce-flyer);
@@ -287,7 +287,7 @@
   letter-spacing: 0.005em;
   color: transparent;
   -webkit-text-stroke: 0.092em #C9A227;
-  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
 }
 .wce-year-outline > span {
   position: absolute;
@@ -303,17 +303,6 @@
 .wce-year-outline > span:nth-child(6) { -webkit-text-stroke: 0.014em #C9A227; }
 .wce-year-outline > span:nth-child(7) { -webkit-text-stroke: 0.003em #0F2A1D; }
 
-/* Dark plate keeping the outlined numeral legible over the footage */
-.wce-year-plate {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 150%;
-  aspect-ratio: 1.7 / 1;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(15, 42, 29, 0.95) 0%, rgba(15, 42, 29, 0.72) 46%, transparent 76%);
-}
 
 /* ============ BANNER HERO LOCKUP (Montserrat, hero only) ============ */
 .wce-banner-lockup {
@@ -331,14 +320,14 @@
   text-transform: uppercase;
   text-align: left;
   color: var(--wce-gold);
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-banner-title-line { display: block; }
 
 .wce-year-wrap {
   width: clamp(240px, 32vw, 460px);
   flex: 0 0 auto;
-  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
 }
 
 .wce-banner-dates { display: flex; align-items: stretch; gap: clamp(0.6rem, 1.4vw, 1.2rem); }
@@ -356,7 +345,7 @@
   text-transform: uppercase;
   color: var(--wce-gold);
   line-height: 0.92;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-banner-day { font-size: clamp(1.6rem, 4.2vw, 3.2rem); letter-spacing: -0.01em; }
 .wce-banner-month { font-size: clamp(0.95rem, 2.3vw, 1.75rem); letter-spacing: 0.02em; }
@@ -377,17 +366,17 @@
   /* Cream on the deepened hero scrim: legible over both the darkest and the
      brightest frames of the video, where the old near-black failed. */
   color: #FBF7EC;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 3px 16px rgba(0, 0, 0, 0.75);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-banner-subline .sep { color: var(--wce-gold); }
 .wce-banner-venue {
   font-family: var(--wce-banner);
   font-weight: 700;
   text-transform: uppercase;
-  font-size: clamp(0.55rem, 1.15vw, 0.88rem);
+  font-size: clamp(0.875rem, 1.15vw, 0.95rem);
   letter-spacing: 0.2em;
   color: var(--wce-gold-light);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 3px 16px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 @media (max-width: 1023px) {
@@ -424,7 +413,7 @@
   display: block;
   font-family: var(--wce-banner);
   font-weight: 700;
-  font-size: 0.6rem;
+  font-size: 0.875rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--wce-gold);
@@ -454,7 +443,7 @@
 .wce-partner-name {
   font-family: var(--wce-banner);
   font-weight: 600;
-  font-size: 0.62rem;
+  font-size: 0.875rem;
   line-height: 1.25;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -494,7 +483,7 @@
 .wce-label {
   display: block;
   margin-bottom: 0.5rem;
-  font-size: 0.68rem;
+  font-size: 0.875rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--wce-gold-light);
@@ -731,18 +720,18 @@
   line-height: 1.1;
   color: var(--wce-gold-light);
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 3px 14px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-count-label {
   display: block;
   margin-top: 0.25rem;
   font-family: var(--wce-flyer);
   font-weight: 500;
-  font-size: 0.56rem;
+  font-size: 0.875rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: rgba(245,239,224,0.82);
-  text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 /* ============ STICKY MOBILE CTA ============ */
@@ -760,7 +749,7 @@
   transition: transform .35s cubic-bezier(0.22,1,0.36,1);
 }
 .wce-sticky-cta.is-visible { transform: translateY(0); }
-.wce-sticky-cta .wce-btn { flex: 1; padding: 0.8rem 0.6rem; font-size: 0.62rem; letter-spacing: 0.14em; }
+.wce-sticky-cta .wce-btn { flex: 1; padding: 0.8rem 0.6rem; font-size: 0.875rem; letter-spacing: 0.14em; }
 @media (min-width: 768px) { .wce-sticky-cta { display: none; } }
 
 /* ============ STICKY SUB-NAV ============ */
@@ -790,7 +779,7 @@
 }
 .wce-subnav a {
   font-family: var(--wce-body);
-  font-size: 0.66rem;
+  font-size: 0.875rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(245,239,224,0.92);
@@ -926,7 +915,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   height: 52px;
   min-width: 258px;
   padding: 0 2rem;
-  font-size: 0.72rem;
+  font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: 0.22em;
   line-height: 1;
@@ -1120,7 +1109,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   background: linear-gradient(160deg, rgba(45,74,53,0.14), rgba(201,162,39,0.12));
 }
 .wce-root .wce-speaker-portrait-slot .wce-portrait-img {
-  width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%;
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%;
 }
 .wce-root .wce-speaker-initials {
   font-family: var(--wce-display);
@@ -1194,7 +1183,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 .wce-root .wce-speaker-session {
   margin-top: 0.6rem;
-  font-size: 0.72rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   color: rgba(26,26,20,0.82);
   opacity: 0;
@@ -1319,7 +1308,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   margin-top: 0.55rem;
   font-family: var(--wce-body);
   font-weight: 400;
-  font-size: clamp(0.55rem, 1.1vw, 0.7rem);
+  font-size: clamp(0.875rem, 1.1vw, 0.95rem);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--wce-gold-text);
@@ -1338,7 +1327,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: clamp(0.8rem, 1.7vw, 1.2rem);
+  font-size: clamp(0.875rem, 1.7vw, 1.2rem);
   color: var(--wce-gold-deep);
 }
 .wce-flyer-venue {
@@ -1348,7 +1337,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.26em;
-  font-size: clamp(0.62rem, 1.5vw, 0.9rem);
+  font-size: clamp(0.875rem, 1.5vw, 0.95rem);
   color: var(--wce-gold-text);
 }
 .wce-flyer-featuring {
@@ -1365,7 +1354,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.24em;
-  font-size: clamp(0.66rem, 1.4vw, 0.85rem);
+  font-size: clamp(0.875rem, 1.4vw, 0.95rem);
   color: var(--wce-gold-text);
 }
 .wce-root .wce-flyer-name {
@@ -1422,7 +1411,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-flyer-portrait-mask img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 40%;
+  object-fit: cover; object-position: 50% 50%;
 }
 .wce-flyer-initials {
   font-family: var(--wce-display);
@@ -1452,7 +1441,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.28em;
-  font-size: clamp(0.85rem, 2vw, 1.3rem);
+  font-size: clamp(0.875rem, 2vw, 1.3rem);
   color: var(--wce-gold-light);
 }
 .wce-flyer-band-ctas {
@@ -1473,14 +1462,14 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 .wce-flyer-poweredby {
   font-family: var(--wce-body);
-  font-size: 0.58rem;
+  font-size: 0.875rem;
   letter-spacing: 0.34em;
   text-transform: uppercase;
   color: var(--wce-gold-light);
 }
 .wce-flyer-partners { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem 1.5rem; }
 .wce-flyer-partners img { height: 34px; width: auto; object-fit: contain; opacity: 0.92; }
-.wce-flyer-partners span { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,239,224,0.85); }
+.wce-flyer-partners span { font-size: 0.875rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,239,224,0.85); }
 
 @media (max-width: 767px) {
   .wce-flyer-scroll { padding: 0; }
@@ -1542,7 +1531,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-root .wce-card-theme {
   display: block;
   font-family: var(--wce-body);
-  font-size: 0.56rem;
+  font-size: 0.875rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--wce-gold-text);
@@ -1559,7 +1548,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 .wce-root .wce-card-fill img {
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 34%;
+  object-fit: cover; object-position: 50% 50%;
   transform: scale(1.1);
   transition: transform 1s cubic-bezier(0.22,1,0.36,1), filter .6s ease;
   filter: saturate(0.94);
@@ -1588,7 +1577,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 .wce-root .wce-card-over-theme {
   font-family: var(--wce-body);
-  font-size: 0.54rem;
+  font-size: 0.875rem;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--wce-gold-light);
@@ -1604,7 +1593,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 .wce-root .wce-card-over-session {
   font-family: var(--wce-body);
-  font-size: 0.6rem;
+  font-size: 0.875rem;
   line-height: 1.35;
   color: rgba(245,239,224,0.86);
 }
@@ -1895,15 +1884,39 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   .wce-halo[data-visible="true"] .wce-halo__diamonds { animation: none; }
 }
 
-/* ============ HERO MEDIA (always covers, never letterboxed) ============ */
+/* ============ HERO MEDIA (never letterboxed, never a flat band) ============
+   Narrow/portrait viewports keep the footage at its natural 16:9 anchored to the
+   top of the hero so both Pitons stay in frame; the area beneath is filled by the
+   blurred, darkened poster underlay and blended with .wce-hero-seam.
+   From 1024px up the footage covers the whole section. */
+.wce-hero-frame { overflow: hidden; }
 .wce-hero-media {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: auto;
+  min-height: 56.25vw;
   object-fit: cover;
-  /* Twin peaks sit slightly above centre in the footage; on narrow portrait
-     viewports the sides crop away, which is preferred over any flat band. */
-  object-position: 68% 44%;
+  object-position: 50% 40%;
 }
-@media (min-width: 768px) { .wce-hero-media { object-position: 60% 46%; } }
-@media (min-width: 1280px) { .wce-hero-media { object-position: 50% 50%; } }
+.wce-hero-seam {
+  position: absolute;
+  left: 0; right: 0;
+  top: 40vw;
+  height: 34vw;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(11, 32, 22, 0) 0%, rgba(11, 32, 22, 0.45) 55%, rgba(11, 32, 22, 0.72) 100%);
+}
+@media (min-width: 1024px) {
+  .wce-hero-media {
+    top: 0;
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+    object-position: 50% 50%;
+  }
+  .wce-hero-seam { display: none; }
+}
 
 /* ============ MOBILE NAV PANEL ON THE WCE ROUTE ============ */
 body.wce-route .wce-mobile-nav-overlay {
@@ -1961,7 +1974,7 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 .wce-flyer-portrait-layer img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 40%;
+  object-fit: cover; object-position: 50% 50%;
 }
 .wce-flyer-themeword-slot { position: relative; min-height: 1px; }
 .wce-flyer-ring-ignite {
@@ -2072,7 +2085,7 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 }
 
 /* --- Retreat band --- */
-.wce-btn-xl { padding: 1.15rem 2.6rem; font-size: 0.82rem; letter-spacing: 0.2em; }
+.wce-btn-xl { padding: 1.15rem 2.6rem; font-size: 0.875rem; letter-spacing: 0.2em; }
 .wce-mandala-spin-slow { animation: wce-spin 150s linear infinite; }
 .wce-retreat-values {
   display: grid;
@@ -2104,27 +2117,27 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 @media (min-width: 640px) { .wce-footer-grid { grid-template-columns: repeat(2, 1fr); text-align: left; } }
 @media (min-width: 1024px) { .wce-footer-grid { grid-template-columns: 1.15fr 0.85fr 0.95fr 1.05fr; } }
 .wce-footer-head {
-  font-size: 0.62rem;
+  font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.26em;
   color: var(--wce-gold);
   margin-bottom: 1.25rem;
 }
 .wce-footer-line {
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   line-height: 1.7;
   color: rgba(245,239,224,0.88);
 }
 .wce-footer-nav { display: flex; flex-direction: column; gap: 0.35rem; }
 .wce-footer-nav a,
 .wce-footer-contact a {
-  font-size: 0.72rem;
+  font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: rgba(245,239,224,0.92);
 }
 .wce-footer-contact { display: flex; flex-direction: column; gap: 0.35rem; }
-.wce-footer-contact a { text-transform: none; letter-spacing: 0.06em; font-size: 0.82rem; }
+.wce-footer-contact a { text-transform: none; letter-spacing: 0.06em; font-size: 0.875rem; }
 .wce-footer-nav a:hover, .wce-footer-contact a:hover { color: var(--wce-gold-light); }
 .wce-footer-partners {
   display: grid;
@@ -2137,7 +2150,7 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 .wce-footer-partners img { height: 34px; width: auto; object-fit: contain; opacity: 0.9; }
 .wce-footer-partners img.is-round { height: 46px; border-radius: 9999px; }
 .wce-footer-partners span {
-  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.18em;
+  font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.18em;
   color: rgba(245,239,224,0.88);
 }
 @media (max-width: 639px) {
@@ -2173,3 +2186,122 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 .wce-seal-ring.is-drawing .wce-seal-check { animation: wce-seal-check 300ms cubic-bezier(0.22,1,0.36,1) 600ms both; }
 @keyframes wce-seal-circle { from { stroke-dashoffset: 277; } to { stroke-dashoffset: 0; } }
 @keyframes wce-seal-check { from { stroke-dashoffset: 58; } to { stroke-dashoffset: 0; } }
+
+/* ============================================================
+   ACCESSIBILITY PASS — legibility, focus, tap targets
+   ============================================================ */
+.wce-root p,
+.wce-root li { line-height: 1.55; }
+.wce-root :is(a, button, [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid var(--wce-gold-light);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.wce-root [data-wce-dark] :is(a, button):focus-visible { outline-color: #FFF6D6; }
+/* Decorative layers must never sit close enough to copy to erode contrast */
+.wce-root .wce-surface-bg { opacity: 0.045 !important; }
+.wce-root .wce-botanical-backdrop { opacity: 0.055 !important; }
+
+/* ============================================================
+   VIEW FLYER — the primary action on every speaker card
+   ============================================================ */
+.wce-viewflyer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--wce-gold-deep, #7A5E0E);
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold));
+  color: var(--wce-forest);
+  font-family: var(--wce-body);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 22px -16px rgba(122, 96, 17, 0.85);
+}
+.wce-viewflyer::after {
+  content: "";
+  position: absolute; inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 253, 240, 0.75) 50%, transparent 80%);
+  transition: transform .7s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-speaker:hover .wce-viewflyer::after,
+.wce-speaker:focus-visible .wce-viewflyer::after,
+.wce-viewflyer:hover::after { transform: translateX(120%); }
+.wce-viewflyer-lg { padding: 0.95rem 2rem; font-size: 0.9rem; letter-spacing: 0.2em; }
+.wce-viewflyer svg { flex: 0 0 auto; }
+
+/* Affordance appearing over the portrait itself */
+.wce-portrait-affordance {
+  position: absolute;
+  left: 50%; bottom: 8%;
+  transform: translate(-50%, 8px);
+  z-index: 6;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 39, 0.9);
+  background: rgba(9, 20, 14, 0.82);
+  color: #F5EFE0;
+  font-size: 0.875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-speaker:hover .wce-portrait-affordance,
+.wce-speaker:focus-visible .wce-portrait-affordance,
+.wce-speaker.is-on .wce-portrait-affordance { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) {
+  .wce-viewflyer::after { transition: none; }
+  .wce-portrait-affordance { transition: none; }
+}
+
+/* ============================================================
+   GRADUATION CEREMONY — laurels, scroll, cohort procession
+   ============================================================ */
+.wce-grad-draw path,
+.wce-grad-draw circle,
+.wce-grad-draw line,
+.wce-grad-draw polyline {
+  stroke-dasharray: var(--len, 400);
+  stroke-dashoffset: var(--len, 400);
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-grad-draw[data-in="true"] path,
+.wce-grad-draw[data-in="true"] circle,
+.wce-grad-draw[data-in="true"] line,
+.wce-grad-draw[data-in="true"] polyline { stroke-dashoffset: 0; }
+.wce-grad-cohort { display: flex; align-items: flex-end; justify-content: center; gap: clamp(0.4rem, 1.6vw, 1rem); flex-wrap: wrap; }
+.wce-grad-cohort > span { opacity: 0; transform: translateY(10px); transition: opacity .6s ease, transform .6s cubic-bezier(0.22,1,0.36,1); }
+.wce-grad-cohort[data-in="true"] > span { opacity: 1; transform: none; }
+.wce-grad-details { display: grid; gap: 2rem; margin-top: 3.5rem; }
+@media (min-width: 768px) { .wce-grad-details { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.wce-grad-detail-label {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wce-gold-light);
+}
+.wce-grad-detail-copy { margin-top: 0.5rem; font-size: 1rem; line-height: 1.55; color: rgba(245, 239, 224, 0.9); }
+@media (prefers-reduced-motion: reduce) {
+  .wce-grad-draw path, .wce-grad-draw circle, .wce-grad-draw line, .wce-grad-draw polyline { transition: none; stroke-dashoffset: 0; }
+  .wce-grad-cohort > span { transition: none; opacity: 1; transform: none; }
+}
+
+/* Row tiles are narrow: keep the View Flyer label on one line */
+.wce-root .wce-speaker:not(.wce-speaker-featured) .wce-viewflyer {
+  width: 100%;
+  padding: 0.7rem 0.5rem;
+  letter-spacing: 0.08em;
+  gap: 0.4rem;
+}

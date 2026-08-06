@@ -20,6 +20,7 @@ export function WceHeroMedia() {
       data-wce-video-slot
       aria-hidden="true"
       className="absolute inset-0 overflow-hidden"
+      style={{ background: "radial-gradient(120% 90% at 50% 20%, #2C5138 0%, #17351F 55%, #0C2116 100%)" }}
     >
       {/* Blurred poster underlay — never a flat colour. */}
       <img
@@ -31,13 +32,13 @@ export function WceHeroMedia() {
       />
       <div
         ref={staticOnly ? undefined : parallaxRef}
-        className="absolute -top-[5%] left-0 h-[110%] w-full will-change-transform"
+        className="wce-hero-frame absolute inset-0 will-change-transform"
       >
         {staticOnly ? (
-          <img src={heroPoster.url} alt="" className="wce-hero-media h-full w-full" />
+          <img src={heroPoster.url} alt="" className="wce-hero-media" />
         ) : (
           <video
-            className="wce-hero-media h-full w-full"
+            className="wce-hero-media"
             src={heroVideo.url}
             poster={heroPoster.url}
             muted
@@ -48,6 +49,10 @@ export function WceHeroMedia() {
           />
         )}
       </div>
+      {/* Narrow viewports: the footage keeps its natural 16:9 so both Pitons stay
+          in frame; this gradient blends its lower edge into the blurred underlay
+          so no seam and no flat colour band is ever visible. */}
+      <div aria-hidden="true" className="wce-hero-seam" />
       <div className="absolute inset-0" style={{ background: "rgba(15,42,29,0.34)" }} />
     </div>
   );

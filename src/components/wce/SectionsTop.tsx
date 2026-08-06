@@ -42,8 +42,8 @@ export function WceHero() {
       <WceHeroMedia />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[58%]"
-        style={{ background: "linear-gradient(to top, rgba(15,42,29,0.94) 0%, rgba(15,42,29,0.78) 30%, rgba(15,42,29,0.44) 62%, rgba(15,42,29,0) 100%)" }}
+        className="absolute inset-x-0 bottom-0 h-[66%]"
+        style={{ background: "linear-gradient(to top, rgba(15,42,29,0.97) 0%, rgba(15,42,29,0.88) 24%, rgba(15,42,29,0.62) 46%, rgba(15,42,29,0.28) 66%, rgba(15,42,29,0) 88%)" }}
       />
       <WceHeroParticles />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
@@ -126,7 +126,7 @@ export function WcePartnerStrip() {
           {PARTNERS.map((p, i) => (
             <Reveal key={p} as="li" index={i} gate>
               <span
-                className="text-[0.72rem] uppercase sm:text-xs"
+                className="text-[0.875rem] uppercase sm:text-xs"
                 style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.24em" }}
               >
                 {p}

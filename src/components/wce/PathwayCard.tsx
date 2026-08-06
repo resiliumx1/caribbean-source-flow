@@ -239,7 +239,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
           <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
 
           <p
-            className="relative mt-4 text-[0.63rem] uppercase sm:mt-5"
+            className="relative mt-4 text-[0.875rem] uppercase sm:mt-5"
             style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(26,26,20,0.9)", letterSpacing: "0.24em" }}
           >
             {isRetreat ? "Applications Open" : pathwayKey === "in_person" ? "Starting at" : "Full access"}
@@ -250,7 +250,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
 
           <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
 
-          <ul className="relative mx-auto mt-6 space-y-2.5 text-left text-[0.85rem] leading-relaxed sm:mt-8 sm:space-y-3">
+          <ul className="relative mx-auto mt-6 space-y-2.5 text-left text-[0.875rem] leading-relaxed sm:mt-8 sm:space-y-3">
             {features.map((f, fi) => (
               <li
                 key={f}
