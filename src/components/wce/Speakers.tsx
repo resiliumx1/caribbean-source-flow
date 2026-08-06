@@ -13,6 +13,15 @@ import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
 import { trackWceCta } from "./cta-tracking";
 
+/** Small gold ornament arrow used on the View Flyer action. */
+function ArrowGlyph({ size = 14 }: { size?: number }) {
+  return (
+    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 16 16" fill="none">
+      <path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 /** One row tile: gilded ring ignition + translucent theme word behind the portrait. */
 function SpeakerTile({
   speaker,
@@ -67,6 +76,7 @@ function SpeakerTile({
                 <span className="wce-speaker-initials" aria-hidden="true">{speakerInitials(speaker.name)}</span>
               )}
             </span>
+            <span className="wce-portrait-affordance" aria-hidden="true">View Flyer</span>
           </span>
       </span>
 
@@ -83,6 +93,10 @@ function SpeakerTile({
             {speaker.title}
           </p>
         )}
+        <span className="wce-viewflyer mt-4">
+          View Flyer
+          <ArrowGlyph />
+        </span>
       </span>
       </span>
 
@@ -138,6 +152,7 @@ function FeaturedSpeaker({
             style={{ width: "clamp(280px, 34vw, 460px)", overflow: "visible" }}
           >
             <FeaturedHalo src={portrait} alt={speaker.name} animate={!reduced} />
+            <span className="wce-portrait-affordance" aria-hidden="true">View Flyer</span>
           </span>
         ) : (
           <span className="wce-speaker-portrait-slot lg">
@@ -169,8 +184,9 @@ function FeaturedSpeaker({
             {speaker.session_title}
           </p>
         )}
-        <span className="mt-7 inline-block text-[0.875rem] uppercase" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.24em" }}>
-          View flyer
+        <span className="wce-viewflyer wce-viewflyer-lg mt-8">
+          View Flyer
+          <ArrowGlyph size={16} />
         </span>
       </div>
     </button>
