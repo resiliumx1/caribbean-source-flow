@@ -9,14 +9,15 @@ import type { ConsultationSettings } from "@/components/consultation/Consultatio
 
 interface Booking {
   id: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  amount_paid_usd: number;
+  booking_reference: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string | null;
+  amount: number;
   payment_transaction_id: string | null;
   status: string;
-  calendly_event_uri: string | null;
-  scheduled_at: string | null;
+  starts_at: string;
+  zoom_join_url: string | null;
   created_at: string;
   landing_path: string | null;
   utm_source: string | null;
@@ -45,8 +46,8 @@ export default function AdminConsultations() {
     const [{ data: bookingsData, error: bookingsErr }, { data: settingsData, error: settingsErr }] = await Promise.all([
       supabase
         .from("consultation_bookings")
-        .select("id, name, email, phone, amount_paid_usd, payment_transaction_id, status, calendly_event_uri, scheduled_at, created_at, landing_path, utm_source")
-        .order("created_at", { ascending: false })
+        .select("id, booking_reference, customer_name, customer_email, customer_phone, amount, payment_transaction_id, status, starts_at, zoom_join_url, created_at, landing_path, utm_source")
+        .order("starts_at", { ascending: false })
         .limit(200),
       supabase.from("consultation_settings").select("value").eq("key", "consultation").single(),
     ]);
@@ -54,7 +55,7 @@ export default function AdminConsultations() {
     if (bookingsErr) {
       toast({ title: "Error loading bookings", description: bookingsErr.message, variant: "destructive" });
     } else {
-      setBookings((bookingsData as Booking[]) || []);
+      setBookings((bookingsData as unknown as Booking[]) || []);
     }
 
     if (settingsErr) {
@@ -180,25 +181,25 @@ export default function AdminConsultations() {
                   <th className="text-left px-4 py-3 font-semibold">Paid</th>
                   <th className="text-left px-4 py-3 font-semibold">Status</th>
                   <th className="text-left px-4 py-3 font-semibold">Source</th>
-                  <th className="text-left px-4 py-3 font-semibold">Booked</th>
-                  <th className="text-left px-4 py-3 font-semibold">Calendly</th>
+                  <th className="text-left px-4 py-3 font-semibold">Session</th>
+                  <th className="text-left px-4 py-3 font-semibold">Zoom</th>
                 </tr>
               </thead>
               <tbody>
                 {bookings.map((b) => (
                   <tr key={b.id} className="border-t border-border hover:bg-muted/30">
-                    <td className="px-4 py-3 font-medium">{b.name}</td>
+                    <td className="px-4 py-3 font-medium">{b.customer_name}</td>
                     <td className="px-4 py-3">
-                      <div>{b.email}</div>
-                      {b.phone && <div className="text-muted-foreground">{b.phone}</div>}
+                      <div>{b.customer_email}</div>
+                      {b.customer_phone && <div className="text-muted-foreground">{b.customer_phone}</div>}
                     </td>
-                    <td className="px-4 py-3">${Number(b.amount_paid_usd).toFixed(2)}</td>
+                    <td className="px-4 py-3">${Number(b.amount).toFixed(2)}</td>
                     <td className="px-4 py-3">
                       <span
                         className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
                         style={{
-                          background: b.status === "paid" ? "rgba(21,128,61,0.12)" : "rgba(234,179,8,0.12)",
-                          color: b.status === "paid" ? "#15803d" : "#a16207",
+                          background: b.status === "confirmed" || b.status === "completed" ? "rgba(21,128,61,0.12)" : "rgba(234,179,8,0.12)",
+                          color: b.status === "confirmed" || b.status === "completed" ? "#15803d" : "#a16207",
                         }}
                       >
                         {b.status}
@@ -211,11 +212,11 @@ export default function AdminConsultations() {
                         <span className="text-muted-foreground text-xs">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">{relativeTime(b.created_at)}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{new Date(b.starts_at).toLocaleString()}</td>
                     <td className="px-4 py-3">
-                      {b.calendly_event_uri ? (
+                      {b.zoom_join_url ? (
                         <a
-                          href={b.calendly_event_uri}
+                          href={b.zoom_join_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-primary hover:underline"
@@ -223,7 +224,7 @@ export default function AdminConsultations() {
                           View <ExternalLink className="w-3 h-3" />
                         </a>
                       ) : (
-                        <span className="text-muted-foreground text-xs">Not scheduled</span>
+                        <span className="text-muted-foreground text-xs">No link</span>
                       )}
                     </td>
                   </tr>
