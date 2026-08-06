@@ -1762,11 +1762,14 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 /* ==========================================================================
    Responsive rhythm — tablet and mobile vertical compression
    ========================================================================== */
+.wce-root .wce-path-heading { min-height: 6.6rem; }
+
 @media (max-width: 1023px) {
   .wce-root section:not(.wce-hero-section) {
     padding-top: 4.5rem !important;
     padding-bottom: 4.5rem !important;
   }
+  .wce-root .wce-path-heading { min-height: 4.6rem; }
   .wce-root footer { padding-top: 3.75rem !important; padding-bottom: 3.75rem !important; }
   .wce-root .wce-speaker-stage { padding-top: 1.75rem; }
 }
