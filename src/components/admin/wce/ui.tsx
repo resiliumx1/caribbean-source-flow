@@ -75,9 +75,10 @@ export function EmptyState({ title, line }: { title: string; line?: string }) {
 
 export function SectionHeading({ title, sub }: { title: string; sub?: string }) {
   return (
-    <div style={{ marginBottom: "0.9rem" }}>
+    <div style={{ marginBottom: "16px" }}>
       <h2 className="wa-serif" style={{ fontSize: "1.5rem", margin: 0 }}>{title}</h2>
-      {sub && <p className="wa-muted" style={{ fontSize: "0.82rem", marginTop: "0.2rem" }}>{sub}</p>}
+      <hr className="wa-section-rule" aria-hidden="true" />
+      {sub && <p className="wa-muted">{sub}</p>}
     </div>
   );
 }
