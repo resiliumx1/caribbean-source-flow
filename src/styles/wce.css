@@ -1884,15 +1884,39 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   .wce-halo[data-visible="true"] .wce-halo__diamonds { animation: none; }
 }
 
-/* ============ HERO MEDIA (always covers, never letterboxed) ============ */
+/* ============ HERO MEDIA (never letterboxed, never a flat band) ============
+   Narrow/portrait viewports keep the footage at its natural 16:9 anchored to the
+   top of the hero so both Pitons stay in frame; the area beneath is filled by the
+   blurred, darkened poster underlay and blended with .wce-hero-seam.
+   From 1024px up the footage covers the whole section. */
+.wce-hero-frame { overflow: hidden; }
 .wce-hero-media {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: auto;
+  min-height: 56.25vw;
   object-fit: cover;
-  /* Twin peaks sit slightly above centre in the footage; on narrow portrait
-     viewports the sides crop away, which is preferred over any flat band. */
-  object-position: 68% 44%;
+  object-position: 50% 40%;
 }
-@media (min-width: 768px) { .wce-hero-media { object-position: 60% 46%; } }
-@media (min-width: 1280px) { .wce-hero-media { object-position: 50% 50%; } }
+.wce-hero-seam {
+  position: absolute;
+  left: 0; right: 0;
+  top: 40vw;
+  height: 34vw;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(11, 32, 22, 0) 0%, rgba(11, 32, 22, 0.45) 55%, rgba(11, 32, 22, 0.72) 100%);
+}
+@media (min-width: 1024px) {
+  .wce-hero-media {
+    top: 0;
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+    object-position: 50% 50%;
+  }
+  .wce-hero-seam { display: none; }
+}
 
 /* ============ MOBILE NAV PANEL ON THE WCE ROUTE ============ */
 body.wce-route .wce-mobile-nav-overlay {
