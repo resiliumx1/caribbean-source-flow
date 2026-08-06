@@ -15,7 +15,7 @@ export function useConsultationSettings() {
         console.error("consultation_settings error:", error);
         return null;
       }
-      return (data?.value as ConsultationSettings) || null;
+      return (data?.value as unknown as ConsultationSettings) || null;
     },
     staleTime: 1000 * 60 * 5,
   });
