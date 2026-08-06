@@ -2676,6 +2676,7 @@ export type Database = {
         Returns: boolean
       }
       is_wce_order: { Args: { _order_id: string }; Returns: boolean }
+      wce_accept_own_invite: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "wce_admin"
