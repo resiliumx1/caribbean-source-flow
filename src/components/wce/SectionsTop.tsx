@@ -157,20 +157,20 @@ function PathwaysInner() {
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>
         <MaskedHeading
           lines={["Choose Your Experience Pathway"]}
-          className="mt-8 text-[clamp(2rem,5vw,3.4rem)]"
+          className="mt-6 text-[clamp(1.9rem,5vw,3.4rem)] sm:mt-8"
           style={{ color: "var(--wce-forest)" }}
         />
         <Reveal index={2}>
           <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
             Three ways to experience transformation.
           </p>
-          <LeafDivider className="mt-10" />
+          <LeafDivider className="mt-8 sm:mt-10" />
         </Reveal>
 
         {isLoading && <PathwayCardsSkeleton />}
 
         {!isLoading && (
-        <div className="wce-path-row mx-auto mt-20 grid max-w-5xl gap-7 sm:mt-24 lg:grid-cols-3">
+        <div className="wce-path-row mx-auto mt-14 grid max-w-5xl gap-6 sm:mt-20 sm:gap-7 md:grid-cols-2 lg:grid-cols-3">
           {(pathways ?? []).map((p, i) => (
             <PathwayCard
               key={p.id}
