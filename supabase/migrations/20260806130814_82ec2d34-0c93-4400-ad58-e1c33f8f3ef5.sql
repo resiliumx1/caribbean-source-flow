@@ -1,0 +1,1 @@
+DELETE FROM public.wce_leads WHERE email = 'qa2+wce@example.com';
