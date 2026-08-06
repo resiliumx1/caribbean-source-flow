@@ -488,6 +488,11 @@
   text-transform: uppercase;
   color: var(--wce-gold-light);
 }
+/* Application form grid: each column is a flex stack so a label that wraps onto
+   two lines still leaves its control flush with the neighbouring column. */
+.wce-form-grid > div { display: flex; flex-direction: column; }
+.wce-form-grid > div > .wce-field { margin-top: auto; }
+.wce-form-grid > div > .wce-label { min-height: 1.4em; }
 
 /* ============ MOTION ============ */
 
