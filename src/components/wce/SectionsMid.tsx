@@ -20,6 +20,10 @@ import {
 } from "./decor";
 import { LoveEmblem } from "./LoveEmblem";
 import { WceFormSuccess } from "./FormSuccess";
+import {
+  LaurelWreath, ScrollMark, CohortProcession,
+  TitleCapMark, HerbalCohortMark, KnowledgePassMark,
+} from "./graduation";
 import retreatImage from "@/assets/wce-retreat-landscape.jpg";
 
 /* ---------------- 5. HIGHLIGHT REELS ---------------- */
@@ -173,6 +177,24 @@ export function WceActivitiesSection() {
 }
 
 /* ---------------- 6b. SPECIAL CEREMONY ---------------- */
+const GRADUATION_DETAILS = [
+  {
+    Mark: TitleCapMark,
+    label: "Conferring of Titles",
+    copy: "Each graduate is called forward and formally recognised as a Herbal Physician.",
+  },
+  {
+    Mark: HerbalCohortMark,
+    label: "Herbal Physician Cohort",
+    copy: "A full cohort completing their study of the plants, the soil and the discipline of care.",
+  },
+  {
+    Mark: KnowledgePassMark,
+    label: "Traditional Knowledge Passed On",
+    copy: "The teaching moves from master to practitioner, carried forward into service.",
+  },
+] as const;
+
 export function WceCeremonySection() {
   const medallionRef = useCounterRotate<HTMLSpanElement>(6);
   return (
