@@ -1,72 +1,43 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import heroVideo from "@/assets/wce-hero.mp4.asset.json";
 import heroPoster from "@/assets/wce-hero-poster.jpg.asset.json";
 import { useIsMobile, useParallax, useWceReducedData, useWceReducedMotion } from "./motion";
 
 /**
- * From 1024px up the hero section itself takes the footage aspect ratio, so the
- * video can cover edge to edge with effectively no cropping. Below that the
- * frame letterboxes (both Pitons stay in shot) over a blurred poster fill.
+ * Hero background: the footage always covers the whole section at every
+ * breakpoint — never letterboxed, never a flat colour fill. A heavily blurred,
+ * darkened copy of the poster sits underneath purely as a paint-time fallback
+ * for the first frame (and for any sub-pixel gap during the parallax shift).
  */
-const COVER_QUERY = "(min-width: 1280px)";
-
-function useCoverMode() {
-  const [cover, setCover] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(COVER_QUERY).matches,
-  );
-  useEffect(() => {
-    const mq = window.matchMedia(COVER_QUERY);
-    const on = () => setCover(mq.matches);
-    on();
-    mq.addEventListener("change", on);
-    return () => mq.removeEventListener("change", on);
-  }, []);
-  return cover;
-}
-
-/** Hero background: parallaxed video, or a static poster under reduced motion/data. */
 export function WceHeroMedia() {
   const reducedMotion = useWceReducedMotion();
   const reducedData = useWceReducedData();
   const staticOnly = reducedMotion || reducedData;
   const parallaxRef = useParallax<HTMLDivElement>(0.12);
-  const cover = useCoverMode();
-  const fit = cover ? "cover" : "contain";
 
   return (
     <div
       data-wce-video-slot
       aria-hidden="true"
       className="absolute inset-0 overflow-hidden"
-      style={{ backgroundColor: "#0f2a1d" }}
     >
-      {!cover && (
-        <>
-          <img
-            src={heroPoster.url}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full scale-125 object-cover"
-            style={{ filter: "blur(38px) saturate(0.9)", objectPosition: "center center" }}
-          />
-          <div className="absolute inset-0" style={{ background: "rgba(15,42,29,0.55)" }} />
-        </>
-      )}
+      {/* Blurred poster underlay — never a flat colour. */}
+      <img
+        src={heroPoster.url}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full scale-110 object-cover"
+        style={{ filter: "blur(34px) saturate(0.9) brightness(0.72)" }}
+      />
       <div
-        ref={cover ? parallaxRef : undefined}
-        className={`absolute inset-0 will-change-transform ${cover ? "-top-[6%] h-[112%]" : ""}`}
+        ref={staticOnly ? undefined : parallaxRef}
+        className="absolute -top-[5%] left-0 h-[110%] w-full will-change-transform"
       >
         {staticOnly ? (
-          <img
-            src={heroPoster.url}
-            alt=""
-            className="h-full w-full"
-            style={{ objectFit: fit, objectPosition: "center center" }}
-          />
+          <img src={heroPoster.url} alt="" className="wce-hero-media h-full w-full" />
         ) : (
           <video
-            className="h-full w-full"
-            style={{ objectFit: fit, objectPosition: "center center" }}
+            className="wce-hero-media h-full w-full"
             src={heroVideo.url}
             poster={heroPoster.url}
             muted
@@ -77,7 +48,7 @@ export function WceHeroMedia() {
           />
         )}
       </div>
-      <div className="absolute inset-0" style={{ background: "rgba(15,42,29,0.45)" }} />
+      <div className="absolute inset-0" style={{ background: "rgba(15,42,29,0.34)" }} />
     </div>
   );
 }

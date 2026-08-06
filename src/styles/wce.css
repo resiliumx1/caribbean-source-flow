@@ -1894,3 +1894,57 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   .wce-halo[data-visible="true"] .wce-halo__orbit,
   .wce-halo[data-visible="true"] .wce-halo__diamonds { animation: none; }
 }
+
+/* ============ HERO MEDIA (always covers, never letterboxed) ============ */
+.wce-hero-media {
+  object-fit: cover;
+  /* Twin peaks sit slightly above centre in the footage; on narrow portrait
+     viewports the sides crop away, which is preferred over any flat band. */
+  object-position: 68% 44%;
+}
+@media (min-width: 768px) { .wce-hero-media { object-position: 60% 46%; } }
+@media (min-width: 1280px) { .wce-hero-media { object-position: 50% 50%; } }
+
+/* ============ MOBILE NAV PANEL ON THE WCE ROUTE ============ */
+body.wce-route .wce-mobile-nav-overlay {
+  z-index: 99400 !important;
+  background: rgba(6, 20, 12, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+body.wce-route .wce-mobile-nav {
+  z-index: 99500 !important;
+  background: rgba(11, 32, 22, 0.97) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-left: 1px solid rgba(201, 162, 39, 0.42);
+  color: var(--wce-cream, #F5EFE0);
+}
+body.wce-route .wce-mobile-nav :is(a, span, button, p, svg) { color: var(--wce-cream, #F5EFE0); }
+body.wce-route .wce-mobile-nav a:hover,
+body.wce-route .wce-mobile-nav a:hover span { color: #E4C766; }
+body.wce-route .wce-mobile-nav .wce-nav-item,
+body.wce-route .wce-mobile-nav .wce-nav-item span { color: #E4C766; }
+body.wce-route .wce-mobile-nav hr { border-color: rgba(201, 162, 39, 0.28); }
+
+/* Hamburger reads in cream against the video and never sits under hero layers */
+body.wce-route header[class*="fixed"] button[aria-label="Open menu"] {
+  position: relative;
+  z-index: 2;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--wce-cream, #F5EFE0);
+}
+body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
+  filter: drop-shadow(0 1px 6px rgba(6, 20, 12, 0.85));
+}
+
+/* Tap targets: every interactive element on the route clears 44px */
+.wce-root footer a,
+.wce-subnav a,
+.wce-root nav a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.wce-subnav { padding-top: 0.45rem; padding-bottom: 0.45rem; }

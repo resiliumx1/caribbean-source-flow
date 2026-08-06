@@ -11,6 +11,7 @@ export function WceThemeProvider({ children }: { children: React.ReactNode }) {
   // Route-scoped: the site header floats transparently over the hero, then
   // returns to its solid state once the hero has scrolled past.
   useEffect(() => {
+    document.body.classList.add("wce-route");
     const onScroll = () => {
       const overHero = window.scrollY < window.innerHeight * 0.8;
       document.body.classList.toggle("wce-transparent-header", overHero);
@@ -19,6 +20,7 @@ export function WceThemeProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
+      document.body.classList.remove("wce-route");
       document.body.classList.remove("wce-transparent-header");
     };
   }, []);

@@ -6,6 +6,23 @@ import { trackWceCta } from "./cta-tracking";
 export function WceStickyCta() {
   const [pastHero, setPastHero] = useState(false);
   const [formInView, setFormInView] = useState(false);
+  // Sit above the cookie consent banner while it is showing.
+  const [consentOffset, setConsentOffset] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const el = document.querySelector('[aria-label="Cookie consent"]') as HTMLElement | null;
+      setConsentOffset(el ? Math.round(el.getBoundingClientRect().height) : 0);
+    };
+    measure();
+    const mo = new MutationObserver(measure);
+    mo.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("resize", measure);
+    return () => {
+      mo.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setPastHero(window.scrollY > window.innerHeight * 0.75);
@@ -30,7 +47,11 @@ export function WceStickyCta() {
   const visible = pastHero && !formInView;
 
   return (
-    <div className={`wce-sticky-cta ${visible ? "is-visible" : ""}`} aria-hidden={!visible}>
+    <div
+      className={`wce-sticky-cta ${visible ? "is-visible" : ""}`}
+      style={{ bottom: consentOffset }}
+      aria-hidden={!visible}
+    >
       <a
         href="#pathways"
         className="wce-btn wce-btn-gold"
