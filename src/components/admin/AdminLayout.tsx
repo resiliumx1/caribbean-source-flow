@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
+import { useWceAccess } from "@/hooks/use-wce-access";
+import { WceAdminShell } from "@/components/wce-admin/WceAdminShell";
 import { Loader2, Home, Sun, Moon, Bell, ShoppingBag, MessageSquare, Wallet, AlertTriangle, Mail, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -54,8 +56,12 @@ function relativeTime(iso: string) {
 
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
+  const wce = useWceAccess();
   const navigate = useNavigate();
   const location = useLocation();
+  const isWceRoute = location.pathname.startsWith("/admin/wce");
+  // A WCE organiser who is not a full store admin.
+  const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
   const { theme, setTheme } = useTheme();
   const [unread, setUnread] = useState(0);
   const [recent, setRecent] = useState<Notification[]>([]);
@@ -116,16 +122,21 @@ export default function AdminLayout() {
   };
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!user) {
-        navigate("/admin/login", { replace: true });
-      } else if (!isAdmin) {
-        navigate("/", { replace: true });
-      }
+    if (isLoading || wce.isLoading) return;
+    if (!user) {
+      navigate(isWceRoute ? "/wce-admin/login" : "/admin/login", { replace: true });
+      return;
     }
-  }, [user, isAdmin, isLoading, navigate]);
+    if (isAdmin) return; // full admins: unchanged, everything reachable
+    if (wce.hasWceAccess) {
+      // Organisers live only inside /admin/wce — never show them the store admin.
+      if (!isWceRoute) navigate("/admin/wce", { replace: true });
+      return;
+    }
+    navigate(isWceRoute ? "/wce-admin/login" : "/", { replace: true });
+  }, [user, isAdmin, isLoading, wce.isLoading, wce.hasWceAccess, isWceRoute, navigate]);
 
-  if (isLoading) {
+  if (isLoading || wce.isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -133,8 +144,19 @@ export default function AdminLayout() {
     );
   }
 
-  if (!user || !isAdmin) {
+  // Never flash admin contents before the check resolves.
+  if (!user || (!isAdmin && !wce.hasWceAccess)) {
     return null;
+  }
+
+  if (wceOnly) {
+    // Organisers get the event-branded shell with no store navigation at all.
+    if (!isWceRoute) return null;
+    return (
+      <WceAdminShell email={user.email ?? ""} onSignOut={signOut}>
+        <Outlet />
+      </WceAdminShell>
+    );
   }
 
   return (
