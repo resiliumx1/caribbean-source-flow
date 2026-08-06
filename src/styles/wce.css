@@ -239,7 +239,7 @@
   font-family: var(--wce-flyer) !important;
   font-weight: 800 !important;
   color: #C9A227 !important;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
   line-height: 0.86;
   letter-spacing: 0.005em;
   text-align: left;
@@ -267,7 +267,7 @@
   color: #C9A227;
   line-height: 0.9;
   letter-spacing: 0.01em;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-hero-sub {
   font-family: var(--wce-flyer);
@@ -287,7 +287,7 @@
   letter-spacing: 0.005em;
   color: transparent;
   -webkit-text-stroke: 0.092em #C9A227;
-  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
 }
 .wce-year-outline > span {
   position: absolute;
@@ -303,17 +303,6 @@
 .wce-year-outline > span:nth-child(6) { -webkit-text-stroke: 0.014em #C9A227; }
 .wce-year-outline > span:nth-child(7) { -webkit-text-stroke: 0.003em #0F2A1D; }
 
-/* Dark plate keeping the outlined numeral legible over the footage */
-.wce-year-plate {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 150%;
-  aspect-ratio: 1.7 / 1;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(15, 42, 29, 0.95) 0%, rgba(15, 42, 29, 0.72) 46%, transparent 76%);
-}
 
 /* ============ BANNER HERO LOCKUP (Montserrat, hero only) ============ */
 .wce-banner-lockup {
@@ -331,14 +320,14 @@
   text-transform: uppercase;
   text-align: left;
   color: var(--wce-gold);
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-banner-title-line { display: block; }
 
 .wce-year-wrap {
   width: clamp(240px, 32vw, 460px);
   flex: 0 0 auto;
-  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
 }
 
 .wce-banner-dates { display: flex; align-items: stretch; gap: clamp(0.6rem, 1.4vw, 1.2rem); }
@@ -356,7 +345,7 @@
   text-transform: uppercase;
   color: var(--wce-gold);
   line-height: 0.92;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-banner-day { font-size: clamp(1.6rem, 4.2vw, 3.2rem); letter-spacing: -0.01em; }
 .wce-banner-month { font-size: clamp(0.95rem, 2.3vw, 1.75rem); letter-spacing: 0.02em; }
@@ -377,7 +366,7 @@
   /* Cream on the deepened hero scrim: legible over both the darkest and the
      brightest frames of the video, where the old near-black failed. */
   color: #FBF7EC;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 3px 16px rgba(0, 0, 0, 0.75);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-banner-subline .sep { color: var(--wce-gold); }
 .wce-banner-venue {
@@ -387,7 +376,7 @@
   font-size: clamp(0.55rem, 1.15vw, 0.88rem);
   letter-spacing: 0.2em;
   color: var(--wce-gold-light);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 3px 16px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 @media (max-width: 1023px) {
@@ -731,7 +720,7 @@
   line-height: 1.1;
   color: var(--wce-gold-light);
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 3px 14px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 .wce-count-label {
   display: block;
@@ -742,7 +731,7 @@
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: rgba(245,239,224,0.82);
-  text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 /* ============ STICKY MOBILE CTA ============ */
@@ -1120,7 +1109,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   background: linear-gradient(160deg, rgba(45,74,53,0.14), rgba(201,162,39,0.12));
 }
 .wce-root .wce-speaker-portrait-slot .wce-portrait-img {
-  width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%;
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%;
 }
 .wce-root .wce-speaker-initials {
   font-family: var(--wce-display);
@@ -1422,7 +1411,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-flyer-portrait-mask img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 40%;
+  object-fit: cover; object-position: 50% 50%;
 }
 .wce-flyer-initials {
   font-family: var(--wce-display);
@@ -1559,7 +1548,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 .wce-root .wce-card-fill img {
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 34%;
+  object-fit: cover; object-position: 50% 50%;
   transform: scale(1.1);
   transition: transform 1s cubic-bezier(0.22,1,0.36,1), filter .6s ease;
   filter: saturate(0.94);
@@ -1961,7 +1950,7 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 .wce-flyer-portrait-layer img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 40%;
+  object-fit: cover; object-position: 50% 50%;
 }
 .wce-flyer-themeword-slot { position: relative; min-height: 1px; }
 .wce-flyer-ring-ignite {
