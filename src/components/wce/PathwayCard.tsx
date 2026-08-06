@@ -7,37 +7,17 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/use-cart";
 import { rememberPathway } from "@/lib/wce-attribution";
 import { dataLayerPush } from "@/lib/tracking";
-import { DiamondRule } from "./decor";
+import { DiamondRule, PeakMark, WaveMark, RangeMark } from "./decor";
 import { MaskedHeading, useCountUp, useInView, useIsTouch, useWceReducedMotion } from "./motion";
 import { selectPathway } from "./pathway-select";
 
 /* ---------- watermarks ---------- */
 
-/** Mountain-arch watermark echoing the Love the Life You Live emblem. */
-function MountainArch({ peaks }: { peaks: 1 | 2 | 3 }) {
-  const ranges: Record<number, string> = {
-    1: "M20 96 L100 30 L180 96 Z",
-    2: "M4 96 L74 34 L124 96 Z M96 96 L152 44 L204 96 Z",
-    3: "M-6 96 L48 44 L98 96 Z M52 96 L104 26 L158 96 Z M120 96 L168 50 L212 96 Z",
-  };
-  return (
-    <svg
-      aria-hidden="true"
-      className="wce-path-arch"
-      viewBox="0 0 200 96"
-      preserveAspectRatio="xMidYMax slice"
-      fill="none"
-    >
-      <path d={ranges[peaks]} stroke="var(--wce-gold)" strokeWidth="1.4" strokeLinejoin="round" />
-      <path
-        d="M12 96 A88 88 0 0 1 188 96"
-        stroke="var(--wce-gold)"
-        strokeWidth="1"
-        opacity="0.7"
-      />
-      <path d="M0 88 q26 -8 50 0 t50 0 t50 0 t50 0" stroke="var(--wce-gold)" strokeWidth="0.9" opacity="0.5" />
-    </svg>
-  );
+/** Each tier carries its own watermark so the three cards read as different places. */
+function TierWatermark({ tier }: { tier: "inperson" | "online" | "retreat" }) {
+  if (tier === "online") return <WaveMark tone="var(--wce-moss)" />;
+  if (tier === "retreat") return <RangeMark tone="var(--wce-gold-light)" />;
+  return <PeakMark tone="var(--wce-gold)" />;
 }
 
 /** Flower-of-life geometry that blooms outward, petal by petal (card 3 only). */
@@ -160,7 +140,11 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
 
   const cta = isRetreat ? "Apply for the Retreat" : pathwayKey === "online" ? "Get Online Access" : "Reserve Spot";
   const ctaClass = isRetreat ? "wce-pcta-outline" : pathwayKey === "online" ? "wce-pcta-gold" : "wce-pcta-forest";
-  const peaks = (Math.min(index + 1, 3) || 1) as 1 | 2 | 3;
+  const tier: "inperson" | "online" | "retreat" = isRetreat
+    ? "retreat"
+    : pathwayKey === "online"
+      ? "online"
+      : "inperson";
 
   const onCta = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -232,12 +216,12 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
         </span>
 
         <article
-          className={`wce-path-card relative flex h-full flex-col overflow-hidden px-7 pb-10 pt-14 text-center ${isRetreat ? "is-retreat" : ""}`}
+          className={`wce-path-card wce-path-card-${tier} relative flex h-full flex-col overflow-hidden px-7 pb-10 pt-14 text-center ${isRetreat ? "is-retreat" : ""}`}
         >
           {/* gold bloom — light entering, never a colour change */}
           <span aria-hidden="true" className="wce-path-bloom" />
-          <span aria-hidden="true" className="wce-path-arch-wrap">
-            <MountainArch peaks={peaks} />
+          <span aria-hidden="true" className={`wce-path-arch-wrap wce-path-arch-${tier}`}>
+            <TierWatermark tier={tier} />
           </span>
           {isRetreat && (
             <>
@@ -297,7 +281,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
               onClick={onCta}
             >
               <span className="wce-pcta-label">{cta}</span>
-              {isRetreat && <span aria-hidden="true" className="wce-pcta-arrow">→</span>}
+              <span aria-hidden="true" className="wce-pcta-arrow">→</span>
             </a>
           </div>
         </article>

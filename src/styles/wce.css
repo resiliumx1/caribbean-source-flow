@@ -1502,3 +1502,255 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   .wce-root .wce-speaker-session { opacity: 1; transform: none; }
   .wce-flyer-overlay { backdrop-filter: none; -webkit-backdrop-filter: none; }
 }
+
+/* ==========================================================================
+   Speaker card — two states (rest portrait, hover face-fills-card)
+   ========================================================================== */
+.wce-root .wce-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 17.5rem;
+  overflow: hidden;
+  border-radius: 2px;
+  border: 1px solid rgba(201, 162, 39, 0.5);
+  background: linear-gradient(180deg, #FFFDF4 0%, var(--wce-cream) 100%);
+  box-shadow: 0 14px 32px -24px rgba(122, 96, 17, 0.5);
+  text-align: center;
+  isolation: isolate;
+}
+@media (min-width: 640px) { .wce-root .wce-card { height: 19rem; } }
+
+.wce-root .wce-card-rest {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0.75rem 0.5rem 1rem;
+  transition: opacity .45s ease, transform .55s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-root .wce-card .wce-speaker-stage { padding: 0.25rem 0.25rem 0; }
+.wce-root .wce-card .wce-speaker-portrait-slot { width: 7rem; height: 7rem; }
+@media (min-width: 640px) { .wce-root .wce-card .wce-speaker-portrait-slot { width: 7.75rem; height: 7.75rem; } }
+.wce-root .wce-card .wce-speaker-meta { display: block; margin-top: 0.85rem; }
+.wce-root .wce-card-theme {
+  display: block;
+  font-family: var(--wce-body);
+  font-size: 0.56rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--wce-gold-text);
+}
+
+/* the photograph, filling the card */
+.wce-root .wce-card-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.wce-root .wce-card-fill img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 34%;
+  transform: scale(1.1);
+  transition: transform 1s cubic-bezier(0.22,1,0.36,1), filter .6s ease;
+  filter: saturate(0.94);
+}
+.wce-root .wce-card-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(9,20,14,0) 34%, rgba(9,20,14,0.42) 62%, rgba(9,20,14,0.88) 100%);
+  transition: opacity .5s ease;
+}
+.wce-root .wce-card-over {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem 0.85rem 1.05rem;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity .45s ease, transform .55s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-root .wce-card-over-theme {
+  font-family: var(--wce-body);
+  font-size: 0.54rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--wce-gold-light);
+}
+.wce-root .wce-card-over-name {
+  font-family: var(--wce-flyer);
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--wce-cream);
+  text-shadow: 0 1px 10px rgba(9,20,14,0.7);
+}
+.wce-root .wce-card-over-session {
+  font-family: var(--wce-body);
+  font-size: 0.6rem;
+  line-height: 1.35;
+  color: rgba(245,239,224,0.86);
+}
+
+/* the ignition ring survives the crossfade so the gilding still reads */
+.wce-root .wce-card .wce-ring-ignite { z-index: 5; }
+.wce-root .wce-card .wce-speaker-ring { transition: opacity .45s ease, transform .5s cubic-bezier(0.22,1,0.36,1); }
+
+@media (hover: hover) {
+  .wce-root .wce-card:hover, .wce-root .wce-card:focus-visible { transform: translateY(-6px); border-color: var(--wce-gold); box-shadow: 0 26px 48px -26px rgba(15,42,29,0.55); }
+  .wce-root .wce-card:hover .wce-card-fill,
+  .wce-root .wce-card:focus-visible .wce-card-fill { opacity: 1; }
+  .wce-root .wce-card:hover .wce-card-fill img,
+  .wce-root .wce-card:focus-visible .wce-card-fill img { transform: scale(1); filter: saturate(1); }
+  .wce-root .wce-card:hover .wce-card-scrim,
+  .wce-root .wce-card:focus-visible .wce-card-scrim { opacity: 1; }
+  .wce-root .wce-card:hover .wce-card-over,
+  .wce-root .wce-card:focus-visible .wce-card-over { opacity: 1; transform: translateY(0); }
+  .wce-root .wce-card:hover .wce-card-rest,
+  .wce-root .wce-card:focus-visible .wce-card-rest { opacity: 0; transform: scale(1.04); }
+}
+/* touch: hold the filled state once revealed */
+.wce-root .wce-card.is-on .wce-card-fill { opacity: 1; }
+.wce-root .wce-card.is-on .wce-card-fill img { transform: scale(1); filter: saturate(1); }
+.wce-root .wce-card.is-on .wce-card-scrim { opacity: 1; }
+.wce-root .wce-card.is-on .wce-card-over { opacity: 1; transform: translateY(0); }
+.wce-root .wce-card.is-on .wce-card-rest { opacity: 0; }
+
+/* the flower-of-life watermark steps back where the foliage overlaps it */
+.wce-root .wce-surface-bg {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
+
+/* ==========================================================================
+   Layered botanical backdrop
+   ========================================================================== */
+.wce-botanical { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.wce-botanical-left, .wce-botanical-right { position: absolute; top: 0; bottom: 0; width: 34%; }
+.wce-botanical-left { left: 0; }
+.wce-botanical-right { right: 0; transform: scaleX(-1); }
+.wce-botanical-a, .wce-botanical-b, .wce-botanical-c { position: absolute; display: block; will-change: transform; }
+.wce-botanical-a { left: -5%; top: 4%; }
+.wce-botanical-b { left: 12%; bottom: -6%; }
+.wce-botanical-c { left: 6%; bottom: 2%; }
+@media (max-width: 1023px) { .wce-botanical-left, .wce-botanical-right { display: none; } }
+
+.wce-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 52%, rgba(122, 96, 17, 0.09) 88%, rgba(122, 96, 17, 0.16) 100%);
+}
+.wce-vignette.on-dark {
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(9, 20, 14, 0.28) 92%, rgba(9, 20, 14, 0.45) 100%);
+}
+
+/* ==========================================================================
+   Pathway tiers — three visibly different places
+   ========================================================================== */
+.wce-path-card-inperson { background: linear-gradient(180deg, #FFFDF3 0%, #FBF6EA 100%); }
+.wce-path-card-online {
+  background: linear-gradient(180deg, #F8F7EC 0%, #F1F3E6 100%);
+  border-color: rgba(45, 74, 53, 0.45);
+}
+.wce-path-card-retreat {
+  background: linear-gradient(165deg, var(--wce-forest) 0%, var(--wce-forest-mid, #1B4030) 100%);
+  border-color: var(--wce-gold);
+  box-shadow: 0 26px 56px -28px rgba(15, 42, 29, 0.6);
+}
+.wce-path-arch-inperson { height: 44%; opacity: 0.05; }
+.wce-path-arch-online { height: 40%; opacity: 0.06; }
+.wce-path-arch-retreat { height: 46%; opacity: 0.07; }
+
+/* ==========================================================================
+   CTA character — shimmer, arrow travel, press ripple
+   ========================================================================== */
+@media (hover: hover) {
+  .wce-btn:hover .wce-pcta-arrow { transform: translateX(4px); }
+  .wce-btn:hover .wce-pcta-label::after { transform: scaleX(1); }
+}
+.wce-pcta-label::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .45s cubic-bezier(0.22,1,0.36,1);
+}
+.wce-btn.is-press { transform: scale(0.97); }
+.wce-btn-ripple {
+  position: absolute;
+  z-index: 2;
+  width: 12px; height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 9999px;
+  border: 1px solid rgba(201, 162, 39, 0.9);
+  pointer-events: none;
+  animation: wce-ripple 600ms cubic-bezier(0.22,1,0.36,1) forwards;
+}
+@keyframes wce-ripple {
+  from { transform: scale(0.4); opacity: 0.9; }
+  to { transform: scale(16); opacity: 0; }
+}
+
+/* ==========================================================================
+   Flyer — internal scrolling with a fixed chrome layer
+   ========================================================================== */
+.wce-flyer-scroll { align-items: center; overflow: hidden; }
+.wce-root .wce-flyer { max-height: 92svh; height: auto; overflow: hidden; }
+.wce-flyer-body {
+  position: relative;
+  max-height: 92svh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.wce-flyer-fade {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 15;
+  height: 76px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(15,42,29,0) 0%, rgba(15,42,29,0.55) 100%);
+  opacity: 1;
+  transition: opacity .35s ease;
+}
+.wce-flyer-fade.is-hidden { opacity: 0; }
+.wce-flyer-bio {
+  margin: clamp(1.1rem, 2.6vw, 1.8rem) auto 0;
+  max-width: 46rem;
+  text-align: center;
+  font-family: var(--wce-body);
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: rgba(26, 26, 20, 0.86);
+}
+@media (max-width: 767px) {
+  .wce-root .wce-flyer { max-height: 100svh; min-height: 100svh; }
+  .wce-flyer-body { max-height: 100svh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wce-root .wce-card-fill img,
+  .wce-root .wce-card-rest,
+  .wce-root .wce-card-over,
+  .wce-root .wce-card-scrim { transition: none !important; }
+  .wce-btn-ripple { display: none !important; }
+  .wce-botanical-a, .wce-botanical-b, .wce-botanical-c { transform: none !important; }
+}

@@ -1,7 +1,7 @@
 /** The speaker flyer expansion — the printed event flyer rebuilt in HTML/CSS.
  *  Opens as a centred overlay, shares the portrait layout with the row tile,
  *  and supports arrow navigation, Escape, click-outside and focus trapping. */
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Year2026 } from "./Year2026";
@@ -11,6 +11,7 @@ import { CornerVine } from "./ornaments";
 import { FlowerOfLifeField, EdgeFoliage, DiamondRule } from "./decor";
 import { useWceReducedMotion } from "./motion";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
+import { speakerPortrait } from "./speaker-portraits";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -33,6 +34,23 @@ export function SpeakerFlyer({
   const reduced = useWceReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [atBottom, setAtBottom] = useState(true);
+  const portrait = speakerPortrait(speaker.name, speaker.portrait_url);
+
+  /* Scroll affordance: fade the bottom edge until the panel is scrolled through */
+  const measure = useCallback(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+    setAtBottom(el.scrollHeight - el.clientHeight - el.scrollTop < 24);
+  }, []);
+  useEffect(() => {
+    measure();
+    const el = bodyRef.current;
+    if (el) el.scrollTop = 0;
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [measure, speaker.id]);
 
   /* Body scroll lock */
   useEffect(() => {
@@ -114,7 +132,9 @@ export function SpeakerFlyer({
           <button type="button" className="wce-flyer-arrow right" onClick={onNext} aria-label="Next speaker">
             <ChevronRight className="h-6 w-6" aria-hidden="true" />
           </button>
+          <span aria-hidden="true" className={`wce-flyer-fade ${atBottom ? "is-hidden" : ""}`} />
 
+          <div ref={bodyRef} className="wce-flyer-body" onScroll={measure}>
           <div className="relative z-10 px-5 pb-0 pt-14 sm:px-10 sm:pt-12">
             {/* Top lockup */}
             <motion.div className="wce-flyer-lockup" {...rise(0.05)}>
@@ -168,10 +188,10 @@ export function SpeakerFlyer({
                 <span aria-hidden="true" className="wce-flyer-portrait-ring" />
                 <div className="wce-flyer-portrait-mask">
                   <AnimatePresence mode="wait" initial={false}>
-                    {speaker.portrait_url ? (
+                    {portrait ? (
                       <motion.img
-                        key={speaker.portrait_url}
-                        src={speaker.portrait_url}
+                        key={portrait}
+                        src={portrait}
                         alt={speaker.name}
                         initial={reduced ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -206,6 +226,8 @@ export function SpeakerFlyer({
                 </motion.p>
               </AnimatePresence>
             )}
+
+            {speaker.bio?.trim() && <p className="wce-flyer-bio">{speaker.bio}</p>}
           </div>
 
           {/* Reserve band */}
@@ -235,6 +257,7 @@ export function SpeakerFlyer({
                 </li>
               ))}
             </ul>
+          </div>
           </div>
         </motion.div>
       </div>

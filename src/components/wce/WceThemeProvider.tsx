@@ -46,5 +46,25 @@ export function WceThemeProvider({ children }: { children: React.ReactNode }) {
     };
   }, [reduced]);
 
+  /* Press feedback on every WCE button: a slight compression plus a gold ring ripple. */
+  useEffect(() => {
+    if (reduced) return;
+    const onDown = (e: PointerEvent) => {
+      const btn = (e.target as HTMLElement | null)?.closest?.(".wce-btn") as HTMLElement | null;
+      if (!btn) return;
+      const rect = btn.getBoundingClientRect();
+      const ripple = document.createElement("span");
+      ripple.className = "wce-btn-ripple";
+      ripple.style.left = `${e.clientX - rect.left}px`;
+      ripple.style.top = `${e.clientY - rect.top}px`;
+      btn.appendChild(ripple);
+      btn.classList.add("is-press");
+      window.setTimeout(() => btn.classList.remove("is-press"), 170);
+      window.setTimeout(() => ripple.remove(), 640);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [reduced]);
+
   return <div className="wce-root">{children}</div>;
 }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
-import { FlowerOfLifeField, EdgeFoliage, DiamondRule, GoldFlourish } from "./decor";
+import { FlowerOfLifeField, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
 import { useWcePathways, useWceSpeakers, useWceSettings, pathwayFeatures } from "./useWceData";
 import { WceHeroMedia, WceHeroParticles } from "./HeroMedia";
 import {
@@ -151,8 +151,7 @@ function PathwaysInner() {
   return (
     <section ref={lift.ref} id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="left" opacity={0.04} />
-      <EdgeFoliage side="right" opacity={0.04} />
+      <BotanicalBackdrop intensity={1.1} />
       <div className="mx-auto max-w-5xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={58} /></Reveal>
         <Reveal><LotusMark size={30} className="mx-auto mt-3" /></Reveal>

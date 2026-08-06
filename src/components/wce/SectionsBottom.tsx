@@ -3,7 +3,7 @@ import { LeafDivider, LotusMark, CornerVine } from "./ornaments";
 import { useWceFaqs, useWceSettings } from "./useWceData";
 import { Reveal, MaskedHeading, useSectionLift } from "./motion";
 import { FaqSkeleton } from "./Skeletons";
-import { FlowerOfLifeField, FlowerOfLifeMark, EdgeFoliage, GoldFlourish, DiamondRule, LeafIcon, EdgeBleed } from "./decor";
+import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, GoldFlourish, DiamondRule, LeafIcon, EdgeBleed } from "./decor";
 import { LoveEmblem } from "./LoveEmblem";
 
 const PARTNERS = ["Mount Kailash", "Kamila's Kitchen", "Jah9", "LifeCraft in Jamaica", "The Ubuntu Movement"];
@@ -17,7 +17,7 @@ export function WceFaqSection() {
   return (
     <section ref={lift.ref} id="faq" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
-      <EdgeFoliage side="right" opacity={0.04} />
+      <BotanicalBackdrop intensity={0.9} />
       <div className="mx-auto max-w-5xl text-center">
         <Reveal><GoldFlourish className="mx-auto" size={54} /></Reveal>
         <Reveal><LotusMark size={28} className="mx-auto mt-3" /></Reveal>
