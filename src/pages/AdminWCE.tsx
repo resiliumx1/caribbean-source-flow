@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useWceAccess } from "@/hooks/use-wce-access";
 import WceLeads from "@/components/admin/wce/WceLeads";
 import WceSpeakers from "@/components/admin/wce/WceSpeakers";
 import WcePathways from "@/components/admin/wce/WcePathways";
@@ -7,6 +8,7 @@ import WceFaqs from "@/components/admin/wce/WceFaqs";
 import WceMedia from "@/components/admin/wce/WceMedia";
 import WceSettings from "@/components/admin/wce/WceSettings";
 import WceOrders from "@/components/admin/wce/WceOrders";
+import WceOrganisers from "@/components/admin/wce/WceOrganisers";
 
 const TABS = [
   { key: "leads", label: "Leads", Component: WceLeads },
@@ -17,11 +19,21 @@ const TABS = [
   { key: "faqs", label: "FAQs", Component: WceFaqs },
   { key: "media", label: "Media", Component: WceMedia },
   { key: "settings", label: "Settings", Component: WceSettings },
-] as const;
+];
+
+// Only full store admins may manage who has organiser access.
+const ADMIN_ONLY_TABS = [
+  { key: "organisers", label: "Organisers", Component: WceOrganisers },
+];
 
 export default function AdminWCE() {
+  const { isFullAdmin } = useWceAccess();
   const [tab, setTab] = useState<string>("leads");
-  const Active = TABS.find((t) => t.key === tab)?.Component ?? WceLeads;
+  const tabs = useMemo(
+    () => (isFullAdmin ? [...TABS, ...ADMIN_ONLY_TABS] : TABS),
+    [isFullAdmin],
+  );
+  const Active = tabs.find((t) => t.key === tab)?.Component ?? WceLeads;
 
   return (
     <div className="space-y-6">
@@ -31,7 +43,7 @@ export default function AdminWCE() {
       </div>
 
       <div className="flex flex-wrap gap-1 border-b border-border">
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
