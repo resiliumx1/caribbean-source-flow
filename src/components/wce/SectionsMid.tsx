@@ -230,11 +230,38 @@ export function WceCeremonySection() {
 
         <Reveal index={2}>
           <span className="mt-14 flex justify-center">
-            <EmblemCeremony />
+            <LaurelWreath size={280} />
           </span>
         </Reveal>
 
         <Reveal index={3}>
+          <span className="mt-10 flex justify-center">
+            <ScrollMark size={110} />
+          </span>
+        </Reveal>
+
+        <Reveal index={4}>
+          <p className="wce-eyebrow mt-14" style={{ color: "var(--wce-gold)", letterSpacing: "0.3em" }}>
+            The Graduating Cohort
+          </p>
+          <span className="mt-6 block">
+            <CohortProcession count={9} />
+          </span>
+        </Reveal>
+
+        <div className="wce-grad-details">
+          {GRADUATION_DETAILS.map(({ Mark, label, copy }, i) => (
+            <Reveal key={label} index={i}>
+              <div className="flex flex-col items-center text-center">
+                <Mark delay={i * 120} />
+                <p className="wce-grad-detail-label">{label}</p>
+                <p className="wce-grad-detail-copy mx-auto max-w-[18rem]">{copy}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal index={5}>
           <span className="mt-12 flex justify-center">
             <LoveEmblem size={320} />
           </span>
