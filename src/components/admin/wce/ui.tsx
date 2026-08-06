@@ -82,3 +82,18 @@ export function SectionHeading({ title, sub }: { title: string; sub?: string }) 
     </div>
   );
 }
+
+/** Readable date; relative wording for anything inside the last 3 days. */
+export function whenText(iso: string | null | undefined) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  const mins = Math.round((Date.now() - d.getTime()) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min${mins === 1 ? "" : "s"} ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs} hour${hrs === 1 ? "" : "s"} ago`;
+  const days = Math.round(hrs / 24);
+  if (days <= 3) return `${days} day${days === 1 ? "" : "s"} ago`;
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+}

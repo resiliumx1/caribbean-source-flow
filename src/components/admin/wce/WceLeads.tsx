@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Download } from "lucide-react";
 import { inputCls } from "./shared";
-import { StatCard, StatusPill, EmptyState, SectionHeading, ACCENTS } from "./ui";
+import { StatCard, StatusPill, EmptyState, SectionHeading, ACCENTS, whenText } from "./ui";
 import {
   wceToast, useSaveState, SaveBadge, TableSkeleton, StatsSkeleton, InfoTip, TipLabel,
   useConfirm, FilterBar, GuidedEmpty, useLastVisit,
@@ -340,7 +340,7 @@ export default function WceLeads() {
                 return (
                   <tr key={l.id} data-fresh={fresh ? "true" : undefined}>
                     <td data-label="Date" className="whitespace-nowrap text-xs">
-                      {new Date(l.created_at).toLocaleDateString()}
+                      {whenText(l.created_at)}
                     </td>
                     <td data-label="Name" className="wa-strong">
                       {l.full_name || "—"}

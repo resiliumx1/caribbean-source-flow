@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Download } from "lucide-react";
-import { StatCard, StatusPill, SectionHeading } from "./ui";
+import { StatCard, StatusPill, SectionHeading, whenText } from "./ui";
 import {
   wceToast, TableSkeleton, StatsSkeleton, InfoTip, FilterBar, GuidedEmpty, Expander,
 } from "./kit";
@@ -248,7 +248,7 @@ export default function WceOrders() {
                       <span className="wa-pill" data-tone="new">Physical</span>
                     )}
                   </td>
-                  <td data-label="Date" className="wa-muted">{new Date(r.created_at).toLocaleDateString()}</td>
+                  <td data-label="Date" className="wa-muted">{whenText(r.created_at)}</td>
                 </tr>
               ))}
             </tbody>
