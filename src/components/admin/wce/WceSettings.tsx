@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { inputCls, ImageUploadField } from "./shared";
 import {
-  wceToast, useSaveState, SaveBadge, CardsSkeleton, TipLabel,
+  wceToast, useSaveState, SaveBadge, CardsSkeleton, TipLabel, InfoTip,
   useUnsavedChanges, DirtyFlag, GuidedEmpty,
 } from "./kit";
 
@@ -115,14 +115,16 @@ export default function WceSettings() {
         </div>
       </div>
       <hr className="border-border wa-rule" />
-      <label className="flex items-center gap-2 text-sm font-medium" style={{ minHeight: 44 }}>
-        <input type="checkbox" checked={draft.popup_enabled}
-          onChange={(e) => set({ popup_enabled: e.target.checked })} />
-        Popup enabled
-        <TipLabel tip="When on, this shows a site-wide flyer popup to every visitor across the whole site, not just the WCE 2026 page.">
-          {""}
-        </TipLabel>
-      </label>
+      <div className="flex items-center gap-2">
+        <label className="flex items-center gap-2 text-sm font-medium" style={{ minHeight: 44 }}>
+          <input type="checkbox" checked={draft.popup_enabled}
+            onChange={(e) => set({ popup_enabled: e.target.checked })} />
+          Popup enabled
+        </label>
+        <InfoTip label="Popup enabled">
+          When on, this shows a site-wide flyer popup to every visitor across the whole site, not just the WCE 2026 page.
+        </InfoTip>
+      </div>
       <div>
         <TipLabel tip="The call-to-action text shown on the popup flyer button, seen verbatim by visitors.">
           Popup CTA text
