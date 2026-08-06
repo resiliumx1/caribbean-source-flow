@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { dataLayerPush } from "@/lib/tracking";
+import { trackWceCta } from "./cta-tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
 import { FlowerOfLifeField, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
 import { useWcePathways, useWceSpeakers, useWceSettings, pathwayFeatures } from "./useWceData";
