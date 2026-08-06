@@ -92,6 +92,7 @@ export function WceHero() {
             href="#pathways"
             className={`wce-btn wce-btn-gold ${reduced ? "" : "wce-hero-cta-enter"}`}
             style={reduced ? undefined : { animationDelay: "1.6s" }}
+            onClick={() => trackWceCta("reserve", "hero", "Choose Your Pathway")}
           >
             Choose Your Pathway
           </a>
@@ -99,6 +100,7 @@ export function WceHero() {
             href="#apply"
             className={`wce-btn wce-btn-outline ${reduced ? "" : "wce-hero-cta-enter"}`}
             style={reduced ? undefined : { animationDelay: "1.69s" }}
+            onClick={() => trackWceCta("apply", "hero", "Apply for the Retreat")}
           >
             Apply for the Retreat
           </a>
