@@ -126,7 +126,7 @@ export function WcePartnerStrip() {
           {PARTNERS.map((p, i) => (
             <Reveal key={p} as="li" index={i} gate>
               <span
-                className="text-[0.72rem] uppercase sm:text-xs"
+                className="text-[0.875rem] uppercase sm:text-xs"
                 style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.24em" }}
               >
                 {p}

@@ -124,7 +124,7 @@ export function WcePopup() {
         )}
 
         <div style={{ padding: "28px 26px 32px" }}>
-          <p style={{ color: GOLD, fontSize: "0.6rem", letterSpacing: "0.24em", textTransform: "uppercase", margin: 0 }}>
+          <p style={{ color: GOLD, fontSize: "0.875rem", letterSpacing: "0.24em", textTransform: "uppercase", margin: 0 }}>
             {settings?.event_dates ?? "11–17 October 2026"}
           </p>
           <h2
@@ -143,7 +143,7 @@ export function WcePopup() {
               display: "inline-flex", alignItems: "center", justifyContent: "center",
               marginTop: 24, minHeight: 48, padding: "0 30px",
               background: GOLD, color: FOREST, borderRadius: 2, textDecoration: "none",
-              fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600,
+              fontSize: "0.875rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600,
             }}
           >
             {settings?.popup_cta_text ?? "Learn More"}

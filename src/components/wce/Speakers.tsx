@@ -79,7 +79,7 @@ function SpeakerTile({
         </p>
         <DiamondRule className="mx-auto mt-2 max-w-[3.2rem]" tone="rgba(201,162,39,0.9)" />
         {speaker.title && (
-          <p className="mt-2 text-[0.58rem] uppercase" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}>
+          <p className="mt-2 text-[0.875rem] uppercase" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}>
             {speaker.title}
           </p>
         )}
@@ -156,7 +156,7 @@ function FeaturedSpeaker({
           {speaker.prefix ? `${speaker.prefix} ` : ""}{speaker.name}
         </h3>
         <DiamondRule className="mx-auto mt-5 max-w-[9rem] md:mx-0" tone="var(--wce-gold)" />
-        <p className="mt-5 text-[0.68rem] uppercase" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.24em" }}>
+        <p className="mt-5 text-[0.875rem] uppercase" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.24em" }}>
           {speaker.title?.trim() || "Grand Master Herbal Physician · Founder, Mount Kailash"}
         </p>
         {speaker.theme && (
@@ -169,7 +169,7 @@ function FeaturedSpeaker({
             {speaker.session_title}
           </p>
         )}
-        <span className="mt-7 inline-block text-[0.62rem] uppercase" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.24em" }}>
+        <span className="mt-7 inline-block text-[0.875rem] uppercase" style={{ color: "var(--wce-gold-light)", letterSpacing: "0.24em" }}>
           View flyer
         </span>
       </div>

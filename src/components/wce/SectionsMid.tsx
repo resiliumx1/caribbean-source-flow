@@ -92,7 +92,7 @@ export function WceMediaSection() {
                 </span>
               </a>
               <p
-                className="flex items-center justify-center gap-2.5 px-4 py-4 text-[0.66rem] uppercase"
+                className="flex items-center justify-center gap-2.5 px-4 py-4 text-[0.875rem] uppercase"
                 style={{ color: "var(--wce-cream)", letterSpacing: "0.22em", borderTop: "1px solid rgba(201,162,39,0.3)" }}
               >
                 <LeafIcon />
@@ -316,12 +316,12 @@ export function WceRetreatBand() {
               <SlideInItem as="li" key={label} index={i} className="wce-retreat-value">
                 <Icon size={30} />
                 <span
-                  className="mt-4 block text-[0.62rem] font-semibold uppercase"
+                  className="mt-4 block text-[0.875rem] font-semibold uppercase"
                   style={{ color: "var(--wce-gold-light)", letterSpacing: "0.2em" }}
                 >
                   {label}
                 </span>
-                <span className="mt-2.5 block text-[0.82rem] leading-relaxed" style={{ color: "rgba(245,239,224,0.82)" }}>
+                <span className="mt-2.5 block text-[0.875rem] leading-relaxed" style={{ color: "rgba(245,239,224,0.82)" }}>
                   {copy}
                 </span>
               </SlideInItem>
@@ -399,7 +399,7 @@ export function WceRetreatBand() {
 
       <div className="relative mx-auto mt-20 max-w-3xl text-center">
         <LeafDivider className="mx-auto w-full max-w-md" />
-        <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.86)", letterSpacing: "0.2em" }}>
+        <p className="mt-8 text-[0.875rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.86)", letterSpacing: "0.2em" }}>
           Holistic Wellness <span style={{ color: "var(--wce-gold)" }}>|</span> Meaningful Connection{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span> Lasting Transformation
         </p>
@@ -579,7 +579,7 @@ export function WceApplicationForm() {
               "Limited retreat places each cohort",
               "No obligation — applying simply opens the conversation",
             ].map((t) => (
-              <li key={t} className="flex items-start gap-2.5 text-left text-[0.86rem] leading-relaxed" style={{ color: "rgba(26,26,20,0.9)" }}>
+              <li key={t} className="flex items-start gap-2.5 text-left text-[0.875rem] leading-relaxed" style={{ color: "rgba(26,26,20,0.9)" }}>
                 <span className="mt-1 shrink-0"><CheckMark tone="var(--wce-gold-text)" /></span>
                 <span>{t}</span>
               </li>
@@ -589,7 +589,7 @@ export function WceApplicationForm() {
             {["Sacred. Natural. Transformative.", "Holistic Wellness Experiences", "Saint Lucia Awaits You"].map((t) => (
               <li
                 key={t}
-                className="flex items-center gap-2.5 text-[0.6rem] uppercase leading-relaxed"
+                className="flex items-center gap-2.5 text-[0.875rem] uppercase leading-relaxed"
                 style={{ color: "var(--wce-gold-text)", letterSpacing: "0.18em" }}
               >
                 <LeafIcon tone="var(--wce-gold-text)" />
@@ -644,7 +644,7 @@ export function WceApplicationForm() {
                   value={values.full_name} onChange={set("full_name")}
                   aria-invalid={!!errors.full_name} aria-describedby={errors.full_name ? "wce-name-err" : undefined}
                 />
-                {errors.full_name && <p id="wce-name-err" className="mt-2 text-xs" style={errStyle}>{errors.full_name}</p>}
+                {errors.full_name && <p id="wce-name-err" className="mt-2 text-sm" style={errStyle}>{errors.full_name}</p>}
               </div>
               <div>
                 <label className="wce-label" htmlFor="wce-email">Email Address</label>
@@ -653,7 +653,7 @@ export function WceApplicationForm() {
                   value={values.email} onChange={set("email")}
                   aria-invalid={!!errors.email} aria-describedby={errors.email ? "wce-email-err" : undefined}
                 />
-                {errors.email && <p id="wce-email-err" className="mt-2 text-xs" style={errStyle}>{errors.email}</p>}
+                {errors.email && <p id="wce-email-err" className="mt-2 text-sm" style={errStyle}>{errors.email}</p>}
               </div>
               <div>
                 <label className="wce-label" htmlFor="wce-phone">Phone / WhatsApp</label>
@@ -695,18 +695,18 @@ export function WceApplicationForm() {
               </div>
             </div>
 
-            <label className="flex items-start gap-3 text-xs leading-relaxed" style={{ color: "rgba(245,239,224,0.92)" }}>
+            <label className="flex items-start gap-3 text-sm leading-relaxed" style={{ color: "rgba(245,239,224,0.92)" }}>
               <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[var(--wce-gold)]"
                 checked={values.consent_marketing} onChange={set("consent_marketing")} />
               <span>Yes, keep me updated about Caribbean Wellness Saint Lucia 2026 and Mount Kailash offerings.</span>
             </label>
 
-            {formError && <p className="text-xs" style={errStyle}>{formError}</p>}
+            {formError && <p className="text-sm" style={errStyle}>{formError}</p>}
 
             <button type="submit" className="wce-btn wce-btn-gold wce-shimmer-btn w-full" disabled={submitting} style={submitting ? { opacity: 0.65, cursor: "wait" } : undefined}>
               {submitting ? "Sending your application…" : "Submit Retreat Application"}
             </button>
-            <p className="text-center text-[0.68rem]" style={{ color: "rgba(245,239,224,0.84)" }}>
+            <p className="text-center text-[0.875rem]" style={{ color: "rgba(245,239,224,0.84)" }}>
               We respect your privacy. Your information is secure with us.
             </p>
           </form>

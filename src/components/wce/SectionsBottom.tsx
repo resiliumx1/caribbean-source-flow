@@ -131,7 +131,7 @@ export function WceFinalCta() {
           ))}
         </div>
         <LeafDivider className="mt-16" />
-        <p className="mt-8 text-[0.68rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.9)", letterSpacing: "0.22em" }}>
+        <p className="mt-8 text-[0.875rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.9)", letterSpacing: "0.22em" }}>
           {(settings?.event_dates ?? "11-17 October 2026").toUpperCase()}{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span>{" "}
           {(settings?.venue ?? "Mount Kailash Rejuvenation Centre, St. Lucia").toUpperCase()}
@@ -202,11 +202,11 @@ export function WceFooter() {
       </div>
 
       <div className="wce-hairline mx-auto mt-16 max-w-6xl" />
-      <p className="mt-8 text-center text-[0.72rem]" style={{ color: "rgba(245,239,224,0.9)" }}>
+      <p className="mt-8 text-center text-[0.875rem]" style={{ color: "rgba(245,239,224,0.9)" }}>
         © 2026 Caribbean Wellness Experience · Mount Kailash Rejuvenation Centre
       </p>
       <p
-        className="mx-auto mt-4 max-w-4xl text-center text-[0.58rem] uppercase leading-loose"
+        className="mx-auto mt-4 max-w-4xl text-center text-[0.875rem] uppercase leading-loose"
         style={{ color: "rgba(201,162,39,0.72)", letterSpacing: "0.26em" }}
       >
         Clinical Wellness Medicine · Herbal Practice · Volcanic Highlands · Restoration · Food · Herbs · Discipline · Family · Care
