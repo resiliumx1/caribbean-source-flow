@@ -253,10 +253,20 @@
 .wce-admin input[type="checkbox"] { min-height: 22px; width: 22px; height: 22px; accent-color: var(--wa-gold); }
 .wce-admin button, .wce-admin a[role="button"] { min-height: 44px; }
 .wce-admin .wa-field-label {
-  display: block; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 0.3rem;
+  /* Matches the height of a label that carries an info tooltip (32px trigger),
+     so plain and tooltip labels sit on the same baseline and the inputs beneath
+     them line up across every column of a form grid. */
+  min-height: 32px; margin-bottom: 4px;
   font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--wa-gold-light); font-weight: 600;
 }
+/* Form columns stretch so labels of differing length still leave their control
+   flush with its neighbours. */
+.wce-admin form .grid > div { display: flex; flex-direction: column; }
+.wce-admin form .grid > div > input,
+.wce-admin form .grid > div > select,
+.wce-admin form .grid > div > textarea { width: 100%; margin-top: auto; }
 .wce-admin .wa-hint { font-size: 0.82rem; color: var(--wa-cream-mute); line-height: 1.55; }
 
 /* --- save / dirty badges ---------------------------------------- */
@@ -318,8 +328,8 @@
   text-transform: none; letter-spacing: normal; font-weight: 400;
 }
 .wce-admin .wa-tip strong { color: var(--wa-gold-light); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; }
-.wce-admin .wa-tiplabel { display: inline-flex; align-items: center; gap: 0.1rem; margin-bottom: 4px; }
-.wce-admin .wa-tiplabel .wa-field-label { margin-bottom: 0; }
+.wce-admin .wa-tiplabel { display: flex; align-items: center; gap: 0.1rem; min-height: 32px; margin-bottom: 4px; }
+.wce-admin .wa-tiplabel .wa-field-label { margin-bottom: 0; min-height: 0; }
 
 /* --- confirm dialog --------------------------------------------- */
 .wa-confirm-veil {
