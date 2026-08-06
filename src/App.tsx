@@ -67,6 +67,7 @@ const AdminAbandonedCarts = lazy(() => import("./pages/AdminAbandonedCarts"));
 const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
 const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
 const AdminWCE = lazy(() => import("./pages/AdminWCE"));
+const WceAdminLogin = lazy(() => import("./pages/WceAdminLogin"));
 const WCE2026 = lazy(() => import("./pages/WCE2026"));
 
 const queryClient = new QueryClient();
@@ -180,6 +181,7 @@ function AppContent() {
           <Route path="/product/:slug" element={<RedirectProductToShop />} />
           <Route path="/pay/:planId" element={<PaymentPlanPay />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/wce-admin/login" element={<WceAdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="/admin/orders" replace />} />
             <Route path="products" element={<AdminProducts />} />
