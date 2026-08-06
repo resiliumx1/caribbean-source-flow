@@ -16,6 +16,9 @@ const json = (body: unknown, status = 200) =>
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Invitation links stay valid for 12 hours; after that a resend is required. */
+const INVITE_TTL_HOURS = 12;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -75,21 +78,30 @@ Deno.serve(async (req) => {
           .eq("user_id", existing.id).eq("role", "wce_admin");
       }
       await svc.from("wce_organiser_invites")
-        .update({ status: "revoked", accepted_at: null })
+        .update({ status: "revoked", accepted_at: null, expires_at: null })
         .eq("email", email);
       return json({ ok: true, action: "revoke", email });
     }
 
     // ---- INVITE / RESEND -------------------------------------------------
+    // Read the current record first: a resend must reuse its display name and
+    // bump its counters rather than silently create a brand-new invitation.
+    const { data: prior } = await svc.from("wce_organiser_invites")
+      .select("id, display_name, resend_count").eq("email", email).maybeSingle();
+    if (action === "resend" && !prior) {
+      return json({ error: "There is no invitation for that address to resend." }, 404);
+    }
+
     const existing = await findUserByEmail(svc, email);
     let userId = existing?.id ?? null;
     let alreadyExisted = Boolean(existing);
     let emailSent = false;
+    const name = displayName ?? (prior?.display_name as string | null) ?? null;
 
     if (!existing) {
       const { data, error } = await svc.auth.admin.inviteUserByEmail(email, {
         redirectTo: redirectTo || undefined,
-        data: displayName ? { full_name: displayName } : undefined,
+        data: name ? { full_name: name } : undefined,
       });
       if (error) {
         // Race: created between our lookup and the invite.
@@ -121,18 +133,22 @@ Deno.serve(async (req) => {
     // Record / refresh the invite. Existing accounts that have signed in before
     // can already use their password, so those count as accepted immediately.
     const nowIso = new Date().toISOString();
+    const expiresIso = new Date(Date.now() + INVITE_TTL_HOURS * 3600_000).toISOString();
     const preAccepted = alreadyExisted && Boolean(existing?.last_sign_in_at);
-    const record = {
+    const record: Record<string, unknown> = {
       email,
-      display_name: displayName,
+      display_name: name,
       invited_by: caller.id,
       invited_at: nowIso,
       status: preAccepted ? "accepted" : "pending",
       accepted_at: preAccepted ? nowIso : null,
+      // A fresh link was just issued, so the clock restarts from now. An
+      // account that can already sign in has no pending link to expire.
+      expires_at: preAccepted ? null : expiresIso,
+      last_sent_at: emailSent ? nowIso : null,
+      resend_count:
+        action === "resend" ? Number(prior?.resend_count ?? 0) + 1 : 0,
     };
-
-    const { data: prior } = await svc.from("wce_organiser_invites")
-      .select("id").eq("email", email).maybeSingle();
 
     const writer = prior
       ? svc.from("wce_organiser_invites").update(record).eq("id", prior.id)
@@ -146,6 +162,8 @@ Deno.serve(async (req) => {
       email,
       already_existed: alreadyExisted,
       email_sent: emailSent,
+      expires_at: record.expires_at,
+      expires_in_hours: preAccepted ? null : INVITE_TTL_HOURS,
       invite,
     });
   } catch (e) {

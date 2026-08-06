@@ -2231,9 +2231,12 @@ export type Database = {
           created_at: string
           display_name: string | null
           email: string
+          expires_at: string | null
           id: string
           invited_at: string
           invited_by: string | null
+          last_sent_at: string | null
+          resend_count: number
           status: string
           updated_at: string
         }
@@ -2242,9 +2245,12 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email: string
+          expires_at?: string | null
           id?: string
           invited_at?: string
           invited_by?: string | null
+          last_sent_at?: string | null
+          resend_count?: number
           status?: string
           updated_at?: string
         }
@@ -2253,9 +2259,12 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email?: string
+          expires_at?: string | null
           id?: string
           invited_at?: string
           invited_by?: string | null
+          last_sent_at?: string | null
+          resend_count?: number
           status?: string
           updated_at?: string
         }

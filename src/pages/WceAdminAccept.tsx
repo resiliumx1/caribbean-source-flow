@@ -71,9 +71,20 @@ export default function WceAdminAccept() {
 
     // Mark the invite accepted through a security-definer helper: organisers have
     // no read access to the invites table, so a direct update cannot be verified
-    // client-side. Best effort — a failure here must never block sign-in.
+    // client-side. It refuses invitations older than 12 hours or already revoked.
     void userRes;
-    await (supabase as any).rpc("wce_accept_own_invite");
+    const { data: accepted, error: rpcErr } = await (supabase as any).rpc("wce_accept_own_invite");
+    if (!rpcErr && accepted === false) {
+      // The link outlived its 12-hour window (or access was revoked). Drop the
+      // session so nobody slips into the console on a stale invitation.
+      await supabase.auth.signOut();
+      setBusy(false);
+      setError(
+        "This invitation has expired or was withdrawn. Invitation links are valid for 12 hours — ask a site administrator to resend yours.",
+      );
+      setPhase("invalid");
+      return;
+    }
 
     setBusy(false);
     setPhase("done");
