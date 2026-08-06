@@ -2063,6 +2063,30 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       wce_faqs: {
         Row: {
           answer: string | null
@@ -2602,6 +2626,14 @@ export type Database = {
         Returns: boolean
       }
       clean_product_text: { Args: { t: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      has_wce_access: { Args: { _user_id: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_order_owner_or_admin: {
         Args: { target_order_id: string }
@@ -2609,6 +2641,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_role: "admin" | "wce_admin"
       wholesale_lead_status:
         | "new"
         | "contacted"
@@ -2742,6 +2775,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "wce_admin"],
       wholesale_lead_status: [
         "new",
         "contacted",
