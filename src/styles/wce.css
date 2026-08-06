@@ -2397,3 +2397,89 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
   letter-spacing: 0.08em;
   gap: 0.4rem;
 }
+
+/* --- Featured hover: light radiating outward through each layer ---
+   Applies on pointer hover and on keyboard focus of the featured panel,
+   which is the halo's focusable wrapper (a button that opens the flyer). */
+
+/* 1. portrait warms and lifts */
+.wce-halo__portrait {
+  transform-box: view-box;
+  transform-origin: 450px 450px;
+  transition: filter 600ms ease-out, transform 700ms cubic-bezier(0.22,1,0.36,1);
+}
+.wce-halo:is(:hover, :focus-visible) .wce-halo__portrait,
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__portrait {
+  filter: brightness(1.08) saturate(1.12) contrast(1.03);
+  transform: scale(1.035);
+}
+
+/* 2. aura swells */
+.wce-halo__aura {
+  transform-box: view-box;
+  transform-origin: 450px 450px;
+  transition: transform 900ms cubic-bezier(0.22,1,0.36,1), opacity 700ms ease-out;
+}
+.wce-halo:is(:hover, :focus-visible) .wce-halo__aura,
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__aura { transform: scale(1.12); }
+
+/* 3. rays extend outward in a wave — the inline transition-delay on each
+      path staggers them, so the pulse travels around the halo */
+.wce-halo__rays path {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.wce-halo:is(:hover, :focus-visible) .wce-halo__rays path,
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__rays path {
+  transform: scaleY(1.22);
+  transition: transform 520ms cubic-bezier(0.34,1.4,0.64,1),
+              opacity 380ms ease-out;
+}
+.wce-halo:is(:hover, :focus-visible) .wce-halo__rays path:nth-child(odd),
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__rays path:nth-child(odd)  { opacity: 1; }
+.wce-halo:is(:hover, :focus-visible) .wce-halo__rays path:nth-child(even),
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__rays path:nth-child(even) { opacity: 0.7; }
+
+/* 4. geometry field brightens */
+.wce-halo__geo { transition: opacity 800ms ease-out; }
+.wce-halo:is(:hover, :focus-visible) .wce-halo__geo,
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__geo { opacity: 0.34; }
+
+/* 5. orbit and diamonds brighten */
+.wce-halo__orbit, .wce-halo__diamonds { transition: opacity 600ms ease-out; }
+.wce-halo:is(:hover, :focus-visible) .wce-halo__orbit,
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__orbit { opacity: 1; }
+.wce-halo:is(:hover, :focus-visible) .wce-halo__diamonds,
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__diamonds { opacity: 1; }
+
+/* 6. two ripples travel outward from the ring, second trailing the first */
+.wce-halo__ripple {
+  transform-box: view-box;
+  transform-origin: 450px 450px;
+  pointer-events: none;
+}
+@keyframes wce-halo-ripple {
+  0%   { opacity: 0.85; transform: scale(1); }
+  70%  { opacity: 0.25; }
+  100% { opacity: 0;    transform: scale(1.5); }
+}
+.wce-halo:is(:hover, :focus-visible) .wce-halo__ripple--1,
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__ripple--1 { animation: wce-halo-ripple 1400ms cubic-bezier(0.22,1,0.36,1); }
+.wce-halo:is(:hover, :focus-visible) .wce-halo__ripple--2,
+.wce-speaker-featured:focus-visible .wce-halo .wce-halo__ripple--2 { animation: wce-halo-ripple 1400ms cubic-bezier(0.22,1,0.36,1) 260ms; }
+
+/* touch devices: no ripples, no ray extension (hover state is sticky there) */
+@media (hover: none), (pointer: coarse) {
+  .wce-halo__ripple { animation: none !important; }
+  .wce-halo:hover .wce-halo__rays path { transform: scaleY(1); }
+  .wce-halo:hover .wce-halo__portrait { transform: none; }
+}
+
+/* reduced motion / static: none of the above */
+@media (prefers-reduced-motion: reduce) {
+  .wce-halo:hover .wce-halo__portrait,
+  .wce-halo:hover .wce-halo__aura,
+  .wce-halo:hover .wce-halo__rays path { transform: none; filter: none; }
+  .wce-halo__ripple { animation: none !important; }
+}
+.wce-halo--static .wce-halo__ripple { animation: none !important; }
