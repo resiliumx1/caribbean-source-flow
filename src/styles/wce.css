@@ -1907,6 +1907,90 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   pointer-events: none;
   background: linear-gradient(180deg, rgba(11, 32, 22, 0) 0%, rgba(11, 32, 22, 0.45) 55%, rgba(11, 32, 22, 0.72) 100%);
 }
+
+/* ---- Composed under-video treatment (below 1024px only) ----
+   Layers, back to front: blurred footage continuation (masked into the real
+   video), forest gradient, warm radial glows, flower-of-life + botanical
+   texture, grain, vignette, then the gold seam hairline + mist band.
+   Everything static: no animation is introduced here. */
+.wce-hero-under {
+  position: absolute;
+  left: 0; right: 0;
+  top: calc(56.25vw - 120px);
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0.35) 55px, #000 120px);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0.35) 55px, #000 120px);
+}
+.wce-hero-under__media {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  object-fit: cover;
+  object-position: 50% 60%;
+  filter: blur(60px) saturate(1.15) brightness(0.58);
+  transform: scale(1.15);
+}
+.wce-hero-under__forest {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(15,42,29,0) 0%,
+    color-mix(in srgb, var(--wce-forest-mid) 62%, transparent) 34%,
+    color-mix(in srgb, var(--wce-forest-mid) 88%, transparent) 58%,
+    var(--wce-forest) 92%,
+    var(--wce-forest) 100%);
+}
+.wce-hero-under__warm {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(58% 40% at 50% 62%, rgba(201,162,39,0.10) 0%, rgba(201,162,39,0.05) 45%, rgba(201,162,39,0) 78%),
+    radial-gradient(36% 24% at 50% 18%, rgba(214,178,70,0.09) 0%, rgba(214,178,70,0) 72%);
+}
+.wce-hero-under__flower {
+  position: absolute;
+  left: 50%;
+  bottom: -12%;
+  transform: translateX(-50%);
+}
+.wce-hero-under__foliage {
+  position: absolute;
+  top: 0;
+  width: 42vw;
+  max-width: 260px;
+}
+.wce-hero-under__foliage--left { left: -6vw; }
+.wce-hero-under__foliage--right { right: -6vw; transform: scaleX(-1); }
+.wce-hero-under__grain {
+  position: absolute; inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+.wce-hero-under__vignette {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 82% at 50% 48%, rgba(6,20,12,0) 52%, rgba(6,20,12,0.34) 84%, rgba(6,20,12,0.52) 100%);
+}
+.wce-hero-hairline {
+  position: absolute;
+  left: 0; right: 0;
+  top: 56.25vw;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(201,162,39,0) 0%, rgba(201,162,39,0.26) 28%, rgba(201,162,39,0.34) 50%, rgba(201,162,39,0.26) 72%, rgba(201,162,39,0) 100%);
+}
+.wce-hero-mist {
+  position: absolute;
+  left: 0; right: 0;
+  top: calc(56.25vw + 1px);
+  height: 68px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(232,240,232,0.07) 0%, rgba(232,240,232,0.03) 42%, rgba(232,240,232,0) 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
 @media (min-width: 1024px) {
   .wce-hero-media {
     top: 0;
@@ -1916,6 +2000,9 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
     object-position: 50% 50%;
   }
   .wce-hero-seam { display: none; }
+  .wce-hero-under,
+  .wce-hero-hairline,
+  .wce-hero-mist { display: none; }
 }
 
 /* ============ MOBILE NAV PANEL ON THE WCE ROUTE ============ */

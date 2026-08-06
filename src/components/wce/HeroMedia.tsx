@@ -2,6 +2,56 @@ import { useMemo } from "react";
 import heroVideo from "@/assets/wce-hero.mp4.asset.json";
 import heroPoster from "@/assets/wce-hero-poster.jpg.asset.json";
 import { useIsMobile, useParallax, useWceReducedData, useWceReducedMotion } from "./motion";
+import { FlowerOfLifeMark } from "./decor";
+
+/** Static botanical spray hanging from a top corner of the copy area. */
+function HangingBotanical({ tone }: { tone: string }) {
+  return (
+    <svg viewBox="0 0 200 320" width="100%" height="auto" aria-hidden="true" fill="none">
+      <g stroke={tone} strokeWidth="1.4" strokeLinecap="round">
+        <path d="M18 0c14 62 30 108 62 156s58 84 66 132" />
+        <path d="M56 0c4 48 10 84 26 122" />
+        {Array.from({ length: 9 }, (_, i) => {
+          const t = i / 8;
+          const x = 18 + t * 128;
+          const y = t * 292;
+          return (
+            <g key={i}>
+              <path d={`M${x} ${y}c-26 6-40 22-42 44 26-2 42-16 42-44z`} fill={tone} fillOpacity="0.5" stroke="none" />
+              <path d={`M${x} ${y}c22 10 32 28 30 50-24-6-36-22-30-50z`} fill={tone} fillOpacity="0.32" stroke="none" />
+            </g>
+          );
+        })}
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * Layered treatment for the area beneath the footage on tablet/mobile.
+ * A blurred, saturated, darkened copy of the poster frame continues the
+ * footage colours (poster rather than a second <video> element to keep the
+ * mobile hero light), masked into the real video over ~120px so no seam is
+ * detectable, then forest gradient, warm glows, texture and vignette.
+ */
+function WceHeroUnderlay() {
+  return (
+    <div className="wce-hero-under" aria-hidden="true">
+      <img src={heroPoster.url} alt="" className="wce-hero-under__media" />
+      <div className="wce-hero-under__forest" />
+      <div className="wce-hero-under__warm" />
+      <span className="wce-hero-under__foliage wce-hero-under__foliage--left" style={{ opacity: 0.06 }}>
+        <HangingBotanical tone="var(--wce-gold)" />
+      </span>
+      <span className="wce-hero-under__foliage wce-hero-under__foliage--right" style={{ opacity: 0.06 }}>
+        <HangingBotanical tone="var(--wce-sage, #9BB49B)" />
+      </span>
+      <FlowerOfLifeMark size={520} opacity={0.05} className="wce-hero-under__flower" />
+      <div className="wce-hero-under__grain" />
+      <div className="wce-hero-under__vignette" />
+    </div>
+  );
+}
 
 /**
  * Hero background: the footage always covers the whole section at every
@@ -54,6 +104,9 @@ export function WceHeroMedia() {
           so no seam and no flat colour band is ever visible. */}
       <div aria-hidden="true" className="wce-hero-seam" />
       <div className="absolute inset-0" style={{ background: "rgba(15,42,29,0.34)" }} />
+      <WceHeroUnderlay />
+      <div aria-hidden="true" className="wce-hero-hairline" />
+      <div aria-hidden="true" className="wce-hero-mist" />
     </div>
   );
 }
