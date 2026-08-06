@@ -101,21 +101,14 @@ Deno.serve(async (req) => {
         userId = data.user?.id ?? null;
         emailSent = true;
       }
-    } else if (action === "resend") {
-      // The account exists but has never signed in — resend a set-password link.
-      const { error } = await svc.auth.admin.generateLink({
-        type: existing.last_sign_in_at ? "recovery" : "invite",
-        email,
-        options: { redirectTo: redirectTo || undefined },
-      });
-      // generateLink does not send mail on its own; fall back to a reset email.
-      if (error) {
-        await svc.auth.resetPasswordForEmail?.(email, { redirectTo });
-      }
-      const { error: resetErr } = await svc.auth.admin.inviteUserByEmail(email, {
+    } else {
+      // The account already exists. Send a set-password (recovery) email so they
+      // can choose a password and land on the accept screen. inviteUserByEmail
+      // refuses existing users, so recovery is the correct channel here.
+      const { error } = await svc.auth.resetPasswordForEmail(email, {
         redirectTo: redirectTo || undefined,
-      }).then((r) => ({ error: r.error }));
-      emailSent = !resetErr;
+      });
+      emailSent = !error;
     }
 
     if (!userId) return json({ error: "Could not resolve the invited account." }, 500);
