@@ -1718,7 +1718,8 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-root .wce-flyer { max-height: 92svh; height: auto; overflow: hidden; }
 .wce-flyer-body {
   position: relative;
-  max-height: 92svh;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -1746,7 +1747,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 @media (max-width: 767px) {
   .wce-root .wce-flyer { max-height: 100svh; min-height: 100svh; }
-  .wce-flyer-body { max-height: 100svh; }
+  .wce-flyer-body { max-height: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
