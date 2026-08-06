@@ -118,21 +118,26 @@ Deno.serve(async (req) => {
       .upsert({ user_id: userId, role: "wce_admin" }, { onConflict: "user_id,role" });
     if (roleErr) return json({ error: roleErr.message }, 400);
 
-    // Record / refresh the invite.
-    const { data: invite, error: invErr } = await svc.from("wce_organiser_invites")
-      .upsert(
-        {
-          email,
-          display_name: displayName,
-          invited_by: caller.id,
-          invited_at: new Date().toISOString(),
-          status: "pending",
-          accepted_at: null,
-        },
-        { onConflict: "email" },
-      )
-      .select()
-      .maybeSingle();
+    // Record / refresh the invite. Existing accounts that have signed in before
+    // can already use their password, so those count as accepted immediately.
+    const nowIso = new Date().toISOString();
+    const preAccepted = alreadyExisted && Boolean(existing?.last_sign_in_at);
+    const record = {
+      email,
+      display_name: displayName,
+      invited_by: caller.id,
+      invited_at: nowIso,
+      status: preAccepted ? "accepted" : "pending",
+      accepted_at: preAccepted ? nowIso : null,
+    };
+
+    const { data: prior } = await svc.from("wce_organiser_invites")
+      .select("id").eq("email", email).maybeSingle();
+
+    const writer = prior
+      ? svc.from("wce_organiser_invites").update(record).eq("id", prior.id)
+      : svc.from("wce_organiser_invites").insert(record);
+    const { data: invite, error: invErr } = await writer.select().maybeSingle();
     if (invErr) return json({ error: invErr.message }, 400);
 
     return json({
