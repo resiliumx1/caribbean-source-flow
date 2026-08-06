@@ -40,7 +40,8 @@ export function useSaveState() {
   const run = useCallback(
     async <T,>(opts: {
       label: string;
-      write: () => Promise<{ error: { message: string } | null } | void>;
+      /** Any thenable: a Supabase query builder, or a plain async function. */
+      write: () => PromiseLike<{ error?: { message: string } | null } | void | unknown>;
       optimistic?: () => void;
       rollback?: () => void;
       onDone?: () => void;
@@ -49,7 +50,7 @@ export function useSaveState() {
       setState("saving");
       setMessage(null);
       try {
-        const res = await opts.write();
+        const res = (await opts.write()) as { error?: { message: string } | null } | void;
         const err = res && typeof res === "object" && "error" in res ? res.error : null;
         if (err) throw new Error(err.message);
         setState("saved");
