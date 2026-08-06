@@ -208,3 +208,22 @@
   .wce-admin * { transition: none !important; animation: none !important; }
   .wce-admin .wa-btn-primary::before { display: none; }
 }
+
+/* Shell layout: side nav on desktop, horizontal scroller on small screens */
+.wce-admin .wa-shell { display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 1.5rem; }
+.wce-admin .wa-nav {
+  border-right: 1px solid var(--wa-line); padding-right: 0.9rem;
+}
+@media (max-width: 900px) {
+  .wce-admin .wa-shell { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .wce-admin .wa-nav {
+    border-right: 0; border-bottom: 1px solid var(--wa-line);
+    padding: 0 0 0.75rem; display: flex; gap: 0.9rem; overflow-x: auto;
+  }
+  .wce-admin .wa-nav-group { margin: 0; display: flex; align-items: center; gap: 0.35rem; }
+  .wce-admin .wa-nav-group > .wa-label { padding: 0 0.3rem 0 0; white-space: nowrap; }
+  .wce-admin .wa-nav-item { white-space: nowrap; width: auto; }
+}
+@media (max-width: 520px) {
+  .wce-admin .wa-body { padding: 1.1rem 0.85rem !important; }
+}
