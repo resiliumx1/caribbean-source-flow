@@ -11,6 +11,7 @@ import WebinarCommunity from "@/components/webinar/WebinarCommunity";
 import WebinarShowcase from "@/components/webinar/WebinarShowcase";
 import WebinarTrust from "@/components/webinar/WebinarTrust";
 import WebinarHost from "@/components/webinar/WebinarHost";
+import { ConsultationBookingBand } from "@/components/webinar/ConsultationBookingBand";
 import WebinarSignup from "@/components/webinar/WebinarSignup";
 import WebinarExplore from "@/components/webinar/WebinarExplore";
 import WebinarFooter from "@/components/webinar/WebinarFooter";
@@ -90,6 +91,7 @@ export default function Webinars() {
       />
       <WebinarTrust />
       <WebinarHost />
+      <ConsultationBookingBand />
       <WebinarSignup />
       <WebinarExplore />
       <WebinarFooter />

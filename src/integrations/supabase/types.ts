@@ -336,6 +336,99 @@ export type Database = {
           },
         ]
       }
+      consultation_bookings: {
+        Row: {
+          amount_paid_usd: number
+          calendly_event_uri: string | null
+          created_at: string
+          email: string
+          id: string
+          ip_address: string | null
+          landing_path: string | null
+          name: string
+          payment_method: string | null
+          payment_transaction_id: string | null
+          phone: string | null
+          referral_code: string | null
+          scheduled_at: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          amount_paid_usd: number
+          calendly_event_uri?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: string | null
+          landing_path?: string | null
+          name: string
+          payment_method?: string | null
+          payment_transaction_id?: string | null
+          phone?: string | null
+          referral_code?: string | null
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          amount_paid_usd?: number
+          calendly_event_uri?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: string | null
+          landing_path?: string | null
+          name?: string
+          payment_method?: string | null
+          payment_transaction_id?: string | null
+          phone?: string | null
+          referral_code?: string | null
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
+      consultation_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       coupon_redemptions: {
         Row: {
           coupon_id: string
