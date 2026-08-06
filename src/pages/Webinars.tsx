@@ -91,6 +91,7 @@ export default function Webinars() {
       />
       <WebinarTrust />
       <WebinarHost />
+      <ConsultationBookingBand />
       <WebinarSignup />
       <WebinarExplore />
       <WebinarFooter />
