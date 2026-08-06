@@ -1,11 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWceAccess } from "@/hooks/use-wce-access";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Users, Mic2, Route as RouteIcon, ShoppingBag, Ticket, HelpCircle,
   Image as ImageIcon, Settings as SettingsIcon, ShieldCheck, LogOut,
+  Menu, X,
 } from "lucide-react";
+import { createPortal } from "react-dom";
 import WceLeads from "@/components/admin/wce/WceLeads";
 import WceSpeakers from "@/components/admin/wce/WceSpeakers";
 import WcePathways from "@/components/admin/wce/WcePathways";
@@ -15,6 +17,7 @@ import WceMedia from "@/components/admin/wce/WceMedia";
 import WceSettings from "@/components/admin/wce/WceSettings";
 import WceOrders from "@/components/admin/wce/WceOrders";
 import WceOrganisers from "@/components/admin/wce/WceOrganisers";
+import { ConfirmProvider } from "@/components/admin/wce/kit";
 import { FlowerOfLifeField } from "@/components/wce/decor";
 import "@/styles/wce.css";
 import "@/styles/wce-admin.css";
@@ -53,6 +56,7 @@ export default function AdminWCE() {
   const { isFullAdmin, user } = useWceAccess();
   const navigate = useNavigate();
   const [tab, setTab] = useState<string>("leads");
+  const [drawer, setDrawer] = useState(false);
 
   const groups = useMemo(
     () => (isFullAdmin ? [...GROUPS, ADMIN_GROUP] : GROUPS),
@@ -62,12 +66,38 @@ export default function AdminWCE() {
   const active = all.find((t) => t.key === tab) ?? all[0];
   const Active = active.Component;
 
+  useEffect(() => {
+    if (!drawer) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setDrawer(false); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [drawer]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
     navigate("/wce-admin/login", { replace: true });
   };
 
+  const navItems = (onPick?: () => void) =>
+    groups.map((g) => (
+      <div key={g.group} className="wa-nav-group">
+        <span className="wa-label">{g.group}</span>
+        {g.items.map(({ key, label, Icon }) => (
+          <button
+            key={key}
+            type="button"
+            className="wa-nav-item"
+            aria-current={tab === key ? "page" : undefined}
+            onClick={() => { setTab(key); onPick?.(); }}
+          >
+            <Icon aria-hidden /> {label}
+          </button>
+        ))}
+      </div>
+    ));
+
   return (
+    <ConfirmProvider>
     <div className="wce-admin wce-root">
       <div className="wa-watermark" aria-hidden="true">
         <FlowerOfLifeField opacity={1} />
