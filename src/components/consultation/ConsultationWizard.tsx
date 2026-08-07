@@ -21,6 +21,7 @@ import {
   AuthorizeNetCardForm, type OpaqueData,
 } from "@/components/payments/AuthorizeNetCardForm";
 import { SlotPicker } from "@/components/consultation/SlotPicker";
+import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
 import {
   useConsultationAvailability, useIntakeQuestions,
   type ConsultationPractitioner, type ConsultationService,
@@ -584,16 +585,15 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                     <dd>
                       {paid.mode === "in_person"
                         ? "Mount Kailash Rejuvenation Centre, Saint Lucia"
-                        : paid.zoom_join_url
-                          ? <a href={paid.zoom_join_url} target="_blank" rel="noopener noreferrer"
-                              style={{ color: "var(--c-gold-deep)", textDecoration: "underline" }}>
-                              Join the video room
-                            </a>
-                          : "Your video link will arrive by email shortly"}
+                        : "Online, by Zoom"}
                     </dd>
                   </div>
                 </dl>
               </div>
+
+              {paid.mode === "online" && (
+                <ZoomJoinPanel joinUrl={paid.zoom_join_url} pending={paid.zoom_pending} />
+              )}
 
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button asChild className="min-h-[48px] px-6">
