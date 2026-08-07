@@ -249,7 +249,6 @@ export default function AdminConsultations() {
         <TabsList>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="availability">Availability</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="service">Session types</TabsTrigger>
           <TabsTrigger value="practitioner">Practitioner</TabsTrigger>
         </TabsList>
@@ -583,43 +582,83 @@ function NewOverride({ practitionerId, onDone }: { practitionerId?: string; onDo
 }
 
 function ServiceEditor({
-  service, categories, busy, onSave, onDelete,
+  service, busy, canMoveUp, canMoveDown, onMove, onDuplicate, onSave, onDelete,
 }: {
   service: Service;
-  categories: Category[];
   busy: boolean;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onMove: (direction: -1 | 1) => void;
+  onDuplicate: () => void;
   onSave: (patch: Record<string, unknown>) => void;
   onDelete: () => void;
 }) {
   const [f, setF] = useState({
     name: service.name,
-    category_id: service.category_id ?? "none",
+    slug: service.slug,
     display_order: String(service.display_order ?? 0),
     description: service.description ?? "",
     long_description: service.long_description ?? "",
     duration_minutes: String(service.duration_minutes),
     price_usd: String(service.price_usd),
+    price_xcd: String(service.price_xcd),
+    xcd_manual: false,
     mode: service.mode,
+    icon: service.icon ?? "leaf",
+    image_url: service.image_url ?? "",
+    requires_payment: service.requires_payment !== false,
+    price_needs_confirmation: !!service.price_needs_confirmation,
+    admin_note: service.admin_note ?? "",
     min_notice_hours: String(service.min_notice_hours),
     max_advance_days: String(service.max_advance_days),
+    max_per_day: service.max_per_day == null ? "" : String(service.max_per_day),
     buffer_before_minutes: String(service.buffer_before_minutes),
     buffer_after_minutes: String(service.buffer_after_minutes),
     is_active: service.is_active,
   });
 
+  // XCD follows USD at the store rate unless it is set by hand.
+  const derivedXcd = (+(Number(f.price_usd) * 2.7).toFixed(2)).toString();
+  const xcdShown = f.xcd_manual ? f.price_xcd : derivedXcd;
+
   return (
-    <div className="rounded-xl border p-4 space-y-3">
+    <div className="rounded-xl border p-4 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-medium">{service.name}</span>
+          {!service.is_active && <Badge variant="outline">Hidden</Badge>}
+          {service.requires_payment === false && (
+            <Badge variant="outline" className="bg-sky-100 text-sky-900 border-sky-300">
+              No payment taken
+            </Badge>
+          )}
+          {service.price_needs_confirmation && (
+            <Badge variant="outline" className="bg-amber-100 text-amber-900 border-amber-300">
+              Price needs confirming
+            </Badge>
+          )}
+        </div>
+        <div className="flex items-center gap-1">
+          <Button size="sm" variant="ghost" className="min-h-[40px]" disabled={busy || !canMoveUp}
+            aria-label="Move up" onClick={() => onMove(-1)}>
+            <ArrowUp className="w-4 h-4" />
+          </Button>
+          <Button size="sm" variant="ghost" className="min-h-[40px]" disabled={busy || !canMoveDown}
+            aria-label="Move down" onClick={() => onMove(1)}>
+            <ArrowDown className="w-4 h-4" />
+          </Button>
+          <Button size="sm" variant="ghost" className="min-h-[40px]" disabled={busy} onClick={onDuplicate}>
+            <Copy className="w-4 h-4 mr-2" /> Duplicate
+          </Button>
+        </div>
+      </div>
+
       <div className="grid sm:grid-cols-2 gap-3">
         <div><Label>Name</Label>
           <Input className="mt-1 min-h-[44px]" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
-        <div><Label>Category</Label>
-          <Select value={f.category_id} onValueChange={(v) => setF({ ...f, category_id: v })}>
-            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">Not filed</SelectItem>
-              {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-            </SelectContent>
-          </Select></div>
+        <div><Label>Web address slug</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.slug}
+            onChange={(e) => setF({ ...f, slug: e.target.value })} /></div>
         <div><Label>Format offered</Label>
           <Select value={f.mode} onValueChange={(v) => setF({ ...f, mode: v })}>
             <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
@@ -629,100 +668,6 @@ function ServiceEditor({
               <SelectItem value="in_person">In person only</SelectItem>
             </SelectContent>
           </Select></div>
-        <div><Label>Order within the category</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.display_order}
-            onChange={(e) => setF({ ...f, display_order: e.target.value })} /></div>
-      </div>
-      <div><Label>Short description</Label>
-        <Textarea rows={2} className="mt-1" value={f.description}
-          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
-      <div><Label>Full description</Label>
-        <Textarea rows={4} className="mt-1" value={f.long_description}
-          onChange={(e) => setF({ ...f, long_description: e.target.value })} /></div>
-      <div className="grid sm:grid-cols-3 gap-3">
-        <div><Label>Minutes</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.duration_minutes}
-            onChange={(e) => setF({ ...f, duration_minutes: e.target.value })} /></div>
-        <div><Label>Price USD</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.price_usd}
-            onChange={(e) => setF({ ...f, price_usd: e.target.value })} /></div>
-        <div><Label>Notice hours</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.min_notice_hours}
-            onChange={(e) => setF({ ...f, min_notice_hours: e.target.value })} /></div>
-        <div><Label>Book ahead (days)</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.max_advance_days}
-            onChange={(e) => setF({ ...f, max_advance_days: e.target.value })} /></div>
-        <div><Label>Buffer before</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_before_minutes}
-            onChange={(e) => setF({ ...f, buffer_before_minutes: e.target.value })} /></div>
-        <div><Label>Buffer after</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_after_minutes}
-            onChange={(e) => setF({ ...f, buffer_after_minutes: e.target.value })} /></div>
-      </div>
-      <div className="flex items-center gap-3">
-        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
-        <span className="text-sm">{f.is_active ? "Bookable on the site" : "Hidden"}</span>
-      </div>
-      <Button className="min-h-[44px]" disabled={busy} onClick={() => {
-        const priceUsd = Number(f.price_usd);
-        onSave({
-          name: f.name,
-          category_id: f.category_id === "none" ? null : f.category_id,
-          display_order: Number(f.display_order) || 0,
-          description: f.description || null,
-          long_description: f.long_description || null,
-          duration_minutes: Number(f.duration_minutes),
-          price_usd: priceUsd,
-          price_xcd: +(priceUsd * 2.7).toFixed(2),
-          mode: f.mode,
-          min_notice_hours: Number(f.min_notice_hours),
-          max_advance_days: Number(f.max_advance_days),
-          buffer_before_minutes: Number(f.buffer_before_minutes),
-          buffer_after_minutes: Number(f.buffer_after_minutes),
-          is_active: f.is_active,
-        });
-      }}>
-        {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-        Save session type
-      </Button>
-      <Button variant="ghost" className="min-h-[44px] ml-2 text-destructive" disabled={busy}
-        onClick={() => { if (confirm(`Remove "${service.name}"?`)) onDelete(); }}>
-        Remove
-      </Button>
-      <p className="text-xs text-muted-foreground">
-        XCD is kept in step automatically at the 2.7 rate used across the store.
-      </p>
-    </div>
-  );
-}
-
-function CategoryEditor({
-  category, serviceCount, busy, onSave, onDelete,
-}: {
-  category: Category;
-  serviceCount: number;
-  busy: boolean;
-  onSave: (patch: Record<string, unknown>) => void;
-  onDelete: () => void;
-}) {
-  const [f, setF] = useState({
-    name: category.name,
-    slug: category.slug,
-    description: category.description ?? "",
-    icon: category.icon ?? "leaf",
-    display_order: String(category.display_order),
-    is_active: category.is_active,
-  });
-
-  return (
-    <div className="rounded-xl border p-4 space-y-3">
-      <div className="grid sm:grid-cols-2 gap-3">
-        <div><Label>Name</Label>
-          <Input className="mt-1 min-h-[44px]" value={f.name}
-            onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
-        <div><Label>Web address slug</Label>
-          <Input className="mt-1 min-h-[44px]" value={f.slug}
-            onChange={(e) => setF({ ...f, slug: e.target.value })} /></div>
         <div><Label>Icon</Label>
           <Select value={f.icon} onValueChange={(v) => setF({ ...f, icon: v })}>
             <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
@@ -730,40 +675,123 @@ function CategoryEditor({
               {ICON_CHOICES.map((i) => <SelectItem key={i} value={i}>{i.replace(/-/g, " ")}</SelectItem>)}
             </SelectContent>
           </Select></div>
-        <div><Label>Display order</Label>
+        <div className="sm:col-span-2"><Label>Card image URL (optional)</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.image_url}
+            placeholder="https://…"
+            onChange={(e) => setF({ ...f, image_url: e.target.value })} /></div>
+      </div>
+
+      <div><Label>Short line on the card</Label>
+        <Textarea rows={2} className="mt-1" value={f.description}
+          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
+      <div><Label>Longer description shown once chosen</Label>
+        <Textarea rows={4} className="mt-1" value={f.long_description}
+          onChange={(e) => setF({ ...f, long_description: e.target.value })} /></div>
+
+      <div className="grid sm:grid-cols-3 gap-3">
+        <div><Label>Minutes</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.duration_minutes}
+            onChange={(e) => setF({ ...f, duration_minutes: e.target.value })} /></div>
+        <div><Label>Price USD</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.price_usd}
+            onChange={(e) => setF({ ...f, price_usd: e.target.value })} /></div>
+        <div><Label>Price XCD</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={xcdShown}
+            onChange={(e) => setF({ ...f, price_xcd: e.target.value, xcd_manual: true })} />
+          <p className="text-xs text-muted-foreground mt-1">
+            {f.xcd_manual ? "Set by hand." : "Following USD at the 2.7 rate."}
+          </p></div>
+        <div><Label>Notice hours</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.min_notice_hours}
+            onChange={(e) => setF({ ...f, min_notice_hours: e.target.value })} /></div>
+        <div><Label>Book ahead (days)</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.max_advance_days}
+            onChange={(e) => setF({ ...f, max_advance_days: e.target.value })} /></div>
+        <div><Label>Most per day (blank for no cap)</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.max_per_day}
+            onChange={(e) => setF({ ...f, max_per_day: e.target.value })} /></div>
+        <div><Label>Buffer before</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_before_minutes}
+            onChange={(e) => setF({ ...f, buffer_before_minutes: e.target.value })} /></div>
+        <div><Label>Buffer after</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_after_minutes}
+            onChange={(e) => setF({ ...f, buffer_after_minutes: e.target.value })} /></div>
+        <div><Label>Order on the site</Label>
           <Input type="number" className="mt-1 min-h-[44px]" value={f.display_order}
             onChange={(e) => setF({ ...f, display_order: e.target.value })} /></div>
       </div>
-      <div><Label>One line description</Label>
-        <Textarea rows={2} className="mt-1" value={f.description}
-          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
-      <div className="flex flex-wrap items-center gap-3">
-        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
-        <span className="text-sm">{f.is_active ? "Shown on the site" : "Hidden"}</span>
-        <Badge variant="outline">
-          {serviceCount} session type{serviceCount === 1 ? "" : "s"}
-        </Badge>
+
+      <div className="space-y-3 rounded-lg border p-3">
+        <div className="flex items-center gap-3">
+          <Switch checked={f.requires_payment}
+            onCheckedChange={(v) => setF({ ...f, requires_payment: v })} />
+          <span className="text-sm">
+            {f.requires_payment ? "Payment is taken at booking" : "No payment is taken"}
+          </span>
+        </div>
+        {!f.requires_payment && (
+          <p className="flex items-start gap-2 text-sm text-amber-900 dark:text-amber-200
+            bg-amber-50 dark:bg-amber-950/30 border border-amber-300 rounded-md p-3">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+            No card is collected for this session type. Anyone who books it is confirmed
+            immediately, so only use it where the money has already been taken elsewhere.
+          </p>
+        )}
+        <div className="flex items-center gap-3">
+          <Switch checked={f.price_needs_confirmation}
+            onCheckedChange={(v) => setF({ ...f, price_needs_confirmation: v })} />
+          <span className="text-sm">Price is a placeholder awaiting confirmation</span>
+        </div>
+        <div><Label>Internal note (only ever seen here)</Label>
+          <Textarea rows={2} className="mt-1" value={f.admin_note}
+            onChange={(e) => setF({ ...f, admin_note: e.target.value })} /></div>
       </div>
+
+      <div className="flex items-center gap-3">
+        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
+        <span className="text-sm">
+          {f.is_active ? "Bookable on the site" : "Hidden — past bookings are untouched"}
+        </span>
+      </div>
+
       <div className="flex flex-wrap gap-2">
-        <Button className="min-h-[44px]" disabled={busy} onClick={() => onSave({
-          name: f.name,
-          slug: slugify(f.slug || f.name),
-          description: f.description || null,
-          icon: f.icon,
-          display_order: Number(f.display_order) || 0,
-          is_active: f.is_active,
-        })}>
+        <Button className="min-h-[44px]" disabled={busy} onClick={() => {
+          const priceUsd = Number(f.price_usd) || 0;
+          onSave({
+            name: f.name,
+            slug: slugify(f.slug || f.name),
+            display_order: Number(f.display_order) || 0,
+            description: f.description || null,
+            long_description: f.long_description || null,
+            duration_minutes: Number(f.duration_minutes),
+            price_usd: priceUsd,
+            price_xcd: f.xcd_manual ? Number(f.price_xcd) || 0 : +(priceUsd * 2.7).toFixed(2),
+            mode: f.mode,
+            icon: f.icon,
+            image_url: f.image_url || null,
+            requires_payment: f.requires_payment,
+            price_needs_confirmation: f.price_needs_confirmation,
+            admin_note: f.admin_note || null,
+            min_notice_hours: Number(f.min_notice_hours),
+            max_advance_days: Number(f.max_advance_days),
+            max_per_day: f.max_per_day === "" ? null : Number(f.max_per_day),
+            buffer_before_minutes: Number(f.buffer_before_minutes),
+            buffer_after_minutes: Number(f.buffer_after_minutes),
+            is_active: f.is_active,
+          });
+        }}>
           {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Save category
+          Save session type
         </Button>
         <Button variant="ghost" className="min-h-[44px] text-destructive" disabled={busy}
-          onClick={() => { if (confirm(`Remove "${category.name}"?`)) onDelete(); }}>
+          onClick={() => { if (confirm(`Remove "${service.name}"? Switching it off keeps past bookings tidy instead.`)) onDelete(); }}>
           Remove
         </Button>
       </div>
     </div>
   );
 }
+
 
 function PractitionerEditor({
   practitioner, busy, onSave,
