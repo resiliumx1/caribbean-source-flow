@@ -22,6 +22,7 @@ import {
 } from "@/components/payments/AuthorizeNetCardForm";
 import { SlotPicker } from "@/components/consultation/SlotPicker";
 import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
+import { ServiceCard } from "@/components/consultations/ServiceCard";
 import {
   useConsultationCatalog, useIntakeQuestions, useServiceAvailability,
   type ConsultationService,
@@ -64,13 +65,6 @@ const STEP_LABELS: Record<number, string> = {
   [S_DETAILS]: "Details",
   [S_REVIEW]: "Payment",
   [S_DONE]: "Confirmed",
-};
-
-const SERVICE_ICONS: Record<string, typeof Leaf> = {
-  leaf: Leaf,
-  "clipboard-list": ClipboardList,
-  repeat: Repeat,
-  mountain: Mountain,
 };
 
 const CENTRE = "Mount Kailash Rejuvenation Centre, Saint Lucia";
@@ -367,20 +361,26 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                 point without losing anything.
               </p>
 
-              <div className="mt-6 grid sm:grid-cols-2 gap-3">
-                {allServices.map((s) => {
-                  const Icon = SERVICE_ICONS[s.icon ?? ""] ?? Leaf;
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 items-stretch">
+                {allServices.map((s, idx) => {
                   const free = s.requires_payment === false;
-                  // The package is the higher commitment, marked with a quiet accent.
-                  const featured = s.icon === "repeat";
                   return (
-                    <button
+                    <ServiceCard
                       key={s.id}
-                      type="button"
-                      className="consult-choice"
-                      data-featured={featured ? "true" : undefined}
-                      aria-pressed={serviceId === s.id}
-                      onClick={() => {
+                      index={idx}
+                      name={s.name}
+                      description={s.description}
+                      iconKey={s.icon}
+                      selected={serviceId === s.id}
+                      // The package is the higher commitment, marked quietly.
+                      featuredLabel={s.icon === "package" || s.icon === "repeat" ? "Package" : null}
+                      price={free ? "No payment required" : `${moneyUsd(s.price_usd)} USD`}
+                      meta={[
+                        durationLabel(s.duration_minutes, s.duration_display_label),
+                        s.mode === "both" ? "Online or in person"
+                          : s.mode === "online" ? "Online" : "In person",
+                      ]}
+                      onSelect={() => {
                         setServiceId(s.id);
                         setSlot(null);
                         setSelectedDate(null);
@@ -388,19 +388,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                         if (s.mode !== "both") setMode(s.mode as Mode);
                         goTo(s.mode === "both" ? S_MODE : S_TIME);
                       }}
-                    >
-                      <span className="consult-choice__title">
-                        <Icon className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} aria-hidden />
-                        {s.name}
-                      </span>
-                      {s.description && <span className="consult-choice__note">{s.description}</span>}
-                      <span className="consult-choice__meta">
-                        {durationLabel(s.duration_minutes, s.duration_display_label)} ·{" "}
-                        {free ? "No payment required" : `${moneyUsd(s.price_usd)} USD`} ·{" "}
-                        {s.mode === "both" ? "Online or in person"
-                          : s.mode === "online" ? "Online" : "In person"}
-                      </span>
-                    </button>
+                    />
                   );
                 })}
               </div>
