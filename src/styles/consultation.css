@@ -113,6 +113,18 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+.consult-step-compact {
+  display: none;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-gold-deep);
+  font-weight: 600;
+}
+@media (max-width: 639px) {
+  .consult-steps { display: none; }
+  .consult-step-compact { display: block; }
+}
 .consult-step {
   display: inline-flex;
   align-items: center;
