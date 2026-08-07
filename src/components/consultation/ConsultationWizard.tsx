@@ -128,8 +128,13 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     error: availErrorObj, refetch: refetchAvailability,
   } = useServiceAvailability(serviceId ?? undefined);
 
+  const catalogService = allServices.find((s) => s.id === serviceId);
+  // The availability payload is the fresher record, but the catalogue row stays
+  // the fallback for anything that payload does not carry.
   const service: ConsultationService | undefined =
-    availability?.service ?? allServices.find((s) => s.id === serviceId);
+    availability?.service
+      ? { ...catalogService, ...availability.service } as ConsultationService
+      : catalogService;
   const practitioner = availability?.practitioner;
   const { data: intakeQuestions = [] } = useIntakeQuestions(service?.id);
 
@@ -625,15 +630,17 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   placeholder="Your history, anything you have already tried, and any medication you take." />
               </div>
 
-              <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
-                <div className="flex flex-col sm:w-[260px]">
-                  <Label htmlFor="c-coupon" className="consult-label">Discount code (optional)</Label>
-                  <Input id="c-coupon" className="consult-input mt-1.5 uppercase"
-                    placeholder="Enter a code"
-                    value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
+              {requiresPayment && (
+                <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
+                  <div className="flex flex-col sm:w-[260px]">
+                    <Label htmlFor="c-coupon" className="consult-label">Discount code (optional)</Label>
+                    <Input id="c-coupon" className="consult-input mt-1.5 uppercase"
+                      placeholder="Enter a code"
+                      value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
+                  </div>
+                  <p className="consult-hold sm:pb-3">Applied when your time is held.</p>
                 </div>
-                <p className="consult-hold sm:pb-3">Applied when your time is held.</p>
-              </div>
+              )}
 
               <label className="mt-5 flex items-start gap-3 min-h-[44px] cursor-pointer">
                 <Checkbox checked={consent} onCheckedChange={(v) => setConsent(v === true)} className="mt-1" />
