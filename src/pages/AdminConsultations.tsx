@@ -669,13 +669,33 @@ function ServiceEditor({
               <SelectItem value="in_person">In person only</SelectItem>
             </SelectContent>
           </Select></div>
-        <div><Label>Icon</Label>
-          <Select value={f.icon} onValueChange={(v) => setF({ ...f, icon: v })}>
-            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {ICON_CHOICES.map((i) => <SelectItem key={i} value={i}>{i.replace(/-/g, " ")}</SelectItem>)}
-            </SelectContent>
-          </Select></div>
+        <div className="consult"><Label>Icon</Label>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {CONSULTATION_ICON_OPTIONS.map((opt) => {
+              const active = (f.icon || "consultation") === opt.key
+                || consultationIcon(f.icon) === opt.Icon;
+              return (
+                <button
+                  key={opt.key}
+                  type="button"
+                  aria-label={opt.label}
+                  title={opt.label}
+                  aria-pressed={active}
+                  onClick={() => setF({ ...f, icon: opt.key })}
+                  className="h-[46px] w-[46px] rounded-lg border grid place-items-center transition-colors"
+                  style={{
+                    borderColor: active ? "hsl(var(--primary))" : "hsl(var(--border))",
+                    background: active ? "hsl(var(--primary) / 0.12)" : "transparent",
+                    color: active ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+                  }}
+                >
+                  <opt.Icon width={28} height={28} />
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Shown on the booking card.</p>
+        </div>
         <div className="sm:col-span-2"><Label>Card image URL (optional)</Label>
           <Input className="mt-1 min-h-[44px]" value={f.image_url}
             placeholder="https://…"
