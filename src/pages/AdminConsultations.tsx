@@ -556,10 +556,18 @@ function NewOverride({ practitionerId, onDone }: { practitionerId?: string; onDo
 }
 
 function ServiceEditor({
-  service, busy, onSave,
-}: { service: Service; busy: boolean; onSave: (patch: Record<string, unknown>) => void }) {
+  service, categories, busy, onSave, onDelete,
+}: {
+  service: Service;
+  categories: Category[];
+  busy: boolean;
+  onSave: (patch: Record<string, unknown>) => void;
+  onDelete: () => void;
+}) {
   const [f, setF] = useState({
     name: service.name,
+    category_id: service.category_id ?? "none",
+    display_order: String(service.display_order ?? 0),
     description: service.description ?? "",
     long_description: service.long_description ?? "",
     duration_minutes: String(service.duration_minutes),
@@ -577,6 +585,14 @@ function ServiceEditor({
       <div className="grid sm:grid-cols-2 gap-3">
         <div><Label>Name</Label>
           <Input className="mt-1 min-h-[44px]" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+        <div><Label>Category</Label>
+          <Select value={f.category_id} onValueChange={(v) => setF({ ...f, category_id: v })}>
+            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">Not filed</SelectItem>
+              {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+            </SelectContent>
+          </Select></div>
         <div><Label>Format offered</Label>
           <Select value={f.mode} onValueChange={(v) => setF({ ...f, mode: v })}>
             <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
@@ -586,6 +602,9 @@ function ServiceEditor({
               <SelectItem value="in_person">In person only</SelectItem>
             </SelectContent>
           </Select></div>
+        <div><Label>Order within the category</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.display_order}
+            onChange={(e) => setF({ ...f, display_order: e.target.value })} /></div>
       </div>
       <div><Label>Short description</Label>
         <Textarea rows={2} className="mt-1" value={f.description}
@@ -621,6 +640,8 @@ function ServiceEditor({
         const priceUsd = Number(f.price_usd);
         onSave({
           name: f.name,
+          category_id: f.category_id === "none" ? null : f.category_id,
+          display_order: Number(f.display_order) || 0,
           description: f.description || null,
           long_description: f.long_description || null,
           duration_minutes: Number(f.duration_minutes),
@@ -637,9 +658,82 @@ function ServiceEditor({
         {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
         Save session type
       </Button>
+      <Button variant="ghost" className="min-h-[44px] ml-2 text-destructive" disabled={busy}
+        onClick={() => { if (confirm(`Remove "${service.name}"?`)) onDelete(); }}>
+        Remove
+      </Button>
       <p className="text-xs text-muted-foreground">
         XCD is kept in step automatically at the 2.7 rate used across the store.
       </p>
+    </div>
+  );
+}
+
+function CategoryEditor({
+  category, serviceCount, busy, onSave, onDelete,
+}: {
+  category: Category;
+  serviceCount: number;
+  busy: boolean;
+  onSave: (patch: Record<string, unknown>) => void;
+  onDelete: () => void;
+}) {
+  const [f, setF] = useState({
+    name: category.name,
+    slug: category.slug,
+    description: category.description ?? "",
+    icon: category.icon ?? "leaf",
+    display_order: String(category.display_order),
+    is_active: category.is_active,
+  });
+
+  return (
+    <div className="rounded-xl border p-4 space-y-3">
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div><Label>Name</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.name}
+            onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+        <div><Label>Web address slug</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.slug}
+            onChange={(e) => setF({ ...f, slug: e.target.value })} /></div>
+        <div><Label>Icon</Label>
+          <Select value={f.icon} onValueChange={(v) => setF({ ...f, icon: v })}>
+            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {ICON_CHOICES.map((i) => <SelectItem key={i} value={i}>{i.replace(/-/g, " ")}</SelectItem>)}
+            </SelectContent>
+          </Select></div>
+        <div><Label>Display order</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.display_order}
+            onChange={(e) => setF({ ...f, display_order: e.target.value })} /></div>
+      </div>
+      <div><Label>One line description</Label>
+        <Textarea rows={2} className="mt-1" value={f.description}
+          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
+      <div className="flex flex-wrap items-center gap-3">
+        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
+        <span className="text-sm">{f.is_active ? "Shown on the site" : "Hidden"}</span>
+        <Badge variant="outline">
+          {serviceCount} session type{serviceCount === 1 ? "" : "s"}
+        </Badge>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button className="min-h-[44px]" disabled={busy} onClick={() => onSave({
+          name: f.name,
+          slug: slugify(f.slug || f.name),
+          description: f.description || null,
+          icon: f.icon,
+          display_order: Number(f.display_order) || 0,
+          is_active: f.is_active,
+        })}>
+          {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+          Save category
+        </Button>
+        <Button variant="ghost" className="min-h-[44px] text-destructive" disabled={busy}
+          onClick={() => { if (confirm(`Remove "${category.name}"?`)) onDelete(); }}>
+          Remove
+        </Button>
+      </div>
     </div>
   );
 }
