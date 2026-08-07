@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Plus, Loader2, Trash2, Copy } from "lucide-react";
+import { MobileTable, StackedCard } from "@/components/admin/responsive";
 
 type Coupon = {
   id: string;
@@ -160,62 +161,105 @@ export default function AdminCoupons() {
         </Dialog>
       </div>
 
-      <div className="rounded-lg border border-border bg-card overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50">
-            <tr className="text-left">
-              <th className="px-4 py-3 font-semibold">Code</th>
-              <th className="px-4 py-3 font-semibold">Discount</th>
-              <th className="px-4 py-3 font-semibold">Rules</th>
-              <th className="px-4 py-3 font-semibold text-right">Used</th>
-              <th className="px-4 py-3 font-semibold">Active</th>
-              <th className="px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>
-            ) : coupons.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">No discount codes yet.</td></tr>
-            ) : coupons.map((c) => (
-              <tr key={c.id} className="border-t border-border">
-                <td className="px-4 py-3">
+      {loading ? (
+        <div className="rounded-lg border border-border bg-card px-4 py-10 text-center text-muted-foreground">Loading…</div>
+      ) : coupons.length === 0 ? (
+        <div className="rounded-lg border border-border bg-card px-4 py-10 text-center text-muted-foreground">No discount codes yet.</div>
+      ) : (
+        <MobileTable
+          items={coupons}
+          renderRow={(c) => (
+            <StackedCard
+              primary={
+                <>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-semibold">{c.code}</span>
                     <button onClick={() => { navigator.clipboard.writeText(c.code); toast.success("Copied"); }}>
                       <Copy className="h-3.5 w-3.5 text-muted-foreground" />
                     </button>
                   </div>
-                  {c.description && <div className="text-xs text-muted-foreground">{c.description}</div>}
-                </td>
-                <td className="px-4 py-3">
-                  {c.discount_type === "percent" ? `${Number(c.discount_value)}% off` : `$${Number(c.discount_value).toFixed(2)} off`}
-                </td>
-                <td className="px-4 py-3 text-xs text-muted-foreground">
+                  <div className="text-sm text-foreground">
+                    {c.discount_type === "percent" ? `${Number(c.discount_value)}% off` : `$${Number(c.discount_value).toFixed(2)} off`}
+                    {" · "}{c.used_count}{c.max_uses ? ` / ${c.max_uses}` : ""} used
+                  </div>
+                </>
+              }
+              details={
+                <>
+                  {c.description && <div>{c.description}</div>}
                   {Number(c.min_order_usd) > 0 && <div>Min order ${Number(c.min_order_usd).toFixed(2)}</div>}
                   {c.max_uses && <div>Max {c.max_uses} uses</div>}
                   {c.expires_at && <div>Expires {new Date(c.expires_at).toLocaleDateString()}</div>}
-                  {!c.min_order_usd && !c.max_uses && !c.expires_at && <span>No restrictions</span>}
-                </td>
-                <td className="px-4 py-3 text-right">
-                  {c.used_count}{c.max_uses ? ` / ${c.max_uses}` : ""}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <Switch checked={c.is_active} onCheckedChange={() => toggleActive(c)} />
-                    {c.expires_at && new Date(c.expires_at) < new Date() && <Badge variant="outline">expired</Badge>}
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Button size="sm" variant="ghost" onClick={() => setDeleteTarget(c)}>
+                  {!c.min_order_usd && !c.max_uses && !c.expires_at && <div>No restrictions</div>}
+                </>
+              }
+              actions={
+                <div className="flex items-center gap-2">
+                  {c.expires_at && new Date(c.expires_at) < new Date() && <Badge variant="outline">expired</Badge>}
+                  <Switch checked={c.is_active} onCheckedChange={() => toggleActive(c)} />
+                  <Button size="sm" variant="ghost" className="min-h-[44px] min-w-[44px]" onClick={() => setDeleteTarget(c)}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </div>
+              }
+            />
+          )}
+          table={
+            <div className="rounded-lg border border-border bg-card overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50">
+                  <tr className="text-left">
+                    <th className="px-4 py-3 font-semibold">Code</th>
+                    <th className="px-4 py-3 font-semibold">Discount</th>
+                    <th className="px-4 py-3 font-semibold">Rules</th>
+                    <th className="px-4 py-3 font-semibold text-right">Used</th>
+                    <th className="px-4 py-3 font-semibold">Active</th>
+                    <th className="px-4 py-3" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {coupons.map((c) => (
+                    <tr key={c.id} className="border-t border-border">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-semibold">{c.code}</span>
+                          <button onClick={() => { navigator.clipboard.writeText(c.code); toast.success("Copied"); }}>
+                            <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                          </button>
+                        </div>
+                        {c.description && <div className="text-xs text-muted-foreground">{c.description}</div>}
+                      </td>
+                      <td className="px-4 py-3">
+                        {c.discount_type === "percent" ? `${Number(c.discount_value)}% off` : `$${Number(c.discount_value).toFixed(2)} off`}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                        {Number(c.min_order_usd) > 0 && <div>Min order ${Number(c.min_order_usd).toFixed(2)}</div>}
+                        {c.max_uses && <div>Max {c.max_uses} uses</div>}
+                        {c.expires_at && <div>Expires {new Date(c.expires_at).toLocaleDateString()}</div>}
+                        {!c.min_order_usd && !c.max_uses && !c.expires_at && <span>No restrictions</span>}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {c.used_count}{c.max_uses ? ` / ${c.max_uses}` : ""}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Switch checked={c.is_active} onCheckedChange={() => toggleActive(c)} />
+                          {c.expires_at && new Date(c.expires_at) < new Date() && <Badge variant="outline">expired</Badge>}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Button size="sm" variant="ghost" onClick={() => setDeleteTarget(c)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          }
+        />
+      )}
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(v) => !v && setDeleteTarget(null)}>
         <AlertDialogContent>

@@ -22,6 +22,7 @@ import {
 } from "@/components/payments/AuthorizeNetCardForm";
 import { SlotPicker } from "@/components/consultation/SlotPicker";
 import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
+import { ServiceCard } from "@/components/consultations/ServiceCard";
 import {
   useConsultationCatalog, useIntakeQuestions, useServiceAvailability,
   type ConsultationService,
@@ -64,13 +65,6 @@ const STEP_LABELS: Record<number, string> = {
   [S_DETAILS]: "Details",
   [S_REVIEW]: "Payment",
   [S_DONE]: "Confirmed",
-};
-
-const SERVICE_ICONS: Record<string, typeof Leaf> = {
-  leaf: Leaf,
-  "clipboard-list": ClipboardList,
-  repeat: Repeat,
-  mountain: Mountain,
 };
 
 const CENTRE = "Mount Kailash Rejuvenation Centre, Saint Lucia";
@@ -134,8 +128,13 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     error: availErrorObj, refetch: refetchAvailability,
   } = useServiceAvailability(serviceId ?? undefined);
 
+  const catalogService = allServices.find((s) => s.id === serviceId);
+  // The availability payload is the fresher record, but the catalogue row stays
+  // the fallback for anything that payload does not carry.
   const service: ConsultationService | undefined =
-    availability?.service ?? allServices.find((s) => s.id === serviceId);
+    availability?.service
+      ? { ...catalogService, ...availability.service } as ConsultationService
+      : catalogService;
   const practitioner = availability?.practitioner;
   const { data: intakeQuestions = [] } = useIntakeQuestions(service?.id);
 
@@ -367,20 +366,26 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                 point without losing anything.
               </p>
 
-              <div className="mt-6 grid sm:grid-cols-2 gap-3">
-                {allServices.map((s) => {
-                  const Icon = SERVICE_ICONS[s.icon ?? ""] ?? Leaf;
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 items-stretch">
+                {allServices.map((s, idx) => {
                   const free = s.requires_payment === false;
-                  // The package is the higher commitment, marked with a quiet accent.
-                  const featured = s.icon === "repeat";
                   return (
-                    <button
+                    <ServiceCard
                       key={s.id}
-                      type="button"
-                      className="consult-choice"
-                      data-featured={featured ? "true" : undefined}
-                      aria-pressed={serviceId === s.id}
-                      onClick={() => {
+                      index={idx}
+                      name={s.name}
+                      description={s.description}
+                      iconKey={s.icon}
+                      selected={serviceId === s.id}
+                      // The package is the higher commitment, marked quietly.
+                      featuredLabel={s.icon === "package" || s.icon === "repeat" ? "Package" : null}
+                      price={free ? "No payment required" : `${moneyUsd(s.price_usd)} USD`}
+                      meta={[
+                        durationLabel(s.duration_minutes, s.duration_display_label),
+                        s.mode === "both" ? "Online or in person"
+                          : s.mode === "online" ? "Online" : "In person",
+                      ]}
+                      onSelect={() => {
                         setServiceId(s.id);
                         setSlot(null);
                         setSelectedDate(null);
@@ -388,19 +393,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                         if (s.mode !== "both") setMode(s.mode as Mode);
                         goTo(s.mode === "both" ? S_MODE : S_TIME);
                       }}
-                    >
-                      <span className="consult-choice__title">
-                        <Icon className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} aria-hidden />
-                        {s.name}
-                      </span>
-                      {s.description && <span className="consult-choice__note">{s.description}</span>}
-                      <span className="consult-choice__meta">
-                        {durationLabel(s.duration_minutes, s.duration_display_label)} ·{" "}
-                        {free ? "No payment required" : `${moneyUsd(s.price_usd)} USD`} ·{" "}
-                        {s.mode === "both" ? "Online or in person"
-                          : s.mode === "online" ? "Online" : "In person"}
-                      </span>
-                    </button>
+                    />
                   );
                 })}
               </div>
@@ -537,7 +530,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
               {slot && (
                 <p className="consult-fine mt-2">
                   <Clock className="inline w-4 h-4 mr-1.5 -mt-0.5" aria-hidden />
-                  {fullMoment(slot.start, timezone)} · {zoneLabel(timezone)}
+                  {fullMoment(slot.start, timezone)}
                 </p>
               )}
 
@@ -637,15 +630,17 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   placeholder="Your history, anything you have already tried, and any medication you take." />
               </div>
 
-              <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
-                <div className="flex flex-col sm:w-[260px]">
-                  <Label htmlFor="c-coupon" className="consult-label">Discount code (optional)</Label>
-                  <Input id="c-coupon" className="consult-input mt-1.5 uppercase"
-                    placeholder="Enter a code"
-                    value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
+              {requiresPayment && (
+                <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
+                  <div className="flex flex-col sm:w-[260px]">
+                    <Label htmlFor="c-coupon" className="consult-label">Discount code (optional)</Label>
+                    <Input id="c-coupon" className="consult-input mt-1.5 uppercase"
+                      placeholder="Enter a code"
+                      value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
+                  </div>
+                  <p className="consult-hold sm:pb-3">Applied when your time is held.</p>
                 </div>
-                <p className="consult-hold sm:pb-3">Applied when your time is held.</p>
-              </div>
+              )}
 
               <label className="mt-5 flex items-start gap-3 min-h-[44px] cursor-pointer">
                 <Checkbox checked={consent} onCheckedChange={(v) => setConsent(v === true)} className="mt-1" />

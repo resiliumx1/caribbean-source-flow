@@ -3,6 +3,7 @@
 // deno-lint-ignore-file no-explicit-any
 import { formatInZone } from "./consultation.ts";
 import { buildConsultationIcs } from "./consultation-ics.ts";
+import { getConsultationNotifyEmail } from "./consultation-settings.ts";
 
 const BRAND_DARK = "#1a3a2e";
 const BRAND_GOLD = "#b8893d";
@@ -14,8 +15,6 @@ const SUPPORT_EMAIL = "info@mountkailashslu.com";
 const SUPPORT_PHONE = "+1 (758) 285-5195";
 
 const FROM_CUSTOMER = "Mount Kailash <orders@mountkailashslu.com>";
-const ADMIN_TO = "info@mountkailashslu.com";
-const ADMIN_CC = "blessedlove@mountkailashslu.com";
 
 export type ConsultationEmailType =
   | "confirmation"
@@ -349,10 +348,10 @@ export async function sendConsultationEmail(
       internalRows.push(["Host start link", `<a href="${booking.zoom_start_url}" style="color:${BRAND_GOLD};">Start the meeting</a>`]);
     }
     try {
+      const notifyEmail = await getConsultationNotifyEmail();
       await sendResend({
         from: FROM_CUSTOMER,
-        to: [ADMIN_TO],
-        cc: [ADMIN_CC],
+        to: [notifyEmail],
         reply_to: booking.customer_email,
         subject: `${label} — ${booking.booking_reference} — ${booking.customer_name}`,
         html: shell(

@@ -22,6 +22,9 @@ import type { Tables } from "@/integrations/supabase/types";
 import { fullMoment, moneyUsd } from "@/lib/consultation-utils";
 import BookingsTable from "@/components/admin/consultations/BookingsTable";
 import ZoomStatusCard from "@/components/admin/consultations/ZoomStatusCard";
+import ConsultationEditors from "@/components/admin/consultations/ConsultationEditors";
+import ConsultationNotifySettings from "@/components/admin/consultations/ConsultationNotifySettings";
+import { CONSULTATION_ICON_OPTIONS, consultationIcon } from "@/components/consultations/ConsultationIcons";
 
 type Booking = Tables<"consultation_bookings">;
 type Service = Tables<"consultation_services">;
@@ -31,8 +34,6 @@ type Override = Tables<"consultation_availability_overrides">;
 type CalendlyEvent = Tables<"consultation_calendly_events">;
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-const ICON_CHOICES = ["leaf", "clipboard-list", "repeat", "mountain"];
 
 const slugify = (s: string) =>
   s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
@@ -246,12 +247,15 @@ export default function AdminConsultations() {
       </div>
 
       <Tabs defaultValue="bookings">
-        <TabsList>
-          <TabsTrigger value="bookings">Bookings</TabsTrigger>
-          <TabsTrigger value="availability">Availability</TabsTrigger>
-          <TabsTrigger value="service">Session types</TabsTrigger>
-          <TabsTrigger value="practitioner">Practitioner</TabsTrigger>
-        </TabsList>
+        <div className="relative -mx-1 px-1">
+          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden">
+            <TabsTrigger value="bookings" className="shrink-0 min-h-[44px]">Bookings</TabsTrigger>
+            <TabsTrigger value="availability" className="shrink-0 min-h-[44px]">Availability</TabsTrigger>
+            <TabsTrigger value="service" className="shrink-0 min-h-[44px]">Session types</TabsTrigger>
+            <TabsTrigger value="practitioner" className="shrink-0 min-h-[44px]">Practitioner</TabsTrigger>
+            <TabsTrigger value="settings" className="shrink-0 min-h-[44px]">Settings &amp; access</TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* ───────── Bookings ───────── */}
         <TabsContent value="bookings" className="space-y-4 pt-4">
@@ -421,6 +425,12 @@ export default function AdminConsultations() {
             <PractitionerEditor key={p.id} practitioner={p} busy={busyId === p.id}
               onSave={(patch) => saveRow("consultation_practitioners", p.id, patch)} />
           ))}
+        </TabsContent>
+
+        {/* ───────── Settings and access ───────── */}
+        <TabsContent value="settings" className="space-y-6 pt-4">
+          <ConsultationNotifySettings />
+          <ConsultationEditors />
         </TabsContent>
       </Tabs>
 
@@ -670,13 +680,33 @@ function ServiceEditor({
               <SelectItem value="in_person">In person only</SelectItem>
             </SelectContent>
           </Select></div>
-        <div><Label>Icon</Label>
-          <Select value={f.icon} onValueChange={(v) => setF({ ...f, icon: v })}>
-            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {ICON_CHOICES.map((i) => <SelectItem key={i} value={i}>{i.replace(/-/g, " ")}</SelectItem>)}
-            </SelectContent>
-          </Select></div>
+        <div className="consult"><Label>Icon</Label>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {CONSULTATION_ICON_OPTIONS.map((opt) => {
+              const active = (f.icon || "consultation") === opt.key
+                || consultationIcon(f.icon) === opt.Icon;
+              return (
+                <button
+                  key={opt.key}
+                  type="button"
+                  aria-label={opt.label}
+                  title={opt.label}
+                  aria-pressed={active}
+                  onClick={() => setF({ ...f, icon: opt.key })}
+                  className="h-[46px] w-[46px] rounded-lg border grid place-items-center transition-colors"
+                  style={{
+                    borderColor: active ? "hsl(var(--primary))" : "hsl(var(--border))",
+                    background: active ? "hsl(var(--primary) / 0.12)" : "transparent",
+                    color: active ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+                  }}
+                >
+                  <opt.Icon width={28} height={28} />
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Shown on the booking card.</p>
+        </div>
         <div className="sm:col-span-2"><Label>Card image URL (optional)</Label>
           <Input className="mt-1 min-h-[44px]" value={f.image_url}
             placeholder="https://…"

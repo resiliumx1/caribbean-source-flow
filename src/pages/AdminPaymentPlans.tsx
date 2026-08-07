@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Copy, Plus, Loader2, Search, Eye } from "lucide-react";
 import PaymentPlanDetail, { type Plan } from "@/components/admin/PaymentPlanDetail";
+import { ScrollTabs, FilterSheet, MobileTable, StackedCard } from "@/components/admin/responsive";
 
 const PUBLIC_SITE_ORIGIN = "https://www.mountkailashslu.com";
 const buildPayLink = (id: string) => `${PUBLIC_SITE_ORIGIN}/pay/${id}`;
@@ -166,77 +167,129 @@ export default function AdminPaymentPlans() {
 
       <div className="flex flex-wrap items-center gap-3">
         <Tabs value={view} onValueChange={(v) => setView(v as "active" | "archived")}>
-          <TabsList>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="archived">Archived</TabsTrigger>
-          </TabsList>
+          <ScrollTabs activeKey={view}>
+            <TabsList>
+              <TabsTrigger value="active" className="min-h-[44px]">Active</TabsTrigger>
+              <TabsTrigger value="archived" className="min-h-[44px]">Archived</TabsTrigger>
+            </TabsList>
+          </ScrollTabs>
         </Tabs>
-        <div className="relative flex-1 min-w-[220px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input className="pl-9" placeholder="Search customer, email or package"
-            value={query} onChange={(e) => setQuery(e.target.value)} />
-        </div>
+        <FilterSheet triggerLabel="Search" activeCount={query ? 1 : 0} className="flex-1">
+          <div className="relative flex-1 min-w-[220px] md:max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input className="pl-9 min-h-[44px]" placeholder="Search customer, email or package"
+              value={query} onChange={(e) => setQuery(e.target.value)} />
+          </div>
+        </FilterSheet>
       </div>
 
-      <div className="rounded-lg border border-border bg-card overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50">
-            <tr className="text-left">
-              <th className="px-4 py-3 font-semibold">Customer</th>
-              <th className="px-4 py-3 font-semibold">Package</th>
-              <th className="px-4 py-3 font-semibold text-right">Total</th>
-              <th className="px-4 py-3 font-semibold text-right">Paid</th>
-              <th className="px-4 py-3 font-semibold text-right">Remaining</th>
-              <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">Loading…</td></tr>
-            ) : visible.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
-                {view === "archived" ? "No archived plans." : "No payment plans yet."}
-              </td></tr>
-            ) : visible.map((p) => (
-              <tr key={p.id} className="border-t border-border hover:bg-muted/30 cursor-pointer"
-                onClick={() => openDetail(p)}>
-                <td className="px-4 py-3">
-                  <div className="font-medium text-foreground">{p.customer_name}</div>
-                  <div className="text-xs text-muted-foreground">{p.customer_email}</div>
-                </td>
-                <td className="px-4 py-3 text-foreground">{p.package_name}</td>
-                <td className="px-4 py-3 text-right">{fmt(p.total_amount)}</td>
-                <td className="px-4 py-3 text-right">{fmt(p.amount_paid)}</td>
-                <td className="px-4 py-3 text-right font-semibold">{fmt(p.balance_remaining)}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
-                    style={{
-                      background: p.status === "paid" ? "#15803d22" : p.status === "cancelled" ? "#6b728022" : "#b4530922",
-                      color: p.status === "paid" ? "#15803d" : p.status === "cancelled" ? "#6b7280" : "#b45309",
-                    }}
-                  >
-                    {p.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Button size="sm" variant="outline" className="gap-1.5" onClick={() => openDetail(p)}>
-                      <Eye className="h-3.5 w-3.5" /> View
-                    </Button>
-                    {!p.archived_at && (
-                      <Button size="sm" variant="outline" className="gap-1.5" onClick={() => copyLink(p.id)}>
-                        <Copy className="h-3.5 w-3.5" /> Copy
-                      </Button>
-                    )}
+      {loading ? (
+        <div className="rounded-lg border border-border bg-card px-4 py-10 text-center text-muted-foreground">Loading…</div>
+      ) : visible.length === 0 ? (
+        <div className="rounded-lg border border-border bg-card px-4 py-10 text-center text-muted-foreground">
+          {view === "archived" ? "No archived plans." : "No payment plans yet."}
+        </div>
+      ) : (
+        <MobileTable
+          items={visible}
+          renderRow={(p) => (
+            <StackedCard
+              primary={
+                <>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="font-medium text-foreground truncate">{p.customer_name}</div>
+                    <span
+                      className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium flex-shrink-0"
+                      style={{
+                        background: p.status === "paid" ? "#15803d22" : p.status === "cancelled" ? "#6b728022" : "#b4530922",
+                        color: p.status === "paid" ? "#15803d" : p.status === "cancelled" ? "#6b7280" : "#b45309",
+                      }}
+                    >
+                      {p.status}
+                    </span>
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  <div className="text-xs text-muted-foreground truncate">{p.customer_email}</div>
+                  <div className="text-sm text-foreground">{p.package_name}</div>
+                  <div className="text-sm font-semibold">Remaining: {fmt(p.balance_remaining)}</div>
+                </>
+              }
+              details={
+                <>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Total</span><span>{fmt(p.total_amount)}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Paid</span><span>{fmt(p.amount_paid)}</span></div>
+                </>
+              }
+              actions={
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" className="gap-1.5 min-h-[44px]" onClick={() => openDetail(p)}>
+                    <Eye className="h-3.5 w-3.5" /> View
+                  </Button>
+                  {!p.archived_at && (
+                    <Button size="sm" variant="outline" className="gap-1.5 min-h-[44px]" onClick={() => copyLink(p.id)}>
+                      <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                </div>
+              }
+            />
+          )}
+          table={
+            <div className="rounded-lg border border-border bg-card overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50">
+                  <tr className="text-left">
+                    <th className="px-4 py-3 font-semibold">Customer</th>
+                    <th className="px-4 py-3 font-semibold">Package</th>
+                    <th className="px-4 py-3 font-semibold text-right">Total</th>
+                    <th className="px-4 py-3 font-semibold text-right">Paid</th>
+                    <th className="px-4 py-3 font-semibold text-right">Remaining</th>
+                    <th className="px-4 py-3 font-semibold">Status</th>
+                    <th className="px-4 py-3 font-semibold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.map((p) => (
+                    <tr key={p.id} className="border-t border-border hover:bg-muted/30 cursor-pointer"
+                      onClick={() => openDetail(p)}>
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-foreground">{p.customer_name}</div>
+                        <div className="text-xs text-muted-foreground">{p.customer_email}</div>
+                      </td>
+                      <td className="px-4 py-3 text-foreground">{p.package_name}</td>
+                      <td className="px-4 py-3 text-right">{fmt(p.total_amount)}</td>
+                      <td className="px-4 py-3 text-right">{fmt(p.amount_paid)}</td>
+                      <td className="px-4 py-3 text-right font-semibold">{fmt(p.balance_remaining)}</td>
+                      <td className="px-4 py-3">
+                        <span
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                          style={{
+                            background: p.status === "paid" ? "#15803d22" : p.status === "cancelled" ? "#6b728022" : "#b4530922",
+                            color: p.status === "paid" ? "#15803d" : p.status === "cancelled" ? "#6b7280" : "#b45309",
+                          }}
+                        >
+                          {p.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                          <Button size="sm" variant="outline" className="gap-1.5" onClick={() => openDetail(p)}>
+                            <Eye className="h-3.5 w-3.5" /> View
+                          </Button>
+                          {!p.archived_at && (
+                            <Button size="sm" variant="outline" className="gap-1.5" onClick={() => copyLink(p.id)}>
+                              <Copy className="h-3.5 w-3.5" /> Copy
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          }
+        />
+      )}
 
       <PaymentPlanDetail
         plan={selected}

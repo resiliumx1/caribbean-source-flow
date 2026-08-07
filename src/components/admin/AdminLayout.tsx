@@ -61,6 +61,13 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isWceRoute = location.pathname.startsWith("/admin/wce");
+  const currentSectionLabel = NAV_LINKS.find((l) => location.pathname.startsWith(l.href))?.label ?? "Menu";
+  // The desktop strip scrolls when it runs out of room; keep the current section in view.
+  const deskNavRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const active = deskNavRef.current?.querySelector<HTMLElement>('[data-active="true"]');
+    active?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [location.pathname]);
   // A WCE organiser who is not a full store admin.
   const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
   const { theme, setTheme } = useTheme();
@@ -173,13 +180,23 @@ export default function AdminLayout() {
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Admin</div>
               </div>
             </div>
-            <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
+            <nav
+              ref={deskNavRef}
+              className="hidden lg:flex items-center gap-0.5 flex-1 min-w-0 overflow-x-auto no-scrollbar"
+              style={{
+                WebkitOverflowScrolling: "touch",
+                maskImage:
+                  "linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)",
+                WebkitMaskImage:
+                  "linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)",
+              }}
+            >
               {NAV_LINKS.map((link) => {
                 const isActive = location.pathname.startsWith(link.href);
                 const isNotif = link.href === '/admin/notifications';
                 const badge = isNotif ? unread : link.href === '/admin/payment-alerts' ? paymentAlerts : 0;
                 return (
-                  <Link key={link.href} to={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors inline-flex items-center gap-1.5" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
+                  <Link key={link.href} to={link.href} data-active={isActive ? "true" : undefined} className="px-3 py-1.5 rounded-md text-sm transition-colors inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
                     {link.label}
                     {badge > 0 && (
                       <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
@@ -262,14 +279,15 @@ export default function AdminLayout() {
               <Link to="/" className="hidden lg:inline-flex"><Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" style={{ color: '#1b4332' }}><Home className="h-4 w-4" /><span>Back to Site</span></Button></Link>
               <button onClick={() => signOut()} className="text-xs text-destructive hover:underline hidden lg:inline">Sign Out</button>
 
-              {/* Mobile / tablet hamburger */}
+              {/* Mobile / tablet hamburger, with current section name so the active area is always identifiable */}
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
                   <button
                     aria-label="Open menu"
-                    className="lg:hidden h-8 w-8 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center justify-center text-foreground"
+                    className="lg:hidden min-h-[44px] pl-2 pr-2.5 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center gap-2 text-foreground max-w-[46vw] sm:max-w-none"
                   >
-                    <Menu className="h-4 w-4" />
+                    <Menu className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-xs font-semibold truncate">{currentSectionLabel}</span>
                   </button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[280px] sm:w-[320px] p-0 flex flex-col">

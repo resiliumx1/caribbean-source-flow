@@ -16,6 +16,7 @@ import { initTracking } from "@/lib/tracking";
 import { CompareBar } from "@/components/store/CompareBar";
 import CookieConsent from "@/components/CookieConsent";
 import ComingSoon from "@/components/ComingSoon";
+import ConsultationOnlyGuard from "@/components/admin/ConsultationOnlyGuard";
 
 // Lazy load non-critical global components
 const ChatWidget = lazy(() => import("@/components/ChatWidget"));
@@ -68,6 +69,7 @@ const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
 const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
 const AdminWCE = lazy(() => import("./pages/AdminWCE"));
 const AdminConsultations = lazy(() => import("./pages/AdminConsultations"));
+const ConsultationAdminAccept = lazy(() => import("./pages/ConsultationAdminAccept"));
 const Consultations = lazy(() => import("./pages/Consultations"));
 const ConsultationManage = lazy(() => import("./pages/ConsultationManage"));
 const WceAdminLogin = lazy(() => import("./pages/WceAdminLogin"));
@@ -192,23 +194,31 @@ function AppContent() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/wce-admin/login" element={<WceAdminLogin />} />
           <Route path="/wce-admin/accept" element={<WceAdminAccept />} />
+          <Route path="/consultation-admin/accept" element={<ConsultationAdminAccept />} />
           <Route path="/admin" element={<AdminLayout />}>
+            {/* Every child route except "consultations" is wrapped in
+                ConsultationOnlyGuard so a consultation_editor who is not a
+                full admin is redirected to /admin/consultations. This is a
+                per-route wrap (not a single mount in AdminLayout) because
+                AdminLayout.tsx is owned by another agent — see the comment
+                at the top of ConsultationOnlyGuard.tsx for the one-line
+                alternative if that ownership changes. */}
             <Route index element={<Navigate to="/admin/orders" replace />} />
-            <Route path="products" element={<AdminProducts />} />
-            <Route path="retreats" element={<AdminRetreats />} />
-            <Route path="retreat-dates" element={<AdminRetreatDates />} />
-            <Route path="reviews" element={<AdminReviews />} />
-            <Route path="webinars" element={<AdminWebinars />} />
-            <Route path="analytics" element={<AdminAnalytics />} />
-            <Route path="orders" element={<AdminOrders />} />
-            <Route path="notifications" element={<AdminNotifications />} />
-            <Route path="payment-plans" element={<AdminPaymentPlans />} />
-            <Route path="wholesale-leads" element={<AdminWholesaleLeads />} />
-            <Route path="payment-alerts" element={<AdminPaymentAlerts />} />
-            <Route path="coupons" element={<AdminCoupons />} />
-            <Route path="abandoned-carts" element={<AdminAbandonedCarts />} />
+            <Route path="products" element={<ConsultationOnlyGuard><AdminProducts /></ConsultationOnlyGuard>} />
+            <Route path="retreats" element={<ConsultationOnlyGuard><AdminRetreats /></ConsultationOnlyGuard>} />
+            <Route path="retreat-dates" element={<ConsultationOnlyGuard><AdminRetreatDates /></ConsultationOnlyGuard>} />
+            <Route path="reviews" element={<ConsultationOnlyGuard><AdminReviews /></ConsultationOnlyGuard>} />
+            <Route path="webinars" element={<ConsultationOnlyGuard><AdminWebinars /></ConsultationOnlyGuard>} />
+            <Route path="analytics" element={<ConsultationOnlyGuard><AdminAnalytics /></ConsultationOnlyGuard>} />
+            <Route path="orders" element={<ConsultationOnlyGuard><AdminOrders /></ConsultationOnlyGuard>} />
+            <Route path="notifications" element={<ConsultationOnlyGuard><AdminNotifications /></ConsultationOnlyGuard>} />
+            <Route path="payment-plans" element={<ConsultationOnlyGuard><AdminPaymentPlans /></ConsultationOnlyGuard>} />
+            <Route path="wholesale-leads" element={<ConsultationOnlyGuard><AdminWholesaleLeads /></ConsultationOnlyGuard>} />
+            <Route path="payment-alerts" element={<ConsultationOnlyGuard><AdminPaymentAlerts /></ConsultationOnlyGuard>} />
+            <Route path="coupons" element={<ConsultationOnlyGuard><AdminCoupons /></ConsultationOnlyGuard>} />
+            <Route path="abandoned-carts" element={<ConsultationOnlyGuard><AdminAbandonedCarts /></ConsultationOnlyGuard>} />
             <Route path="consultations" element={<AdminConsultations />} />
-            <Route path="wce" element={<AdminWCE />} />
+            <Route path="wce" element={<ConsultationOnlyGuard><AdminWCE /></ConsultationOnlyGuard>} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

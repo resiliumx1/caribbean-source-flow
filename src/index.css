@@ -417,6 +417,15 @@
 }
 
 @layer utilities {
+  /* Hide scrollbar but keep scrollability (admin responsive kit) */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Gold gradient text */
   .text-gradient-gold {
     background: var(--gradient-gold);

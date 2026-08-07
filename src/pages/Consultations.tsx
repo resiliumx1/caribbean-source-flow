@@ -12,11 +12,11 @@ import "@/styles/consultation.css";
 const FAQS = [
   {
     q: "How long is a private consultation with Priest Kailash?",
-    a: "A private consultation is booked as a one hour session, one to one with Rt. Hon. Priest Kailash.",
+    a: "Sessions run 30 to 45 minutes, one to one with Rt. Hon. Priest Kailash. The full 45 minutes is reserved for you, and a session that finishes early simply ends early.",
   },
   {
     q: "How much does a consultation cost?",
-    a: "A one-hour private consultation is USD 300, which is 810 XCD at our standard rate. Payment is taken at the time of booking, which is what reserves the hour in the calendar.",
+    a: "A single private consultation is USD 300, which is 810 XCD at our standard rate. The five session package is USD 1,200, and a follow-on session inside an existing package takes no further payment. Payment is taken at the time of booking, which is what reserves the time in the calendar.",
   },
   {
     q: "Can I meet online instead of travelling to Saint Lucia?",
@@ -88,7 +88,7 @@ export default function Consultations() {
     <main className="consult min-h-screen" style={{ background: "var(--c-bg)" }}>
       <SEOHead
         title="Book a Private Consultation with Rt. Hon. Priest Kailash"
-        description="Book a one-hour private consultation with Rt. Hon. Priest Kailash of Mount Kailash Rejuvenation Centre, Saint Lucia. Online or in person, USD 300, confirmed the moment you pay."
+        description="Book a private 30 to 45 minute consultation with Rt. Hon. Priest Kailash of Mount Kailash Rejuvenation Centre, Saint Lucia. Held online, from USD 300, confirmed the moment you pay."
         path="/consultations"
       />
       <Helmet>
@@ -124,7 +124,7 @@ export default function Consultations() {
             className="consult-serif"
             style={{ fontSize: "clamp(2.1rem, 5.5vw, 3.4rem)", lineHeight: 1.08 }}
           >
-            An hour with Rt. Hon. Priest Kailash
+            A session with Rt. Hon. Priest Kailash
           </h1>
           <p
             className="mt-5 mx-auto"
@@ -158,7 +158,7 @@ export default function Consultations() {
 
       {/* Wizard */}
       <section id="book" className="px-4 pb-16">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl xl:max-w-6xl mx-auto">
           <ConsultationWizard />
         </div>
       </section>
