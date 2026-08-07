@@ -42,7 +42,7 @@ interface ManageBooking {
 
 interface ManagePayload {
   booking: ManageBooking;
-  service: { name: string; duration_minutes: number } | null;
+  service: { name: string; duration_minutes: number; duration_display_label?: string | null } | null;
   practitioner: { name: string; title: string | null; timezone: string } | null;
   policy: {
     min_reschedule_notice_hours: number;
@@ -206,7 +206,7 @@ export default function ConsultationManage() {
                 <dl className="grid sm:grid-cols-2 gap-4">
                   <div><dt>Your time</dt><dd>{fullMoment(b.starts_at, timezone)}</dd></div>
                   <div><dt>His time</dt><dd>{fullMoment(b.starts_at, practitionerTz)}</dd></div>
-                  <div><dt>Length</dt><dd>{durationLabel(payload?.service?.duration_minutes)}</dd></div>
+                  <div><dt>Length</dt><dd>{durationLabel(payload?.service?.duration_minutes, payload?.service?.duration_display_label)}</dd></div>
                   <div><dt>Paid</dt><dd>{moneyUsd(b.amount)} {b.currency}</dd></div>
                   <div className="sm:col-span-2">
                     <dt>Where</dt>
