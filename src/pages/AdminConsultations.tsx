@@ -22,6 +22,8 @@ import type { Tables } from "@/integrations/supabase/types";
 import { fullMoment, moneyUsd } from "@/lib/consultation-utils";
 import BookingsTable from "@/components/admin/consultations/BookingsTable";
 import ZoomStatusCard from "@/components/admin/consultations/ZoomStatusCard";
+import ConsultationEditors from "@/components/admin/consultations/ConsultationEditors";
+import ConsultationNotifySettings from "@/components/admin/consultations/ConsultationNotifySettings";
 import { CONSULTATION_ICON_OPTIONS, consultationIcon } from "@/components/consultations/ConsultationIcons";
 
 type Booking = Tables<"consultation_bookings">;
@@ -245,12 +247,15 @@ export default function AdminConsultations() {
       </div>
 
       <Tabs defaultValue="bookings">
-        <TabsList>
-          <TabsTrigger value="bookings">Bookings</TabsTrigger>
-          <TabsTrigger value="availability">Availability</TabsTrigger>
-          <TabsTrigger value="service">Session types</TabsTrigger>
-          <TabsTrigger value="practitioner">Practitioner</TabsTrigger>
-        </TabsList>
+        <div className="relative -mx-1 px-1">
+          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden">
+            <TabsTrigger value="bookings" className="shrink-0 min-h-[44px]">Bookings</TabsTrigger>
+            <TabsTrigger value="availability" className="shrink-0 min-h-[44px]">Availability</TabsTrigger>
+            <TabsTrigger value="service" className="shrink-0 min-h-[44px]">Session types</TabsTrigger>
+            <TabsTrigger value="practitioner" className="shrink-0 min-h-[44px]">Practitioner</TabsTrigger>
+            <TabsTrigger value="settings" className="shrink-0 min-h-[44px]">Settings &amp; access</TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* ───────── Bookings ───────── */}
         <TabsContent value="bookings" className="space-y-4 pt-4">
