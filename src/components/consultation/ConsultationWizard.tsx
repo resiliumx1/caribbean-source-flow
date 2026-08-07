@@ -562,6 +562,19 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                     placeholder="Include your country code"
                     onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
                 </div>
+                {!requiresPayment && (
+                  <div className="flex flex-col sm:col-span-2">
+                    <Label htmlFor="c-pkg" className="consult-label">
+                      Email used on your package purchase *
+                    </Label>
+                    <Input id="c-pkg" type="email" className="consult-input mt-1.5" value={packageEmail}
+                      placeholder="you@example.com"
+                      onChange={(e) => setPackageEmail(e.target.value)} />
+                    <p className="consult-fine mt-1.5">
+                      This lets us match your booking to the five-session package you already paid for.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {intakeQuestions.length > 0 && (
@@ -651,7 +664,9 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                 <Button className="min-h-[48px] px-6" disabled={!detailsReady || holding} onClick={createHold}>
                   {holding
                     ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Holding your time…</>
-                    : <>Review and pay <ArrowRight className="w-4 h-4 ml-2" /></>}
+                    : requiresPayment
+                      ? <>Review and pay <ArrowRight className="w-4 h-4 ml-2" /></>
+                      : <>Confirm this session <ArrowRight className="w-4 h-4 ml-2" /></>}
                 </Button>
               </div>
             </motion.div>
