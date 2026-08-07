@@ -1,239 +1,714 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { Loader2, Plus, RefreshCw, Save, Mail, CalendarX2, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Loader2, Calendar, RefreshCw, ExternalLink, Save, DollarSign } from "lucide-react";
-import type { ConsultationSettings } from "@/components/consultation/ConsultationBookingForm";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import type { Tables } from "@/integrations/supabase/types";
+import { fullMoment, moneyUsd } from "@/lib/consultation-utils";
 
-interface Booking {
-  id: string;
-  booking_reference: string;
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string | null;
-  amount: number;
-  payment_transaction_id: string | null;
-  status: string;
-  starts_at: string;
-  zoom_join_url: string | null;
-  created_at: string;
-  landing_path: string | null;
-  utm_source: string | null;
-}
+type Booking = Tables<"consultation_bookings">;
+type Service = Tables<"consultation_services">;
+type Practitioner = Tables<"consultation_practitioners">;
+type Window = Tables<"consultation_availability">;
+type Override = Tables<"consultation_availability_overrides">;
 
-function relativeTime(iso: string | null) {
-  if (!iso) return "—";
-  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  const d = Math.floor(diff / 86400);
-  if (d < 30) return `${d}d ago`;
-  return new Date(iso).toLocaleDateString();
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const STATUS_TONE: Record<string, string> = {
+  confirmed: "bg-emerald-100 text-emerald-900 border-emerald-300",
+  pending_payment: "bg-amber-100 text-amber-900 border-amber-300",
+  completed: "bg-sky-100 text-sky-900 border-sky-300",
+  cancelled: "bg-neutral-200 text-neutral-700 border-neutral-300",
+  no_show: "bg-rose-100 text-rose-900 border-rose-300",
+};
+
+async function adminAction(body: Record<string, unknown>) {
+  const { data, error } = await supabase.functions.invoke("consultation-admin", { body });
+  if (error) throw new Error(error.message);
+  if (data?.error) throw new Error(data.error);
+  return data;
 }
 
 export default function AdminConsultations() {
-  const { toast } = useToast();
-  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [settings, setSettings] = useState<ConsultationSettings | null>(null);
-  const [saving, setSaving] = useState(false);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
+  const [windows, setWindows] = useState<Window[]>([]);
+  const [overrides, setOverrides] = useState<Override[]>([]);
+  const [filter, setFilter] = useState<"upcoming" | "all" | "cancelled">("upcoming");
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [manualOpen, setManualOpen] = useState(false);
+  const [rescheduleTarget, setRescheduleTarget] = useState<Booking | null>(null);
+  const [newStart, setNewStart] = useState("");
 
-  const fetchAll = async () => {
+  const practitioner = practitioners[0];
+  const tz = practitioner?.timezone ?? "America/St_Lucia";
+
+  const load = async () => {
     setLoading(true);
-    const [{ data: bookingsData, error: bookingsErr }, { data: settingsData, error: settingsErr }] = await Promise.all([
-      supabase
-        .from("consultation_bookings")
-        .select("id, booking_reference, customer_name, customer_email, customer_phone, amount, payment_transaction_id, status, starts_at, zoom_join_url, created_at, landing_path, utm_source")
-        .order("starts_at", { ascending: false })
-        .limit(200),
-      supabase.from("consultation_settings").select("value").eq("key", "consultation").single(),
+    const [b, s, p, w, o] = await Promise.all([
+      supabase.from("consultation_bookings").select("*").order("starts_at", { ascending: true }),
+      supabase.from("consultation_services").select("*").order("display_order"),
+      supabase.from("consultation_practitioners").select("*").order("display_order"),
+      supabase.from("consultation_availability").select("*").order("day_of_week"),
+      supabase.from("consultation_availability_overrides").select("*").order("date"),
     ]);
-
-    if (bookingsErr) {
-      toast({ title: "Error loading bookings", description: bookingsErr.message, variant: "destructive" });
-    } else {
-      setBookings((bookingsData as unknown as Booking[]) || []);
-    }
-
-    if (settingsErr) {
-      toast({ title: "Error loading settings", description: settingsErr.message, variant: "destructive" });
-    } else {
-      setSettings((settingsData?.value as unknown as ConsultationSettings) || null);
-    }
-
+    for (const r of [b, s, p, w, o]) if (r.error) toast.error(r.error.message);
+    setBookings((b.data as Booking[]) ?? []);
+    setServices((s.data as Service[]) ?? []);
+    setPractitioners((p.data as Practitioner[]) ?? []);
+    setWindows((w.data as Window[]) ?? []);
+    setOverrides((o.data as Override[]) ?? []);
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  useEffect(() => { load(); }, []);
 
-  const updateSetting = (field: keyof ConsultationSettings, value: string | number) => {
-    if (!settings) return;
-    setSettings((s) => ({
-      ...s!,
-      [field]: typeof value === "number" ? value : value,
-    }));
-  };
+  const visible = useMemo(() => {
+    const now = Date.now();
+    return bookings.filter((b) => {
+      if (filter === "cancelled") return b.status === "cancelled" || b.status === "no_show";
+      if (filter === "upcoming") {
+        return new Date(b.starts_at).getTime() >= now && b.status !== "cancelled";
+      }
+      return true;
+    });
+  }, [bookings, filter]);
 
-  const saveSettings = async () => {
-    if (!settings) return;
-    setSaving(true);
-    const { error } = await supabase
-      .from("consultation_settings")
-      .update({ value: settings as unknown as any })
-      .eq("key", "consultation");
-    setSaving(false);
-    if (error) {
-      toast({ title: "Failed to save settings", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Settings saved" });
+  const run = async (id: string, body: Record<string, unknown>, okMessage: string) => {
+    setBusyId(id);
+    try {
+      await adminAction(body);
+      toast.success(okMessage);
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message || "Action failed");
+    } finally {
+      setBusyId(null);
     }
   };
 
+  /* ── Manual booking form ── */
+  const [manual, setManual] = useState({
+    service_id: "", start: "", mode: "online", customer_name: "",
+    customer_email: "", customer_phone: "", notes: "", skip_payment: true, amount: "",
+  });
+  const [manualSaving, setManualSaving] = useState(false);
+
+  const createManual = async () => {
+    if (!manual.service_id || !manual.start || !manual.customer_name || !manual.customer_email) {
+      return toast.error("Service, time, name and email are required");
+    }
+    setManualSaving(true);
+    try {
+      await adminAction({
+        action: "create",
+        service_id: manual.service_id,
+        start: new Date(manual.start).toISOString(),
+        mode: manual.mode,
+        customer_name: manual.customer_name,
+        customer_email: manual.customer_email,
+        customer_phone: manual.customer_phone || undefined,
+        notes: manual.notes || undefined,
+        skip_payment: manual.skip_payment,
+        amount: manual.amount ? Number(manual.amount) : undefined,
+        send_email: true,
+      });
+      toast.success("Booking created and confirmation sent");
+      setManualOpen(false);
+      setManual({ ...manual, start: "", customer_name: "", customer_email: "", customer_phone: "", notes: "" });
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not create the booking");
+    } finally {
+      setManualSaving(false);
+    }
+  };
+
+  /* ── Service and practitioner editing ── */
+  const saveRow = async (
+    table: "consultation_services" | "consultation_practitioners",
+    id: string,
+    patch: Record<string, unknown>,
+  ) => {
+    setBusyId(id);
+    const { error } = await supabase.from(table).update(patch).eq("id", id);
+    if (error) toast.error(error.message);
+    else { toast.success("Saved"); await load(); }
+    setBusyId(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 space-y-4">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-40 w-full" />
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-serif font-bold">Consultation Bookings</h1>
-        <Button variant="outline" size="sm" onClick={fetchAll} disabled={loading}>
-          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
+    <div className="p-4 sm:p-6 space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold">Consultations</h1>
+          <p className="text-sm text-muted-foreground">
+            Private sessions with {practitioner?.name ?? "the practitioner"} · times shown in {tz}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" className="min-h-[44px]" onClick={load}>
+            <RefreshCw className="w-4 h-4 mr-2" /> Refresh
+          </Button>
+          <Button className="min-h-[44px]" onClick={() => setManualOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" /> Add booking
+          </Button>
+        </div>
       </div>
 
-      {/* Settings card */}
-      {settings && (
-        <div className="bg-card border border-border rounded-xl p-6 mb-8">
-          <h2 className="font-serif font-semibold text-lg mb-4 flex items-center gap-2">
-            <DollarSign className="w-5 h-5" /> Consultation Settings
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="fee">Fee (USD)</Label>
-              <Input
-                id="fee"
-                type="number"
-                value={settings.fee_usd}
-                onChange={(e) => updateSetting("fee_usd", Number(e.target.value))}
-                min={0}
-                step={0.01}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="duration">Duration (minutes)</Label>
-              <Input
-                id="duration"
-                type="number"
-                value={settings.duration_minutes}
-                onChange={(e) => updateSetting("duration_minutes", Number(e.target.value))}
-                min={1}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="notice">Notice (hours)</Label>
-              <Input
-                id="notice"
-                type="number"
-                value={settings.notice_hours}
-                onChange={(e) => updateSetting("notice_hours", Number(e.target.value))}
-                min={0}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="slug">Calendly Event Slug</Label>
-              <Input
-                id="slug"
-                value={settings.calendly_event_slug}
-                onChange={(e) => updateSetting("calendly_event_slug", e.target.value)}
-              />
-            </div>
+      <Tabs defaultValue="bookings">
+        <TabsList>
+          <TabsTrigger value="bookings">Bookings</TabsTrigger>
+          <TabsTrigger value="availability">Availability</TabsTrigger>
+          <TabsTrigger value="service">Session type</TabsTrigger>
+          <TabsTrigger value="practitioner">Practitioner</TabsTrigger>
+        </TabsList>
+
+        {/* ───────── Bookings ───────── */}
+        <TabsContent value="bookings" className="space-y-4 pt-4">
+          <div className="flex gap-2">
+            {(["upcoming", "all", "cancelled"] as const).map((f) => (
+              <Button key={f} size="sm" variant={filter === f ? "default" : "outline"}
+                className="min-h-[40px] capitalize" onClick={() => setFilter(f)}>
+                {f}
+              </Button>
+            ))}
           </div>
-          <div className="mt-4 flex justify-end">
-            <Button onClick={saveSettings} disabled={saving}>
-              <Save className="w-4 h-4 mr-2" />
-              {saving ? "Saving..." : "Save Settings"}
+
+          {visible.length === 0 ? (
+            <div className="rounded-xl border p-8 text-center text-muted-foreground">
+              No consultations in this view yet.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {visible.map((b) => (
+                <div key={b.id} className="rounded-xl border p-4 space-y-3">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium">{b.customer_name}</span>
+                        <Badge variant="outline" className={STATUS_TONE[b.status] ?? ""}>
+                          {b.status.replace(/_/g, " ")}
+                        </Badge>
+                        <Badge variant="outline">{b.mode === "online" ? "Online" : "In person"}</Badge>
+                        {b.mode === "online" && !b.zoom_join_url && b.status === "confirmed" && (
+                          <Badge variant="outline" className="bg-amber-100 text-amber-900 border-amber-300">
+                            No video link
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {b.booking_reference} · {b.customer_email}
+                        {b.customer_phone ? ` · ${b.customer_phone}` : ""}
+                      </p>
+                      <p className="text-sm mt-1">
+                        <Clock className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" />
+                        {fullMoment(b.starts_at, tz)}
+                        <span className="text-muted-foreground">
+                          {" "}· their time {fullMoment(b.starts_at, b.customer_timezone || tz)}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">{moneyUsd(Number(b.amount))}</p>
+                      {Number(b.discount_usd) > 0 && (
+                        <p className="text-xs text-muted-foreground">
+                          {b.coupon_code} · −{moneyUsd(Number(b.discount_usd))}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {(b.notes || Object.keys((b.intake_answers as object) ?? {}).length > 0) && (
+                    <div className="rounded-lg bg-muted/50 p-3 text-sm whitespace-pre-wrap">
+                      {b.notes}
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" className="min-h-[40px]"
+                      disabled={busyId === b.id || b.status === "cancelled"}
+                      onClick={() => { setRescheduleTarget(b); setNewStart(""); }}>
+                      Reschedule
+                    </Button>
+                    <Button size="sm" variant="outline" className="min-h-[40px]"
+                      disabled={busyId === b.id || b.status === "cancelled"}
+                      onClick={() => run(b.id, {
+                        action: "cancel", booking_id: b.id, send_email: true,
+                        reason: "Cancelled by Mount Kailash",
+                      }, "Booking cancelled")}>
+                      <CalendarX2 className="w-4 h-4 mr-1.5" /> Cancel
+                    </Button>
+                    <Select
+                      value={b.status}
+                      onValueChange={(v) => run(b.id, { action: "set_status", booking_id: b.id, status: v }, "Status updated")}
+                    >
+                      <SelectTrigger className="h-10 w-[170px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {["confirmed", "completed", "cancelled", "no_show"].map((s) => (
+                          <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button size="sm" variant="outline" className="min-h-[40px]" disabled={busyId === b.id}
+                      onClick={() => run(b.id, { action: "resend_email", booking_id: b.id, email_type: "confirmation" }, "Confirmation resent")}>
+                      <Mail className="w-4 h-4 mr-1.5" /> Resend confirmation
+                    </Button>
+                    {b.mode === "online" && !b.zoom_join_url && (
+                      <Button size="sm" variant="outline" className="min-h-[40px]" disabled={busyId === b.id}
+                        onClick={async () => {
+                          setBusyId(b.id);
+                          const { data, error } = await supabase.functions.invoke("zoom-create-meeting", {
+                            body: { booking_id: b.id },
+                          });
+                          if (error || data?.error) toast.error(data?.error || error?.message);
+                          else { toast.success("Video room created"); await load(); }
+                          setBusyId(null);
+                        }}>
+                        Create video room
+                      </Button>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`note-${b.id}`} className="text-xs">Internal notes</Label>
+                    <Textarea
+                      id={`note-${b.id}`} rows={2} className="mt-1"
+                      defaultValue={b.internal_notes ?? ""}
+                      onBlur={(e) => {
+                        if (e.target.value !== (b.internal_notes ?? "")) {
+                          run(b.id, { action: "update_notes", booking_id: b.id, internal_notes: e.target.value }, "Notes saved");
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* ───────── Availability ───────── */}
+        <TabsContent value="availability" className="space-y-6 pt-4">
+          <div className="rounded-xl border p-4">
+            <h2 className="font-medium mb-1">Weekly windows</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Open hours in {tz}. Slots are generated inside these windows.
+            </p>
+            <div className="space-y-2">
+              {windows.map((w) => (
+                <div key={w.id} className="flex flex-wrap items-center gap-2">
+                  <span className="w-24 text-sm">{DAYS[w.day_of_week]}</span>
+                  <Input type="time" defaultValue={w.start_time.slice(0, 5)} className="w-[130px] min-h-[44px]"
+                    onBlur={async (e) => {
+                      const { error } = await supabase.from("consultation_availability")
+                        .update({ start_time: e.target.value }).eq("id", w.id);
+                      error ? toast.error(error.message) : toast.success("Window updated");
+                    }} />
+                  <span className="text-muted-foreground">to</span>
+                  <Input type="time" defaultValue={w.end_time.slice(0, 5)} className="w-[130px] min-h-[44px]"
+                    onBlur={async (e) => {
+                      const { error } = await supabase.from("consultation_availability")
+                        .update({ end_time: e.target.value }).eq("id", w.id);
+                      error ? toast.error(error.message) : toast.success("Window updated");
+                    }} />
+                  <div className="flex items-center gap-2 ml-2">
+                    <Switch checked={w.is_active} onCheckedChange={async (v) => {
+                      const { error } = await supabase.from("consultation_availability")
+                        .update({ is_active: v }).eq("id", w.id);
+                      error ? toast.error(error.message) : await load();
+                    }} />
+                    <span className="text-sm text-muted-foreground">{w.is_active ? "Open" : "Closed"}</span>
+                  </div>
+                  <Button size="sm" variant="ghost" className="min-h-[40px]" onClick={async () => {
+                    const { error } = await supabase.from("consultation_availability").delete().eq("id", w.id);
+                    error ? toast.error(error.message) : await load();
+                  }}>Remove</Button>
+                </div>
+              ))}
+            </div>
+            <Button size="sm" variant="outline" className="mt-4 min-h-[44px]" onClick={async () => {
+              if (!practitioner) return;
+              const { error } = await supabase.from("consultation_availability").insert({
+                practitioner_id: practitioner.id, day_of_week: 1,
+                start_time: "09:00", end_time: "16:00",
+              });
+              error ? toast.error(error.message) : await load();
+            }}>
+              <Plus className="w-4 h-4 mr-2" /> Add a window
             </Button>
           </div>
-        </div>
-      )}
 
-      {/* Bookings table */}
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-primary" />
-        </div>
-      ) : bookings.length === 0 ? (
-        <div className="text-center py-16 border border-dashed border-border rounded-xl">
-          <Calendar className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">No consultation bookings yet.</p>
-        </div>
-      ) : (
-        <div className="bg-card border border-border rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/50">
-                <tr>
-                  <th className="text-left px-4 py-3 font-semibold">Name</th>
-                  <th className="text-left px-4 py-3 font-semibold">Contact</th>
-                  <th className="text-left px-4 py-3 font-semibold">Paid</th>
-                  <th className="text-left px-4 py-3 font-semibold">Status</th>
-                  <th className="text-left px-4 py-3 font-semibold">Source</th>
-                  <th className="text-left px-4 py-3 font-semibold">Session</th>
-                  <th className="text-left px-4 py-3 font-semibold">Zoom</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bookings.map((b) => (
-                  <tr key={b.id} className="border-t border-border hover:bg-muted/30">
-                    <td className="px-4 py-3 font-medium">{b.customer_name}</td>
-                    <td className="px-4 py-3">
-                      <div>{b.customer_email}</div>
-                      {b.customer_phone && <div className="text-muted-foreground">{b.customer_phone}</div>}
-                    </td>
-                    <td className="px-4 py-3">${Number(b.amount).toFixed(2)}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                        style={{
-                          background: b.status === "confirmed" || b.status === "completed" ? "rgba(21,128,61,0.12)" : "rgba(234,179,8,0.12)",
-                          color: b.status === "confirmed" || b.status === "completed" ? "#15803d" : "#a16207",
-                        }}
-                      >
-                        {b.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {b.utm_source ? (
-                        <span className="text-xs">{b.utm_source}</span>
-                      ) : (
-                        <span className="text-muted-foreground text-xs">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">{new Date(b.starts_at).toLocaleString()}</td>
-                    <td className="px-4 py-3">
-                      {b.zoom_join_url ? (
-                        <a
-                          href={b.zoom_join_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-primary hover:underline"
-                        >
-                          View <ExternalLink className="w-3 h-3" />
-                        </a>
-                      ) : (
-                        <span className="text-muted-foreground text-xs">No link</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="rounded-xl border p-4">
+            <h2 className="font-medium mb-1">Date exceptions</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Block a day off, or open a day that is normally closed.
+            </p>
+            <div className="space-y-2">
+              {overrides.map((o) => (
+                <div key={o.id} className="flex flex-wrap items-center gap-3 text-sm">
+                  <span className="w-28">{o.date}</span>
+                  <Badge variant="outline" className={o.is_available
+                    ? "bg-emerald-100 text-emerald-900 border-emerald-300"
+                    : "bg-rose-100 text-rose-900 border-rose-300"}>
+                    {o.is_available ? "Open" : "Closed"}
+                  </Badge>
+                  {o.is_available && o.start_time && (
+                    <span className="text-muted-foreground">
+                      {o.start_time.slice(0, 5)}–{o.end_time?.slice(0, 5)}
+                    </span>
+                  )}
+                  {o.reason && <span className="text-muted-foreground">{o.reason}</span>}
+                  <Button size="sm" variant="ghost" className="min-h-[40px]" onClick={async () => {
+                    const { error } = await supabase.from("consultation_availability_overrides")
+                      .delete().eq("id", o.id);
+                    error ? toast.error(error.message) : await load();
+                  }}>Remove</Button>
+                </div>
+              ))}
+            </div>
+            <NewOverride practitionerId={practitioner?.id} onDone={load} />
           </div>
-        </div>
+        </TabsContent>
+
+        {/* ───────── Service ───────── */}
+        <TabsContent value="service" className="space-y-4 pt-4">
+          {services.map((s) => (
+            <ServiceEditor key={s.id} service={s} busy={busyId === s.id}
+              onSave={(patch) => saveRow("consultation_services", s.id, patch)} />
+          ))}
+        </TabsContent>
+
+        {/* ───────── Practitioner ───────── */}
+        <TabsContent value="practitioner" className="space-y-4 pt-4">
+          {practitioners.map((p) => (
+            <PractitionerEditor key={p.id} practitioner={p} busy={busyId === p.id}
+              onSave={(patch) => saveRow("consultation_practitioners", p.id, patch)} />
+          ))}
+        </TabsContent>
+      </Tabs>
+
+      {/* Manual booking */}
+      <Dialog open={manualOpen} onOpenChange={setManualOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Add a booking</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label>Session type</Label>
+              <Select value={manual.service_id} onValueChange={(v) => setManual({ ...manual, service_id: v })}>
+                <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue placeholder="Choose" /></SelectTrigger>
+                <SelectContent>
+                  {services.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Start ({tz})</Label>
+              <Input type="datetime-local" className="mt-1 min-h-[44px]" value={manual.start}
+                onChange={(e) => setManual({ ...manual, start: e.target.value })} />
+            </div>
+            <div>
+              <Label>Format</Label>
+              <Select value={manual.mode} onValueChange={(v) => setManual({ ...manual, mode: v })}>
+                <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="online">Online</SelectItem>
+                  <SelectItem value="in_person">In person</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label>Name</Label>
+                <Input className="mt-1 min-h-[44px]" value={manual.customer_name}
+                  onChange={(e) => setManual({ ...manual, customer_name: e.target.value })} />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input type="email" className="mt-1 min-h-[44px]" value={manual.customer_email}
+                  onChange={(e) => setManual({ ...manual, customer_email: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <Label>Phone (optional)</Label>
+              <Input className="mt-1 min-h-[44px]" value={manual.customer_phone}
+                onChange={(e) => setManual({ ...manual, customer_phone: e.target.value })} />
+            </div>
+            <div>
+              <Label>Notes</Label>
+              <Textarea rows={3} className="mt-1" value={manual.notes}
+                onChange={(e) => setManual({ ...manual, notes: e.target.value })} />
+            </div>
+            <div className="flex items-center gap-3">
+              <Switch checked={manual.skip_payment}
+                onCheckedChange={(v) => setManual({ ...manual, skip_payment: v })} />
+              <span className="text-sm">Mark as already settled (no card taken)</span>
+            </div>
+            {!manual.skip_payment && (
+              <div>
+                <Label>Amount owed (USD)</Label>
+                <Input type="number" className="mt-1 min-h-[44px]" value={manual.amount}
+                  onChange={(e) => setManual({ ...manual, amount: e.target.value })} />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" className="min-h-[44px]" onClick={() => setManualOpen(false)}>Cancel</Button>
+            <Button className="min-h-[44px]" disabled={manualSaving} onClick={createManual}>
+              {manualSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Create booking
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reschedule */}
+      <Dialog open={!!rescheduleTarget} onOpenChange={(o) => !o && setRescheduleTarget(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Move this consultation</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            {rescheduleTarget && fullMoment(rescheduleTarget.starts_at, tz)} — choose a new start in {tz}.
+          </p>
+          <Input type="datetime-local" className="min-h-[44px]" value={newStart}
+            onChange={(e) => setNewStart(e.target.value)} />
+          <DialogFooter>
+            <Button variant="outline" className="min-h-[44px]" onClick={() => setRescheduleTarget(null)}>
+              Keep current time
+            </Button>
+            <Button className="min-h-[44px]" disabled={!newStart}
+              onClick={async () => {
+                const target = rescheduleTarget!;
+                setRescheduleTarget(null);
+                await run(target.id, {
+                  action: "reschedule", booking_id: target.id,
+                  start: new Date(newStart).toISOString(), send_email: true,
+                }, "Consultation moved and the customer notified");
+              }}>
+              Move session
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+/* ── Sub-editors ── */
+
+function NewOverride({ practitionerId, onDone }: { practitionerId?: string; onDone: () => void }) {
+  const [date, setDate] = useState("");
+  const [available, setAvailable] = useState(false);
+  const [start, setStart] = useState("09:00");
+  const [end, setEnd] = useState("16:00");
+  const [reason, setReason] = useState("");
+
+  return (
+    <div className="mt-4 flex flex-wrap items-end gap-3">
+      <div>
+        <Label className="text-xs">Date</Label>
+        <Input type="date" className="mt-1 min-h-[44px] w-[170px]" value={date}
+          onChange={(e) => setDate(e.target.value)} />
+      </div>
+      <div className="flex items-center gap-2 pb-2.5">
+        <Switch checked={available} onCheckedChange={setAvailable} />
+        <span className="text-sm">{available ? "Open specially" : "Closed"}</span>
+      </div>
+      {available && (
+        <>
+          <div>
+            <Label className="text-xs">From</Label>
+            <Input type="time" className="mt-1 min-h-[44px] w-[120px]" value={start}
+              onChange={(e) => setStart(e.target.value)} />
+          </div>
+          <div>
+            <Label className="text-xs">To</Label>
+            <Input type="time" className="mt-1 min-h-[44px] w-[120px]" value={end}
+              onChange={(e) => setEnd(e.target.value)} />
+          </div>
+        </>
       )}
+      <div>
+        <Label className="text-xs">Reason</Label>
+        <Input className="mt-1 min-h-[44px] w-[200px]" value={reason}
+          onChange={(e) => setReason(e.target.value)} />
+      </div>
+      <Button size="sm" className="min-h-[44px]" disabled={!date || !practitionerId} onClick={async () => {
+        const { error } = await supabase.from("consultation_availability_overrides").insert({
+          practitioner_id: practitionerId!, date, is_available: available,
+          start_time: available ? start : null, end_time: available ? end : null,
+          reason: reason || null,
+        });
+        if (error) toast.error(error.message);
+        else { toast.success("Exception added"); setDate(""); setReason(""); onDone(); }
+      }}>
+        <Plus className="w-4 h-4 mr-2" /> Add exception
+      </Button>
+    </div>
+  );
+}
+
+function ServiceEditor({
+  service, busy, onSave,
+}: { service: Service; busy: boolean; onSave: (patch: Record<string, unknown>) => void }) {
+  const [f, setF] = useState({
+    name: service.name,
+    description: service.description ?? "",
+    long_description: service.long_description ?? "",
+    duration_minutes: String(service.duration_minutes),
+    price_usd: String(service.price_usd),
+    mode: service.mode,
+    min_notice_hours: String(service.min_notice_hours),
+    max_advance_days: String(service.max_advance_days),
+    buffer_before_minutes: String(service.buffer_before_minutes),
+    buffer_after_minutes: String(service.buffer_after_minutes),
+    is_active: service.is_active,
+  });
+
+  return (
+    <div className="rounded-xl border p-4 space-y-3">
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div><Label>Name</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+        <div><Label>Format offered</Label>
+          <Select value={f.mode} onValueChange={(v) => setF({ ...f, mode: v })}>
+            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="both">Online or in person</SelectItem>
+              <SelectItem value="online">Online only</SelectItem>
+              <SelectItem value="in_person">In person only</SelectItem>
+            </SelectContent>
+          </Select></div>
+      </div>
+      <div><Label>Short description</Label>
+        <Textarea rows={2} className="mt-1" value={f.description}
+          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
+      <div><Label>Full description</Label>
+        <Textarea rows={4} className="mt-1" value={f.long_description}
+          onChange={(e) => setF({ ...f, long_description: e.target.value })} /></div>
+      <div className="grid sm:grid-cols-3 gap-3">
+        <div><Label>Minutes</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.duration_minutes}
+            onChange={(e) => setF({ ...f, duration_minutes: e.target.value })} /></div>
+        <div><Label>Price USD</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.price_usd}
+            onChange={(e) => setF({ ...f, price_usd: e.target.value })} /></div>
+        <div><Label>Notice hours</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.min_notice_hours}
+            onChange={(e) => setF({ ...f, min_notice_hours: e.target.value })} /></div>
+        <div><Label>Book ahead (days)</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.max_advance_days}
+            onChange={(e) => setF({ ...f, max_advance_days: e.target.value })} /></div>
+        <div><Label>Buffer before</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_before_minutes}
+            onChange={(e) => setF({ ...f, buffer_before_minutes: e.target.value })} /></div>
+        <div><Label>Buffer after</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_after_minutes}
+            onChange={(e) => setF({ ...f, buffer_after_minutes: e.target.value })} /></div>
+      </div>
+      <div className="flex items-center gap-3">
+        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
+        <span className="text-sm">{f.is_active ? "Bookable on the site" : "Hidden"}</span>
+      </div>
+      <Button className="min-h-[44px]" disabled={busy} onClick={() => {
+        const priceUsd = Number(f.price_usd);
+        onSave({
+          name: f.name,
+          description: f.description || null,
+          long_description: f.long_description || null,
+          duration_minutes: Number(f.duration_minutes),
+          price_usd: priceUsd,
+          price_xcd: +(priceUsd * 2.7).toFixed(2),
+          mode: f.mode,
+          min_notice_hours: Number(f.min_notice_hours),
+          max_advance_days: Number(f.max_advance_days),
+          buffer_before_minutes: Number(f.buffer_before_minutes),
+          buffer_after_minutes: Number(f.buffer_after_minutes),
+          is_active: f.is_active,
+        });
+      }}>
+        {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+        Save session type
+      </Button>
+      <p className="text-xs text-muted-foreground">
+        XCD is kept in step automatically at the 2.7 rate used across the store.
+      </p>
+    </div>
+  );
+}
+
+function PractitionerEditor({
+  practitioner, busy, onSave,
+}: { practitioner: Practitioner; busy: boolean; onSave: (patch: Record<string, unknown>) => void }) {
+  const [f, setF] = useState({
+    name: practitioner.name,
+    title: practitioner.title ?? "",
+    bio: practitioner.bio ?? "",
+    photo_url: practitioner.photo_url ?? "",
+    timezone: practitioner.timezone,
+    zoom_user_email: practitioner.zoom_user_email ?? "",
+    is_active: practitioner.is_active,
+  });
+
+  return (
+    <div className="rounded-xl border p-4 space-y-3">
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div><Label>Name</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+        <div><Label>Title</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} /></div>
+        <div><Label>Timezone</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.timezone} onChange={(e) => setF({ ...f, timezone: e.target.value })} /></div>
+        <div><Label>Zoom account email</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.zoom_user_email}
+            onChange={(e) => setF({ ...f, zoom_user_email: e.target.value })} /></div>
+        <div className="sm:col-span-2"><Label>Photo URL</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.photo_url}
+            onChange={(e) => setF({ ...f, photo_url: e.target.value })} /></div>
+      </div>
+      <div><Label>Biography</Label>
+        <Textarea rows={5} className="mt-1" value={f.bio} onChange={(e) => setF({ ...f, bio: e.target.value })} /></div>
+      <div className="flex items-center gap-3">
+        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
+        <span className="text-sm">{f.is_active ? "Taking bookings" : "Not taking bookings"}</span>
+      </div>
+      <Button className="min-h-[44px]" disabled={busy} onClick={() => onSave({
+        name: f.name,
+        title: f.title || null,
+        bio: f.bio || null,
+        photo_url: f.photo_url || null,
+        timezone: f.timezone,
+        zoom_user_email: f.zoom_user_email || null,
+        is_active: f.is_active,
+      })}>
+        {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+        Save practitioner
+      </Button>
+      <p className="text-xs text-muted-foreground">
+        Zoom rooms are only created when Zoom credentials are configured and this email is set.
+      </p>
     </div>
   );
 }
