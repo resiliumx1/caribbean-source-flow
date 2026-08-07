@@ -22,7 +22,8 @@ export type ConsultationEmailType =
   | "reschedule"
   | "cancellation"
   | "reminder_24h"
-  | "reminder_1h";
+  | "reminder_1h"
+  | "join_link";
 
 async function sendResend(payload: Record<string, unknown>) {
   const key = Deno.env.get("RESEND_API_KEY");
