@@ -113,6 +113,7 @@ Deno.serve(async (req) => {
         service: service
           ? {
             id: service.id, name: service.name, duration_minutes: service.duration_minutes,
+            duration_display_label: (service as any).duration_display_label ?? null,
             price_usd: Number(service.price_usd), mode: service.mode,
           }
           : null,
@@ -223,7 +224,7 @@ Deno.serve(async (req) => {
           await updateZoomMeeting({
             meetingId: record.zoom_meeting_id,
             startAtIso: record.starts_at,
-            durationMinutes: service?.duration_minutes ?? 60,
+            durationMinutes: service?.duration_minutes ?? 45,
             timezone: tz,
           });
         } catch (e: any) {

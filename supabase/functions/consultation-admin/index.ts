@@ -210,7 +210,7 @@ Deno.serve(async (req) => {
       if (!b.start) return json({ error: "A new time is required." }, 400);
       const startIso = new Date(b.start).toISOString();
       const endIso = DateTime.fromISO(startIso)
-        .plus({ minutes: service?.duration_minutes ?? 60 }).toUTC().toISO()!;
+        .plus({ minutes: service?.duration_minutes ?? 45 }).toUTC().toISO()!;
 
       const { data: updated, error: updErr } = await supabase
         .from("consultation_bookings")
@@ -234,7 +234,7 @@ Deno.serve(async (req) => {
           await updateZoomMeeting({
             meetingId: updated.zoom_meeting_id,
             startAtIso: updated.starts_at,
-            durationMinutes: service?.duration_minutes ?? 60,
+            durationMinutes: service?.duration_minutes ?? 45,
             timezone: tz,
           });
         } catch (e: any) {

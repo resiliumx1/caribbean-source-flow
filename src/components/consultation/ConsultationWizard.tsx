@@ -395,7 +395,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                       </span>
                       {s.description && <span className="consult-choice__note">{s.description}</span>}
                       <span className="consult-choice__meta">
-                        {durationLabel(s.duration_minutes)} ·{" "}
+                        {durationLabel(s.duration_minutes, s.duration_display_label)} ·{" "}
                         {free ? "No payment required" : `${moneyUsd(s.price_usd)} USD`} ·{" "}
                         {s.mode === "both" ? "Online or in person"
                           : s.mode === "online" ? "Online" : "In person"}
@@ -689,7 +689,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   </div>
                   <div><dt>Your time</dt><dd>{fullMoment(hold.starts_at, timezone)}</dd></div>
                   <div><dt>Saint Lucia time</dt><dd>{fullMoment(hold.starts_at, centreZone)}</dd></div>
-                  <div><dt>Length</dt><dd>{durationLabel(service.duration_minutes)}</dd></div>
+                  <div><dt>Length</dt><dd>{durationLabel(service.duration_minutes, service.duration_display_label)}</dd></div>
                   <div><dt>Reference</dt><dd>{hold.reference}</dd></div>
                   <div>
                     <dt>Total</dt>

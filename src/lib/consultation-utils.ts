@@ -41,9 +41,11 @@ export function zoneLabel(zone: string): string {
  * Session length wording. Sessions are booked as a 45 minute block but run
  * 30–45 minutes in practice, so say so wherever the length is shown.
  */
-export function durationLabel(minutes?: number | null): string {
+export function durationLabel(minutes?: number | null, displayLabel?: string | null): string {
+  const label = displayLabel?.trim();
+  if (label) return label;
   const m = Number(minutes) || 45;
-  return m === 45 ? "45 minutes (typically 30–45)" : `${m} minutes`;
+  return `${m} minutes`;
 }
 
 function fmt(iso: string, zone: string, options: Intl.DateTimeFormatOptions): string {

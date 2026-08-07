@@ -137,7 +137,7 @@ export default function Consultations() {
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
             {[
-              { icon: Clock, label: `${durationLabel(service?.duration_minutes)}, one to one` },
+              { icon: Clock, label: `${durationLabel(service?.duration_minutes, service?.duration_display_label)}, one to one` },
               { icon: Leaf, label: `From ${service ? moneyUsd(service.price_usd) : "300"} USD` },
               { icon: Video, label: "Online video room" },
               { icon: MapPin, label: "Saint Lucia practice" },

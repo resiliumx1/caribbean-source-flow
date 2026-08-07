@@ -402,7 +402,8 @@ export default function AdminConsultations() {
           <Button variant="outline" className="min-h-[44px]" disabled={!practitioner} onClick={async () => {
             const { error } = await supabase.from("consultation_services").insert({
               name: "New session type", slug: `new-session-${Date.now().toString(36)}`,
-              description: "", duration_minutes: 60, buffer_before_minutes: 0, buffer_after_minutes: 0,
+              description: "", duration_minutes: 45, duration_display_label: "30–45 minutes",
+              buffer_before_minutes: 0, buffer_after_minutes: 15,
               price_usd: 300, price_xcd: 810, mode: "online",
               practitioner_id: practitioner!.id,
               min_notice_hours: 24, max_advance_days: 60,
@@ -600,6 +601,7 @@ function ServiceEditor({
     description: service.description ?? "",
     long_description: service.long_description ?? "",
     duration_minutes: String(service.duration_minutes),
+    duration_display_label: service.duration_display_label ?? "",
     price_usd: String(service.price_usd),
     price_xcd: String(service.price_xcd),
     xcd_manual: false,
@@ -689,9 +691,16 @@ function ServiceEditor({
           onChange={(e) => setF({ ...f, long_description: e.target.value })} /></div>
 
       <div className="grid sm:grid-cols-3 gap-3">
-        <div><Label>Minutes</Label>
+        <div><Label>Minutes (drives scheduling)</Label>
           <Input type="number" className="mt-1 min-h-[44px]" value={f.duration_minutes}
             onChange={(e) => setF({ ...f, duration_minutes: e.target.value })} /></div>
+        <div className="sm:col-span-2"><Label>Length shown to visitors (optional)</Label>
+          <Input className="mt-1 min-h-[44px]" placeholder="30–45 minutes"
+            value={f.duration_display_label}
+            onChange={(e) => setF({ ...f, duration_display_label: e.target.value })} />
+          <p className="text-xs text-muted-foreground mt-1">
+            Wording only. The minutes above still set the calendar block, the buffer and the invite.
+          </p></div>
         <div><Label>Price USD</Label>
           <Input type="number" className="mt-1 min-h-[44px]" value={f.price_usd}
             onChange={(e) => setF({ ...f, price_usd: e.target.value })} /></div>
@@ -764,6 +773,7 @@ function ServiceEditor({
             description: f.description || null,
             long_description: f.long_description || null,
             duration_minutes: Number(f.duration_minutes),
+            duration_display_label: f.duration_display_label.trim() || null,
             price_usd: priceUsd,
             price_xcd: f.xcd_manual ? Number(f.price_xcd) || 0 : +(priceUsd * 2.7).toFixed(2),
             mode: f.mode,

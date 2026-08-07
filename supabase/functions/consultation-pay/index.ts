@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
             topic: `${service?.name ?? "Consultation"} — ${record.customer_name}`,
             agenda: `Reference ${record.booking_reference}. ${record.notes ?? ""}`.trim(),
             startAtIso: record.starts_at,
-            durationMinutes: service?.duration_minutes ?? 60,
+            durationMinutes: service?.duration_minutes ?? 45,
             timezone: practitioner.timezone || "America/St_Lucia",
           });
           const { data: withZoom } = await supabase

@@ -766,6 +766,7 @@ export type Database = {
           created_at: string
           description: string | null
           display_order: number
+          duration_display_label: string | null
           duration_minutes: number
           icon: string | null
           id: string
@@ -793,6 +794,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_order?: number
+          duration_display_label?: string | null
           duration_minutes?: number
           icon?: string | null
           id?: string
@@ -820,6 +822,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_order?: number
+          duration_display_label?: string | null
           duration_minutes?: number
           icon?: string | null
           id?: string

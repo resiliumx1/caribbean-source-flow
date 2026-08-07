@@ -9,6 +9,8 @@ export interface ConsultationService {
   description: string | null;
   long_description: string | null;
   duration_minutes: number;
+  /** Visitor-facing wording for the length, e.g. "30–45 minutes". Display only. */
+  duration_display_label?: string | null;
   price_usd: number;
   price_xcd: number;
   mode: "in_person" | "online" | "both";
@@ -75,7 +77,7 @@ export function useConsultationCatalog() {
     queryFn: async (): Promise<ConsultationService[]> => {
       const { data, error } = await supabase
         .from("consultation_services")
-        .select("id, name, slug, description, long_description, duration_minutes, price_usd, price_xcd, mode, image_url, min_notice_hours, max_advance_days, display_order, requires_payment, icon")
+        .select("id, name, slug, description, long_description, duration_minutes, duration_display_label, price_usd, price_xcd, mode, image_url, min_notice_hours, max_advance_days, display_order, requires_payment, icon")
         .eq("is_active", true)
         .order("display_order", { ascending: true });
       if (error) throw error;

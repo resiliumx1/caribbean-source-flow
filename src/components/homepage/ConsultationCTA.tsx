@@ -4,13 +4,13 @@ import priestPhoto from "@/assets/priest-kailash-host.webp";
 import { VineVariationA } from "@/components/decorative/BotanicalVine";
 import { Button } from "@/components/ui/button";
 import { useNextConsultationSlot } from "@/hooks/use-consultations";
-import { fullMoment, detectTimezone, moneyUsd } from "@/lib/consultation-utils";
+import { fullMoment, detectTimezone, moneyUsd, durationLabel } from "@/lib/consultation-utils";
 
 export function ConsultationCTA() {
   const { data } = useNextConsultationSlot();
   const nextSlot = data?.slots?.[0]?.start;
   const priceUsd = data?.service?.price_usd;
-  const duration = data?.service?.duration_minutes ?? 60;
+  const duration = durationLabel(data?.service?.duration_minutes, data?.service?.duration_display_label);
   const zone = detectTimezone();
 
   return (
@@ -91,7 +91,7 @@ export function ConsultationCTA() {
 
             <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2.5">
               {[
-                { icon: Clock, label: `${duration} minutes, one to one` },
+              { icon: Clock, label: `${duration}, one to one` },
                 { icon: Leaf, label: `From ${priceUsd ? moneyUsd(priceUsd) : "300"} USD` },
                 { icon: Video, label: "Online" },
                 { icon: MapPin, label: "Saint Lucia practice" },

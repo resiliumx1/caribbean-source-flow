@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Clock, Leaf, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNextConsultationSlot } from "@/hooks/use-consultations";
-import { detectTimezone, fullMoment, moneyUsd } from "@/lib/consultation-utils";
+import { detectTimezone, durationLabel, fullMoment, moneyUsd } from "@/lib/consultation-utils";
 
 /**
  * Webinar-page band inviting viewers into a private consultation.
@@ -12,7 +12,7 @@ export function ConsultationBookingBand() {
   const { data } = useNextConsultationSlot();
   const nextSlot = data?.slots?.[0]?.start;
   const priceUsd = data?.service?.price_usd;
-  const duration = data?.service?.duration_minutes ?? 60;
+  const duration = durationLabel(data?.service?.duration_minutes, data?.service?.duration_display_label);
   const zone = detectTimezone();
 
   return (
@@ -65,7 +65,7 @@ export function ConsultationBookingBand() {
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5">
           {[
-            { icon: Clock, label: `${duration} minutes` },
+            { icon: Clock, label: duration },
             { icon: Leaf, label: priceUsd ? `${moneyUsd(priceUsd)} USD` : "USD 300" },
             { icon: Video, label: "Online or in Saint Lucia" },
           ].map(({ icon: Icon, label }) => (
