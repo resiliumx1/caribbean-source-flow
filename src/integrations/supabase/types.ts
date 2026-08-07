@@ -669,6 +669,51 @@ export type Database = {
         }
         Relationships: []
       }
+      consultation_editor_invites: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          display_name: string | null
+          email: string
+          expires_at: string | null
+          id: string
+          invited_at: string
+          invited_by: string | null
+          last_sent_at: string | null
+          resend_count: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          display_name?: string | null
+          email: string
+          expires_at?: string | null
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          last_sent_at?: string | null
+          resend_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          expires_at?: string | null
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          last_sent_at?: string | null
+          resend_count?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       consultation_intake_questions: {
         Row: {
           created_at: string
@@ -3216,7 +3261,9 @@ export type Database = {
         Returns: boolean
       }
       clean_product_text: { Args: { t: string }; Returns: string }
+      consultation_accept_own_invite: { Args: never; Returns: boolean }
       expire_pending_consultation_bookings: { Args: never; Returns: number }
+      has_consultation_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
