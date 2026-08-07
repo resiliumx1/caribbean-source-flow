@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Plus, RefreshCw, Save } from "lucide-react";
+import {
+  AlertTriangle, ArrowDown, ArrowUp, Copy, Loader2, Plus, RefreshCw, Save,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +25,6 @@ import ZoomStatusCard from "@/components/admin/consultations/ZoomStatusCard";
 
 type Booking = Tables<"consultation_bookings">;
 type Service = Tables<"consultation_services">;
-type Category = Tables<"consultation_categories">;
 type Practitioner = Tables<"consultation_practitioners">;
 type Window = Tables<"consultation_availability">;
 type Override = Tables<"consultation_availability_overrides">;
@@ -56,7 +57,6 @@ export default function AdminConsultations() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [calendlyEvents, setCalendlyEvents] = useState<CalendlyEvent[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
   const [windows, setWindows] = useState<Window[]>([]);
   const [overrides, setOverrides] = useState<Override[]>([]);
@@ -71,23 +71,21 @@ export default function AdminConsultations() {
 
   const load = async () => {
     setLoading(true);
-    const [b, s, p, w, o, c, cat] = await Promise.all([
+    const [b, s, p, w, o, c] = await Promise.all([
       supabase.from("consultation_bookings").select("*").order("starts_at", { ascending: true }),
       supabase.from("consultation_services").select("*").order("display_order"),
       supabase.from("consultation_practitioners").select("*").order("display_order"),
       supabase.from("consultation_availability").select("*").order("day_of_week"),
       supabase.from("consultation_availability_overrides").select("*").order("date"),
       supabase.from("consultation_calendly_events").select("*").order("starts_at", { ascending: false }),
-      supabase.from("consultation_categories").select("*").order("display_order"),
     ]);
-    for (const r of [b, s, p, w, o, c, cat]) if (r.error) toast.error(r.error.message);
+    for (const r of [b, s, p, w, o, c]) if (r.error) toast.error(r.error.message);
     setBookings((b.data as Booking[]) ?? []);
     setServices((s.data as Service[]) ?? []);
     setPractitioners((p.data as Practitioner[]) ?? []);
     setWindows((w.data as Window[]) ?? []);
     setOverrides((o.data as Override[]) ?? []);
     setCalendlyEvents((c.data as CalendlyEvent[]) ?? []);
-    setCategories((cat.data as Category[]) ?? []);
     setLoading(false);
   };
 
@@ -171,16 +169,53 @@ export default function AdminConsultations() {
 
   /* ── Service and practitioner editing ── */
   const saveRow = async (
-    table: "consultation_services" | "consultation_practitioners" | "consultation_categories",
+    table: "consultation_services" | "consultation_practitioners",
     id: string,
     patch: Record<string, unknown>,
   ) => {
     setBusyId(id);
-    const { error } = await supabase.from(table).update(patch).eq("id", id);
+    const { error } = await supabase.from(table).update(patch as never).eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success("Saved"); await load(); }
     setBusyId(null);
   };
+
+  /** Move a session type up or down by swapping display_order with its neighbour. */
+  const reorderService = async (service: Service, direction: -1 | 1) => {
+    const ordered = [...services].sort((a, b) => a.display_order - b.display_order);
+    const i = ordered.findIndex((s) => s.id === service.id);
+    const other = ordered[i + direction];
+    if (!other) return;
+    setBusyId(service.id);
+    const [a, b] = [
+      supabase.from("consultation_services").update({ display_order: other.display_order }).eq("id", service.id),
+      supabase.from("consultation_services").update({ display_order: service.display_order }).eq("id", other.id),
+    ];
+    const results = await Promise.all([a, b]);
+    const failed = results.find((r) => r.error);
+    if (failed?.error) toast.error(failed.error.message);
+    await load();
+    setBusyId(null);
+  };
+
+  /** Copy a session type so a new one can be built from an existing shape. */
+  const duplicateService = async (service: Service) => {
+    setBusyId(service.id);
+    const rest: Record<string, unknown> = { ...(service as unknown as Record<string, unknown>) };
+    delete rest.id; delete rest.created_at; delete rest.updated_at;
+    const { error } = await supabase.from("consultation_services").insert({
+      ...rest,
+      name: `${service.name} (copy)`,
+      slug: `${service.slug}-copy-${Date.now().toString(36)}`,
+      display_order: services.length + 1,
+      is_active: false,
+    } as never);
+    if (error) toast.error(error.message);
+    else { toast.success("Copied. The copy is hidden until you switch it on."); await load(); }
+    setBusyId(null);
+  };
+
+  const openQuestions = services.filter((s) => s.admin_note);
 
   if (loading) {
     return (
@@ -214,7 +249,6 @@ export default function AdminConsultations() {
         <TabsList>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="availability">Availability</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="service">Session types</TabsTrigger>
           <TabsTrigger value="practitioner">Practitioner</TabsTrigger>
         </TabsList>
@@ -334,38 +368,31 @@ export default function AdminConsultations() {
           </div>
         </TabsContent>
 
-        {/* ───────── Categories ───────── */}
-        <TabsContent value="categories" className="space-y-4 pt-4">
-          <p className="text-sm text-muted-foreground">
-            The four cards someone sees first. Session types are filed underneath them.
-          </p>
-          {categories.map((c) => (
-            <CategoryEditor
-              key={c.id} category={c} busy={busyId === c.id}
-              serviceCount={services.filter((s) => s.category_id === c.id).length}
-              onSave={(patch) => saveRow("consultation_categories", c.id, patch)}
-              onDelete={async () => {
-                const { error } = await supabase.from("consultation_categories").delete().eq("id", c.id);
-                error ? toast.error(error.message) : await load();
-              }}
-            />
-          ))}
-          <Button variant="outline" className="min-h-[44px]" onClick={async () => {
-            const order = (categories.at(-1)?.display_order ?? 0) + 1;
-            const { error } = await supabase.from("consultation_categories").insert({
-              name: "New category", slug: `new-category-${Date.now().toString(36)}`,
-              description: "", icon: "leaf", display_order: order, is_active: false,
-            });
-            error ? toast.error(error.message) : await load();
-          }}>
-            <Plus className="w-4 h-4 mr-2" /> Add a category
-          </Button>
-        </TabsContent>
-
-        {/* ───────── Service ───────── */}
+        {/* ───────── Session types ───────── */}
         <TabsContent value="service" className="space-y-4 pt-4">
-          {services.map((s) => (
-            <ServiceEditor key={s.id} service={s} categories={categories} busy={busyId === s.id}
+          <p className="text-sm text-muted-foreground">
+            These are the cards someone sees first. Anything switched on appears on the site
+            straight away, in the order below.
+          </p>
+
+          {openQuestions.length > 0 && (
+            <div className="rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-950/30 p-4">
+              <p className="flex items-center gap-2 font-medium text-amber-900 dark:text-amber-200">
+                <AlertTriangle className="w-4 h-4" /> Still to confirm with the client
+              </p>
+              <ul className="mt-2 space-y-1.5 text-sm text-amber-900/90 dark:text-amber-100/90 list-disc pl-5">
+                {openQuestions.map((s) => (
+                  <li key={s.id}><strong>{s.name}:</strong> {s.admin_note}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {[...services].sort((a, b) => a.display_order - b.display_order).map((s, i, arr) => (
+            <ServiceEditor key={s.id} service={s} busy={busyId === s.id}
+              canMoveUp={i > 0} canMoveDown={i < arr.length - 1}
+              onMove={(d) => { void reorderService(s, d); }}
+              onDuplicate={() => { void duplicateService(s); }}
               onSave={(patch) => saveRow("consultation_services", s.id, patch)}
               onDelete={async () => {
                 const { error } = await supabase.from("consultation_services").delete().eq("id", s.id);
@@ -376,9 +403,8 @@ export default function AdminConsultations() {
             const { error } = await supabase.from("consultation_services").insert({
               name: "New session type", slug: `new-session-${Date.now().toString(36)}`,
               description: "", duration_minutes: 60, buffer_before_minutes: 0, buffer_after_minutes: 0,
-              price_usd: 300, price_xcd: 810, mode: "both",
+              price_usd: 300, price_xcd: 810, mode: "online",
               practitioner_id: practitioner!.id,
-              category_id: categories[0]?.id ?? null,
               min_notice_hours: 24, max_advance_days: 60,
               display_order: services.length + 1, is_active: false,
             });
@@ -556,43 +582,83 @@ function NewOverride({ practitionerId, onDone }: { practitionerId?: string; onDo
 }
 
 function ServiceEditor({
-  service, categories, busy, onSave, onDelete,
+  service, busy, canMoveUp, canMoveDown, onMove, onDuplicate, onSave, onDelete,
 }: {
   service: Service;
-  categories: Category[];
   busy: boolean;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onMove: (direction: -1 | 1) => void;
+  onDuplicate: () => void;
   onSave: (patch: Record<string, unknown>) => void;
   onDelete: () => void;
 }) {
   const [f, setF] = useState({
     name: service.name,
-    category_id: service.category_id ?? "none",
+    slug: service.slug,
     display_order: String(service.display_order ?? 0),
     description: service.description ?? "",
     long_description: service.long_description ?? "",
     duration_minutes: String(service.duration_minutes),
     price_usd: String(service.price_usd),
+    price_xcd: String(service.price_xcd),
+    xcd_manual: false,
     mode: service.mode,
+    icon: service.icon ?? "leaf",
+    image_url: service.image_url ?? "",
+    requires_payment: service.requires_payment !== false,
+    price_needs_confirmation: !!service.price_needs_confirmation,
+    admin_note: service.admin_note ?? "",
     min_notice_hours: String(service.min_notice_hours),
     max_advance_days: String(service.max_advance_days),
+    max_per_day: service.max_per_day == null ? "" : String(service.max_per_day),
     buffer_before_minutes: String(service.buffer_before_minutes),
     buffer_after_minutes: String(service.buffer_after_minutes),
     is_active: service.is_active,
   });
 
+  // XCD follows USD at the store rate unless it is set by hand.
+  const derivedXcd = (+(Number(f.price_usd) * 2.7).toFixed(2)).toString();
+  const xcdShown = f.xcd_manual ? f.price_xcd : derivedXcd;
+
   return (
-    <div className="rounded-xl border p-4 space-y-3">
+    <div className="rounded-xl border p-4 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-medium">{service.name}</span>
+          {!service.is_active && <Badge variant="outline">Hidden</Badge>}
+          {service.requires_payment === false && (
+            <Badge variant="outline" className="bg-sky-100 text-sky-900 border-sky-300">
+              No payment taken
+            </Badge>
+          )}
+          {service.price_needs_confirmation && (
+            <Badge variant="outline" className="bg-amber-100 text-amber-900 border-amber-300">
+              Price needs confirming
+            </Badge>
+          )}
+        </div>
+        <div className="flex items-center gap-1">
+          <Button size="sm" variant="ghost" className="min-h-[40px]" disabled={busy || !canMoveUp}
+            aria-label="Move up" onClick={() => onMove(-1)}>
+            <ArrowUp className="w-4 h-4" />
+          </Button>
+          <Button size="sm" variant="ghost" className="min-h-[40px]" disabled={busy || !canMoveDown}
+            aria-label="Move down" onClick={() => onMove(1)}>
+            <ArrowDown className="w-4 h-4" />
+          </Button>
+          <Button size="sm" variant="ghost" className="min-h-[40px]" disabled={busy} onClick={onDuplicate}>
+            <Copy className="w-4 h-4 mr-2" /> Duplicate
+          </Button>
+        </div>
+      </div>
+
       <div className="grid sm:grid-cols-2 gap-3">
         <div><Label>Name</Label>
           <Input className="mt-1 min-h-[44px]" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
-        <div><Label>Category</Label>
-          <Select value={f.category_id} onValueChange={(v) => setF({ ...f, category_id: v })}>
-            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">Not filed</SelectItem>
-              {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-            </SelectContent>
-          </Select></div>
+        <div><Label>Web address slug</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.slug}
+            onChange={(e) => setF({ ...f, slug: e.target.value })} /></div>
         <div><Label>Format offered</Label>
           <Select value={f.mode} onValueChange={(v) => setF({ ...f, mode: v })}>
             <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
@@ -602,100 +668,6 @@ function ServiceEditor({
               <SelectItem value="in_person">In person only</SelectItem>
             </SelectContent>
           </Select></div>
-        <div><Label>Order within the category</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.display_order}
-            onChange={(e) => setF({ ...f, display_order: e.target.value })} /></div>
-      </div>
-      <div><Label>Short description</Label>
-        <Textarea rows={2} className="mt-1" value={f.description}
-          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
-      <div><Label>Full description</Label>
-        <Textarea rows={4} className="mt-1" value={f.long_description}
-          onChange={(e) => setF({ ...f, long_description: e.target.value })} /></div>
-      <div className="grid sm:grid-cols-3 gap-3">
-        <div><Label>Minutes</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.duration_minutes}
-            onChange={(e) => setF({ ...f, duration_minutes: e.target.value })} /></div>
-        <div><Label>Price USD</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.price_usd}
-            onChange={(e) => setF({ ...f, price_usd: e.target.value })} /></div>
-        <div><Label>Notice hours</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.min_notice_hours}
-            onChange={(e) => setF({ ...f, min_notice_hours: e.target.value })} /></div>
-        <div><Label>Book ahead (days)</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.max_advance_days}
-            onChange={(e) => setF({ ...f, max_advance_days: e.target.value })} /></div>
-        <div><Label>Buffer before</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_before_minutes}
-            onChange={(e) => setF({ ...f, buffer_before_minutes: e.target.value })} /></div>
-        <div><Label>Buffer after</Label>
-          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_after_minutes}
-            onChange={(e) => setF({ ...f, buffer_after_minutes: e.target.value })} /></div>
-      </div>
-      <div className="flex items-center gap-3">
-        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
-        <span className="text-sm">{f.is_active ? "Bookable on the site" : "Hidden"}</span>
-      </div>
-      <Button className="min-h-[44px]" disabled={busy} onClick={() => {
-        const priceUsd = Number(f.price_usd);
-        onSave({
-          name: f.name,
-          category_id: f.category_id === "none" ? null : f.category_id,
-          display_order: Number(f.display_order) || 0,
-          description: f.description || null,
-          long_description: f.long_description || null,
-          duration_minutes: Number(f.duration_minutes),
-          price_usd: priceUsd,
-          price_xcd: +(priceUsd * 2.7).toFixed(2),
-          mode: f.mode,
-          min_notice_hours: Number(f.min_notice_hours),
-          max_advance_days: Number(f.max_advance_days),
-          buffer_before_minutes: Number(f.buffer_before_minutes),
-          buffer_after_minutes: Number(f.buffer_after_minutes),
-          is_active: f.is_active,
-        });
-      }}>
-        {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-        Save session type
-      </Button>
-      <Button variant="ghost" className="min-h-[44px] ml-2 text-destructive" disabled={busy}
-        onClick={() => { if (confirm(`Remove "${service.name}"?`)) onDelete(); }}>
-        Remove
-      </Button>
-      <p className="text-xs text-muted-foreground">
-        XCD is kept in step automatically at the 2.7 rate used across the store.
-      </p>
-    </div>
-  );
-}
-
-function CategoryEditor({
-  category, serviceCount, busy, onSave, onDelete,
-}: {
-  category: Category;
-  serviceCount: number;
-  busy: boolean;
-  onSave: (patch: Record<string, unknown>) => void;
-  onDelete: () => void;
-}) {
-  const [f, setF] = useState({
-    name: category.name,
-    slug: category.slug,
-    description: category.description ?? "",
-    icon: category.icon ?? "leaf",
-    display_order: String(category.display_order),
-    is_active: category.is_active,
-  });
-
-  return (
-    <div className="rounded-xl border p-4 space-y-3">
-      <div className="grid sm:grid-cols-2 gap-3">
-        <div><Label>Name</Label>
-          <Input className="mt-1 min-h-[44px]" value={f.name}
-            onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
-        <div><Label>Web address slug</Label>
-          <Input className="mt-1 min-h-[44px]" value={f.slug}
-            onChange={(e) => setF({ ...f, slug: e.target.value })} /></div>
         <div><Label>Icon</Label>
           <Select value={f.icon} onValueChange={(v) => setF({ ...f, icon: v })}>
             <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
@@ -703,40 +675,123 @@ function CategoryEditor({
               {ICON_CHOICES.map((i) => <SelectItem key={i} value={i}>{i.replace(/-/g, " ")}</SelectItem>)}
             </SelectContent>
           </Select></div>
-        <div><Label>Display order</Label>
+        <div className="sm:col-span-2"><Label>Card image URL (optional)</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.image_url}
+            placeholder="https://…"
+            onChange={(e) => setF({ ...f, image_url: e.target.value })} /></div>
+      </div>
+
+      <div><Label>Short line on the card</Label>
+        <Textarea rows={2} className="mt-1" value={f.description}
+          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
+      <div><Label>Longer description shown once chosen</Label>
+        <Textarea rows={4} className="mt-1" value={f.long_description}
+          onChange={(e) => setF({ ...f, long_description: e.target.value })} /></div>
+
+      <div className="grid sm:grid-cols-3 gap-3">
+        <div><Label>Minutes</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.duration_minutes}
+            onChange={(e) => setF({ ...f, duration_minutes: e.target.value })} /></div>
+        <div><Label>Price USD</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.price_usd}
+            onChange={(e) => setF({ ...f, price_usd: e.target.value })} /></div>
+        <div><Label>Price XCD</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={xcdShown}
+            onChange={(e) => setF({ ...f, price_xcd: e.target.value, xcd_manual: true })} />
+          <p className="text-xs text-muted-foreground mt-1">
+            {f.xcd_manual ? "Set by hand." : "Following USD at the 2.7 rate."}
+          </p></div>
+        <div><Label>Notice hours</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.min_notice_hours}
+            onChange={(e) => setF({ ...f, min_notice_hours: e.target.value })} /></div>
+        <div><Label>Book ahead (days)</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.max_advance_days}
+            onChange={(e) => setF({ ...f, max_advance_days: e.target.value })} /></div>
+        <div><Label>Most per day (blank for no cap)</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.max_per_day}
+            onChange={(e) => setF({ ...f, max_per_day: e.target.value })} /></div>
+        <div><Label>Buffer before</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_before_minutes}
+            onChange={(e) => setF({ ...f, buffer_before_minutes: e.target.value })} /></div>
+        <div><Label>Buffer after</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.buffer_after_minutes}
+            onChange={(e) => setF({ ...f, buffer_after_minutes: e.target.value })} /></div>
+        <div><Label>Order on the site</Label>
           <Input type="number" className="mt-1 min-h-[44px]" value={f.display_order}
             onChange={(e) => setF({ ...f, display_order: e.target.value })} /></div>
       </div>
-      <div><Label>One line description</Label>
-        <Textarea rows={2} className="mt-1" value={f.description}
-          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
-      <div className="flex flex-wrap items-center gap-3">
-        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
-        <span className="text-sm">{f.is_active ? "Shown on the site" : "Hidden"}</span>
-        <Badge variant="outline">
-          {serviceCount} session type{serviceCount === 1 ? "" : "s"}
-        </Badge>
+
+      <div className="space-y-3 rounded-lg border p-3">
+        <div className="flex items-center gap-3">
+          <Switch checked={f.requires_payment}
+            onCheckedChange={(v) => setF({ ...f, requires_payment: v })} />
+          <span className="text-sm">
+            {f.requires_payment ? "Payment is taken at booking" : "No payment is taken"}
+          </span>
+        </div>
+        {!f.requires_payment && (
+          <p className="flex items-start gap-2 text-sm text-amber-900 dark:text-amber-200
+            bg-amber-50 dark:bg-amber-950/30 border border-amber-300 rounded-md p-3">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+            No card is collected for this session type. Anyone who books it is confirmed
+            immediately, so only use it where the money has already been taken elsewhere.
+          </p>
+        )}
+        <div className="flex items-center gap-3">
+          <Switch checked={f.price_needs_confirmation}
+            onCheckedChange={(v) => setF({ ...f, price_needs_confirmation: v })} />
+          <span className="text-sm">Price is a placeholder awaiting confirmation</span>
+        </div>
+        <div><Label>Internal note (only ever seen here)</Label>
+          <Textarea rows={2} className="mt-1" value={f.admin_note}
+            onChange={(e) => setF({ ...f, admin_note: e.target.value })} /></div>
       </div>
+
+      <div className="flex items-center gap-3">
+        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
+        <span className="text-sm">
+          {f.is_active ? "Bookable on the site" : "Hidden — past bookings are untouched"}
+        </span>
+      </div>
+
       <div className="flex flex-wrap gap-2">
-        <Button className="min-h-[44px]" disabled={busy} onClick={() => onSave({
-          name: f.name,
-          slug: slugify(f.slug || f.name),
-          description: f.description || null,
-          icon: f.icon,
-          display_order: Number(f.display_order) || 0,
-          is_active: f.is_active,
-        })}>
+        <Button className="min-h-[44px]" disabled={busy} onClick={() => {
+          const priceUsd = Number(f.price_usd) || 0;
+          onSave({
+            name: f.name,
+            slug: slugify(f.slug || f.name),
+            display_order: Number(f.display_order) || 0,
+            description: f.description || null,
+            long_description: f.long_description || null,
+            duration_minutes: Number(f.duration_minutes),
+            price_usd: priceUsd,
+            price_xcd: f.xcd_manual ? Number(f.price_xcd) || 0 : +(priceUsd * 2.7).toFixed(2),
+            mode: f.mode,
+            icon: f.icon,
+            image_url: f.image_url || null,
+            requires_payment: f.requires_payment,
+            price_needs_confirmation: f.price_needs_confirmation,
+            admin_note: f.admin_note || null,
+            min_notice_hours: Number(f.min_notice_hours),
+            max_advance_days: Number(f.max_advance_days),
+            max_per_day: f.max_per_day === "" ? null : Number(f.max_per_day),
+            buffer_before_minutes: Number(f.buffer_before_minutes),
+            buffer_after_minutes: Number(f.buffer_after_minutes),
+            is_active: f.is_active,
+          });
+        }}>
           {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Save category
+          Save session type
         </Button>
         <Button variant="ghost" className="min-h-[44px] text-destructive" disabled={busy}
-          onClick={() => { if (confirm(`Remove "${category.name}"?`)) onDelete(); }}>
+          onClick={() => { if (confirm(`Remove "${service.name}"? Switching it off keeps past bookings tidy instead.`)) onDelete(); }}>
           Remove
         </Button>
       </div>
     </div>
   );
 }
+
 
 function PractitionerEditor({
   practitioner, busy, onSave,

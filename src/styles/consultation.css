@@ -327,6 +327,11 @@
 .consult-choice__title { font-size: 17px; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
 .consult-choice__note { display: block; margin-top: 0.35rem; font-size: 14px; line-height: 1.6; color: var(--c-ink-soft); }
 .consult-choice__meta { display: block; margin-top: 0.5rem; font-size: 14px; color: var(--c-ink-soft); }
+/* The higher-commitment package: a quiet accent, never a loud badge. */
+.consult-choice[data-featured="true"] {
+  border-color: color-mix(in srgb, var(--c-gold) 55%, transparent);
+  box-shadow: inset 3px 0 0 var(--c-gold-deep);
+}
 
 .consult-summary {
   border: 1px solid var(--c-line);

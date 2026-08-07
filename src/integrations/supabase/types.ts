@@ -444,8 +444,11 @@ export type Database = {
           landing_path: string | null
           manage_token: string
           mode: string
+          needs_verification: boolean
           notes: string | null
           order_id: string | null
+          package_email: string | null
+          package_purchase_email: string | null
           payment_method: string | null
           payment_transaction_id: string | null
           practitioner_id: string | null
@@ -491,8 +494,11 @@ export type Database = {
           landing_path?: string | null
           manage_token?: string
           mode?: string
+          needs_verification?: boolean
           notes?: string | null
           order_id?: string | null
+          package_email?: string | null
+          package_purchase_email?: string | null
           payment_method?: string | null
           payment_transaction_id?: string | null
           practitioner_id?: string | null
@@ -538,8 +544,11 @@ export type Database = {
           landing_path?: string | null
           manage_token?: string
           mode?: string
+          needs_verification?: boolean
           notes?: string | null
           order_id?: string | null
+          package_email?: string | null
+          package_purchase_email?: string | null
           payment_method?: string | null
           payment_transaction_id?: string | null
           practitioner_id?: string | null
@@ -660,42 +669,6 @@ export type Database = {
         }
         Relationships: []
       }
-      consultation_categories: {
-        Row: {
-          created_at: string
-          description: string | null
-          display_order: number
-          icon: string | null
-          id: string
-          is_active: boolean
-          name: string
-          slug: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          display_order?: number
-          icon?: string | null
-          id?: string
-          is_active?: boolean
-          name: string
-          slug: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          display_order?: number
-          icon?: string | null
-          id?: string
-          is_active?: boolean
-          name?: string
-          slug?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       consultation_intake_questions: {
         Row: {
           created_at: string
@@ -787,13 +760,14 @@ export type Database = {
       }
       consultation_services: {
         Row: {
+          admin_note: string | null
           buffer_after_minutes: number
           buffer_before_minutes: number
-          category_id: string | null
           created_at: string
           description: string | null
           display_order: number
           duration_minutes: number
+          icon: string | null
           id: string
           image_url: string | null
           is_active: boolean
@@ -804,20 +778,23 @@ export type Database = {
           mode: string
           name: string
           practitioner_id: string | null
+          price_needs_confirmation: boolean
           price_usd: number
           price_xcd: number
           product_id: string | null
+          requires_payment: boolean
           slug: string
           updated_at: string
         }
         Insert: {
+          admin_note?: string | null
           buffer_after_minutes?: number
           buffer_before_minutes?: number
-          category_id?: string | null
           created_at?: string
           description?: string | null
           display_order?: number
           duration_minutes?: number
+          icon?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
@@ -828,20 +805,23 @@ export type Database = {
           mode?: string
           name: string
           practitioner_id?: string | null
+          price_needs_confirmation?: boolean
           price_usd?: number
           price_xcd?: number
           product_id?: string | null
+          requires_payment?: boolean
           slug: string
           updated_at?: string
         }
         Update: {
+          admin_note?: string | null
           buffer_after_minutes?: number
           buffer_before_minutes?: number
-          category_id?: string | null
           created_at?: string
           description?: string | null
           display_order?: number
           duration_minutes?: number
+          icon?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
@@ -852,20 +832,15 @@ export type Database = {
           mode?: string
           name?: string
           practitioner_id?: string | null
+          price_needs_confirmation?: boolean
           price_usd?: number
           price_xcd?: number
           product_id?: string | null
+          requires_payment?: boolean
           slug?: string
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "consultation_services_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "consultation_categories"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "consultation_services_practitioner_id_fkey"
             columns: ["practitioner_id"]

@@ -84,17 +84,17 @@ export function ConsultationCTA() {
                 maxWidth: "38rem",
               }}
             >
-              A private one hour session, one to one, online or in person at the Rejuvenation
-              Centre in Saint Lucia. Sessions are taken in small number, and only times he has
-              open appear in the calendar.
+              Four options: a single wellness consultation, a five session package, a follow-on
+              session for anyone already holding a package, and a business consultation. All are
+              one to one and online, and only times he has open appear in the calendar.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2.5">
               {[
                 { icon: Clock, label: `${duration} minutes, one to one` },
-                { icon: Leaf, label: priceUsd ? `${moneyUsd(priceUsd)} USD` : "USD 300" },
+                { icon: Leaf, label: `From ${priceUsd ? moneyUsd(priceUsd) : "300"} USD` },
                 { icon: Video, label: "Online" },
-                { icon: MapPin, label: "Or in Saint Lucia" },
+                { icon: MapPin, label: "Saint Lucia practice" },
               ].map(({ icon: Icon, label }) => (
                 <span
                   key={label}

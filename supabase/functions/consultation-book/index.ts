@@ -6,6 +6,7 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod@3.23.8";
 import { DateTime } from "npm:luxon@3.5.0";
 import { sanitizeAttribution } from "../_shared/attribution.ts";
+import { finalizeBooking } from "../_shared/consultation-confirm.ts";
 import {
   generateSlots, toBlockedRanges, resolveCoupon, isValidZone, type Service,
 } from "../_shared/consultation.ts";
@@ -21,6 +22,7 @@ const BodySchema = z.object({
   notes: z.string().trim().max(2000).optional().default(""),
   intake_answers: z.record(z.union([z.string(), z.boolean()])).optional().default({}),
   coupon_code: z.string().trim().max(60).optional(),
+  package_email: z.string().trim().email().max(255).optional(),
   attribution: z.record(z.unknown()).optional(),
 });
 
@@ -99,6 +101,14 @@ Deno.serve(async (req) => {
     }
 
     const amountUsd = Number(service.price_usd);
+    // Follow-on package sessions take no card; entitlement is checked by hand.
+    const requiresPayment = service.requires_payment !== false;
+    if (!requiresPayment && !b.package_email) {
+      return json({
+        error: "Please give the email address used on your package purchase.",
+        code: "package_email_required",
+      }, 400);
+    }
     const { coupon, discountUsd, reason } = await resolveCoupon(supabase, b.coupon_code, amountUsd);
     if (b.coupon_code && !coupon) {
       return json({ error: reason || "That code could not be applied.", code: "coupon_invalid" }, 400);
@@ -122,8 +132,11 @@ Deno.serve(async (req) => {
         notes: b.notes || null,
         intake_answers: b.intake_answers ?? {},
         mode: b.mode,
-        status: "pending_payment",
-        amount: dueUsd,
+        status: requiresPayment ? "pending_payment" : "confirmed",
+        amount: requiresPayment ? dueUsd : 0,
+        payment_method: requiresPayment ? null : "no_charge",
+        package_purchase_email: b.package_email?.toLowerCase() ?? null,
+        needs_verification: !requiresPayment,
         currency: "USD",
         discount_usd: discountUsd,
         coupon_code: coupon?.code ?? null,
@@ -137,7 +150,7 @@ Deno.serve(async (req) => {
         user_agent: req.headers.get("user-agent")?.slice(0, 400) || null,
         ip_address: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null,
       })
-      .select("id, booking_reference, starts_at, ends_at, amount, discount_usd, created_at")
+      .select("*")
       .single();
 
     if (insertErr) {
@@ -150,6 +163,23 @@ Deno.serve(async (req) => {
       }
       console.error("consultation booking insert failed:", insertErr);
       throw insertErr;
+    }
+
+    // No payment to take: confirm, create the video room and email straight away.
+    if (!requiresPayment) {
+      const { record } = await finalizeBooking(supabase, booking, service, practitioner);
+      return json({
+        success: true,
+        confirmed: true,
+        reference: record.booking_reference,
+        manage_token: record.manage_token,
+        starts_at: record.starts_at,
+        mode: record.mode,
+        zoom_join_url: record.zoom_join_url ?? null,
+        zoom_pending: record.mode === "online" && !record.zoom_join_url,
+        amount_paid_usd: 0,
+        practitioner_timezone: tz,
+      });
     }
 
     return json({

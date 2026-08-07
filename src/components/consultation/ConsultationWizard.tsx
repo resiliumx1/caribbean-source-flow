@@ -24,7 +24,7 @@ import { SlotPicker } from "@/components/consultation/SlotPicker";
 import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
 import {
   useConsultationCatalog, useIntakeQuestions, useServiceAvailability,
-  type ConsultationCategory, type ConsultationService,
+  type ConsultationService,
 } from "@/hooks/use-consultations";
 import {
   captureAttribution, detectTimezone, durationLabel, fullMoment, moneyUsd,
@@ -55,14 +55,18 @@ interface PaidResult {
   amount_paid_usd: number;
 }
 
-const STEP_LABELS = [
-  "Focus", "Session", "Format", "Time", "Details", "Payment", "Confirmed",
-];
+const S_SERVICE = 0, S_MODE = 1, S_TIME = 2, S_DETAILS = 3, S_REVIEW = 4, S_DONE = 5;
 
-const S_CATEGORY = 0, S_SERVICE = 1, S_MODE = 2, S_TIME = 3,
-  S_DETAILS = 4, S_REVIEW = 5, S_DONE = 6;
+const STEP_LABELS: Record<number, string> = {
+  [S_SERVICE]: "Session",
+  [S_MODE]: "Format",
+  [S_TIME]: "Time",
+  [S_DETAILS]: "Details",
+  [S_REVIEW]: "Payment",
+  [S_DONE]: "Confirmed",
+};
 
-const CATEGORY_ICONS: Record<string, typeof Leaf> = {
+const SERVICE_ICONS: Record<string, typeof Leaf> = {
   leaf: Leaf,
   "clipboard-list": ClipboardList,
   repeat: Repeat,
@@ -87,7 +91,6 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   } = useConsultationCatalog();
 
   const [step, setStep] = useState(0);
-  const [categoryId, setCategoryId] = useState<string | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("online");
   const [timezone, setTimezone] = useState(detectTimezone());
@@ -98,6 +101,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [packageEmail, setPackageEmail] = useState("");
   const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
   const [couponInput, setCouponInput] = useState("");
   const [consent, setConsent] = useState(false);
@@ -112,25 +116,18 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   const attribution = useRef(captureAttribution());
   const topRef = useRef<HTMLDivElement>(null);
 
-  const categories = catalog?.categories ?? [];
-  const allServices = catalog?.services ?? [];
+  const allServices = catalog ?? [];
 
-  /** A deep link by slug jumps straight past the first two steps. */
+  /** A deep link by slug jumps straight past the first step. */
   useEffect(() => {
     if (!serviceSlug || serviceId || !allServices.length) return;
     const found = allServices.find((s) => s.slug === serviceSlug);
     if (found) {
-      setCategoryId(found.category_id ?? null);
       setServiceId(found.id);
       setStep(found.mode === "both" ? S_MODE : S_TIME);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceSlug, allServices.length]);
-
-  const categoryServices = useMemo(
-    () => allServices.filter((s) => s.category_id === categoryId),
-    [allServices, categoryId],
-  );
 
   const {
     data: availability, isLoading: availLoading, isError: availError,
@@ -143,6 +140,29 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   const { data: intakeQuestions = [] } = useIntakeQuestions(service?.id);
 
   const singleMode = service ? service.mode !== "both" : false;
+  /** No card is taken for the follow-on package sessions. */
+  const requiresPayment = service ? service.requires_payment !== false : true;
+
+  /**
+   * The steps that actually apply. The format step disappears while every
+   * service is online only, and the payment step disappears for services that
+   * take no payment. Both reappear on their own if the admin changes a service.
+   */
+  const flow = useMemo(() => {
+    const showMode = service
+      ? service.mode === "both"
+      : allServices.some((s) => s.mode !== "online");
+    return [
+      S_SERVICE,
+      ...(showMode ? [S_MODE] : []),
+      S_TIME,
+      S_DETAILS,
+      ...(requiresPayment ? [S_REVIEW] : []),
+      S_DONE,
+    ];
+  }, [service, allServices, requiresPayment]);
+
+  const flowIndex = Math.max(0, flow.indexOf(step));
 
   useEffect(() => {
     if (service && service.mode !== "both") setMode(service.mode as Mode);
@@ -182,20 +202,21 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [holdSecondsLeft, hold, paid]);
 
-  /** Back and forward, hopping the format step when there is only one format. */
+  /** The previous step in the live flow, so skipped steps are never revisited. */
   const stepBack = (from: number) => {
-    if (from === S_TIME && singleMode) return S_SERVICE;
-    if (from === S_REVIEW) { setHold(null); return S_DETAILS; }
-    return from - 1;
+    if (from === S_REVIEW) setHold(null);
+    const i = flow.indexOf(from);
+    return flow[Math.max(0, i - 1)];
   };
-  const afterService = () => (singleMode ? S_TIME : S_MODE);
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const packageEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(packageEmail.trim());
   const missingRequired = intakeQuestions.filter(
     (q) => q.is_required && !String(answers[q.id] ?? "").trim(),
   );
   const detailsReady =
-    name.trim().length > 1 && emailValid && consent && missingRequired.length === 0;
+    name.trim().length > 1 && emailValid && consent && missingRequired.length === 0 &&
+    (requiresPayment || packageEmailValid);
 
   const createHold = async () => {
     if (!service || !slot) return;
@@ -214,6 +235,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           notes: notes.trim(),
           intake_answers: answers,
           coupon_code: couponInput.trim() || undefined,
+          package_email: requiresPayment ? undefined : packageEmail.trim(),
           attribution: attribution.current,
         },
       });
@@ -227,6 +249,14 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           return;
         }
         setFormError(res.error);
+        return;
+      }
+      // Services that take no payment come back already confirmed.
+      if (res?.confirmed) {
+        setPaid(res as PaidResult);
+        queryClient.invalidateQueries({ queryKey: ["consultation-availability"] });
+        queryClient.invalidateQueries({ queryKey: ["consultation-next-slot"] });
+        goTo(S_DONE);
         return;
       }
       setHold(res.booking as Hold);
@@ -292,7 +322,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     );
   }
 
-  if (catalogError || !categories.length) {
+  if (catalogError || !allServices.length) {
     return (
       <div className="consult">
         <div className="consult-panel p-6 sm:p-8 text-center">
@@ -307,108 +337,72 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   return (
     <div className="consult" ref={topRef}>
       <p className="consult-step-compact mb-4">
-        Step {step + 1} of {STEP_LABELS.length} · {STEP_LABELS[step]}
+        Step {flowIndex + 1} of {flow.length} · {STEP_LABELS[step]}
       </p>
       <nav className="consult-steps mb-6" aria-label="Booking steps">
-        {STEP_LABELS.map((label, i) => (
-          <span key={label} className="inline-flex items-center gap-2">
-            <span className="consult-step" data-state={step === i ? "current" : step > i ? "done" : "todo"}>
+        {flow.map((id, i) => (
+          <span key={id} className="inline-flex items-center gap-2">
+            <span className="consult-step" data-state={i === flowIndex ? "current" : i < flowIndex ? "done" : "todo"}>
               <span className="consult-step-dot">
-                {step > i ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
+                {i < flowIndex ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
               </span>
-              <span className="hidden sm:inline">{label}</span>
+              <span className="hidden sm:inline">{STEP_LABELS[id]}</span>
             </span>
-            {i < STEP_LABELS.length - 1 && <span className="consult-step-sep" aria-hidden />}
+            {i < flow.length - 1 && <span className="consult-step-sep" aria-hidden />}
           </span>
         ))}
       </nav>
 
       <div className="consult-panel p-5 sm:p-8">
         <AnimatePresence mode="wait">
-          {/* ─── 1. Focus ─── */}
-          {step === S_CATEGORY && (
-            <motion.div key="s-cat" {...fade}>
+          {/* ─── 1. Session type ─── */}
+          {step === S_SERVICE && (
+            <motion.div key="s-svc" {...fade}>
               <p className="consult-eyebrow mb-2">Where to begin</p>
-              <h2 className="consult-serif" style={{ fontSize: "clamp(1.6rem,3.4vw,2.2rem)", lineHeight: 1.15 }}>
-                What brings you to the practice?
+              <h2 className="consult-serif" style={{ fontSize: "clamp(1.5rem,3.2vw,2rem)" }}>
+                Choose a consultation
               </h2>
               <p className="consult-body mt-3" style={{ maxWidth: "40rem" }}>
-                Choose the closest fit. You can move back at any point without losing anything.
+                Every session is one to one with Rt. Hon. Priest Kailash. You can move back at any
+                point without losing anything.
               </p>
 
               <div className="mt-6 grid sm:grid-cols-2 gap-3">
-                {categories.map((c: ConsultationCategory) => {
-                  const Icon = CATEGORY_ICONS[c.icon ?? ""] ?? Leaf;
-                  const count = allServices.filter((s) => s.category_id === c.id).length;
+                {allServices.map((s) => {
+                  const Icon = SERVICE_ICONS[s.icon ?? ""] ?? Leaf;
+                  const free = s.requires_payment === false;
+                  // The package is the higher commitment, marked with a quiet accent.
+                  const featured = s.icon === "repeat";
                   return (
                     <button
-                      key={c.id}
+                      key={s.id}
                       type="button"
                       className="consult-choice"
-                      aria-pressed={categoryId === c.id}
-                      disabled={count === 0}
+                      data-featured={featured ? "true" : undefined}
+                      aria-pressed={serviceId === s.id}
                       onClick={() => {
-                        setCategoryId(c.id);
-                        setServiceId(null);
+                        setServiceId(s.id);
                         setSlot(null);
                         setSelectedDate(null);
-                        goTo(S_SERVICE);
+                        setHold(null);
+                        if (s.mode !== "both") setMode(s.mode as Mode);
+                        goTo(s.mode === "both" ? S_MODE : S_TIME);
                       }}
                     >
                       <span className="consult-choice__title">
                         <Icon className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} aria-hidden />
-                        {c.name}
+                        {s.name}
                       </span>
-                      {c.description && <span className="consult-choice__note">{c.description}</span>}
-                      {count === 0 && <span className="consult-choice__meta">Nothing bookable here yet</span>}
+                      {s.description && <span className="consult-choice__note">{s.description}</span>}
+                      <span className="consult-choice__meta">
+                        {durationLabel(s.duration_minutes)} ·{" "}
+                        {free ? "No payment required" : `${moneyUsd(s.price_usd)} USD`} ·{" "}
+                        {s.mode === "both" ? "Online or in person"
+                          : s.mode === "online" ? "Online" : "In person"}
+                      </span>
                     </button>
                   );
                 })}
-              </div>
-            </motion.div>
-          )}
-
-          {/* ─── 2. Session type ─── */}
-          {step === S_SERVICE && (
-            <motion.div key="s-svc" {...fade}>
-              <p className="consult-eyebrow mb-2">
-                {categories.find((c) => c.id === categoryId)?.name ?? "Session"}
-              </p>
-              <h2 className="consult-serif" style={{ fontSize: "clamp(1.5rem,3.2vw,2rem)" }}>
-                Choose a consultation
-              </h2>
-
-              <div className="mt-6 grid sm:grid-cols-2 gap-3">
-                {categoryServices.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    className="consult-choice"
-                    aria-pressed={serviceId === s.id}
-                    onClick={() => {
-                      setServiceId(s.id);
-                      setSlot(null);
-                      setSelectedDate(null);
-                      setHold(null);
-                      if (s.mode !== "both") setMode(s.mode as Mode);
-                      goTo(s.mode === "both" ? S_MODE : S_TIME);
-                    }}
-                  >
-                    <span className="consult-choice__title">{s.name}</span>
-                    {s.description && <span className="consult-choice__note">{s.description}</span>}
-                    <span className="consult-choice__meta">
-                      {durationLabel(s.duration_minutes)} · {moneyUsd(s.price_usd)} USD ·{" "}
-                      {s.mode === "both" ? "Online or in person"
-                        : s.mode === "online" ? "Online only" : "In person only"}
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="mt-7">
-                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(S_CATEGORY)}>
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                </Button>
               </div>
             </motion.div>
           )}
@@ -568,6 +562,19 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                     placeholder="Include your country code"
                     onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
                 </div>
+                {!requiresPayment && (
+                  <div className="flex flex-col sm:col-span-2">
+                    <Label htmlFor="c-pkg" className="consult-label">
+                      Email used on your package purchase *
+                    </Label>
+                    <Input id="c-pkg" type="email" className="consult-input mt-1.5" value={packageEmail}
+                      placeholder="you@example.com"
+                      onChange={(e) => setPackageEmail(e.target.value)} />
+                    <p className="consult-fine mt-1.5">
+                      This lets us match your booking to the five-session package you already paid for.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {intakeQuestions.length > 0 && (
@@ -657,7 +664,9 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                 <Button className="min-h-[48px] px-6" disabled={!detailsReady || holding} onClick={createHold}>
                   {holding
                     ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Holding your time…</>
-                    : <>Review and pay <ArrowRight className="w-4 h-4 ml-2" /></>}
+                    : requiresPayment
+                      ? <>Review and pay <ArrowRight className="w-4 h-4 ml-2" /></>
+                      : <>Confirm this session <ArrowRight className="w-4 h-4 ml-2" /></>}
                 </Button>
               </div>
             </motion.div>
@@ -750,7 +759,14 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                 <dl className="grid sm:grid-cols-2 gap-4">
                   <div><dt>Your time</dt><dd>{fullMoment(paid.starts_at, timezone)}</dd></div>
                   <div><dt>Saint Lucia time</dt><dd>{fullMoment(paid.starts_at, centreZone)}</dd></div>
-                  <div><dt>Paid</dt><dd>{moneyUsd(paid.amount_paid_usd)} USD</dd></div>
+                  <div>
+                    <dt>Payment</dt>
+                    <dd>
+                      {paid.amount_paid_usd > 0
+                        ? `${moneyUsd(paid.amount_paid_usd)} USD paid`
+                        : "Covered by your package"}
+                    </dd>
+                  </div>
                   <div>
                     <dt>Where</dt>
                     <dd>{paid.mode === "in_person" ? CENTRE : "Online, by private video link"}</dd>
