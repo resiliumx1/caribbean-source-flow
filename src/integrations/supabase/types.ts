@@ -610,6 +610,7 @@ export type Database = {
           organizer_email: string | null
           organizer_name: string | null
           raw: Json
+          sent_confirmation_at: string | null
           starts_at: string
           status: string
           synced_at: string
@@ -630,6 +631,7 @@ export type Database = {
           organizer_email?: string | null
           organizer_name?: string | null
           raw?: Json
+          sent_confirmation_at?: string | null
           starts_at: string
           status?: string
           synced_at?: string
@@ -650,6 +652,7 @@ export type Database = {
           organizer_email?: string | null
           organizer_name?: string | null
           raw?: Json
+          sent_confirmation_at?: string | null
           starts_at?: string
           status?: string
           synced_at?: string
