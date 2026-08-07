@@ -95,7 +95,7 @@ export default function AdminConsultations() {
       if (error) throw new Error(error.message);
       if (data?.error) throw new Error(data.error);
       toast.success(
-        `Calendly sync complete · ${data.added} added, ${data.updated} updated${data.skipped ? `, ${data.skipped} skipped` : ""}`,
+        `Calendly sync complete · ${data.added} added, ${data.updated} updated${data.skipped ? `, ${data.skipped} skipped` : ""}${data.emailed ? `, ${data.emailed} confirmation${data.emailed === 1 ? "" : "s"} sent` : ""}`,
       );
       await load();
     } catch (e: any) {
