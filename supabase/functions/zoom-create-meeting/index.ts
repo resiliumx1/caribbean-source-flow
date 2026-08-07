@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
       topic: `${service?.name ?? "Consultation"} — ${booking.customer_name}`,
       agenda: `Reference ${booking.booking_reference}. ${booking.notes ?? ""}`.trim(),
       startAtIso: booking.starts_at,
-      durationMinutes: service?.duration_minutes ?? 60,
+      durationMinutes: service?.duration_minutes ?? 45,
       timezone: practitioner.timezone || "America/St_Lucia",
     });
 
