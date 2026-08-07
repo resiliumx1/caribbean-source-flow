@@ -81,8 +81,10 @@ export function ServiceCard({
         <Check className="w-3.5 h-3.5" strokeWidth={3} />
       </span>
 
-      <span className="consult-card__icon" aria-hidden><Icon /></span>
-      {featuredLabel && <span className="consult-card__featured">{featuredLabel}</span>}
+      <span className="consult-card__head">
+        <span className="consult-card__icon" aria-hidden><Icon /></span>
+        {featuredLabel && <span className="consult-card__featured">{featuredLabel}</span>}
+      </span>
       <span className="consult-card__title">{name}</span>
       {description && <span className="consult-card__note">{description}</span>}
       <span className="consult-card__meta">
