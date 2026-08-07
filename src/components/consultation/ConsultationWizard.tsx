@@ -24,7 +24,7 @@ import { SlotPicker } from "@/components/consultation/SlotPicker";
 import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
 import {
   useConsultationCatalog, useIntakeQuestions, useServiceAvailability,
-  type ConsultationCategory, type ConsultationService,
+  type ConsultationService,
 } from "@/hooks/use-consultations";
 import {
   captureAttribution, detectTimezone, durationLabel, fullMoment, moneyUsd,
@@ -55,14 +55,18 @@ interface PaidResult {
   amount_paid_usd: number;
 }
 
-const STEP_LABELS = [
-  "Focus", "Session", "Format", "Time", "Details", "Payment", "Confirmed",
-];
+const S_SERVICE = 0, S_MODE = 1, S_TIME = 2, S_DETAILS = 3, S_REVIEW = 4, S_DONE = 5;
 
-const S_CATEGORY = 0, S_SERVICE = 1, S_MODE = 2, S_TIME = 3,
-  S_DETAILS = 4, S_REVIEW = 5, S_DONE = 6;
+const STEP_LABELS: Record<number, string> = {
+  [S_SERVICE]: "Session",
+  [S_MODE]: "Format",
+  [S_TIME]: "Time",
+  [S_DETAILS]: "Details",
+  [S_REVIEW]: "Payment",
+  [S_DONE]: "Confirmed",
+};
 
-const CATEGORY_ICONS: Record<string, typeof Leaf> = {
+const SERVICE_ICONS: Record<string, typeof Leaf> = {
   leaf: Leaf,
   "clipboard-list": ClipboardList,
   repeat: Repeat,
@@ -87,7 +91,6 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   } = useConsultationCatalog();
 
   const [step, setStep] = useState(0);
-  const [categoryId, setCategoryId] = useState<string | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("online");
   const [timezone, setTimezone] = useState(detectTimezone());
@@ -98,6 +101,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [packageEmail, setPackageEmail] = useState("");
   const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
   const [couponInput, setCouponInput] = useState("");
   const [consent, setConsent] = useState(false);
@@ -112,25 +116,18 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   const attribution = useRef(captureAttribution());
   const topRef = useRef<HTMLDivElement>(null);
 
-  const categories = catalog?.categories ?? [];
-  const allServices = catalog?.services ?? [];
+  const allServices = catalog ?? [];
 
-  /** A deep link by slug jumps straight past the first two steps. */
+  /** A deep link by slug jumps straight past the first step. */
   useEffect(() => {
     if (!serviceSlug || serviceId || !allServices.length) return;
     const found = allServices.find((s) => s.slug === serviceSlug);
     if (found) {
-      setCategoryId(found.category_id ?? null);
       setServiceId(found.id);
       setStep(found.mode === "both" ? S_MODE : S_TIME);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceSlug, allServices.length]);
-
-  const categoryServices = useMemo(
-    () => allServices.filter((s) => s.category_id === categoryId),
-    [allServices, categoryId],
-  );
 
   const {
     data: availability, isLoading: availLoading, isError: availError,
@@ -143,6 +140,29 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   const { data: intakeQuestions = [] } = useIntakeQuestions(service?.id);
 
   const singleMode = service ? service.mode !== "both" : false;
+  /** No card is taken for the follow-on package sessions. */
+  const requiresPayment = service ? service.requires_payment !== false : true;
+
+  /**
+   * The steps that actually apply. The format step disappears while every
+   * service is online only, and the payment step disappears for services that
+   * take no payment. Both reappear on their own if the admin changes a service.
+   */
+  const flow = useMemo(() => {
+    const showMode = service
+      ? service.mode === "both"
+      : allServices.some((s) => s.mode !== "online");
+    return [
+      S_SERVICE,
+      ...(showMode ? [S_MODE] : []),
+      S_TIME,
+      S_DETAILS,
+      ...(requiresPayment ? [S_REVIEW] : []),
+      S_DONE,
+    ];
+  }, [service, allServices, requiresPayment]);
+
+  const flowIndex = Math.max(0, flow.indexOf(step));
 
   useEffect(() => {
     if (service && service.mode !== "both") setMode(service.mode as Mode);
@@ -182,20 +202,21 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [holdSecondsLeft, hold, paid]);
 
-  /** Back and forward, hopping the format step when there is only one format. */
+  /** The previous step in the live flow, so skipped steps are never revisited. */
   const stepBack = (from: number) => {
-    if (from === S_TIME && singleMode) return S_SERVICE;
-    if (from === S_REVIEW) { setHold(null); return S_DETAILS; }
-    return from - 1;
+    if (from === S_REVIEW) setHold(null);
+    const i = flow.indexOf(from);
+    return flow[Math.max(0, i - 1)];
   };
-  const afterService = () => (singleMode ? S_TIME : S_MODE);
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const packageEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(packageEmail.trim());
   const missingRequired = intakeQuestions.filter(
     (q) => q.is_required && !String(answers[q.id] ?? "").trim(),
   );
   const detailsReady =
-    name.trim().length > 1 && emailValid && consent && missingRequired.length === 0;
+    name.trim().length > 1 && emailValid && consent && missingRequired.length === 0 &&
+    (requiresPayment || packageEmailValid);
 
   const createHold = async () => {
     if (!service || !slot) return;
@@ -214,6 +235,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           notes: notes.trim(),
           intake_answers: answers,
           coupon_code: couponInput.trim() || undefined,
+          package_email: requiresPayment ? undefined : packageEmail.trim(),
           attribution: attribution.current,
         },
       });
@@ -227,6 +249,14 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           return;
         }
         setFormError(res.error);
+        return;
+      }
+      // Services that take no payment come back already confirmed.
+      if (res?.confirmed) {
+        setPaid(res as PaidResult);
+        queryClient.invalidateQueries({ queryKey: ["consultation-availability"] });
+        queryClient.invalidateQueries({ queryKey: ["consultation-next-slot"] });
+        goTo(S_DONE);
         return;
       }
       setHold(res.booking as Hold);
