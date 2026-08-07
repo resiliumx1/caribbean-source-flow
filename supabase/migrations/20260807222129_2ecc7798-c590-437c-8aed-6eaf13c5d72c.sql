@@ -1,0 +1,1 @@
+ALTER TABLE public.consultation_services ADD COLUMN IF NOT EXISTS duration_display_label text;
