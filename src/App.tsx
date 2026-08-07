@@ -68,6 +68,8 @@ const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
 const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
 const AdminWCE = lazy(() => import("./pages/AdminWCE"));
 const AdminConsultations = lazy(() => import("./pages/AdminConsultations"));
+const Consultations = lazy(() => import("./pages/Consultations"));
+const ConsultationManage = lazy(() => import("./pages/ConsultationManage"));
 const WceAdminLogin = lazy(() => import("./pages/WceAdminLogin"));
 const WceAdminAccept = lazy(() => import("./pages/WceAdminAccept"));
 const WCE2026 = lazy(() => import("./pages/WCE2026"));
@@ -167,6 +169,8 @@ function AppContent() {
           <Route path="/retreats/book/:slug" element={<RetreatBooking />} />
           <Route path="/the-answer" element={<TheAnswer />} />
           <Route path="/webinars" element={<WebinarsPage />} />
+          <Route path="/consultations" element={<Consultations />} />
+          <Route path="/consultations/manage/:token" element={<ConsultationManage />} />
           <Route path="/school/herbal-physician" element={<HerbalPhysicianCourse />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/learn/:slug" element={<LearnArticle />} />
