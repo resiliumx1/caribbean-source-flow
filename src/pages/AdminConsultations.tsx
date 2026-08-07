@@ -426,6 +426,12 @@ export default function AdminConsultations() {
               onSave={(patch) => saveRow("consultation_practitioners", p.id, patch)} />
           ))}
         </TabsContent>
+
+        {/* ───────── Settings and access ───────── */}
+        <TabsContent value="settings" className="space-y-6 pt-4">
+          <ConsultationNotifySettings />
+          <ConsultationEditors />
+        </TabsContent>
       </Tabs>
 
       {/* Manual booking */}
