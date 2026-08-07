@@ -91,7 +91,8 @@ type DatePreset = "all" | "today" | "next7" | "month" | "past" | "custom";
 
 export default function BookingsTable({
   bookings, calendlyEvents, services, practitioners, tz,
-  busyId, onReschedule, onAction, onCreateZoom, onSync, syncing, lastSync,
+  busyId, onReschedule, onAction, onCreateZoom, onSendCalendlyConfirmation,
+  onSync, syncing, lastSync,
 }: {
   bookings: Booking[];
   calendlyEvents: CalendlyEvent[];
