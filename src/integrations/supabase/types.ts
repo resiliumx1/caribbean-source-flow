@@ -660,6 +660,42 @@ export type Database = {
         }
         Relationships: []
       }
+      consultation_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       consultation_intake_questions: {
         Row: {
           created_at: string
@@ -753,6 +789,7 @@ export type Database = {
         Row: {
           buffer_after_minutes: number
           buffer_before_minutes: number
+          category_id: string | null
           created_at: string
           description: string | null
           display_order: number
@@ -776,6 +813,7 @@ export type Database = {
         Insert: {
           buffer_after_minutes?: number
           buffer_before_minutes?: number
+          category_id?: string | null
           created_at?: string
           description?: string | null
           display_order?: number
@@ -799,6 +837,7 @@ export type Database = {
         Update: {
           buffer_after_minutes?: number
           buffer_before_minutes?: number
+          category_id?: string | null
           created_at?: string
           description?: string | null
           display_order?: number
@@ -820,6 +859,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "consultation_services_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "consultation_services_practitioner_id_fkey"
             columns: ["practitioner_id"]
