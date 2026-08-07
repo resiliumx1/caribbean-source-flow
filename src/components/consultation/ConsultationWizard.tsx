@@ -306,7 +306,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
 
   return (
     <div className="consult" ref={topRef}>
-      <p className="consult-step-compact mb-4" aria-hidden>
+      <p className="consult-step-compact mb-4">
         Step {step + 1} of {STEP_LABELS.length} · {STEP_LABELS[step]}
       </p>
       <nav className="consult-steps mb-6" aria-label="Booking steps">
