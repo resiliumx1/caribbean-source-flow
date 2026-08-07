@@ -1,66 +1,30 @@
-# Self-hosted consultation booking system
+# Consultations admin: filtered table view + Calendly import
 
-Replaces the Calendly redirect with a fully branded booking system on the main Mount Kailash site, for Rt. Hon. Priest Kailash's own consultation practice. It has no connection to WCE 2026: nothing under /wce-2026 or the WCE admin is touched, and no WCE branding, colour variables, or event references appear in the wizard, homepage section, emails, .ics files, or admin. Emails send from the Mount Kailash identity.
+Turn the Bookings tab of `/admin/consultations` into a proper filterable table, and add a manual button that pulls sessions booked through the old Calendly page in as read-only rows so all consultations live in one place.
 
-## What already exists (inspected)
+## What changes for you
 
-- `consultation_bookings` — Calendly-era shape (name, email, phone, amount_paid_usd, calendly_event_uri, scheduled_at, UTM columns). **0 rows**, so it can be reshaped in place rather than duplicated.
-- `consultation_settings` — one `consultation` row: fee 150, 30 minutes, 24h notice, Calendly username/slug.
-- `ConsultationBookingForm.tsx` (pay then redirect to Calendly), `use-consultation-settings.ts`, `ConsultationCTA` on the homepage, `ConsultationBookingBand` on webinars, `AdminConsultations.tsx`, and the `calendly-consultation` edge function.
-- Admin nav already has a Consultations entry.
+**Bookings tab becomes a table.** Columns: date and time (in the practitioner's timezone), customer name and email, session type, practitioner, mode, payment status, amount, source (Site or Calendly), and actions. Sorted by session date, most recent first. Below 768px each row collapses into a card so it stays usable on a phone.
 
-Everything is extended: the same bookings table, the same admin page, the same Authorize.net card form, the same coupons table, the same order email function.
+**Three filters above the table**
+- Date: preset ranges (today, next 7 days, this month, past sessions) plus a custom from/to range.
+- Organizer: dropdown of practitioners. It shows Priest Kailash today and picks up any practitioner added later automatically.
+- Payment status: Paid, Awaiting payment, Refunded, Cancelled.
 
-## Delivery in five stages
+Filters combine, a free-text search box matches name, email and booking reference, and the header shows a count plus the total value of what is currently filtered. A "Clear filters" action resets everything.
 
-Because this is large, it lands in reviewable stages. Each stage is verified before the next.
+**Sync from Calendly button.** Sits at the top of the tab. Pressing it fetches scheduled sessions from your connected Calendly account and stores them as read-only rows. They appear in the table with a Calendly badge, show no recorded payment, and cannot be rescheduled, cancelled or emailed from here — Calendly stays the source of truth for those. Re-running the sync updates existing rows and adds anything new rather than duplicating. The button shows progress and a result summary (added / updated / skipped), with the last sync time beside it.
 
-### Stage 1 — Data model and safety rails
-- Reshape `consultation_bookings` to the full schema (booking reference, service, practitioner, starts_at/ends_at, timezone, intake answers, status, order link, Zoom fields, manage token, reminder timestamps, cancellation and reschedule fields). Existing UTM and payment columns are kept.
-- New tables: `consultation_services`, `consultation_practitioners`, `consultation_availability`, `consultation_availability_overrides`, `consultation_intake_questions`.
-- Enable `btree_gist` and add an `EXCLUDE USING gist` constraint so two overlapping bookings for one practitioner in `pending_payment` or `confirmed` cannot both exist.
-- RLS: public read on active services, practitioners, availability, overrides and intake questions; admin-only writes. **No anonymous read on bookings at all** — all customer access goes through edge functions. Grants written per table.
-- Seed **Rt. Hon. Priest Kailash** (herbal physician and founder of Mount Kailash Rejuvenation Centre, America/St_Lucia) as the primary and only active practitioner, plus one service from the current settings (Private Healing Consultation, 30 min, $150). The table stays multi-practitioner for later additions.
-- Consultation tables are gated on the existing full-admin check `public.is_admin()`. `has_wce_access` is never used, so a wce_admin has no path to consultations or their customer data.
-
-### Stage 2 — Availability and booking engine
-- `consultation-availability`: expands recurring weekly windows over a date range, applies date overrides with precedence, slices into slots stepped by duration plus buffers, removes slots overlapping existing bookings including their buffers, applies min notice, max advance and max per day, and returns UTC instants. All timezone maths via a proper IANA library, so daylight saving is handled.
-- `consultation-book`: the only path that creates a booking. Writes `pending_payment` first, catches the exclusion-constraint violation and returns a friendly "that time was just taken" error.
-- `consultation-confirm`: called after payment succeeds; flips to `confirmed`, applies coupon discount, links the order, triggers Zoom and emails.
-- `consultation-manage`: token-based read, reschedule and cancel, rate limited.
-- Cleanup that releases `pending_payment` holds older than 20 minutes, plus reminder dispatch, both scheduled with pg_cron.
-
-### Stage 3 — Public booking wizard at /consultations
-Six steps, matching the site's design system: service, practitioner (auto-skipped when there is one), date and time, details plus intake questions, review with discount code and Authorize.net payment, confirmation with reference, add-to-calendar, Zoom link and manage link.
-- With one active practitioner the practitioner step is skipped entirely and no "choose a practitioner" language appears anywhere.
-- Visitor timezone detected automatically and changeable, practitioner's local time shown as a secondary line.
-- Progress indicator, lossless back navigation, state in sessionStorage, slots re-fetched periodically, UTM and `?ref=` captured on entry.
-- Built mobile-first. `/consultations/manage/:token` for reschedule and cancel with the policy shown.
-
-### Stage 4 — Zoom, emails and calendar files
-- `zoom-create-meeting` using Server-to-Server OAuth against `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET`. Waiting room on, join-before-host off. Join URL is customer-facing; start URL is admin only.
-- If Zoom is missing or fails the booking still succeeds and is flagged in admin with a button to generate or attach a link later. Cancellation deletes the meeting, reschedule updates it.
-- `consultation-emails` sibling of `send-order-emails` via Resend: customer confirmation, practitioner and admin notification, reschedule, cancellation, and 24h/1h reminders guarded by the sent-at timestamps.
-- `.ics` generated with VTIMEZONE, a stable UID per booking and an incrementing SEQUENCE so reschedules update rather than duplicate.
-
-### Stage 5 — Admin and account
-
-The consultation admin lives under the main `/admin` and is full-admin only.
-- `/admin/consultations` extended into tabs: dashboard strip (today, upcoming, this week, revenue, no-show rate), calendar with day/week/month and practitioner selector colour-coded by status, bookings list with filters, search and CSV export, booking detail (reschedule, cancel, complete, no-show, resend, Zoom link, internal notes), services CRUD with intake questions, practitioners CRUD with photo upload, and availability editing as a weekly grid plus override calendar.
-- Manual booking creation for phone enquiries with an option to skip payment.
-- `/account` gains a Consultations section with upcoming and past bookings linking to their manage pages.
-
-## Homepage section
-
-The homepage block is framed personally rather than as a generic booking tool: heading "Consult with Rt. Hon. Priest Kailash", his photograph, his standing as a herbal physician, and what a consultation with him involves. The generic practitioner trust strip is dropped in favour of a proper feature panel for him. Main-site design system only.
+Imported Calendly sessions are kept out of the site's availability engine, so they will not block or be blocked by native bookings.
 
 ## Technical notes
 
-- Timezones: every instant stored as `timestamptz` in UTC. Availability rows are wall-clock times interpreted in the practitioner's IANA zone at that date, so DST shifts are correct. Display conversion happens only in the browser.
-- Payment ordering: booking row is written before payment is attempted, so a successful charge can never be orphaned. A failed charge leaves a `pending_payment` row that the cleanup releases.
-- Zoom, coupons and email are all treated as non-fatal side effects of confirmation.
-- The old `calendly-consultation` function and the Calendly-redirect form stay in place until the wizard is verified, then the homepage and webinar entry points are pointed at `/consultations`.
+- Link the existing workspace Calendly connection to this project so `CALENDLY_API_KEY` is available to backend code. All Calendly calls go through the Lovable connector gateway.
+- New table `consultation_calendly_events`: `calendly_event_uri` (unique), `calendly_invitee_uri`, `organizer_name`, `organizer_email`, `event_name`, `starts_at`, `ends_at`, `invitee_name`, `invitee_email`, `invitee_timezone`, `status`, `location_type`, `join_url`, `raw` jsonb, `synced_at`. Admin-only RLS via `public.is_admin()`, with GRANTs for `authenticated` and `service_role`; no `wce_admin` access. Kept separate from `consultation_bookings` so the overlap-exclusion constraint and the payment/manage flows stay untouched.
+- New edge function `consultation-calendly-sync`: verifies the caller is a full admin, resolves the Calendly user and organization via `/users/me`, pages `/scheduled_events` (plus `/scheduled_events/{uuid}/invitees` for attendee details), upserts on `calendly_event_uri`, and returns counts. Surfaces the gateway status and body verbatim on failure.
+- Frontend: extract the bookings tab into `src/components/admin/consultations/BookingsTable.tsx` with a `useMemo` filter pipeline over a combined list of native bookings and imported Calendly events mapped to one row shape. Payment status derives from existing booking fields (`status`, refunded amount, `payment_transaction_id`); Calendly rows report none. Reuse existing shadcn table, select, popover-calendar and badge components and the site design system — no new styling language.
+- No changes to `/wce-2026`, the WCE admin, or any `wce_` table.
 
 ## Verification
 
-Typecheck and build; a direct test that the exclusion constraint rejects an overlapping insert; an anonymous-client select against `consultation_bookings` proving it returns nothing; a booking made in a non-practitioner timezone checked against both sides; screenshots of the wizard at 1440 and 390 and of the admin calendar. Zoom will need the three secrets before live meeting creation can be verified.
+Typecheck and build; a signed-in admin run of the sync against the live Calendly connection confirming counts and idempotency on a second run; an anonymous select against the new table proving it returns nothing; screenshots of the table at 1440 and 390 with filters applied.
