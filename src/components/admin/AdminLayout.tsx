@@ -174,13 +174,23 @@ export default function AdminLayout() {
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Admin</div>
               </div>
             </div>
-            <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
+            <nav
+              ref={deskNavRef}
+              className="hidden lg:flex items-center gap-0.5 flex-1 min-w-0 overflow-x-auto no-scrollbar"
+              style={{
+                WebkitOverflowScrolling: "touch",
+                maskImage:
+                  "linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)",
+                WebkitMaskImage:
+                  "linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)",
+              }}
+            >
               {NAV_LINKS.map((link) => {
                 const isActive = location.pathname.startsWith(link.href);
                 const isNotif = link.href === '/admin/notifications';
                 const badge = isNotif ? unread : link.href === '/admin/payment-alerts' ? paymentAlerts : 0;
                 return (
-                  <Link key={link.href} to={link.href} className="px-3 py-1.5 rounded-md text-sm transition-colors inline-flex items-center gap-1.5" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
+                  <Link key={link.href} to={link.href} data-active={isActive ? "true" : undefined} className="px-3 py-1.5 rounded-md text-sm transition-colors inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
                     {link.label}
                     {badge > 0 && (
                       <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
