@@ -530,7 +530,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
               {slot && (
                 <p className="consult-fine mt-2">
                   <Clock className="inline w-4 h-4 mr-1.5 -mt-0.5" aria-hidden />
-                  {fullMoment(slot.start, timezone)} · {zoneLabel(timezone)}
+                  {fullMoment(slot.start, timezone)}
                 </p>
               )}
 
