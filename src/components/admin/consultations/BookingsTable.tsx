@@ -514,6 +514,17 @@ export default function BookingsTable({
                       }, "Confirmation resent")}>
                       <Mail className="w-4 h-4 mr-1.5" /> Resend confirmation
                     </Button>
+                    {detail.booking.mode === "online" && (
+                      <Button size="sm" variant="outline" className="min-h-[40px]"
+                        disabled={busyId === detail.id || detail.booking.status === "cancelled"}
+                        onClick={() => onAction(detail.id, {
+                          action: "resend_email", booking_id: detail.id, email_type: "join_link",
+                        }, detail.booking!.zoom_join_url
+                          ? "Join link emailed"
+                          : "Email sent — no link on this booking yet")}>
+                        <Video className="w-4 h-4 mr-1.5" /> Resend join link
+                      </Button>
+                    )}
                     {detail.booking.mode === "online" && !detail.booking.zoom_join_url && (
                       <Button size="sm" variant="outline" className="min-h-[40px]" disabled={busyId === detail.id}
                         onClick={() => onCreateZoom(detail.booking!)}>
