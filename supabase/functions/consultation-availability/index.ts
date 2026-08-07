@@ -105,6 +105,7 @@ Deno.serve(async (req) => {
         description: service.description,
         long_description: service.long_description,
         duration_minutes: service.duration_minutes,
+        duration_display_label: service.duration_display_label ?? null,
         price_usd: Number(service.price_usd),
         price_xcd: Number(service.price_xcd),
         mode: service.mode,
