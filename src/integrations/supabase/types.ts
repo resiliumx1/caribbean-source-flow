@@ -448,6 +448,7 @@ export type Database = {
           notes: string | null
           order_id: string | null
           package_email: string | null
+          package_purchase_email: string | null
           payment_method: string | null
           payment_transaction_id: string | null
           practitioner_id: string | null
@@ -497,6 +498,7 @@ export type Database = {
           notes?: string | null
           order_id?: string | null
           package_email?: string | null
+          package_purchase_email?: string | null
           payment_method?: string | null
           payment_transaction_id?: string | null
           practitioner_id?: string | null
@@ -546,6 +548,7 @@ export type Database = {
           notes?: string | null
           order_id?: string | null
           package_email?: string | null
+          package_purchase_email?: string | null
           payment_method?: string | null
           payment_transaction_id?: string | null
           practitioner_id?: string | null
