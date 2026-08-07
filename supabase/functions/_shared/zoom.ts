@@ -44,6 +44,15 @@ async function zoomToken(): Promise<string> {
 
 async function zoomFetch(path: string, init: RequestInit): Promise<any> {
   const token = await zoomToken();
+  return await zoomFetchWith(token, path, init);
+}
+
+/** Confirm the credentials are valid and the app is activated. */
+export async function zoomPing(): Promise<void> {
+  await zoomToken();
+}
+
+async function zoomFetchWith(token: string, path: string, init: RequestInit): Promise<any> {
   const res = await fetch(`https://api.zoom.us/v2${path}`, {
     ...init,
     headers: {
