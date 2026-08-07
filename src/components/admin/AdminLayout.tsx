@@ -62,6 +62,12 @@ export default function AdminLayout() {
   const location = useLocation();
   const isWceRoute = location.pathname.startsWith("/admin/wce");
   const currentSectionLabel = NAV_LINKS.find((l) => location.pathname.startsWith(l.href))?.label ?? "Menu";
+  // The desktop strip scrolls when it runs out of room; keep the current section in view.
+  const deskNavRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const active = deskNavRef.current?.querySelector<HTMLElement>('[data-active="true"]');
+    active?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [location.pathname]);
   // A WCE organiser who is not a full store admin.
   const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
   const { theme, setTheme } = useTheme();
