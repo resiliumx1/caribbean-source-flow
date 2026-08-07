@@ -159,3 +159,45 @@
   .consult-daybtn, .consult-slot, .consult-choice { transition: none; }
   .consult-daybtn:hover, .consult-slot:hover, .consult-choice:hover { transform: none; }
 }
+
+/* ── Zoom join block (participant-facing) ── */
+.consult-join {
+  margin-top: 1.5rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 18px;
+  border: 1px solid var(--c-gold);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 246, 0.94), rgba(255, 255, 255, 0.7));
+  box-shadow: 0 14px 34px -26px rgba(15, 40, 30, 0.55);
+}
+.consult-join--pending {
+  border-color: var(--c-line);
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: none;
+}
+.consult-join__label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-gold-deep);
+  margin: 0;
+}
+.consult-join__actions {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.consult-join__url {
+  margin-top: 0.85rem;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--c-ink-soft);
+  word-break: break-all;
+}
+.consult-join__note {
+  margin-top: 0.5rem;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--c-ink-soft);
+}
