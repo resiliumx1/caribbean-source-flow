@@ -10,7 +10,10 @@ import { sendConsultationEmail } from "../_shared/consultation-email.ts";
 import { isValidZone } from "../_shared/consultation.ts";
 
 const BodySchema = z.object({
-  action: z.enum(["create", "reschedule", "cancel", "set_status", "resend_email", "update_notes"]),
+  action: z.enum([
+    "create", "reschedule", "cancel", "set_status", "resend_email", "update_notes",
+    "zoom_status",
+  ]),
   booking_id: z.string().uuid().optional(),
   service_id: z.string().uuid().optional(),
   start: z.string().datetime({ offset: true }).optional(),
@@ -25,7 +28,9 @@ const BodySchema = z.object({
   amount: z.number().min(0).max(100000).optional(),
   status: z.enum(["confirmed", "completed", "cancelled", "no_show"]).optional(),
   reason: z.string().trim().max(500).optional(),
-  email_type: z.enum(["confirmation", "reschedule", "cancellation"]).optional(),
+  email_type: z.enum([
+    "confirmation", "reschedule", "cancellation", "reminder_24h", "reminder_1h", "join_link",
+  ]).optional(),
   send_email: z.boolean().optional(),
 });
 
