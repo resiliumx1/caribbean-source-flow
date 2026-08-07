@@ -201,9 +201,10 @@ export default function AdminConsultations() {
   /** Copy a session type so a new one can be built from an existing shape. */
   const duplicateService = async (service: Service) => {
     setBusyId(service.id);
-    const { id, created_at, updated_at, ...rest } = service as Record<string, unknown> as Service & Record<string, unknown>;
+    const rest: Record<string, unknown> = { ...(service as unknown as Record<string, unknown>) };
+    delete rest.id; delete rest.created_at; delete rest.updated_at;
     const { error } = await supabase.from("consultation_services").insert({
-      ...(rest as never),
+      ...rest,
       name: `${service.name} (copy)`,
       slug: `${service.slug}-copy-${Date.now().toString(36)}`,
       display_order: services.length + 1,
@@ -368,38 +369,31 @@ export default function AdminConsultations() {
           </div>
         </TabsContent>
 
-        {/* ───────── Categories ───────── */}
-        <TabsContent value="categories" className="space-y-4 pt-4">
-          <p className="text-sm text-muted-foreground">
-            The four cards someone sees first. Session types are filed underneath them.
-          </p>
-          {categories.map((c) => (
-            <CategoryEditor
-              key={c.id} category={c} busy={busyId === c.id}
-              serviceCount={services.filter((s) => s.category_id === c.id).length}
-              onSave={(patch) => saveRow("consultation_categories", c.id, patch)}
-              onDelete={async () => {
-                const { error } = await supabase.from("consultation_categories").delete().eq("id", c.id);
-                error ? toast.error(error.message) : await load();
-              }}
-            />
-          ))}
-          <Button variant="outline" className="min-h-[44px]" onClick={async () => {
-            const order = (categories.at(-1)?.display_order ?? 0) + 1;
-            const { error } = await supabase.from("consultation_categories").insert({
-              name: "New category", slug: `new-category-${Date.now().toString(36)}`,
-              description: "", icon: "leaf", display_order: order, is_active: false,
-            });
-            error ? toast.error(error.message) : await load();
-          }}>
-            <Plus className="w-4 h-4 mr-2" /> Add a category
-          </Button>
-        </TabsContent>
-
-        {/* ───────── Service ───────── */}
+        {/* ───────── Session types ───────── */}
         <TabsContent value="service" className="space-y-4 pt-4">
-          {services.map((s) => (
-            <ServiceEditor key={s.id} service={s} categories={categories} busy={busyId === s.id}
+          <p className="text-sm text-muted-foreground">
+            These are the cards someone sees first. Anything switched on appears on the site
+            straight away, in the order below.
+          </p>
+
+          {openQuestions.length > 0 && (
+            <div className="rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-950/30 p-4">
+              <p className="flex items-center gap-2 font-medium text-amber-900 dark:text-amber-200">
+                <AlertTriangle className="w-4 h-4" /> Still to confirm with the client
+              </p>
+              <ul className="mt-2 space-y-1.5 text-sm text-amber-900/90 dark:text-amber-100/90 list-disc pl-5">
+                {openQuestions.map((s) => (
+                  <li key={s.id}><strong>{s.name}:</strong> {s.admin_note}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {[...services].sort((a, b) => a.display_order - b.display_order).map((s, i, arr) => (
+            <ServiceEditor key={s.id} service={s} busy={busyId === s.id}
+              canMoveUp={i > 0} canMoveDown={i < arr.length - 1}
+              onMove={(d) => { void reorderService(s, d); }}
+              onDuplicate={() => { void duplicateService(s); }}
               onSave={(patch) => saveRow("consultation_services", s.id, patch)}
               onDelete={async () => {
                 const { error } = await supabase.from("consultation_services").delete().eq("id", s.id);
@@ -410,9 +404,8 @@ export default function AdminConsultations() {
             const { error } = await supabase.from("consultation_services").insert({
               name: "New session type", slug: `new-session-${Date.now().toString(36)}`,
               description: "", duration_minutes: 60, buffer_before_minutes: 0, buffer_after_minutes: 0,
-              price_usd: 300, price_xcd: 810, mode: "both",
+              price_usd: 300, price_xcd: 810, mode: "online",
               practitioner_id: practitioner!.id,
-              category_id: categories[0]?.id ?? null,
               min_notice_hours: 24, max_advance_days: 60,
               display_order: services.length + 1, is_active: false,
             });
