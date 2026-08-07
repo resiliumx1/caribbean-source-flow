@@ -594,6 +594,69 @@ export type Database = {
           },
         ]
       }
+      consultation_calendly_events: {
+        Row: {
+          calendly_event_uri: string
+          calendly_invitee_uri: string | null
+          created_at: string
+          ends_at: string
+          event_name: string | null
+          id: string
+          invitee_email: string | null
+          invitee_name: string | null
+          invitee_timezone: string | null
+          join_url: string | null
+          location_type: string | null
+          organizer_email: string | null
+          organizer_name: string | null
+          raw: Json
+          starts_at: string
+          status: string
+          synced_at: string
+          updated_at: string
+        }
+        Insert: {
+          calendly_event_uri: string
+          calendly_invitee_uri?: string | null
+          created_at?: string
+          ends_at: string
+          event_name?: string | null
+          id?: string
+          invitee_email?: string | null
+          invitee_name?: string | null
+          invitee_timezone?: string | null
+          join_url?: string | null
+          location_type?: string | null
+          organizer_email?: string | null
+          organizer_name?: string | null
+          raw?: Json
+          starts_at: string
+          status?: string
+          synced_at?: string
+          updated_at?: string
+        }
+        Update: {
+          calendly_event_uri?: string
+          calendly_invitee_uri?: string | null
+          created_at?: string
+          ends_at?: string
+          event_name?: string | null
+          id?: string
+          invitee_email?: string | null
+          invitee_name?: string | null
+          invitee_timezone?: string | null
+          join_url?: string | null
+          location_type?: string | null
+          organizer_email?: string | null
+          organizer_name?: string | null
+          raw?: Json
+          starts_at?: string
+          status?: string
+          synced_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       consultation_intake_questions: {
         Row: {
           created_at: string

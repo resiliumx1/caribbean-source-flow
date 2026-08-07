@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Plus, RefreshCw, Save, Mail, CalendarX2, Clock } from "lucide-react";
+import { Loader2, Plus, RefreshCw, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,12 +18,14 @@ import {
 } from "@/components/ui/dialog";
 import type { Tables } from "@/integrations/supabase/types";
 import { fullMoment, moneyUsd } from "@/lib/consultation-utils";
+import BookingsTable from "@/components/admin/consultations/BookingsTable";
 
 type Booking = Tables<"consultation_bookings">;
 type Service = Tables<"consultation_services">;
 type Practitioner = Tables<"consultation_practitioners">;
 type Window = Tables<"consultation_availability">;
 type Override = Tables<"consultation_availability_overrides">;
+type CalendlyEvent = Tables<"consultation_calendly_events">;
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -45,49 +47,73 @@ async function adminAction(body: Record<string, unknown>) {
 export default function AdminConsultations() {
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [calendlyEvents, setCalendlyEvents] = useState<CalendlyEvent[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
   const [windows, setWindows] = useState<Window[]>([]);
   const [overrides, setOverrides] = useState<Override[]>([]);
-  const [filter, setFilter] = useState<"upcoming" | "all" | "cancelled">("upcoming");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [manualOpen, setManualOpen] = useState(false);
   const [rescheduleTarget, setRescheduleTarget] = useState<Booking | null>(null);
   const [newStart, setNewStart] = useState("");
+  const [syncing, setSyncing] = useState(false);
 
   const practitioner = practitioners[0];
   const tz = practitioner?.timezone ?? "America/St_Lucia";
 
   const load = async () => {
     setLoading(true);
-    const [b, s, p, w, o] = await Promise.all([
+    const [b, s, p, w, o, c] = await Promise.all([
       supabase.from("consultation_bookings").select("*").order("starts_at", { ascending: true }),
       supabase.from("consultation_services").select("*").order("display_order"),
       supabase.from("consultation_practitioners").select("*").order("display_order"),
       supabase.from("consultation_availability").select("*").order("day_of_week"),
       supabase.from("consultation_availability_overrides").select("*").order("date"),
+      supabase.from("consultation_calendly_events").select("*").order("starts_at", { ascending: false }),
     ]);
-    for (const r of [b, s, p, w, o]) if (r.error) toast.error(r.error.message);
+    for (const r of [b, s, p, w, o, c]) if (r.error) toast.error(r.error.message);
     setBookings((b.data as Booking[]) ?? []);
     setServices((s.data as Service[]) ?? []);
     setPractitioners((p.data as Practitioner[]) ?? []);
     setWindows((w.data as Window[]) ?? []);
     setOverrides((o.data as Override[]) ?? []);
+    setCalendlyEvents((c.data as CalendlyEvent[]) ?? []);
     setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
 
-  const visible = useMemo(() => {
-    const now = Date.now();
-    return bookings.filter((b) => {
-      if (filter === "cancelled") return b.status === "cancelled" || b.status === "no_show";
-      if (filter === "upcoming") {
-        return new Date(b.starts_at).getTime() >= now && b.status !== "cancelled";
-      }
-      return true;
+  const lastSync = calendlyEvents.reduce<string | null>(
+    (latest, e) => (!latest || e.synced_at > latest ? e.synced_at : latest),
+    null,
+  );
+
+  const syncCalendly = async () => {
+    setSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("consultation-calendly-sync", { body: {} });
+      if (error) throw new Error(error.message);
+      if (data?.error) throw new Error(data.error);
+      toast.success(
+        `Calendly sync complete · ${data.added} added, ${data.updated} updated${data.skipped ? `, ${data.skipped} skipped` : ""}`,
+      );
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message || "Calendly sync failed");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const createZoomRoom = async (b: Booking) => {
+    setBusyId(b.id);
+    const { data, error } = await supabase.functions.invoke("zoom-create-meeting", {
+      body: { booking_id: b.id },
     });
-  }, [bookings, filter]);
+    if (error || data?.error) toast.error(data?.error || error?.message);
+    else { toast.success("Video room created"); await load(); }
+    setBusyId(null);
+  };
 
   const run = async (id: string, body: Record<string, unknown>, okMessage: string) => {
     setBusyId(id);
@@ -190,126 +216,20 @@ export default function AdminConsultations() {
 
         {/* ───────── Bookings ───────── */}
         <TabsContent value="bookings" className="space-y-4 pt-4">
-          <div className="flex gap-2">
-            {(["upcoming", "all", "cancelled"] as const).map((f) => (
-              <Button key={f} size="sm" variant={filter === f ? "default" : "outline"}
-                className="min-h-[40px] capitalize" onClick={() => setFilter(f)}>
-                {f}
-              </Button>
-            ))}
-          </div>
-
-          {visible.length === 0 ? (
-            <div className="rounded-xl border p-8 text-center text-muted-foreground">
-              No consultations in this view yet.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {visible.map((b) => (
-                <div key={b.id} className="rounded-xl border p-4 space-y-3">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium">{b.customer_name}</span>
-                        <Badge variant="outline" className={STATUS_TONE[b.status] ?? ""}>
-                          {b.status.replace(/_/g, " ")}
-                        </Badge>
-                        <Badge variant="outline">{b.mode === "online" ? "Online" : "In person"}</Badge>
-                        {b.mode === "online" && !b.zoom_join_url && b.status === "confirmed" && (
-                          <Badge variant="outline" className="bg-amber-100 text-amber-900 border-amber-300">
-                            No video link
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {b.booking_reference} · {b.customer_email}
-                        {b.customer_phone ? ` · ${b.customer_phone}` : ""}
-                      </p>
-                      <p className="text-sm mt-1">
-                        <Clock className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" />
-                        {fullMoment(b.starts_at, tz)}
-                        <span className="text-muted-foreground">
-                          {" "}· their time {fullMoment(b.starts_at, b.customer_timezone || tz)}
-                        </span>
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">{moneyUsd(Number(b.amount))}</p>
-                      {Number(b.discount_usd) > 0 && (
-                        <p className="text-xs text-muted-foreground">
-                          {b.coupon_code} · −{moneyUsd(Number(b.discount_usd))}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {(b.notes || Object.keys((b.intake_answers as object) ?? {}).length > 0) && (
-                    <div className="rounded-lg bg-muted/50 p-3 text-sm whitespace-pre-wrap">
-                      {b.notes}
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" className="min-h-[40px]"
-                      disabled={busyId === b.id || b.status === "cancelled"}
-                      onClick={() => { setRescheduleTarget(b); setNewStart(""); }}>
-                      Reschedule
-                    </Button>
-                    <Button size="sm" variant="outline" className="min-h-[40px]"
-                      disabled={busyId === b.id || b.status === "cancelled"}
-                      onClick={() => run(b.id, {
-                        action: "cancel", booking_id: b.id, send_email: true,
-                        reason: "Cancelled by Mount Kailash",
-                      }, "Booking cancelled")}>
-                      <CalendarX2 className="w-4 h-4 mr-1.5" /> Cancel
-                    </Button>
-                    <Select
-                      value={b.status}
-                      onValueChange={(v) => run(b.id, { action: "set_status", booking_id: b.id, status: v }, "Status updated")}
-                    >
-                      <SelectTrigger className="h-10 w-[170px]"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {["confirmed", "completed", "cancelled", "no_show"].map((s) => (
-                          <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button size="sm" variant="outline" className="min-h-[40px]" disabled={busyId === b.id}
-                      onClick={() => run(b.id, { action: "resend_email", booking_id: b.id, email_type: "confirmation" }, "Confirmation resent")}>
-                      <Mail className="w-4 h-4 mr-1.5" /> Resend confirmation
-                    </Button>
-                    {b.mode === "online" && !b.zoom_join_url && (
-                      <Button size="sm" variant="outline" className="min-h-[40px]" disabled={busyId === b.id}
-                        onClick={async () => {
-                          setBusyId(b.id);
-                          const { data, error } = await supabase.functions.invoke("zoom-create-meeting", {
-                            body: { booking_id: b.id },
-                          });
-                          if (error || data?.error) toast.error(data?.error || error?.message);
-                          else { toast.success("Video room created"); await load(); }
-                          setBusyId(null);
-                        }}>
-                        Create video room
-                      </Button>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor={`note-${b.id}`} className="text-xs">Internal notes</Label>
-                    <Textarea
-                      id={`note-${b.id}`} rows={2} className="mt-1"
-                      defaultValue={b.internal_notes ?? ""}
-                      onBlur={(e) => {
-                        if (e.target.value !== (b.internal_notes ?? "")) {
-                          run(b.id, { action: "update_notes", booking_id: b.id, internal_notes: e.target.value }, "Notes saved");
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <BookingsTable
+            bookings={bookings}
+            calendlyEvents={calendlyEvents}
+            services={services}
+            practitioners={practitioners}
+            tz={tz}
+            busyId={busyId}
+            onReschedule={(b) => { setRescheduleTarget(b); setNewStart(""); }}
+            onAction={(id, body, msg) => { void run(id, body, msg); }}
+            onCreateZoom={(b) => { void createZoomRoom(b); }}
+            onSync={() => { void syncCalendly(); }}
+            syncing={syncing}
+            lastSync={lastSync}
+          />
         </TabsContent>
 
         {/* ───────── Availability ───────── */}
