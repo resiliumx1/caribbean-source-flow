@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import {
-  CalendarX2, Clock, ExternalLink, Mail, RefreshCw, Search, Video, X,
+  CalendarX2, Check, Clock, Copy, ExternalLink, Mail, RefreshCw, Search, Video, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -115,6 +115,22 @@ export default function BookingsTable({
   const [organizer, setOrganizer] = useState("all");
   const [payment, setPayment] = useState<"all" | PaymentState>("all");
   const [detail, setDetail] = useState<Row | null>(null);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+
+  const copyJoinUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      const el = document.createElement("textarea");
+      el.value = url;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+    }
+    setCopiedUrl(url);
+    window.setTimeout(() => setCopiedUrl(null), 2200);
+  };
 
   const serviceName = (id: string | null) =>
     services.find((s) => s.id === id)?.name ?? "Consultation";
