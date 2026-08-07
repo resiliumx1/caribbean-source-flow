@@ -5,7 +5,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { DirectAnswer } from "@/components/DirectAnswer";
 import { ConsultationWizard } from "@/components/consultation/ConsultationWizard";
 import { useConsultationAvailability } from "@/hooks/use-consultations";
-import { moneyUsd } from "@/lib/consultation-utils";
+import { moneyUsd, durationLabel } from "@/lib/consultation-utils";
 import priestPhoto from "@/assets/priest-kailash-host.webp";
 import "@/styles/consultation.css";
 
@@ -133,7 +133,7 @@ export default function Consultations() {
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
             {[
-              { icon: Clock, label: `${service?.duration_minutes ?? 60} minutes, one to one` },
+              { icon: Clock, label: `${durationLabel(service?.duration_minutes)}, one to one` },
               { icon: Leaf, label: service ? `${moneyUsd(service.price_usd)} USD` : "USD 300" },
               { icon: Video, label: "Online video room" },
               { icon: MapPin, label: "Or in person in Saint Lucia" },

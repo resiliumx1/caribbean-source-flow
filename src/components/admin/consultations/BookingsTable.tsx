@@ -91,7 +91,8 @@ type DatePreset = "all" | "today" | "next7" | "month" | "past" | "custom";
 
 export default function BookingsTable({
   bookings, calendlyEvents, services, practitioners, tz,
-  busyId, onReschedule, onAction, onCreateZoom, onSync, syncing, lastSync,
+  busyId, onReschedule, onAction, onCreateZoom, onSendCalendlyConfirmation,
+  onSync, syncing, lastSync,
 }: {
   bookings: Booking[];
   calendlyEvents: CalendlyEvent[];
@@ -102,6 +103,7 @@ export default function BookingsTable({
   onReschedule: (b: Booking) => void;
   onAction: (id: string, body: Record<string, unknown>, okMessage: string) => void;
   onCreateZoom: (b: Booking) => void;
+  onSendCalendlyConfirmation: (e: CalendlyEvent) => void;
   onSync: () => void;
   syncing: boolean;
   lastSync: string | null;
@@ -435,10 +437,25 @@ export default function BookingsTable({
               </div>
 
               {detail.source === "calendly" ? (
-                <p className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
-                  Imported from Calendly and read-only here. Reschedule or cancel it in Calendly,
-                  then run the sync again.
-                </p>
+                <>
+                  <p className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
+                    Imported from Calendly and read-only here. Reschedule or cancel it in Calendly,
+                    then run the sync again.
+                  </p>
+                  <div className="space-y-2">
+                    <Button size="sm" variant="outline" className="min-h-[40px]"
+                      disabled={busyId === detail.id || !detail.calendly?.invitee_email}
+                      onClick={() => onSendCalendlyConfirmation(detail.calendly!)}>
+                      <Mail className="w-4 h-4 mr-1.5" />
+                      {detail.calendly?.sent_confirmation_at ? "Send confirmation again" : "Send confirmation"}
+                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      {detail.calendly?.sent_confirmation_at
+                        ? `Our confirmation was sent ${momentWithYear(detail.calendly.sent_confirmation_at, tz)}.`
+                        : "Sends our branded confirmation with the meeting link and disclaimer."}
+                    </p>
+                  </div>
+                </>
               ) : detail.booking && (
                 <>
                   <div className="flex flex-wrap gap-2">

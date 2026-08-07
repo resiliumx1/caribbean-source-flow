@@ -27,6 +27,7 @@ import {
 } from "@/hooks/use-consultations";
 import {
   captureAttribution, detectTimezone, fullMoment, moneyUsd, zoneLabel, type Slot,
+  durationLabel,
 } from "@/lib/consultation-utils";
 
 type Mode = "in_person" | "online";
@@ -288,7 +289,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
               <dl className="grid sm:grid-cols-3 gap-4">
                 <div>
                   <dt className="consult-eyebrow">Length</dt>
-                  <dd style={{ fontSize: "16px" }}>{service.duration_minutes} minutes</dd>
+                  <dd style={{ fontSize: "16px" }}>{durationLabel(service.duration_minutes)}</dd>
                 </div>
                 <div>
                   <dt className="consult-eyebrow">Fee</dt>
