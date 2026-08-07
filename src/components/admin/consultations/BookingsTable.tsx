@@ -102,6 +102,7 @@ export default function BookingsTable({
   onReschedule: (b: Booking) => void;
   onAction: (id: string, body: Record<string, unknown>, okMessage: string) => void;
   onCreateZoom: (b: Booking) => void;
+  onSendCalendlyConfirmation: (e: CalendlyEvent) => void;
   onSync: () => void;
   syncing: boolean;
   lastSync: string | null;
