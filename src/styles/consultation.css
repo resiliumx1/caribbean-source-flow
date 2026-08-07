@@ -392,3 +392,230 @@
   line-height: 1.65;
   color: var(--c-ink-soft);
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Consultation service cards and their botanical line-art icons
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Icon base weights ── */
+.consult .ic-ring { stroke-width: 1.3; opacity: 0.5; }
+.consult .ic-arc  { stroke-width: 1.3; opacity: 0.35; }
+.consult .ic-seg  { stroke-width: 2.4; opacity: 0.35; }
+.consult .ic-seg--done { opacity: 1; }
+.consult .ic-bar  { stroke-width: 2.4; }
+.consult .ic-base { stroke-width: 1.3; opacity: 0.45; }
+
+.consult-card__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  color: var(--c-gold-deep);
+  background: color-mix(in srgb, var(--c-gold) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-gold) 34%, transparent);
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+              color 240ms ease, background 240ms ease, border-color 240ms ease;
+}
+.consult-card__icon svg { width: 34px; height: 34px; overflow: visible; }
+
+/* ── Draw-in: each stroke arrives in sequence, keyed off --i ── */
+.consult-card__icon svg :is(path, circle) {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.consult-card[data-inview="false"] .consult-card__icon svg :is(path, circle) {
+  stroke-dashoffset: 1;
+}
+.consult-card[data-inview="true"] .consult-card__icon svg :is(path, circle) {
+  animation: consult-ic-draw 620ms cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  animation-delay: calc(var(--card-delay, 0ms) + 140ms + (var(--i, 0) * 85ms));
+}
+@keyframes consult-ic-draw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* ── The card itself ── */
+.consult-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  text-align: left;
+  padding: 1.35rem 1.3rem 1.4rem;
+  border-radius: 18px;
+  border: 1px solid var(--c-line);
+  background: var(--c-field);
+  color: var(--c-ink);
+  min-height: 44px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 320ms ease,
+    border-color 240ms ease,
+    background 240ms ease,
+    opacity 460ms ease;
+}
+.consult-card[data-inview="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: var(--card-delay, 0ms);
+}
+
+/* ── Hover and keyboard focus ── */
+.consult-card:hover,
+.consult-card:focus-visible {
+  transform: translateY(-6px);
+  border-color: var(--c-gold);
+  box-shadow: 0 22px 44px -26px rgba(15, 40, 30, 0.55);
+}
+.dark .consult-card:hover,
+.dark .consult-card:focus-visible {
+  box-shadow: 0 22px 46px -24px rgba(0, 0, 0, 0.72);
+}
+.consult-card:hover .consult-card__icon,
+.consult-card:focus-visible .consult-card__icon {
+  transform: scale(1.08);
+  border-color: var(--c-gold);
+  background: color-mix(in srgb, var(--c-gold) 20%, transparent);
+}
+/* Leaves splay a touch outward. */
+.consult-card:hover .ic-leaf  { transform: rotate(3deg); }
+.consult-card:hover .ic-leaf2 { transform: rotate(-3deg); }
+.consult-card:hover .ic-leaf,
+.consult-card:hover .ic-leaf2 {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.consult-card .ic-leaf, .consult-card .ic-leaf2 {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Remaining ring segments brighten. */
+.consult-card .ic-seg { transition: opacity 300ms ease; }
+.consult-card:hover .ic-seg:not(.ic-seg--done),
+.consult-card:focus-visible .ic-seg:not(.ic-seg--done) { opacity: 0.7; }
+/* Bars grow a couple of pixels, in sequence. */
+.consult-card .ic-bar {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+.consult-card:hover .ic-bar,
+.consult-card:focus-visible .ic-bar { transform: translateY(-2px); }
+
+/* ── Press: brief compression ── */
+.consult-card[data-press="true"] {
+  transform: scale(0.97);
+  transition-duration: 120ms;
+}
+
+/* ── Selection ripple, expanding once from the click point ── */
+.consult-card__ripple {
+  position: absolute;
+  left: var(--rx, 50%);
+  top: var(--ry, 50%);
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 999px;
+  border: 2px solid var(--c-gold);
+  pointer-events: none;
+  z-index: 0;
+  animation: consult-ripple 400ms ease-out forwards;
+}
+@keyframes consult-ripple {
+  from { opacity: 0.65; transform: scale(1); }
+  to   { opacity: 0; transform: scale(18); }
+}
+
+/* ── Persistent selected state: unmistakable in both themes ── */
+.consult-card[data-selected="true"] {
+  border-color: var(--c-gold-deep);
+  background: color-mix(in srgb, var(--c-forest) 10%, var(--c-field));
+  box-shadow: inset 0 0 0 2px var(--c-gold-deep), 0 16px 34px -26px rgba(15, 40, 30, 0.5);
+}
+.dark .consult-card[data-selected="true"] {
+  background: color-mix(in srgb, var(--c-gold) 16%, var(--c-field));
+  box-shadow: inset 0 0 0 2px var(--c-gold), 0 18px 36px -24px rgba(0, 0, 0, 0.7);
+}
+.consult-card[data-selected="true"] .consult-card__icon {
+  color: var(--c-forest-ink);
+  background: var(--c-forest);
+  border-color: var(--c-forest);
+}
+.consult-card__check {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--c-forest);
+  color: var(--c-forest-ink);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 220ms ease, transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.consult-card[data-selected="true"] .consult-card__check { opacity: 1; transform: scale(1); }
+
+/* ── Card content ── */
+.consult-card__title {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  padding-right: 1.75rem;
+}
+.consult-card__note {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--c-ink-soft);
+  flex: 1 1 auto;
+}
+.consult-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 14px;
+  color: var(--c-ink-soft);
+  margin-top: auto;
+}
+.consult-card__price { font-size: 15px; font-weight: 500; color: var(--c-ink); }
+.consult-card__featured {
+  align-self: flex-start;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-gold-deep);
+  border: 1px solid color-mix(in srgb, var(--c-gold) 45%, transparent);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+}
+
+/* ── Reduced motion: everything settled, icons fully drawn ── */
+@media (prefers-reduced-motion: reduce) {
+  .consult-card,
+  .consult-card__icon,
+  .consult-card__check,
+  .consult-card .ic-bar,
+  .consult-card .ic-leaf,
+  .consult-card .ic-leaf2,
+  .consult-card .ic-seg { transition: none !important; animation: none !important; }
+  .consult-card { opacity: 1 !important; transform: none !important; }
+  .consult-card:hover, .consult-card:focus-visible { transform: none; }
+  .consult-card[data-inview] .consult-card__icon svg :is(path, circle) {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .consult-card__ripple { display: none; }
+}
