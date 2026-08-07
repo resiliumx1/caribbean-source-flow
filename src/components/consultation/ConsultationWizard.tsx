@@ -322,7 +322,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     );
   }
 
-  if (catalogError || !categories.length) {
+  if (catalogError || !allServices.length) {
     return (
       <div className="consult">
         <div className="consult-panel p-6 sm:p-8 text-center">
@@ -337,108 +337,72 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   return (
     <div className="consult" ref={topRef}>
       <p className="consult-step-compact mb-4">
-        Step {step + 1} of {STEP_LABELS.length} · {STEP_LABELS[step]}
+        Step {flowIndex + 1} of {flow.length} · {STEP_LABELS[step]}
       </p>
       <nav className="consult-steps mb-6" aria-label="Booking steps">
-        {STEP_LABELS.map((label, i) => (
-          <span key={label} className="inline-flex items-center gap-2">
-            <span className="consult-step" data-state={step === i ? "current" : step > i ? "done" : "todo"}>
+        {flow.map((id, i) => (
+          <span key={id} className="inline-flex items-center gap-2">
+            <span className="consult-step" data-state={i === flowIndex ? "current" : i < flowIndex ? "done" : "todo"}>
               <span className="consult-step-dot">
-                {step > i ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
+                {i < flowIndex ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
               </span>
-              <span className="hidden sm:inline">{label}</span>
+              <span className="hidden sm:inline">{STEP_LABELS[id]}</span>
             </span>
-            {i < STEP_LABELS.length - 1 && <span className="consult-step-sep" aria-hidden />}
+            {i < flow.length - 1 && <span className="consult-step-sep" aria-hidden />}
           </span>
         ))}
       </nav>
 
       <div className="consult-panel p-5 sm:p-8">
         <AnimatePresence mode="wait">
-          {/* ─── 1. Focus ─── */}
-          {step === S_CATEGORY && (
-            <motion.div key="s-cat" {...fade}>
+          {/* ─── 1. Session type ─── */}
+          {step === S_SERVICE && (
+            <motion.div key="s-svc" {...fade}>
               <p className="consult-eyebrow mb-2">Where to begin</p>
-              <h2 className="consult-serif" style={{ fontSize: "clamp(1.6rem,3.4vw,2.2rem)", lineHeight: 1.15 }}>
-                What brings you to the practice?
+              <h2 className="consult-serif" style={{ fontSize: "clamp(1.5rem,3.2vw,2rem)" }}>
+                Choose a consultation
               </h2>
               <p className="consult-body mt-3" style={{ maxWidth: "40rem" }}>
-                Choose the closest fit. You can move back at any point without losing anything.
+                Every session is one to one with Rt. Hon. Priest Kailash. You can move back at any
+                point without losing anything.
               </p>
 
               <div className="mt-6 grid sm:grid-cols-2 gap-3">
-                {categories.map((c: ConsultationCategory) => {
-                  const Icon = CATEGORY_ICONS[c.icon ?? ""] ?? Leaf;
-                  const count = allServices.filter((s) => s.category_id === c.id).length;
+                {allServices.map((s) => {
+                  const Icon = SERVICE_ICONS[s.icon ?? ""] ?? Leaf;
+                  const free = s.requires_payment === false;
+                  // The package is the higher commitment, marked with a quiet accent.
+                  const featured = s.icon === "repeat";
                   return (
                     <button
-                      key={c.id}
+                      key={s.id}
                       type="button"
                       className="consult-choice"
-                      aria-pressed={categoryId === c.id}
-                      disabled={count === 0}
+                      data-featured={featured ? "true" : undefined}
+                      aria-pressed={serviceId === s.id}
                       onClick={() => {
-                        setCategoryId(c.id);
-                        setServiceId(null);
+                        setServiceId(s.id);
                         setSlot(null);
                         setSelectedDate(null);
-                        goTo(S_SERVICE);
+                        setHold(null);
+                        if (s.mode !== "both") setMode(s.mode as Mode);
+                        goTo(s.mode === "both" ? S_MODE : S_TIME);
                       }}
                     >
                       <span className="consult-choice__title">
                         <Icon className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} aria-hidden />
-                        {c.name}
+                        {s.name}
                       </span>
-                      {c.description && <span className="consult-choice__note">{c.description}</span>}
-                      {count === 0 && <span className="consult-choice__meta">Nothing bookable here yet</span>}
+                      {s.description && <span className="consult-choice__note">{s.description}</span>}
+                      <span className="consult-choice__meta">
+                        {durationLabel(s.duration_minutes)} ·{" "}
+                        {free ? "No payment required" : `${moneyUsd(s.price_usd)} USD`} ·{" "}
+                        {s.mode === "both" ? "Online or in person"
+                          : s.mode === "online" ? "Online" : "In person"}
+                      </span>
                     </button>
                   );
                 })}
-              </div>
-            </motion.div>
-          )}
-
-          {/* ─── 2. Session type ─── */}
-          {step === S_SERVICE && (
-            <motion.div key="s-svc" {...fade}>
-              <p className="consult-eyebrow mb-2">
-                {categories.find((c) => c.id === categoryId)?.name ?? "Session"}
-              </p>
-              <h2 className="consult-serif" style={{ fontSize: "clamp(1.5rem,3.2vw,2rem)" }}>
-                Choose a consultation
-              </h2>
-
-              <div className="mt-6 grid sm:grid-cols-2 gap-3">
-                {categoryServices.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    className="consult-choice"
-                    aria-pressed={serviceId === s.id}
-                    onClick={() => {
-                      setServiceId(s.id);
-                      setSlot(null);
-                      setSelectedDate(null);
-                      setHold(null);
-                      if (s.mode !== "both") setMode(s.mode as Mode);
-                      goTo(s.mode === "both" ? S_MODE : S_TIME);
-                    }}
-                  >
-                    <span className="consult-choice__title">{s.name}</span>
-                    {s.description && <span className="consult-choice__note">{s.description}</span>}
-                    <span className="consult-choice__meta">
-                      {durationLabel(s.duration_minutes)} · {moneyUsd(s.price_usd)} USD ·{" "}
-                      {s.mode === "both" ? "Online or in person"
-                        : s.mode === "online" ? "Online only" : "In person only"}
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="mt-7">
-                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(S_CATEGORY)}>
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                </Button>
               </div>
             </motion.div>
           )}
