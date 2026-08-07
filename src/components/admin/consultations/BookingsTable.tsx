@@ -75,6 +75,8 @@ type Row = {
   amount: number;
   customerTimezone: string | null;
   joinUrl: string | null;
+  needsVerification: boolean;
+  packageEmail: string | null;
   booking?: Booking;
   calendly?: CalendlyEvent;
 };
@@ -155,6 +157,8 @@ export default function BookingsTable({
       amount: Number(b.amount) || 0,
       customerTimezone: b.customer_timezone,
       joinUrl: b.zoom_join_url,
+      needsVerification: !!b.needs_verification,
+      packageEmail: b.package_purchase_email ?? null,
       booking: b,
     }));
 
