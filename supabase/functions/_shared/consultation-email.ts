@@ -123,6 +123,58 @@ export interface EmailContext {
 }
 
 /**
+ * Branded confirmation for a session that was booked through Calendly. Carries
+ * the meeting link Calendly issued plus the same disclaimer as native bookings.
+ */
+export async function sendCalendlyConfirmationEmail(
+  ev: any,
+): Promise<{ sent: boolean; error?: string }> {
+  if (!ev?.invitee_email) return { sent: false, error: "No invitee email on that session." };
+  const inviteeZone = ev.invitee_timezone || "America/St_Lucia";
+  const name = ev.invitee_name || "there";
+  const minutes = Math.max(
+    1,
+    Math.round((new Date(ev.ends_at).getTime() - new Date(ev.starts_at).getTime()) / 60000),
+  );
+
+  const rows: [string, string][] = [
+    ["Session", ev.event_name || "Private Consultation"],
+    ["Your time", formatInZone(ev.starts_at, inviteeZone)],
+    ["Saint Lucia time", formatInZone(ev.starts_at, "America/St_Lucia")],
+    ["Duration", durationLabel(minutes)],
+    ["Format", ev.join_url ? "Online via Zoom" : "Online — link to follow"],
+  ];
+  if (ev.join_url) {
+    rows.push(["Meeting link", `<a href="${ev.join_url}" style="color:${BRAND_GOLD};">Join the session</a>`]);
+  }
+
+  const cta = ev.join_url
+    ? goldButton(ev.join_url, "Join your session on Zoom") +
+      textLink(ev.join_url, "Or paste this link into your browser:")
+    : button(`${SITE_URL}/consultations`, "View consultations");
+
+  const html = shell(
+    "Your consultation is confirmed",
+    `${name}, your time with Rt. Hon. Priest Kailash is reserved. The details and your meeting link are below.`,
+    PREPARE_NOTE + detailRows(rows),
+    cta + disclaimerBlock(),
+  );
+
+  try {
+    await sendResend({
+      from: FROM_CUSTOMER,
+      to: [ev.invitee_email],
+      reply_to: SUPPORT_EMAIL,
+      subject: `Your consultation is confirmed — ${formatInZone(ev.starts_at, inviteeZone)} | Mount Kailash`,
+      html,
+    });
+  } catch (e: any) {
+    return { sent: false, error: e?.message || String(e) };
+  }
+  return { sent: true };
+}
+
+/**
  * Send the customer-facing consultation email plus, for new and changed
  * bookings, the internal notification. Attaches an .ics for calendar entries.
  */
