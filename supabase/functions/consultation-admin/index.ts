@@ -61,6 +61,53 @@ Deno.serve(async (req) => {
     const b = parsed.data;
     const supabase = serviceClient();
 
+    // ---- Zoom health, for the admin status card ----------------------------
+    if (b.action === "zoom_status") {
+      const configured = zoomConfigured();
+      const { data: hosts } = await supabase
+        .from("consultation_practitioners")
+        .select("id, name, zoom_user_email, is_active");
+      const nowIso = new Date().toISOString();
+      const { data: upcoming } = await supabase
+        .from("consultation_bookings")
+        .select("id, booking_reference, starts_at, zoom_join_url, zoom_error")
+        .eq("mode", "online").eq("status", "confirmed").gte("starts_at", nowIso)
+        .order("starts_at", { ascending: true });
+
+      const rows = upcoming ?? [];
+      const missing = rows.filter((r) => !r.zoom_join_url);
+      const missingHost = (hosts ?? []).filter((h) => h.is_active && !h.zoom_user_email);
+
+      let reachable: boolean | null = null;
+      let reachError: string | null = null;
+      if (configured) {
+        try {
+          await zoomToken();
+          reachable = true;
+        } catch (e: any) {
+          reachable = false;
+          reachError = String(e?.message || e).slice(0, 300);
+        }
+      }
+
+      return json({
+        success: true,
+        configured,
+        reachable,
+        error: reachError ?? missing.find((m) => m.zoom_error)?.zoom_error ?? null,
+        hosts: (hosts ?? []).map((h) => ({
+          id: h.id, name: h.name, zoom_user_email: h.zoom_user_email, is_active: h.is_active,
+        })),
+        hosts_missing_email: missingHost.length,
+        upcoming_online: rows.length,
+        upcoming_missing_link: missing.length,
+        missing: missing.slice(0, 8).map((m) => ({
+          id: m.id, reference: m.booking_reference, starts_at: m.starts_at,
+          error: m.zoom_error ?? null,
+        })),
+      });
+    }
+
     // ---- manual creation (phone enquiries) --------------------------------
     if (b.action === "create") {
       if (!b.service_id || !b.start || !b.customer_name || !b.customer_email) {
