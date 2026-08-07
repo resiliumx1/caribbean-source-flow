@@ -21,6 +21,7 @@ export interface Service {
   description: string | null;
   long_description: string | null;
   duration_minutes: number;
+  duration_display_label: string | null;
   buffer_before_minutes: number;
   buffer_after_minutes: number;
   price_usd: number;
