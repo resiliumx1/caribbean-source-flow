@@ -3234,7 +3234,7 @@ export type Database = {
       wce_accept_own_invite: { Args: never; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "wce_admin"
+      app_role: "admin" | "wce_admin" | "consultation_editor"
       wholesale_lead_status:
         | "new"
         | "contacted"
@@ -3368,7 +3368,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "wce_admin"],
+      app_role: ["admin", "wce_admin", "consultation_editor"],
       wholesale_lead_status: [
         "new",
         "contacted",
