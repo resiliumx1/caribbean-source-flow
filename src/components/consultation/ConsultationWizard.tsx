@@ -759,7 +759,14 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                 <dl className="grid sm:grid-cols-2 gap-4">
                   <div><dt>Your time</dt><dd>{fullMoment(paid.starts_at, timezone)}</dd></div>
                   <div><dt>Saint Lucia time</dt><dd>{fullMoment(paid.starts_at, centreZone)}</dd></div>
-                  <div><dt>Paid</dt><dd>{moneyUsd(paid.amount_paid_usd)} USD</dd></div>
+                  <div>
+                    <dt>Payment</dt>
+                    <dd>
+                      {paid.amount_paid_usd > 0
+                        ? `${moneyUsd(paid.amount_paid_usd)} USD paid`
+                        : "Covered by your package"}
+                    </dd>
+                  </div>
                   <div>
                     <dt>Where</dt>
                     <dd>{paid.mode === "in_person" ? CENTRE : "Online, by private video link"}</dd>
