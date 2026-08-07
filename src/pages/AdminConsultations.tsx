@@ -22,6 +22,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import { fullMoment, moneyUsd } from "@/lib/consultation-utils";
 import BookingsTable from "@/components/admin/consultations/BookingsTable";
 import ZoomStatusCard from "@/components/admin/consultations/ZoomStatusCard";
+import { CONSULTATION_ICON_OPTIONS, consultationIcon } from "@/components/consultations/ConsultationIcons";
 
 type Booking = Tables<"consultation_bookings">;
 type Service = Tables<"consultation_services">;
@@ -31,8 +32,6 @@ type Override = Tables<"consultation_availability_overrides">;
 type CalendlyEvent = Tables<"consultation_calendly_events">;
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-const ICON_CHOICES = ["leaf", "clipboard-list", "repeat", "mountain"];
 
 const slugify = (s: string) =>
   s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
