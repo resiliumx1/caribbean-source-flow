@@ -428,13 +428,30 @@ export default function BookingsTable({
                 <p className="text-muted-foreground">
                   {detail.serviceName} · {detail.practitionerName} · {detail.mode}
                 </p>
-                {detail.joinUrl && (
-                  <a href={detail.joinUrl} target="_blank" rel="noreferrer"
-                     className="inline-flex items-center gap-1.5 text-sm underline">
-                    <Video className="w-4 h-4" /> Join link <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
               </div>
+
+              {detail.joinUrl && (
+                <div className="rounded-lg border bg-muted/40 p-3">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Video room
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <Button asChild size="sm" className="min-h-[40px]">
+                      <a href={detail.joinUrl} target="_blank" rel="noreferrer">
+                        <Video className="w-4 h-4 mr-1.5" /> Open join link
+                        <ExternalLink className="w-3 h-3 ml-1.5" />
+                      </a>
+                    </Button>
+                    <Button size="sm" variant="outline" className="min-h-[40px]"
+                      onClick={() => copyJoinUrl(detail.joinUrl!)}>
+                      {copiedUrl === detail.joinUrl
+                        ? <><Check className="w-4 h-4 mr-1.5" /> Copied</>
+                        : <><Copy className="w-4 h-4 mr-1.5" /> Copy link</>}
+                    </Button>
+                  </div>
+                  <p className="mt-2 break-all text-xs text-muted-foreground">{detail.joinUrl}</p>
+                </div>
+              )}
 
               {detail.source === "calendly" ? (
                 <>
