@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Loader2, Plus, RefreshCw, Save } from "lucide-react";
+import {
+  AlertTriangle, ArrowDown, ArrowUp, Copy, Loader2, Plus, RefreshCw, Save,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +25,6 @@ import ZoomStatusCard from "@/components/admin/consultations/ZoomStatusCard";
 
 type Booking = Tables<"consultation_bookings">;
 type Service = Tables<"consultation_services">;
-type Category = Tables<"consultation_categories">;
 type Practitioner = Tables<"consultation_practitioners">;
 type Window = Tables<"consultation_availability">;
 type Override = Tables<"consultation_availability_overrides">;
@@ -56,7 +57,6 @@ export default function AdminConsultations() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [calendlyEvents, setCalendlyEvents] = useState<CalendlyEvent[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
   const [windows, setWindows] = useState<Window[]>([]);
   const [overrides, setOverrides] = useState<Override[]>([]);
@@ -71,23 +71,21 @@ export default function AdminConsultations() {
 
   const load = async () => {
     setLoading(true);
-    const [b, s, p, w, o, c, cat] = await Promise.all([
+    const [b, s, p, w, o, c] = await Promise.all([
       supabase.from("consultation_bookings").select("*").order("starts_at", { ascending: true }),
       supabase.from("consultation_services").select("*").order("display_order"),
       supabase.from("consultation_practitioners").select("*").order("display_order"),
       supabase.from("consultation_availability").select("*").order("day_of_week"),
       supabase.from("consultation_availability_overrides").select("*").order("date"),
       supabase.from("consultation_calendly_events").select("*").order("starts_at", { ascending: false }),
-      supabase.from("consultation_categories").select("*").order("display_order"),
     ]);
-    for (const r of [b, s, p, w, o, c, cat]) if (r.error) toast.error(r.error.message);
+    for (const r of [b, s, p, w, o, c]) if (r.error) toast.error(r.error.message);
     setBookings((b.data as Booking[]) ?? []);
     setServices((s.data as Service[]) ?? []);
     setPractitioners((p.data as Practitioner[]) ?? []);
     setWindows((w.data as Window[]) ?? []);
     setOverrides((o.data as Override[]) ?? []);
     setCalendlyEvents((c.data as CalendlyEvent[]) ?? []);
-    setCategories((cat.data as Category[]) ?? []);
     setLoading(false);
   };
 
@@ -171,16 +169,52 @@ export default function AdminConsultations() {
 
   /* ── Service and practitioner editing ── */
   const saveRow = async (
-    table: "consultation_services" | "consultation_practitioners" | "consultation_categories",
+    table: "consultation_services" | "consultation_practitioners",
     id: string,
     patch: Record<string, unknown>,
   ) => {
     setBusyId(id);
-    const { error } = await supabase.from(table).update(patch).eq("id", id);
+    const { error } = await supabase.from(table).update(patch as never).eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success("Saved"); await load(); }
     setBusyId(null);
   };
+
+  /** Move a session type up or down by swapping display_order with its neighbour. */
+  const reorderService = async (service: Service, direction: -1 | 1) => {
+    const ordered = [...services].sort((a, b) => a.display_order - b.display_order);
+    const i = ordered.findIndex((s) => s.id === service.id);
+    const other = ordered[i + direction];
+    if (!other) return;
+    setBusyId(service.id);
+    const [a, b] = [
+      supabase.from("consultation_services").update({ display_order: other.display_order }).eq("id", service.id),
+      supabase.from("consultation_services").update({ display_order: service.display_order }).eq("id", other.id),
+    ];
+    const results = await Promise.all([a, b]);
+    const failed = results.find((r) => r.error);
+    if (failed?.error) toast.error(failed.error.message);
+    await load();
+    setBusyId(null);
+  };
+
+  /** Copy a session type so a new one can be built from an existing shape. */
+  const duplicateService = async (service: Service) => {
+    setBusyId(service.id);
+    const { id, created_at, updated_at, ...rest } = service as Record<string, unknown> as Service & Record<string, unknown>;
+    const { error } = await supabase.from("consultation_services").insert({
+      ...(rest as never),
+      name: `${service.name} (copy)`,
+      slug: `${service.slug}-copy-${Date.now().toString(36)}`,
+      display_order: services.length + 1,
+      is_active: false,
+    } as never);
+    if (error) toast.error(error.message);
+    else { toast.success("Copied. The copy is hidden until you switch it on."); await load(); }
+    setBusyId(null);
+  };
+
+  const openQuestions = services.filter((s) => s.admin_note);
 
   if (loading) {
     return (
