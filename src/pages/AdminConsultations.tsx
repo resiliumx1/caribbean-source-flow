@@ -216,126 +216,20 @@ export default function AdminConsultations() {
 
         {/* ───────── Bookings ───────── */}
         <TabsContent value="bookings" className="space-y-4 pt-4">
-          <div className="flex gap-2">
-            {(["upcoming", "all", "cancelled"] as const).map((f) => (
-              <Button key={f} size="sm" variant={filter === f ? "default" : "outline"}
-                className="min-h-[40px] capitalize" onClick={() => setFilter(f)}>
-                {f}
-              </Button>
-            ))}
-          </div>
-
-          {visible.length === 0 ? (
-            <div className="rounded-xl border p-8 text-center text-muted-foreground">
-              No consultations in this view yet.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {visible.map((b) => (
-                <div key={b.id} className="rounded-xl border p-4 space-y-3">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium">{b.customer_name}</span>
-                        <Badge variant="outline" className={STATUS_TONE[b.status] ?? ""}>
-                          {b.status.replace(/_/g, " ")}
-                        </Badge>
-                        <Badge variant="outline">{b.mode === "online" ? "Online" : "In person"}</Badge>
-                        {b.mode === "online" && !b.zoom_join_url && b.status === "confirmed" && (
-                          <Badge variant="outline" className="bg-amber-100 text-amber-900 border-amber-300">
-                            No video link
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {b.booking_reference} · {b.customer_email}
-                        {b.customer_phone ? ` · ${b.customer_phone}` : ""}
-                      </p>
-                      <p className="text-sm mt-1">
-                        <Clock className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" />
-                        {fullMoment(b.starts_at, tz)}
-                        <span className="text-muted-foreground">
-                          {" "}· their time {fullMoment(b.starts_at, b.customer_timezone || tz)}
-                        </span>
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">{moneyUsd(Number(b.amount))}</p>
-                      {Number(b.discount_usd) > 0 && (
-                        <p className="text-xs text-muted-foreground">
-                          {b.coupon_code} · −{moneyUsd(Number(b.discount_usd))}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {(b.notes || Object.keys((b.intake_answers as object) ?? {}).length > 0) && (
-                    <div className="rounded-lg bg-muted/50 p-3 text-sm whitespace-pre-wrap">
-                      {b.notes}
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" className="min-h-[40px]"
-                      disabled={busyId === b.id || b.status === "cancelled"}
-                      onClick={() => { setRescheduleTarget(b); setNewStart(""); }}>
-                      Reschedule
-                    </Button>
-                    <Button size="sm" variant="outline" className="min-h-[40px]"
-                      disabled={busyId === b.id || b.status === "cancelled"}
-                      onClick={() => run(b.id, {
-                        action: "cancel", booking_id: b.id, send_email: true,
-                        reason: "Cancelled by Mount Kailash",
-                      }, "Booking cancelled")}>
-                      <CalendarX2 className="w-4 h-4 mr-1.5" /> Cancel
-                    </Button>
-                    <Select
-                      value={b.status}
-                      onValueChange={(v) => run(b.id, { action: "set_status", booking_id: b.id, status: v }, "Status updated")}
-                    >
-                      <SelectTrigger className="h-10 w-[170px]"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {["confirmed", "completed", "cancelled", "no_show"].map((s) => (
-                          <SelectItem key={s} value={s}>{s.replace(/_/g, " ")}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button size="sm" variant="outline" className="min-h-[40px]" disabled={busyId === b.id}
-                      onClick={() => run(b.id, { action: "resend_email", booking_id: b.id, email_type: "confirmation" }, "Confirmation resent")}>
-                      <Mail className="w-4 h-4 mr-1.5" /> Resend confirmation
-                    </Button>
-                    {b.mode === "online" && !b.zoom_join_url && (
-                      <Button size="sm" variant="outline" className="min-h-[40px]" disabled={busyId === b.id}
-                        onClick={async () => {
-                          setBusyId(b.id);
-                          const { data, error } = await supabase.functions.invoke("zoom-create-meeting", {
-                            body: { booking_id: b.id },
-                          });
-                          if (error || data?.error) toast.error(data?.error || error?.message);
-                          else { toast.success("Video room created"); await load(); }
-                          setBusyId(null);
-                        }}>
-                        Create video room
-                      </Button>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor={`note-${b.id}`} className="text-xs">Internal notes</Label>
-                    <Textarea
-                      id={`note-${b.id}`} rows={2} className="mt-1"
-                      defaultValue={b.internal_notes ?? ""}
-                      onBlur={(e) => {
-                        if (e.target.value !== (b.internal_notes ?? "")) {
-                          run(b.id, { action: "update_notes", booking_id: b.id, internal_notes: e.target.value }, "Notes saved");
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <BookingsTable
+            bookings={bookings}
+            calendlyEvents={calendlyEvents}
+            services={services}
+            practitioners={practitioners}
+            tz={tz}
+            busyId={busyId}
+            onReschedule={(b) => { setRescheduleTarget(b); setNewStart(""); }}
+            onAction={(id, body, msg) => { void run(id, body, msg); }}
+            onCreateZoom={(b) => { void createZoomRoom(b); }}
+            onSync={() => { void syncCalendly(); }}
+            syncing={syncing}
+            lastSync={lastSync}
+          />
         </TabsContent>
 
         {/* ───────── Availability ───────── */}
