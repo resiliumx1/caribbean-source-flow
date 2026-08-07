@@ -5,7 +5,9 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod@3.23.8";
 import { DateTime } from "npm:luxon@3.5.0";
 import { requireAdmin, serviceClient } from "../_shared/admin-auth.ts";
-import { createZoomMeeting, deleteZoomMeeting, updateZoomMeeting, zoomConfigured } from "../_shared/zoom.ts";
+import {
+  createZoomMeeting, deleteZoomMeeting, updateZoomMeeting, zoomConfigured, zoomPing,
+} from "../_shared/zoom.ts";
 import { sendConsultationEmail } from "../_shared/consultation-email.ts";
 import { isValidZone } from "../_shared/consultation.ts";
 
@@ -82,7 +84,7 @@ Deno.serve(async (req) => {
       let reachError: string | null = null;
       if (configured) {
         try {
-          await zoomToken();
+          await zoomPing();
           reachable = true;
         } catch (e: any) {
           reachable = false;
