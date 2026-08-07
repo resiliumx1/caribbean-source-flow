@@ -130,17 +130,17 @@ export default function Consultations() {
             className="mt-5 mx-auto"
             style={{ maxWidth: "42rem", fontSize: "17px", lineHeight: 1.8, color: "var(--c-ink-soft)" }}
           >
-            A private one hour session, one to one, online or in person in Saint Lucia. Sessions are
-            taken in small number and only open times appear below. Choose one and it is held the
-            moment you confirm.
+            One-to-one sessions with Rt. Hon. Priest Kailash, held online. Choose a single
+            consultation, a five session package, a follow-on session from an existing package, or
+            a business consultation. Only open times appear below.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
             {[
               { icon: Clock, label: `${durationLabel(service?.duration_minutes)}, one to one` },
-              { icon: Leaf, label: service ? `${moneyUsd(service.price_usd)} USD` : "USD 300" },
+              { icon: Leaf, label: `From ${service ? moneyUsd(service.price_usd) : "300"} USD` },
               { icon: Video, label: "Online video room" },
-              { icon: MapPin, label: "Or in person in Saint Lucia" },
+              { icon: MapPin, label: "Saint Lucia practice" },
             ].map(({ icon: Icon, label }) => (
               <span key={label} className="inline-flex items-center gap-2" style={{ fontSize: "15px" }}>
                 <Icon className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} />
@@ -153,7 +153,7 @@ export default function Consultations() {
 
       <DirectAnswer
         question="How do I book a consultation with Priest Kailash?"
-        answer="Choose what you are coming for, pick an open time on this page, and pay the USD 300 fee. The hour is reserved for you immediately and a confirmation with a calendar invitation — and a private video link for online sessions — arrives by email. Consultations are one hour, one to one with Rt. Hon. Priest Kailash himself, either online or in person at the Mount Kailash Rejuvenation Centre in Saint Lucia, and every confirmation includes a link to reschedule or cancel."
+        answer="Choose one of the four consultations on this page, pick an open time, and pay the fee, which starts at USD 300. The time is reserved for you immediately and a confirmation with a calendar invitation and a private video link arrives by email. Sessions are one to one with Rt. Hon. Priest Kailash himself, and every confirmation includes a link to reschedule or cancel."
       />
 
       {/* Wizard */}
