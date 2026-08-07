@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SlotPicker } from "@/components/consultation/SlotPicker";
 import {
   detectTimezone, fullMoment, moneyUsd, zoneLabel, type Slot,
+  durationLabel,
 } from "@/lib/consultation-utils";
 import "@/styles/consultation.css";
 
@@ -204,7 +205,7 @@ export default function ConsultationManage() {
                 <dl className="grid sm:grid-cols-2 gap-4">
                   <div><dt>Your time</dt><dd>{fullMoment(b.starts_at, timezone)}</dd></div>
                   <div><dt>His time</dt><dd>{fullMoment(b.starts_at, practitionerTz)}</dd></div>
-                  <div><dt>Length</dt><dd>{payload?.service?.duration_minutes ?? 60} minutes</dd></div>
+                  <div><dt>Length</dt><dd>{durationLabel(payload?.service?.duration_minutes)}</dd></div>
                   <div><dt>Paid</dt><dd>{moneyUsd(b.amount)} {b.currency}</dd></div>
                   <div className="sm:col-span-2">
                     <dt>Where</dt>
