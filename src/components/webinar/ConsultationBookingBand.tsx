@@ -1,93 +1,104 @@
-import { Calendar, Clock, Video, Sparkles } from "lucide-react";
-import { ConsultationBookingForm } from "@/components/consultation/ConsultationBookingForm";
-import { useConsultationSettings } from "@/hooks/use-consultation-settings";
+import { Link } from "react-router-dom";
+import { Clock, Leaf, Video } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNextConsultationSlot } from "@/hooks/use-consultations";
+import { detectTimezone, fullMoment, moneyUsd } from "@/lib/consultation-utils";
 
+/**
+ * Webinar-page band inviting viewers into a private consultation.
+ * Lives on the permanently dark webinar page, so colours are set locally.
+ */
 export function ConsultationBookingBand() {
-  const { data: settings } = useConsultationSettings();
+  const { data } = useNextConsultationSlot();
+  const nextSlot = data?.slots?.[0]?.start;
+  const priceUsd = data?.service?.price_usd;
+  const duration = data?.service?.duration_minutes ?? 60;
+  const zone = detectTimezone();
 
   return (
-    <section
-      className="py-16 sm:py-20 px-4 relative overflow-hidden"
-      style={{
-        background: "linear-gradient(180deg, rgba(15,40,30,0.98) 0%, rgba(10,28,22,0.98) 100%)",
-        borderTop: "1px solid rgba(201,168,76,0.15)",
-        borderBottom: "1px solid rgba(201,168,76,0.15)",
-      }}
-    >
-      <div className="max-w-3xl mx-auto relative z-10">
-        <div className="text-center mb-8">
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4"
-            style={{
-              background: "rgba(201,168,76,0.12)",
-              color: "#C9A227",
-              border: "1px solid rgba(201,168,76,0.25)",
-            }}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Private Session
-          </div>
-
-          <h2
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
-              color: "#F5F1E8",
-              marginBottom: "12px",
-            }}
-          >
-            Book a 1-on-1 Consultation
-          </h2>
-
-          <p
-            className="max-w-xl mx-auto"
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 300,
-              fontSize: "16px",
-              color: "rgba(245,241,232,0.75)",
-              lineHeight: 1.7,
-            }}
-          >
-            Move from education to action. Work directly with Priest Kailash to build a
-            personalized protocol rooted in your history, symptoms, and goals.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8 text-sm" style={{ color: "rgba(245,241,232,0.7)" }}>
-          <span className="inline-flex items-center gap-2">
-            <Clock className="w-4 h-4" style={{ color: "#C9A227" }} />
-            {settings?.duration_minutes || 30} minutes
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <Calendar className="w-4 h-4" style={{ color: "#C9A227" }} />
-            {settings?.notice_hours || 24}-hour notice
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <Video className="w-4 h-4" style={{ color: "#C9A227" }} />
-            Zoom session
-          </span>
-        </div>
-
-        <div
-          className="rounded-2xl p-6 sm:p-8"
+    <section className="py-16 px-4" style={{ background: "linear-gradient(180deg,#0B1F15,#0F281E)" }}>
+      <div
+        className="max-w-4xl mx-auto rounded-3xl p-7 sm:p-10 text-center"
+        style={{
+          background: "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(188,138,95,0.28)",
+        }}
+      >
+        <p
           style={{
-            background: "rgba(245,241,232,0.03)",
-            border: "1px solid rgba(201,168,76,0.15)",
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "12px",
+            fontWeight: 500,
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "#D8B074",
+            marginBottom: "10px",
           }}
         >
-          <ConsultationBookingForm settings={settings ?? null} compact />
+          Go deeper, one to one
+        </p>
+        <h2
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: 300,
+            fontSize: "clamp(1.8rem, 4vw, 2.5rem)",
+            lineHeight: 1.14,
+            color: "#F5F1E8",
+          }}
+        >
+          Book a private hour with Rt. Hon. Priest Kailash
+        </h2>
+        <p
+          className="mt-4 mx-auto"
+          style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 300,
+            fontSize: "16px",
+            lineHeight: 1.8,
+            color: "rgba(245,241,232,0.78)",
+            maxWidth: "36rem",
+          }}
+        >
+          The webinars are the teaching. A consultation is your own protocol, built around your
+          history and the pattern beneath your condition.
+        </p>
+
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5">
+          {[
+            { icon: Clock, label: `${duration} minutes` },
+            { icon: Leaf, label: priceUsd ? `${moneyUsd(priceUsd)} USD` : "USD 300" },
+            { icon: Video, label: "Online or in Saint Lucia" },
+          ].map(({ icon: Icon, label }) => (
+            <span
+              key={label}
+              className="inline-flex items-center gap-2"
+              style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "15px", color: "#F5F1E8" }}
+            >
+              <Icon className="w-4 h-4" style={{ color: "#D8B074" }} />
+              {label}
+            </span>
+          ))}
+        </div>
+
+        {nextSlot && (
+          <p
+            className="mt-5"
+            style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "15px", color: "#D8B074" }}
+          >
+            Next opening: {fullMoment(nextSlot, zone)}
+          </p>
+        )}
+
+        <div className="mt-7">
+          <Button
+            asChild
+            className="min-h-[48px] px-8"
+            style={{ background: "#C9A227", color: "#0B1F15" }}
+          >
+            <Link to="/consultations#book">Reserve your session</Link>
+          </Button>
         </div>
       </div>
-
-      {/* Decorative watermark */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: `radial-gradient(circle at 30% 50%, #C9A227 0%, transparent 45%), radial-gradient(circle at 70% 50%, #C9A227 0%, transparent 45%)`,
-        }}
-      />
     </section>
   );
 }
