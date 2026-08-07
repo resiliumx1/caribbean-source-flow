@@ -1,17 +1,84 @@
-/* Consultation booking — main site design language (ivory, forest, gold). */
+/* Consultation booking — main site design language (ivory, forest, gold).
+   Every surface and text colour is declared for light and dark so the whole
+   flow holds contrast in both themes. */
 
 .consult {
-  --c-bg: var(--site-bg-primary, #F5F1E8);
-  --c-ink: var(--site-text-primary, #0F281E);
-  --c-ink-soft: var(--site-text-secondary, #4A4A4A);
+  --c-bg: var(--site-bg-primary, #F4EFEA);
+  --c-ink: var(--site-text-primary, #193325);
+  --c-ink-soft: #47604F;
   --c-gold: var(--site-gold, #BC8A5F);
-  --c-gold-deep: #9A6B3F;
+  --c-gold-deep: #85562C;
   --c-forest: #14432E;
-  --c-line: rgba(188, 138, 95, 0.22);
-  --c-panel: rgba(255, 255, 255, 0.66);
+  --c-forest-ink: #F4EFEA;
+  --c-line: rgba(133, 86, 44, 0.32);
+  --c-panel: rgba(255, 255, 255, 0.82);
+  --c-field: #FFFFFF;
+  --c-raised: rgba(255, 255, 255, 0.9);
+  --c-muted-surface: rgba(25, 51, 37, 0.05);
+  --c-danger: #A32E17;
   font-family: 'DM Sans', sans-serif;
   color: var(--c-ink);
 }
+
+.dark .consult {
+  --c-bg: var(--site-bg-primary, #193325);
+  --c-ink: #F4EFEA;
+  --c-ink-soft: #C4D2C6;
+  --c-gold: #D4A373;
+  --c-gold-deep: #E3BE93;
+  --c-forest: #D4A373;
+  --c-forest-ink: #14251C;
+  --c-line: rgba(212, 163, 115, 0.34);
+  --c-panel: rgba(255, 255, 255, 0.05);
+  --c-field: rgba(255, 255, 255, 0.09);
+  --c-raised: rgba(255, 255, 255, 0.1);
+  --c-muted-surface: rgba(255, 255, 255, 0.05);
+  --c-danger: #FF9C82;
+}
+
+/* Shared type scale — nothing below 14px, inputs at 16px. */
+.consult-body { font-size: 16px; line-height: 1.75; color: var(--c-ink-soft); }
+.consult-fine { font-size: 14px; line-height: 1.7; color: var(--c-ink-soft); }
+.consult-error { font-size: 14px; line-height: 1.6; color: var(--c-danger); }
+
+.consult-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-ink);
+  display: block;
+}
+
+.consult .consult-input,
+.consult textarea.consult-input {
+  font-size: 16px;
+  min-height: 48px;
+  width: 100%;
+  color: var(--c-ink);
+  background: var(--c-field);
+  border: 1px solid var(--c-line);
+}
+.consult textarea.consult-input { min-height: 96px; }
+.consult .consult-input::placeholder { color: var(--c-ink-soft); opacity: 0.85; }
+
+.consult .consult-input:focus-visible,
+.consult button:focus-visible,
+.consult a:focus-visible,
+.consult [role="button"]:focus-visible {
+  outline: 2px solid var(--c-gold-deep);
+  outline-offset: 2px;
+}
+
+.consult-link {
+  color: var(--c-gold-deep);
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 4px;
+}
+.consult-link:hover { color: var(--c-ink); }
+
+.consult-tzline { font-size: 14px; line-height: 1.7; color: var(--c-ink-soft); }
+.consult-tzline strong { color: var(--c-ink); font-weight: 500; }
 
 .consult-serif {
   font-family: 'Cormorant Garamond', serif;
@@ -46,6 +113,18 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+.consult-step-compact {
+  display: none;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-gold-deep);
+  font-weight: 600;
+}
+@media (max-width: 639px) {
+  .consult-steps { display: none; }
+  .consult-step-compact { display: block; }
+}
 .consult-step {
   display: inline-flex;
   align-items: center;
@@ -63,7 +142,7 @@
   font-size: 12px;
   font-weight: 600;
   border: 1px solid var(--c-line);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--c-raised);
   color: var(--c-gold-deep);
   transition: background 240ms ease, color 240ms ease, border-color 240ms ease;
 }
@@ -71,36 +150,134 @@
 .consult-step[data-state="current"] .consult-step-dot {
   background: var(--c-forest);
   border-color: var(--c-forest);
-  color: #F5F1E8;
+  color: var(--c-forest-ink);
 }
 .consult-step[data-state="done"] .consult-step-dot {
   background: var(--c-gold);
   border-color: var(--c-gold);
-  color: #fff;
+  color: var(--c-forest-ink);
 }
 .consult-step-sep { width: 18px; height: 1px; background: var(--c-line); }
 
-/* Date rail */
-.consult-daybtn {
-  min-width: 84px;
-  min-height: 74px;
-  padding: 0.6rem 0.75rem;
-  border-radius: 14px;
+/* Month calendar */
+.consult-cal {
   border: 1px solid var(--c-line);
-  background: rgba(255, 255, 255, 0.62);
-  text-align: center;
-  transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
+  border-radius: 18px;
+  background: var(--c-raised);
+  padding: 0.9rem;
 }
-.consult-daybtn:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--c-gold); }
-.consult-daybtn[aria-pressed="true"] {
+.consult-cal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.consult-cal__label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--c-ink);
+  margin: 0;
+}
+.consult-cal__nav {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--c-line);
+  background: var(--c-field);
+  color: var(--c-ink);
+}
+.consult-cal__nav:hover:not(:disabled) { border-color: var(--c-gold); }
+.consult-cal__nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.consult-cal__dow,
+.consult-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.consult-cal__dow span {
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-ink-soft);
+  padding-bottom: 4px;
+}
+.consult-cal__blank { display: block; }
+.consult-cal__day {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--c-ink);
+  font-size: 15px;
+  display: grid;
+  place-items: center;
+  transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+.consult-cal__day[data-state="open"] {
+  border-color: var(--c-line);
+  background: var(--c-field);
+  font-weight: 500;
+}
+.consult-cal__day[data-state="open"]:hover { border-color: var(--c-gold); }
+.consult-cal__day[data-state="full"],
+.consult-cal__day[data-state="closed"],
+.consult-cal__day[data-state="outside"] {
+  color: var(--c-ink-soft);
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--c-muted-surface);
+}
+.consult-cal__day[data-state="full"] { opacity: 0.7; }
+.consult-cal__day[aria-pressed="true"] {
   background: var(--c-forest);
   border-color: var(--c-forest);
-  color: #F5F1E8;
+  color: var(--c-forest-ink);
+  font-weight: 600;
+  box-shadow: 0 0 0 2px var(--c-gold) inset;
+  opacity: 1;
 }
-.consult-daybtn:disabled { opacity: 0.38; cursor: not-allowed; }
-.consult-daybtn .dow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.75; }
-.consult-daybtn .dom { font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.1; }
-.consult-daybtn .mon { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75; }
+.consult-cal__num { line-height: 1; }
+.consult-cal__dot {
+  position: absolute;
+  bottom: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--c-gold-deep);
+}
+.consult-cal__day[aria-pressed="true"] .consult-cal__dot { background: var(--c-forest-ink); }
+.consult-cal__strike {
+  position: absolute;
+  width: 62%;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.65;
+}
+.consult-cal__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 0.85rem;
+  font-size: 14px;
+  color: var(--c-ink-soft);
+}
+.consult-cal__legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.consult-cal__key {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--c-line);
+  display: inline-block;
+}
+.consult-cal__key--open { background: var(--c-field); box-shadow: inset 0 -3px 0 var(--c-gold-deep); }
+.consult-cal__key--full { background: var(--c-muted-surface); }
+.consult-cal__key--closed { background: transparent; opacity: 0.5; }
 
 /* Slot buttons */
 .consult-slot {
@@ -108,8 +285,8 @@
   padding: 0.7rem 0.9rem;
   border-radius: 999px;
   border: 1px solid var(--c-line);
-  background: rgba(255, 255, 255, 0.72);
-  font-size: 15px;
+  background: var(--c-field);
+  font-size: 16px;
   color: var(--c-ink);
   transition: transform 200ms ease, border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
 }
@@ -121,43 +298,53 @@
 .consult-slot[aria-pressed="true"] {
   background: var(--c-forest);
   border-color: var(--c-forest);
-  color: #F5F1E8;
+  color: var(--c-forest-ink);
+  font-weight: 500;
+  box-shadow: 0 0 0 2px var(--c-gold) inset;
 }
 
 /* Mode / choice cards */
 .consult-choice {
   text-align: left;
-  padding: 1.1rem 1.15rem;
+  padding: 1.15rem 1.2rem;
   border-radius: 16px;
   border: 1px solid var(--c-line);
-  background: rgba(255, 255, 255, 0.62);
+  background: var(--c-field);
   min-height: 44px;
+  color: var(--c-ink);
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 .consult-choice:hover { transform: translateY(-2px); border-color: var(--c-gold); }
 .consult-choice[aria-pressed="true"] {
-  border-color: var(--c-gold);
-  box-shadow: inset 0 0 0 1px var(--c-gold), 0 10px 26px -20px rgba(15, 40, 30, 0.5);
-  background: rgba(255, 255, 255, 0.86);
+  border-color: var(--c-forest);
+  background: var(--c-forest);
+  color: var(--c-forest-ink);
+  box-shadow: inset 0 0 0 2px var(--c-gold), 0 12px 28px -22px rgba(15, 40, 30, 0.55);
 }
+.consult-choice[aria-pressed="true"] .consult-choice__note,
+.consult-choice[aria-pressed="true"] .consult-choice__meta { color: var(--c-forest-ink); opacity: 0.86; }
+.consult-choice[aria-pressed="true"] svg { color: var(--c-forest-ink) !important; }
+.consult-choice__title { font-size: 17px; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
+.consult-choice__note { display: block; margin-top: 0.35rem; font-size: 14px; line-height: 1.6; color: var(--c-ink-soft); }
+.consult-choice__meta { display: block; margin-top: 0.5rem; font-size: 14px; color: var(--c-ink-soft); }
 
 .consult-summary {
   border: 1px solid var(--c-line);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--c-raised);
   padding: 1.15rem 1.25rem;
 }
 .consult-summary dt { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-gold-deep); }
-.consult-summary dd { font-size: 15px; color: var(--c-ink); margin-top: 2px; }
+.consult-summary dd { font-size: 16px; color: var(--c-ink); margin-top: 2px; }
 
 .consult-hold {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--c-ink-soft);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .consult-daybtn, .consult-slot, .consult-choice { transition: none; }
-  .consult-daybtn:hover, .consult-slot:hover, .consult-choice:hover { transform: none; }
+  .consult-cal__day, .consult-slot, .consult-choice { transition: none; }
+  .consult-slot:hover, .consult-choice:hover { transform: none; }
 }
 
 /* ── Zoom join block (participant-facing) ── */
@@ -166,13 +353,12 @@
   padding: 1.15rem 1.25rem;
   border-radius: 18px;
   border: 1px solid var(--c-gold);
-  background:
-    linear-gradient(180deg, rgba(255, 253, 246, 0.94), rgba(255, 255, 255, 0.7));
+  background: var(--c-raised);
   box-shadow: 0 14px 34px -26px rgba(15, 40, 30, 0.55);
 }
 .consult-join--pending {
   border-color: var(--c-line);
-  background: rgba(255, 255, 255, 0.66);
+  background: var(--c-muted-surface);
   box-shadow: none;
 }
 .consult-join__label {
@@ -190,14 +376,14 @@
 }
 .consult-join__url {
   margin-top: 0.85rem;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--c-ink-soft);
   word-break: break-all;
 }
 .consult-join__note {
   margin-top: 0.5rem;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.65;
   color: var(--c-ink-soft);
 }

@@ -12,7 +12,7 @@ import "@/styles/consultation.css";
 const FAQS = [
   {
     q: "How long is a private consultation with Priest Kailash?",
-    a: "Each private consultation runs for a full hour. That hour is yours alone: your history, your current condition, and the protocol built around it.",
+    a: "A private consultation is booked as a one hour session, one to one with Rt. Hon. Priest Kailash.",
   },
   {
     q: "How much does a consultation cost?",
@@ -20,7 +20,11 @@ const FAQS = [
   },
   {
     q: "Can I meet online instead of travelling to Saint Lucia?",
-    a: "Yes. Consultations are held either online in a private video room or in person at the Mount Kailash Rejuvenation Centre in Saint Lucia. Online bookings receive their private video link by email immediately after payment.",
+    a: "Yes. Consultations are held either online or in person at the Mount Kailash Rejuvenation Centre in Saint Lucia. Online bookings receive a private video link by email once the booking is confirmed; in person bookings receive directions to the centre.",
+  },
+  {
+    q: "When are consultations held?",
+    a: "Open times are published on this page as Priest Kailash releases them. Only times he has open appear in the calendar, so whatever you can select is genuinely available.",
   },
   {
     q: "Can I reschedule or cancel?",
@@ -31,8 +35,8 @@ const FAQS = [
     a: "No. A consultation is traditional herbal guidance rooted in decades of practice with Saint Lucia's mineral rich soil and its botanicals. It is not a substitute for diagnosis or treatment by a licensed medical practitioner.",
   },
   {
-    q: "What should I prepare beforehand?",
-    a: "Bring your history: what you are experiencing, how long it has been present, anything you have already tried, and any medication you are taking. The more Priest Kailash knows in advance, the more precise the protocol.",
+    q: "What do I need to have ready?",
+    a: "For an online session, a stable internet connection and somewhere quiet to sit. For an in person session at the centre, bring any medication you are taking. In both cases the booking form has space for anything you would like him to know beforehand.",
   },
 ];
 
@@ -84,7 +88,7 @@ export default function Consultations() {
     <main className="consult min-h-screen" style={{ background: "var(--c-bg)" }}>
       <SEOHead
         title="Book a Private Consultation with Rt. Hon. Priest Kailash"
-        description="Reserve a one-hour private herbal consultation with Rt. Hon. Priest Kailash of Mount Kailash Rejuvenation Centre, Saint Lucia. Online or in person, USD 300, confirmed instantly."
+        description="Book a one-hour private consultation with Rt. Hon. Priest Kailash of Mount Kailash Rejuvenation Centre, Saint Lucia. Online or in person, USD 300, confirmed the moment you pay."
         path="/consultations"
       />
       <Helmet>
@@ -126,9 +130,9 @@ export default function Consultations() {
             className="mt-5 mx-auto"
             style={{ maxWidth: "42rem", fontSize: "17px", lineHeight: 1.8, color: "var(--c-ink-soft)" }}
           >
-            One person, one hour, one protocol. Sessions are taken slowly and in small number,
-            because each one is prepared before you ever arrive. Choose your time below and it is
-            held the moment you confirm.
+            A private one hour session, one to one, online or in person in Saint Lucia. Sessions are
+            taken in small number and only open times appear below. Choose one and it is held the
+            moment you confirm.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
@@ -149,7 +153,7 @@ export default function Consultations() {
 
       <DirectAnswer
         question="How do I book a consultation with Priest Kailash?"
-        answer="Choose an open time on this page, share a little of your history, and pay the USD 300 fee. The hour is reserved for you immediately and a confirmation with a calendar invitation — and a private video link for online sessions — arrives by email. Consultations run for one hour with Rt. Hon. Priest Kailash himself, either online or in person at the Mount Kailash Rejuvenation Centre in Saint Lucia, and every confirmation includes a link to reschedule or cancel."
+        answer="Choose what you are coming for, pick an open time on this page, and pay the USD 300 fee. The hour is reserved for you immediately and a confirmation with a calendar invitation — and a private video link for online sessions — arrives by email. Consultations are one hour, one to one with Rt. Hon. Priest Kailash himself, either online or in person at the Mount Kailash Rejuvenation Centre in Saint Lucia, and every confirmation includes a link to reschedule or cancel."
       />
 
       {/* Wizard */}
@@ -159,23 +163,23 @@ export default function Consultations() {
         </div>
       </section>
 
-      {/* What the hour holds */}
+      {/* Practical details — logistics only */}
       <section className="px-4 pb-16">
         <div className="max-w-4xl mx-auto">
-          <p className="consult-eyebrow mb-3">What the hour holds</p>
+          <p className="consult-eyebrow mb-3">Practical details</p>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
               {
-                title: "Your history, heard properly",
-                body: "The first part of the hour is listening. What has happened, what has been tried, and what the body has been signalling all along.",
+                title: "Online",
+                body: "A private video link is emailed once your booking is confirmed. You will need a stable internet connection and somewhere quiet to sit.",
               },
               {
-                title: "The pattern beneath it",
-                body: "Priest Kailash works to the root pattern rather than the surface complaint, drawing on decades in Saint Lucia's mineral rich soil and its botanicals.",
+                title: "In person",
+                body: "At the Mount Kailash Rejuvenation Centre in Saint Lucia. Directions arrive with your confirmation. Bring any medication you are taking.",
               },
               {
-                title: "A protocol you can follow",
-                body: "You leave with a clear, sequenced protocol: what to take, in what order, for how long, and what to watch for as the body responds.",
+                title: "Times and changes",
+                body: "All times are shown in your own timezone and confirmed in Saint Lucia time as well. Your confirmation carries a private link to move or cancel the session.",
               },
             ].map((c) => (
               <div key={c.title} className="consult-summary">

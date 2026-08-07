@@ -23,12 +23,18 @@ import ZoomStatusCard from "@/components/admin/consultations/ZoomStatusCard";
 
 type Booking = Tables<"consultation_bookings">;
 type Service = Tables<"consultation_services">;
+type Category = Tables<"consultation_categories">;
 type Practitioner = Tables<"consultation_practitioners">;
 type Window = Tables<"consultation_availability">;
 type Override = Tables<"consultation_availability_overrides">;
 type CalendlyEvent = Tables<"consultation_calendly_events">;
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const ICON_CHOICES = ["leaf", "clipboard-list", "repeat", "mountain"];
+
+const slugify = (s: string) =>
+  s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 
 const STATUS_TONE: Record<string, string> = {
   confirmed: "bg-emerald-100 text-emerald-900 border-emerald-300",
@@ -50,6 +56,7 @@ export default function AdminConsultations() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [calendlyEvents, setCalendlyEvents] = useState<CalendlyEvent[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [practitioners, setPractitioners] = useState<Practitioner[]>([]);
   const [windows, setWindows] = useState<Window[]>([]);
   const [overrides, setOverrides] = useState<Override[]>([]);
@@ -57,28 +64,30 @@ export default function AdminConsultations() {
   const [manualOpen, setManualOpen] = useState(false);
   const [rescheduleTarget, setRescheduleTarget] = useState<Booking | null>(null);
   const [newStart, setNewStart] = useState("");
-  const [syncing, setSyncing] = useState(false);
+  const [syncing] = useState(false);
 
   const practitioner = practitioners[0];
   const tz = practitioner?.timezone ?? "America/St_Lucia";
 
   const load = async () => {
     setLoading(true);
-    const [b, s, p, w, o, c] = await Promise.all([
+    const [b, s, p, w, o, c, cat] = await Promise.all([
       supabase.from("consultation_bookings").select("*").order("starts_at", { ascending: true }),
       supabase.from("consultation_services").select("*").order("display_order"),
       supabase.from("consultation_practitioners").select("*").order("display_order"),
       supabase.from("consultation_availability").select("*").order("day_of_week"),
       supabase.from("consultation_availability_overrides").select("*").order("date"),
       supabase.from("consultation_calendly_events").select("*").order("starts_at", { ascending: false }),
+      supabase.from("consultation_categories").select("*").order("display_order"),
     ]);
-    for (const r of [b, s, p, w, o, c]) if (r.error) toast.error(r.error.message);
+    for (const r of [b, s, p, w, o, c, cat]) if (r.error) toast.error(r.error.message);
     setBookings((b.data as Booking[]) ?? []);
     setServices((s.data as Service[]) ?? []);
     setPractitioners((p.data as Practitioner[]) ?? []);
     setWindows((w.data as Window[]) ?? []);
     setOverrides((o.data as Override[]) ?? []);
     setCalendlyEvents((c.data as CalendlyEvent[]) ?? []);
+    setCategories((cat.data as Category[]) ?? []);
     setLoading(false);
   };
 
@@ -88,23 +97,6 @@ export default function AdminConsultations() {
     (latest, e) => (!latest || e.synced_at > latest ? e.synced_at : latest),
     null,
   );
-
-  const syncCalendly = async () => {
-    setSyncing(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("consultation-calendly-sync", { body: {} });
-      if (error) throw new Error(error.message);
-      if (data?.error) throw new Error(data.error);
-      toast.success(
-        `Calendly sync complete · ${data.added} added, ${data.updated} updated${data.skipped ? `, ${data.skipped} skipped` : ""}${data.emailed ? `, ${data.emailed} confirmation${data.emailed === 1 ? "" : "s"} sent` : ""}`,
-      );
-      await load();
-    } catch (e: any) {
-      toast.error(e?.message || "Calendly sync failed");
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   const createZoomRoom = async (b: Booking) => {
     setBusyId(b.id);
@@ -179,7 +171,7 @@ export default function AdminConsultations() {
 
   /* ── Service and practitioner editing ── */
   const saveRow = async (
-    table: "consultation_services" | "consultation_practitioners",
+    table: "consultation_services" | "consultation_practitioners" | "consultation_categories",
     id: string,
     patch: Record<string, unknown>,
   ) => {
@@ -222,7 +214,8 @@ export default function AdminConsultations() {
         <TabsList>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="availability">Availability</TabsTrigger>
-          <TabsTrigger value="service">Session type</TabsTrigger>
+          <TabsTrigger value="categories">Categories</TabsTrigger>
+          <TabsTrigger value="service">Session types</TabsTrigger>
           <TabsTrigger value="practitioner">Practitioner</TabsTrigger>
         </TabsList>
 
@@ -240,7 +233,6 @@ export default function AdminConsultations() {
             onAction={(id, body, msg) => { void run(id, body, msg); }}
             onCreateZoom={(b) => { void createZoomRoom(b); }}
             onSendCalendlyConfirmation={(e) => { void sendCalendlyConfirmation(e); }}
-            onSync={() => { void syncCalendly(); }}
             syncing={syncing}
             lastSync={lastSync}
           />
@@ -256,7 +248,20 @@ export default function AdminConsultations() {
             <div className="space-y-2">
               {windows.map((w) => (
                 <div key={w.id} className="flex flex-wrap items-center gap-2">
-                  <span className="w-24 text-sm">{DAYS[w.day_of_week]}</span>
+                  <Select
+                    value={String(w.day_of_week)}
+                    onValueChange={async (v) => {
+                      const { error } = await supabase.from("consultation_availability")
+                        .update({ day_of_week: Number(v) }).eq("id", w.id);
+                      if (error) toast.error(error.message);
+                      else { toast.success("Day updated"); await load(); }
+                    }}
+                  >
+                    <SelectTrigger className="w-[140px] min-h-[44px]"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {DAYS.map((d, i) => <SelectItem key={d} value={String(i)}>{d}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                   <Input type="time" defaultValue={w.start_time.slice(0, 5)} className="w-[130px] min-h-[44px]"
                     onBlur={async (e) => {
                       const { error } = await supabase.from("consultation_availability")
@@ -288,8 +293,8 @@ export default function AdminConsultations() {
             <Button size="sm" variant="outline" className="mt-4 min-h-[44px]" onClick={async () => {
               if (!practitioner) return;
               const { error } = await supabase.from("consultation_availability").insert({
-                practitioner_id: practitioner.id, day_of_week: 1,
-                start_time: "09:00", end_time: "16:00",
+                practitioner_id: practitioner.id, day_of_week: 2,
+                start_time: "14:00", end_time: "17:00",
               });
               error ? toast.error(error.message) : await load();
             }}>
@@ -329,12 +334,58 @@ export default function AdminConsultations() {
           </div>
         </TabsContent>
 
+        {/* ───────── Categories ───────── */}
+        <TabsContent value="categories" className="space-y-4 pt-4">
+          <p className="text-sm text-muted-foreground">
+            The four cards someone sees first. Session types are filed underneath them.
+          </p>
+          {categories.map((c) => (
+            <CategoryEditor
+              key={c.id} category={c} busy={busyId === c.id}
+              serviceCount={services.filter((s) => s.category_id === c.id).length}
+              onSave={(patch) => saveRow("consultation_categories", c.id, patch)}
+              onDelete={async () => {
+                const { error } = await supabase.from("consultation_categories").delete().eq("id", c.id);
+                error ? toast.error(error.message) : await load();
+              }}
+            />
+          ))}
+          <Button variant="outline" className="min-h-[44px]" onClick={async () => {
+            const order = (categories.at(-1)?.display_order ?? 0) + 1;
+            const { error } = await supabase.from("consultation_categories").insert({
+              name: "New category", slug: `new-category-${Date.now().toString(36)}`,
+              description: "", icon: "leaf", display_order: order, is_active: false,
+            });
+            error ? toast.error(error.message) : await load();
+          }}>
+            <Plus className="w-4 h-4 mr-2" /> Add a category
+          </Button>
+        </TabsContent>
+
         {/* ───────── Service ───────── */}
         <TabsContent value="service" className="space-y-4 pt-4">
           {services.map((s) => (
-            <ServiceEditor key={s.id} service={s} busy={busyId === s.id}
-              onSave={(patch) => saveRow("consultation_services", s.id, patch)} />
+            <ServiceEditor key={s.id} service={s} categories={categories} busy={busyId === s.id}
+              onSave={(patch) => saveRow("consultation_services", s.id, patch)}
+              onDelete={async () => {
+                const { error } = await supabase.from("consultation_services").delete().eq("id", s.id);
+                error ? toast.error(error.message) : await load();
+              }} />
           ))}
+          <Button variant="outline" className="min-h-[44px]" disabled={!practitioner} onClick={async () => {
+            const { error } = await supabase.from("consultation_services").insert({
+              name: "New session type", slug: `new-session-${Date.now().toString(36)}`,
+              description: "", duration_minutes: 60, buffer_before_minutes: 0, buffer_after_minutes: 0,
+              price_usd: 300, price_xcd: 810, mode: "both",
+              practitioner_id: practitioner!.id,
+              category_id: categories[0]?.id ?? null,
+              min_notice_hours: 24, max_advance_days: 60,
+              display_order: services.length + 1, is_active: false,
+            });
+            error ? toast.error(error.message) : await load();
+          }}>
+            <Plus className="w-4 h-4 mr-2" /> Add a session type
+          </Button>
         </TabsContent>
 
         {/* ───────── Practitioner ───────── */}
@@ -505,10 +556,18 @@ function NewOverride({ practitionerId, onDone }: { practitionerId?: string; onDo
 }
 
 function ServiceEditor({
-  service, busy, onSave,
-}: { service: Service; busy: boolean; onSave: (patch: Record<string, unknown>) => void }) {
+  service, categories, busy, onSave, onDelete,
+}: {
+  service: Service;
+  categories: Category[];
+  busy: boolean;
+  onSave: (patch: Record<string, unknown>) => void;
+  onDelete: () => void;
+}) {
   const [f, setF] = useState({
     name: service.name,
+    category_id: service.category_id ?? "none",
+    display_order: String(service.display_order ?? 0),
     description: service.description ?? "",
     long_description: service.long_description ?? "",
     duration_minutes: String(service.duration_minutes),
@@ -526,6 +585,14 @@ function ServiceEditor({
       <div className="grid sm:grid-cols-2 gap-3">
         <div><Label>Name</Label>
           <Input className="mt-1 min-h-[44px]" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+        <div><Label>Category</Label>
+          <Select value={f.category_id} onValueChange={(v) => setF({ ...f, category_id: v })}>
+            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">Not filed</SelectItem>
+              {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+            </SelectContent>
+          </Select></div>
         <div><Label>Format offered</Label>
           <Select value={f.mode} onValueChange={(v) => setF({ ...f, mode: v })}>
             <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
@@ -535,6 +602,9 @@ function ServiceEditor({
               <SelectItem value="in_person">In person only</SelectItem>
             </SelectContent>
           </Select></div>
+        <div><Label>Order within the category</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.display_order}
+            onChange={(e) => setF({ ...f, display_order: e.target.value })} /></div>
       </div>
       <div><Label>Short description</Label>
         <Textarea rows={2} className="mt-1" value={f.description}
@@ -570,6 +640,8 @@ function ServiceEditor({
         const priceUsd = Number(f.price_usd);
         onSave({
           name: f.name,
+          category_id: f.category_id === "none" ? null : f.category_id,
+          display_order: Number(f.display_order) || 0,
           description: f.description || null,
           long_description: f.long_description || null,
           duration_minutes: Number(f.duration_minutes),
@@ -586,9 +658,82 @@ function ServiceEditor({
         {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
         Save session type
       </Button>
+      <Button variant="ghost" className="min-h-[44px] ml-2 text-destructive" disabled={busy}
+        onClick={() => { if (confirm(`Remove "${service.name}"?`)) onDelete(); }}>
+        Remove
+      </Button>
       <p className="text-xs text-muted-foreground">
         XCD is kept in step automatically at the 2.7 rate used across the store.
       </p>
+    </div>
+  );
+}
+
+function CategoryEditor({
+  category, serviceCount, busy, onSave, onDelete,
+}: {
+  category: Category;
+  serviceCount: number;
+  busy: boolean;
+  onSave: (patch: Record<string, unknown>) => void;
+  onDelete: () => void;
+}) {
+  const [f, setF] = useState({
+    name: category.name,
+    slug: category.slug,
+    description: category.description ?? "",
+    icon: category.icon ?? "leaf",
+    display_order: String(category.display_order),
+    is_active: category.is_active,
+  });
+
+  return (
+    <div className="rounded-xl border p-4 space-y-3">
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div><Label>Name</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.name}
+            onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+        <div><Label>Web address slug</Label>
+          <Input className="mt-1 min-h-[44px]" value={f.slug}
+            onChange={(e) => setF({ ...f, slug: e.target.value })} /></div>
+        <div><Label>Icon</Label>
+          <Select value={f.icon} onValueChange={(v) => setF({ ...f, icon: v })}>
+            <SelectTrigger className="mt-1 min-h-[44px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {ICON_CHOICES.map((i) => <SelectItem key={i} value={i}>{i.replace(/-/g, " ")}</SelectItem>)}
+            </SelectContent>
+          </Select></div>
+        <div><Label>Display order</Label>
+          <Input type="number" className="mt-1 min-h-[44px]" value={f.display_order}
+            onChange={(e) => setF({ ...f, display_order: e.target.value })} /></div>
+      </div>
+      <div><Label>One line description</Label>
+        <Textarea rows={2} className="mt-1" value={f.description}
+          onChange={(e) => setF({ ...f, description: e.target.value })} /></div>
+      <div className="flex flex-wrap items-center gap-3">
+        <Switch checked={f.is_active} onCheckedChange={(v) => setF({ ...f, is_active: v })} />
+        <span className="text-sm">{f.is_active ? "Shown on the site" : "Hidden"}</span>
+        <Badge variant="outline">
+          {serviceCount} session type{serviceCount === 1 ? "" : "s"}
+        </Badge>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button className="min-h-[44px]" disabled={busy} onClick={() => onSave({
+          name: f.name,
+          slug: slugify(f.slug || f.name),
+          description: f.description || null,
+          icon: f.icon,
+          display_order: Number(f.display_order) || 0,
+          is_active: f.is_active,
+        })}>
+          {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+          Save category
+        </Button>
+        <Button variant="ghost" className="min-h-[44px] text-destructive" disabled={busy}
+          onClick={() => { if (confirm(`Remove "${category.name}"?`)) onDelete(); }}>
+          Remove
+        </Button>
+      </div>
     </div>
   );
 }

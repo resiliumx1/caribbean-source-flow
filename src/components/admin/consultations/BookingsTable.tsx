@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import {
-  CalendarX2, Check, Clock, Copy, ExternalLink, Mail, RefreshCw, Search, Video, X,
+  CalendarX2, Check, Clock, Copy, ExternalLink, Mail, Search, Video, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,7 +92,7 @@ type DatePreset = "all" | "today" | "next7" | "month" | "past" | "custom";
 export default function BookingsTable({
   bookings, calendlyEvents, services, practitioners, tz,
   busyId, onReschedule, onAction, onCreateZoom, onSendCalendlyConfirmation,
-  onSync, syncing, lastSync,
+  syncing, lastSync,
 }: {
   bookings: Booking[];
   calendlyEvents: CalendlyEvent[];
@@ -104,7 +104,6 @@ export default function BookingsTable({
   onAction: (id: string, body: Record<string, unknown>, okMessage: string) => void;
   onCreateZoom: (b: Booking) => void;
   onSendCalendlyConfirmation: (e: CalendlyEvent) => void;
-  onSync: () => void;
   syncing: boolean;
   lastSync: string | null;
 }) {
@@ -318,13 +317,9 @@ export default function BookingsTable({
             )}
             {lastSync && (
               <span className="text-xs text-muted-foreground">
-                Last Calendly sync {fullMoment(lastSync, tz)}
+                Historic Calendly sessions last imported {fullMoment(lastSync, tz)}
               </span>
             )}
-            <Button variant="outline" className="min-h-[44px]" onClick={onSync} disabled={syncing}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? "animate-spin" : ""}`} />
-              {syncing ? "Syncing…" : "Sync from Calendly"}
-            </Button>
           </div>
         </div>
       </div>
@@ -472,8 +467,8 @@ export default function BookingsTable({
               {detail.source === "calendly" ? (
                 <>
                   <p className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
-                    Imported from Calendly and read-only here. Reschedule or cancel it in Calendly,
-                    then run the sync again.
+                    A historic session imported from Calendly, kept for reference and read-only.
+                    New bookings are made and managed here.
                   </p>
                   <div className="space-y-2">
                     <Button size="sm" variant="outline" className="min-h-[40px]"

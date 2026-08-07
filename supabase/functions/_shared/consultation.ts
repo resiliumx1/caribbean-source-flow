@@ -165,6 +165,40 @@ export function generateSlots(params: {
 }
 
 /** Expand stored bookings into buffer-inclusive blocked ranges. */
+export function scheduleOpenDates(params: {
+  timezone: string;
+  availability: AvailabilityRow[];
+  overrides: OverrideRow[];
+  from: string;
+  to: string;
+}): string[] {
+  const { timezone, availability, overrides, from, to } = params;
+  const overridesByDate = new Map<string, OverrideRow[]>();
+  for (const o of overrides) {
+    const list = overridesByDate.get(o.date) ?? [];
+    list.push(o);
+    overridesByDate.set(o.date, list);
+  }
+
+  const out: string[] = [];
+  let cursor = DateTime.fromISO(from, { zone: timezone }).startOf("day");
+  const last = DateTime.fromISO(to, { zone: timezone }).startOf("day");
+  if (!cursor.isValid || !last.isValid) return out;
+
+  for (let guard = 0; guard < 400 && cursor <= last; guard++, cursor = cursor.plus({ days: 1 })) {
+    const key = cursor.toFormat("yyyy-MM-dd");
+    const dayOverrides = overridesByDate.get(key);
+    if (dayOverrides && dayOverrides.length) {
+      if (dayOverrides.some((o) => !o.is_available)) continue;
+      if (dayOverrides.some((o) => o.start_time && o.end_time)) out.push(key);
+      continue;
+    }
+    const dow = cursor.weekday === 7 ? 0 : cursor.weekday;
+    if (availability.some((a) => a.day_of_week === dow)) out.push(key);
+  }
+  return out;
+}
+
 export function toBlockedRanges(
   bookings: any[],
   timezone: string,

@@ -5,7 +5,9 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod@3.23.8";
 import { DateTime } from "npm:luxon@3.5.0";
-import { generateSlots, toBlockedRanges, type Service } from "../_shared/consultation.ts";
+import {
+  generateSlots, scheduleOpenDates, toBlockedRanges, type Service,
+} from "../_shared/consultation.ts";
 
 const BodySchema = z.object({
   service_id: z.string().uuid().optional(),
@@ -120,6 +122,15 @@ Deno.serve(async (req) => {
       },
       range: { from, to },
       slots: next_only ? slots.slice(0, 1) : slots,
+      // Dates the schedule opens, so the calendar can tell "fully booked"
+      // apart from "not a session day".
+      open_dates: next_only ? [] : scheduleOpenDates({
+        timezone: tz,
+        availability: availability ?? [],
+        overrides: overrides ?? [],
+        from,
+        to,
+      }),
     });
   } catch (err: any) {
     console.error("consultation-availability error:", err?.message || err);

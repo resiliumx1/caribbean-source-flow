@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { MonthCalendar } from "@/components/consultation/MonthCalendar";
 import {
-  groupSlotsByDate, slotTime, timezoneList, zoneLabel, zonedDateKey, type Slot,
+  groupSlotsByDate, longDate, slotTime, timezoneList, zoneLabel, type Slot,
 } from "@/lib/consultation-utils";
 
 interface SlotPickerProps {
@@ -16,24 +16,33 @@ interface SlotPickerProps {
   onSelectDate: (date: string) => void;
   selected: Slot | null;
   onSelect: (slot: Slot) => void;
-  practitionerTimezone: string;
-}
-
-function dayParts(dateKey: string, zone: string) {
-  // Noon avoids any DST edge when reading the label back out.
-  const d = new Date(`${dateKey}T12:00:00Z`);
-  const f = (opts: Intl.DateTimeFormatOptions) =>
-    new Intl.DateTimeFormat("en-GB", { ...opts, timeZone: "UTC" }).format(d);
-  return { dow: f({ weekday: "short" }), dom: f({ day: "numeric" }), mon: f({ month: "short" }) };
+  /** Dates the schedule opens, from the availability engine. */
+  scheduleDates?: string[];
+  /** Bookable window. Derived from the slots when not supplied. */
+  range?: { from: string; to: string };
 }
 
 export function SlotPicker({
   slots, timezone, onTimezoneChange, selectedDate, onSelectDate,
-  selected, onSelect, practitionerTimezone,
+  selected, onSelect, scheduleDates = [], range: rangeProp,
 }: SlotPickerProps) {
   const grouped = useMemo(() => groupSlotsByDate(slots, timezone), [slots, timezone]);
   const dates = useMemo(() => Array.from(grouped.keys()).sort(), [grouped]);
-  const railRef = useRef<HTMLDivElement>(null);
+  const counts = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const [k, v] of grouped) m.set(k, v.length);
+    return m;
+  }, [grouped]);
+  const scheduleSet = useMemo(() => new Set(scheduleDates), [scheduleDates]);
+  const [zoneOpen, setZoneOpen] = useState(false);
+
+  const range = useMemo(
+    () => rangeProp ?? {
+      from: dates[0] ?? new Date().toISOString().slice(0, 10),
+      to: dates[dates.length - 1] ?? new Date().toISOString().slice(0, 10),
+    },
+    [rangeProp, dates],
+  );
 
   // Keep a valid day selected as the timezone or availability shifts.
   useEffect(() => {
@@ -48,26 +57,21 @@ export function SlotPicker({
     return list.includes(timezone) ? list : [timezone, ...list];
   }, [timezone]);
 
-  const scroll = (dir: -1 | 1) => {
-    railRef.current?.scrollBy({ left: dir * 260, behavior: "smooth" });
-  };
-
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
-        <div>
-          <p className="consult-eyebrow mb-1">Choose a day</p>
-          <p style={{ fontSize: "14px", color: "var(--c-ink-soft)" }}>
-            Times shown in your timezone. Priest Kailash sits in{" "}
-            {zoneLabel(practitionerTimezone)}.
-          </p>
-        </div>
-        <div className="sm:w-[280px]">
-          <Label htmlFor="consult-tz" className="text-xs" style={{ color: "var(--c-gold-deep)" }}>
-            Your timezone
-          </Label>
-          <Select value={timezone} onValueChange={onTimezoneChange}>
-            <SelectTrigger id="consult-tz" className="mt-1 bg-white/70 min-h-[44px]">
+      <p className="consult-eyebrow mb-2">Choose a date and time</p>
+      <p className="consult-tzline">
+        All times are shown in <strong>{zoneLabel(timezone)}</strong>.{" "}
+        <button type="button" className="consult-link" onClick={() => setZoneOpen((v) => !v)}>
+          {zoneOpen ? "Close" : "Change timezone"}
+        </button>
+      </p>
+
+      {zoneOpen && (
+        <div className="mt-3 sm:max-w-[320px]">
+          <Label htmlFor="consult-tz" className="consult-label">Your timezone</Label>
+          <Select value={timezone} onValueChange={(v) => { onTimezoneChange(v); setZoneOpen(false); }}>
+            <SelectTrigger id="consult-tz" className="consult-input mt-1.5">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="max-h-[320px]">
@@ -77,90 +81,57 @@ export function SlotPicker({
             </SelectContent>
           </Select>
         </div>
-      </div>
+      )}
 
       {dates.length === 0 ? (
-        <div className="consult-summary text-center py-8">
-          <p className="consult-serif" style={{ fontSize: "20px" }}>
-            No open times in this window
-          </p>
-          <p className="mt-2" style={{ fontSize: "15px", color: "var(--c-ink-soft)" }}>
-            The calendar is fully booked for now. Please check back shortly, or reach out and we
-            will let you know as soon as a new session opens.
+        <div className="consult-summary text-center py-8 mt-5">
+          <p className="consult-serif" style={{ fontSize: "20px" }}>No open times just now</p>
+          <p className="consult-body mt-2">
+            Every session in this window has been taken. Please look again shortly, or write to us
+            and we will let you know the moment a new time opens.
           </p>
         </div>
       ) : (
-        <>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => scroll(-1)}
-              aria-label="Earlier days"
-              className="hidden sm:grid place-items-center absolute -left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full"
-              style={{ background: "rgba(255,255,255,0.9)", border: "1px solid var(--c-line)" }}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <div
-              ref={railRef}
-              className="flex gap-2 overflow-x-auto pb-2 sm:px-2"
-              style={{ scrollbarWidth: "thin" }}
-            >
-              {dates.map((d) => {
-                const { dow, dom, mon } = dayParts(d, timezone);
-                const count = grouped.get(d)?.length ?? 0;
-                return (
-                  <button
-                    key={d}
-                    type="button"
-                    className="consult-daybtn shrink-0"
-                    aria-pressed={selectedDate === d}
-                    onClick={() => onSelectDate(d)}
-                  >
-                    <span className="block dow">{dow}</span>
-                    <span className="block dom">{dom}</span>
-                    <span className="block mon">{mon}</span>
-                    <span className="block" style={{ fontSize: "10px", opacity: 0.7 }}>
-                      {count} {count === 1 ? "time" : "times"}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            <button
-              type="button"
-              onClick={() => scroll(1)}
-              aria-label="Later days"
-              className="hidden sm:grid place-items-center absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full"
-              style={{ background: "rgba(255,255,255,0.9)", border: "1px solid var(--c-line)" }}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+        <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:gap-8">
+          <MonthCalendar
+            openCounts={counts}
+            scheduleDates={scheduleSet}
+            minDate={range.from}
+            maxDate={range.to}
+            value={selectedDate}
+            onChange={(d) => onSelectDate(d)}
+          />
 
-          <div className="consult-rule my-6" />
-
-          <p className="consult-eyebrow mb-3">Choose a time</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
-            {daySlots.map((s) => (
-              <button
-                key={s.start}
-                type="button"
-                className="consult-slot"
-                aria-pressed={selected?.start === s.start}
-                onClick={() => onSelect(s)}
-              >
-                {slotTime(s.start, timezone)}
-              </button>
-            ))}
-          </div>
-          {selected && zonedDateKey(selected.start, timezone) === selectedDate && (
-            <p className="mt-4" style={{ fontSize: "14px", color: "var(--c-ink-soft)" }}>
-              That is {slotTime(selected.start, practitionerTimezone)} for Priest Kailash in{" "}
-              {zoneLabel(practitionerTimezone)}.
+          <div>
+            <p className="consult-eyebrow mb-2">
+              {selectedDate ? longDate(`${selectedDate}T12:00:00Z`, "UTC") : "Pick a date"}
             </p>
-          )}
-        </>
+            {daySlots.length === 0 ? (
+              <p className="consult-body">
+                Nothing open on that date.{" "}
+                {dates[0] && (
+                  <button type="button" className="consult-link" onClick={() => onSelectDate(dates[0])}>
+                    Try {longDate(`${dates[0]}T12:00:00Z`, "UTC")}
+                  </button>
+                )}
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
+                {daySlots.map((s) => (
+                  <button
+                    key={s.start}
+                    type="button"
+                    className="consult-slot"
+                    aria-pressed={selected?.start === s.start}
+                    onClick={() => onSelect(s)}
+                  >
+                    {slotTime(s.start, timezone)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

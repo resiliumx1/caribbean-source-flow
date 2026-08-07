@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  ArrowLeft, ArrowRight, CalendarCheck, CheckCircle2, Clock, Loader2, MapPin,
-  ShieldCheck, Video,
+  ArrowLeft, ArrowRight, CalendarCheck, CheckCircle2, ClipboardList, Clock, Leaf,
+  Loader2, MapPin, Mountain, Repeat, ShieldCheck, Video, Wifi,
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,12 +23,12 @@ import {
 import { SlotPicker } from "@/components/consultation/SlotPicker";
 import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
 import {
-  useConsultationAvailability, useIntakeQuestions,
-  type ConsultationPractitioner, type ConsultationService,
+  useConsultationCatalog, useIntakeQuestions, useServiceAvailability,
+  type ConsultationCategory, type ConsultationService,
 } from "@/hooks/use-consultations";
 import {
-  captureAttribution, detectTimezone, fullMoment, moneyUsd, zoneLabel, type Slot,
-  durationLabel,
+  captureAttribution, detectTimezone, durationLabel, fullMoment, moneyUsd,
+  zoneLabel, type Slot,
 } from "@/lib/consultation-utils";
 
 type Mode = "in_person" | "online";
@@ -55,7 +55,21 @@ interface PaidResult {
   amount_paid_usd: number;
 }
 
-const STEP_LABELS = ["The session", "Your time", "Your details", "Payment"];
+const STEP_LABELS = [
+  "Focus", "Session", "Format", "Time", "Details", "Payment", "Confirmed",
+];
+
+const S_CATEGORY = 0, S_SERVICE = 1, S_MODE = 2, S_TIME = 3,
+  S_DETAILS = 4, S_REVIEW = 5, S_DONE = 6;
+
+const CATEGORY_ICONS: Record<string, typeof Leaf> = {
+  leaf: Leaf,
+  "clipboard-list": ClipboardList,
+  repeat: Repeat,
+  mountain: Mountain,
+};
+
+const CENTRE = "Mount Kailash Rejuvenation Centre, Saint Lucia";
 
 const fade = {
   initial: { opacity: 0, y: 14 },
@@ -67,12 +81,14 @@ const fade = {
 export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data, isLoading, isError, error, refetch } = useConsultationAvailability(serviceSlug);
-  const service: ConsultationService | undefined = data?.service;
-  const practitioner: ConsultationPractitioner | undefined = data?.practitioner;
-  const { data: intakeQuestions = [] } = useIntakeQuestions(service?.id);
+
+  const {
+    data: catalog, isLoading: catalogLoading, isError: catalogError, refetch: refetchCatalog,
+  } = useConsultationCatalog();
 
   const [step, setStep] = useState(0);
+  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [serviceId, setServiceId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("online");
   const [timezone, setTimezone] = useState(detectTimezone());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -96,11 +112,43 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   const attribution = useRef(captureAttribution());
   const topRef = useRef<HTMLDivElement>(null);
 
+  const categories = catalog?.categories ?? [];
+  const allServices = catalog?.services ?? [];
+
+  /** A deep link by slug jumps straight past the first two steps. */
+  useEffect(() => {
+    if (!serviceSlug || serviceId || !allServices.length) return;
+    const found = allServices.find((s) => s.slug === serviceSlug);
+    if (found) {
+      setCategoryId(found.category_id ?? null);
+      setServiceId(found.id);
+      setStep(found.mode === "both" ? S_MODE : S_TIME);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceSlug, allServices.length]);
+
+  const categoryServices = useMemo(
+    () => allServices.filter((s) => s.category_id === categoryId),
+    [allServices, categoryId],
+  );
+
+  const {
+    data: availability, isLoading: availLoading, isError: availError,
+    error: availErrorObj, refetch: refetchAvailability,
+  } = useServiceAvailability(serviceId ?? undefined);
+
+  const service: ConsultationService | undefined =
+    availability?.service ?? allServices.find((s) => s.id === serviceId);
+  const practitioner = availability?.practitioner;
+  const { data: intakeQuestions = [] } = useIntakeQuestions(service?.id);
+
+  const singleMode = service ? service.mode !== "both" : false;
+
   useEffect(() => {
     if (service && service.mode !== "both") setMode(service.mode as Mode);
   }, [service]);
 
-  // Hold countdown.
+  /* ── hold countdown ── */
   useEffect(() => {
     if (!hold || paid) return;
     const t = setInterval(() => setNow(Date.now()), 1000);
@@ -111,12 +159,20 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     ? Math.max(0, Math.floor((new Date(hold.hold_expires_at).getTime() - now) / 1000))
     : 0;
 
+  const goTo = useCallback((next: number) => {
+    setFormError(null);
+    setStep(next);
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, []);
+
   useEffect(() => {
     if (hold && !paid && holdSecondsLeft === 0) {
       setHold(null);
       setSlot(null);
-      setStep(1);
-      refetch();
+      goTo(S_TIME);
+      refetchAvailability();
       toast({
         title: "Your hold expired",
         description: "We released the time so someone else could take it. Please pick a new one.",
@@ -126,19 +182,18 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [holdSecondsLeft, hold, paid]);
 
-  const goTo = useCallback((next: number) => {
-    setFormError(null);
-    setStep(next);
-    requestAnimationFrame(() => {
-      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  }, []);
+  /** Back and forward, hopping the format step when there is only one format. */
+  const stepBack = (from: number) => {
+    if (from === S_TIME && singleMode) return S_SERVICE;
+    if (from === S_REVIEW) { setHold(null); return S_DETAILS; }
+    return from - 1;
+  };
+  const afterService = () => (singleMode ? S_TIME : S_MODE);
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const missingRequired = intakeQuestions.filter(
     (q) => q.is_required && !String(answers[q.id] ?? "").trim(),
   );
-
   const detailsReady =
     name.trim().length > 1 && emailValid && consent && missingRequired.length === 0;
 
@@ -166,13 +221,9 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
       if (res?.error) {
         if (res.code === "slot_unavailable" || res.code === "slot_taken") {
           setSlot(null);
-          await refetch();
-          goTo(1);
-          toast({
-            title: "That time just went",
-            description: res.error,
-            variant: "destructive",
-          });
+          await refetchAvailability();
+          goTo(S_TIME);
+          toast({ title: "That time just went", description: res.error, variant: "destructive" });
           return;
         }
         setFormError(res.error);
@@ -186,7 +237,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
         items: [{ item_name: service.name, item_category: "consultation", price: res.booking.amount_due_usd }],
       });
       pixelTrack("InitiateCheckout", { currency: "USD", value: res.booking.amount_due_usd });
-      goTo(3);
+      goTo(S_REVIEW);
     } catch (e: any) {
       setFormError(e?.message || "We could not hold that time. Please try again.");
     } finally {
@@ -215,7 +266,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
       pixelTrack("Purchase", { currency: "USD", value: result.amount_paid_usd });
       queryClient.invalidateQueries({ queryKey: ["consultation-availability"] });
       queryClient.invalidateQueries({ queryKey: ["consultation-next-slot"] });
-      goTo(4);
+      goTo(S_DONE);
     } catch (e: any) {
       setFormError(e?.message || "The payment could not be completed.");
       throw e;
@@ -225,161 +276,273 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
   };
 
   const dueUsd = hold?.amount_due_usd ?? service?.price_usd ?? 0;
+  const centreZone = practitioner?.timezone ?? "America/St_Lucia";
 
-  if (isLoading) {
+  if (catalogLoading) {
     return (
-      <div className="consult-panel p-6 sm:p-8 space-y-4">
-        <Skeleton className="h-6 w-48" />
-        <Skeleton className="h-4 w-full max-w-md" />
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
-          {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-full" />)}
+      <div className="consult">
+        <div className="consult-panel p-6 sm:p-8 space-y-4">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-9 w-72" />
+          <div className="grid sm:grid-cols-2 gap-3 pt-3">
+            {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-2xl" />)}
+          </div>
         </div>
       </div>
     );
   }
 
-  if (isError || !service || !practitioner) {
+  if (catalogError || !categories.length) {
     return (
-      <div className="consult-panel p-6 sm:p-8 text-center">
-        <p className="consult-serif" style={{ fontSize: "22px" }}>Booking is briefly unavailable</p>
-        <p className="mt-2" style={{ fontSize: "15px", color: "var(--c-ink-soft)" }}>
-          {(error as Error)?.message || "We could not load the calendar just now."}
-        </p>
-        <Button className="mt-5 min-h-[44px]" onClick={() => refetch()}>Try again</Button>
+      <div className="consult">
+        <div className="consult-panel p-6 sm:p-8 text-center">
+          <p className="consult-serif" style={{ fontSize: "22px" }}>Booking is briefly unavailable</p>
+          <p className="consult-body mt-2">We could not load the booking options just now.</p>
+          <Button className="mt-5 min-h-[48px]" onClick={() => refetchCatalog()}>Try again</Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="consult" ref={topRef}>
-      {/* Step rail */}
-      {!paid && (
-        <nav className="consult-steps mb-6" aria-label="Booking steps">
-          {STEP_LABELS.map((label, i) => (
-            <span key={label} className="inline-flex items-center gap-2">
-              <span
-                className="consult-step"
-                data-state={step === i ? "current" : step > i ? "done" : "todo"}
-              >
-                <span className="consult-step-dot">
-                  {step > i ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
-                </span>
-                <span className="hidden sm:inline">{label}</span>
+      <p className="consult-step-compact mb-4">
+        Step {step + 1} of {STEP_LABELS.length} · {STEP_LABELS[step]}
+      </p>
+      <nav className="consult-steps mb-6" aria-label="Booking steps">
+        {STEP_LABELS.map((label, i) => (
+          <span key={label} className="inline-flex items-center gap-2">
+            <span className="consult-step" data-state={step === i ? "current" : step > i ? "done" : "todo"}>
+              <span className="consult-step-dot">
+                {step > i ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
               </span>
-              {i < STEP_LABELS.length - 1 && <span className="consult-step-sep" aria-hidden />}
+              <span className="hidden sm:inline">{label}</span>
             </span>
-          ))}
-        </nav>
-      )}
+            {i < STEP_LABELS.length - 1 && <span className="consult-step-sep" aria-hidden />}
+          </span>
+        ))}
+      </nav>
 
       <div className="consult-panel p-5 sm:p-8">
         <AnimatePresence mode="wait">
-          {/* ─── Step 1: the session ─── */}
-          {step === 0 && (
-            <motion.div key="s0" {...fade}>
-              <p className="consult-eyebrow mb-2">The session</p>
+          {/* ─── 1. Focus ─── */}
+          {step === S_CATEGORY && (
+            <motion.div key="s-cat" {...fade}>
+              <p className="consult-eyebrow mb-2">Where to begin</p>
               <h2 className="consult-serif" style={{ fontSize: "clamp(1.6rem,3.4vw,2.2rem)", lineHeight: 1.15 }}>
-                {service.name}
+                What brings you to the practice?
               </h2>
-              <p className="mt-3" style={{ fontSize: "16px", lineHeight: 1.75, color: "var(--c-ink-soft)" }}>
-                {service.long_description || service.description}
+              <p className="consult-body mt-3" style={{ maxWidth: "40rem" }}>
+                Choose the closest fit. You can move back at any point without losing anything.
               </p>
 
-              <div className="consult-rule my-6" />
+              <div className="mt-6 grid sm:grid-cols-2 gap-3">
+                {categories.map((c: ConsultationCategory) => {
+                  const Icon = CATEGORY_ICONS[c.icon ?? ""] ?? Leaf;
+                  const count = allServices.filter((s) => s.category_id === c.id).length;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      className="consult-choice"
+                      aria-pressed={categoryId === c.id}
+                      disabled={count === 0}
+                      onClick={() => {
+                        setCategoryId(c.id);
+                        setServiceId(null);
+                        setSlot(null);
+                        setSelectedDate(null);
+                        goTo(S_SERVICE);
+                      }}
+                    >
+                      <span className="consult-choice__title">
+                        <Icon className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} aria-hidden />
+                        {c.name}
+                      </span>
+                      {c.description && <span className="consult-choice__note">{c.description}</span>}
+                      {count === 0 && <span className="consult-choice__meta">Nothing bookable here yet</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
 
-              <dl className="grid sm:grid-cols-3 gap-4">
-                <div>
-                  <dt className="consult-eyebrow">Length</dt>
-                  <dd style={{ fontSize: "16px" }}>{durationLabel(service.duration_minutes)}</dd>
-                </div>
-                <div>
-                  <dt className="consult-eyebrow">Fee</dt>
-                  <dd style={{ fontSize: "16px" }}>
-                    {moneyUsd(service.price_usd)} USD
-                    <span style={{ color: "var(--c-ink-soft)", fontSize: "14px" }}>
-                      {" "}· {service.price_xcd.toFixed(2)} XCD
+          {/* ─── 2. Session type ─── */}
+          {step === S_SERVICE && (
+            <motion.div key="s-svc" {...fade}>
+              <p className="consult-eyebrow mb-2">
+                {categories.find((c) => c.id === categoryId)?.name ?? "Session"}
+              </p>
+              <h2 className="consult-serif" style={{ fontSize: "clamp(1.5rem,3.2vw,2rem)" }}>
+                Choose a consultation
+              </h2>
+
+              <div className="mt-6 grid sm:grid-cols-2 gap-3">
+                {categoryServices.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    className="consult-choice"
+                    aria-pressed={serviceId === s.id}
+                    onClick={() => {
+                      setServiceId(s.id);
+                      setSlot(null);
+                      setSelectedDate(null);
+                      setHold(null);
+                      if (s.mode !== "both") setMode(s.mode as Mode);
+                      goTo(s.mode === "both" ? S_MODE : S_TIME);
+                    }}
+                  >
+                    <span className="consult-choice__title">{s.name}</span>
+                    {s.description && <span className="consult-choice__note">{s.description}</span>}
+                    <span className="consult-choice__meta">
+                      {durationLabel(s.duration_minutes)} · {moneyUsd(s.price_usd)} USD ·{" "}
+                      {s.mode === "both" ? "Online or in person"
+                        : s.mode === "online" ? "Online only" : "In person only"}
                     </span>
-                  </dd>
-                </div>
-                <div>
-                  <dt className="consult-eyebrow">Held by</dt>
-                  <dd style={{ fontSize: "16px" }}>{practitioner.name}</dd>
-                </div>
-              </dl>
+                  </button>
+                ))}
+              </div>
 
-              {service.mode === "both" && (
-                <>
-                  <div className="consult-rule my-6" />
-                  <p className="consult-eyebrow mb-3">How would you like to meet?</p>
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <button
-                      type="button" className="consult-choice"
-                      aria-pressed={mode === "online"} onClick={() => setMode("online")}
-                    >
-                      <span className="flex items-center gap-2" style={{ fontSize: "16px", fontWeight: 500 }}>
-                        <Video className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} /> Online
-                      </span>
-                      <span className="block mt-1" style={{ fontSize: "14px", color: "var(--c-ink-soft)" }}>
-                        A private video room, sent to you the moment you book.
-                      </span>
-                    </button>
-                    <button
-                      type="button" className="consult-choice"
-                      aria-pressed={mode === "in_person"} onClick={() => setMode("in_person")}
-                    >
-                      <span className="flex items-center gap-2" style={{ fontSize: "16px", fontWeight: 500 }}>
-                        <MapPin className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} /> In person
-                      </span>
-                      <span className="block mt-1" style={{ fontSize: "14px", color: "var(--c-ink-soft)" }}>
-                        At the Rejuvenation Centre in Saint Lucia.
-                      </span>
-                    </button>
-                  </div>
-                </>
-              )}
+              <div className="mt-7">
+                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(S_CATEGORY)}>
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                </Button>
+              </div>
+            </motion.div>
+          )}
 
-              <div className="mt-7 flex justify-end">
-                <Button className="min-h-[48px] px-6" onClick={() => goTo(1)}>
+          {/* ─── 3. Format ─── */}
+          {step === S_MODE && service && (
+            <motion.div key="s-mode" {...fade}>
+              <p className="consult-eyebrow mb-2">Format</p>
+              <h2 className="consult-serif" style={{ fontSize: "clamp(1.5rem,3.2vw,2rem)" }}>
+                Online or in person?
+              </h2>
+
+              <div className="mt-6 grid sm:grid-cols-2 gap-3">
+                <button
+                  type="button" className="consult-choice"
+                  aria-pressed={mode === "online"} onClick={() => setMode("online")}
+                >
+                  <span className="consult-choice__title">
+                    <Video className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} aria-hidden /> Online
+                  </span>
+                  <span className="consult-choice__note">
+                    A private video link is emailed to you once your booking is confirmed. You will
+                    need a stable internet connection and somewhere quiet to sit.
+                  </span>
+                </button>
+                <button
+                  type="button" className="consult-choice"
+                  aria-pressed={mode === "in_person"} onClick={() => setMode("in_person")}
+                >
+                  <span className="consult-choice__title">
+                    <MapPin className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} aria-hidden /> In person
+                  </span>
+                  <span className="consult-choice__note">
+                    At the {CENTRE}. No video link is created. Directions are included in your
+                    confirmation email.
+                  </span>
+                </button>
+              </div>
+
+              <div className="consult-summary mt-5">
+                {mode === "in_person" ? (
+                  <>
+                    <p className="consult-eyebrow">Where to come</p>
+                    <p className="consult-body mt-1.5">{CENTRE}</p>
+                    <p className="consult-fine mt-2">
+                      Bring any medication you are taking and a note of anything you have already
+                      tried. Arrive a few minutes early. Full directions arrive with your
+                      confirmation email.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="consult-eyebrow">How it reaches you</p>
+                    <p className="consult-body mt-1.5">
+                      <Wifi className="inline w-4 h-4 mr-1.5 -mt-0.5" aria-hidden />
+                      A private video link is emailed on confirmation.
+                    </p>
+                    <p className="consult-fine mt-2">
+                      A stable internet connection is needed. The link also sits on your booking
+                      page, so you can open it from any device.
+                    </p>
+                  </>
+                )}
+              </div>
+
+              <div className="mt-7 flex items-center justify-between gap-3">
+                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(S_SERVICE)}>
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                </Button>
+                <Button className="min-h-[48px] px-6" onClick={() => goTo(S_TIME)}>
                   Choose a time <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </motion.div>
           )}
 
-          {/* ─── Step 2: time ─── */}
-          {step === 1 && (
-            <motion.div key="s1" {...fade}>
-              <SlotPicker
-                slots={data.slots}
-                timezone={timezone}
-                onTimezoneChange={setTimezone}
-                selectedDate={selectedDate}
-                onSelectDate={setSelectedDate}
-                selected={slot}
-                onSelect={setSlot}
-                practitionerTimezone={practitioner.timezone}
-              />
+          {/* ─── 4. Date and time ─── */}
+          {step === S_TIME && (
+            <motion.div key="s-time" {...fade}>
+              {availLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-5 w-52" />
+                  <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)]">
+                    <Skeleton className="h-[320px] rounded-2xl" />
+                    <div className="space-y-2.5">
+                      {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-full" />)}
+                    </div>
+                  </div>
+                </div>
+              ) : availError || !availability ? (
+                <div className="text-center py-6">
+                  <p className="consult-serif" style={{ fontSize: "20px" }}>The calendar did not load</p>
+                  <p className="consult-body mt-2">
+                    {(availErrorObj as Error)?.message || "Please try again in a moment."}
+                  </p>
+                  <Button className="mt-5 min-h-[48px]" onClick={() => refetchAvailability()}>
+                    Try again
+                  </Button>
+                </div>
+              ) : (
+                <SlotPicker
+                  slots={availability.slots}
+                  timezone={timezone}
+                  onTimezoneChange={setTimezone}
+                  selectedDate={selectedDate}
+                  onSelectDate={setSelectedDate}
+                  selected={slot}
+                  onSelect={setSlot}
+                  scheduleDates={availability.open_dates}
+                  range={availability.range}
+                />
+              )}
+
               <div className="mt-7 flex items-center justify-between gap-3">
-                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(0)}>
+                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(stepBack(S_TIME))}>
                   <ArrowLeft className="w-4 h-4 mr-2" /> Back
                 </Button>
-                <Button className="min-h-[48px] px-6" disabled={!slot} onClick={() => goTo(2)}>
+                <Button className="min-h-[48px] px-6" disabled={!slot} onClick={() => goTo(S_DETAILS)}>
                   Continue <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </motion.div>
           )}
 
-          {/* ─── Step 3: details ─── */}
-          {step === 2 && (
-            <motion.div key="s2" {...fade}>
+          {/* ─── 5. Details ─── */}
+          {step === S_DETAILS && (
+            <motion.div key="s-details" {...fade}>
               <p className="consult-eyebrow mb-2">Your details</p>
               <h2 className="consult-serif" style={{ fontSize: "clamp(1.4rem,3vw,1.9rem)" }}>
-                So Priest Kailash can prepare
+                A little about you
               </h2>
               {slot && (
-                <p className="mt-2" style={{ fontSize: "15px", color: "var(--c-ink-soft)" }}>
-                  <Clock className="inline w-4 h-4 mr-1.5 -mt-0.5" />
+                <p className="consult-fine mt-2">
+                  <Clock className="inline w-4 h-4 mr-1.5 -mt-0.5" aria-hidden />
                   {fullMoment(slot.start, timezone)} · {zoneLabel(timezone)}
                 </p>
               )}
@@ -388,20 +551,21 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="flex flex-col">
-                  <Label htmlFor="c-name" className="min-h-[24px] flex items-end">Full name *</Label>
-                  <Input id="c-name" className="mt-1.5 bg-white/70 min-h-[44px]" value={name}
+                  <Label htmlFor="c-name" className="consult-label">Full name *</Label>
+                  <Input id="c-name" className="consult-input mt-1.5" value={name}
+                    placeholder="Your full name"
                     onChange={(e) => setName(e.target.value)} autoComplete="name" />
                 </div>
                 <div className="flex flex-col">
-                  <Label htmlFor="c-email" className="min-h-[24px] flex items-end">Email address *</Label>
-                  <Input id="c-email" type="email" className="mt-1.5 bg-white/70 min-h-[44px]" value={email}
+                  <Label htmlFor="c-email" className="consult-label">Email address *</Label>
+                  <Input id="c-email" type="email" className="consult-input mt-1.5" value={email}
+                    placeholder="you@example.com"
                     onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
                 </div>
                 <div className="flex flex-col sm:col-span-2">
-                  <Label htmlFor="c-phone" className="min-h-[24px] flex items-end">
-                    Phone or WhatsApp <span style={{ color: "var(--c-ink-soft)" }}>(optional)</span>
-                  </Label>
-                  <Input id="c-phone" className="mt-1.5 bg-white/70 min-h-[44px]" value={phone}
+                  <Label htmlFor="c-phone" className="consult-label">Phone or WhatsApp (optional)</Label>
+                  <Input id="c-phone" className="consult-input mt-1.5" value={phone}
+                    placeholder="Include your country code"
                     onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
                 </div>
               </div>
@@ -419,21 +583,23 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                               onCheckedChange={(v) => setAnswers((a) => ({ ...a, [q.id]: v === true }))}
                               className="mt-1"
                             />
-                            <span style={{ fontSize: "15px" }}>{q.question}{q.is_required && " *"}</span>
+                            <span className="consult-label" style={{ fontWeight: 400 }}>
+                              {q.question}{q.is_required && " *"}
+                            </span>
                           </label>
                         ) : (
                           <>
-                            <Label htmlFor={`q-${q.id}`} className="min-h-[24px] flex items-end">
+                            <Label htmlFor={`q-${q.id}`} className="consult-label">
                               {q.question}{q.is_required && " *"}
                             </Label>
                             {q.type === "textarea" ? (
-                              <Textarea id={`q-${q.id}`} rows={4} className="mt-1.5 bg-white/70"
+                              <Textarea id={`q-${q.id}`} rows={4} className="consult-input mt-1.5"
                                 value={String(answers[q.id] ?? "")}
                                 onChange={(e) => setAnswers((a) => ({ ...a, [q.id]: e.target.value }))} />
                             ) : q.type === "select" ? (
                               <Select value={String(answers[q.id] ?? "")}
                                 onValueChange={(v) => setAnswers((a) => ({ ...a, [q.id]: v }))}>
-                                <SelectTrigger id={`q-${q.id}`} className="mt-1.5 bg-white/70 min-h-[44px]">
+                                <SelectTrigger id={`q-${q.id}`} className="consult-input mt-1.5">
                                   <SelectValue placeholder="Please choose" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -441,7 +607,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                                 </SelectContent>
                               </Select>
                             ) : (
-                              <Input id={`q-${q.id}`} className="mt-1.5 bg-white/70 min-h-[44px]"
+                              <Input id={`q-${q.id}`} className="consult-input mt-1.5"
                                 value={String(answers[q.id] ?? "")}
                                 onChange={(e) => setAnswers((a) => ({ ...a, [q.id]: e.target.value }))} />
                             )}
@@ -456,20 +622,19 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
               <div className="consult-rule my-6" />
 
               <div className="flex flex-col">
-                <Label htmlFor="c-notes" className="min-h-[24px] flex items-end">
-                  Anything else you would like him to know
+                <Label htmlFor="c-notes" className="consult-label">
+                  Anything you would like him to know beforehand
                 </Label>
-                <Textarea id="c-notes" rows={4} className="mt-1.5 bg-white/70" value={notes}
+                <Textarea id="c-notes" rows={4} className="consult-input mt-1.5" value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Your history, what you have tried, what you are hoping for." />
+                  placeholder="Your history, anything you have already tried, and any medication you take." />
               </div>
 
               <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
                 <div className="flex flex-col sm:w-[260px]">
-                  <Label htmlFor="c-coupon" className="min-h-[24px] flex items-end">
-                    Discount code <span style={{ color: "var(--c-ink-soft)" }}>(optional)</span>
-                  </Label>
-                  <Input id="c-coupon" className="mt-1.5 bg-white/70 min-h-[44px] uppercase"
+                  <Label htmlFor="c-coupon" className="consult-label">Discount code (optional)</Label>
+                  <Input id="c-coupon" className="consult-input mt-1.5 uppercase"
+                    placeholder="Enter a code"
                     value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
                 </div>
                 <p className="consult-hold sm:pb-3">Applied when your time is held.</p>
@@ -477,33 +642,31 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
 
               <label className="mt-5 flex items-start gap-3 min-h-[44px] cursor-pointer">
                 <Checkbox checked={consent} onCheckedChange={(v) => setConsent(v === true)} className="mt-1" />
-                <span style={{ fontSize: "14px", color: "var(--c-ink-soft)", lineHeight: 1.6 }}>
+                <span className="consult-fine">
                   I understand this consultation is traditional herbal guidance and is not a
                   substitute for diagnosis or treatment by a licensed medical practitioner.
                 </span>
               </label>
 
-              {formError && (
-                <p className="mt-4" style={{ fontSize: "14px", color: "#B4442B" }}>{formError}</p>
-              )}
+              {formError && <p className="consult-error mt-4">{formError}</p>}
 
               <div className="mt-7 flex items-center justify-between gap-3">
-                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(1)}>
+                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(S_TIME)}>
                   <ArrowLeft className="w-4 h-4 mr-2" /> Back
                 </Button>
                 <Button className="min-h-[48px] px-6" disabled={!detailsReady || holding} onClick={createHold}>
                   {holding
                     ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Holding your time…</>
-                    : <>Hold this time <ArrowRight className="w-4 h-4 ml-2" /></>}
+                    : <>Review and pay <ArrowRight className="w-4 h-4 ml-2" /></>}
                 </Button>
               </div>
             </motion.div>
           )}
 
-          {/* ─── Step 4: payment ─── */}
-          {step === 3 && hold && (
-            <motion.div key="s3" {...fade}>
-              <p className="consult-eyebrow mb-2">Payment</p>
+          {/* ─── 6. Review and pay ─── */}
+          {step === S_REVIEW && hold && service && (
+            <motion.div key="s-review" {...fade}>
+              <p className="consult-eyebrow mb-2">Review and pay</p>
               <h2 className="consult-serif" style={{ fontSize: "clamp(1.4rem,3vw,1.9rem)" }}>
                 Confirm your session
               </h2>
@@ -511,9 +674,13 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
               <div className="consult-summary mt-5">
                 <dl className="grid sm:grid-cols-2 gap-4">
                   <div><dt>Session</dt><dd>{service.name}</dd></div>
-                  <div><dt>Format</dt><dd>{mode === "online" ? "Online video room" : "In person, Saint Lucia"}</dd></div>
+                  <div>
+                    <dt>Format</dt>
+                    <dd>{mode === "online" ? "Online, private video link" : `In person, ${CENTRE}`}</dd>
+                  </div>
                   <div><dt>Your time</dt><dd>{fullMoment(hold.starts_at, timezone)}</dd></div>
-                  <div><dt>His time</dt><dd>{fullMoment(hold.starts_at, practitioner.timezone)}</dd></div>
+                  <div><dt>Saint Lucia time</dt><dd>{fullMoment(hold.starts_at, centreZone)}</dd></div>
+                  <div><dt>Length</dt><dd>{durationLabel(service.duration_minutes)}</dd></div>
                   <div><dt>Reference</dt><dd>{hold.reference}</dd></div>
                   <div>
                     <dt>Total</dt>
@@ -525,7 +692,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                       )}
                       {moneyUsd(dueUsd)} USD
                       {hold.coupon_code && (
-                        <span style={{ fontSize: "13px", color: "var(--c-gold-deep)" }}>
+                        <span style={{ fontSize: "14px", color: "var(--c-gold-deep)" }}>
                           {" "}· {hold.coupon_code} applied
                         </span>
                       )}
@@ -535,7 +702,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
               </div>
 
               <p className="consult-hold mt-3">
-                <Clock className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" />
+                <Clock className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" aria-hidden />
                 This time is held for you for{" "}
                 <strong>
                   {Math.floor(holdSecondsLeft / 60)}:{String(holdSecondsLeft % 60).padStart(2, "0")}
@@ -552,25 +719,29 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                 onToken={payNow}
               />
 
-              {formError && (
-                <p className="mt-4" style={{ fontSize: "14px", color: "#B4442B" }}>{formError}</p>
-              )}
+              {formError && <p className="consult-error mt-4">{formError}</p>}
 
               <p className="mt-4 flex items-center gap-2 consult-hold">
-                <ShieldCheck className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} />
+                <ShieldCheck className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} aria-hidden />
                 Card details go straight to our payment processor and never touch our servers.
               </p>
+
+              <div className="mt-5">
+                <Button variant="ghost" className="min-h-[44px]" onClick={() => goTo(stepBack(S_REVIEW))}>
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Back to your details
+                </Button>
+              </div>
             </motion.div>
           )}
 
-          {/* ─── Step 5: confirmed ─── */}
-          {step === 4 && paid && (
-            <motion.div key="s4" {...fade} className="text-center">
-              <CalendarCheck className="w-10 h-10 mx-auto" style={{ color: "var(--c-gold-deep)" }} />
+          {/* ─── 7. Confirmed ─── */}
+          {step === S_DONE && paid && (
+            <motion.div key="s-done" {...fade} className="text-center">
+              <CalendarCheck className="w-10 h-10 mx-auto" style={{ color: "var(--c-gold-deep)" }} aria-hidden />
               <h2 className="consult-serif mt-4" style={{ fontSize: "clamp(1.7rem,3.6vw,2.3rem)" }}>
                 Your session is confirmed
               </h2>
-              <p className="mt-3" style={{ fontSize: "16px", color: "var(--c-ink-soft)", lineHeight: 1.75 }}>
+              <p className="consult-body mt-3">
                 Reference <strong>{paid.reference}</strong>. A confirmation with a calendar
                 invitation is on its way to {email}.
               </p>
@@ -578,15 +749,11 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
               <div className="consult-summary mt-6 text-left">
                 <dl className="grid sm:grid-cols-2 gap-4">
                   <div><dt>Your time</dt><dd>{fullMoment(paid.starts_at, timezone)}</dd></div>
-                  <div><dt>His time</dt><dd>{fullMoment(paid.starts_at, practitioner.timezone)}</dd></div>
+                  <div><dt>Saint Lucia time</dt><dd>{fullMoment(paid.starts_at, centreZone)}</dd></div>
                   <div><dt>Paid</dt><dd>{moneyUsd(paid.amount_paid_usd)} USD</dd></div>
                   <div>
                     <dt>Where</dt>
-                    <dd>
-                      {paid.mode === "in_person"
-                        ? "Mount Kailash Rejuvenation Centre, Saint Lucia"
-                        : "Online, by Zoom"}
-                    </dd>
+                    <dd>{paid.mode === "in_person" ? CENTRE : "Online, by private video link"}</dd>
                   </div>
                 </dl>
               </div>

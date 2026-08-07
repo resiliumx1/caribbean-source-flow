@@ -15,6 +15,8 @@ export interface ConsultationService {
   image_url: string | null;
   min_notice_hours: number;
   max_advance_days: number;
+  category_id?: string | null;
+  display_order?: number;
 }
 
 export interface ConsultationPractitioner {
@@ -31,6 +33,8 @@ export interface AvailabilityResponse {
   practitioner: ConsultationPractitioner;
   range: { from: string; to: string };
   slots: Slot[];
+  /** Dates the weekly schedule opens, whether or not any slot is still free. */
+  open_dates?: string[];
 }
 
 async function fetchAvailability(body: Record<string, unknown>): Promise<AvailabilityResponse> {
@@ -47,6 +51,61 @@ export function useConsultationAvailability(serviceSlug?: string) {
     queryFn: () => fetchAvailability(serviceSlug ? { service_slug: serviceSlug } : {}),
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: true,
+  });
+}
+
+/** Availability for a specific service chosen inside the wizard. */
+export function useServiceAvailability(serviceId?: string) {
+  return useQuery({
+    queryKey: ["consultation-availability", "service", serviceId],
+    enabled: !!serviceId,
+    queryFn: () => fetchAvailability({ service_id: serviceId }),
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: true,
+  });
+}
+
+export interface ConsultationCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  display_order: number;
+}
+
+export interface ConsultationCatalog {
+  categories: ConsultationCategory[];
+  services: ConsultationService[];
+}
+
+/** The four entry points and the session types filed beneath them. */
+export function useConsultationCatalog() {
+  return useQuery({
+    queryKey: ["consultation-catalog"],
+    staleTime: 1000 * 60 * 10,
+    queryFn: async (): Promise<ConsultationCatalog> => {
+      const [cats, svcs] = await Promise.all([
+        supabase.from("consultation_categories")
+          .select("id, name, slug, description, icon, display_order")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true }),
+        supabase.from("consultation_services")
+          .select("id, name, slug, description, long_description, duration_minutes, price_usd, price_xcd, mode, image_url, min_notice_hours, max_advance_days, category_id, display_order")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true }),
+      ]);
+      if (cats.error) throw cats.error;
+      if (svcs.error) throw svcs.error;
+      return {
+        categories: (cats.data ?? []) as ConsultationCategory[],
+        services: ((svcs.data ?? []) as unknown[]).map((s) => ({
+          ...(s as ConsultationService),
+          price_usd: Number((s as ConsultationService).price_usd),
+          price_xcd: Number((s as ConsultationService).price_xcd),
+        })),
+      };
+    },
   });
 }
 
