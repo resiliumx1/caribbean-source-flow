@@ -107,12 +107,22 @@ export default function AdminConsultations() {
 
   const createZoomRoom = async (b: Booking) => {
     setBusyId(b.id);
-    setBusyId(b.id);
     const { data, error } = await supabase.functions.invoke("zoom-create-meeting", {
       body: { booking_id: b.id },
     });
     if (error || data?.error) toast.error(data?.error || error?.message);
     else { toast.success("Video room created"); await load(); }
+    setBusyId(null);
+  };
+
+  /** Send our branded confirmation for a session that came in through Calendly. */
+  const sendCalendlyConfirmation = async (ev: any) => {
+    setBusyId(ev.id);
+    const { data, error } = await supabase.functions.invoke("consultation-calendly-sync", {
+      body: { action: "send_confirmation", calendly_event_uri: ev.calendly_event_uri },
+    });
+    if (error || data?.error) toast.error(data?.error || error?.message || "Could not send the confirmation");
+    else { toast.success(`Confirmation sent to ${data?.sent_to ?? "the client"}`); await load(); }
     setBusyId(null);
   };
 
@@ -227,6 +237,7 @@ export default function AdminConsultations() {
             onReschedule={(b) => { setRescheduleTarget(b); setNewStart(""); }}
             onAction={(id, body, msg) => { void run(id, body, msg); }}
             onCreateZoom={(b) => { void createZoomRoom(b); }}
+            onSendCalendlyConfirmation={(e) => { void sendCalendlyConfirmation(e); }}
             onSync={() => { void syncCalendly(); }}
             syncing={syncing}
             lastSync={lastSync}
