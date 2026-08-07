@@ -690,9 +690,16 @@ function ServiceEditor({
           onChange={(e) => setF({ ...f, long_description: e.target.value })} /></div>
 
       <div className="grid sm:grid-cols-3 gap-3">
-        <div><Label>Minutes</Label>
+        <div><Label>Minutes (drives scheduling)</Label>
           <Input type="number" className="mt-1 min-h-[44px]" value={f.duration_minutes}
             onChange={(e) => setF({ ...f, duration_minutes: e.target.value })} /></div>
+        <div className="sm:col-span-2"><Label>Length shown to visitors (optional)</Label>
+          <Input className="mt-1 min-h-[44px]" placeholder="30–45 minutes"
+            value={f.duration_display_label}
+            onChange={(e) => setF({ ...f, duration_display_label: e.target.value })} />
+          <p className="text-xs text-muted-foreground mt-1">
+            Wording only. The minutes above still set the calendar block, the buffer and the invite.
+          </p></div>
         <div><Label>Price USD</Label>
           <Input type="number" className="mt-1 min-h-[44px]" value={f.price_usd}
             onChange={(e) => setF({ ...f, price_usd: e.target.value })} /></div>
