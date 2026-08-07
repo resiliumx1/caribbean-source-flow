@@ -68,7 +68,7 @@ export function ZoomStatusCard({ onRefreshed }: { onRefreshed?: () => void }) {
                   {status.hosts.filter((h) => h.zoom_user_email).map((h) => `${h.name} → ${h.zoom_user_email}`).join(" · ")
                     || "No practitioner has a Zoom host email set yet."}
                 </p>
-                <p className="flex flex-wrap items-center gap-2 text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-2 text-muted-foreground">
                   <span>{status.upcoming_online} upcoming online session{status.upcoming_online === 1 ? "" : "s"}</span>
                   {status.upcoming_missing_link > 0 ? (
                     <Badge variant="outline" className="border-amber-400 bg-white text-amber-900">
@@ -79,7 +79,7 @@ export function ZoomStatusCard({ onRefreshed }: { onRefreshed?: () => void }) {
                       all have links
                     </Badge>
                   )}
-                </p>
+                </div>
                 {status.missing.length > 0 && (
                   <p className="text-xs text-muted-foreground">
                     Needs a link: {status.missing.map((m) => m.reference).join(", ")}
