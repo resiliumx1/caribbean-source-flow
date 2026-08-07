@@ -171,8 +171,8 @@ export default function AdminWholesaleLeads() {
           No leads match your filters.
         </div>
       ) : (
-        <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
-          <table className="min-w-full text-sm">
+        <div className="border border-gray-200 rounded-lg overflow-x-auto bg-white">
+          <table className="min-w-[720px] w-full text-sm">
             <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
               <tr>
                 <th className="px-4 py-3 text-left">Company</th>

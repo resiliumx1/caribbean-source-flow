@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdminReviews, useUpdateReviewStatus, useDeleteReviews, type Review } from "@/hooks/use-reviews";
 import { StarRating } from "@/components/reviews/StarRating";
+import { ScrollTabs, MobileTable, StackedCard } from "@/components/admin/responsive";
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
@@ -70,12 +71,14 @@ export default function AdminReviews() {
       </div>
 
       <Tabs value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setSelected(new Set()); }}>
-        <TabsList>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="approved">Approved</TabsTrigger>
-          <TabsTrigger value="rejected">Rejected</TabsTrigger>
-          <TabsTrigger value="all">All</TabsTrigger>
-        </TabsList>
+        <ScrollTabs activeKey={statusFilter}>
+          <TabsList>
+            <TabsTrigger value="pending" className="min-h-[44px]">Pending</TabsTrigger>
+            <TabsTrigger value="approved" className="min-h-[44px]">Approved</TabsTrigger>
+            <TabsTrigger value="rejected" className="min-h-[44px]">Rejected</TabsTrigger>
+            <TabsTrigger value="all" className="min-h-[44px]">All</TabsTrigger>
+          </TabsList>
+        </ScrollTabs>
       </Tabs>
 
       {/* Bulk actions */}
@@ -103,80 +106,133 @@ export default function AdminReviews() {
           No {statusFilter !== "all" ? statusFilter : ""} reviews found.
         </div>
       ) : (
-        <div className="border border-border rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50">
-              <tr>
-                <th className="p-3 w-10">
-                  <Checkbox
-                    checked={selected.size === reviews.length && reviews.length > 0}
-                    onCheckedChange={toggleAll}
-                    aria-label="Select all"
-                  />
-                </th>
-                <th className="p-3 text-left font-medium text-muted-foreground">Product</th>
-                <th className="p-3 text-left font-medium text-muted-foreground">User</th>
-                <th className="p-3 text-left font-medium text-muted-foreground">Rating</th>
-                <th className="p-3 text-left font-medium text-muted-foreground">Status</th>
-                <th className="p-3 text-left font-medium text-muted-foreground">Date</th>
-                <th className="p-3 text-right font-medium text-muted-foreground">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reviews.map((review) => (
-                <tr key={review.id} className="border-t border-border hover:bg-muted/30">
-                  <td className="p-3">
-                    <Checkbox
-                      checked={selected.has(review.id)}
-                      onCheckedChange={() => toggleSelect(review.id)}
-                      aria-label={`Select review by ${review.user_name}`}
-                    />
-                  </td>
-                  <td className="p-3 font-medium text-foreground">
-                    {review.products?.name || "Unknown"}
-                  </td>
-                  <td className="p-3 text-muted-foreground">{review.user_name}</td>
-                  <td className="p-3">
+        <MobileTable
+          items={reviews}
+          renderRow={(review) => (
+            <StackedCard
+              primary={
+                <>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-medium text-foreground truncate">{review.products?.name || "Unknown"}</span>
+                    <Badge className={`text-xs flex-shrink-0 ${STATUS_COLORS[review.status] || ""}`}>{review.status}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-muted-foreground truncate">{review.user_name}</span>
                     <StarRating rating={review.rating} size="sm" />
-                  </td>
-                  <td className="p-3">
-                    <Badge className={`text-xs ${STATUS_COLORS[review.status] || ""}`}>
-                      {review.status}
-                    </Badge>
-                  </td>
-                  <td className="p-3 text-muted-foreground">{fmtDate(review.created_at)}</td>
-                  <td className="p-3 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => setPreviewReview(review)} aria-label="Preview">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      {review.status !== "approved" && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => updateStatus({ ids: [review.id], status: "approved" })}
-                          aria-label="Approve"
-                        >
-                          <Check className="w-4 h-4 text-primary" />
-                        </Button>
-                      )}
-                      {review.status !== "rejected" && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => updateStatus({ ids: [review.id], status: "rejected" })}
-                          aria-label="Reject"
-                        >
-                          <X className="w-4 h-4 text-destructive" />
-                        </Button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+                </>
+              }
+              details={
+                <div className="text-muted-foreground">{fmtDate(review.created_at)}</div>
+              }
+              actions={
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => setPreviewReview(review)} aria-label="Preview">
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                  {review.status !== "approved" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="min-h-[44px] min-w-[44px]"
+                      onClick={() => updateStatus({ ids: [review.id], status: "approved" })}
+                      aria-label="Approve"
+                    >
+                      <Check className="w-4 h-4 text-primary" />
+                    </Button>
+                  )}
+                  {review.status !== "rejected" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="min-h-[44px] min-w-[44px]"
+                      onClick={() => updateStatus({ ids: [review.id], status: "rejected" })}
+                      aria-label="Reject"
+                    >
+                      <X className="w-4 h-4 text-destructive" />
+                    </Button>
+                  )}
+                </div>
+              }
+            />
+          )}
+          table={
+            <div className="border border-border rounded-lg overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50">
+                  <tr>
+                    <th className="p-3 w-10">
+                      <Checkbox
+                        checked={selected.size === reviews.length && reviews.length > 0}
+                        onCheckedChange={toggleAll}
+                        aria-label="Select all"
+                      />
+                    </th>
+                    <th className="p-3 text-left font-medium text-muted-foreground">Product</th>
+                    <th className="p-3 text-left font-medium text-muted-foreground">User</th>
+                    <th className="p-3 text-left font-medium text-muted-foreground">Rating</th>
+                    <th className="p-3 text-left font-medium text-muted-foreground">Status</th>
+                    <th className="p-3 text-left font-medium text-muted-foreground">Date</th>
+                    <th className="p-3 text-right font-medium text-muted-foreground">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reviews.map((review) => (
+                    <tr key={review.id} className="border-t border-border hover:bg-muted/30">
+                      <td className="p-3">
+                        <Checkbox
+                          checked={selected.has(review.id)}
+                          onCheckedChange={() => toggleSelect(review.id)}
+                          aria-label={`Select review by ${review.user_name}`}
+                        />
+                      </td>
+                      <td className="p-3 font-medium text-foreground">
+                        {review.products?.name || "Unknown"}
+                      </td>
+                      <td className="p-3 text-muted-foreground">{review.user_name}</td>
+                      <td className="p-3">
+                        <StarRating rating={review.rating} size="sm" />
+                      </td>
+                      <td className="p-3">
+                        <Badge className={`text-xs ${STATUS_COLORS[review.status] || ""}`}>
+                          {review.status}
+                        </Badge>
+                      </td>
+                      <td className="p-3 text-muted-foreground">{fmtDate(review.created_at)}</td>
+                      <td className="p-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="icon" onClick={() => setPreviewReview(review)} aria-label="Preview">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          {review.status !== "approved" && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => updateStatus({ ids: [review.id], status: "approved" })}
+                              aria-label="Approve"
+                            >
+                              <Check className="w-4 h-4 text-primary" />
+                            </Button>
+                          )}
+                          {review.status !== "rejected" && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => updateStatus({ ids: [review.id], status: "rejected" })}
+                              aria-label="Reject"
+                            >
+                              <X className="w-4 h-4 text-destructive" />
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          }
+        />
       )}
 
       {/* Preview Modal */}

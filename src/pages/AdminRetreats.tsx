@@ -29,6 +29,7 @@ import {
   useRetreatGalleryMutations,
   RETREAT_CATEGORIES,
 } from "@/hooks/use-retreat-gallery";
+import { ScrollTabs } from "@/components/admin/responsive";
 
 const VIDEO_CATEGORIES = [
   { value: "experience", label: "Experience" },
@@ -45,11 +46,13 @@ export default function AdminRetreats() {
     <div className="space-y-8">
       <h1 className="text-3xl font-serif font-bold text-foreground">Retreat Media</h1>
       <Tabs defaultValue="gallery" className="w-full">
-        <TabsList>
-          <TabsTrigger value="gallery" className="gap-2"><ImageIcon className="w-4 h-4" />Gallery</TabsTrigger>
-          <TabsTrigger value="videos" className="gap-2"><Video className="w-4 h-4" />Videos</TabsTrigger>
-          <TabsTrigger value="retreats" className="gap-2"><Tent className="w-4 h-4" />Retreats</TabsTrigger>
-        </TabsList>
+        <ScrollTabs>
+          <TabsList>
+            <TabsTrigger value="gallery" className="gap-2 min-h-[44px]"><ImageIcon className="w-4 h-4" />Gallery</TabsTrigger>
+            <TabsTrigger value="videos" className="gap-2 min-h-[44px]"><Video className="w-4 h-4" />Videos</TabsTrigger>
+            <TabsTrigger value="retreats" className="gap-2 min-h-[44px]"><Tent className="w-4 h-4" />Retreats</TabsTrigger>
+          </TabsList>
+        </ScrollTabs>
         <TabsContent value="gallery"><GalleryTab /></TabsContent>
         <TabsContent value="videos"><VideosTab /></TabsContent>
         <TabsContent value="retreats"><RetreatsTab /></TabsContent>
