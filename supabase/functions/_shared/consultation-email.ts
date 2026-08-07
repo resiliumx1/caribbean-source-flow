@@ -22,7 +22,8 @@ export type ConsultationEmailType =
   | "reschedule"
   | "cancellation"
   | "reminder_24h"
-  | "reminder_1h";
+  | "reminder_1h"
+  | "join_link";
 
 async function sendResend(payload: Record<string, unknown>) {
   const key = Deno.env.get("RESEND_API_KEY");
@@ -264,6 +265,19 @@ export async function sendConsultationEmail(
           textLink(booking.zoom_join_url, "Or paste this link into your browser:")
         : cta;
       attachIcs = false;
+      break;
+    case "join_link":
+      subject = `Your Zoom link for the consultation — ${booking.booking_reference} | Mount Kailash`;
+      heading = joinable ? "Here is your join link" : "Your join link is on the way";
+      intro = joinable
+        ? `${booking.customer_name}, here is the link for your session with Rt. Hon. Priest Kailash. Open it a few minutes early — the same link works for the whole session.`
+        : `${booking.customer_name}, we are preparing the video room for your session and will send the link as soon as it is ready.`;
+      attachIcs = joinable;
+      if (joinable) {
+        cta = goldButton(booking.zoom_join_url, "Join your session on Zoom") +
+          textLink(booking.zoom_join_url, "Or paste this link into your browser:") +
+          button(manageUrl, "View or change this booking");
+      }
       break;
   }
 

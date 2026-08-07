@@ -19,6 +19,7 @@ import {
 import type { Tables } from "@/integrations/supabase/types";
 import { fullMoment, moneyUsd } from "@/lib/consultation-utils";
 import BookingsTable from "@/components/admin/consultations/BookingsTable";
+import ZoomStatusCard from "@/components/admin/consultations/ZoomStatusCard";
 
 type Booking = Tables<"consultation_bookings">;
 type Service = Tables<"consultation_services">;
@@ -227,6 +228,7 @@ export default function AdminConsultations() {
 
         {/* ───────── Bookings ───────── */}
         <TabsContent value="bookings" className="space-y-4 pt-4">
+          <ZoomStatusCard />
           <BookingsTable
             bookings={bookings}
             calendlyEvents={calendlyEvents}
