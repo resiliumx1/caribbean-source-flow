@@ -180,6 +180,8 @@ export default function BookingsTable({
       amount: 0,
       customerTimezone: e.invitee_timezone,
       joinUrl: e.join_url,
+      needsVerification: false,
+      packageEmail: null,
       calendly: e,
     }));
 
@@ -357,6 +359,11 @@ export default function BookingsTable({
                       <Badge variant="outline" className={`mt-1 ${STATUS_TONE[r.status] ?? ""}`}>
                         {r.status.replace(/_/g, " ")}
                       </Badge>
+                      {r.needsVerification && (
+                        <Badge variant="outline" className="mt-1 ml-1 bg-amber-100 text-amber-900 border-amber-300">
+                          verify package
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell className="align-middle">
                       <div className="font-medium">{r.name}</div>
@@ -397,6 +404,11 @@ export default function BookingsTable({
                   <Badge variant="outline" className={STATUS_TONE[r.status] ?? ""}>
                     {r.status.replace(/_/g, " ")}
                   </Badge>
+                  {r.needsVerification && (
+                    <Badge variant="outline" className="bg-amber-100 text-amber-900 border-amber-300">
+                      verify package
+                    </Badge>
+                  )}
                   <Badge variant="outline" className={PAYMENT_TONE[r.payment]}>
                     {PAYMENT_LABEL[r.payment]}
                   </Badge>
