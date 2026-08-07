@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import {
-  CalendarX2, Clock, ExternalLink, Mail, RefreshCw, Search, Video, X,
+  CalendarX2, Check, Clock, Copy, ExternalLink, Mail, RefreshCw, Search, Video, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -115,6 +115,22 @@ export default function BookingsTable({
   const [organizer, setOrganizer] = useState("all");
   const [payment, setPayment] = useState<"all" | PaymentState>("all");
   const [detail, setDetail] = useState<Row | null>(null);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+
+  const copyJoinUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      const el = document.createElement("textarea");
+      el.value = url;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+    }
+    setCopiedUrl(url);
+    window.setTimeout(() => setCopiedUrl(null), 2200);
+  };
 
   const serviceName = (id: string | null) =>
     services.find((s) => s.id === id)?.name ?? "Consultation";
@@ -428,13 +444,30 @@ export default function BookingsTable({
                 <p className="text-muted-foreground">
                   {detail.serviceName} · {detail.practitionerName} · {detail.mode}
                 </p>
-                {detail.joinUrl && (
-                  <a href={detail.joinUrl} target="_blank" rel="noreferrer"
-                     className="inline-flex items-center gap-1.5 text-sm underline">
-                    <Video className="w-4 h-4" /> Join link <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
               </div>
+
+              {detail.joinUrl && (
+                <div className="rounded-lg border bg-muted/40 p-3">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Video room
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <Button asChild size="sm" className="min-h-[40px]">
+                      <a href={detail.joinUrl} target="_blank" rel="noreferrer">
+                        <Video className="w-4 h-4 mr-1.5" /> Open join link
+                        <ExternalLink className="w-3 h-3 ml-1.5" />
+                      </a>
+                    </Button>
+                    <Button size="sm" variant="outline" className="min-h-[40px]"
+                      onClick={() => copyJoinUrl(detail.joinUrl!)}>
+                      {copiedUrl === detail.joinUrl
+                        ? <><Check className="w-4 h-4 mr-1.5" /> Copied</>
+                        : <><Copy className="w-4 h-4 mr-1.5" /> Copy link</>}
+                    </Button>
+                  </div>
+                  <p className="mt-2 break-all text-xs text-muted-foreground">{detail.joinUrl}</p>
+                </div>
+              )}
 
               {detail.source === "calendly" ? (
                 <>
