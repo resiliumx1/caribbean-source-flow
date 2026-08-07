@@ -84,9 +84,9 @@ export function ConsultationCTA() {
                 maxWidth: "38rem",
               }}
             >
-              One person, one hour, one protocol. Your history is heard properly, the pattern
-              beneath the complaint is named, and you leave with a sequenced protocol you can
-              actually follow. Sessions are taken in small number.
+              A private one hour session, one to one, online or in person at the Rejuvenation
+              Centre in Saint Lucia. Sessions are taken in small number, and only times he has
+              open appear in the calendar.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2.5">
@@ -129,7 +129,7 @@ export function ConsultationCTA() {
                 <Link to="/consultations#book">Book a consultation</Link>
               </Button>
               <Button asChild variant="outline" className="min-h-[48px] px-7">
-                <Link to="/consultations">See what the hour holds</Link>
+                <Link to="/consultations">Times, fees and formats</Link>
               </Button>
             </div>
           </div>
