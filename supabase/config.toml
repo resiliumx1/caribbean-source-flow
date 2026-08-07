@@ -41,3 +41,18 @@ verify_jwt = false
 
 [functions.calendly-consultation]
 verify_jwt = false
+
+[functions.consultation-availability]
+verify_jwt = false
+
+[functions.consultation-book]
+verify_jwt = false
+
+[functions.consultation-pay]
+verify_jwt = false
+
+[functions.consultation-manage]
+verify_jwt = false
+
+[functions.consultation-reminders]
+verify_jwt = false

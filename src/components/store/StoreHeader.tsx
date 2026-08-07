@@ -45,6 +45,7 @@ const NAV_LINKS = [
   { label: "Retreats", to: "/retreats" },
   { label: "School", to: SCHOOL_URL, external: true },
   { label: "The Answer", to: "/the-answer" },
+  { label: "Consultations", to: "/consultations" },
   { label: "Webinars", to: "/webinars" },
   { label: "WCE 2026", to: "/wce-2026" },
 ];

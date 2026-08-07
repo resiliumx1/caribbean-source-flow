@@ -336,21 +336,126 @@ export type Database = {
           },
         ]
       }
+      consultation_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_active: boolean
+          practitioner_id: string
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_active?: boolean
+          practitioner_id: string
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          practitioner_id?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_availability_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_practitioners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_availability_overrides: {
+        Row: {
+          created_at: string
+          date: string
+          end_time: string | null
+          id: string
+          is_available: boolean
+          practitioner_id: string
+          reason: string | null
+          start_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          end_time?: string | null
+          id?: string
+          is_available?: boolean
+          practitioner_id: string
+          reason?: string | null
+          start_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          end_time?: string | null
+          id?: string
+          is_available?: boolean
+          practitioner_id?: string
+          reason?: string | null
+          start_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_availability_overrides_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_practitioners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultation_bookings: {
         Row: {
-          amount_paid_usd: number
-          calendly_event_uri: string | null
+          amount: number
+          booking_reference: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          coupon_code: string | null
           created_at: string
-          email: string
+          currency: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string | null
+          customer_timezone: string
+          discount_usd: number
+          ends_at: string
+          ics_sequence: number
           id: string
+          intake_answers: Json
+          internal_notes: string | null
           ip_address: string | null
           landing_path: string | null
-          name: string
+          manage_token: string
+          mode: string
+          notes: string | null
+          order_id: string | null
           payment_method: string | null
           payment_transaction_id: string | null
-          phone: string | null
+          practitioner_id: string | null
           referral_code: string | null
-          scheduled_at: string | null
+          reminder_1h_sent_at: string | null
+          reminder_24h_sent_at: string | null
+          reschedule_count: number
+          rescheduled_from_id: string | null
+          service_id: string | null
+          starts_at: string
           status: string
           updated_at: string
           user_agent: string | null
@@ -359,21 +464,45 @@ export type Database = {
           utm_medium: string | null
           utm_source: string | null
           utm_term: string | null
+          zoom_error: string | null
+          zoom_join_url: string | null
+          zoom_meeting_id: string | null
+          zoom_start_url: string | null
         }
         Insert: {
-          amount_paid_usd: number
-          calendly_event_uri?: string | null
+          amount?: number
+          booking_reference: string
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          coupon_code?: string | null
           created_at?: string
-          email: string
+          currency?: string
+          customer_email: string
+          customer_name: string
+          customer_phone?: string | null
+          customer_timezone?: string
+          discount_usd?: number
+          ends_at: string
+          ics_sequence?: number
           id?: string
+          intake_answers?: Json
+          internal_notes?: string | null
           ip_address?: string | null
           landing_path?: string | null
-          name: string
+          manage_token?: string
+          mode?: string
+          notes?: string | null
+          order_id?: string | null
           payment_method?: string | null
           payment_transaction_id?: string | null
-          phone?: string | null
+          practitioner_id?: string | null
           referral_code?: string | null
-          scheduled_at?: string | null
+          reminder_1h_sent_at?: string | null
+          reminder_24h_sent_at?: string | null
+          reschedule_count?: number
+          rescheduled_from_id?: string | null
+          service_id?: string | null
+          starts_at: string
           status?: string
           updated_at?: string
           user_agent?: string | null
@@ -382,21 +511,45 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          zoom_error?: string | null
+          zoom_join_url?: string | null
+          zoom_meeting_id?: string | null
+          zoom_start_url?: string | null
         }
         Update: {
-          amount_paid_usd?: number
-          calendly_event_uri?: string | null
+          amount?: number
+          booking_reference?: string
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          coupon_code?: string | null
           created_at?: string
-          email?: string
+          currency?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string | null
+          customer_timezone?: string
+          discount_usd?: number
+          ends_at?: string
+          ics_sequence?: number
           id?: string
+          intake_answers?: Json
+          internal_notes?: string | null
           ip_address?: string | null
           landing_path?: string | null
-          name?: string
+          manage_token?: string
+          mode?: string
+          notes?: string | null
+          order_id?: string | null
           payment_method?: string | null
           payment_transaction_id?: string | null
-          phone?: string | null
+          practitioner_id?: string | null
           referral_code?: string | null
-          scheduled_at?: string | null
+          reminder_1h_sent_at?: string | null
+          reminder_24h_sent_at?: string | null
+          reschedule_count?: number
+          rescheduled_from_id?: string | null
+          service_id?: string | null
+          starts_at?: string
           status?: string
           updated_at?: string
           user_agent?: string | null
@@ -405,8 +558,217 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          zoom_error?: string | null
+          zoom_join_url?: string | null
+          zoom_meeting_id?: string | null
+          zoom_start_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_bookings_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_bookings_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_practitioners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_bookings_rescheduled_from_id_fkey"
+            columns: ["rescheduled_from_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_intake_questions: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          is_required: boolean
+          options: Json
+          question: string
+          service_id: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          options?: Json
+          question: string
+          service_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          options?: Json
+          question?: string
+          service_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_intake_questions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_practitioners: {
+        Row: {
+          bio: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          photo_url: string | null
+          timezone: string
+          title: string | null
+          updated_at: string
+          zoom_user_email: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          photo_url?: string | null
+          timezone?: string
+          title?: string | null
+          updated_at?: string
+          zoom_user_email?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          photo_url?: string | null
+          timezone?: string
+          title?: string | null
+          updated_at?: string
+          zoom_user_email?: string | null
         }
         Relationships: []
+      }
+      consultation_services: {
+        Row: {
+          buffer_after_minutes: number
+          buffer_before_minutes: number
+          created_at: string
+          description: string | null
+          display_order: number
+          duration_minutes: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          long_description: string | null
+          max_advance_days: number
+          max_per_day: number | null
+          min_notice_hours: number
+          mode: string
+          name: string
+          practitioner_id: string | null
+          price_usd: number
+          price_xcd: number
+          product_id: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          buffer_after_minutes?: number
+          buffer_before_minutes?: number
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          duration_minutes?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          long_description?: string | null
+          max_advance_days?: number
+          max_per_day?: number | null
+          min_notice_hours?: number
+          mode?: string
+          name: string
+          practitioner_id?: string | null
+          price_usd?: number
+          price_xcd?: number
+          product_id?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          buffer_after_minutes?: number
+          buffer_before_minutes?: number
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          duration_minutes?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          long_description?: string | null
+          max_advance_days?: number
+          max_per_day?: number | null
+          min_notice_hours?: number
+          mode?: string
+          name?: string
+          practitioner_id?: string | null
+          price_usd?: number
+          price_xcd?: number
+          product_id?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_services_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_practitioners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_services_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consultation_settings: {
         Row: {
@@ -2764,6 +3126,7 @@ export type Database = {
         Returns: boolean
       }
       clean_product_text: { Args: { t: string }; Returns: string }
+      expire_pending_consultation_bookings: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
