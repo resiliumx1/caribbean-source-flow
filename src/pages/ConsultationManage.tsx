@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { SlotPicker } from "@/components/consultation/SlotPicker";
+import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
 import {
   detectTimezone, fullMoment, moneyUsd, zoneLabel, type Slot,
   durationLabel,
@@ -213,20 +214,18 @@ export default function ConsultationManage() {
                       {b.mode === "in_person" ? (
                         <><MapPin className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} />
                           Mount Kailash Rejuvenation Centre, Saint Lucia</>
-                      ) : b.zoom_join_url && !isCancelled ? (
-                        <><Video className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} />
-                          <a href={b.zoom_join_url} target="_blank" rel="noopener noreferrer"
-                            style={{ color: "var(--c-gold-deep)", textDecoration: "underline" }}>
-                            Join the video room
-                          </a></>
                       ) : (
                         <><Video className="w-4 h-4" style={{ color: "var(--c-gold-deep)" }} />
-                          {isCancelled ? "Online session" : "Your video link will arrive by email shortly"}</>
+                          {isCancelled ? "Online session" : "Online, by Zoom"}</>
                       )}
                     </dd>
                   </div>
                 </dl>
               </div>
+
+              {b.mode === "online" && !isCancelled && !isPast && (
+                <ZoomJoinPanel joinUrl={b.zoom_join_url} pending={b.zoom_pending} />
+              )}
 
               {isCancelled ? (
                 <div className="mt-6">
