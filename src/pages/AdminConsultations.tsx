@@ -107,6 +107,7 @@ export default function AdminConsultations() {
 
   const createZoomRoom = async (b: Booking) => {
     setBusyId(b.id);
+    setBusyId(b.id);
     const { data, error } = await supabase.functions.invoke("zoom-create-meeting", {
       body: { booking_id: b.id },
     });
