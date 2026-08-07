@@ -61,6 +61,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isWceRoute = location.pathname.startsWith("/admin/wce");
+  const currentSectionLabel = NAV_LINKS.find((l) => location.pathname.startsWith(l.href))?.label ?? "Menu";
   // A WCE organiser who is not a full store admin.
   const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
   const { theme, setTheme } = useTheme();
@@ -262,14 +263,15 @@ export default function AdminLayout() {
               <Link to="/" className="hidden lg:inline-flex"><Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" style={{ color: '#1b4332' }}><Home className="h-4 w-4" /><span>Back to Site</span></Button></Link>
               <button onClick={() => signOut()} className="text-xs text-destructive hover:underline hidden lg:inline">Sign Out</button>
 
-              {/* Mobile / tablet hamburger */}
+              {/* Mobile / tablet hamburger, with current section name so the active area is always identifiable */}
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
                   <button
                     aria-label="Open menu"
-                    className="lg:hidden h-8 w-8 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center justify-center text-foreground"
+                    className="lg:hidden min-h-[44px] pl-2 pr-2.5 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center gap-2 text-foreground max-w-[46vw] sm:max-w-none"
                   >
-                    <Menu className="h-4 w-4" />
+                    <Menu className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-xs font-semibold truncate">{currentSectionLabel}</span>
                   </button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[280px] sm:w-[320px] p-0 flex flex-col">
