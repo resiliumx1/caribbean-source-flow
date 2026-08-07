@@ -78,6 +78,44 @@ function button(href: string, label: string): string {
   return `<div style="margin:0 0 8px;"><a href="${href}" style="display:inline-block;background:${BRAND_DARK};color:${BRAND_CREAM};text-decoration:none;padding:14px 26px;border-radius:8px;font-size:15px;font-weight:600;">${label}</a></div>`;
 }
 
+function goldButton(href: string, label: string): string {
+  return `<div style="margin:0 0 10px;"><a href="${href}" style="display:inline-block;background:${BRAND_GOLD};color:#ffffff;text-decoration:none;padding:15px 28px;border-radius:8px;font-size:16px;font-weight:700;letter-spacing:.02em;">${label}</a></div>`;
+}
+
+function textLink(href: string, label: string): string {
+  return `<p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:${BRAND_MUTED};">${label} <a href="${href}" style="color:${BRAND_GOLD};word-break:break-all;">${href}</a></p>`;
+}
+
+/** Session length wording — sessions run 30–45 minutes in practice. */
+export function durationLabel(minutes?: number | null): string {
+  const m = Number(minutes) || 45;
+  return m === 45 ? "45 minutes (typically 30–45)" : `${m} minutes`;
+}
+
+/** Non-refundable and consultative-scope notice, shown on every client email. */
+function disclaimerBlock(): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:22px 0 0;border:1px solid #e8e0d2;border-left:4px solid ${BRAND_GOLD};border-radius:8px;background:${BRAND_CREAM};">
+    <tr><td style="padding:16px 18px;">
+      <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:${BRAND_DARK};font-weight:700;margin:0 0 8px;">Please note</div>
+      <p style="margin:0 0 10px;font-size:13px;line-height:1.7;color:${BRAND_TEXT};">
+        Consultation fees are <strong>non-refundable</strong>. Sessions may be rescheduled once with at least 24 hours' notice.
+      </p>
+      <p style="margin:0;font-size:13px;line-height:1.7;color:${BRAND_MUTED};">
+        This consultation is educational and consultative in nature. It does not constitute medical diagnosis,
+        treatment, or a doctor–patient relationship, and it is not a substitute for care from your licensed physician.
+        Do not stop or change prescribed medication based on this session. In an emergency, contact your local
+        emergency services.
+      </p>
+    </td></tr>
+  </table>`;
+}
+
+const PREPARE_NOTE =
+  `<p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:${BRAND_TEXT};">
+    <strong>To prepare:</strong> bring your questions, your current concerns, and any history — including
+    medications or supplements — that you would like discussed.
+  </p>`;
+
 export interface EmailContext {
   booking: any;
   service: any;
@@ -106,7 +144,7 @@ export async function sendConsultationEmail(
     ["Session", service?.name ?? "Private Consultation"],
     ["Your time", formatInZone(booking.starts_at, customerZone)],
     ["Saint Lucia time", formatInZone(booking.starts_at, practitionerZone)],
-    ["Duration", `${service?.duration_minutes ?? 60} minutes`],
+    ["Duration", durationLabel(service?.duration_minutes)],
     ["Format", location],
   ];
   if (booking.zoom_join_url && isOnline) {
@@ -122,17 +160,30 @@ export async function sendConsultationEmail(
   let cta = button(manageUrl, "View or change this booking");
   let attachIcs = true;
   let cancelled = false;
+  let extraHtml = "";
+  const joinable = isOnline && Boolean(booking.zoom_join_url);
 
   switch (type) {
     case "confirmation":
       subject = `Your consultation is confirmed — ${booking.booking_reference} | Mount Kailash`;
       heading = "Your consultation is confirmed";
       intro = `${booking.customer_name}, your time with Rt. Hon. Priest Kailash is reserved. The details are below, and a calendar invitation is attached.`;
+      extraHtml = PREPARE_NOTE;
+      if (joinable) {
+        cta = goldButton(booking.zoom_join_url, "Join your session on Zoom") +
+          textLink(booking.zoom_join_url, "Or paste this link into your browser:") +
+          button(manageUrl, "View or change this booking");
+      }
       break;
     case "reschedule":
       subject = `Your consultation has been moved — ${booking.booking_reference} | Mount Kailash`;
       heading = "Your consultation has been moved";
       intro = `${booking.customer_name}, your session has been rescheduled. The new time is below and the attached invitation will update your calendar.`;
+      if (joinable) {
+        cta = goldButton(booking.zoom_join_url, "Join your session on Zoom") +
+          textLink(booking.zoom_join_url, "Or paste this link into your browser:") +
+          button(manageUrl, "View or change this booking");
+      }
       break;
     case "cancellation":
       subject = `Your consultation has been cancelled — ${booking.booking_reference} | Mount Kailash`;
@@ -146,19 +197,30 @@ export async function sendConsultationEmail(
       heading = "Your consultation is tomorrow";
       intro = `${booking.customer_name}, a reminder that your session with Rt. Hon. Priest Kailash is tomorrow. Come with your questions and any history you would like to discuss.`;
       attachIcs = false;
+      if (joinable) {
+        cta = goldButton(booking.zoom_join_url, "Join your session on Zoom") +
+          textLink(booking.zoom_join_url, "Your link, ready for tomorrow:") +
+          button(manageUrl, "View or change this booking");
+      }
       break;
     case "reminder_1h":
       subject = `In one hour: your consultation with Priest Kailash — ${booking.booking_reference}`;
       heading = "Your consultation begins in one hour";
-      intro = `${booking.customer_name}, your session begins in one hour.${isOnline && booking.zoom_join_url ? " Use the Zoom link below to join a few minutes early." : ""}`;
-      cta = isOnline && booking.zoom_join_url
-        ? button(booking.zoom_join_url, "Join the session")
+      intro = `${booking.customer_name}, your session begins in one hour.${joinable ? " Use the link below to join a few minutes early." : ""}`;
+      cta = joinable
+        ? goldButton(booking.zoom_join_url, "Join your session on Zoom") +
+          textLink(booking.zoom_join_url, "Or paste this link into your browser:")
         : cta;
       attachIcs = false;
       break;
   }
 
-  const html = shell(heading, intro, detailRows(rows), cta);
+  const html = shell(
+    heading,
+    intro,
+    extraHtml + detailRows(rows),
+    cta + (cancelled ? "" : disclaimerBlock()),
+  );
 
   let attachments: unknown[] | undefined;
   if (attachIcs) {
