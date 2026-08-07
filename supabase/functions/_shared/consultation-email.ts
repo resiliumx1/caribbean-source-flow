@@ -87,10 +87,12 @@ function textLink(href: string, label: string): string {
   return `<p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:${BRAND_MUTED};">${label} <a href="${href}" style="color:${BRAND_GOLD};word-break:break-all;">${href}</a></p>`;
 }
 
-/** Session length wording — sessions run 30–45 minutes in practice. */
-export function durationLabel(minutes?: number | null): string {
+/** Session length wording. A service's own display label wins when it has one. */
+export function durationLabel(minutes?: number | null, displayLabel?: string | null): string {
+  const label = typeof displayLabel === "string" ? displayLabel.trim() : "";
+  if (label) return label;
   const m = Number(minutes) || 45;
-  return m === 45 ? "45 minutes (typically 30–45)" : `${m} minutes`;
+  return `${m} minutes`;
 }
 
 /** Non-refundable and consultative-scope notice, shown on every client email. */
@@ -197,7 +199,7 @@ export async function sendConsultationEmail(
     ["Session", service?.name ?? "Private Consultation"],
     ["Your time", formatInZone(booking.starts_at, customerZone)],
     ["Saint Lucia time", formatInZone(booking.starts_at, practitionerZone)],
-    ["Duration", durationLabel(service?.duration_minutes)],
+    ["Duration", durationLabel(service?.duration_minutes, service?.duration_display_label)],
     ["Format", location],
   ];
   if (booking.zoom_join_url && isOnline) {
