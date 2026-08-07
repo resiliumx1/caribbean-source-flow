@@ -402,7 +402,8 @@ export default function AdminConsultations() {
           <Button variant="outline" className="min-h-[44px]" disabled={!practitioner} onClick={async () => {
             const { error } = await supabase.from("consultation_services").insert({
               name: "New session type", slug: `new-session-${Date.now().toString(36)}`,
-              description: "", duration_minutes: 60, buffer_before_minutes: 0, buffer_after_minutes: 0,
+              description: "", duration_minutes: 45, duration_display_label: "30–45 minutes",
+              buffer_before_minutes: 0, buffer_after_minutes: 15,
               price_usd: 300, price_xcd: 810, mode: "online",
               practitioner_id: practitioner!.id,
               min_notice_hours: 24, max_advance_days: 60,
