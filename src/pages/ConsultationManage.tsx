@@ -260,7 +260,6 @@ export default function ConsultationManage() {
                       onSelectDate={setSelectedDate}
                       selected={slot}
                       onSelect={setSlot}
-                      practitionerTimezone={practitionerTz}
                     />
                   )}
                   <div className="mt-6 flex items-center justify-between gap-3">

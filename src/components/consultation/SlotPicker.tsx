@@ -18,12 +18,13 @@ interface SlotPickerProps {
   onSelect: (slot: Slot) => void;
   /** Dates the schedule opens, from the availability engine. */
   scheduleDates?: string[];
-  range: { from: string; to: string };
+  /** Bookable window. Derived from the slots when not supplied. */
+  range?: { from: string; to: string };
 }
 
 export function SlotPicker({
   slots, timezone, onTimezoneChange, selectedDate, onSelectDate,
-  selected, onSelect, scheduleDates = [], range,
+  selected, onSelect, scheduleDates = [], range: rangeProp,
 }: SlotPickerProps) {
   const grouped = useMemo(() => groupSlotsByDate(slots, timezone), [slots, timezone]);
   const dates = useMemo(() => Array.from(grouped.keys()).sort(), [grouped]);
@@ -34,6 +35,14 @@ export function SlotPicker({
   }, [grouped]);
   const scheduleSet = useMemo(() => new Set(scheduleDates), [scheduleDates]);
   const [zoneOpen, setZoneOpen] = useState(false);
+
+  const range = useMemo(
+    () => rangeProp ?? {
+      from: dates[0] ?? new Date().toISOString().slice(0, 10),
+      to: dates[dates.length - 1] ?? new Date().toISOString().slice(0, 10),
+    },
+    [rangeProp, dates],
+  );
 
   // Keep a valid day selected as the timezone or availability shifts.
   useEffect(() => {
