@@ -19,6 +19,13 @@ import {
 import type { Tables } from "@/integrations/supabase/types";
 import { fullMoment, moneyUsd } from "@/lib/consultation-utils";
 
+/** Long moment including the year — imported sessions span several years. */
+const momentWithYear = (iso: string, zone: string) =>
+  new Intl.DateTimeFormat("en-GB", {
+    weekday: "short", day: "numeric", month: "short", year: "numeric",
+    hour: "numeric", minute: "2-digit", timeZone: zone, timeZoneName: "short",
+  }).format(new Date(iso));
+
 type Booking = Tables<"consultation_bookings">;
 type Practitioner = Tables<"consultation_practitioners">;
 type Service = Tables<"consultation_services">;
@@ -31,7 +38,7 @@ const PAYMENT_LABEL: Record<PaymentState, string> = {
   awaiting: "Awaiting payment",
   refunded: "Refunded",
   cancelled: "Cancelled",
-  none: "No payment recorded",
+  none: "No charge",
 };
 
 const PAYMENT_TONE: Record<PaymentState, string> = {
@@ -262,7 +269,7 @@ export default function BookingsTable({
                 <SelectItem value="awaiting">Awaiting payment</SelectItem>
                 <SelectItem value="refunded">Refunded</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
-                <SelectItem value="none">No payment recorded</SelectItem>
+                <SelectItem value="none">No charge</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -329,7 +336,7 @@ export default function BookingsTable({
                 {filtered.map((r) => (
                   <TableRow key={`${r.source}-${r.id}`}>
                     <TableCell className="align-middle">
-                      <div className="font-medium">{fullMoment(r.startsAt, tz)}</div>
+                      <div className="font-medium">{momentWithYear(r.startsAt, tz)}</div>
                       <Badge variant="outline" className={`mt-1 ${STATUS_TONE[r.status] ?? ""}`}>
                         {r.status.replace(/_/g, " ")}
                       </Badge>
@@ -380,7 +387,7 @@ export default function BookingsTable({
                 </div>
                 <p className="text-sm">
                   <Clock className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" />
-                  {fullMoment(r.startsAt, tz)}
+                  {momentWithYear(r.startsAt, tz)}
                 </p>
                 <p className="font-medium">{r.name}</p>
                 <p className="text-sm text-muted-foreground break-words">{r.email}</p>
@@ -406,10 +413,10 @@ export default function BookingsTable({
           {detail && (
             <div className="space-y-4">
               <div className="text-sm space-y-1">
-                <p>{fullMoment(detail.startsAt, tz)} ({tz})</p>
+                <p>{momentWithYear(detail.startsAt, tz)} ({tz})</p>
                 {detail.customerTimezone && (
                   <p className="text-muted-foreground">
-                    Their time {fullMoment(detail.startsAt, detail.customerTimezone)}
+                    Their time {momentWithYear(detail.startsAt, detail.customerTimezone)}
                   </p>
                 )}
                 <p className="text-muted-foreground">
