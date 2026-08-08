@@ -1,31 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
 import { useWceAccess } from "@/hooks/use-wce-access";
+import { useConsultationAccess } from "@/hooks/use-consultation-access";
 import { WceAdminShell } from "@/components/wce-admin/WceAdminShell";
-import { Loader2, Home, Sun, Moon, Bell, ShoppingBag, MessageSquare, Wallet, AlertTriangle, Mail, Menu } from "lucide-react";
+import { Loader2, Home, Sun, Moon, Bell, ShoppingBag, MessageSquare, Wallet, AlertTriangle, Mail, Menu, ChevronRight, LogOut, MoreVertical, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 import { supabase } from "@/integrations/supabase/client";
-
-const NAV_LINKS = [
-  { label: 'Orders', href: '/admin/orders' },
-  { label: 'Products', href: '/admin/products' },
-  { label: 'Retreats', href: '/admin/retreats' },
-  { label: 'Retreat Dates', href: '/admin/retreat-dates' },
-  { label: 'Reviews', href: '/admin/reviews' },
-  { label: 'Webinars', href: '/admin/webinars' },
-  { label: 'Analytics', href: '/admin/analytics' },
-  { label: 'Payment Plans', href: '/admin/payment-plans' },
-  { label: 'Wholesale Leads', href: '/admin/wholesale-leads' },
-  { label: 'Payment Alerts', href: '/admin/payment-alerts' },
-  { label: 'Discount Codes', href: '/admin/coupons' },
-  { label: 'Abandoned Carts', href: '/admin/abandoned-carts' },
-  { label: 'Consultations', href: '/admin/consultations' },
-  { label: 'WCE 2026', href: '/admin/wce' },
-  { label: 'Notifications', href: '/admin/notifications' },
-];
+import { AdminNav, AdminSidebar, useRailState, type BadgeCounts } from "./AdminSidebar";
+import { AdminCommandPalette } from "./AdminCommandPalette";
+import { findActiveItem, visibleGroups } from "./nav-config";
 
 type Notification = {
   id: string;
@@ -58,25 +45,71 @@ function relativeTime(iso: string) {
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
   const wce = useWceAccess();
+  const consult = useConsultationAccess();
   const navigate = useNavigate();
   const location = useLocation();
   const isWceRoute = location.pathname.startsWith("/admin/wce");
-  const currentSectionLabel = NAV_LINKS.find((l) => location.pathname.startsWith(l.href))?.label ?? "Menu";
-  // The desktop strip scrolls when it runs out of room; keep the current section in view.
-  const deskNavRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    const active = deskNavRef.current?.querySelector<HTMLElement>('[data-active="true"]');
-    active?.scrollIntoView({ block: "nearest", inline: "center" });
-  }, [location.pathname]);
   // A WCE organiser who is not a full store admin.
   const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
+  const consultationOnly =
+    !isLoading && !consult.isLoading && !isAdmin && consult.hasConsultationAccess;
   const { theme, setTheme } = useTheme();
   const [unread, setUnread] = useState(0);
   const [recent, setRecent] = useState<Notification[]>([]);
   const [bellOpen, setBellOpen] = useState(false);
   const [paymentAlerts, setPaymentAlerts] = useState(0);
+  const [pendingConsults, setPendingConsults] = useState(0);
+  const [newLeads, setNewLeads] = useState(0);
   const bellRef = useRef<HTMLDivElement | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const { collapsed, setCollapsed } = useRailState();
+
+  const groups = useMemo(
+    () =>
+      visibleGroups({
+        isFullAdmin: isAdmin,
+        hasConsultationAccess: consult.hasConsultationAccess,
+        hasWceAccess: wce.hasWceAccess,
+      }),
+    [isAdmin, consult.hasConsultationAccess, wce.hasWceAccess],
+  );
+  const activeItem = useMemo(() => findActiveItem(location.pathname), [location.pathname]);
+  const activeGroup = useMemo(
+    () => groups.find((g) => g.items.some((i) => i.href === activeItem?.href)),
+    [groups, activeItem],
+  );
+  const badges: BadgeCounts = {
+    notifications: unread,
+    paymentAlerts,
+    consultations: pendingConsults,
+    wholesaleLeads: newLeads,
+  };
+
+  // Counts that make the navigation communicate state, not just destinations.
+  useEffect(() => {
+    if (!isAdmin && !consult.hasConsultationAccess) return;
+    let active = true;
+    const load = async () => {
+      const [consults, leads] = await Promise.all([
+        supabase
+          .from("consultation_bookings")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending"),
+        isAdmin
+          ? supabase
+              .from("wholesale_leads")
+              .select("id", { count: "exact", head: true })
+              .eq("status", "new")
+          : Promise.resolve({ count: 0 } as { count: number | null }),
+      ]);
+      if (!active) return;
+      setPendingConsults(consults.count || 0);
+      setNewLeads(leads.count || 0);
+    };
+    load();
+    return () => { active = false; };
+  }, [isAdmin, consult.hasConsultationAccess]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -130,7 +163,7 @@ export default function AdminLayout() {
   };
 
   useEffect(() => {
-    if (isLoading || wce.isLoading) return;
+    if (isLoading || wce.isLoading || consult.isLoading) return;
     if (!user) {
       navigate(isWceRoute ? "/wce-admin/login" : "/admin/login", { replace: true });
       return;
@@ -141,10 +174,17 @@ export default function AdminLayout() {
       if (!isWceRoute) navigate("/admin/wce", { replace: true });
       return;
     }
+    if (consult.hasConsultationAccess) {
+      // Consultation editors live only inside /admin/consultations.
+      if (!location.pathname.startsWith("/admin/consultations")) {
+        navigate("/admin/consultations", { replace: true });
+      }
+      return;
+    }
     navigate(isWceRoute ? "/wce-admin/login" : "/", { replace: true });
-  }, [user, isAdmin, isLoading, wce.isLoading, wce.hasWceAccess, isWceRoute, navigate]);
+  }, [user, isAdmin, isLoading, wce.isLoading, wce.hasWceAccess, consult.isLoading, consult.hasConsultationAccess, isWceRoute, location.pathname, navigate]);
 
-  if (isLoading || wce.isLoading) {
+  if (isLoading || wce.isLoading || consult.isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -153,7 +193,7 @@ export default function AdminLayout() {
   }
 
   // Never flash admin contents before the check resolves.
-  if (!user || (!isAdmin && !wce.hasWceAccess)) {
+  if (!user || (!isAdmin && !wce.hasWceAccess && !consult.hasConsultationAccess)) {
     return null;
   }
 
