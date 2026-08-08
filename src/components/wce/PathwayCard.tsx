@@ -75,17 +75,28 @@ function ThresholdVine({ corner, drawn }: { corner: "tl" | "br"; drawn: boolean 
 
 /* ---------- heading ---------- */
 function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolean }) {
-  const match = label.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
-  const lines = match ? [match[1], `(${match[2]})`] : [label];
+  const lines = splitPathwayTitle(label);
   return (
     <MaskedHeading
       as="h3"
       lines={lines}
       stagger={80}
-      className="wce-path-heading relative mx-auto flex max-w-[22ch] flex-col justify-center text-[1.35rem] leading-snug"
+      className="wce-path-heading relative mx-auto flex max-w-[24ch] flex-col justify-center"
       style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-ink-strong)" }}
     />
   );
+}
+
+/** Keep the "Caribbean Wellness" family name on its own line so the
+ *  distinguishing part of each pathway reads clearly beneath it. */
+function splitPathwayTitle(label: string): string[] {
+  const dash = label.split(/\s+—\s+/);
+  if (dash.length === 2) return [dash[0], dash[1]];
+  const paren = label.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+  if (paren) return [paren[1], `(${paren[2]})`];
+  const family = label.match(/^(Caribbean Wellness)\s+(.+)$/);
+  if (family) return [family[1], family[2]];
+  return [label];
 }
 
 /** Gold checkmark used on the pathway bullets. */
