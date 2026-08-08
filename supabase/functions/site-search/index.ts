@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
       const hits = (res.data ?? []).map(map);
       if (!hits.length) return;
       const total = res.count ?? hits.length;
-      groups.push({ key, label, hits, total, seeAll: total > hits.length ? seeAll : seeAll });
+      groups.push({ key, label, hits, total, seeAll });
     };
 
     push("products", "Products", products as any, (p) => ({
