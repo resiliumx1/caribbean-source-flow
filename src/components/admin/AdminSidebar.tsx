@@ -113,7 +113,7 @@ function NavRow({
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--card))]",
         rail && "justify-center px-0",
         active
-          ? "bg-primary/15 text-primary font-semibold shadow-sm"
+          ? "bg-primary/15 text-primary font-semibold shadow-sm ring-1 ring-primary/30 pl-4"
           : muted
             ? "text-muted-foreground hover:bg-muted hover:text-foreground"
             : "text-foreground/80 hover:bg-muted hover:text-foreground",
@@ -124,7 +124,7 @@ function NavRow({
       <span
         aria-hidden
         className={cn(
-          "absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full",
+          "absolute left-0 top-0 bottom-0 w-[4px] rounded-l-md",
           active ? "bg-primary" : "bg-transparent",
         )}
       />
