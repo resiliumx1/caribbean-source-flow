@@ -1,21 +1,26 @@
 import { useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
+import { useParams } from "react-router-dom";
 import { WceThemeProvider } from "@/components/wce/WceThemeProvider";
 import { WceHero, WcePathwaysSection, WceSpeakersSection } from "@/components/wce/SectionsTop";
 import { WceMediaSection, WceActivitiesSection, WceCeremonySection, WceRetreatBand, WceApplicationForm } from "@/components/wce/SectionsMid";
 import { WceLifeCraftSection } from "@/components/wce/LifeCraft";
 import { WceFaqSection, WceFinalCta, WceFooter } from "@/components/wce/SectionsBottom";
-import { useWcePathways, useWceSettings, pathwayFeatures } from "@/components/wce/useWceData";
+import { useWcePathways, useWceSettings, useWceSpeakers, pathwayFeatures } from "@/components/wce/useWceData";
 import { WceSubNav } from "@/components/wce/WceSubNav";
 import { WceStickyCta } from "@/components/wce/WceStickyCta";
 import { useWceAttribution } from "@/components/wce/useWceAttribution";
 import { dataLayerPush } from "@/lib/tracking";
 import { SITE_URL } from "@/lib/site-config";
 import { EVENT_END, EVENT_START, RETREAT_END, RETREAT_START, SYMPOSIUM_DATE } from "@/components/wce/campaign";
+import { speakerOgDescription, speakerOgTitle, speakerShareUrl } from "@/components/wce/share";
+import type { WceSpeaker } from "@/components/wce/speaker-utils";
 
 const PAGE_URL = `${SITE_URL}/wce-2026`;
 // Stable, unhashed public path — social platforms cache the image URL aggressively.
 const OG_IMAGE = `${SITE_URL}/og/wce-2026.jpg`;
+/** Secondary square card, for platforms that prefer 1:1. Listed after the landscape one. */
+const OG_IMAGE_SQUARE = `${SITE_URL}/og/wce-2026-square.jpg`;
 const OG_TITLE = "Caribbean Wellness Experience Saint Lucia 2026";
 const OG_DESCRIPTION =
   "11–17 October 2026 at Mount Kailash Rejuvenation Centre. A holistic symposium, fortification retreat and LifeCraft experience. What started in Jamaica continues in St. Lucia.";
@@ -23,7 +28,19 @@ const OG_DESCRIPTION =
 export default function WCE2026() {
   const { data: settings } = useWceSettings();
   const { data: pathways } = useWcePathways();
+  const { data: speakers } = useWceSpeakers();
+  const { slug } = useParams<{ slug?: string }>();
   const attribution = useWceAttribution();
+
+  const speaker = slug
+    ? (((speakers ?? []) as WceSpeaker[]).find((s) => s.slug === slug) ?? null)
+    : null;
+  const pageUrl = speaker?.slug ? speakerShareUrl(speaker.slug) : PAGE_URL;
+  const shareTitle = speaker ? speakerOgTitle(speaker) : OG_TITLE;
+  const shareDescription = speaker ? speakerOgDescription(speaker) : OG_DESCRIPTION;
+  const shareImage = speaker?.og_image_url
+    ? (speaker.og_image_url.startsWith("http") ? speaker.og_image_url : `${SITE_URL}${speaker.og_image_url}`)
+    : OG_IMAGE;
 
   const pageViewFired = useRef(false);
 
@@ -112,28 +129,28 @@ export default function WCE2026() {
   return (
     <WceThemeProvider>
       <Helmet>
-        <title>Caribbean Wellness Saint Lucia 2026 | 11–17 October</title>
-        <meta name="description" content="11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat." />
-        <link rel="canonical" href={PAGE_URL} />
+        <title>{speaker ? shareTitle : "Caribbean Wellness Saint Lucia 2026 | 11–17 October"}</title>
+        <meta name="description" content={speaker ? shareDescription : "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat."} />
+        <link rel="canonical" href={pageUrl} />
 
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Mount Kailash Rejuvenation Centre" />
         <meta property="og:locale" content="en_US" />
-        <meta property="og:title" content={OG_TITLE} />
-        <meta property="og:description" content={OG_DESCRIPTION} />
-        <meta property="og:url" content={PAGE_URL} />
-        <meta property="og:image" content={OG_IMAGE} />
-        <meta property="og:image:secure_url" content={OG_IMAGE} />
+        <meta property="og:title" content={shareTitle} />
+        <meta property="og:description" content={shareDescription} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:image" content={shareImage} />
+        <meta property="og:image:secure_url" content={shareImage} />
         <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre" />
+        <meta property="og:image:alt" content={speaker ? shareTitle : "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre"} />
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={OG_TITLE} />
-        <meta name="twitter:description" content="11–17 October 2026 at Mount Kailash Rejuvenation Centre. What started in Jamaica continues in St. Lucia." />
-        <meta name="twitter:image" content={OG_IMAGE} />
-        <meta name="twitter:image:alt" content="Caribbean Wellness Saint Lucia 2026" />
+        <meta name="twitter:title" content={shareTitle} />
+        <meta name="twitter:description" content={speaker ? shareDescription : "11–17 October 2026 at Mount Kailash Rejuvenation Centre. What started in Jamaica continues in St. Lucia."} />
+        <meta name="twitter:image" content={shareImage} />
+        <meta name="twitter:image:alt" content={speaker ? shareTitle : "Caribbean Wellness Saint Lucia 2026"} />
 
         <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
       </Helmet>
