@@ -2,7 +2,7 @@
  *  Ascent stagger, gold bloom on threshold, drawn vines, tiered CTAs.
  *  Every effect is disabled under prefers-reduced-motion; on touch the
  *  bloom + vine draw fire once on scroll-into-view instead of on hover. */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/use-cart";
 import { rememberPathway } from "@/lib/wce-attribution";
@@ -113,6 +113,8 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
   const { ref, inView } = useInView<HTMLDivElement>();
   const [hover, setHover] = useState(false);
   const [flash, setFlash] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const ctaRef = useRef<HTMLAnchorElement | null>(null);
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
@@ -243,26 +245,28 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
           >
             {copy?.priceLine ?? `${currency} ${price.toFixed(0)}`}
           </p>
-          {copy?.availability && (
-            <p
-              className="relative mx-auto mt-3 inline-flex items-center justify-center px-3 py-1 text-[0.8125rem] uppercase"
-              style={{
-                color: "var(--wce-gold-light)",
-                letterSpacing: "0.18em",
-                border: "1px solid rgba(201,162,39,0.75)",
-                borderRadius: "999px",
-              }}
-            >
-              {copy.availability}
-            </p>
-          )}
+          {/* reserved band so price blocks stay level across all three cards */}
+          <div className="wce-path-avail relative">
+            {copy?.availability && (
+              <span
+                className="inline-flex items-center justify-center px-3 py-1 text-[0.8125rem] uppercase"
+                style={{
+                  color: "var(--wce-gold-light)",
+                  letterSpacing: "0.18em",
+                  border: "1px solid rgba(201,162,39,0.75)",
+                  borderRadius: "999px",
+                }}
+              >
+                {copy.availability}
+              </span>
+            )}
+          </div>
 
           <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
 
-          <p
-            className="relative mx-auto mt-6 max-w-[36ch] text-left text-[0.9375rem] leading-relaxed"
+          <div
+            className="relative"
             style={{
-              color: isRetreat ? "rgba(245,239,224,0.92)" : "rgba(26,26,20,0.9)",
               opacity: entered ? 1 : 0,
               transform: entered ? "translateY(0)" : "translateY(10px)",
               transition: reduced
@@ -270,11 +274,48 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
                 : `opacity .6s cubic-bezier(0.22,1,0.36,1) ${index * 140 + 200}ms, transform .6s cubic-bezier(0.22,1,0.36,1) ${index * 140 + 200}ms`,
             }}
           >
-            {copy?.body}
-          </p>
+            <p className="wce-path-lead mx-auto">{copy?.lead}</p>
+
+            <ul className="wce-path-bullets mx-auto">
+              {(copy?.bullets ?? []).map((b) => (
+                <li key={b}>
+                  <CheckGlyph />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className={`wce-path-more ${expanded ? "is-open" : ""}`}>
+              <div className="wce-path-more-inner">
+                <p className="wce-path-body">{copy?.body}</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="wce-path-readmore"
+              aria-expanded={expanded}
+              onClick={() => {
+                const next = !expanded;
+                setExpanded(next);
+                if (next && typeof window !== "undefined" && window.innerWidth < 768) {
+                  window.setTimeout(
+                    () => ctaRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }),
+                    reduced ? 0 : 420
+                  );
+                }
+              }}
+            >
+              <span>{expanded ? "Read less" : "Read more"}</span>
+              <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="none" className={`wce-path-chev ${expanded ? "is-up" : ""}`}>
+                <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
 
           <div className="relative mt-auto pt-8 sm:pt-10">
             <a
+              ref={ctaRef}
               href="#apply"
               className={`wce-btn wce-pcta ${ctaClass} w-full ${flash ? "is-flash" : ""}`}
               onClick={onCta}
