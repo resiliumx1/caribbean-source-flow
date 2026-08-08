@@ -352,6 +352,7 @@ export default function WceLeads() {
       "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
       "landing_path", "referrer", "consent_marketing",
       "application_status", "approved_at", "declined_at", "checkout_sent_at", "paid_at",
+      "mailchimp_status", "mailchimp_synced_at", "mailchimp_error",
     ];
     const rows = [cols.join(","), ...filtered.map((l) => cols.map((c) => csv(l[c])).join(","))];
     const url = URL.createObjectURL(new Blob([rows.join("\n")], { type: "text/csv" }));
@@ -363,6 +364,23 @@ export default function WceLeads() {
   };
 
   const activeFilters = [statusFilter, sourceFilter, pathwayFilter].filter((f) => f !== "all").length;
+  const failedCount = leads.filter(
+    (l) => l.consent_marketing && (l.mailchimp_status === "failed" || l.mailchimp_status === "synced_partial"),
+  ).length;
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  const retryAllFailed = async () => {
+    setBulkBusy(true);
+    const { data, error } = await supabase.functions.invoke("mailchimp-sync", { body: { action: "retry_failed" } });
+    setBulkBusy(false);
+    const res = data as { ok?: boolean; retried?: number; error?: string } | null;
+    if (error || !res?.ok) {
+      wceToast({ title: "Bulk retry failed", description: res?.error ?? error?.message, tone: "error" });
+      return;
+    }
+    wceToast({ title: `Retried ${res.retried ?? 0} lead${res.retried === 1 ? "" : "s"}` });
+    load();
+  };
 
   return (
     <div className="space-y-5">
@@ -443,9 +461,17 @@ export default function WceLeads() {
       <FilterBar
         activeCount={activeFilters}
         actions={
+          <>
+            {failedCount > 0 && (
+              <button type="button" className="wa-btn wa-btn-ghost" disabled={bulkBusy} onClick={retryAllFailed}>
+                {bulkBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <RefreshCw className="h-4 w-4" aria-hidden />}{" "}
+                Retry {failedCount} failed Mailchimp sync{failedCount === 1 ? "" : "s"}
+              </button>
+            )}
           <button type="button" className="wa-btn wa-btn-primary" onClick={exportCsv}>
             <Download className="h-4 w-4" /> Export CSV
           </button>
+          </>
         }
       >
         <select className={inputCls + " max-w-[170px]"} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
@@ -501,6 +527,13 @@ export default function WceLeads() {
                 </th>
                 <th>Status</th>
                 <th>
+                  Mailchimp{" "}
+                  <InfoTip label="Marketing list sync">
+                    Whether this person reached the Mailchimp audience. People who did not tick marketing consent are
+                    never sent, by design. Application and order emails are sent by our own system either way.
+                  </InfoTip>
+                </th>
+                <th>
                   Retreat review{" "}
                   <InfoTip label="Retreat application pipeline">
                     Retreat places are application-only. Approving an applicant emails them a private, single-use
@@ -544,6 +577,9 @@ export default function WceLeads() {
                     </td>
                     <td data-label="Status">
                       <LeadStatusCell lead={l} onChanged={(values) => patchLead(l.id, values)} />
+                    </td>
+                    <td data-label="Mailchimp">
+                      <MailchimpCell lead={l} onChanged={(values) => patchLead(l.id, values)} />
                     </td>
                     <td data-label="Retreat review">
                       {l.pathway_interest === "retreat" ? (
