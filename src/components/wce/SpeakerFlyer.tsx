@@ -14,6 +14,7 @@ import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
 import { trackWceCta } from "./cta-tracking";
 import { isSymposiumOnlySpeaker } from "./campaign";
+import { WceShareRow, speakerOgDescription, speakerOgTitle, speakerShareUrl } from "./share";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
