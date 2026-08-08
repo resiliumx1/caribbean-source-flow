@@ -16,6 +16,11 @@ type Settings = {
   popup_enabled: boolean;
   popup_flyer_url: string | null;
   popup_cta_text: string | null;
+  livestream_provider: string | null;
+  livestream_embed_url: string | null;
+  livestream_embed_code: string | null;
+  livestream_fallback_copy: string | null;
+  retreat_checkout_expiry_days: number;
 };
 
 export default function WceSettings() {
@@ -138,6 +143,53 @@ export default function WceSettings() {
         </TipLabel>
         <ImageUploadField label="" folder="flyers" value={draft.popup_flyer_url}
           onChange={(url) => set({ popup_flyer_url: url })} />
+      </div>
+
+      <hr className="border-border wa-rule" />
+      <h3 className="wa-serif text-base">Online symposium livestream</h3>
+      <p className="text-xs text-muted-foreground">
+        Only people who bought online access can reach the player at <code>/wce-2026/live</code>. Access is checked on
+        the server, so these details are never handed to a visitor without a valid ticket.
+      </p>
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div>
+          <TipLabel tip="Which service hosts the stream, e.g. YouTube, Vimeo or StreamYard.">
+            Livestream provider
+          </TipLabel>
+          <input className={inputCls} value={draft.livestream_provider ?? ""}
+            onChange={(e) => set({ livestream_provider: e.target.value })} />
+        </div>
+        <div>
+          <TipLabel tip="The player URL used inside the embedded frame, e.g. https://www.youtube.com/embed/XXXX.">
+            Embed URL
+          </TipLabel>
+          <input className={inputCls} value={draft.livestream_embed_url ?? ""}
+            onChange={(e) => set({ livestream_embed_url: e.target.value })} />
+        </div>
+      </div>
+      <div>
+        <TipLabel tip="Optional. Paste the provider's full embed snippet if a plain URL is not enough. Leave empty to use the embed URL.">
+          Embed code
+        </TipLabel>
+        <textarea className={inputCls} rows={3} value={draft.livestream_embed_code ?? ""}
+          onChange={(e) => set({ livestream_embed_code: e.target.value })} />
+      </div>
+      <div>
+        <TipLabel tip="Shown to ticket holders before the stream goes live, or if the player is temporarily unavailable.">
+          Message when the stream is not live
+        </TipLabel>
+        <textarea className={inputCls} rows={2} value={draft.livestream_fallback_copy ?? ""}
+          onChange={(e) => set({ livestream_fallback_copy: e.target.value })} />
+      </div>
+
+      <hr className="border-border wa-rule" />
+      <div className="max-w-xs">
+        <TipLabel tip="How many days an approved retreat applicant has to pay before their private payment link stops working.">
+          Retreat payment link expires after (days)
+        </TipLabel>
+        <input className={inputCls} type="number" min={1} max={60}
+          value={draft.retreat_checkout_expiry_days ?? 7}
+          onChange={(e) => set({ retreat_checkout_expiry_days: Math.max(1, Math.min(60, Number(e.target.value) || 7)) })} />
       </div>
 
       <div className="flex justify-end">
