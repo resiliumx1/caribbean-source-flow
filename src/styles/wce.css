@@ -1059,7 +1059,16 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   justify-content: flex-start;
   padding: 1.5rem 1.25rem 1.5rem;
 }
-.wce-root .wce-card-speaker .wce-speaker-meta { width: 100%; }
+.wce-root .wce-card-speaker .wce-speaker-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+  width: 100%;
+}
+.wce-root .wce-card-speaker .wce-speaker-portrait-slot { width: 8.5rem; height: 8.5rem; }
+@media (min-width: 640px) { .wce-root .wce-card-speaker .wce-speaker-portrait-slot { width: 9.5rem; height: 9.5rem; } }
+.wce-root .wce-card-speaker .wce-portrait-img { object-fit: cover; object-position: center; }
 .wce-root .wce-card-speaker .wce-card-theme { min-height: 1.4rem; }
 .wce-root .wce-card-speaker .wce-speaker-name { min-height: 3rem; }
 .wce-root .wce-card-speaker .wce-speaker-role { min-height: 2.6rem; }
