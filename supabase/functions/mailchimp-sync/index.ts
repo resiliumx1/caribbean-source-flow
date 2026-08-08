@@ -31,9 +31,9 @@ const PATHWAY_TAG: Record<string, string> = {
 };
 
 const PATHWAY_LABEL: Record<string, string> = {
-  in_person: "Symposium In Person",
-  online: "Symposium Online",
-  retreat: "Retreat Applicant",
+  in_person: "Caribbean Wellness Symposium — In Person Attendance",
+  online: "Caribbean Wellness Symposium — Online Access",
+  retreat: "Caribbean Wellness Fortification Retreat",
 };
 
 /** Mailchimp addresses members by the MD5 of the lowercased email. */
