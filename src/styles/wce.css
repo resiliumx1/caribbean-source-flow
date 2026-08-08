@@ -59,6 +59,10 @@
   --wce-solid-btn-fg: var(--wce-cream);
   --wce-solid-btn-border: var(--wce-forest);
   --wce-focus-ring: #6E5410;
+  /* online pathway tier: a cooler paper than the in-person card */
+  --wce-tier-online-a: #F8F7EC;
+  --wce-tier-online-b: #F1F3E6;
+  --wce-tier-online-border: rgba(45, 74, 53, 0.45);
   --wce-decor-scale: 1;
   --wce-foliage-scale: 1;
 
@@ -119,6 +123,9 @@
   --wce-solid-btn-fg: var(--wce-cream);
   --wce-solid-btn-border: rgba(var(--wce-gold-rgb), 0.55);
   --wce-focus-ring: var(--wce-gold-light);
+  --wce-tier-online-a: #14291D;
+  --wce-tier-online-b: #0F2318;
+  --wce-tier-online-border: rgba(var(--wce-gold-rgb), 0.3);
   /* gold watermarks read stronger on dark; foliage silhouettes must recede */
   --wce-decor-scale: 1.7;
   --wce-foliage-scale: 0.65;
@@ -1926,8 +1933,8 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
    ========================================================================== */
 .wce-path-card-inperson { background: linear-gradient(180deg, var(--wce-panel-elev-2) 0%, var(--wce-panel-elev) 100%); }
 .wce-path-card-online {
-  background: linear-gradient(180deg, #F8F7EC 0%, #F1F3E6 100%);
-  border-color: rgba(45, 74, 53, 0.45);
+  background: linear-gradient(180deg, var(--wce-tier-online-a) 0%, var(--wce-tier-online-b) 100%);
+  border-color: var(--wce-tier-online-border);
 }
 .wce-path-card-retreat {
   background: linear-gradient(165deg, var(--wce-forest) 0%, var(--wce-forest-mid, #1B4030) 100%);
