@@ -368,6 +368,7 @@ export default function WceLeads() {
     (l) => l.consent_marketing && (l.mailchimp_status === "failed" || l.mailchimp_status === "synced_partial"),
   ).length;
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [fieldsBusy, setFieldsBusy] = useState(false);
 
   const retryAllFailed = async () => {
     setBulkBusy(true);
