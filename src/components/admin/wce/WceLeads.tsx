@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Copy, Download, ListChecks, Loader2, RefreshCw } from "lucide-react";
 import { inputCls } from "./shared";
+import { wcePathwayLabel } from "@/lib/wce-pathway-labels";
 import { StatCard, StatusPill, EmptyState, SectionHeading, ACCENTS, whenText } from "./ui";
 import {
   wceToast, useSaveState, SaveBadge, TableSkeleton, StatsSkeleton, InfoTip, TipLabel,
