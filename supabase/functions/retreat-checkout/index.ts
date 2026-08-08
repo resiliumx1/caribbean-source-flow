@@ -67,6 +67,11 @@ Deno.serve(async (req) => {
       .eq("id", payload.retreat_type_id)
       .single();
     if (typeErr || !rType) throw new Error("Retreat not found.");
+    // Withdrawn retreats are application-only or discontinued: never payable here,
+    // even if a stale link or a crafted request reaches this endpoint.
+    if (rType.is_active === false) {
+      throw new Error("This retreat is not open for direct booking. Please contact us to apply.");
+    }
 
     const guests = Math.max(1, Math.floor(payload.guest_count || 1));
     let total_usd = 0;
@@ -79,6 +84,8 @@ Deno.serve(async (req) => {
         .eq("id", payload.retreat_date_id)
         .single();
       if (rdErr || !rd) throw new Error("Retreat date not found.");
+      if (rd.is_published === false) throw new Error("This retreat date is not open for booking.");
+      if (rd.retreat_type_id !== rType.id) throw new Error("Retreat date does not belong to this retreat.");
       const spotsLeft = rd.spots_total - rd.spots_booked;
       if (spotsLeft < guests) throw new Error("Not enough spots available.");
       const perPerson = Number(rd.price_override_usd ?? rType.base_price_usd);

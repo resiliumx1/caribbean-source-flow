@@ -86,11 +86,17 @@ Deno.serve(async (req) => {
     const productIds = [...new Set(payload.items.map((i) => i.product_id))];
     const { data: products, error: prodErr } = await supabase
       .from("products")
-      .select("id, name, price_usd, price_xcd, is_digital")
+      .select("id, name, price_usd, price_xcd, is_digital, is_active")
       .in("id", productIds);
     if (prodErr) throw prodErr;
     if (!products || products.length !== productIds.length) {
       throw new Error("One or more cart items are no longer available.");
+    }
+    // Mirrors authnet-charge: withdrawn products (e.g. application-only retreats)
+    // can never be bought by pushing their ID straight into a cart.
+    const withdrawn = products.find((p: any) => p.is_active === false);
+    if (withdrawn) {
+      throw new Error(`${withdrawn.name} is no longer available for purchase.`);
     }
 
     const productMap = new Map(products.map((p: any) => [p.id, p]));
