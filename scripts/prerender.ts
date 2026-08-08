@@ -366,6 +366,7 @@ async function main() {
   const shell = readFileSync(SHELL_PATH, "utf8");
 
   const [products, retreats] = await Promise.all([loadProducts(), loadRetreats()]);
+  const speakers = await loadSpeakers();
   let count = 0;
 
   // Static marketing pages — replace head only, keep existing body fallback.
@@ -377,9 +378,55 @@ async function main() {
       ogImage: r.ogImage,
       ogImageAlt: r.ogImageAlt,
       jsonLd: r.jsonLd,
+      extraHead: r.extraHead,
+      tailHead: r.tailHead,
       bodyHtml: r.bodyHtml ?? extractDefaultFallback(shell),
     };
     writeRoute(r.path, buildShellTransform(shell, meta));
+    count++;
+  }
+
+  // Shareable speaker routes — each needs its own OG tags in the raw HTML,
+  // because WhatsApp and Facebook never execute JavaScript.
+  for (const s of speakers) {
+    const path = `/wce-2026/speakers/${s.slug}`;
+    const image = s.og_image_url
+      ? (s.og_image_url.startsWith("http") ? s.og_image_url : `${BASE_URL}${s.og_image_url}`)
+      : `${BASE_URL}/og/wce-2026.jpg`;
+    const title = speakerOgTitle(s);
+    const description = speakerOgDescription(s);
+    const meta: RouteMeta = {
+      path,
+      title,
+      description,
+      ogImage: image,
+      ogImageAlt: title,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: s.name,
+        honorificPrefix: (s.prefix || "").trim() || undefined,
+        jobTitle: (s.title || "").trim() || undefined,
+        description: stripHtml(s.bio) || description,
+        image,
+        url: `${BASE_URL}${path}`,
+      },
+      bodyHtml: `
+        <header>
+          <a href="/" rel="home">Mount Kailash Rejuvenation Centre</a>
+          <nav aria-label="Breadcrumb"><a href="/wce-2026">Caribbean Wellness Saint Lucia 2026</a> · ${esc(s.name)}</nav>
+        </header>
+        <main>
+          <h1>${esc(title)}</h1>
+          ${s.theme ? `<p><strong>${esc(s.theme)}</strong></p>` : ""}
+          ${s.session_title ? `<p>${esc(s.session_title)}${s.session_time ? ` · ${esc(s.session_time)}` : ""}</p>` : ""}
+          ${s.bio ? `<p>${esc(stripHtml(s.bio))}</p>` : ""}
+          <p>11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia.</p>
+          <p><a href="/wce-2026#speakers">See the full line-up</a> · <a href="/wce-2026#pathways">Reserve your place</a></p>
+        </main>
+      `,
+    };
+    writeRoute(path, buildShellTransform(shell, meta));
     count++;
   }
 
