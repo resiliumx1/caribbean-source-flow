@@ -191,6 +191,9 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
 
   /** Bring the CTA back into view when a card grows below the fold. */
   const keepCtaVisible = () => {
+    // Desktop click behaviour is unchanged; only touch / narrow viewports
+    // recentre so the CTA is never stranded below the fold.
+    if (typeof window !== "undefined" && !touch && window.innerWidth >= 768) return;
     window.setTimeout(
       () => ctaRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }),
       reduced ? 0 : 420
