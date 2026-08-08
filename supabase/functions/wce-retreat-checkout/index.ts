@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
     const charge = await chargeCard({
       amount: price_usd,
       opaqueData: payload.opaqueData,
-      description: "WCE 2026 Fortification Retreat",
+      description: "WCE 2026 Caribbean Wellness Fortification Retreat",
       billTo: {
         firstName,
         lastName,

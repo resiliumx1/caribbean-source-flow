@@ -120,7 +120,7 @@ export function WceLifeCraftSection() {
 
         <Reveal index={3}>
           <p className="mx-auto mt-12 max-w-[52ch] text-[0.9375rem]" style={{ color: "rgba(var(--wce-ink-rgb), 0.72)" }}>
-            LifeCraft experiences are included within the Fortification Retreat programme. They are not sold separately.
+            LifeCraft experiences are included within the Caribbean Wellness Fortification Retreat programme. They are not sold separately.
           </p>
         </Reveal>
       </div>

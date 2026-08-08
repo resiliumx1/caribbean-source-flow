@@ -35,7 +35,7 @@ function approvalEmail(name: string | null, link: string, expiresAt: string, pri
       </td></tr>
       <tr><td style="padding:8px 28px 0;font-size:15px;line-height:1.6">
         <p style="margin:0 0 12px">${greeting}</p>
-        <p style="margin:0 0 16px">Thank you for applying to the six-day Fortification Retreat at Mount Kailash Rejuvenation Centre, 12&ndash;17 October 2026. Your application has been reviewed and approved by our team.</p>
+        <p style="margin:0 0 16px">Thank you for applying to the six-day Caribbean Wellness Fortification Retreat at Mount Kailash Rejuvenation Centre, 12&ndash;17 October 2026. Your application has been reviewed and approved by our team.</p>
         <p style="margin:0 0 16px">Your place is confirmed once payment of <strong>${priceLabel}</strong> is complete. The private link below is reserved for you.</p>
         <p style="margin:0 0 22px">
           <a href="${link}" style="display:inline-block;background:#C9A227;color:#0B2114;font-weight:700;text-decoration:none;padding:14px 22px;border-radius:4px">Complete your retreat payment</a>
@@ -59,7 +59,7 @@ function declineEmail(name: string | null, reason: string | null) {
       </td></tr>
       <tr><td style="padding:8px 28px 0;font-size:15px;line-height:1.6">
         <p style="margin:0 0 12px">${greeting}</p>
-        <p style="margin:0 0 16px">Thank you for your interest in the Fortification Retreat. On this occasion we are not able to move your application forward.${reason ? ` ${reason}` : ""}</p>
+        <p style="margin:0 0 16px">Thank you for your interest in the Caribbean Wellness Fortification Retreat. On this occasion we are not able to move your application forward.${reason ? ` ${reason}` : ""}</p>
         <p style="margin:0 0 16px">You remain very welcome at the Caribbean Wellness Symposium on 11 October 2026, in person or online.</p>
         <p style="margin:0"><a href="${SITE_URL}/wce-2026#pathways" style="color:#C9A227">View symposium options</a></p>
       </td></tr>
@@ -131,7 +131,7 @@ Deno.serve(async (req) => {
         checkout_token: null,
         checkout_token_expires_at: null,
       }).eq("id", lead.id);
-      const mail = await sendMail(lead.email, "About your Fortification Retreat application", declineEmail(lead.full_name, reason));
+      const mail = await sendMail(lead.email, "About your Caribbean Wellness Fortification Retreat application", declineEmail(lead.full_name, reason));
       return json({ ok: true, application_status: "declined", email_sent: mail.sent, email_error: mail.error });
     }
 
@@ -171,8 +171,8 @@ Deno.serve(async (req) => {
     const mail = await sendMail(
       lead.email,
       action === "resend_link"
-        ? "Your Fortification Retreat payment link"
-        : "Your Fortification Retreat application has been approved",
+        ? "Your Caribbean Wellness Fortification Retreat payment link"
+        : "Your Caribbean Wellness Fortification Retreat application has been approved",
       approvalEmail(lead.full_name, link, expiresAt, priceLabel),
     );
 

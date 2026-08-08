@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Copy, Download, ListChecks, Loader2, RefreshCw } from "lucide-react";
 import { inputCls } from "./shared";
+import { wcePathwayLabel } from "@/lib/wce-pathway-labels";
 import { StatCard, StatusPill, EmptyState, SectionHeading, ACCENTS, whenText } from "./ui";
 import {
   wceToast, useSaveState, SaveBadge, TableSkeleton, StatsSkeleton, InfoTip, TipLabel,
@@ -508,7 +509,7 @@ export default function WceLeads() {
         </select>
         <select className={inputCls + " max-w-[200px]"} value={pathwayFilter} onChange={(e) => setPathwayFilter(e.target.value)}>
           <option value="all">All pathways</option>
-          {pathways.map((p) => <option key={p} value={p}>{p}</option>)}
+          {pathways.map((p) => <option key={p} value={p}>{wcePathwayLabel(p)}</option>)}
         </select>
       </FilterBar>
 
@@ -591,7 +592,7 @@ export default function WceLeads() {
                       <div>{l.whatsapp || ""}</div>
                     </td>
                     <td data-label="Country" className="text-xs">{l.country || "—"}</td>
-                    <td data-label="Pathway" className="text-xs">{l.pathway_interest || "—"}</td>
+                    <td data-label="Pathway" className="text-xs">{wcePathwayLabel(l.pathway_interest)}</td>
                     <td data-label="Source" className="text-xs">
                       {l.utm_source || "direct"}
                       {(l.utm_medium || l.utm_campaign) && (
