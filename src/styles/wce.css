@@ -977,7 +977,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-path-slot { display: flex; flex-direction: column; min-height: 0; }
 .wce-path-shell { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
 .wce-path-card { flex: 1 1 auto; min-height: 0; }
-.wce-path-card { height: auto; max-height: none; overflow: visible; }
+.wce-path-card { height: auto; max-height: none; }
 .wce-path-heading { min-height: 3.75rem; }
 .wce-path-avail { min-height: 2.25rem; margin-top: 0.75rem; }
 
@@ -1054,7 +1054,8 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-root .wce-card.wce-card-speaker {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
+  flex: 1 1 auto;
   min-height: 22rem;
 }
 .wce-root .wce-card.wce-card-speaker .wce-card-rest {
