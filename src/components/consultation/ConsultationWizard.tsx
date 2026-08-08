@@ -194,7 +194,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
       refetchAvailability();
       toast({
         title: "Your hold expired",
-        description: "We released the time so someone else could take it. Please pick a new one.",
+        description: "That time has just been released. Please choose another.",
         variant: "destructive",
       });
     }
@@ -244,7 +244,11 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           setSlot(null);
           await refetchAvailability();
           goTo(S_TIME);
-          toast({ title: "That time just went", description: res.error, variant: "destructive" });
+          toast({
+            title: "That time has just been booked",
+            description: "Please choose another.",
+            variant: "destructive",
+          });
           return;
         }
         setFormError(res.error);
@@ -268,7 +272,8 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
       pixelTrack("InitiateCheckout", { currency: "USD", value: res.booking.amount_due_usd });
       goTo(S_REVIEW);
     } catch (e: any) {
-      setFormError(e?.message || "We could not hold that time. Please try again.");
+      setFormError(e?.message
+        || "Something went wrong. Please try again, or contact us if it continues.");
     } finally {
       setHolding(false);
     }
@@ -297,7 +302,9 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
       queryClient.invalidateQueries({ queryKey: ["consultation-next-slot"] });
       goTo(S_DONE);
     } catch (e: any) {
-      setFormError(e?.message || "The payment could not be completed.");
+      setFormError(
+        "Your payment didn't go through. Your time slot is held for a few more minutes — please try again.",
+      );
       throw e;
     } finally {
       setPaying(false);
@@ -325,8 +332,10 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     return (
       <div className="consult">
         <div className="consult-panel p-6 sm:p-8 text-center">
-          <p className="consult-serif" style={{ fontSize: "22px" }}>Booking is briefly unavailable</p>
-          <p className="consult-body mt-2">We could not load the booking options just now.</p>
+          <p className="consult-h2">Booking is briefly unavailable</p>
+          <p className="consult-body mt-3 mx-auto">
+            Something went wrong. Please try again, or contact us if it continues.
+          </p>
           <Button className="mt-5 min-h-[48px]" onClick={() => refetchCatalog()}>Try again</Button>
         </div>
       </div>
@@ -583,6 +592,12 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   </div>
                 )}
               </div>
+
+              {!requiresPayment && (
+                <p className="consult-fine mt-4" style={{ maxWidth: "62ch" }}>
+                  No payment is required — this session is part of your existing package.
+                </p>
+              )}
 
               {intakeQuestions.length > 0 && (
                 <>

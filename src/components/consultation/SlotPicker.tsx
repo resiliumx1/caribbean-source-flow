@@ -59,11 +59,10 @@ export function SlotPicker({
 
   return (
     <div>
-      <p className="consult-eyebrow mb-2">Choose a date and time</p>
       <p className="consult-tzline">
-        All times are shown in <strong>{zoneLabel(timezone)}</strong>.{" "}
+        Times shown in <strong>{zoneLabel(timezone)}</strong>.{" "}
         <button type="button" className="consult-link" onClick={() => setZoneOpen((v) => !v)}>
-          {zoneOpen ? "Close" : "Change timezone"}
+          {zoneOpen ? "Close" : "Change"}
         </button>
       </p>
 
@@ -85,14 +84,13 @@ export function SlotPicker({
 
       {dates.length === 0 ? (
         <div className="consult-summary text-center py-8 mt-5">
-          <p className="consult-serif" style={{ fontSize: "20px" }}>No open times just now</p>
-          <p className="consult-body mt-2">
-            Every session in this window has been taken. Please look again shortly, or write to us
-            and we will let you know the moment a new time opens.
+          <p className="consult-h2">No times available</p>
+          <p className="consult-body mt-3 mx-auto">
+            No times are available in this period. Try a later month.
           </p>
         </div>
       ) : (
-        <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:gap-8">
+        <div className="mt-5 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:gap-8">
           <MonthCalendar
             openCounts={counts}
             scheduleDates={scheduleSet}
@@ -103,16 +101,20 @@ export function SlotPicker({
           />
 
           <div>
-            <p className="consult-eyebrow mb-2">
+            <p className="consult-eyebrow mb-3">
               {selectedDate ? longDate(`${selectedDate}T12:00:00Z`, "UTC") : "Pick a date"}
             </p>
             {daySlots.length === 0 ? (
               <p className="consult-body">
-                Nothing open on that date.{" "}
+                No times remaining on this date.{" "}
                 {dates[0] && (
-                  <button type="button" className="consult-link" onClick={() => onSelectDate(dates[0])}>
-                    Try {longDate(`${dates[0]}T12:00:00Z`, "UTC")}
-                  </button>
+                  <>
+                    Try{" "}
+                    <button type="button" className="consult-link" onClick={() => onSelectDate(dates[0])}>
+                      {longDate(`${dates[0]}T12:00:00Z`, "UTC")}
+                    </button>
+                    .
+                  </>
                 )}
               </p>
             ) : (

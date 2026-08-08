@@ -181,7 +181,7 @@ export default function ConsultationManage() {
               <h1 className="consult-serif mt-4" style={{ fontSize: "clamp(1.6rem,3.4vw,2.2rem)" }}>
                 This link is not valid
               </h1>
-              <p className="mt-3" style={{ fontSize: "16px", color: "var(--c-ink-soft)" }}>
+              <p className="mt-3" style={{ fontSize: "16px", lineHeight: 1.6, color: "var(--c-ink-soft)" }}>
                 {loadError}
               </p>
               <Button asChild className="mt-6 min-h-[48px] px-6">
@@ -194,12 +194,16 @@ export default function ConsultationManage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
-              <p className="consult-eyebrow mb-2">Your consultation</p>
-              <h1 className="consult-serif" style={{ fontSize: "clamp(1.9rem,4.4vw,2.8rem)", lineHeight: 1.1 }}>
-                {isCancelled ? "This session was cancelled" : payload?.service?.name ?? "Private consultation"}
+              <p className="consult-eyebrow mb-2.5">Your consultation</p>
+              <h1 className="consult-serif" style={{ fontSize: "clamp(1.9rem,4.4vw,2.8rem)", lineHeight: 1.15, fontWeight: 400 }}>
+                {isCancelled ? "This session was cancelled" : "Manage Your Booking"}
               </h1>
-              <p className="mt-2" style={{ fontSize: "15px", color: "var(--c-ink-soft)" }}>
-                Reference {b.reference} · {b.customer_name}
+              <p className="consult-intro mt-3.5">
+                You can reschedule or cancel your consultation below.
+              </p>
+              <p className="consult-fine mt-2.5">
+                {payload?.service?.name ?? "Private consultation"} · Reference {b.reference} ·{" "}
+                {b.customer_name}
               </p>
 
               <div className="consult-summary mt-6">
@@ -229,17 +233,17 @@ export default function ConsultationManage() {
 
               {isCancelled ? (
                 <div className="mt-6">
-                  <p style={{ fontSize: "15px", color: "var(--c-ink-soft)", lineHeight: 1.7 }}>
+                  <p style={{ fontSize: "16px", color: "var(--c-ink-soft)", lineHeight: 1.65, maxWidth: "60ch" }}>
                     This session was cancelled
                     {b.cancellation_reason ? `: ${b.cancellation_reason}` : "."} You are welcome to
-                    book another hour whenever you are ready.
+                    book another session whenever you are ready.
                   </p>
                   <Button asChild className="mt-5 min-h-[48px] px-6">
                     <a href="/consultations">Book another session</a>
                   </Button>
                 </div>
               ) : isPast ? (
-                <p className="mt-6" style={{ fontSize: "15px", color: "var(--c-ink-soft)" }}>
+                <p className="mt-6" style={{ fontSize: "16px", lineHeight: 1.65, color: "var(--c-ink-soft)" }}>
                   This session has already taken place. Thank you for sitting with Priest Kailash.
                 </p>
               ) : rescheduling ? (
@@ -286,15 +290,11 @@ export default function ConsultationManage() {
                       Cancel this session
                     </Button>
                   </div>
-                  {(!payload?.can_reschedule || !payload?.can_cancel) && (
-                    <p className="mt-4" style={{ fontSize: "14px", color: "var(--c-ink-soft)", lineHeight: 1.7 }}>
-                      Changes close {payload?.policy.min_reschedule_notice_hours} hours before the
-                      session and cancellations {payload?.policy.min_cancel_notice_hours} hours
-                      before. If you are inside that window, reach out directly and we will do what
-                      we can.
-                    </p>
-                  )}
-                  <p className="mt-4" style={{ fontSize: "14px", color: "var(--c-ink-soft)" }}>
+                  <p className="mt-4" style={{ fontSize: "15px", lineHeight: 1.6, color: "var(--c-ink-soft)", maxWidth: "60ch" }}>
+                    Changes can be made up to {payload?.policy.min_reschedule_notice_hours} hours
+                    before your session.
+                  </p>
+                  <p className="mt-2" style={{ fontSize: "15px", lineHeight: 1.6, color: "var(--c-ink-soft)" }}>
                     Times shown in {zoneLabel(timezone)}.
                   </p>
                 </>
@@ -309,7 +309,7 @@ export default function ConsultationManage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel this consultation?</AlertDialogTitle>
             <AlertDialogDescription>
-              The hour will be released for someone else. If you would rather move it, close this
+              Your time will be released for someone else. If you would rather move it, close this
               and choose Reschedule instead.
             </AlertDialogDescription>
           </AlertDialogHeader>
