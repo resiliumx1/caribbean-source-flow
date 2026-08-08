@@ -44,14 +44,14 @@ export function WceFaqSection() {
 
         {isLoading && <FaqSkeleton />}
 
-        <div className="mt-14 grid gap-5 text-left md:grid-cols-2">
+        <div className="mt-14 grid items-start gap-5 text-left md:grid-cols-2">
           {(faqs ?? []).map((f, i) => {
             const isOpen = open === f.id;
             return (
               <Reveal
                 key={f.id}
                 index={Math.min(i, 5)}
-                className={`wce-faq-card h-full ${isOpen ? "is-open" : ""}`}
+                className={`wce-faq-card ${isOpen ? "is-open" : ""}`}
               >
                 <h3>
                   <button
