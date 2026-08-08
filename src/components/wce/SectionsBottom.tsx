@@ -7,6 +7,7 @@ import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, GoldFlourish, D
 import { LoveEmblem } from "./LoveEmblem";
 import { WCE_PARTNERS } from "./PartnerMarquee";
 import { trackWceCta, WceCtaIntent } from "./cta-tracking";
+import { WceShareRow, WCE_PAGE_URL } from "./share";
 
 const FOOTER_NAV = [
   { label: "Pathways", href: "#pathways" },
