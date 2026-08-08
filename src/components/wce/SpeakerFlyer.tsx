@@ -2,6 +2,7 @@
  *  Opens as a centred overlay, shares the portrait layout with the row tile,
  *  and supports arrow navigation, Escape, click-outside and focus trapping. */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { WceBioText } from "./BioText";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Year2026 } from "./Year2026";
@@ -424,7 +425,7 @@ export function SpeakerFlyer({
 
             <p id="wce-flyer-desc" className={speaker.bio?.trim() ? "wce-flyer-bio" : "sr-only"}>
               {speaker.bio?.trim()
-                ? speaker.bio
+                ? <WceBioText bio={speaker.bio} links={speaker.bio_links} />
                 : `Event flyer for ${speaker.name}. Use the left and right arrow keys to move between speakers, or Escape to close.`}
             </p>
           </div>
