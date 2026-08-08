@@ -3261,6 +3261,6 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
   white-space: nowrap;
   min-height: 48px;
 }
-@media (max-width: 359px) {
-  .wce-sticky-cta .wce-btn { letter-spacing: 0.01em; }
+@media (max-width: 380px) {
+  .wce-sticky-cta .wce-btn { letter-spacing: 0; padding-inline: 0.35rem; }
 }
