@@ -5,7 +5,7 @@ import { Reveal, MaskedHeading, useSectionLift } from "./motion";
 import { FaqSkeleton } from "./Skeletons";
 import { FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, GoldFlourish, DiamondRule, LeafIcon, EdgeBleed } from "./decor";
 import { LoveEmblem } from "./LoveEmblem";
-import { WCE_PARTNERS } from "./PartnerMarquee";
+import { usePartnerList } from "./PartnerMarquee";
 import { trackWceCta, WceCtaIntent } from "./cta-tracking";
 import { WceShareRow, WCE_PAGE_URL } from "./share";
 
@@ -198,15 +198,30 @@ export function WceFooter() {
         <div className="wce-footer-col">
           <p className="wce-footer-head">Proudly Partnered With</p>
           <ul className="wce-footer-partners">
-            {WCE_PARTNERS.map((p) => (
-              <li key={p.name}>
-                {p.logoUrl ? (
-                  <img src={p.logoUrl} alt={p.name} loading="lazy" decoding="async" className={p.round ? "is-round" : undefined} />
-                ) : (
-                  <span>{p.name}</span>
-                )}
-              </li>
-            ))}
+            {partners.map((p) => {
+              const art = p.logoUrl ? (
+                <img src={p.logoUrl} alt={p.name} loading="lazy" decoding="async" className={p.round ? "is-round" : undefined} />
+              ) : (
+                <span>{p.name}</span>
+              );
+              return (
+                <li key={p.name}>
+                  {p.url ? (
+                    <a
+                      className="wce-footer-partner-link"
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${p.name} (opens in a new tab)`}
+                    >
+                      {art}
+                    </a>
+                  ) : (
+                    art
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
