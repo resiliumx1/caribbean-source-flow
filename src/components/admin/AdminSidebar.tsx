@@ -163,6 +163,8 @@ export interface AdminNavProps {
   variant?: "sidebar" | "drawer";
   onNavigate?: () => void;
   onOpenPalette?: () => void;
+  /** Explanatory note for scoped roles, so a one-group sidebar reads as intentional. */
+  note?: React.ReactNode;
 }
 
 export function AdminNav({
@@ -172,6 +174,7 @@ export function AdminNav({
   variant = "sidebar",
   onNavigate,
   onOpenPalette,
+  note,
 }: AdminNavProps) {
   const { pathname } = useLocation();
   const activeItem = useMemo(() => findActiveItem(pathname), [pathname]);
@@ -293,6 +296,11 @@ export function AdminNav({
         )}
       </div>
       {variant === "drawer" && <div className="h-2" />}
+      {note && !rail && (
+        <div className="mt-3 mx-3 rounded-md border border-border bg-muted/40 px-3 py-2.5 text-[13px] leading-relaxed text-muted-foreground">
+          {note}
+        </div>
+      )}
     </nav>
   );
 }
@@ -306,6 +314,7 @@ export function AdminSidebar({
   onOpenPalette,
   header,
   footer,
+  note,
 }: {
   groups: AdminNavGroup[];
   badges: BadgeCounts;
@@ -314,6 +323,7 @@ export function AdminSidebar({
   onOpenPalette: () => void;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  note?: React.ReactNode;
 }) {
   return (
     <aside
@@ -339,6 +349,7 @@ export function AdminSidebar({
           badges={badges}
           rail={collapsed}
           onOpenPalette={onOpenPalette}
+          note={note}
         />
       </div>
       {footer && <div className="border-t border-border p-2">{footer}</div>}
