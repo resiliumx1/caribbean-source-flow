@@ -9,6 +9,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { SiteSearch } from "./SiteSearch";
 
 const SCHOOL_URL = "https://herbalphysicianschoolmountkailash.netlify.app";
 
@@ -196,8 +197,9 @@ export function StoreHeader() {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
 
+            <SiteSearch />
 
             <div className="hidden sm:block">
               <SkyToggle />
