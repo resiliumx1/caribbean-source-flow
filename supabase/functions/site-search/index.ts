@@ -16,6 +16,13 @@ type Hit = {
   meta?: string | null;
 };
 
+/** Trim descriptions so the payload stays small — the UI shows one line. */
+function snippet(text: string | null | undefined) {
+  if (!text) return null;
+  const clean = text.replace(/\s+/g, " ").trim();
+  return clean.length > 150 ? `${clean.slice(0, 150)}…` : clean;
+}
+
 type Group = { key: string; label: string; hits: Hit[]; total: number; seeAll: string | null };
 
 /** PostgREST `or` needs the pattern escaped: commas and parens break the filter. */
@@ -110,7 +117,7 @@ Deno.serve(async (req) => {
     push("products", "Products", products as any, (p) => ({
       id: p.id,
       title: p.name,
-      subtitle: p.short_description,
+      subtitle: snippet(p.short_description),
       url: `/shop/${p.slug}`,
       image: p.image_url,
       price_usd: p.price_usd,
@@ -121,7 +128,7 @@ Deno.serve(async (req) => {
     push("consultations", "Consultations", consultations as any, (c) => ({
       id: c.id,
       title: c.name,
-      subtitle: c.description,
+      subtitle: snippet(c.description),
       url: `/consultations`,
       image: c.image_url,
       price_usd: c.price_usd,
@@ -131,7 +138,7 @@ Deno.serve(async (req) => {
     push("retreats", "Retreats", retreats as any, (r) => ({
       id: r.id,
       title: r.name,
-      subtitle: r.description,
+      subtitle: snippet(r.description),
       url: `/retreats`,
       image: r.image_url,
       price_usd: r.base_price_usd,
@@ -140,7 +147,7 @@ Deno.serve(async (req) => {
     push("webinars", "Webinars", webinars as any, (w) => ({
       id: w.id,
       title: w.title,
-      subtitle: w.description,
+      subtitle: snippet(w.description),
       url: `/webinars`,
       image: w.thumbnail_url,
       meta: w.category,
@@ -149,7 +156,7 @@ Deno.serve(async (req) => {
     push("articles", "Learn articles", articles as any, (a) => ({
       id: a.id,
       title: a.title,
-      subtitle: a.excerpt,
+      subtitle: snippet(a.excerpt),
       url: `/learn/${a.slug}`,
     }), `/learn?q=${encoded}`);
 
