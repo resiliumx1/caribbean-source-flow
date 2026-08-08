@@ -26,7 +26,7 @@ export function WceItinerarySection() {
       ref={lift.ref}
       id="itinerary"
       className="wce-surface px-6 py-24 sm:py-32"
-      style={{ background: "var(--wce-cream-warm)", ...lift.style }}
+      style={{ background: "var(--wce-panel-warm)", ...lift.style }}
     >
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <BotanicalBackdrop />
@@ -39,10 +39,10 @@ export function WceItinerarySection() {
         <MaskedHeading
           lines={["The Week, Day by Day"]}
           className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]"
-          style={{ color: "var(--wce-forest)" }}
+          style={{ color: "var(--wce-ink-strong)" }}
         />
         <Reveal index={1}>
-          <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
+          <p className="mx-auto mt-5 max-w-2xl text-sm sm:text-base" style={{ color: "rgba(var(--wce-ink-rgb), 0.88)" }}>
             An outline of the shape of the week at Mount Kailash. Daily details are confirmed with participants
             before arrival and may be adjusted by the team.
           </p>

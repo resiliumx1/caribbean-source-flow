@@ -24,7 +24,7 @@ export function WceFaqSection() {
   const lift = useSectionLift<HTMLElement>();
 
   return (
-    <section ref={lift.ref} id="faq" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream-warm)", ...lift.style }}>
+    <section ref={lift.ref} id="faq" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-panel-warm)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <BotanicalBackdrop intensity={0.9} />
       <div className="mx-auto max-w-5xl text-center">
@@ -33,10 +33,10 @@ export function WceFaqSection() {
         <MaskedHeading
           lines={["Frequently Asked Questions"]}
           className="mt-8 text-[clamp(2rem,5vw,3.2rem)]"
-          style={{ color: "var(--wce-forest)" }}
+          style={{ color: "var(--wce-ink-strong)" }}
         />
         <Reveal index={1}>
-        <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
+        <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(var(--wce-ink-rgb), 0.88)" }}>
           Everything you need to know before you join us in Saint Lucia.
         </p>
         <LeafDivider className="mt-10" />
@@ -59,13 +59,13 @@ export function WceFaqSection() {
                     onClick={() => setOpen(isOpen ? null : f.id)}
                     aria-expanded={isOpen}
                     className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left"
-                    style={{ minHeight: 56, color: "var(--wce-forest)" }}
+                    style={{ minHeight: 56, color: "var(--wce-ink-strong)" }}
                   >
                     <span className="text-[1.02rem] leading-snug sm:text-lg" style={{ fontFamily: "var(--wce-display)" }}>{f.question}</span>
                     <span
                       aria-hidden="true"
                       className={`wce-faq-icon flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-base ${isOpen ? "is-open" : ""}`}
-                      style={{ color: "var(--wce-gold-text)", border: "1px solid rgba(201,162,39,0.85)" }}
+                      style={{ color: "var(--wce-gold-text)", border: "1px solid rgba(var(--wce-gold-rgb), 0.85)" }}
                     >
                       +
                     </span>
@@ -74,8 +74,8 @@ export function WceFaqSection() {
                 <div className={`wce-faq-panel ${isOpen ? "is-open" : ""}`}>
                   <div>
                     <div className="px-6 pb-6">
-                      <DiamondRule className="mb-4 max-w-[6rem]" tone="rgba(201,162,39,0.7)" />
-                      <p className="text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.88)" }}>
+                      <DiamondRule className="mb-4 max-w-[6rem]" tone="rgba(var(--wce-gold-rgb), 0.7)" />
+                      <p className="text-sm leading-relaxed" style={{ color: "rgba(var(--wce-ink-rgb), 0.88)" }}>
                         {f.answer}
                       </p>
                     </div>
@@ -94,7 +94,7 @@ export function WceFaqSection() {
 export function WceFinalCta() {
   const { data: settings } = useWceSettings();
   return (
-    <section className="relative overflow-hidden px-6 py-24 text-center sm:py-32" style={{ background: "var(--wce-forest)" }}>
+    <section className="relative overflow-hidden px-6 py-24 text-center sm:py-32" style={{ background: "var(--wce-band)" }}>
       <EdgeBleed position="top" />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-50" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-50" />
@@ -125,7 +125,7 @@ export function WceFinalCta() {
                 className={`wce-btn wce-btn-gold ${b.shimmer ? "wce-shimmer-btn" : ""} h-full w-full text-center`}
                 onClick={() => trackWceCta(b.intent, "final_band", b.label)}
               >
-                <LeafIcon tone="var(--wce-forest)" size={13} />
+                <LeafIcon tone="var(--wce-ink-strong)" size={13} />
                 <span>{b.label}</span>
               </a>
             </Reveal>
@@ -141,7 +141,7 @@ export function WceFinalCta() {
             label="Share this event"
           />
         </div>
-        <p className="mt-8 text-[0.875rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.9)", letterSpacing: "0.22em" }}>
+        <p className="mt-8 text-[0.875rem] uppercase leading-loose" style={{ color: "rgba(var(--wce-cream-rgb), 0.9)", letterSpacing: "0.22em" }}>
           {(settings?.event_dates ?? "11-17 October 2026").toUpperCase()}{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span>{" "}
           {(settings?.venue ?? "Mount Kailash Rejuvenation Centre, St. Lucia").toUpperCase()}
@@ -155,14 +155,14 @@ export function WceFinalCta() {
 export function WceFooter() {
   const { data: settings } = useWceSettings();
   return (
-    <footer className="wce-surface px-6 py-20" style={{ background: "var(--wce-forest-mid)", borderTop: "1px solid rgba(201,162,39,0.3)" }}>
+    <footer className="wce-surface px-6 py-20" style={{ background: "var(--wce-band-mid)", borderTop: "1px solid rgba(var(--wce-gold-rgb), 0.3)" }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} light />
 
       {/* Emblem band */}
       <div className="mx-auto flex max-w-5xl items-center justify-center gap-6">
-        <DiamondRule className="hidden flex-1 sm:block" tone="rgba(201,162,39,0.75)" />
+        <DiamondRule className="hidden flex-1 sm:block" tone="rgba(var(--wce-gold-rgb), 0.75)" />
         <LoveEmblem size={220} className="shrink-0" />
-        <DiamondRule className="hidden flex-1 sm:block" tone="rgba(201,162,39,0.75)" />
+        <DiamondRule className="hidden flex-1 sm:block" tone="rgba(var(--wce-gold-rgb), 0.75)" />
       </div>
 
       <div className="wce-footer-grid mx-auto mt-16 max-w-6xl">
@@ -212,12 +212,12 @@ export function WceFooter() {
       </div>
 
       <div className="wce-hairline mx-auto mt-16 max-w-6xl" />
-      <p className="mt-8 text-center text-[0.875rem]" style={{ color: "rgba(245,239,224,0.9)" }}>
+      <p className="mt-8 text-center text-[0.875rem]" style={{ color: "rgba(var(--wce-cream-rgb), 0.9)" }}>
         © 2026 Caribbean Wellness Experience · Mount Kailash Rejuvenation Centre
       </p>
       <p
         className="mx-auto mt-4 max-w-4xl text-center text-[0.875rem] uppercase leading-loose"
-        style={{ color: "rgba(201,162,39,0.72)", letterSpacing: "0.26em" }}
+        style={{ color: "rgba(var(--wce-gold-rgb), 0.72)", letterSpacing: "0.26em" }}
       >
         Clinical Wellness Medicine · Herbal Practice · Volcanic Highlands · Restoration · Food · Herbs · Discipline · Family · Care
       </p>

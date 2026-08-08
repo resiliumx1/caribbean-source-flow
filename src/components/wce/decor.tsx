@@ -46,7 +46,7 @@ export function FlowerOfLifeField({
       aria-hidden="true"
       className={`pointer-events-none absolute inset-x-0 ${drift ? "-inset-y-[14%]" : "inset-y-0"} ${className}`}
       style={{
-        opacity,
+        opacity: `calc(${opacity} * var(--wce-decor-scale, 1))` as unknown as number,
         backgroundImage: `url("data:image/svg+xml,${light ? FOL_LIGHT : FOL_GOLD}")`,
         backgroundSize: `${size}px auto`,
         backgroundRepeat: "repeat",
@@ -77,7 +77,7 @@ export function FlowerOfLifeMark({ size = 220, opacity = 0.12, className = "", s
       width={size}
       height={size}
       viewBox="0 0 100 100"
-      style={{ opacity, ...style }}
+      style={{ opacity: `calc(${opacity} * var(--wce-decor-scale, 1))` as unknown as number, ...style }}
       fill="none"
     >
       <g stroke="var(--wce-gold)" strokeWidth="0.4">
@@ -117,7 +117,7 @@ export function EdgeFoliage({ side = "left", opacity = 0.16, className = "", dri
     <span
       aria-hidden="true"
       className={`pointer-events-none absolute top-1/2 hidden -translate-y-1/2 lg:block ${side === "left" ? "left-0" : "right-0"} ${className}`}
-      style={{ opacity, transform: `translateY(-50%) ${side === "right" ? "scaleX(-1)" : ""}` }}
+      style={{ opacity: `calc(${opacity} * var(--wce-foliage-scale, 1))` as unknown as number, transform: `translateY(-50%) ${side === "right" ? "scaleX(-1)" : ""}` }}
     >
       <span ref={drift ? driftRef : undefined} className="block will-change-transform">
         <FoliageArt />
@@ -214,20 +214,20 @@ export function BotanicalBackdrop({
     <span aria-hidden="true" className="wce-botanical">
       {side !== "right" && (
         <span className="wce-botanical-left">
-          <span ref={slow} className="wce-botanical-a" style={{ opacity: o(0.07) }}>
+          <span ref={slow} className="wce-botanical-a" style={{ opacity: `calc(${o(0.07)} * var(--wce-foliage-scale, 1))` as unknown as number }}>
             <FrondArt tone={gold} />
           </span>
-          <span ref={slower} className="wce-botanical-b" style={{ opacity: o(0.055) }}>
+          <span ref={slower} className="wce-botanical-b" style={{ opacity: `calc(${o(0.055)} * var(--wce-foliage-scale, 1))` as unknown as number }}>
             <LeafClusterArt tone={sage} />
           </span>
         </span>
       )}
       {side !== "left" && (
         <span className="wce-botanical-right">
-          <span className="wce-botanical-a" style={{ opacity: o(0.065) }}>
+          <span className="wce-botanical-a" style={{ opacity: `calc(${o(0.065)} * var(--wce-foliage-scale, 1))` as unknown as number }}>
             <FrondArt tone={sage} />
           </span>
-          <span className="wce-botanical-c" style={{ opacity: o(0.05) }}>
+          <span className="wce-botanical-c" style={{ opacity: `calc(${o(0.05)} * var(--wce-foliage-scale, 1))` as unknown as number }}>
             <StemArt tone={gold} />
           </span>
         </span>
@@ -240,7 +240,7 @@ export function BotanicalBackdrop({
 /* ---------- Pathway watermarks ---------- */
 
 /** Single peak — the In Person tier. */
-export function PeakMark({ tone = "var(--wce-forest)" }: { tone?: string }) {
+export function PeakMark({ tone = "var(--wce-ink-strong)" }: { tone?: string }) {
   return (
     <svg viewBox="0 0 200 100" fill="none" preserveAspectRatio="none" aria-hidden="true" className="h-full w-full">
       <g stroke={tone} strokeWidth="1.2" fill="none">
@@ -253,7 +253,7 @@ export function PeakMark({ tone = "var(--wce-forest)" }: { tone?: string }) {
 }
 
 /** Broadcast waves — the Online tier. */
-export function WaveMark({ tone = "var(--wce-forest)" }: { tone?: string }) {
+export function WaveMark({ tone = "var(--wce-ink-strong)" }: { tone?: string }) {
   return (
     <svg viewBox="0 0 200 100" fill="none" preserveAspectRatio="none" aria-hidden="true" className="h-full w-full">
       <g stroke={tone} strokeWidth="1.2" fill="none">

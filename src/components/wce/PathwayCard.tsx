@@ -83,7 +83,7 @@ function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolea
       lines={lines}
       stagger={80}
       className="wce-path-heading relative mx-auto flex max-w-[22ch] flex-col justify-center text-[1.35rem] leading-snug"
-      style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-forest)" }}
+      style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-ink-strong)" }}
     />
   );
 }
@@ -204,7 +204,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
             fontFamily: "var(--wce-display)",
             border: "1px solid var(--wce-gold-deep)",
             background: "linear-gradient(180deg, var(--wce-gold-light), var(--wce-gold))",
-            color: "var(--wce-forest)",
+            color: "var(--wce-ink-strong)",
           }}
         >
           {index + 1}
@@ -231,11 +231,11 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
 
           <PathwayHeading label={label} isRetreat={isRetreat} />
 
-          <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
+          <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(var(--wce-gold-rgb), 0.85)"} />
 
           <p
             className="relative mt-4 text-[0.875rem] uppercase sm:mt-5"
-            style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(26,26,20,0.9)", letterSpacing: "0.2em" }}
+            style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(var(--wce-ink-rgb), 0.9)", letterSpacing: "0.2em" }}
           >
             {copy?.dateLine}
           </p>
@@ -253,7 +253,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
                 style={{
                   color: "var(--wce-gold-light)",
                   letterSpacing: "0.18em",
-                  border: "1px solid rgba(201,162,39,0.75)",
+                  border: "1px solid rgba(var(--wce-gold-rgb), 0.75)",
                   borderRadius: "999px",
                 }}
               >
@@ -262,7 +262,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
             )}
           </div>
 
-          <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
+          <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(var(--wce-gold-rgb), 0.85)"} />
 
           <div
             className="relative"

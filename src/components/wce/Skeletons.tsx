@@ -7,7 +7,7 @@ export function PathwayCardsSkeleton() {
         <div
           key={i}
           className="flex flex-col items-center gap-5 px-8 py-12"
-          style={{ border: "1px solid rgba(201,162,39,0.25)", borderRadius: "3px", background: "var(--wce-cream-warm)" }}
+          style={{ border: "1px solid rgba(var(--wce-gold-rgb), 0.25)", borderRadius: "3px", background: "var(--wce-panel-warm)" }}
         >
           <div className="wce-skeleton h-12 w-12 rounded-full" />
           <div className="wce-skeleton h-6 w-2/3" />
@@ -44,7 +44,7 @@ export function FaqSkeleton() {
         <div
           key={i}
           className="px-6 py-6"
-          style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.25)", borderRadius: "3px" }}
+          style={{ background: "var(--wce-panel)", border: "1px solid rgba(var(--wce-gold-rgb), 0.25)", borderRadius: "3px" }}
         >
           <div className="wce-skeleton h-4 w-2/3" />
         </div>

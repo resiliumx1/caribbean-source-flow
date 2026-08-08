@@ -70,7 +70,7 @@ export function WceHeroMedia() {
       data-wce-video-slot
       aria-hidden="true"
       className="absolute inset-0 overflow-hidden"
-      style={{ background: "radial-gradient(120% 90% at 50% 20%, #2C5138 0%, #17351F 55%, #0C2116 100%)" }}
+      style={{ background: "radial-gradient(120% 90% at 50% 20%, #2C5138 0%, #17351F 55%, var(--wce-band) 100%)" }}
     >
       {/* Blurred poster underlay — never a flat colour. */}
       <img
@@ -103,7 +103,7 @@ export function WceHeroMedia() {
           in frame; this gradient blends its lower edge into the blurred underlay
           so no seam and no flat colour band is ever visible. */}
       <div aria-hidden="true" className="wce-hero-seam" />
-      <div className="absolute inset-0" style={{ background: "rgba(15,42,29,0.34)" }} />
+      <div className="absolute inset-0" style={{ background: "rgba(var(--wce-forest-rgb), 0.34)" }} />
       <WceHeroUnderlay />
       <div aria-hidden="true" className="wce-hero-hairline" />
       <div aria-hidden="true" className="wce-hero-mist" />

@@ -124,7 +124,7 @@ export function WceFormSuccess({ contactLabel }: { contactLabel: string }) {
         lines={[`Our team will be in touch personally by ${contactLabel}`, "about your place at Caribbean Wellness Saint Lucia 2026."]}
         delay={reduced ? 0 : 1150}
         className="mt-6 max-w-md text-sm leading-relaxed"
-        style={{ color: "rgba(245,239,224,0.9)" }}
+        style={{ color: "rgba(var(--wce-cream-rgb), 0.9)" }}
       />
       <LeafDivider className="mt-9 w-full max-w-xs" />
     </div>
