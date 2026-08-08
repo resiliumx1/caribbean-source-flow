@@ -51,7 +51,8 @@ export default function AdminLayout() {
   const isWceRoute = location.pathname.startsWith("/admin/wce");
   // A WCE organiser who is not a full store admin.
   const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
-  const consultationOnly = true;
+  const consultationOnly =
+    !isLoading && !consult.isLoading && !isAdmin && consult.hasConsultationAccess;
   const { theme, setTheme } = useTheme();
   const [unread, setUnread] = useState(0);
   const [recent, setRecent] = useState<Notification[]>([]);
@@ -67,9 +68,9 @@ export default function AdminLayout() {
   const groups = useMemo(
     () =>
       visibleGroups({
-        isFullAdmin: false,
-        hasConsultationAccess: true,
-        hasWceAccess: false,
+        isFullAdmin: isAdmin,
+        hasConsultationAccess: consult.hasConsultationAccess,
+        hasWceAccess: wce.hasWceAccess,
       }),
     [isAdmin, consult.hasConsultationAccess, wce.hasWceAccess],
   );
