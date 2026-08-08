@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { inputCls, ImageUploadField, useDragReorder, DragHandle } from "./shared";
+import { parseBioLinks, type WceBioLink } from "@/components/wce/speaker-utils";
 import { wceToast, useSaveState, SaveBadge, CardsSkeleton, InfoTip, useConfirm, GuidedEmpty } from "./kit";
 
 type Speaker = {
@@ -12,6 +13,7 @@ type Speaker = {
   title: string | null;
   theme: string | null;
   bio: string | null;
+  bio_links: unknown;
   portrait_url: string | null;
   session_title: string | null;
   session_time: string | null;
@@ -21,6 +23,53 @@ type Speaker = {
   slug: string | null;
   og_image_url: string | null;
 };
+
+/** Generic mechanism: any phrase inside a bio can be turned into a link.
+ *  One "phrase | https://url" pair per line — no speaker is special-cased. */
+function BioLinksEditor({ speaker, onChange }: { speaker: Speaker; onChange: (next: WceBioLink[]) => void }) {
+  const initial = parseBioLinks(speaker.bio_links)
+    .map((l) => `${l.phrase} | ${l.url}`)
+    .join("\n");
+  const [error, setError] = useState<string | null>(null);
+
+  const commit = (raw: string) => {
+    const lines = raw.split("\n").map((l) => l.trim()).filter(Boolean);
+    const parsed: WceBioLink[] = [];
+    for (const line of lines) {
+      const idx = line.lastIndexOf("|");
+      const phrase = idx >= 0 ? line.slice(0, idx).trim() : "";
+      const url = idx >= 0 ? line.slice(idx + 1).trim() : "";
+      if (!phrase || !/^https?:\/\//i.test(url)) {
+        setError(`Each line needs "phrase | https://address" — check: ${line}`);
+        return;
+      }
+      if (!(speaker.bio ?? "").includes(phrase)) {
+        setError(`"${phrase}" does not appear in this bio, so it cannot be linked.`);
+        return;
+      }
+      parsed.push({ phrase, url });
+    }
+    setError(null);
+    onChange(parsed);
+  };
+
+  return (
+    <div className="space-y-1">
+      <label className="wa-muted block" style={{ fontSize: "0.72rem" }}>
+        Links inside the bio — one per line, as{" "}
+        <code>phrase | https://address</code>
+      </label>
+      <textarea
+        className={inputCls}
+        rows={2}
+        defaultValue={initial}
+        placeholder="The UBUNTU Movement USA, Inc. | https://theubuntumovement.org/"
+        onBlur={(e) => commit(e.target.value)}
+      />
+      {error && <p style={{ fontSize: "0.75rem", color: "var(--wa-danger, #E7A98F)" }}>{error}</p>}
+    </div>
+  );
+}
 
 export default function WceSpeakers() {
   const [rows, setRows] = useState<Speaker[]>([]);
@@ -165,6 +214,7 @@ export default function WceSpeakers() {
                     onBlur={(e) => e.target.value !== (s.og_image_url ?? "") && patch(s.id, { og_image_url: e.target.value.trim() || null })} />
                   <textarea className={inputCls} rows={2} defaultValue={s.bio ?? ""} placeholder="Bio"
                     onBlur={(e) => patch(s.id, { bio: e.target.value })} />
+                  <BioLinksEditor speaker={s} onChange={(next) => patch(s.id, { bio_links: next })} />
                   <ImageUploadField
                     label="Portrait"
                     folder="speakers"

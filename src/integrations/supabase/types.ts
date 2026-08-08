@@ -2994,6 +2994,42 @@ export type Database = {
         }
         Relationships: []
       }
+      wce_partners: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          logo_url: string | null
+          name: string
+          published: boolean
+          round: boolean
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          logo_url?: string | null
+          name: string
+          published?: boolean
+          round?: boolean
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          logo_url?: string | null
+          name?: string
+          published?: boolean
+          round?: boolean
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       wce_pathways: {
         Row: {
           capacity: number | null
@@ -3175,6 +3211,7 @@ export type Database = {
       wce_speakers: {
         Row: {
           bio: string | null
+          bio_links: Json
           created_at: string
           display_order: number
           id: string
@@ -3192,6 +3229,7 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
+          bio_links?: Json
           created_at?: string
           display_order?: number
           id?: string
@@ -3209,6 +3247,7 @@ export type Database = {
         }
         Update: {
           bio?: string | null
+          bio_links?: Json
           created_at?: string
           display_order?: number
           id?: string

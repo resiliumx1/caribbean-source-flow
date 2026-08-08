@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
 import { RelatedLinks } from "@/components/RelatedLinks";
 import { getBreadcrumbs } from "@/lib/internal-links";
@@ -153,8 +153,10 @@ export default function Shop() {
   const [activeCondition, setActiveCondition] = useState<string | null>(null);
   const [activeForm, setActiveForm] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("featured");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("q") ?? "";
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialQuery);
 
   // 300ms debounce for search
   useEffect(() => {

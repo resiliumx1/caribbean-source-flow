@@ -12,7 +12,29 @@ export type WceSpeaker = {
   is_featured?: boolean;
   slug?: string | null;
   og_image_url?: string | null;
+  /** Organiser-managed inline links inside the bio: [{ phrase, url }]. */
+  bio_links?: unknown;
 };
+
+export type WceBioLink = { phrase: string; url: string };
+
+/** Normalises the jsonb bio_links column into usable link definitions. */
+export function parseBioLinks(raw: unknown): WceBioLink[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const { phrase, url } = entry as Record<string, unknown>;
+      if (typeof phrase !== "string" || typeof url !== "string") return null;
+      const p = phrase.trim();
+      const u = url.trim();
+      if (!p || !/^https?:\/\//i.test(u)) return null;
+      return { phrase: p, url: u };
+    })
+    .filter((l): l is WceBioLink => l !== null)
+    // Longest phrase first so overlapping phrases match the most specific one.
+    .sort((a, b) => b.phrase.length - a.phrase.length);
+}
 
 /** How each flyer theme word breaks across lines, exactly as printed. */
 const THEME_LINES: Record<string, string[]> = {

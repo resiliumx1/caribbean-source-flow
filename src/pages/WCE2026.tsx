@@ -5,7 +5,8 @@ import { WceThemeProvider } from "@/components/wce/WceThemeProvider";
 import { WceHero, WcePathwaysSection, WceSpeakersSection } from "@/components/wce/SectionsTop";
 import { WceMediaSection, WceCeremonySection, WceRetreatBand, WceApplicationForm } from "@/components/wce/SectionsMid";
 import { WceItinerarySection } from "@/components/wce/Itinerary";
-import { WceWhoForSection, WceArcSection, WceIncludedSection, WceInvestmentSection, WceFortifiedBanner } from "@/components/wce/RetreatDetail";
+import { WceFortifiedBanner } from "@/components/wce/RetreatDetail";
+import { WceRetreatDetailCards } from "@/components/wce/RetreatCards";
 import { WceLifeCraftSection } from "@/components/wce/LifeCraft";
 import { WceFaqSection, WceFinalCta, WceFooter } from "@/components/wce/SectionsBottom";
 import { useWceFaqs, useWcePathways, useWceSettings, useWceSpeakers, pathwayFeatures } from "@/components/wce/useWceData";
@@ -190,15 +191,12 @@ export default function WCE2026() {
         <WceHero />
         <WcePathwaysSection />
         <WceSpeakersSection />
+        <WceRetreatBand />
+        <WceRetreatDetailCards />
         <WceMediaSection />
         <WceItinerarySection />
         <WceLifeCraftSection />
-        <WceWhoForSection />
-        <WceArcSection />
-        <WceIncludedSection />
         <WceCeremonySection />
-        <WceRetreatBand />
-        <WceInvestmentSection />
         <WceApplicationForm />
         <WceFaqSection />
         <WceFortifiedBanner />
