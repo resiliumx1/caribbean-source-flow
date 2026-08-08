@@ -50,43 +50,43 @@ export function ConsultationCTA() {
             <p
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: "12px",
+                fontSize: "13px",
                 fontWeight: 500,
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 color: "var(--site-gold, #9A6B3F)",
-                marginBottom: "10px",
+                marginBottom: "12px",
               }}
             >
-              Private practice
+              Consultations
             </p>
 
             <h2
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 300,
-                fontSize: "clamp(1.9rem, 4vw, 2.6rem)",
-                lineHeight: 1.12,
+                fontWeight: 400,
+                fontSize: "clamp(1.75rem, 4vw, 2.6rem)",
+                lineHeight: 1.15,
                 color: "var(--site-text-primary, #0F281E)",
               }}
             >
-              An hour with Rt. Hon. Priest Kailash
+              Consult with Rt. Hon. Priest Kailash
             </h2>
 
             <p
               className="mt-4 mx-auto lg:mx-0"
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 300,
-                fontSize: "16px",
-                lineHeight: 1.8,
-                color: "var(--site-text-secondary, #4A4A4A)",
-                maxWidth: "38rem",
+                fontWeight: 400,
+                fontSize: "17px",
+                lineHeight: 1.65,
+                color: "var(--site-text-secondary, #3E4B42)",
+                maxWidth: "60ch",
               }}
             >
-              Four options: a single wellness consultation, a five session package, a follow-on
-              session for anyone already holding a package, and a business consultation. All are
-              one to one and online, and only times he has open appear in the calendar.
+              Priest Kailash has spent more than twenty-five years helping people heal and live in
+              alignment with nature. His medical and herbal training spans several countries.
+              Sessions are held one-to-one, online, and can be booked directly below.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2.5">
@@ -101,7 +101,7 @@ export function ConsultationCTA() {
                   className="inline-flex items-center gap-2"
                   style={{
                     fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "15px",
+                    fontSize: "16px",
                     color: "var(--site-text-primary, #0F281E)",
                   }}
                 >
@@ -116,7 +116,7 @@ export function ConsultationCTA() {
                 className="mt-5"
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "15px",
+                  fontSize: "16px",
                   color: "var(--site-gold, #9A6B3F)",
                 }}
               >
@@ -125,13 +125,25 @@ export function ConsultationCTA() {
             )}
 
             <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <Button asChild className="min-h-[48px] px-7">
-                <Link to="/consultations#book">Book a consultation</Link>
+              <Button asChild className="min-h-[48px] px-7 text-base">
+                <Link to="/consultations#book">Book a Consultation</Link>
               </Button>
-              <Button asChild variant="outline" className="min-h-[48px] px-7">
+              <Button asChild variant="outline" className="min-h-[48px] px-7 text-base">
                 <Link to="/consultations">Times, fees and formats</Link>
               </Button>
             </div>
+
+            <p
+              className="mt-4"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "15px",
+                lineHeight: 1.6,
+                color: "var(--site-text-secondary, #3E4B42)",
+              }}
+            >
+              Sessions from USD 300 · 30–45 minutes
+            </p>
           </div>
         </div>
       </div>
