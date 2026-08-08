@@ -16,6 +16,10 @@ export interface WcePathwayCopy {
   priceLine: string;
   /** Words-only availability note, or null. Never a number. */
   availability: string | null;
+  /** Scannable lead line — max two lines on the card. */
+  lead: string;
+  /** Exactly three one-line bullets. */
+  bullets: [string, string, string];
   body: string;
   cta: string;
 }
@@ -26,6 +30,12 @@ export const PATHWAY_COPY: Record<WcePathwayKey, WcePathwayCopy> = {
     dateLine: "Sunday, October 11, 2026",
     priceLine: "US$70 per person",
     availability: null,
+    lead: "Be present at Mount Kailash for the opening day of the experience.",
+    bullets: [
+      "Live keynote sessions and panels",
+      "Caribbean-rooted wellness conversations",
+      "On-site community and environment",
+    ],
     body:
       "Join us at Mount Kailash Rejuvenation Centre in Saint Lucia for the opening day of Caribbean Wellness Experience Saint Lucia 2026 — a public symposium bringing together powerful voices, practical perspectives, and Caribbean-rooted approaches to wellness, conscious living, movement, food, herbs, leadership, culture and community. The in-person experience is designed for those who want to be present for the conversations, environment and community.",
     cta: "Reserve My Place",
@@ -35,6 +45,12 @@ export const PATHWAY_COPY: Record<WcePathwayKey, WcePathwayCopy> = {
     dateLine: "Sunday, October 11, 2026",
     priceLine: "US$50 per person",
     availability: null,
+    lead: "Join the Symposium from anywhere in the world.",
+    bullets: [
+      "Secure, gated livestream access",
+      "Access instructions sent by email",
+      "For international and diaspora audiences",
+    ],
     body:
       "Join the Caribbean Wellness Saint Lucia 2026 Symposium from anywhere across the world. Online access is intended for international audiences, diaspora communities, and anyone unable to attend Mount Kailash in person but who still wants to experience the main conversations and programme. Purchasers will receive access instructions before the event through a secure, gated livestream experience.",
     cta: "Get Online Access",
@@ -44,6 +60,12 @@ export const PATHWAY_COPY: Record<WcePathwayKey, WcePathwayCopy> = {
     dateLine: "October 12–17, 2026",
     priceLine: "US$4,500 per person",
     availability: "Limited Availability",
+    lead: "Six days of deeper practice, beyond the Symposium.",
+    bullets: [
+      "Guided wellness practice, food and herbs",
+      "LifeCraft experiences throughout the week",
+      "Application reviewed by the Mount Kailash team",
+    ],
     body:
       "Continue beyond the Caribbean Wellness Symposium with a deeper, six-day fortification experience at Mount Kailash Rejuvenation Centre. The Fortification Retreat is designed for participants seeking more time for guided wellness practice, reflection, food, herbs, movement, discipline, community and restorative rhythms within the Mount Kailash environment. The six-day immersion will also feature LifeCraft experiences running throughout the retreat period, with Chalice Station and An Evening with Jah9 serving as key components of the wider retreat week. Retreat participation begins with an application, which will be reviewed by the Mount Kailash team.",
     cta: "Begin Your Application",
