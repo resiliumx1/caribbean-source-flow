@@ -540,7 +540,7 @@ export function WceApplicationForm() {
     // One shared Event ID for this application, reused by the browser Pixel and
     // any server-side (CAPI) twin so Meta deduplicates rather than double-counts.
     const leadEventId = newEventId("wce_lead");
-    const { error } = await supabase.from("wce_leads").insert({
+    const { data: inserted, error } = await supabase.from("wce_leads").insert({
       meta_event_ids: { lead: leadEventId },
       full_name: values.full_name.trim(),
       email: values.email.trim(),
@@ -560,12 +560,23 @@ export function WceApplicationForm() {
       user_agent: attribution.user_agent,
       consent_marketing: values.consent_marketing,
       consent_timestamp: values.consent_marketing ? new Date().toISOString() : null,
-    });
+    }).select("id").single();
     setSubmitting(false);
 
     if (error) {
       setFormError("We could not send your application just now. Please try again in a moment.");
       return;
+    }
+
+    /* Mailchimp runs after the lead is safely stored, and never blocks the
+       success state — an outage can never lose an application. The edge
+       function itself refuses to contact Mailchimp without marketing consent. */
+    if (inserted?.id) {
+      void supabase.functions
+        .invoke("mailchimp-sync", { body: { action: "sync_lead", lead_id: inserted.id } })
+        .catch(() => {
+          /* list sync must never affect the applicant's journey */
+        });
     }
 
     dataLayerPush("lead_submit", {
