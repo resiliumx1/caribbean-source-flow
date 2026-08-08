@@ -45,7 +45,7 @@ function SpeakerTile({
       type="button"
       ref={cardRef}
       onClick={onOpen}
-      className={`wce-speaker wce-card ${held ? "is-on" : ""}`}
+      className={`wce-speaker wce-card wce-card-speaker ${held ? "is-on" : ""}`}
     >
       {/* Hover state: the face becomes the card. */}
       <span aria-hidden="true" className="wce-card-fill">
@@ -81,18 +81,14 @@ function SpeakerTile({
       </span>
 
       <span className="wce-speaker-meta">
-        {speaker.theme && (
-          <span className="wce-card-theme">{speaker.theme}</span>
-        )}
+        <span className="wce-card-theme">{speaker.theme || ""}</span>
         <p className="wce-speaker-name mt-2 text-[1rem] leading-tight sm:text-[1.08rem]">
           {speaker.prefix ? `${speaker.prefix} ` : ""}{speaker.name}
         </p>
         <DiamondRule className="mx-auto mt-2 max-w-[3.2rem]" tone="rgba(201,162,39,0.9)" />
-        {speaker.title && (
-          <p className="mt-2 text-[0.875rem] uppercase" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}>
-            {speaker.title}
-          </p>
-        )}
+        <p className="wce-speaker-role mt-2 text-[0.875rem] uppercase" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}>
+          {speaker.title || ""}
+        </p>
         <span className="wce-viewflyer mt-4">
           View Flyer
           <ArrowGlyph />
@@ -292,9 +288,9 @@ export function WceSpeakersSection() {
             </Reveal>
           )}
 
-          <ul className="mt-16 grid grid-cols-2 gap-x-5 gap-y-14 sm:mt-20 sm:grid-cols-3 lg:grid-cols-6">
+          <ul className="mt-16 grid grid-cols-1 gap-6 sm:mt-20 sm:grid-cols-2 lg:grid-cols-3">
             {rest.map((s, i) => (
-              <Reveal key={s.id} as="li" index={i % 6}>
+              <Reveal key={s.id} as="li" index={i % 3} className="h-full">
                 <SpeakerTile
                   speaker={s}
                   onOpen={() => setOpenId(s.id)}
