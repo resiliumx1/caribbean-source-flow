@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Copy, Download, Loader2 } from "lucide-react";
+import { Copy, Download, Loader2, RefreshCw } from "lucide-react";
 import { inputCls } from "./shared";
 import { StatCard, StatusPill, EmptyState, SectionHeading, ACCENTS, whenText } from "./ui";
 import {
@@ -43,11 +43,83 @@ type Lead = {
   checkout_sent_at: string | null;
   checkout_token_expires_at: string | null;
   paid_at: string | null;
+  /** Mailchimp marketing-list sync state. */
+  mailchimp_status: string | null;
+  mailchimp_error: string | null;
+  mailchimp_synced_at: string | null;
 };
 
 function csv(v: unknown) {
   if (v === null || v === undefined) return "";
   return `"${String(v).replace(/"/g, '""')}"`;
+}
+
+const MC_TONE: Record<string, string> = {
+  synced: "accepted",
+  synced_partial: "qualified",
+  failed: "declined",
+  skipped_no_consent: "new",
+  skipped_not_configured: "new",
+};
+
+const MC_LABEL: Record<string, string> = {
+  synced: "Synced",
+  synced_partial: "Synced · fields missing",
+  failed: "Failed",
+  skipped_no_consent: "Not sent · no consent",
+  skipped_not_configured: "Not configured",
+};
+
+/** Mailchimp sync state, with the error text visible on the row and a retry. */
+function MailchimpCell({ lead, onChanged }: { lead: Lead; onChanged: (values: Partial<Lead>) => void }) {
+  const [busy, setBusy] = useState(false);
+
+  if (!lead.consent_marketing) {
+    return <span className="wa-muted text-xs">Not sent · no consent</span>;
+  }
+
+  const status = lead.mailchimp_status ?? "pending";
+
+  const retry = async () => {
+    setBusy(true);
+    const { data, error } = await supabase.functions.invoke("mailchimp-sync", {
+      body: { action: "retry", lead_id: lead.id },
+    });
+    setBusy(false);
+    const res = data as { ok?: boolean; status?: string; rejected?: string[]; error?: string | null } | null;
+    if (error || !res?.ok) {
+      wceToast({ title: "Mailchimp retry failed", description: res?.error ?? error?.message, tone: "error" });
+    } else {
+      wceToast({
+        title: res.status === "synced" ? "Synced to Mailchimp" : `Mailchimp: ${res.status}`,
+        description: res.rejected?.length ? `Fields missing in the audience: ${res.rejected.join(", ")}` : undefined,
+        tone: res.status === "synced" ? "ok" : "error",
+      });
+    }
+    onChanged({
+      mailchimp_status: res?.status ?? "failed",
+      mailchimp_error: res?.error ?? null,
+      mailchimp_synced_at: res?.status?.startsWith("synced") ? new Date().toISOString() : null,
+    });
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", minWidth: 150 }}>
+      {status === "pending" ? (
+        <span className="wa-muted text-xs">Pending</span>
+      ) : (
+        <span className="wa-pill" data-tone={MC_TONE[status] ?? "new"}>{MC_LABEL[status] ?? status}</span>
+      )}
+      {lead.mailchimp_synced_at && <span className="wa-muted text-xs">{whenText(lead.mailchimp_synced_at)}</span>}
+      {lead.mailchimp_error && (
+        <span className="text-xs" style={{ color: "#F2D98A", wordBreak: "break-word" }}>{lead.mailchimp_error}</span>
+      )}
+      <button type="button" className="wa-btn wa-btn-ghost wa-btn-sm" disabled={busy} onClick={retry}>
+        {busy ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden /> : <RefreshCw className="h-3 w-3" aria-hidden />}{" "}
+        Retry Mailchimp sync
+      </button>
+    </div>
+  );
 }
 
 function LeadStatusCell({ lead, onChanged }: { lead: Lead; onChanged: (values: Partial<Lead>) => void }) {
@@ -280,6 +352,7 @@ export default function WceLeads() {
       "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
       "landing_path", "referrer", "consent_marketing",
       "application_status", "approved_at", "declined_at", "checkout_sent_at", "paid_at",
+      "mailchimp_status", "mailchimp_synced_at", "mailchimp_error",
     ];
     const rows = [cols.join(","), ...filtered.map((l) => cols.map((c) => csv(l[c])).join(","))];
     const url = URL.createObjectURL(new Blob([rows.join("\n")], { type: "text/csv" }));
@@ -291,6 +364,23 @@ export default function WceLeads() {
   };
 
   const activeFilters = [statusFilter, sourceFilter, pathwayFilter].filter((f) => f !== "all").length;
+  const failedCount = leads.filter(
+    (l) => l.consent_marketing && (l.mailchimp_status === "failed" || l.mailchimp_status === "synced_partial"),
+  ).length;
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  const retryAllFailed = async () => {
+    setBulkBusy(true);
+    const { data, error } = await supabase.functions.invoke("mailchimp-sync", { body: { action: "retry_failed" } });
+    setBulkBusy(false);
+    const res = data as { ok?: boolean; retried?: number; error?: string } | null;
+    if (error || !res?.ok) {
+      wceToast({ title: "Bulk retry failed", description: res?.error ?? error?.message, tone: "error" });
+      return;
+    }
+    wceToast({ title: `Retried ${res.retried ?? 0} lead${res.retried === 1 ? "" : "s"}` });
+    load();
+  };
 
   return (
     <div className="space-y-5">
@@ -371,9 +461,17 @@ export default function WceLeads() {
       <FilterBar
         activeCount={activeFilters}
         actions={
+          <>
+            {failedCount > 0 && (
+              <button type="button" className="wa-btn wa-btn-ghost" disabled={bulkBusy} onClick={retryAllFailed}>
+                {bulkBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <RefreshCw className="h-4 w-4" aria-hidden />}{" "}
+                Retry {failedCount} failed Mailchimp sync{failedCount === 1 ? "" : "s"}
+              </button>
+            )}
           <button type="button" className="wa-btn wa-btn-primary" onClick={exportCsv}>
             <Download className="h-4 w-4" /> Export CSV
           </button>
+          </>
         }
       >
         <select className={inputCls + " max-w-[170px]"} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
@@ -429,6 +527,13 @@ export default function WceLeads() {
                 </th>
                 <th>Status</th>
                 <th>
+                  Mailchimp{" "}
+                  <InfoTip label="Marketing list sync">
+                    Whether this person reached the Mailchimp audience. People who did not tick marketing consent are
+                    never sent, by design. Application and order emails are sent by our own system either way.
+                  </InfoTip>
+                </th>
+                <th>
                   Retreat review{" "}
                   <InfoTip label="Retreat application pipeline">
                     Retreat places are application-only. Approving an applicant emails them a private, single-use
@@ -472,6 +577,9 @@ export default function WceLeads() {
                     </td>
                     <td data-label="Status">
                       <LeadStatusCell lead={l} onChanged={(values) => patchLead(l.id, values)} />
+                    </td>
+                    <td data-label="Mailchimp">
+                      <MailchimpCell lead={l} onChanged={(values) => patchLead(l.id, values)} />
                     </td>
                     <td data-label="Retreat review">
                       {l.pathway_interest === "retreat" ? (
