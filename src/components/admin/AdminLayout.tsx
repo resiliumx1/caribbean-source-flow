@@ -92,10 +92,13 @@ export default function AdminLayout() {
     let active = true;
     const load = async () => {
       const [consults, leads] = await Promise.all([
+        // Upcoming sessions plus anything still awaiting payment — the states
+        // that actually need attention.
         supabase
           .from("consultation_bookings")
           .select("id", { count: "exact", head: true })
-          .eq("status", "pending"),
+          .neq("status", "cancelled")
+          .gte("starts_at", new Date().toISOString()),
         isAdmin
           ? supabase
               .from("wholesale_leads")
