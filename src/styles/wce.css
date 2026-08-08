@@ -970,6 +970,117 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 }
 .wce-path-card.is-retreat { background: var(--wce-forest); border-color: var(--wce-gold); }
 
+/* ---- scannable card body: reserved bands keep the three cards aligned ---- */
+/* Cards must never scroll internally — they grow instead. */
+/* Flex stretching (not percentage heights) so every card takes the row height,
+   which keeps all three CTAs on one line even when one card is expanded. */
+.wce-path-slot { display: flex; flex-direction: column; min-height: 0; }
+.wce-path-shell { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.wce-path-card { flex: 1 1 auto; min-height: 0; }
+.wce-path-card { height: auto; max-height: none; }
+.wce-path-heading { min-height: 3.75rem; }
+.wce-path-avail { min-height: 2.25rem; margin-top: 0.75rem; }
+
+.wce-path-lead {
+  max-width: 30ch;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(26, 26, 20, 0.92);
+}
+.wce-path-card.is-retreat .wce-path-lead { color: rgba(245, 239, 224, 0.94); }
+
+.wce-path-bullets {
+  margin-top: 1.35rem;
+  max-width: 32ch;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.wce-path-bullets li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgba(26, 26, 20, 0.9);
+}
+.wce-path-card.is-retreat .wce-path-bullets li { color: rgba(245, 239, 224, 0.92); }
+.wce-path-check { flex: 0 0 auto; margin-top: 0.2rem; color: var(--wce-gold-text); }
+.wce-path-card.is-retreat .wce-path-check { color: var(--wce-gold-light); }
+
+/* Read more — animated height via grid-template-rows, no internal scrolling */
+.wce-path-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 420ms cubic-bezier(0.22,1,0.36,1);
+}
+.wce-path-more.is-open { grid-template-rows: 1fr; }
+.wce-path-more-inner { overflow: hidden; min-height: 0; }
+.wce-path-body {
+  max-width: 34ch;
+  margin: 1.25rem auto 0;
+  padding: 1rem 0.25rem 0;
+  border-top: 1px solid rgba(201, 162, 39, 0.4);
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(26, 26, 20, 0.88);
+}
+.wce-path-card.is-retreat .wce-path-body { color: rgba(245, 239, 224, 0.9); }
+
+.wce-path-readmore {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.1rem;
+  min-height: 44px;
+  padding: 0 0.25rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wce-gold-text);
+  border-bottom: 1px solid rgba(201, 162, 39, 0.55);
+}
+.wce-path-card.is-retreat .wce-path-readmore { color: var(--wce-gold-light); border-bottom-color: rgba(228, 199, 102, 0.6); }
+.wce-path-chev { transition: transform 320ms cubic-bezier(0.22,1,0.36,1); }
+.wce-path-chev.is-up { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .wce-path-more, .wce-path-chev { transition: none; }
+}
+
+/* ---- Speaker card: banded, equal-height, CTA pinned ---- */
+.wce-root .wce-card.wce-card-speaker {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 22rem;
+}
+/* the li wrapper stretches, the button fills it via flex */
+.wce-root li.h-full { display: flex; flex-direction: column; }
+.wce-root .wce-card.wce-card-speaker .wce-card-rest {
+  flex: 1 1 auto;
+  height: auto;
+  justify-content: flex-start;
+  padding: 1.5rem 1.25rem 1.5rem;
+}
+.wce-root .wce-card-speaker .wce-speaker-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+  width: 100%;
+}
+.wce-root .wce-card-speaker .wce-speaker-portrait-slot { width: 8.5rem; height: 8.5rem; }
+@media (min-width: 640px) { .wce-root .wce-card-speaker .wce-speaker-portrait-slot { width: 9.5rem; height: 9.5rem; } }
+.wce-root .wce-card-speaker .wce-portrait-img { object-fit: cover; object-position: center; }
+.wce-root .wce-card-speaker .wce-card-theme { min-height: 1.4rem; }
+.wce-root .wce-card-speaker .wce-speaker-name { min-height: 3rem; }
+.wce-root .wce-card-speaker .wce-speaker-role { min-height: 2.6rem; }
+.wce-root .wce-card-speaker .wce-viewflyer { margin-top: auto; }
+
 /* gold bloom from behind the numbered badge */
 .wce-path-bloom {
   position: absolute;

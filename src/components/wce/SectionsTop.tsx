@@ -183,7 +183,7 @@ function PathwaysInner() {
         {isLoading && <PathwayCardsSkeleton />}
 
         {!isLoading && (
-        <div className="wce-path-row mx-auto mt-14 grid max-w-5xl gap-6 sm:mt-20 sm:gap-7 lg:grid-cols-3">
+        <div className="wce-path-row mx-auto mt-14 grid max-w-5xl grid-cols-1 items-stretch gap-6 sm:mt-20 sm:gap-7 md:grid-cols-2 lg:grid-cols-3">
           {(pathways ?? [])
             .filter((p) => p.key in PATHWAY_COPY)
             .map((p, i) => (
