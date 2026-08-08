@@ -1,31 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
 import { useWceAccess } from "@/hooks/use-wce-access";
+import { useConsultationAccess } from "@/hooks/use-consultation-access";
 import { WceAdminShell } from "@/components/wce-admin/WceAdminShell";
-import { Loader2, Home, Sun, Moon, Bell, ShoppingBag, MessageSquare, Wallet, AlertTriangle, Mail, Menu } from "lucide-react";
+import { Loader2, Home, Sun, Moon, Bell, ShoppingBag, MessageSquare, Wallet, AlertTriangle, Mail, Menu, ChevronRight, LogOut, MoreVertical, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 import { supabase } from "@/integrations/supabase/client";
-
-const NAV_LINKS = [
-  { label: 'Orders', href: '/admin/orders' },
-  { label: 'Products', href: '/admin/products' },
-  { label: 'Retreats', href: '/admin/retreats' },
-  { label: 'Retreat Dates', href: '/admin/retreat-dates' },
-  { label: 'Reviews', href: '/admin/reviews' },
-  { label: 'Webinars', href: '/admin/webinars' },
-  { label: 'Analytics', href: '/admin/analytics' },
-  { label: 'Payment Plans', href: '/admin/payment-plans' },
-  { label: 'Wholesale Leads', href: '/admin/wholesale-leads' },
-  { label: 'Payment Alerts', href: '/admin/payment-alerts' },
-  { label: 'Discount Codes', href: '/admin/coupons' },
-  { label: 'Abandoned Carts', href: '/admin/abandoned-carts' },
-  { label: 'Consultations', href: '/admin/consultations' },
-  { label: 'WCE 2026', href: '/admin/wce' },
-  { label: 'Notifications', href: '/admin/notifications' },
-];
+import { AdminNav, AdminSidebar, useRailState, type BadgeCounts } from "./AdminSidebar";
+import { AdminCommandPalette } from "./AdminCommandPalette";
+import { findActiveItem, visibleGroups } from "./nav-config";
 
 type Notification = {
   id: string;
@@ -58,25 +45,74 @@ function relativeTime(iso: string) {
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
   const wce = useWceAccess();
+  const consult = useConsultationAccess();
   const navigate = useNavigate();
   const location = useLocation();
   const isWceRoute = location.pathname.startsWith("/admin/wce");
-  const currentSectionLabel = NAV_LINKS.find((l) => location.pathname.startsWith(l.href))?.label ?? "Menu";
-  // The desktop strip scrolls when it runs out of room; keep the current section in view.
-  const deskNavRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    const active = deskNavRef.current?.querySelector<HTMLElement>('[data-active="true"]');
-    active?.scrollIntoView({ block: "nearest", inline: "center" });
-  }, [location.pathname]);
   // A WCE organiser who is not a full store admin.
   const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
+  const consultationOnly =
+    !isLoading && !consult.isLoading && !isAdmin && consult.hasConsultationAccess;
   const { theme, setTheme } = useTheme();
   const [unread, setUnread] = useState(0);
   const [recent, setRecent] = useState<Notification[]>([]);
   const [bellOpen, setBellOpen] = useState(false);
   const [paymentAlerts, setPaymentAlerts] = useState(0);
+  const [pendingConsults, setPendingConsults] = useState(0);
+  const [newLeads, setNewLeads] = useState(0);
   const bellRef = useRef<HTMLDivElement | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const { collapsed, setCollapsed } = useRailState();
+
+  const groups = useMemo(
+    () =>
+      visibleGroups({
+        isFullAdmin: isAdmin,
+        hasConsultationAccess: consult.hasConsultationAccess,
+        hasWceAccess: wce.hasWceAccess,
+      }),
+    [isAdmin, consult.hasConsultationAccess, wce.hasWceAccess],
+  );
+  const activeItem = useMemo(() => findActiveItem(location.pathname), [location.pathname]);
+  const activeGroup = useMemo(
+    () => groups.find((g) => g.items.some((i) => i.href === activeItem?.href)),
+    [groups, activeItem],
+  );
+  const badges: BadgeCounts = {
+    notifications: unread,
+    paymentAlerts,
+    consultations: pendingConsults,
+    wholesaleLeads: newLeads,
+  };
+
+  // Counts that make the navigation communicate state, not just destinations.
+  useEffect(() => {
+    if (!isAdmin && !consult.hasConsultationAccess) return;
+    let active = true;
+    const load = async () => {
+      const [consults, leads] = await Promise.all([
+        // Upcoming sessions plus anything still awaiting payment — the states
+        // that actually need attention.
+        supabase
+          .from("consultation_bookings")
+          .select("id", { count: "exact", head: true })
+          .neq("status", "cancelled")
+          .gte("starts_at", new Date().toISOString()),
+        isAdmin
+          ? supabase
+              .from("wholesale_leads")
+              .select("id", { count: "exact", head: true })
+              .eq("status", "new")
+          : Promise.resolve({ count: 0 } as { count: number | null }),
+      ]);
+      if (!active) return;
+      setPendingConsults(consults.count || 0);
+      setNewLeads(leads.count || 0);
+    };
+    load();
+    return () => { active = false; };
+  }, [isAdmin, consult.hasConsultationAccess]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -130,7 +166,7 @@ export default function AdminLayout() {
   };
 
   useEffect(() => {
-    if (isLoading || wce.isLoading) return;
+    if (isLoading || wce.isLoading || consult.isLoading) return;
     if (!user) {
       navigate(isWceRoute ? "/wce-admin/login" : "/admin/login", { replace: true });
       return;
@@ -141,10 +177,17 @@ export default function AdminLayout() {
       if (!isWceRoute) navigate("/admin/wce", { replace: true });
       return;
     }
+    if (consult.hasConsultationAccess) {
+      // Consultation editors live only inside /admin/consultations.
+      if (!location.pathname.startsWith("/admin/consultations")) {
+        navigate("/admin/consultations", { replace: true });
+      }
+      return;
+    }
     navigate(isWceRoute ? "/wce-admin/login" : "/", { replace: true });
-  }, [user, isAdmin, isLoading, wce.isLoading, wce.hasWceAccess, isWceRoute, navigate]);
+  }, [user, isAdmin, isLoading, wce.isLoading, wce.hasWceAccess, consult.isLoading, consult.hasConsultationAccess, isWceRoute, location.pathname, navigate]);
 
-  if (isLoading || wce.isLoading) {
+  if (isLoading || wce.isLoading || consult.isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -153,7 +196,7 @@ export default function AdminLayout() {
   }
 
   // Never flash admin contents before the check resolves.
-  if (!user || (!isAdmin && !wce.hasWceAccess)) {
+  if (!user || (!isAdmin && !wce.hasWceAccess && !consult.hasConsultationAccess)) {
     return null;
   }
 
@@ -167,208 +210,287 @@ export default function AdminLayout() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Admin Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-14 gap-2 sm:gap-4">
-            <div className="flex items-center gap-2.5 flex-shrink-0 min-w-0">
-              <img src="/star-seal-for-lovable.png" alt="Mount Kailash" width={30} height={30} style={{ filter: 'invert(20%) sepia(40%) saturate(500%) hue-rotate(100deg) brightness(85%)' }} />
-              <div className="hidden sm:block leading-tight">
-                <div className="font-bold text-sm text-foreground">Mount Kailash</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Admin</div>
+  const initial = (user.email ?? "?").charAt(0).toUpperCase();
+  const scopeLabel = isAdmin
+    ? "Admin"
+    : consultationOnly
+      ? "Consultations"
+      : "Organiser";
+
+  const scopeNote = consultationOnly ? (
+    <>
+      <span className="block font-medium text-foreground mb-0.5">Consultation editor</span>
+      Your access covers the consultations area — bookings, session types, availability and the
+      practitioner profile. Other store sections are not part of this role.
+    </>
+  ) : null;
+
+  const brand = (
+    <Link to={groups[0]?.items[0]?.href ?? "/admin"} className="flex items-center gap-2.5 min-w-0">
+      <img
+        src="/star-seal-for-lovable.png"
+        alt=""
+        width={28}
+        height={28}
+        style={{ filter: "invert(20%) sepia(40%) saturate(500%) hue-rotate(100deg) brightness(85%)" }}
+      />
+      <span className="leading-tight min-w-0">
+        <span className="block font-bold text-sm text-foreground truncate">Mount Kailash</span>
+        <span className="block text-[11px] text-muted-foreground uppercase tracking-[0.14em]">{scopeLabel}</span>
+      </span>
+    </Link>
+  );
+
+  const notificationsBell = isAdmin ? (
+    <div className="relative" ref={bellRef}>
+      <button
+        onClick={() => setBellOpen((o) => !o)}
+        aria-label="Notifications"
+        className="relative h-10 w-10 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center justify-center text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))]"
+      >
+        <Bell className="h-4 w-4" />
+        {unread > 0 && (
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: "hsl(var(--destructive))" }}>
+            {unread > 99 ? "99+" : unread}
+          </span>
+        )}
+      </button>
+      {bellOpen && (
+        <div className="absolute right-0 mt-2 w-[360px] max-w-[calc(100vw-1rem)] rounded-lg border border-border bg-card shadow-lg z-[60] overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
+            <span className="text-sm font-bold text-foreground">Notifications</span>
+            {unread > 0 && (
+              <button onClick={markAllRead} className="text-xs font-medium hover:underline" style={{ color: "hsl(var(--primary))" }}>
+                Mark all as read
+              </button>
+            )}
+          </div>
+          <div className="max-h-[420px] overflow-y-auto">
+            {recent.length === 0 ? (
+              <div className="px-4 py-10 text-center">
+                <p className="text-sm text-muted-foreground">You're all caught up</p>
               </div>
-            </div>
-            <nav
-              ref={deskNavRef}
-              className="hidden lg:flex items-center gap-0.5 flex-1 min-w-0 overflow-x-auto no-scrollbar"
-              style={{
-                WebkitOverflowScrolling: "touch",
-                maskImage:
-                  "linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)",
-                WebkitMaskImage:
-                  "linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)",
-              }}
-            >
-              {NAV_LINKS.map((link) => {
-                const isActive = location.pathname.startsWith(link.href);
-                const isNotif = link.href === '/admin/notifications';
-                const badge = isNotif ? unread : link.href === '/admin/payment-alerts' ? paymentAlerts : 0;
-                return (
-                  <Link key={link.href} to={link.href} data-active={isActive ? "true" : undefined} className="px-3 py-1.5 rounded-md text-sm transition-colors inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap" style={{ fontWeight: isActive ? 700 : 400, color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))', background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent', borderBottom: isActive ? '2px solid hsl(var(--primary))' : '2px solid transparent' }}>
-                    {link.label}
-                    {badge > 0 && (
-                      <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
-                        {badge > 99 ? '99+' : badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-              <span className="text-xs text-muted-foreground hidden xl:inline truncate max-w-[140px]">{user.email}</span>
-              <div className="relative" ref={bellRef}>
+            ) : recent.map((n) => {
+              const meta = TYPE_META[n.type] || TYPE_META.message;
+              const { Icon } = meta;
+              return (
                 <button
-                  onClick={() => setBellOpen(o => !o)}
-                  aria-label="Notifications"
-                  className="relative h-8 w-8 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center justify-center text-foreground"
+                  key={n.id}
+                  onClick={() => handleNotifClick(n)}
+                  className="w-full text-left flex items-start gap-3 px-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
+                  style={{ background: n.is_read ? "transparent" : "hsl(var(--primary) / 0.05)" }}
                 >
-                  <Bell className="h-3.5 w-3.5" />
-                  {unread > 0 && (
-                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
-                      {unread > 99 ? '99+' : unread}
-                    </span>
+                  <span className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style={{ background: meta.bg, color: meta.color }}>
+                    <Icon className="w-4 h-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-foreground truncate">{n.title}</p>
+                    {n.body && <p className="text-[13px] text-muted-foreground truncate mt-0.5">{n.body}</p>}
+                    <p className="text-[12px] text-muted-foreground mt-1">{relativeTime(n.created_at)}</p>
+                  </div>
+                  {!n.is_read && (
+                    <span className="shrink-0 mt-1.5 w-2 h-2 rounded-full" style={{ background: "hsl(var(--destructive))" }} aria-label="Unread" />
                   )}
                 </button>
-                {bellOpen && (
-                  <div className="absolute right-0 mt-2 w-[360px] max-w-[calc(100vw-1rem)] rounded-lg border border-border bg-card shadow-lg z-[60] overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
-                      <span className="text-sm font-bold text-foreground">Notifications</span>
-                      {unread > 0 && (
-                        <button onClick={markAllRead} className="text-xs font-medium hover:underline" style={{ color: 'hsl(var(--primary))' }}>
-                          Mark all as read
-                        </button>
-                      )}
-                    </div>
-                    <div className="max-h-[420px] overflow-y-auto">
-                      {recent.length === 0 ? (
-                        <div className="px-4 py-10 text-center">
-                          <p className="text-sm text-muted-foreground">You're all caught up</p>
-                        </div>
-                      ) : recent.map((n) => {
-                        const meta = TYPE_META[n.type] || TYPE_META.message;
-                        const { Icon } = meta;
-                        return (
-                          <button
-                            key={n.id}
-                            onClick={() => handleNotifClick(n)}
-                            className="w-full text-left flex items-start gap-3 px-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
-                            style={{ background: n.is_read ? 'transparent' : 'hsl(var(--primary) / 0.05)' }}
-                          >
-                            <span className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style={{ background: meta.bg, color: meta.color }}>
-                              <Icon className="w-4 h-4" />
-                            </span>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-xs font-bold text-foreground truncate">{n.title}</p>
-                              {n.body && <p className="text-[11px] text-muted-foreground truncate mt-0.5">{n.body}</p>}
-                              <p className="text-[10px] text-muted-foreground mt-1">{relativeTime(n.created_at)}</p>
-                            </div>
-                            {!n.is_read && (
-                              <span className="shrink-0 mt-1.5 w-2 h-2 rounded-full" style={{ background: 'hsl(var(--destructive))' }} aria-label="Unread" />
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <Link
-                      to="/admin/notifications"
-                      onClick={() => setBellOpen(false)}
-                      className="block px-4 py-2.5 text-center text-xs font-medium border-t border-border hover:bg-muted/50"
-                      style={{ color: 'hsl(var(--primary))' }}
-                    >
-                      View all notifications
-                    </Link>
-                  </div>
-                )}
-              </div>
-              <Button variant="outline" size="sm" className="h-8 w-8 p-0 hidden lg:inline-flex" aria-label="Toggle theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-                {theme === 'dark' ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-              </Button>
-              <Link to="/" className="hidden lg:inline-flex"><Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" style={{ color: '#1b4332' }}><Home className="h-4 w-4" /><span>Back to Site</span></Button></Link>
-              <button onClick={() => signOut()} className="text-xs text-destructive hover:underline hidden lg:inline">Sign Out</button>
+              );
+            })}
+          </div>
+          <Link
+            to="/admin/notifications"
+            onClick={() => setBellOpen(false)}
+            className="block px-4 py-3 text-center text-[13px] font-medium border-t border-border hover:bg-muted/50"
+            style={{ color: "hsl(var(--primary))" }}
+          >
+            View all notifications
+          </Link>
+        </div>
+      )}
+    </div>
+  ) : null;
 
-              {/* Mobile / tablet hamburger, with current section name so the active area is always identifiable */}
-              <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-                <SheetTrigger asChild>
-                  <button
-                    aria-label="Open menu"
-                    className="lg:hidden min-h-[44px] pl-2 pr-2.5 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center gap-2 text-foreground max-w-[46vw] sm:max-w-none"
-                  >
-                    <Menu className="h-4 w-4 flex-shrink-0" />
-                    <span className="text-xs font-semibold truncate">{currentSectionLabel}</span>
-                  </button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-[280px] sm:w-[320px] p-0 flex flex-col">
-                  <div className="px-5 py-4 border-b border-border">
-                    <div className="font-bold text-sm text-foreground">Mount Kailash</div>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Admin</div>
-                    <div className="text-xs text-muted-foreground mt-2 truncate">{user.email}</div>
-                  </div>
-                  <nav className="flex-1 overflow-y-auto py-2">
-                    {NAV_LINKS.map((link) => {
-                      const isActive = location.pathname.startsWith(link.href);
-                      const isNotif = link.href === '/admin/notifications';
-                      const mBadge = isNotif ? unread : link.href === '/admin/payment-alerts' ? paymentAlerts : 0;
-                      return (
-                        <Link
-                          key={link.href}
-                          to={link.href}
-                          onClick={() => setMobileOpen(false)}
-                          className="flex items-center justify-between gap-2 px-5 py-3 text-sm border-l-2 min-h-[44px]"
-                          style={{
-                            fontWeight: isActive ? 700 : 500,
-                            color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--foreground))',
-                            background: isActive ? 'hsl(var(--primary) / 0.08)' : 'transparent',
-                            borderLeftColor: isActive ? 'hsl(var(--primary))' : 'transparent',
-                          }}
-                        >
-                          <span>{link.label}</span>
-                          {mBadge > 0 && (
-                            <span className="inline-flex items-center justify-center min-w-[20px] h-[20px] px-1 rounded-full text-[10px] font-bold text-white" style={{ background: 'hsl(var(--destructive))' }}>
-                              {mBadge > 99 ? '99+' : mBadge}
-                            </span>
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </nav>
-                  <div className="border-t border-border p-4 space-y-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-start gap-2 h-10"
-                      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                    >
-                      {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                      {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+  const accountMenu = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          aria-label="Account menu"
+          className="h-10 min-h-[44px] min-w-[44px] px-2 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center justify-center gap-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))]"
+        >
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-[11px] font-bold text-primary">{initial}</span>
+          <span className="hidden xl:inline text-[13px] text-muted-foreground truncate max-w-[150px]">{user.email}</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuLabel className="truncate text-[13px] font-normal text-muted-foreground">{user.email}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="gap-2 text-[14px]">
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {theme === "dark" ? "Light mode" : "Dark mode"}
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="gap-2 text-[14px]">
+          <Link to="/"><Home className="h-4 w-4" /> Back to site</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => signOut()} className="gap-2 text-[14px] text-destructive focus:text-destructive">
+          <LogOut className="h-4 w-4" /> Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  const overflowMenu = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          aria-label="More admin actions"
+          className="lg:hidden h-10 w-10 min-h-[44px] min-w-[44px] rounded-md border border-border bg-card hover:bg-muted inline-flex items-center justify-center text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))]"
+        >
+          <MoreVertical className="h-4 w-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuItem onClick={() => setPaletteOpen(true)} className="gap-2 text-[14px]">
+          <Search className="h-4 w-4" /> Search pages
+        </DropdownMenuItem>
+        {isAdmin && (
+          <DropdownMenuItem asChild className="gap-2 text-[14px]">
+            <Link to="/admin/notifications">
+              <Bell className="h-4 w-4" /> Notifications
+              {unread > 0 && (
+                <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full text-[11px] font-bold text-white" style={{ background: "hsl(var(--destructive))" }}>
+                  {unread > 99 ? "99+" : unread}
+                </span>
+              )}
+            </Link>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="gap-2 text-[14px]">
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {theme === "dark" ? "Light mode" : "Dark mode"}
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="gap-2 text-[14px]">
+          <Link to="/"><Home className="h-4 w-4" /> Back to site</Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  return (
+    <div className="min-h-screen bg-muted/30 flex">
+      <AdminSidebar
+        groups={groups}
+        badges={badges}
+        collapsed={collapsed}
+        onToggleCollapsed={() => setCollapsed(!collapsed)}
+        onOpenPalette={() => setPaletteOpen(true)}
+        header={brand}
+        note={scopeNote}
+        footer={
+          <div className="text-[12px] text-muted-foreground px-2 py-1 truncate">
+            {consultationOnly ? "Consultation editor access" : "Signed in as"}{" "}
+            <span className="text-foreground">{user.email}</span>
+          </div>
+        }
+      />
+
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Admin header */}
+        <header className="bg-card border-b border-border sticky top-0 z-40 shadow-sm">
+          <div className="flex items-center gap-2 px-3 sm:px-4 lg:px-6 py-2.5 min-h-[57px]">
+            {/* Drawer trigger — below 1024 only */}
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <button
+                  aria-label="Open navigation menu"
+                  className="lg:hidden h-10 w-10 min-h-[44px] min-w-[44px] shrink-0 rounded-md border border-border bg-card hover:bg-muted inline-flex items-center justify-center text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))]"
+                >
+                  <Menu className="h-5 w-5" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[330px] p-0 flex flex-col">
+                <div className="px-4 py-3 border-b border-border">{brand}</div>
+                <div className="flex-1 overflow-y-auto">
+                  <AdminNav
+                    groups={groups}
+                    badges={badges}
+                    variant="drawer"
+                    onNavigate={() => setMobileOpen(false)}
+                    onOpenPalette={() => { setMobileOpen(false); setPaletteOpen(true); }}
+                    note={scopeNote}
+                  />
+                </div>
+                <div className="border-t border-border p-3 space-y-2">
+                  <Button variant="outline" size="sm" className="w-full justify-start gap-2 min-h-[44px] text-[14px]" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                    {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                    {theme === "dark" ? "Light mode" : "Dark mode"}
+                  </Button>
+                  <Link to="/" onClick={() => setMobileOpen(false)} className="block">
+                    <Button variant="outline" size="sm" className="w-full justify-start gap-2 min-h-[44px] text-[14px]">
+                      <Home className="h-4 w-4" /> Back to site
                     </Button>
-                    <Link to="/" onClick={() => setMobileOpen(false)}>
-                      <Button variant="outline" size="sm" className="w-full justify-start gap-2 h-10" style={{ color: '#1b4332' }}>
-                        <Home className="h-4 w-4" /> Back to Site
-                      </Button>
-                    </Link>
-                    <button
-                      onClick={() => { setMobileOpen(false); signOut(); }}
-                      className="w-full text-left text-sm text-destructive hover:underline px-3 py-2"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                </SheetContent>
-              </Sheet>
+                  </Link>
+                  <button
+                    onClick={() => { setMobileOpen(false); signOut(); }}
+                    className="w-full text-left text-[14px] text-destructive hover:underline px-3 min-h-[44px]"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            {/* Breadcrumb + page title */}
+            <div className="min-w-0 flex-1">
+              {activeItem && (
+                <nav aria-label="Breadcrumb" className="hidden lg:flex items-center gap-1 text-[13px] text-muted-foreground">
+                  <span>{activeGroup?.label ?? "Admin"}</span>
+                  <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+                  <span className="text-foreground font-medium">{activeItem.label}</span>
+                </nav>
+              )}
+              <h1 className="text-[17px] lg:text-[20px] font-bold text-foreground truncate leading-tight">
+                {activeItem?.label ?? "Admin"}
+              </h1>
+              {activeItem?.description && (
+                <p className="hidden md:block text-[14px] text-muted-foreground truncate">{activeItem.description}</p>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <button
+                onClick={() => setPaletteOpen(true)}
+                className="hidden lg:inline-flex items-center gap-2 h-10 px-3 rounded-md border border-border bg-muted/40 text-[13px] text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))]"
+              >
+                <Search className="h-4 w-4" /> Search
+                <kbd className="rounded border border-border bg-card px-1.5 py-0.5 text-[11px] font-sans">⌘K</kbd>
+              </button>
+              <span className="hidden lg:inline-flex">{notificationsBell}</span>
+              {accountMenu}
+              {overflowMenu}
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Admin Content */}
-      <main className="container mx-auto px-4 py-8">
-        {paymentAlerts > 0 && !location.pathname.startsWith('/admin/payment-alerts') && (
-          <Link
-            to="/admin/payment-alerts"
-            className="mb-6 flex items-center gap-3 rounded-lg border p-4 text-sm"
-            style={{ borderColor: 'hsl(var(--destructive) / 0.4)', background: 'hsl(var(--destructive) / 0.08)' }}
-          >
-            <AlertTriangle className="h-4 w-4 flex-shrink-0 text-destructive" />
-            <span className="text-foreground">
-              <strong>{paymentAlerts}</strong> payment{paymentAlerts !== 1 ? 's were' : ' was'} captured without creating an order. Review now →
-            </span>
-          </Link>
-        )}
-        <Outlet />
-      </main>
+        {/* Admin content */}
+        <main className="flex-1 px-4 sm:px-5 lg:px-6 py-6 lg:py-8">
+          <div className="mx-auto w-full max-w-[1400px]">
+            {isAdmin && paymentAlerts > 0 && !location.pathname.startsWith("/admin/payment-alerts") && (
+              <Link
+                to="/admin/payment-alerts"
+                className="mb-6 flex items-center gap-3 rounded-lg border p-4 text-sm"
+                style={{ borderColor: "hsl(var(--destructive) / 0.4)", background: "hsl(var(--destructive) / 0.08)" }}
+              >
+                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-destructive" />
+                <span className="text-foreground">
+                  <strong>{paymentAlerts}</strong> payment{paymentAlerts !== 1 ? "s were" : " was"} captured without creating an order. Review now →
+                </span>
+              </Link>
+            )}
+            <Outlet />
+          </div>
+        </main>
+      </div>
+
+      <AdminCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} groups={groups} />
     </div>
   );
 }
