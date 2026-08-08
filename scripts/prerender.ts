@@ -64,8 +64,11 @@ interface RouteMeta {
   title: string;
   description: string;
   ogImage?: string;
+  ogImageAlt?: string;
   jsonLd?: Record<string, unknown>;
   bodyHtml: string;      // goes into #seo-static-fallback
+  /** Extra raw <meta>/<link> markup injected high in <head> (after the <title>). */
+  extraHead?: string;
 }
 
 function buildShellTransform(shell: string, m: RouteMeta): string {
@@ -73,6 +76,7 @@ function buildShellTransform(shell: string, m: RouteMeta): string {
   const title = esc(m.title);
   const desc = esc(m.description);
   const image = m.ogImage ? esc(m.ogImage) : null;
+  const imageAlt = esc(m.ogImageAlt || m.title);
 
   let html = shell;
 
@@ -133,8 +137,23 @@ function buildShellTransform(shell: string, m: RouteMeta): string {
     );
     html = html.replace(
       /<meta\s+property="og:image:alt"\s+content="[^"]*"\s*\/?>/i,
-      `<meta property="og:image:alt" content="${title}" />`,
+      `<meta property="og:image:alt" content="${imageAlt}" />`,
     );
+    html = html.replace(
+      /<meta\s+property="og:image:secure_url"\s+content="[^"]*"\s*\/?>/i,
+      `<meta property="og:image:secure_url" content="${image}" />`,
+    );
+    html = html.replace(
+      /<meta\s+name="twitter:image:alt"\s+content="[^"]*"\s*\/?>/i,
+      `<meta name="twitter:image:alt" content="${imageAlt}" />`,
+    );
+  }
+
+  // Route-specific extra head markup, injected immediately after </title> so the
+  // social tags sit in the opening bytes of the document (WhatsApp reads only a
+  // small prefix of the response).
+  if (m.extraHead) {
+    html = html.replace(/<\/title>/i, `</title>\n    ${m.extraHead.trim()}`);
   }
 
   // route-specific JSON-LD: inject just before </head>
@@ -226,6 +245,23 @@ async function loadRetreats(): Promise<RetreatRow[]> {
 
 const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> = [
   {
+    path: "/wce-2026",
+    title: "Caribbean Wellness Experience Saint Lucia 2026",
+    description:
+      "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat.",
+    ogImage: `${BASE_URL}/og/wce-2026.jpg`,
+    ogImageAlt: "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre",
+    bodyHtml: `
+      <header><a href="/" rel="home">Mount Kailash Rejuvenation Centre</a></header>
+      <main>
+        <h1>Caribbean Wellness Experience Saint Lucia 2026</h1>
+        <p>11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. A holistic symposium, fortification retreat and LifeCraft experience. What started in Jamaica continues in St. Lucia.</p>
+        <p>Symposium: 11 October 2026 (in person or online). Fortification Retreat: 12–17 October 2026, application only.</p>
+        <p><a href="/wce-2026#pathways">See the pathways</a> · <a href="/wce-2026#apply">Apply for the retreat</a></p>
+      </main>
+    `,
+  },
+  {
     path: "/shop",
     title: "Shop — Mount Kailash Apothecary | Caribbean Herbal Tinctures, Sea Moss & Wellness Medicine",
     description: "Browse the Mount Kailash apothecary: herbal tinctures, sea moss, capsules, teas, and traditional Caribbean wellness medicine, hand-formulated in Saint Lucia.",
@@ -278,6 +314,9 @@ async function main() {
       path: r.path,
       title: r.title,
       description: r.description,
+      ogImage: r.ogImage,
+      ogImageAlt: r.ogImageAlt,
+      jsonLd: r.jsonLd,
       bodyHtml: r.bodyHtml ?? extractDefaultFallback(shell),
     };
     writeRoute(r.path, buildShellTransform(shell, meta));
