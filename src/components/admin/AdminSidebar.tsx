@@ -251,7 +251,6 @@ export function AdminNav({
                     Icon={item.icon}
                     active={activeItem?.href === item.href}
                     badge={badgeFor(item.badgeKey)}
-                    muted={badgeFor(item.badgeKey) === 0 && false}
                     rail={rail}
                     onNavigate={onNavigate}
                   />
