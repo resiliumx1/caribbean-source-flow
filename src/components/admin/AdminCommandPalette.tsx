@@ -40,7 +40,7 @@ export function AdminCommandPalette({
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <CommandInput placeholder="Search admin pages…" />
-      <CommandList>
+      <CommandList className="max-h-[420px]">
         <CommandEmpty>No pages match that search.</CommandEmpty>
         {groups.map((group) => (
           <CommandGroup key={group.id} heading={group.label}>
@@ -52,12 +52,12 @@ export function AdminCommandPalette({
                   onOpenChange(false);
                   navigate(item.href);
                 }}
-                className="gap-3 py-2.5"
+                className="gap-3 py-2.5 data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground"
               >
-                <item.icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <item.icon className="h-4 w-4 shrink-0 opacity-80" />
                 <span className="flex-1 min-w-0">
-                  <span className="block text-[14px] text-foreground">{item.label}</span>
-                  <span className="block text-[12px] text-muted-foreground truncate">
+                  <span className="block text-[14px] font-medium">{item.label}</span>
+                  <span className="block text-[12px] opacity-75 truncate">
                     {item.description}
                   </span>
                 </span>
