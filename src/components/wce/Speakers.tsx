@@ -1,6 +1,7 @@
 /** Visionary Leaders — featured panel, the row of six, and the flyer expansion. */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { useNavigate, useParams } from "react-router-dom";
 import { dataLayerPush } from "@/lib/tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
 import { FlowerOfLifeField, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
@@ -12,6 +13,7 @@ import { FeaturedHalo } from "./FeaturedHalo";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
 import { trackWceCta } from "./cta-tracking";
+import { WCE_PAGE_PATH, speakerPath } from "./share";
 
 /** Small gold ornament arrow used on the View Flyer action. */
 function ArrowGlyph({ size = 14 }: { size?: number }) {
@@ -191,12 +193,15 @@ function FeaturedSpeaker({
 
 export function WceSpeakersSection() {
   const { data, isLoading } = useWceSpeakers();
+  const navigate = useNavigate();
+  const { slug: routeSlug } = useParams<{ slug?: string }>();
   const { ref: sectionRef, inView } = useInView<HTMLElement>();
   const lift = useSectionLift<HTMLElement>();
   const fired = useRef(false);
   const cards = useRef<Record<string, HTMLButtonElement | null>>({});
   const [openId, setOpenId] = useState<string | null>(null);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const scrolled = useRef(false);
 
   useEffect(() => {
     if (inView && !fired.current) {
@@ -210,6 +215,35 @@ export function WceSpeakersSection() {
   const rest = speakers.filter((s) => s.id !== featured?.id);
   const open = speakers.find((s) => s.id === openId) ?? null;
   const openIndex = open ? speakers.findIndex((s) => s.id === open.id) : -1;
+
+  /* The URL is the source of truth for the flyer on /wce-2026/speakers/:slug, so
+     a shared link opens the right flyer and browser Back closes it. */
+  useEffect(() => {
+    if (!routeSlug) {
+      setOpenId((cur) => (cur && speakers.some((s) => s.id === cur && s.slug) ? null : cur));
+      return;
+    }
+    const match = speakers.find((s) => s.slug === routeSlug);
+    if (!match) return;
+    setOpenId(match.id);
+    if (!scrolled.current) {
+      scrolled.current = true;
+      requestAnimationFrame(() => {
+        document.getElementById("speakers")?.scrollIntoView({ block: "start" });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [routeSlug, data]);
+
+  /** Opening a speaker pushes their shareable URL; slug-less rows fall back to local state. */
+  const openSpeaker = useCallback(
+    (s: WceSpeaker) => {
+      if (s.slug) navigate(speakerPath(s.slug));
+      else setOpenId(s.id);
+    },
+    [navigate],
+  );
+
   const neighbour = (dir: 1 | -1) =>
     openIndex >= 0 && speakers.length > 1
       ? speakers[(openIndex + dir + speakers.length) % speakers.length]?.name
@@ -218,36 +252,35 @@ export function WceSpeakersSection() {
   const step = useCallback(
     (dir: 1 | -1) => {
       setDirection(dir);
-      setOpenId((cur) => {
-        if (!cur || !speakers.length) return cur;
-        const i = speakers.findIndex((s) => s.id === cur);
-        const next = (i + dir + speakers.length) % speakers.length;
-        return speakers[next].id;
-      });
+      if (!openId || !speakers.length) return;
+      const i = speakers.findIndex((s) => s.id === openId);
+      const next = speakers[(i + dir + speakers.length) % speakers.length];
+      if (next.slug) navigate(speakerPath(next.slug), { replace: true });
+      else setOpenId(next.id);
     },
-    [speakers]
+    [navigate, openId, speakers]
   );
 
   /** Dot navigation: travel direction is inferred from the index delta. */
   const jumpTo = useCallback(
     (id: string) => {
-      setOpenId((cur) => {
-        if (!cur) return id;
-        const from = speakers.findIndex((s) => s.id === cur);
-        const to = speakers.findIndex((s) => s.id === id);
-        if (to < 0 || to === from) return cur;
-        setDirection(to > from ? 1 : -1);
-        return id;
-      });
+      const from = speakers.findIndex((s) => s.id === openId);
+      const to = speakers.findIndex((s) => s.id === id);
+      if (to < 0 || to === from) return;
+      if (from >= 0) setDirection(to > from ? 1 : -1);
+      const target = speakers[to];
+      if (target.slug) navigate(speakerPath(target.slug), { replace: true });
+      else setOpenId(id);
     },
-    [speakers]
+    [navigate, openId, speakers]
   );
 
   const close = useCallback(() => {
     const id = openId;
     setOpenId(null);
+    if (routeSlug) navigate(WCE_PAGE_PATH);
     if (id) requestAnimationFrame(() => cards.current[id]?.focus());
-  }, [openId]);
+  }, [navigate, openId, routeSlug]);
 
   const setCardRef = (id: string) => (el: HTMLButtonElement | null) => { cards.current[id] = el; };
 
@@ -282,7 +315,7 @@ export function WceSpeakersSection() {
             <Reveal index={2}>
               <FeaturedSpeaker
                 speaker={featured}
-                onOpen={() => setOpenId(featured.id)}
+                onOpen={() => openSpeaker(featured)}
                 cardRef={setCardRef(featured.id)}
               />
             </Reveal>
@@ -293,7 +326,7 @@ export function WceSpeakersSection() {
               <Reveal key={s.id} as="li" index={i % 3} className="h-full">
                 <SpeakerTile
                   speaker={s}
-                  onOpen={() => setOpenId(s.id)}
+                  onOpen={() => openSpeaker(s)}
                   cardRef={setCardRef(s.id)}
                 />
               </Reveal>
@@ -306,7 +339,7 @@ export function WceSpeakersSection() {
                 type="button"
                 onClick={() => {
                   trackWceCta("explore", "speakers", "Explore Speaker Sessions");
-                  setOpenId(speakers[0].id);
+                  openSpeaker(speakers[0]);
                 }}
                 className="wce-btn wce-btn-outline-forest wce-btn-pill mx-auto"
               >
