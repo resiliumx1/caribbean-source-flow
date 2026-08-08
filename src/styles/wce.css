@@ -972,7 +972,11 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 
 /* ---- scannable card body: reserved bands keep the three cards aligned ---- */
 /* Cards must never scroll internally — they grow instead. */
-.wce-path-slot, .wce-path-shell, .wce-path-card { min-height: 0; }
+/* Flex stretching (not percentage heights) so every card takes the row height,
+   which keeps all three CTAs on one line even when one card is expanded. */
+.wce-path-slot { display: flex; flex-direction: column; min-height: 0; }
+.wce-path-shell { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.wce-path-card { flex: 1 1 auto; min-height: 0; }
 .wce-path-card { height: auto; max-height: none; overflow: visible; }
 .wce-path-heading { min-height: 3.75rem; }
 .wce-path-avail { min-height: 2.25rem; margin-top: 0.75rem; }
