@@ -23,6 +23,8 @@ type Lead = {
   country: string | null;
   pathway_interest: string | null;
   reason: string | null;
+  participation_notes: string | null;
+  dietary_notes: string | null;
   preferred_contact: string | null;
   utm_source: string | null;
   utm_medium: string | null;
@@ -349,6 +351,7 @@ export default function WceLeads() {
     const cols: (keyof Lead)[] = [
       "created_at", "full_name", "email", "whatsapp", "country", "pathway_interest",
       "preferred_contact", "reason", "status", "notes", "referral_code",
+      "dietary_notes", "participation_notes",
       "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
       "landing_path", "referrer", "consent_marketing",
       "application_status", "approved_at", "declined_at", "checkout_sent_at", "paid_at",
@@ -561,6 +564,13 @@ export default function WceLeads() {
                     payment link that expires — there is no public way to pay for the retreat.
                   </InfoTip>
                 </th>
+                <th>
+                  Applicant needs{" "}
+                  <InfoTip label="Dietary and participation notes">
+                    What the applicant told us about food and mobility. Confirm what can be accommodated before you
+                    approve them and request payment.
+                  </InfoTip>
+                </th>
                 <th>Notes</th>
               </tr>
             </thead>
@@ -607,6 +617,26 @@ export default function WceLeads() {
                         <RetreatReviewCell lead={l} onChanged={(values) => patchLead(l.id, values)} />
                       ) : (
                         <span className="wa-muted text-xs">—</span>
+                      )}
+                    </td>
+                    <td data-label="Applicant needs" className="text-xs">
+                      {l.dietary_notes || l.participation_notes ? (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", minWidth: 190 }}>
+                          {l.dietary_notes && (
+                            <div>
+                              <span className="wa-muted">Dietary: </span>
+                              <span>{l.dietary_notes}</span>
+                            </div>
+                          )}
+                          {l.participation_notes && (
+                            <div>
+                              <span className="wa-muted">Mobility: </span>
+                              <span>{l.participation_notes}</span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="wa-muted">None given</span>
                       )}
                     </td>
                     <td data-label="Notes">
