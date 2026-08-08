@@ -3251,3 +3251,16 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
 @media (min-width: 640px) and (max-width: 1023px) {
   .wce-rcard-trigger { min-height: 10.75rem; }
 }
+
+/* Sticky bar labels stay on one line at 14px: tighten tracking, not size. */
+.wce-sticky-cta .wce-btn {
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  padding: 0.85rem 0.5rem;
+  line-height: 1.15;
+  white-space: nowrap;
+  min-height: 48px;
+}
+@media (max-width: 359px) {
+  .wce-sticky-cta .wce-btn { letter-spacing: 0.01em; }
+}
