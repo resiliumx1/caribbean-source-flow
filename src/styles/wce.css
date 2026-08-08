@@ -1131,6 +1131,13 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 .wce-path-card { flex: 1 1 auto; min-height: 0; }
 .wce-path-card { height: auto; max-height: none; }
 .wce-path-heading { min-height: 3.75rem; }
+/* Longer campaign titles: family name on line one, distinguishing part beneath.
+   Never smaller than 17px. */
+.wce-path-heading {
+  font-size: clamp(1.0625rem, 0.95rem + 0.45vw, 1.28rem);
+  line-height: 1.3;
+  text-wrap: balance;
+}
 .wce-path-avail { min-height: 2.25rem; margin-top: 0.75rem; }
 
 .wce-path-lead {
