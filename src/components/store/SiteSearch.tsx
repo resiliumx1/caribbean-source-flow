@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, X, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -484,7 +485,9 @@ export function SiteSearch() {
         <Search className="w-5 h-5" />
       </Button>
 
-      {overlayOpen && (
+      {/* Portalled to <body>: the header sets backdrop-filter, which would make it
+          the containing block for a fixed child and clip the overlay to 64px. */}
+      {overlayOpen && createPortal((
         <div
           className="fixed inset-0 xl:hidden site-search-overlay"
           style={{ zIndex: 100000, background: "hsl(var(--background))", opacity: 1 }}
@@ -522,7 +525,7 @@ export function SiteSearch() {
             {panel}
           </div>
         </div>
-      )}
+      ), document.body)}
 
       <span aria-live="polite" role="status" className="sr-only">
         {announcement}
