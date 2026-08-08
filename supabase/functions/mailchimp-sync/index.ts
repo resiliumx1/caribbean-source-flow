@@ -120,6 +120,57 @@ async function mcFetch(
   return { status: res.status, body: await res.text() };
 }
 
+/** Human-readable names for the fields we create in the audience. */
+const MERGE_FIELD_NAMES: Record<string, string> = {
+  FNAME: "First Name",
+  LNAME: "Last Name",
+  COUNTRY: "Country",
+  WHATSAPP: "WhatsApp",
+  PATHWAY: "Pathway",
+  REFCODE: "Referral Code",
+  UTMSOURCE: "UTM Source",
+  UTMMEDIUM: "UTM Medium",
+  UTMCAMP: "UTM Campaign",
+  UTMCONTENT: "UTM Content",
+};
+
+/**
+ * Create any of our merge fields the audience is missing, as plain text.
+ * Idempotent: fields that already exist are left untouched.
+ */
+async function ensureMergeFields(admin: SupabaseClient) {
+  const key = Deno.env.get("MAILCHIMP_API_KEY") ?? "";
+  if (!key) return { ok: false, error: "MAILCHIMP_API_KEY is not configured." };
+
+  const { data: settings } = await admin
+    .from("wce_settings")
+    .select("mailchimp_audience_id, mailchimp_server_prefix")
+    .limit(1)
+    .maybeSingle();
+  const audience = (settings?.mailchimp_audience_id ?? "").trim();
+  const prefix = (settings?.mailchimp_server_prefix ?? "").trim();
+  if (!audience || !prefix) return { ok: false, error: "Audience id / server prefix not configured." };
+
+  const existing = await audienceMergeTags(prefix, key, audience);
+  if (!existing) return { ok: false, error: "Could not read the audience merge fields." };
+
+  const created: string[] = [];
+  const failed: { tag: string; error: string }[] = [];
+  for (const tag of MERGE_TAGS.filter((t) => !existing.includes(t))) {
+    const res = await mcFetch(prefix, key, `/lists/${audience}/merge-fields`, {
+      method: "POST",
+      body: { tag, name: MERGE_FIELD_NAMES[tag] ?? tag, type: "text", required: false, public: false },
+    });
+    if (res.status >= 400) {
+      console.error(`mailchimp-sync: creating merge field ${tag} failed [${res.status}]: ${res.body}`);
+      failed.push({ tag, error: `[${res.status}] ${res.body}`.slice(0, 300) });
+    } else {
+      created.push(tag);
+    }
+  }
+  return { ok: failed.length === 0, created, failed, already_present: existing.filter((t) => MERGE_TAGS.includes(t as typeof MERGE_TAGS[number])) };
+}
+
 /**
  * Upsert one consented person into the audience.
  * `extraTags` lets the purchase path add the tier that was bought.
@@ -318,6 +369,8 @@ Deno.serve(async (req) => {
 
     if (action === "retry_failed") {
       await requireWceAccess(admin, req);
+      /* Create any missing merge fields first so the retry can fill them all. */
+      await ensureMergeFields(admin);
       const { data: rows } = await admin
         .from("wce_leads")
         .select("id")
@@ -329,6 +382,11 @@ Deno.serve(async (req) => {
         results.push({ lead_id: row.id as string, status: r.status, error: r.error });
       }
       return json({ ok: true, retried: results.length, results });
+    }
+
+    if (action === "ensure_merge_fields") {
+      await requireWceAccess(admin, req);
+      return json(await ensureMergeFields(admin));
     }
 
     /* Symposium ticket purchase. Consent still governs: we only sync a buyer

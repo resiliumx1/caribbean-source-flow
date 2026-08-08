@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Copy, Download, Loader2, RefreshCw } from "lucide-react";
+import { Copy, Download, ListChecks, Loader2, RefreshCw } from "lucide-react";
 import { inputCls } from "./shared";
 import { StatCard, StatusPill, EmptyState, SectionHeading, ACCENTS, whenText } from "./ui";
 import {
@@ -368,6 +368,7 @@ export default function WceLeads() {
     (l) => l.consent_marketing && (l.mailchimp_status === "failed" || l.mailchimp_status === "synced_partial"),
   ).length;
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [fieldsBusy, setFieldsBusy] = useState(false);
 
   const retryAllFailed = async () => {
     setBulkBusy(true);
@@ -380,6 +381,22 @@ export default function WceLeads() {
     }
     wceToast({ title: `Retried ${res.retried ?? 0} lead${res.retried === 1 ? "" : "s"}` });
     load();
+  };
+
+  /* Creates any Mailchimp merge fields the audience is missing (idempotent). */
+  const ensureMergeFields = async () => {
+    setFieldsBusy(true);
+    const { data, error } = await supabase.functions.invoke("mailchimp-sync", { body: { action: "ensure_merge_fields" } });
+    setFieldsBusy(false);
+    const res = data as { ok?: boolean; created?: string[]; error?: string } | null;
+    if (error || !res?.ok) {
+      wceToast({ title: "Could not update Mailchimp fields", description: res?.error ?? error?.message, tone: "error" });
+      return;
+    }
+    wceToast({
+      title: res.created?.length ? `Created ${res.created.length} Mailchimp field${res.created.length === 1 ? "" : "s"}` : "Mailchimp fields already complete",
+      description: res.created?.length ? res.created.join(", ") : undefined,
+    });
   };
 
   return (
@@ -468,6 +485,10 @@ export default function WceLeads() {
                 Retry {failedCount} failed Mailchimp sync{failedCount === 1 ? "" : "s"}
               </button>
             )}
+          <button type="button" className="wa-btn wa-btn-ghost" disabled={fieldsBusy} onClick={ensureMergeFields}>
+            {fieldsBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <ListChecks className="h-4 w-4" aria-hidden />}{" "}
+            Check Mailchimp fields
+          </button>
           <button type="button" className="wa-btn wa-btn-primary" onClick={exportCsv}>
             <Download className="h-4 w-4" /> Export CSV
           </button>
