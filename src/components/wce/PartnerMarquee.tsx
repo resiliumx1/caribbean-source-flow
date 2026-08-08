@@ -12,37 +12,68 @@ export interface WcePartner {
   logoUrl?: string;
   /** Circular seal artwork — sized larger so it reads at the same optical weight as wordmarks. */
   round?: boolean;
+  /** Partner website. When present the tile becomes a link opening in a new tab. */
+  url?: string | null;
 }
 
+/** Bundled logo artwork, keyed by partner name. The organiser backend controls
+ *  the list, order and website address; the artwork stays in the bundle. */
+export const WCE_PARTNER_LOGOS: Record<string, { url: string; round?: boolean }> = {
+  "Mount Kailash": { url: logoMountKailash.url, round: true },
+  "Kamila's Kitchen": { url: logoKamilas.url },
+  Jah9: { url: logoJah9.url },
+  "LifeCraft in Jamaica": { url: logoLifecraft.url },
+  "The Ubuntu Movement": { url: logoUbuntu.url },
+};
+
+/** Fallback list used until the partner rows load (and during prerender). */
 export const WCE_PARTNERS: WcePartner[] = [
-  { name: "Mount Kailash", logoUrl: logoMountKailash.url, round: true },
+  { name: "Mount Kailash", logoUrl: logoMountKailash.url, round: true, url: "https://mountkailashslu.com" },
   { name: "Kamila's Kitchen", logoUrl: logoKamilas.url },
   { name: "Jah9", logoUrl: logoJah9.url },
   { name: "LifeCraft in Jamaica", logoUrl: logoLifecraft.url },
-  { name: "The Ubuntu Movement", logoUrl: logoUbuntu.url },
+  { name: "The Ubuntu Movement", logoUrl: logoUbuntu.url, url: "https://theubuntumovement.org/" },
 ];
 
 /** One tile: bare artwork on the bar — no border, no fill. Falls back to the name as text. */
-export function WcePartnerTile({ name, logoUrl, round }: WcePartner) {
+export function WcePartnerTile({ name, logoUrl, round, url }: WcePartner) {
+  const art = logoUrl ? (
+    <img
+      src={logoUrl}
+      alt={name}
+      loading="lazy"
+      decoding="async"
+      className={`wce-partner-logo${round ? " wce-partner-logo-round" : ""}`}
+    />
+  ) : (
+    <span className="wce-partner-name">{name}</span>
+  );
+
+  if (url) {
+    return (
+      <a
+        className="wce-partner-tile is-link"
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={`${name} — opens in a new tab`}
+        aria-label={`${name} (opens in a new tab)`}
+      >
+        {art}
+      </a>
+    );
+  }
+
   return (
     <div className="wce-partner-tile" title={name}>
-      {logoUrl ? (
-        <img
-          src={logoUrl}
-          alt={name}
-          loading="lazy"
-          decoding="async"
-          className={`wce-partner-logo${round ? " wce-partner-logo-round" : ""}`}
-        />
-      ) : (
-        <span className="wce-partner-name">{name}</span>
-      )}
+      {art}
     </div>
   );
 }
 
-export function WcePartnerMarquee({ partners = WCE_PARTNERS }: { partners?: WcePartner[] }) {
+export function WcePartnerMarquee({ partners }: { partners?: WcePartner[] }) {
   const reduced = useWceReducedMotion();
+  const rows = usePartnerList(partners);
 
   return (
     <div className="wce-partner-band" aria-label="Powered by">
@@ -51,7 +82,7 @@ export function WcePartnerMarquee({ partners = WCE_PARTNERS }: { partners?: WceP
       </div>
       {reduced ? (
         <div className="wce-partner-static">
-          {partners.map((p) => (
+          {rows.map((p) => (
             <WcePartnerTile key={p.name} {...p} />
           ))}
         </div>
@@ -60,7 +91,7 @@ export function WcePartnerMarquee({ partners = WCE_PARTNERS }: { partners?: WceP
           <div className="wce-partner-track">
             {[0, 1].map((copy) => (
               <div className="wce-partner-set" key={copy} aria-hidden={copy === 1}>
-                {partners.map((p) => (
+                {rows.map((p) => (
                   <WcePartnerTile key={`${copy}-${p.name}`} {...p} />
                 ))}
               </div>
