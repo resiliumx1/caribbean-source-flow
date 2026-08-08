@@ -81,7 +81,7 @@ function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolea
       as="h3"
       lines={lines}
       stagger={80}
-      className="wce-path-heading relative mx-auto flex max-w-[24ch] flex-col justify-center"
+      className="wce-path-heading relative mx-auto flex w-full flex-col justify-center"
       style={{ color: isRetreat ? "var(--wce-cream)" : "var(--wce-ink-strong)" }}
     />
   );
