@@ -45,8 +45,6 @@ type Lead = {
   paid_at: string | null;
 };
 
-const SITE_URL = "https://mountkailashslu.com";
-
 function csv(v: unknown) {
   if (v === null || v === undefined) return "";
   return `"${String(v).replace(/"/g, '""')}"`;
