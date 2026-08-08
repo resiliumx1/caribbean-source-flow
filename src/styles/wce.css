@@ -3132,3 +3132,99 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
 @media (max-width: 480px) {
   .wce-root select#wce-pathway { font-size: 0.8125rem; }
 }
+
+/* ============================================================
+   MOBILE + TABLET READABILITY PASS
+   Every rule below is a descending clamp: the small-screen end is
+   raised while the value at >=1024px is identical to the desktop
+   size it replaces, so the desktop layout is untouched. Tablet
+   (768-1023) interpolates between the two ends.
+   Nothing resolves below 14px at 390px.
+   ============================================================ */
+
+/* --- generic body copy utilities used across the WCE sections --- */
+.wce-root .text-sm { font-size: clamp(0.875rem, 18.85px - 0.4732vw, 1.0625rem); line-height: 1.6; }
+.wce-root .text-base { font-size: clamp(1rem, 18.42px - 0.2366vw, 1.0938rem); line-height: 1.6; }
+.wce-root .text-xs { font-size: clamp(0.75rem, 15.23px - 0.3155vw, 0.875rem); }
+/* uppercase micro labels never drop under 14px on a phone */
+.wce-root .text-\[0\.82rem\] { font-size: clamp(0.8187rem, 14.55px - 0.142vw, 0.875rem); }
+.wce-root .text-\[0\.8125rem\] { font-size: clamp(0.8125rem, 14.62px - 0.1577vw, 0.875rem); }
+/* feature / benefit lists read as body copy, not as labels */
+.wce-root li.text-\[0\.875rem\]:not(.uppercase) { font-size: clamp(0.875rem, 16.62px - 0.1577vw, 1rem); line-height: 1.65; }
+.wce-root .text-\[0\.9375rem\] { font-size: clamp(0.9375rem, 16.62px - 0.1577vw, 1rem); line-height: 1.6; }
+
+/* --- eyebrows and meta lines: weight instead of extra size --- */
+.wce-root .wce-eyebrow { font-size: clamp(0.875rem, 15.72px - 0.2vw, 0.9375rem); font-weight: 600; }
+
+/* --- pathway cards --- */
+.wce-path-heading { font-size: clamp(1.125rem, 1.02rem + 0.32vw, 1.18rem); }
+.wce-path-lead { font-size: clamp(1rem, 16.62px - 0.0789vw, 1.0625rem); line-height: 1.6; }
+.wce-path-bullets li { font-size: clamp(0.9375rem, 16.62px - 0.1577vw, 1rem); line-height: 1.6; }
+.wce-path-body { font-size: clamp(1rem, 16.62px - 0.0789vw, 1.0625rem); }
+.wce-path-date {
+  font-size: clamp(0.875rem, 14.62px - 0.0789vw, 0.9063rem);
+  font-weight: 600;
+}
+.wce-path-price { font-size: clamp(1.6rem, 32.71px - 0.694vw, 1.875rem); }
+.wce-path-availability { font-size: clamp(0.8125rem, 14.62px - 0.1577vw, 0.875rem); font-weight: 600; }
+.wce-path-readmore { font-size: clamp(0.875rem, 15.2px - 0.1vw, 0.9063rem); font-weight: 600; }
+/* larger type needs a little more room, not smaller type */
+@media (max-width: 1023px) {
+  .wce-path-card { padding-left: 1.35rem; padding-right: 1.35rem; }
+  .wce-path-heading { min-height: 0; }
+  .wce-path-lead, .wce-path-bullets, .wce-path-body { max-width: 34ch; }
+}
+/* whole-card tap affordance on touch: the card itself is the control */
+.wce-path-card.is-tappable { cursor: pointer; }
+
+/* --- retreat detail cards --- */
+.wce-rcard-subline { font-size: clamp(0.9688rem, 16.31px - 0.0789vw, 1rem); }
+.wce-rcard-title { font-size: clamp(1.1875rem, 19.9px - 0.0789vw, 1.25rem); }
+.wce-rcard-teaser { font-size: clamp(0.9688rem, 16.31px - 0.0789vw, 1rem); }
+.wce-rcard-lead, .wce-rcard-list > li, .wce-rcard-arc-copy { font-size: clamp(1rem, 16.62px - 0.0789vw, 1.0625rem); }
+.wce-rcard-note { font-size: clamp(0.9375rem, 16.62px - 0.1577vw, 1rem); }
+.wce-rcard-arc-title { font-size: clamp(1rem, 17.4px - 0.1vw, 1.0625rem); }
+.wce-rcard-eyebrow,
+.wce-rcard-arc-step,
+.wce-rcard-tier-label { font-size: clamp(0.7rem, 15.72px - 0.4416vw, 0.875rem); font-weight: 600; }
+.wce-rcard-tier-price { font-size: clamp(1.5rem, 33.69px - 0.9464vw, 1.875rem); }
+.wce-rcard-tier-copy { font-size: clamp(0.9375rem, 16.62px - 0.1577vw, 1rem); }
+@media (max-width: 1023px) {
+  .wce-rcard-trigger { padding: 1.6rem 1.5rem; }
+  .wce-rcard-body { padding: 0 1.5rem 1.9rem; }
+}
+
+/* --- speakers --- */
+.wce-root .wce-card-speaker .wce-speaker-name { font-size: clamp(1.08rem, 18.44px - 0.1136vw, 1.125rem); }
+.wce-root .wce-card-speaker .wce-speaker-role { font-size: clamp(0.875rem, 14.62px - 0.0789vw, 0.9063rem); font-weight: 600; }
+@media (max-width: 1023px) {
+  /* two lines reserved for names that wrap at the larger size */
+  .wce-root .wce-card-speaker .wce-speaker-name { min-height: 3.4rem; }
+  .wce-root .wce-card-speaker .wce-speaker-role { min-height: 2.9rem; }
+}
+.wce-root .wce-viewflyer { font-size: clamp(0.8125rem, 14.62px - 0.1577vw, 0.875rem); }
+
+/* --- itinerary --- */
+.wce-itinerary-date { font-size: clamp(0.78rem, 14.92px - 0.2366vw, 0.875rem); font-weight: 600; }
+.wce-itinerary-title { font-size: clamp(1.18rem, 19.5px - 0.05vw, 1.25rem); }
+.wce-itinerary-detail { font-size: clamp(0.92rem, 16.8px - 0.205vw, 1rem); line-height: 1.7; }
+
+/* --- application form: inputs never below 16px or iOS zooms on focus --- */
+@media (max-width: 1023px) {
+  .wce-root .wce-field { font-size: 1rem; min-height: 52px; padding: 0.85rem 1rem; }
+  .wce-root select#wce-pathway { font-size: 1rem; }
+}
+.wce-root .wce-label { font-size: clamp(0.875rem, 14.62px - 0.0789vw, 0.9063rem); font-weight: 600; }
+@media (max-width: 480px) {
+  /* supersedes the earlier 13px shrink — 16px is the iOS floor */
+  .wce-root select#wce-pathway { font-size: 1rem; }
+}
+
+/* --- share controls, theme toggle, sticky CTA, footer small print --- */
+.wce-share-label,
+.wce-share-btn { font-size: clamp(0.68rem, 15.92px - 0.4921vw, 0.875rem); }
+.wce-theme-toggle { font-size: clamp(0.68rem, 15.92px - 0.4921vw, 0.8125rem); }
+.wce-sticky-cta .wce-btn { font-size: clamp(0.875rem, 14.6px - 0.05vw, 0.9063rem); letter-spacing: 0.1em; }
+.wce-footer-line,
+.wce-footer-head,
+.wce-footer-contact a { font-size: clamp(0.875rem, 15.2px - 0.1vw, 0.9063rem); }
