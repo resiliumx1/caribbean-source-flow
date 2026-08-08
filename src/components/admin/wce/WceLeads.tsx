@@ -591,7 +591,7 @@ export default function WceLeads() {
                       <div>{l.whatsapp || ""}</div>
                     </td>
                     <td data-label="Country" className="text-xs">{l.country || "—"}</td>
-                    <td data-label="Pathway" className="text-xs">{l.pathway_interest || "—"}</td>
+                    <td data-label="Pathway" className="text-xs">{wcePathwayLabel(l.pathway_interest)}</td>
                     <td data-label="Source" className="text-xs">
                       {l.utm_source || "direct"}
                       {(l.utm_medium || l.utm_campaign) && (
