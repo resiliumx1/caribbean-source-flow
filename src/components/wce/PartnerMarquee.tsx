@@ -1,6 +1,7 @@
 /** Partner band pinned to the bottom of the hero: "POWERED BY" plus a slow,
  *  seamless right-to-left marquee of partner logo tiles. */
 import { useWceReducedMotion } from "./motion";
+import { useWcePartners } from "./useWceData";
 import logoMountKailash from "@/assets/partner-mount-kailash-seal.png.asset.json";
 import logoKamilas from "@/assets/partner-kamilas-kitchen.png.asset.json";
 import logoJah9 from "@/assets/partner-jah9.png.asset.json";
@@ -34,6 +35,24 @@ export const WCE_PARTNERS: WcePartner[] = [
   { name: "LifeCraft in Jamaica", logoUrl: logoLifecraft.url },
   { name: "The Ubuntu Movement", logoUrl: logoUbuntu.url, url: "https://theubuntumovement.org/" },
 ];
+
+/** Merges the organiser-managed partner rows with the bundled logo artwork.
+ *  Falls back to the static list until the rows resolve, so the hero band never
+ *  renders empty (and prerendered HTML still shows the partners). */
+export function usePartnerList(override?: WcePartner[]): WcePartner[] {
+  const { data } = useWcePartners();
+  if (override) return override;
+  if (!data?.length) return WCE_PARTNERS;
+  return data.map((row) => {
+    const art = WCE_PARTNER_LOGOS[row.name];
+    return {
+      name: row.name,
+      logoUrl: row.logo_url || art?.url,
+      round: row.round ?? art?.round ?? false,
+      url: row.url,
+    };
+  });
+}
 
 /** One tile: bare artwork on the bar — no border, no fill. Falls back to the name as text. */
 export function WcePartnerTile({ name, logoUrl, round, url }: WcePartner) {
