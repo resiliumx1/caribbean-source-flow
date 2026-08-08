@@ -58,11 +58,11 @@ export function WceStickyCta() {
         tabIndex={visible ? 0 : -1}
         onClick={(e) => {
           e.preventDefault();
-          trackWceCta("reserve", "sticky_bar", "Reserve Spot");
+          trackWceCta("reserve", "sticky_bar", "Reserve My Place");
           document.getElementById("pathways")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }}
       >
-        Reserve Spot
+        Reserve My Place
       </a>
       <a
         href="#apply"

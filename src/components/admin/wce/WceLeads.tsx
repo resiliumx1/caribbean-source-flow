@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Download } from "lucide-react";
+import { Copy, Download, Loader2 } from "lucide-react";
 import { inputCls } from "./shared";
 import { StatCard, StatusPill, EmptyState, SectionHeading, ACCENTS, whenText } from "./ui";
 import {
@@ -35,6 +35,14 @@ type Lead = {
   consent_marketing: boolean;
   status: string;
   notes: string | null;
+  /** Retreat application pipeline. Payment is only possible once approved. */
+  application_status: string | null;
+  approved_at: string | null;
+  declined_at: string | null;
+  decline_reason: string | null;
+  checkout_sent_at: string | null;
+  checkout_token_expires_at: string | null;
+  paid_at: string | null;
 };
 
 function csv(v: unknown) {
@@ -77,6 +85,94 @@ function LeadStatusCell({ lead, onChanged }: { lead: Lead; onChanged: (values: P
       </select>
       <div style={{ marginTop: "0.3rem" }}><SaveBadge state={state} /></div>
     </>
+  );
+}
+
+
+/** Retreat application review. Approving is what mints the private, single-use
+ *  payment link — nobody can pay before a human has approved them. */
+function RetreatReviewCell({ lead, onChanged }: { lead: Lead; onChanged: (values: Partial<Lead>) => void }) {
+  const confirm = useConfirm();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [link, setLink] = useState<string | null>(null);
+
+  const status = lead.paid_at ? "paid" : lead.application_status || "new";
+
+  const call = async (action: "reviewing" | "approve" | "decline" | "resend_link") => {
+    if (action === "decline") {
+      const ok = await confirm({
+        title: "Decline this retreat application?",
+        item: lead.full_name || lead.email || "this applicant",
+        confirmLabel: "Decline",
+      });
+      if (!ok) return;
+    }
+    setBusy(action);
+    const { data, error } = await supabase.functions.invoke("wce-retreat-approve", {
+      body: { lead_id: lead.id, action },
+    });
+    setBusy(null);
+    const res = data as { ok?: boolean; error?: string; application_status?: string; checkout_link?: string; email_sent?: boolean; email_error?: string | null } | null;
+    if (error || !res?.ok) {
+      wceToast({ title: "Could not update the application", description: res?.error ?? error?.message, tone: "error" });
+      return;
+    }
+    onChanged({
+      application_status: res.application_status ?? null,
+      approved_at: res.application_status === "approved" ? new Date().toISOString() : lead.approved_at,
+      declined_at: res.application_status === "declined" ? new Date().toISOString() : null,
+    });
+    if (res.checkout_link) setLink(res.checkout_link);
+    wceToast({
+      title:
+        action === "decline" ? "Application declined"
+        : action === "reviewing" ? "Marked as under review"
+        : "Approved — payment link issued",
+      description: res.email_sent
+        ? "The applicant has been emailed."
+        : res.email_error ?? "Email was not sent; share the link manually.",
+      tone: res.email_sent || action === "reviewing" ? "success" : "error",
+    });
+  };
+
+  const Btn = ({ action, label }: { action: "reviewing" | "approve" | "decline" | "resend_link"; label: string }) => (
+    <button type="button" className="wa-btn wa-btn-ghost wa-btn-sm" disabled={!!busy} onClick={() => call(action)}>
+      {busy === action ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden /> : null} {label}
+    </button>
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", minWidth: 190 }}>
+      <StatusPill status={status} />
+      {status === "paid" ? (
+        <span className="wa-muted text-xs">Paid {whenText(lead.paid_at!)}</span>
+      ) : (
+        <>
+          {status !== "approved" && status !== "declined" && <Btn action="reviewing" label="Mark reviewing" />}
+          {status !== "approved" && <Btn action="approve" label="Approve & send link" />}
+          {status === "approved" && <Btn action="resend_link" label="Resend payment link" />}
+          {status !== "declined" && <Btn action="decline" label="Decline" />}
+        </>
+      )}
+      {lead.checkout_sent_at && status === "approved" && (
+        <span className="wa-muted text-xs">
+          Link sent {whenText(lead.checkout_sent_at)}
+          {lead.checkout_token_expires_at ? ` · expires ${whenText(lead.checkout_token_expires_at)}` : ""}
+        </span>
+      )}
+      {link && (
+        <button
+          type="button"
+          className="wa-btn wa-btn-ghost wa-btn-sm"
+          onClick={() => {
+            void navigator.clipboard.writeText(link);
+            wceToast({ title: "Payment link copied" });
+          }}
+        >
+          <Copy className="h-3 w-3" aria-hidden /> Copy link
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -183,6 +279,7 @@ export default function WceLeads() {
       "preferred_contact", "reason", "status", "notes", "referral_code",
       "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
       "landing_path", "referrer", "consent_marketing",
+      "application_status", "approved_at", "declined_at", "checkout_sent_at", "paid_at",
     ];
     const rows = [cols.join(","), ...filtered.map((l) => cols.map((c) => csv(l[c])).join(","))];
     const url = URL.createObjectURL(new Blob([rows.join("\n")], { type: "text/csv" }));
@@ -331,6 +428,13 @@ export default function WceLeads() {
                   </InfoTip>
                 </th>
                 <th>Status</th>
+                <th>
+                  Retreat review{" "}
+                  <InfoTip label="Retreat application pipeline">
+                    Retreat places are application-only. Approving an applicant emails them a private, single-use
+                    payment link that expires — there is no public way to pay for the retreat.
+                  </InfoTip>
+                </th>
                 <th>Notes</th>
               </tr>
             </thead>
@@ -368,6 +472,13 @@ export default function WceLeads() {
                     </td>
                     <td data-label="Status">
                       <LeadStatusCell lead={l} onChanged={(values) => patchLead(l.id, values)} />
+                    </td>
+                    <td data-label="Retreat review">
+                      {l.pathway_interest === "retreat" ? (
+                        <RetreatReviewCell lead={l} onChanged={(values) => patchLead(l.id, values)} />
+                      ) : (
+                        <span className="wa-muted text-xs">—</span>
+                      )}
                     </td>
                     <td data-label="Notes">
                       <textarea

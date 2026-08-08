@@ -4,7 +4,7 @@ import { dataLayerPush } from "@/lib/tracking";
 import { trackWceCta } from "./cta-tracking";
 import { LeafDivider, CornerVine, LotusMark } from "./ornaments";
 import { FlowerOfLifeField, BotanicalBackdrop, DiamondRule, GoldFlourish } from "./decor";
-import { useWcePathways, useWceSpeakers, useWceSettings, pathwayFeatures } from "./useWceData";
+import { useWcePathways, useWceSpeakers, useWceSettings } from "./useWceData";
 import { WceHeroMedia, WceHeroParticles } from "./HeroMedia";
 import {
   Reveal, useInView, useWceReducedMotion,
@@ -16,6 +16,7 @@ import { WcePartnerMarquee } from "./PartnerMarquee";
 import { LoveEmblem } from "./LoveEmblem";
 import { PathwayCardsSkeleton, SpeakersSkeleton } from "./Skeletons";
 import { PathwayCard } from "./PathwayCard";
+import { HERO_CIRCUIT_LINE, HERO_DATE_SUPPORT, PATHWAY_COPY } from "./campaign";
 
 const PARTNERS = [
   "Mount Kailash",
@@ -65,6 +66,18 @@ export function WceHero() {
           <span className="sep">|</span> LifeCraft Experience
         </p>
         <p
+          className="wce-hero-datesupport mt-[clamp(0.5rem,1.4vh,0.9rem)]"
+          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.34s both" }}
+        >
+          {HERO_DATE_SUPPORT}
+        </p>
+        <p
+          className="wce-hero-circuit mt-[clamp(0.6rem,1.6vh,1.1rem)]"
+          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.4s both" }}
+        >
+          {HERO_CIRCUIT_LINE}
+        </p>
+        <p
           className="wce-banner-venue mt-[clamp(0.35rem,1vh,0.6rem)]"
           style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.3s both" }}
         >
@@ -98,9 +111,9 @@ export function WceHero() {
             href="#apply"
             className={`wce-btn wce-btn-outline ${reduced ? "" : "wce-hero-cta-enter"}`}
             style={reduced ? undefined : { animationDelay: "1.69s" }}
-            onClick={() => trackWceCta("apply", "hero", "Apply for the Retreat")}
+            onClick={() => trackWceCta("apply", "hero", "Begin Your Application")}
           >
-            Apply for the Retreat
+            Begin Your Application
           </a>
         </div>
       </div>
@@ -171,7 +184,9 @@ function PathwaysInner() {
 
         {!isLoading && (
         <div className="wce-path-row mx-auto mt-14 grid max-w-5xl gap-6 sm:mt-20 sm:gap-7 lg:grid-cols-3">
-          {(pathways ?? []).map((p, i) => (
+          {(pathways ?? [])
+            .filter((p) => p.key in PATHWAY_COPY)
+            .map((p, i) => (
             <PathwayCard
               key={p.id}
               index={i}
@@ -179,7 +194,6 @@ function PathwaysInner() {
               label={p.label}
               currency={p.currency}
               price={Number(p.price)}
-              features={pathwayFeatures(p.features)}
               productId={(p as { product_id?: string | null }).product_id ?? null}
             />
           ))}

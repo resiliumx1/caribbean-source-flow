@@ -8,8 +8,10 @@ import { useCart } from "@/hooks/use-cart";
 import { rememberPathway } from "@/lib/wce-attribution";
 import { dataLayerPush } from "@/lib/tracking";
 import { DiamondRule, PeakMark, WaveMark, RangeMark } from "./decor";
-import { MaskedHeading, useCountUp, useInView, useIsTouch, useWceReducedMotion } from "./motion";
+import { MaskedHeading, useInView, useIsTouch, useWceReducedMotion } from "./motion";
 import { selectPathway } from "./pathway-select";
+import { pathwayCopy } from "./campaign";
+import { WCE_META_EVENTS, wceMetaTrack } from "./meta-events";
 
 /* ---------- watermarks ---------- */
 
@@ -71,33 +73,6 @@ function ThresholdVine({ corner, drawn }: { corner: "tl" | "br"; drawn: boolean 
   );
 }
 
-/** Gold check that draws in just ahead of its label. */
-function DrawnCheck({ tone, drawn, delay }: { tone: string; drawn: boolean; delay: number }) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={`wce-draw mt-[3px] shrink-0 ${drawn ? "is-drawn" : ""}`}
-      width={14}
-      height={14}
-      viewBox="0 0 16 16"
-      fill="none"
-      style={{ ["--wce-draw-delay" as any]: `${delay}ms` }}
-    >
-      <path pathLength={1} d="M2.5 8.5l3.6 3.6L13.5 4.5" stroke={tone} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-/* ---------- price ---------- */
-function PathwayPrice({ currency, price }: { currency: string; price: number }) {
-  const { ref, value } = useCountUp(price);
-  return (
-    <p ref={ref} className="mt-2 text-[2.4rem]" style={{ fontFamily: "var(--wce-display)", color: "var(--wce-gold-text)" }}>
-      {currency} {value.toFixed(0)}
-    </p>
-  );
-}
-
 /* ---------- heading ---------- */
 function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolean }) {
   const match = label.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
@@ -119,12 +94,11 @@ export interface PathwayCardProps {
   label: string;
   currency: string;
   price: number;
-  features: string[];
   /** Linked shop product; when absent the CTA falls back to the application form. */
   productId?: string | null;
 }
 
-export function PathwayCard({ index, pathwayKey, label, currency, price, features, productId }: PathwayCardProps) {
+export function PathwayCard({ index, pathwayKey, label, currency, price, productId }: PathwayCardProps) {
   const reduced = useWceReducedMotion();
   const touch = useIsTouch();
   const { ref, inView } = useInView<HTMLDivElement>();
@@ -138,7 +112,8 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
   /** Threshold state: hover on pointer devices, scroll-reveal on touch, always on when reduced. */
   const crossed = reduced ? true : touch ? inView : hover;
 
-  const cta = isRetreat ? "Apply for the Retreat" : pathwayKey === "online" ? "Get Online Access" : "Reserve Spot";
+  const copy = pathwayCopy(pathwayKey);
+  const cta = copy?.cta ?? (isRetreat ? "Begin Your Application" : "Reserve My Place");
   const ctaClass = isRetreat ? "wce-pcta-outline" : pathwayKey === "online" ? "wce-pcta-gold" : "wce-pcta-forest";
   const tier: "inperson" | "online" | "retreat" = isRetreat
     ? "retreat"
@@ -150,6 +125,8 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
     e.preventDefault();
     dataLayerPush("pathway_click", { pathway_key: pathwayKey, pathway_label: label });
 
+    // The retreat is NEVER purchasable from a public surface — the only route
+    // is the application form, reviewed by the team before any payment link.
     const purchasable = !isRetreat && !!productId;
     if (!isRetreat && !productId) {
       console.warn(
@@ -165,6 +142,13 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
           value: price,
           currency,
           items: [{ item_id: productId, item_name: label, price, quantity: 1 }],
+        });
+        wceMetaTrack(WCE_META_EVENTS.initiateCheckout, {
+          content_name: copy?.title ?? label,
+          content_ids: [productId],
+          value: price,
+          currency,
+          funnel: "symposium",
         });
         addToCart({ productId: productId!, quantity: 1 });
         navigate("/checkout");
@@ -240,39 +224,45 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, feature
 
           <p
             className="relative mt-4 text-[0.875rem] uppercase sm:mt-5"
-            style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(26,26,20,0.9)", letterSpacing: "0.24em" }}
+            style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(26,26,20,0.9)", letterSpacing: "0.2em" }}
           >
-            {isRetreat ? "Applications Open" : pathwayKey === "in_person" ? "Starting at" : "Full access"}
+            {copy?.dateLine}
           </p>
-          <div className="relative flex items-center justify-center" style={{ minHeight: "3.8rem" }}>
-            {!isRetreat && <PathwayPrice currency={currency} price={price} />}
-          </div>
+          <p
+            className="relative mt-3 text-[1.6rem] leading-tight"
+            style={{ fontFamily: "var(--wce-display)", color: isRetreat ? "var(--wce-gold-light)" : "var(--wce-gold-text)" }}
+          >
+            {copy?.priceLine ?? `${currency} ${price.toFixed(0)}`}
+          </p>
+          {copy?.availability && (
+            <p
+              className="relative mx-auto mt-3 inline-flex items-center justify-center px-3 py-1 text-[0.8125rem] uppercase"
+              style={{
+                color: "var(--wce-gold-light)",
+                letterSpacing: "0.18em",
+                border: "1px solid rgba(201,162,39,0.75)",
+                borderRadius: "999px",
+              }}
+            >
+              {copy.availability}
+            </p>
+          )}
 
           <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(201,162,39,0.85)"} />
 
-          <ul className="relative mx-auto mt-6 space-y-2.5 text-left text-[0.875rem] leading-relaxed sm:mt-8 sm:space-y-3">
-            {features.map((f, fi) => (
-              <li
-                key={f}
-                className="flex items-start gap-3"
-                style={{
-                  color: isRetreat ? "rgba(245,239,224,0.92)" : "rgba(26,26,20,0.9)",
-                  opacity: entered ? 1 : 0,
-                  transform: entered ? "translateX(0)" : "translateX(-12px)",
-                  transition: reduced
-                    ? undefined
-                    : `opacity .5s cubic-bezier(0.22,1,0.36,1) ${index * 140 + 180 + fi * 70}ms, transform .5s cubic-bezier(0.22,1,0.36,1) ${index * 140 + 180 + fi * 70}ms`,
-                }}
-              >
-                <DrawnCheck
-                  tone={isRetreat ? "var(--wce-gold-light)" : "var(--wce-gold-text)"}
-                  drawn={entered}
-                  delay={index * 140 + 120 + fi * 70}
-                />
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
+          <p
+            className="relative mx-auto mt-6 max-w-[36ch] text-left text-[0.9375rem] leading-relaxed"
+            style={{
+              color: isRetreat ? "rgba(245,239,224,0.92)" : "rgba(26,26,20,0.9)",
+              opacity: entered ? 1 : 0,
+              transform: entered ? "translateY(0)" : "translateY(10px)",
+              transition: reduced
+                ? undefined
+                : `opacity .6s cubic-bezier(0.22,1,0.36,1) ${index * 140 + 200}ms, transform .6s cubic-bezier(0.22,1,0.36,1) ${index * 140 + 200}ms`,
+            }}
+          >
+            {copy?.body}
+          </p>
 
           <div className="relative mt-auto pt-8 sm:pt-10">
             <a

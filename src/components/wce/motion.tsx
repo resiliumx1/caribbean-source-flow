@@ -140,6 +140,8 @@ export function useHeroGate(enabled = true) {
 
 interface MaskedHeadingProps {
   lines: ReactNode[];
+  /** Optional DOM id so sections can be labelled by their heading. */
+  id?: string;
   as?: "h1" | "h2" | "h3" | "p";
   className?: string;
   style?: CSSProperties;
@@ -151,6 +153,7 @@ interface MaskedHeadingProps {
 /** Each line slides up from behind an overflow-hidden mask. */
 export function MaskedHeading({
   lines,
+  id,
   as = "h2",
   className,
   style,
@@ -162,7 +165,7 @@ export function MaskedHeading({
   const Tag = as as any;
   const active = reduced || inView;
   return (
-    <Tag ref={ref} className={className} style={style}>
+    <Tag ref={ref} id={id} className={className} style={style}>
       {lines.map((line, i) => (
         <span key={i} className="wce-mask-line">
           <span

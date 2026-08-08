@@ -116,7 +116,7 @@ export function WceFinalCta() {
           {[
             { label: "Book In-Person Symposium", href: "#pathways", shimmer: true, intent: "reserve" as WceCtaIntent },
             { label: "Get Online Access", href: "#pathways", shimmer: false, intent: "online" as WceCtaIntent },
-            { label: "Apply for the Retreat", href: "#apply", shimmer: false, intent: "apply" as WceCtaIntent },
+            { label: "Begin Your Application", href: "#apply", shimmer: false, intent: "apply" as WceCtaIntent },
           ].map((b, i) => (
             <Reveal key={b.label} index={i} className="w-full">
               <a

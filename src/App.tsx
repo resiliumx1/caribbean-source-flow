@@ -75,6 +75,8 @@ const ConsultationManage = lazy(() => import("./pages/ConsultationManage"));
 const WceAdminLogin = lazy(() => import("./pages/WceAdminLogin"));
 const WceAdminAccept = lazy(() => import("./pages/WceAdminAccept"));
 const WCE2026 = lazy(() => import("./pages/WCE2026"));
+const WceLive = lazy(() => import("./pages/WceLive"));
+const WceRetreatCheckout = lazy(() => import("./pages/WceRetreatCheckout"));
 
 const queryClient = new QueryClient();
 
@@ -110,7 +112,7 @@ queryClient.prefetchQuery({
 const COMING_SOON = false;
 
 // Pages that should NOT show the header
-const pagesWithoutHeader = ["/admin", "/wce-admin"];
+const pagesWithoutHeader = ["/admin", "/wce-admin", "/wce-2026/live", "/wce-2026/retreat-checkout"];
 
 // Loading fallback
 function PageLoader() {
@@ -143,7 +145,7 @@ function AppContent() {
   const isAdminRoute =
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/wce-admin");
-  const isWceRoute = location.pathname === "/wce-2026";
+  const isWceRoute = location.pathname.startsWith("/wce-2026");
 
   // Google Tag Manager / Meta Pixel container (IDs live in src/lib/tracking.ts)
   useEffect(() => { initTracking(); }, []);
@@ -179,6 +181,10 @@ function AppContent() {
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/goddess" element={<GoddessCard />} />
           <Route path="/wce-2026" element={<WCE2026 />} />
+          {/* Gated online symposium stream — entitlement checked server-side. */}
+          <Route path="/wce-2026/live" element={<WceLive />} />
+          {/* Private retreat payment link. No public entry point; noindex. */}
+          <Route path="/wce-2026/retreat-checkout/:token" element={<WceRetreatCheckout />} />
           <Route path="/account" element={<CustomerAccountPage />} />
           <Route path="/account/orders" element={<MyOrders />} />
           <Route path="/account/orders/:orderNumber" element={<MyOrderDetail />} />

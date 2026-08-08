@@ -2706,21 +2706,36 @@ export type Database = {
       }
       wce_leads: {
         Row: {
+          application_status: string
+          approved_at: string | null
+          checkout_sent_at: string | null
+          checkout_token: string | null
+          checkout_token_expires_at: string | null
+          checkout_token_used_at: string | null
           consent_marketing: boolean
           consent_timestamp: string | null
           country: string | null
           created_at: string
+          decline_reason: string | null
+          declined_at: string | null
           email: string | null
           full_name: string | null
           id: string
           ip_address: string | null
           landing_path: string | null
+          mailchimp_error: string | null
+          mailchimp_status: string | null
+          mailchimp_synced_at: string | null
+          meta_event_ids: Json
           notes: string | null
+          order_id: string | null
+          paid_at: string | null
           pathway_interest: string | null
           preferred_contact: string | null
           reason: string | null
           referral_code: string | null
           referrer: string | null
+          reviewed_at: string | null
           status: string
           user_agent: string | null
           utm_campaign: string | null
@@ -2731,21 +2746,36 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          application_status?: string
+          approved_at?: string | null
+          checkout_sent_at?: string | null
+          checkout_token?: string | null
+          checkout_token_expires_at?: string | null
+          checkout_token_used_at?: string | null
           consent_marketing?: boolean
           consent_timestamp?: string | null
           country?: string | null
           created_at?: string
+          decline_reason?: string | null
+          declined_at?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
           ip_address?: string | null
           landing_path?: string | null
+          mailchimp_error?: string | null
+          mailchimp_status?: string | null
+          mailchimp_synced_at?: string | null
+          meta_event_ids?: Json
           notes?: string | null
+          order_id?: string | null
+          paid_at?: string | null
           pathway_interest?: string | null
           preferred_contact?: string | null
           reason?: string | null
           referral_code?: string | null
           referrer?: string | null
+          reviewed_at?: string | null
           status?: string
           user_agent?: string | null
           utm_campaign?: string | null
@@ -2756,21 +2786,36 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+          application_status?: string
+          approved_at?: string | null
+          checkout_sent_at?: string | null
+          checkout_token?: string | null
+          checkout_token_expires_at?: string | null
+          checkout_token_used_at?: string | null
           consent_marketing?: boolean
           consent_timestamp?: string | null
           country?: string | null
           created_at?: string
+          decline_reason?: string | null
+          declined_at?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
           ip_address?: string | null
           landing_path?: string | null
+          mailchimp_error?: string | null
+          mailchimp_status?: string | null
+          mailchimp_synced_at?: string | null
+          meta_event_ids?: Json
           notes?: string | null
+          order_id?: string | null
+          paid_at?: string | null
           pathway_interest?: string | null
           preferred_contact?: string | null
           reason?: string | null
           referral_code?: string | null
           referrer?: string | null
+          reviewed_at?: string | null
           status?: string
           user_agent?: string | null
           utm_campaign?: string | null
@@ -2781,6 +2826,56 @@ export type Database = {
           whatsapp?: string | null
         }
         Relationships: []
+      }
+      wce_livestream_entitlements: {
+        Row: {
+          access_token: string
+          created_at: string
+          email: string
+          email_sent_at: string | null
+          granted_at: string
+          id: string
+          note: string | null
+          order_id: string | null
+          revoked_at: string | null
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string
+          created_at?: string
+          email: string
+          email_sent_at?: string | null
+          granted_at?: string
+          id?: string
+          note?: string | null
+          order_id?: string | null
+          revoked_at?: string | null
+          source?: string
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          email?: string
+          email_sent_at?: string | null
+          granted_at?: string
+          id?: string
+          note?: string | null
+          order_id?: string | null
+          revoked_at?: string | null
+          source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wce_livestream_entitlements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wce_media: {
         Row: {
@@ -2970,9 +3065,21 @@ export type Database = {
           hero_headline: string | null
           hero_subline: string | null
           id: string
+          lifecraft_body: string | null
+          lifecraft_components: Json
+          lifecraft_heading: string | null
+          livestream_embed_code: string | null
+          livestream_embed_url: string | null
+          livestream_fallback_copy: string | null
+          livestream_provider: string | null
+          mailchimp_audience_id: string | null
+          mailchimp_server_prefix: string | null
+          online_product_id: string | null
           popup_cta_text: string | null
           popup_enabled: boolean
           popup_flyer_url: string | null
+          retreat_checkout_expiry_days: number
+          retreat_product_id: string | null
           updated_at: string
           venue: string | null
         }
@@ -2982,9 +3089,21 @@ export type Database = {
           hero_headline?: string | null
           hero_subline?: string | null
           id?: string
+          lifecraft_body?: string | null
+          lifecraft_components?: Json
+          lifecraft_heading?: string | null
+          livestream_embed_code?: string | null
+          livestream_embed_url?: string | null
+          livestream_fallback_copy?: string | null
+          livestream_provider?: string | null
+          mailchimp_audience_id?: string | null
+          mailchimp_server_prefix?: string | null
+          online_product_id?: string | null
           popup_cta_text?: string | null
           popup_enabled?: boolean
           popup_flyer_url?: string | null
+          retreat_checkout_expiry_days?: number
+          retreat_product_id?: string | null
           updated_at?: string
           venue?: string | null
         }
@@ -2994,9 +3113,21 @@ export type Database = {
           hero_headline?: string | null
           hero_subline?: string | null
           id?: string
+          lifecraft_body?: string | null
+          lifecraft_components?: Json
+          lifecraft_heading?: string | null
+          livestream_embed_code?: string | null
+          livestream_embed_url?: string | null
+          livestream_fallback_copy?: string | null
+          livestream_provider?: string | null
+          mailchimp_audience_id?: string | null
+          mailchimp_server_prefix?: string | null
+          online_product_id?: string | null
           popup_cta_text?: string | null
           popup_enabled?: boolean
           popup_flyer_url?: string | null
+          retreat_checkout_expiry_days?: number
+          retreat_product_id?: string | null
           updated_at?: string
           venue?: string | null
         }
