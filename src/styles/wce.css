@@ -1559,7 +1559,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   min-width: 44px; min-height: 44px;
   border-radius: 9999px;
   border: 1px solid rgba(var(--wce-gold-rgb), 0.6);
-  background: rgba(255,253,243,0.9);
+  background: var(--wce-flyer-chip);
   color: var(--wce-gold-text);
   transition: background .25s ease, color .25s ease, transform .25s ease;
 }
