@@ -145,6 +145,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
 
   const onCta = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     dataLayerPush("pathway_click", { pathway_key: pathwayKey, pathway_label: label });
 
     // The retreat is NEVER purchasable from a public surface — the only route
@@ -188,6 +189,23 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
     window.setTimeout(act, 250);
   };
 
+  /** Bring the CTA back into view when a card grows below the fold. */
+  const keepCtaVisible = () => {
+    // Desktop click behaviour is unchanged; only touch / narrow viewports
+    // recentre so the CTA is never stranded below the fold.
+    if (typeof window !== "undefined" && !touch && window.innerWidth >= 768) return;
+    window.setTimeout(
+      () => ctaRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }),
+      reduced ? 0 : 420
+    );
+  };
+
+  const toggleExpanded = () => {
+    const next = !expanded;
+    setExpanded(next);
+    if (next) keepCtaVisible();
+  };
+
   return (
     <div
       ref={ref}
@@ -222,7 +240,10 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
         </span>
 
         <article
-          className={`wce-path-card wce-path-card-${tier} relative flex h-full flex-col overflow-hidden px-6 pb-8 pt-12 text-center sm:px-7 sm:pb-10 sm:pt-14 ${isRetreat ? "is-retreat" : ""}`}
+          className={`wce-path-card wce-path-card-${tier} relative flex h-full flex-col overflow-hidden px-6 pb-8 pt-12 text-center sm:px-7 sm:pb-10 sm:pt-14 ${isRetreat ? "is-retreat" : ""} ${touch ? "is-tappable" : ""}`}
+          /* On touch there is no hover, so the whole card is the expand control.
+             The CTA stops propagation so it always performs its own action. */
+          onClick={touch ? toggleExpanded : undefined}
         >
           {/* gold bloom — light entering, never a colour change */}
           <span aria-hidden="true" className="wce-path-bloom" />
@@ -245,13 +266,13 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
           <DiamondRule className="relative mx-auto mt-5 max-w-[9rem] sm:mt-6" tone={isRetreat ? "var(--wce-gold)" : "rgba(var(--wce-gold-rgb), 0.85)"} />
 
           <p
-            className="relative mt-4 text-[0.875rem] uppercase sm:mt-5"
+            className="wce-path-date relative mt-4 uppercase sm:mt-5"
             style={{ color: isRetreat ? "var(--wce-gold-light)" : "rgba(var(--wce-ink-rgb), 0.9)", letterSpacing: "0.2em" }}
           >
             {copy?.dateLine}
           </p>
           <p
-            className="relative mt-3 text-[1.6rem] leading-tight"
+            className="wce-path-price relative mt-3 leading-tight"
             style={{ fontFamily: "var(--wce-display)", color: isRetreat ? "var(--wce-gold-light)" : "var(--wce-gold-text)" }}
           >
             {copy?.priceLine ?? `${currency} ${price.toFixed(0)}`}
@@ -260,7 +281,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
           <div className="wce-path-avail relative">
             {copy?.availability && (
               <span
-                className="inline-flex items-center justify-center px-3 py-1 text-[0.8125rem] uppercase"
+                className="wce-path-availability inline-flex items-center justify-center px-3 py-1 uppercase"
                 style={{
                   color: "var(--wce-gold-light)",
                   letterSpacing: "0.18em",
@@ -306,15 +327,9 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
               type="button"
               className="wce-path-readmore"
               aria-expanded={expanded}
-              onClick={() => {
-                const next = !expanded;
-                setExpanded(next);
-                if (next && typeof window !== "undefined" && window.innerWidth < 768) {
-                  window.setTimeout(
-                    () => ctaRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }),
-                    reduced ? 0 : 420
-                  );
-                }
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleExpanded();
               }}
             >
               <span>{expanded ? "Read less" : "Read more"}</span>
