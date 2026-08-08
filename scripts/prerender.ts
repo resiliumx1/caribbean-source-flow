@@ -218,6 +218,18 @@ interface RetreatRow {
   short_description?: string | null;
 }
 
+interface SpeakerRow {
+  slug: string | null;
+  name: string;
+  prefix: string | null;
+  title: string | null;
+  theme: string | null;
+  bio: string | null;
+  session_title: string | null;
+  session_time: string | null;
+  og_image_url: string | null;
+}
+
 async function loadProducts(): Promise<ProductRow[]> {
   if (!SUPABASE_URL || !SUPABASE_KEY) return [];
   const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -243,6 +255,38 @@ async function loadRetreats(): Promise<RetreatRow[]> {
   return (data || []).filter((r) => r.slug) as RetreatRow[];
 }
 
+async function loadSpeakers(): Promise<SpeakerRow[]> {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return [];
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const { data, error } = await sb
+    .from("wce_speakers")
+    .select("slug,name,prefix,title,theme,bio,session_title,session_time,og_image_url")
+    .eq("published", true)
+    .not("slug", "is", null)
+    .order("display_order");
+  if (error) { console.warn("[prerender] speakers error:", error.message); return []; }
+  return (data || []).filter((s) => s.slug) as SpeakerRow[];
+}
+
+/** Mirrors src/components/wce/share.tsx so the static head matches the app. */
+function speakerOgTitle(s: SpeakerRow) {
+  const prefix = (s.prefix || "").trim();
+  return `${prefix ? `${prefix} ` : ""}${s.name} — Caribbean Wellness Saint Lucia 2026`;
+}
+
+function speakerOgDescription(s: SpeakerRow) {
+  const theme = (s.theme || "").trim();
+  const session = (s.session_title || "").trim();
+  let text = [theme, session].filter(Boolean).join(" — ");
+  if (!text) {
+    const bio = stripHtml(s.bio);
+    const m = bio.match(/^.*?[.!?](\s|$)/);
+    text = (m?.[0] ?? bio).trim();
+  }
+  if (!text) text = "Caribbean Wellness Saint Lucia 2026 · 11–17 October";
+  return clip(text, 198);
+}
+
 const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> = [
   {
     path: "/wce-2026",
@@ -251,6 +295,14 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
       "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat.",
     ogImage: `${BASE_URL}/og/wce-2026.jpg`,
     ogImageAlt: "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre",
+    // Secondary square card, after the primary landscape one. Platforms that
+    // prefer 1:1 pick this up; the rest use the first image.
+    extraHead: `<meta property="og:image" content="${BASE_URL}/og/wce-2026-square.jpg" />
+    <meta property="og:image:secure_url" content="${BASE_URL}/og/wce-2026-square.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content="Caribbean Wellness Saint Lucia 2026 — 11–17 October" />`,
     bodyHtml: `
       <header><a href="/" rel="home">Mount Kailash Rejuvenation Centre</a></header>
       <main>
