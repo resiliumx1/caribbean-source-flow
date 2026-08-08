@@ -454,6 +454,17 @@ export function SpeakerFlyer({
           </motion.div>
 
           {/* Powered by */}
+          {speaker.slug && (
+            <motion.div className="wce-flyer-share" {...rise(0.42)}>
+              <WceShareRow
+                url={speakerShareUrl(speaker.slug)}
+                title={speakerOgTitle(speaker)}
+                text={`${speakerOgTitle(speaker)} — ${speakerOgDescription(speaker)}`}
+                slug={speaker.slug}
+              />
+            </motion.div>
+          )}
+
           <div className="wce-flyer-footer">
             <span className="wce-flyer-poweredby">Powered by</span>
             <ul className="wce-flyer-partners">
