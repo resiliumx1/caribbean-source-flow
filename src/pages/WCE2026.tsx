@@ -12,10 +12,13 @@ import { useWceAttribution } from "@/components/wce/useWceAttribution";
 import { dataLayerPush } from "@/lib/tracking";
 import { SITE_URL } from "@/lib/site-config";
 import { EVENT_END, EVENT_START, RETREAT_END, RETREAT_START, SYMPOSIUM_DATE } from "@/components/wce/campaign";
-import heroPoster from "@/assets/wce-hero-poster.jpg.asset.json";
 
 const PAGE_URL = `${SITE_URL}/wce-2026`;
-const OG_IMAGE = `${SITE_URL}${heroPoster.url}`;
+// Stable, unhashed public path — social platforms cache the image URL aggressively.
+const OG_IMAGE = `${SITE_URL}/og/wce-2026.jpg`;
+const OG_TITLE = "Caribbean Wellness Experience Saint Lucia 2026";
+const OG_DESCRIPTION =
+  "11–17 October 2026 at Mount Kailash Rejuvenation Centre. A holistic symposium, fortification retreat and LifeCraft experience. What started in Jamaica continues in St. Lucia.";
 
 export default function WCE2026() {
   const { data: settings } = useWceSettings();
@@ -110,20 +113,27 @@ export default function WCE2026() {
     <WceThemeProvider>
       <Helmet>
         <title>Caribbean Wellness Saint Lucia 2026 | 11–17 October</title>
-        <meta name="description" content={description} />
+        <meta name="description" content="11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat." />
         <link rel="canonical" href={PAGE_URL} />
 
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Caribbean Wellness Saint Lucia 2026 | 11–17 October" />
-        <meta property="og:description" content={description} />
+        <meta property="og:site_name" content="Mount Kailash Rejuvenation Centre" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:title" content={OG_TITLE} />
+        <meta property="og:description" content={OG_DESCRIPTION} />
         <meta property="og:url" content={PAGE_URL} />
         <meta property="og:image" content={OG_IMAGE} />
-        <meta property="og:image:alt" content="Caribbean Wellness Saint Lucia 2026" />
+        <meta property="og:image:secure_url" content={OG_IMAGE} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre" />
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Caribbean Wellness Saint Lucia 2026 | 11–17 October" />
-        <meta name="twitter:description" content={description} />
+        <meta name="twitter:title" content={OG_TITLE} />
+        <meta name="twitter:description" content="11–17 October 2026 at Mount Kailash Rejuvenation Centre. What started in Jamaica continues in St. Lucia." />
         <meta name="twitter:image" content={OG_IMAGE} />
+        <meta name="twitter:image:alt" content="Caribbean Wellness Saint Lucia 2026" />
 
         <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
       </Helmet>
