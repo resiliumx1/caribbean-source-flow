@@ -154,6 +154,7 @@ export function WceFinalCta() {
 /* ---------------- 11. FOOTER ---------------- */
 export function WceFooter() {
   const { data: settings } = useWceSettings();
+  const partners = usePartnerList();
   return (
     <footer className="wce-surface px-6 py-20" style={{ background: "var(--wce-band-mid)", borderTop: "1px solid rgba(var(--wce-gold-rgb), 0.3)" }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} light />

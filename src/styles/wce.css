@@ -3042,3 +3042,32 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
 @media (prefers-reduced-motion: reduce) {
   .wce-rcard-panel, .wce-rcard-chev { transition: none; }
 }
+
+/* Partner logos are links (hero marquee + footer): opacity lifts to full with a slight scale. */
+.wce-partner-tile.is-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity .3s ease, transform .3s ease, filter .3s ease;
+}
+.wce-partner-tile.is-link:hover,
+.wce-partner-tile.is-link:focus-visible { opacity: 1; transform: scale(1.06); }
+.wce-partner-tile.is-link:focus-visible { outline: 2px solid var(--wce-gold); outline-offset: 4px; }
+
+.wce-footer-partner-link { display: inline-flex; transition: opacity .3s ease, transform .3s ease; }
+.wce-footer-partner-link img { transition: opacity .3s ease; }
+.wce-footer-partner-link:hover { transform: scale(1.06); }
+.wce-footer-partner-link:hover img { opacity: 1; }
+.wce-footer-partner-link:focus-visible { outline: 2px solid var(--wce-gold); outline-offset: 4px; }
+
+/* Generic inline links inside a speaker bio on the flyer overlay. */
+.wce-bio-link {
+  color: var(--wce-gold-light, var(--wce-gold));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color .25s ease, text-decoration-color .25s ease;
+}
+.wce-bio-link:hover { color: var(--wce-gold); text-decoration-thickness: 2px; }
+.wce-bio-link:focus-visible { outline: 2px solid var(--wce-gold); outline-offset: 2px; }
