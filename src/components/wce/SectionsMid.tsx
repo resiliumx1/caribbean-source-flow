@@ -475,6 +475,8 @@ export function WceApplicationForm() {
     country: "",
     pathway_interest: "",
     reason: "",
+    participation_notes: "",
+    dietary_notes: "",
     preferred_contact: "",
     consent_marketing: false,
     company: "", // honeypot — must stay empty
@@ -552,6 +554,8 @@ export function WceApplicationForm() {
       country: values.country.trim() || null,
       pathway_interest: values.pathway_interest || null,
       reason: values.reason.trim() || null,
+      participation_notes: values.participation_notes.trim() || null,
+      dietary_notes: values.dietary_notes.trim() || null,
       preferred_contact: values.preferred_contact || null,
       utm_source: attribution.utm_source,
       utm_medium: attribution.utm_medium,
@@ -766,6 +770,24 @@ export function WceApplicationForm() {
                 <label className="wce-label" htmlFor="wce-message">What excites you most about the retreat?</label>
                 <textarea id="wce-message" className="wce-field" rows={4} placeholder="Share what inspires you"
                   value={values.reason} onChange={set("reason")} />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="wce-label" htmlFor="wce-dietary">Dietary requirements or allergies</label>
+                <textarea id="wce-dietary" className="wce-field" rows={3}
+                  placeholder="Feasts are plant-based — tell us about allergies or sensitivities"
+                  value={values.dietary_notes} onChange={set("dietary_notes")} />
+                <p className="mt-2 text-[0.82rem]" style={{ color: "rgba(245,239,224,0.72)" }}>
+                  We confirm what can be accommodated before any payment is requested.
+                </p>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="wce-label" htmlFor="wce-participation">Mobility, accessibility or participation considerations</label>
+                <textarea id="wce-participation" className="wce-field" rows={3}
+                  placeholder="Anything the team should know so we can plan your week well"
+                  value={values.participation_notes} onChange={set("participation_notes")} />
+                <p className="mt-2 text-[0.82rem]" style={{ color: "rgba(245,239,224,0.72)" }}>
+                  A high fitness level is not required. Final activity requirements are shared before payment.
+                </p>
               </div>
             </div>
 
