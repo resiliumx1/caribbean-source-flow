@@ -3228,3 +3228,20 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
 .wce-footer-line,
 .wce-footer-head,
 .wce-footer-contact a { font-size: clamp(0.875rem, 15.2px - 0.1vw, 0.9063rem); }
+
+/* Floor: no text under 14px on any phone or tablet, including the smallest
+   uppercase micro-labels. Desktop (>=1024px) keeps its original sizes. */
+@media (max-width: 1023px) {
+  .wce-root .wce-path-availability,
+  .wce-root .wce-rcard-eyebrow,
+  .wce-root .wce-rcard-arc-step,
+  .wce-root .wce-rcard-tier-label,
+  .wce-root .wce-itinerary-date,
+  .wce-root .wce-share-label,
+  .wce-root .wce-share-btn,
+  .wce-root .wce-theme-toggle,
+  .wce-root .wce-theme-toggle-label,
+  .wce-root .text-\[0\.82rem\],
+  .wce-root .sep { font-size: 0.875rem; }
+  .wce-root .sep { opacity: 0.7; }
+}
