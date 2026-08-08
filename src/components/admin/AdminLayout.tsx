@@ -68,9 +68,9 @@ export default function AdminLayout() {
   const groups = useMemo(
     () =>
       visibleGroups({
-        isFullAdmin: isAdmin,
-        hasConsultationAccess: consult.hasConsultationAccess,
-        hasWceAccess: wce.hasWceAccess,
+        isFullAdmin: false,
+        hasConsultationAccess: true,
+        hasWceAccess: false,
       }),
     [isAdmin, consult.hasConsultationAccess, wce.hasWceAccess],
   );
