@@ -10,6 +10,8 @@ export type WceSpeaker = {
   session_time?: string | null;
   portrait_url: string | null;
   is_featured?: boolean;
+  slug?: string | null;
+  og_image_url?: string | null;
 };
 
 /** How each flyer theme word breaks across lines, exactly as printed. */

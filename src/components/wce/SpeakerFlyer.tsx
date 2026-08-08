@@ -14,6 +14,7 @@ import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
 import { trackWceCta } from "./cta-tracking";
 import { isSymposiumOnlySpeaker } from "./campaign";
+import { WceShareRow, speakerOgDescription, speakerOgTitle, speakerShareUrl } from "./share";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -453,6 +454,17 @@ export function SpeakerFlyer({
           </motion.div>
 
           {/* Powered by */}
+          {speaker.slug && (
+            <motion.div className="wce-flyer-share" {...rise(0.42)}>
+              <WceShareRow
+                url={speakerShareUrl(speaker.slug)}
+                title={speakerOgTitle(speaker)}
+                text={`${speakerOgTitle(speaker)} — ${speakerOgDescription(speaker)}`}
+                slug={speaker.slug}
+              />
+            </motion.div>
+          )}
+
           <div className="wce-flyer-footer">
             <span className="wce-flyer-poweredby">Powered by</span>
             <ul className="wce-flyer-partners">

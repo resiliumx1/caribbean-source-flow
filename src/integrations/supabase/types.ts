@@ -3141,11 +3141,13 @@ export type Database = {
           id: string
           is_featured: boolean
           name: string
+          og_image_url: string | null
           portrait_url: string | null
           prefix: string | null
           published: boolean
           session_time: string | null
           session_title: string | null
+          slug: string | null
           theme: string | null
           title: string | null
         }
@@ -3156,11 +3158,13 @@ export type Database = {
           id?: string
           is_featured?: boolean
           name: string
+          og_image_url?: string | null
           portrait_url?: string | null
           prefix?: string | null
           published?: boolean
           session_time?: string | null
           session_title?: string | null
+          slug?: string | null
           theme?: string | null
           title?: string | null
         }
@@ -3171,11 +3175,13 @@ export type Database = {
           id?: string
           is_featured?: boolean
           name?: string
+          og_image_url?: string | null
           portrait_url?: string | null
           prefix?: string | null
           published?: boolean
           session_time?: string | null
           session_title?: string | null
+          slug?: string | null
           theme?: string | null
           title?: string | null
         }

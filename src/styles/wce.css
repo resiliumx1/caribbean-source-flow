@@ -2613,3 +2613,55 @@ body.wce-route header[class*="fixed"] button[aria-label="Open menu"] svg {
   .wce-halo__ripple { animation: none !important; }
 }
 .wce-halo--static .wce-halo__ripple { animation: none !important; }
+
+/* ---------------- Share controls (flyer + final band) ---------------- */
+.wce-share {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+.wce-share[data-align="start"] { align-items: flex-start; }
+.wce-share-label {
+  font-family: var(--wce-sans, inherit);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  color: var(--wce-gold-text, var(--wce-gold));
+  opacity: 0.9;
+}
+.wce-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.wce-share[data-align="start"] .wce-share-actions { justify-content: flex-start; }
+.wce-share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(201, 162, 39, 0.55);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--wce-gold-text, var(--wce-gold));
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+.wce-share-btn:not(.is-wide) { padding: 0; width: 44px; }
+.wce-share-btn:hover {
+  border-color: var(--wce-gold);
+  background: rgba(201, 162, 39, 0.12);
+  transform: translateY(-1px);
+}
+.wce-share-btn:focus-visible { outline: 2px solid var(--wce-gold); outline-offset: 2px; }
+.wce-flyer-share { margin: 1.6rem auto 0; }

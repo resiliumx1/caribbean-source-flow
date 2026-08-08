@@ -18,6 +18,8 @@ type Speaker = {
   is_featured: boolean;
   display_order: number;
   published: boolean;
+  slug: string | null;
+  og_image_url: string | null;
 };
 
 export default function WceSpeakers() {
@@ -157,6 +159,10 @@ export default function WceSpeakers() {
                     onBlur={(e) => patch(s.id, { session_title: e.target.value })} />
                   <input className={inputCls} defaultValue={s.session_time ?? ""} placeholder="Session time"
                     onBlur={(e) => patch(s.id, { session_time: e.target.value })} />
+                  <input className={inputCls} defaultValue={s.slug ?? ""} placeholder="Share link slug (e.g. kailash)"
+                    onBlur={(e) => e.target.value !== (s.slug ?? "") && patch(s.id, { slug: e.target.value.trim() || null })} />
+                  <input className={inputCls} defaultValue={s.og_image_url ?? ""} placeholder="Share image URL (e.g. /og/speaker-kailash.jpg)"
+                    onBlur={(e) => e.target.value !== (s.og_image_url ?? "") && patch(s.id, { og_image_url: e.target.value.trim() || null })} />
                   <textarea className={inputCls} rows={2} defaultValue={s.bio ?? ""} placeholder="Bio"
                     onBlur={(e) => patch(s.id, { bio: e.target.value })} />
                   <ImageUploadField
@@ -179,6 +185,12 @@ export default function WceSpeakers() {
                     <span className="wa-pill" data-tone={s.published ? "qualified" : "neutral"}>
                       {s.published ? "Published" : "Unpublished"}
                     </span>
+                    {s.slug && (
+                      <a className="wa-muted" style={{ fontSize: "0.78rem", textDecoration: "underline" }}
+                        href={`/wce-2026/speakers/${s.slug}`} target="_blank" rel="noreferrer">
+                        /wce-2026/speakers/{s.slug}
+                      </a>
+                    )}
                   </div>
                 </div>
                 <button onClick={() => remove(s)} aria-label={`Delete ${s.name || "speaker"}`}

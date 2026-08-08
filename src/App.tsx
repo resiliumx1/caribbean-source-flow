@@ -181,6 +181,8 @@ function AppContent() {
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/goddess" element={<GoddessCard />} />
           <Route path="/wce-2026" element={<WCE2026 />} />
+          {/* Shareable per-speaker links — same landing page with the flyer open. */}
+          <Route path="/wce-2026/speakers/:slug" element={<WCE2026 />} />
           {/* Gated online symposium stream — entitlement checked server-side. */}
           <Route path="/wce-2026/live" element={<WceLive />} />
           {/* Private retreat payment link. No public entry point; noindex. */}
