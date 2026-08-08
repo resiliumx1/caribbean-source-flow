@@ -172,12 +172,18 @@
 .wce-root[data-wce-theme="dark"] .wce-itinerary-node { box-shadow: 0 0 0 4px var(--wce-page); }
 
 /* Site header while solid over a dark WCE page */
-body.wce-route.wce-dark header[class*="fixed"]:not(:has(.wce-nothing)) {
-  background: #0A1B13;
-  border-bottom: 1px solid rgba(201, 162, 39, 0.16);
+/* The site header sets its solid background with an inline style, so the dark
+   WCE route has to override it explicitly. */
+body.wce-route.wce-dark header[class*="fixed"] {
+  background: #0A1B13 !important;
+  border-bottom-color: rgba(201, 162, 39, 0.18) !important;
 }
 body.wce-route.wce-dark header[class*="fixed"] :is(a, span, button, p, strong) { color: #F2EDE0; }
-body.wce-route.wce-dark.wce-transparent-header header[class*="fixed"] { background: transparent; border-bottom-color: transparent; }
+body.wce-route.wce-dark.wce-transparent-header header[class*="fixed"] {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+}
 body.wce-route.wce-dark .wce-subnav { background: rgba(8, 23, 18, 0.94); }
 body.wce-route.wce-dark .wce-sticky-cta { background: rgba(8, 23, 18, 0.96); }
 
