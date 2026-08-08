@@ -13,6 +13,7 @@ import { useWceReducedMotion } from "./motion";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
 import { trackWceCta } from "./cta-tracking";
+import { isSymposiumOnlySpeaker } from "./campaign";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -427,24 +428,27 @@ export function SpeakerFlyer({
             </p>
           </div>
 
-          {/* Reserve band */}
+          {/* Reserve band. Some speakers appear at the symposium only, so their
+              panel must never route to the retreat application. */}
           <motion.div className="wce-flyer-band" {...rise(0.36)}>
             <p className="wce-flyer-band-title">Reserve Your Spot</p>
             <div className="wce-flyer-band-ctas">
               <button
                 type="button"
                 className="wce-btn wce-btn-gold"
-                onClick={() => jump("pathways", "reserve", "Reserve Your Spot")}
+                onClick={() => jump("pathways", "reserve", "Reserve My Place")}
               >
-                Reserve Your Spot
+                Reserve My Place
               </button>
-              <button
-                type="button"
-                className="wce-btn wce-btn-outline"
-                onClick={() => jump("apply", "apply", "Apply for the Retreat")}
-              >
-                Apply for the Retreat
-              </button>
+              {!isSymposiumOnlySpeaker(speaker.name) && (
+                <button
+                  type="button"
+                  className="wce-btn wce-btn-outline"
+                  onClick={() => jump("apply", "apply", "Begin Your Application")}
+                >
+                  Begin Your Application
+                </button>
+              )}
             </div>
           </motion.div>
 

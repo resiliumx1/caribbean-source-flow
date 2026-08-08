@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { dataLayerPush, pixelTrack } from "@/lib/tracking";
+import { dataLayerPush } from "@/lib/tracking";
+import { WCE_META_EVENTS, newEventId, wceMetaTrack } from "./meta-events";
 import { useWceAttribution } from "./useWceAttribution";
 import {
   LeafDivider, LotusMark, CompassMandala, MandalaOuterRing, OrnateFrame, CornerVine,
@@ -381,9 +382,9 @@ export function WceRetreatBand() {
             <a
               href="#apply"
               className="wce-btn wce-btn-gold wce-btn-xl mt-14 w-full sm:w-auto"
-              onClick={() => trackWceCta("apply", "retreat_section", "Apply for the Retreat")}
+              onClick={() => trackWceCta("apply", "retreat_section", "Begin Your Application")}
             >
-              Apply for the Retreat
+              Begin Your Application
             </a>
           </Reveal>
         </div>
@@ -536,7 +537,11 @@ export function WceApplicationForm() {
     }
 
     setSubmitting(true);
+    // One shared Event ID for this application, reused by the browser Pixel and
+    // any server-side (CAPI) twin so Meta deduplicates rather than double-counts.
+    const leadEventId = newEventId("wce_lead");
     const { error } = await supabase.from("wce_leads").insert({
+      meta_event_ids: { lead: leadEventId },
       full_name: values.full_name.trim(),
       email: values.email.trim(),
       whatsapp: values.whatsapp.trim() || null,
@@ -567,11 +572,18 @@ export function WceApplicationForm() {
       pathway_interest: values.pathway_interest || null,
       referral_code: attribution.referral_code,
     });
-    pixelTrack("Lead", {
-      content_name: "WCE 2026 Application",
-      pathway_interest: values.pathway_interest || null,
-      referral_code: attribution.referral_code,
-    });
+    // An application is a Lead — never a Purchase. Purchase only fires once a
+    // reviewed applicant completes payment on their private checkout link.
+    wceMetaTrack(
+      values.pathway_interest === "retreat" ? WCE_META_EVENTS.retreatLead : WCE_META_EVENTS.lead,
+      {
+        content_name: "Caribbean Wellness Saint Lucia 2026 Application",
+        pathway_interest: values.pathway_interest || null,
+        referral_code: attribution.referral_code,
+        funnel: values.pathway_interest === "retreat" ? "retreat" : "symposium",
+      },
+      { eventId: leadEventId },
+    );
     setSubmitted(true);
   };
 

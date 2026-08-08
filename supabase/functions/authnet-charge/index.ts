@@ -74,15 +74,22 @@ Deno.serve(async (req) => {
         ? incomingDt
         : payload.form.country?.toUpperCase() === "LC" ? "local" : "international";
 
-    // Re-fetch authoritative pricing
+    // Re-fetch authoritative pricing. is_active is fetched and enforced below so
+    // that products withdrawn from public sale (e.g. the WCE Fortification
+    // Retreat, which is application-only) cannot be bought by posting a raw
+    // product id at this endpoint.
     const productIds = [...new Set(payload.items.map((i) => i.product_id))];
     const { data: products, error: prodErr } = await supabase
       .from("products")
-      .select("id, name, price_usd, price_xcd, is_digital, category_id, track_inventory, stock_quantity")
+      .select("id, name, price_usd, price_xcd, is_digital, category_id, track_inventory, stock_quantity, is_active")
       .in("id", productIds);
     if (prodErr) throw prodErr;
     if (!products || products.length !== productIds.length) {
       throw new Error("One or more cart items are no longer available.");
+    }
+    const withdrawn = products.find((p: any) => p.is_active === false);
+    if (withdrawn) {
+      throw new Error(`${withdrawn.name} is not available for purchase here.`);
     }
     const productMap = new Map(products.map((p: any) => [p.id, p]));
 

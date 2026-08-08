@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { WceThemeProvider } from "@/components/wce/WceThemeProvider";
 import { WceHero, WcePathwaysSection, WceSpeakersSection } from "@/components/wce/SectionsTop";
 import { WceMediaSection, WceActivitiesSection, WceCeremonySection, WceRetreatBand, WceApplicationForm } from "@/components/wce/SectionsMid";
+import { WceLifeCraftSection } from "@/components/wce/LifeCraft";
 import { WceFaqSection, WceFinalCta, WceFooter } from "@/components/wce/SectionsBottom";
 import { useWcePathways, useWceSettings, pathwayFeatures } from "@/components/wce/useWceData";
 import { WceSubNav } from "@/components/wce/WceSubNav";
@@ -10,6 +11,7 @@ import { WceStickyCta } from "@/components/wce/WceStickyCta";
 import { useWceAttribution } from "@/components/wce/useWceAttribution";
 import { dataLayerPush } from "@/lib/tracking";
 import { SITE_URL } from "@/lib/site-config";
+import { EVENT_END, EVENT_START, RETREAT_END, RETREAT_START, SYMPOSIUM_DATE } from "@/components/wce/campaign";
 import heroPoster from "@/assets/wce-hero-poster.jpg.asset.json";
 
 const PAGE_URL = `${SITE_URL}/wce-2026`;
@@ -44,8 +46,8 @@ export default function WCE2026() {
     "@type": "Event",
     name,
     description,
-    startDate: "2026-10-11",
-    endDate: "2026-10-17",
+    startDate: EVENT_START,
+    endDate: EVENT_END,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
     image: [OG_IMAGE],
@@ -65,8 +67,33 @@ export default function WCE2026() {
       name: "Mount Kailash Rejuvenation Centre",
       url: SITE_URL,
     },
+    // The symposium is the ticketed day; the retreat is application-only and so
+    // is described as a sub-event with no offer. No capacity or attendee counts
+    // are ever emitted.
+    subEvent: [
+      {
+        "@type": "Event",
+        name: "Caribbean Wellness Symposium",
+        startDate: SYMPOSIUM_DATE,
+        endDate: SYMPOSIUM_DATE,
+        eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
+        url: `${PAGE_URL}#pathways`,
+      },
+      {
+        "@type": "Event",
+        name: "Fortification Retreat",
+        description:
+          "Six-day fortification retreat at Mount Kailash Rejuvenation Centre, including LifeCraft experiences. Participation begins with an application reviewed by the Mount Kailash team.",
+        startDate: RETREAT_START,
+        endDate: RETREAT_END,
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        url: `${PAGE_URL}#apply`,
+      },
+    ],
     offers: (pathways ?? [])
-      .filter((p) => Number(p.price) > 0)
+      // Only the symposium tiers are purchasable. The retreat must never be
+      // advertised as buyable — it is gated behind application review.
+      .filter((p) => Number(p.price) > 0 && p.key !== "retreat")
       .map((p) => ({
         "@type": "Offer",
         name: p.label,
@@ -107,6 +134,7 @@ export default function WCE2026() {
         <WceSpeakersSection />
         <WceMediaSection />
         <WceActivitiesSection />
+        <WceLifeCraftSection />
         <WceCeremonySection />
         <WceRetreatBand />
         <WceApplicationForm />
