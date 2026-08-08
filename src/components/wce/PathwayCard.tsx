@@ -88,6 +88,15 @@ function PathwayHeading({ label, isRetreat }: { label: string; isRetreat: boolea
   );
 }
 
+/** Gold checkmark used on the pathway bullets. */
+function CheckGlyph() {
+  return (
+    <svg aria-hidden="true" className="wce-path-check" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M3 8.6l3.2 3.2L13 4.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export interface PathwayCardProps {
   index: number;
   pathwayKey: string;
