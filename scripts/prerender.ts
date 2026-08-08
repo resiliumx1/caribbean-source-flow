@@ -243,6 +243,22 @@ async function loadRetreats(): Promise<RetreatRow[]> {
 
 const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> = [
   {
+    path: "/wce-2026",
+    title: "Caribbean Wellness Experience Saint Lucia 2026",
+    description:
+      "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat.",
+    ogImage: `${BASE_URL}/og/wce-2026.jpg`,
+    bodyHtml: `
+      <header><a href="/" rel="home">Mount Kailash Rejuvenation Centre</a></header>
+      <main>
+        <h1>Caribbean Wellness Experience Saint Lucia 2026</h1>
+        <p>11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. A holistic symposium, fortification retreat and LifeCraft experience. What started in Jamaica continues in St. Lucia.</p>
+        <p>Symposium: 11 October 2026 (in person or online). Fortification Retreat: 12–17 October 2026, application only.</p>
+        <p><a href="/wce-2026#pathways">See the pathways</a> · <a href="/wce-2026#apply">Apply for the retreat</a></p>
+      </main>
+    `,
+  },
+  {
     path: "/shop",
     title: "Shop — Mount Kailash Apothecary | Caribbean Herbal Tinctures, Sea Moss & Wellness Medicine",
     description: "Browse the Mount Kailash apothecary: herbal tinctures, sea moss, capsules, teas, and traditional Caribbean wellness medicine, hand-formulated in Saint Lucia.",
