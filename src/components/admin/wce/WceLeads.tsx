@@ -509,7 +509,7 @@ export default function WceLeads() {
         </select>
         <select className={inputCls + " max-w-[200px]"} value={pathwayFilter} onChange={(e) => setPathwayFilter(e.target.value)}>
           <option value="all">All pathways</option>
-          {pathways.map((p) => <option key={p} value={p}>{p}</option>)}
+          {pathways.map((p) => <option key={p} value={p}>{wcePathwayLabel(p)}</option>)}
         </select>
       </FilterBar>
 
