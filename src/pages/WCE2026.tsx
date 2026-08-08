@@ -105,7 +105,7 @@ export default function WCE2026() {
       },
       {
         "@type": "Event",
-        name: "Fortification Retreat",
+        name: "Caribbean Wellness Fortification Retreat",
         description:
           "Six-day fortification retreat at Mount Kailash Rejuvenation Centre, including LifeCraft experiences. Participation begins with an application reviewed by the Mount Kailash team.",
         startDate: RETREAT_START,
@@ -116,7 +116,7 @@ export default function WCE2026() {
         // without ever presenting the retreat as directly purchasable.
         offers: {
           "@type": "Offer",
-          name: "Fortification Retreat place",
+          name: "Caribbean Wellness Fortification Retreat place",
           price: "4500.00",
           priceCurrency: "USD",
           availability: "https://schema.org/LimitedAvailability",
@@ -161,7 +161,7 @@ export default function WCE2026() {
     <WceThemeProvider>
       <Helmet>
         <title>{speaker ? shareTitle : "Caribbean Wellness Saint Lucia 2026 | 11–17 October"}</title>
-        <meta name="description" content={speaker ? shareDescription : "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat."} />
+        <meta name="description" content={speaker ? shareDescription : "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Caribbean Wellness Fortification Retreat."} />
         <link rel="canonical" href={pageUrl} />
 
         <meta property="og:type" content="website" />

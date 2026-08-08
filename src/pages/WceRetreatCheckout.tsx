@@ -90,7 +90,7 @@ export default function WceRetreatCheckout() {
   return (
     <WceThemeProvider>
       <Helmet>
-        <title>Fortification Retreat Payment | Caribbean Wellness Saint Lucia 2026</title>
+        <title>Caribbean Wellness Fortification Retreat Payment | Caribbean Wellness Saint Lucia 2026</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <main
@@ -114,7 +114,7 @@ export default function WceRetreatCheckout() {
             className="mt-3 text-center text-[clamp(1.5rem,4vw,2.1rem)]"
             style={{ fontFamily: "var(--wce-display)", color: "var(--wce-cream)" }}
           >
-            Fortification Retreat
+            Caribbean Wellness Fortification Retreat
           </h1>
           <DiamondRule className="mx-auto mt-5 max-w-[9rem]" />
 

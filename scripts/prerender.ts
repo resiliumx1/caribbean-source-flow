@@ -300,7 +300,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     path: "/wce-2026",
     title: "Caribbean Wellness Experience Saint Lucia 2026",
     description:
-      "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat.",
+      "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Caribbean Wellness Fortification Retreat.",
     ogImage: `${BASE_URL}/og/wce-2026.jpg`,
     ogImageAlt: "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre",
     // Secondary square card, after the primary landscape one. Platforms that
@@ -316,7 +316,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
       <main>
         <h1>Caribbean Wellness Experience Saint Lucia 2026</h1>
         <p>11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. A holistic symposium, fortification retreat and LifeCraft experience. What started in Jamaica continues in St. Lucia.</p>
-        <p>Symposium: 11 October 2026 (in person or online). Fortification Retreat: 12–17 October 2026, application only.</p>
+        <p>Symposium: 11 October 2026 (in person or online). Caribbean Wellness Fortification Retreat: 12–17 October 2026, application only.</p>
         <p><a href="/wce-2026#pathways">See the pathways</a> · <a href="/wce-2026#apply">Apply for the retreat</a></p>
       </main>
     `,
