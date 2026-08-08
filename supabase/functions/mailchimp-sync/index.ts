@@ -86,6 +86,23 @@ function isMergeFieldError(status: number, body: string): boolean {
   return status === 400 && (b.includes("merge") || b.includes("required field"));
 }
 
+/** Which of our merge tags actually exist in the audience.
+ *  Mailchimp silently discards unknown tags rather than always erroring, so we
+ *  check first and report precisely what the audience is still missing. */
+async function audienceMergeTags(prefix: string, key: string, audience: string): Promise<string[] | null> {
+  const res = await mcFetch(prefix, key, `/lists/${audience}/merge-fields?count=200`, { method: "GET" });
+  if (res.status >= 400) {
+    console.error(`mailchimp-sync: could not read merge fields [${res.status}]: ${res.body}`);
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(res.body) as { merge_fields?: { tag?: string }[] };
+    return (parsed.merge_fields ?? []).map((f) => String(f.tag ?? "").toUpperCase());
+  } catch {
+    return null;
+  }
+}
+
 async function mcFetch(
   prefix: string,
   key: string,
@@ -163,6 +180,21 @@ async function syncPerson(
   const hash = subscriberHash(email);
   const path = `/lists/${audience}/members/${hash}`;
 
+  /* Trim the payload to the fields the audience really has. Anything missing is
+     reported so the organiser knows exactly what to create in Mailchimp. */
+  let sendMerge = fullMerge;
+  let missing: string[] = [];
+  const existing = await audienceMergeTags(prefix, key, audience);
+  if (existing) {
+    missing = MERGE_TAGS.filter((t) => !existing.includes(t));
+    if (missing.length) {
+      sendMerge = Object.fromEntries(
+        Object.entries(fullMerge).filter(([t]) => existing.includes(t)),
+      ) as Record<string, string>;
+      console.log(`mailchimp-sync: audience is missing merge fields ${missing.join(", ")} — not sending those.`);
+    }
+  }
+
   const put = (merge: Record<string, string>, withStatus: boolean) =>
     mcFetch(prefix, key, path, {
       method: "PUT", // PUT upserts, so a second submission updates rather than failing
@@ -175,19 +207,21 @@ async function syncPerson(
       },
     });
 
-  let accepted = Object.keys(fullMerge);
-  let rejected: string[] = [];
-  let res = await put(fullMerge, true);
+  let accepted = Object.keys(sendMerge);
+  let rejected: string[] = [...missing];
+  let res = await put(sendMerge, true);
 
   // An already-unsubscribed member cannot be forced back by the API.
   if (res.status >= 400 && res.body.toLowerCase().includes("compliance state")) {
-    res = await put(fullMerge, false);
+    res = await put(sendMerge, false);
   }
 
   // Retry once with email + names only when a merge field is rejected.
   if (isMergeFieldError(res.status, res.body)) {
-    rejected = rejectedFieldsFrom(res.body);
-    if (rejected.length === 0) rejected = MERGE_TAGS.filter((t) => t !== "FNAME" && t !== "LNAME");
+    const errored = rejectedFieldsFrom(res.body);
+    rejected = Array.from(
+      new Set([...missing, ...(errored.length ? errored : MERGE_TAGS.filter((t) => t !== "FNAME" && t !== "LNAME"))]),
+    );
     console.error(
       `mailchimp-sync: merge fields rejected for lead ${lead.id}: ${rejected.join(", ")} — retrying with FNAME/LNAME only. Mailchimp said: ${res.body}`,
     );
