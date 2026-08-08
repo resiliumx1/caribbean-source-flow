@@ -51,8 +51,7 @@ export default function AdminLayout() {
   const isWceRoute = location.pathname.startsWith("/admin/wce");
   // A WCE organiser who is not a full store admin.
   const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
-  const consultationOnly =
-    !isLoading && !consult.isLoading && !isAdmin && consult.hasConsultationAccess;
+  const consultationOnly = true;
   const { theme, setTheme } = useTheme();
   const [unread, setUnread] = useState(0);
   const [recent, setRecent] = useState<Notification[]>([]);
