@@ -87,7 +87,7 @@ function SpeakerTile({
         <p className="wce-speaker-name mt-2 text-[1rem] leading-tight sm:text-[1.08rem]">
           {speaker.prefix ? `${speaker.prefix} ` : ""}{speaker.name}
         </p>
-        <DiamondRule className="mx-auto mt-2 max-w-[3.2rem]" tone="rgba(201,162,39,0.9)" />
+        <DiamondRule className="mx-auto mt-2 max-w-[3.2rem]" tone="rgba(var(--wce-gold-rgb), 0.9)" />
         <p className="wce-speaker-role mt-2 text-[0.875rem] uppercase" style={{ color: "var(--wce-gold-text)", letterSpacing: "0.2em" }}>
           {speaker.title || ""}
         </p>
@@ -178,7 +178,7 @@ function FeaturedSpeaker({
           </p>
         )}
         {speaker.session_title && (
-          <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.9)" }}>
+          <p className="mt-5 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(var(--wce-cream-rgb), 0.9)" }}>
             {speaker.session_title}
           </p>
         )}
@@ -290,7 +290,7 @@ export function WceSpeakersSection() {
         id="speakers"
         ref={sectionRef}
         className="wce-surface px-6 py-24 sm:py-32"
-        style={{ background: "var(--wce-cream-warm)", ...lift.style }}
+        style={{ background: "var(--wce-panel-warm)", ...lift.style }}
       >
         <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
         <BotanicalBackdrop intensity={1.05} />
@@ -300,10 +300,10 @@ export function WceSpeakersSection() {
           <MaskedHeading
             lines={["Visionary Leaders"]}
             className="mt-8 text-[clamp(2rem,5vw,3.4rem)] uppercase"
-            style={{ color: "var(--wce-forest)", letterSpacing: "0.1em" }}
+            style={{ color: "var(--wce-ink-strong)", letterSpacing: "0.1em" }}
           />
           <Reveal index={1}>
-            <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(var(--wce-ink-rgb), 0.88)" }}>
               Guided by voices in wellness, medicine, movement, sovereignty, leadership, transformation, and restoration.
             </p>
             <LeafDivider className="mt-10" />

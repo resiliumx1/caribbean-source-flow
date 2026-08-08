@@ -57,7 +57,7 @@ export function WceLifeCraftSection() {
       ref={lift.ref}
       id="lifecraft"
       className="wce-surface px-6 py-24 sm:py-32"
-      style={{ background: "var(--wce-cream-warm)", ...lift.style }}
+      style={{ background: "var(--wce-panel-warm)", ...lift.style }}
       aria-labelledby="wce-lifecraft-heading"
     >
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
@@ -72,13 +72,13 @@ export function WceLifeCraftSection() {
           id="wce-lifecraft-heading"
           lines={[heading]}
           className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]"
-          style={{ color: "var(--wce-forest)" }}
+          style={{ color: "var(--wce-ink-strong)" }}
         />
         <Reveal index={1}>
           <DiamondRule className="mx-auto mt-7 max-w-[11rem]" />
           <p
             className="mx-auto mt-7 max-w-[62ch] text-left text-[1rem] leading-relaxed sm:text-center"
-            style={{ color: "rgba(26,26,20,0.9)" }}
+            style={{ color: "rgba(var(--wce-ink-rgb), 0.9)" }}
           >
             {body}
           </p>
@@ -100,17 +100,17 @@ export function WceLifeCraftSection() {
               index={i}
               className="relative flex flex-col items-center px-7 py-10 text-center"
               style={{
-                background: "var(--wce-cream)",
-                border: "1px solid rgba(201,162,39,0.7)",
+                background: "var(--wce-panel)",
+                border: "1px solid rgba(var(--wce-gold-rgb), 0.7)",
                 borderRadius: "2px",
-                boxShadow: "0 18px 40px -32px rgba(122,96,17,0.45)",
+                boxShadow: "0 18px 40px -32px rgba(var(--wce-shadow-rgb), 0.45)",
               }}
             >
               <ComponentMark variant={i % 2 === 0 ? 1 : 2} />
-              <h3 className="mt-5 text-[1.2rem]" style={{ color: "var(--wce-forest)" }}>{c.title}</h3>
+              <h3 className="mt-5 text-[1.2rem]" style={{ color: "var(--wce-ink-strong)" }}>{c.title}</h3>
               <DiamondRule className="mx-auto mt-4 max-w-[7rem]" />
               {c.body?.trim() && (
-                <p className="mt-4 max-w-[34ch] text-[0.9375rem] leading-relaxed" style={{ color: "rgba(26,26,20,0.88)" }}>
+                <p className="mt-4 max-w-[34ch] text-[0.9375rem] leading-relaxed" style={{ color: "rgba(var(--wce-ink-rgb), 0.88)" }}>
                   {c.body}
                 </p>
               )}
@@ -119,7 +119,7 @@ export function WceLifeCraftSection() {
         </ul>
 
         <Reveal index={3}>
-          <p className="mx-auto mt-12 max-w-[52ch] text-[0.9375rem]" style={{ color: "rgba(26,26,20,0.72)" }}>
+          <p className="mx-auto mt-12 max-w-[52ch] text-[0.9375rem]" style={{ color: "rgba(var(--wce-ink-rgb), 0.72)" }}>
             LifeCraft experiences are included within the Fortification Retreat programme. They are not sold separately.
           </p>
         </Reveal>

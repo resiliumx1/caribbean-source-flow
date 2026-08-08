@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { WceThemeToggle } from "./theme";
 
 const LINKS = [
   { id: "pathways", label: "Pathways" },
@@ -84,6 +85,7 @@ export function WceSubNav() {
           {l.label}
         </a>
       ))}
+      <WceThemeToggle className="wce-subnav-toggle" />
     </nav>
   );
 }

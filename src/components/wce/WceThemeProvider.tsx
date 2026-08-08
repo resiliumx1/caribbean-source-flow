@@ -2,11 +2,13 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import "@/styles/wce.css";
 import { useWceReducedMotion } from "./motion";
+import { WceThemeContextProvider, WceThemeToggle, useWceThemeState } from "./theme";
 
 /** Scopes the Caribbean Wellness Experience palette + typography to this route only,
  *  and enables Lenis smooth scroll for the lifetime of this route only. */
 export function WceThemeProvider({ children }: { children: React.ReactNode }) {
   const reduced = useWceReducedMotion();
+  const themeState = useWceThemeState();
 
   // Route-scoped: the site header floats transparently over the hero, then
   // returns to its solid state once the hero has scrolled past.
@@ -75,5 +77,16 @@ export function WceThemeProvider({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("pointerdown", onDown);
   }, [reduced]);
 
-  return <div className="wce-root">{children}</div>;
+  return (
+    <WceThemeContextProvider value={themeState}>
+      {/* data-wce-theme is rendered, not assigned in an effect, so the first
+          paint of this route is already in the right theme. */}
+      <div className="wce-root" data-wce-theme={themeState.theme}>
+        {/* Mobile: the sub-nav rail is desktop-only, so the switch also lives
+            as a floating control that is reachable from the hero. */}
+        <WceThemeToggle className="wce-floating-toggle" />
+        {children}
+      </div>
+    </WceThemeContextProvider>
+  );
 }

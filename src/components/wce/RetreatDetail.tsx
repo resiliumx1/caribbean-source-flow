@@ -29,7 +29,7 @@ export function WceWhoForSection() {
       ref={lift.ref}
       id="who-for"
       className="wce-surface px-6 py-24 sm:py-32"
-      style={{ background: "var(--wce-cream)", ...lift.style }}
+      style={{ background: "var(--wce-panel)", ...lift.style }}
     >
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <div className="mx-auto max-w-4xl text-center">
@@ -37,13 +37,13 @@ export function WceWhoForSection() {
         <MaskedHeading
           lines={["Who This Is For"]}
           className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]"
-          style={{ color: "var(--wce-forest)" }}
+          style={{ color: "var(--wce-ink-strong)" }}
         />
         <Reveal index={1}><DiamondRule className="mx-auto mt-8 max-w-[11rem]" /></Reveal>
 
         <ul className="mx-auto mt-12 max-w-2xl space-y-4 text-left">
           {WHO_FOR.map((t, i) => (
-            <SlideInItem as="li" key={t} index={Math.min(i, 5)} className="flex items-start gap-3 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(26,26,20,0.9)" }}>
+            <SlideInItem as="li" key={t} index={Math.min(i, 5)} className="flex items-start gap-3 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(var(--wce-ink-rgb), 0.9)" }}>
               <span className="mt-1 shrink-0"><CheckMark tone="var(--wce-gold-text)" /></span>
               <span>{t}</span>
             </SlideInItem>
@@ -54,9 +54,9 @@ export function WceWhoForSection() {
           <p
             className="mx-auto mt-12 max-w-2xl px-6 py-6 text-sm leading-relaxed"
             style={{
-              color: "rgba(26,26,20,0.86)",
-              background: "var(--wce-cream-warm)",
-              border: "1px solid rgba(201,162,39,0.5)",
+              color: "rgba(var(--wce-ink-rgb), 0.86)",
+              background: "var(--wce-panel-warm)",
+              border: "1px solid rgba(var(--wce-gold-rgb), 0.5)",
               borderRadius: "2px",
             }}
           >
@@ -92,7 +92,7 @@ export function WceArcSection() {
     <section
       id="arc"
       className="relative overflow-hidden px-6 py-24 text-center sm:py-32"
-      style={{ background: "var(--wce-forest)" }}
+      style={{ background: "var(--wce-band)" }}
     >
       <EdgeBleed position="top" />
       <span aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -108,7 +108,7 @@ export function WceArcSection() {
           style={{ color: "var(--wce-cream)" }}
         />
         <Reveal index={1}>
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.9)" }}>
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(var(--wce-cream-rgb), 0.9)" }}>
             The retreat does not end at the gate. Participants leave with a guided continuation framework and tracker
             that carries selected practices through to day 21. Final delivery details are shared during the retreat.
           </p>
@@ -122,11 +122,11 @@ export function WceArcSection() {
               key={a.step}
               index={i}
               className="px-7 py-9"
-              style={{ border: "1px solid rgba(201,162,39,0.45)", borderRadius: "2px", background: "rgba(11,33,22,0.55)" }}
+              style={{ border: "1px solid rgba(var(--wce-gold-rgb), 0.45)", borderRadius: "2px", background: "rgba(var(--wce-scrim-rgb), 0.55)" }}
             >
               <p className="text-[0.8rem] uppercase" style={{ color: "var(--wce-gold)", letterSpacing: "0.22em" }}>{a.step}</p>
               <h3 className="mt-4 text-xl" style={{ color: "var(--wce-cream)", fontFamily: "var(--wce-display)" }}>{a.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgba(245,239,224,0.84)" }}>{a.copy}</p>
+              <p className="mt-3 text-sm leading-relaxed" style={{ color: "rgba(var(--wce-cream-rgb), 0.84)" }}>{a.copy}</p>
             </SlideInItem>
           ))}
         </ol>
@@ -161,7 +161,7 @@ export function WceIncludedSection() {
       ref={lift.ref}
       id="included"
       className="wce-surface px-6 py-24 sm:py-32"
-      style={{ background: "var(--wce-cream-warm)", ...lift.style }}
+      style={{ background: "var(--wce-panel-warm)", ...lift.style }}
     >
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <BotanicalBackdrop intensity={0.8} />
@@ -171,19 +171,19 @@ export function WceIncludedSection() {
         <MaskedHeading
           lines={["What Is Included"]}
           className="mt-8 text-[clamp(1.9rem,4.6vw,3rem)]"
-          style={{ color: "var(--wce-forest)" }}
+          style={{ color: "var(--wce-ink-strong)" }}
         />
         <Reveal index={1}><DiamondRule className="mx-auto mt-8 max-w-[11rem]" /></Reveal>
 
         <div className="mt-14 grid gap-6 text-left md:grid-cols-2">
           <Reveal
             className="px-8 py-10"
-            style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.6)", borderRadius: "2px" }}
+            style={{ background: "var(--wce-panel)", border: "1px solid rgba(var(--wce-gold-rgb), 0.6)", borderRadius: "2px" }}
           >
             <p className="wce-eyebrow" style={{ color: "var(--wce-gold-text)" }}>Included in your place</p>
             <ul className="mt-6 space-y-3.5">
               {INCLUDED.map((t) => (
-                <li key={t} className="flex items-start gap-3 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.9)" }}>
+                <li key={t} className="flex items-start gap-3 text-sm leading-relaxed" style={{ color: "rgba(var(--wce-ink-rgb), 0.9)" }}>
                   <span className="mt-1 shrink-0"><CheckMark tone="var(--wce-gold-text)" /></span>
                   <span>{t}</span>
                 </li>
@@ -194,18 +194,18 @@ export function WceIncludedSection() {
           <Reveal
             index={1}
             className="px-8 py-10"
-            style={{ background: "var(--wce-cream)", border: "1px solid rgba(201,162,39,0.35)", borderRadius: "2px" }}
+            style={{ background: "var(--wce-panel)", border: "1px solid rgba(var(--wce-gold-rgb), 0.35)", borderRadius: "2px" }}
           >
             <p className="wce-eyebrow" style={{ color: "var(--wce-gold-text)" }}>Not included</p>
             <ul className="mt-6 space-y-3.5">
               {NOT_INCLUDED.map((t) => (
-                <li key={t} className="flex items-start gap-3 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.82)" }}>
-                  <span className="mt-1 shrink-0"><LeafIcon tone="rgba(201,162,39,0.85)" /></span>
+                <li key={t} className="flex items-start gap-3 text-sm leading-relaxed" style={{ color: "rgba(var(--wce-ink-rgb), 0.82)" }}>
+                  <span className="mt-1 shrink-0"><LeafIcon tone="rgba(var(--wce-gold-rgb), 0.85)" /></span>
                   <span>{t}</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-8 text-sm leading-relaxed" style={{ color: "rgba(26,26,20,0.78)" }}>
+            <p className="mt-8 text-sm leading-relaxed" style={{ color: "rgba(var(--wce-ink-rgb), 0.78)" }}>
               Applicants should note dietary requirements and any mobility or accessibility considerations on the
               application form. The team confirms what can be accommodated before any payment is requested.
             </p>
@@ -224,7 +224,7 @@ export function WceInvestmentSection() {
     <section
       id="investment"
       className="relative overflow-hidden px-6 py-24 text-center sm:py-32"
-      style={{ background: "var(--wce-forest-deep, #0B2116)", borderTop: "1px solid rgba(201,162,39,0.45)" }}
+      style={{ background: "var(--wce-forest-deep, var(--wce-band))", borderTop: "1px solid rgba(var(--wce-gold-rgb), 0.45)" }}
     >
       <EdgeBleed position="top" />
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.045} light />
@@ -236,7 +236,7 @@ export function WceInvestmentSection() {
           style={{ color: "var(--wce-cream)" }}
         />
         <Reveal index={1}>
-          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.9)" }}>
+          <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(var(--wce-cream-rgb), 0.9)" }}>
             Approved participants stay in villa accommodation on the Mount Kailash grounds for six nights, from
             October 12 to 17. Villa assignments and final accommodation information are shared after acceptance.
           </p>
@@ -246,7 +246,7 @@ export function WceInvestmentSection() {
         <Reveal
           index={2}
           className="mx-auto mt-12 px-9 py-12"
-          style={{ border: "1px solid rgba(201,162,39,0.55)", borderRadius: "2px", background: "rgba(15,42,29,0.6)" }}
+          style={{ border: "1px solid rgba(var(--wce-gold-rgb), 0.55)", borderRadius: "2px", background: "rgba(var(--wce-forest-rgb), 0.6)" }}
         >
           <p className="text-[0.8rem] uppercase" style={{ color: "var(--wce-gold)", letterSpacing: "0.24em" }}>
             Retreat Investment
@@ -254,7 +254,7 @@ export function WceInvestmentSection() {
           <p className="mt-5" style={{ color: "var(--wce-gold-light)", fontFamily: "var(--wce-display)", fontSize: "clamp(2.1rem,6vw,3.2rem)", lineHeight: 1.1 }}>
             US$4,500
           </p>
-          <p className="mt-2 text-sm" style={{ color: "rgba(245,239,224,0.86)" }}>per person · six days, six nights</p>
+          <p className="mt-2 text-sm" style={{ color: "rgba(var(--wce-cream-rgb), 0.86)" }}>per person · six days, six nights</p>
 
           <DiamondRule className="mx-auto mt-9 max-w-[9rem]" />
 
@@ -265,7 +265,7 @@ export function WceInvestmentSection() {
               "The remaining balance is paid through a private, secure checkout link sent only to accepted applicants",
               "Cancellation and transfer terms are supplied with your acceptance, before the balance is paid",
             ].map((t) => (
-              <li key={t} className="flex items-start gap-3 text-sm leading-relaxed" style={{ color: "rgba(245,239,224,0.9)" }}>
+              <li key={t} className="flex items-start gap-3 text-sm leading-relaxed" style={{ color: "rgba(var(--wce-cream-rgb), 0.9)" }}>
                 <span className="mt-1 shrink-0"><CheckMark tone="var(--wce-gold-light)" /></span>
                 <span>{t}</span>
               </li>
@@ -281,7 +281,7 @@ export function WceInvestmentSection() {
               Begin Your Application
             </a>
           </Reveal>
-          <p className="mt-5 text-[0.85rem]" style={{ color: "rgba(245,239,224,0.78)" }}>
+          <p className="mt-5 text-[0.85rem]" style={{ color: "rgba(var(--wce-cream-rgb), 0.78)" }}>
             No payment is taken at application. Places are limited and reviewed personally.
           </p>
         </Reveal>
@@ -296,7 +296,7 @@ export function WceFortifiedBanner() {
   return (
     <section
       className="relative overflow-hidden px-6 py-20 text-center sm:py-24"
-      style={{ background: "var(--wce-forest-mid)", borderTop: "1px solid rgba(201,162,39,0.3)" }}
+      style={{ background: "var(--wce-band-mid)", borderTop: "1px solid rgba(var(--wce-gold-rgb), 0.3)" }}
     >
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.05} light />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-45" />
@@ -308,7 +308,7 @@ export function WceFortifiedBanner() {
           style={{ color: "var(--wce-cream)" }}
         />
         <Reveal index={1}>
-          <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(245,239,224,0.9)" }}>
+          <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(var(--wce-cream-rgb), 0.9)" }}>
             October 12–17, 2026 at Mount Kailash Rejuvenation Centre. Applications are reviewed personally, and
             places are limited.
           </p>
@@ -317,7 +317,7 @@ export function WceFortifiedBanner() {
             className="wce-btn wce-btn-gold wce-shimmer-btn mt-10 w-full sm:w-auto"
             onClick={() => trackWceCta("apply", "fortified_banner", "Begin Your Application")}
           >
-            <LeafIcon tone="var(--wce-forest)" size={13} />
+            <LeafIcon tone="var(--wce-ink-strong)" size={13} />
             <span>Begin Your Application</span>
           </a>
         </Reveal>

@@ -44,7 +44,7 @@ export function WceHero() {
       <div
         aria-hidden="true"
         className="absolute inset-x-0 bottom-0 h-[66%]"
-        style={{ background: "linear-gradient(to top, rgba(15,42,29,0.97) 0%, rgba(15,42,29,0.88) 24%, rgba(15,42,29,0.62) 46%, rgba(15,42,29,0.28) 66%, rgba(15,42,29,0) 88%)" }}
+        style={{ background: "linear-gradient(to top, rgba(var(--wce-forest-rgb), 0.97) 0%, rgba(var(--wce-forest-rgb), 0.88) 24%, rgba(var(--wce-forest-rgb), 0.62) 46%, rgba(var(--wce-forest-rgb), 0.28) 66%, rgba(var(--wce-forest-rgb), 0) 88%)" }}
       />
       <WceHeroParticles />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
@@ -128,7 +128,7 @@ export function WcePartnerStrip() {
   return (
     <section
       className="px-6 py-10"
-      style={{ background: "var(--wce-forest-mid)", borderTop: "1px solid rgba(201,162,39,0.28)", borderBottom: "1px solid rgba(201,162,39,0.28)" }}
+      style={{ background: "var(--wce-band-mid)", borderTop: "1px solid rgba(var(--wce-gold-rgb), 0.28)", borderBottom: "1px solid rgba(var(--wce-gold-rgb), 0.28)" }}
       aria-label="Event partners"
     >
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6">
@@ -140,7 +140,7 @@ export function WcePartnerStrip() {
             <Reveal key={p} as="li" index={i} gate>
               <span
                 className="text-[0.875rem] uppercase sm:text-xs"
-                style={{ color: "rgba(245,239,224,0.92)", letterSpacing: "0.24em" }}
+                style={{ color: "rgba(var(--wce-cream-rgb), 0.92)", letterSpacing: "0.24em" }}
               >
                 {p}
               </span>
@@ -162,7 +162,7 @@ function PathwaysInner() {
   const lift = useSectionLift<HTMLElement>();
 
   return (
-    <section ref={lift.ref} id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-cream)", ...lift.style }}>
+    <section ref={lift.ref} id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-panel)", ...lift.style }}>
       <FlowerOfLifeField className="wce-surface-bg" opacity={0.04} drift />
       <BotanicalBackdrop intensity={1.1} />
       <div className="mx-auto max-w-5xl text-center">
@@ -171,10 +171,10 @@ function PathwaysInner() {
         <MaskedHeading
           lines={["Choose Your Experience Pathway"]}
           className="mt-6 text-[clamp(1.9rem,5vw,3.4rem)] sm:mt-8"
-          style={{ color: "var(--wce-forest)" }}
+          style={{ color: "var(--wce-ink-strong)" }}
         />
         <Reveal index={2}>
-          <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(26,26,20,0.88)" }}>
+          <p className="mt-5 text-sm sm:text-base" style={{ color: "rgba(var(--wce-ink-rgb), 0.88)" }}>
             Three ways to experience transformation.
           </p>
           <LeafDivider className="mt-8 sm:mt-10" />

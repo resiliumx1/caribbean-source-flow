@@ -9,7 +9,7 @@ import { useWceSettings } from "./useWceData";
  */
 const GOLD = "#C9A227";
 const GOLD_LIGHT = "#E4C567";
-const FOREST = "#0F2A1D";
+const FOREST = "var(--wce-band)";
 const CREAM = "#F5EFE0";
 const SESSION_KEY = "wce-popup-dismissed";
 
@@ -84,7 +84,7 @@ export function WcePopup() {
       onClick={(e) => { if (e.target === e.currentTarget) close(); }}
       style={{
         position: "fixed", inset: 0, zIndex: 9998,
-        background: "rgba(8,20,14,0.72)", backdropFilter: "blur(3px)",
+        background: "rgba(var(--wce-scrim-rgb), 0.72)", backdropFilter: "blur(3px)",
         display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
       }}
     >
@@ -105,7 +105,7 @@ export function WcePopup() {
           aria-label="Close announcement"
           style={{
             position: "absolute", top: 8, right: 8, zIndex: 2,
-            minWidth: 44, minHeight: 44, background: "rgba(15,42,29,0.7)",
+            minWidth: 44, minHeight: 44, background: "rgba(var(--wce-forest-rgb), 0.7)",
             border: `1px solid ${GOLD}`, borderRadius: "50%", color: GOLD_LIGHT,
             fontSize: 18, lineHeight: 1, cursor: "pointer",
           }}

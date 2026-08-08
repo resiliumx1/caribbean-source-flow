@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { selectPathway } from "./pathway-select";
 import { trackWceCta } from "./cta-tracking";
+import { WceThemeToggle } from "./theme";
 
 /** Mobile-only bottom action bar. Appears past the hero, hides while the form is in view. */
 export function WceStickyCta() {
@@ -76,6 +77,7 @@ export function WceStickyCta() {
       >
         Apply for Retreat
       </a>
+      <WceThemeToggle className="wce-sticky-toggle" />
     </div>
   );
 }
