@@ -1134,7 +1134,7 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
 /* Longer campaign titles: family name on line one, distinguishing part beneath.
    Never smaller than 17px. */
 .wce-path-heading {
-  font-size: clamp(1.0625rem, 0.95rem + 0.45vw, 1.28rem);
+  font-size: clamp(1.0625rem, 0.95rem + 0.35vw, 1.18rem);
   line-height: 1.3;
   text-wrap: balance;
 }
