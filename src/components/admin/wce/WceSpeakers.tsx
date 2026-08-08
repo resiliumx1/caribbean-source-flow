@@ -93,7 +93,7 @@ export default function WceSpeakers() {
       label: "Speaker",
       optimistic: () => setRows((p) => p.map((r) => (r.id === id ? { ...r, ...values } : r))),
       rollback: () => setRows(prev),
-      write: () => supabase.from("wce_speakers").update(values).eq("id", id),
+      write: () => supabase.from("wce_speakers").update(values as never).eq("id", id),
     });
   };
 

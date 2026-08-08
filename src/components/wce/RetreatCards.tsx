@@ -272,7 +272,7 @@ export function WceRetreatDetailCards() {
           style={{ color: "var(--wce-ink-strong)" }}
         />
         <Reveal index={1}>
-          <p className="mx-auto mt-4 max-w-xl text-center text-sm leading-relaxed" style={{ color: "rgba(var(--wce-ink-rgb), 0.8)" }}>
+          <p className="wce-rcard-subline mx-auto mt-4 max-w-xl text-center">
             Open any card to read more. Several can stay open at once, so you can compare.
           </p>
         </Reveal>
