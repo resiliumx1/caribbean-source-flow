@@ -1058,6 +1058,8 @@ body.wce-transparent-header header[class*="fixed"] .wce-nav-item span {
   flex: 1 1 auto;
   min-height: 22rem;
 }
+/* the li wrapper stretches, the button fills it via flex */
+.wce-root li.h-full { display: flex; flex-direction: column; }
 .wce-root .wce-card.wce-card-speaker .wce-card-rest {
   flex: 1 1 auto;
   height: auto;
