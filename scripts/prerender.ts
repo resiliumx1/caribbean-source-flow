@@ -66,6 +66,8 @@ interface RouteMeta {
   ogImage?: string;
   jsonLd?: Record<string, unknown>;
   bodyHtml: string;      // goes into #seo-static-fallback
+  /** Extra raw <meta>/<link> markup injected high in <head> (after the <title>). */
+  extraHead?: string;
 }
 
 function buildShellTransform(shell: string, m: RouteMeta): string {
@@ -135,6 +137,21 @@ function buildShellTransform(shell: string, m: RouteMeta): string {
       /<meta\s+property="og:image:alt"\s+content="[^"]*"\s*\/?>/i,
       `<meta property="og:image:alt" content="${title}" />`,
     );
+    html = html.replace(
+      /<meta\s+property="og:image:secure_url"\s+content="[^"]*"\s*\/?>/i,
+      `<meta property="og:image:secure_url" content="${image}" />`,
+    );
+    html = html.replace(
+      /<meta\s+name="twitter:image:alt"\s+content="[^"]*"\s*\/?>/i,
+      `<meta name="twitter:image:alt" content="${title}" />`,
+    );
+  }
+
+  // Route-specific extra head markup, injected immediately after </title> so the
+  // social tags sit in the opening bytes of the document (WhatsApp reads only a
+  // small prefix of the response).
+  if (m.extraHead) {
+    html = html.replace(/<\/title>/i, `</title>\n    ${m.extraHead.trim()}`);
   }
 
   // route-specific JSON-LD: inject just before </head>
