@@ -26,7 +26,7 @@ export interface WcePathwayCopy {
 
 export const PATHWAY_COPY: Record<WcePathwayKey, WcePathwayCopy> = {
   in_person: {
-    title: "Attend In Person",
+    title: "Caribbean Wellness Symposium — In Person Attendance",
     dateLine: "Sunday, October 11, 2026",
     priceLine: "US$70 per person",
     availability: null,
@@ -41,7 +41,7 @@ export const PATHWAY_COPY: Record<WcePathwayKey, WcePathwayCopy> = {
     cta: "Reserve My Place",
   },
   online: {
-    title: "Get Online Access",
+    title: "Caribbean Wellness Symposium — Online Access",
     dateLine: "Sunday, October 11, 2026",
     priceLine: "US$50 per person",
     availability: null,
@@ -56,7 +56,7 @@ export const PATHWAY_COPY: Record<WcePathwayKey, WcePathwayCopy> = {
     cta: "Get Online Access",
   },
   retreat: {
-    title: "Fortification Retreat",
+    title: "Caribbean Wellness Fortification Retreat",
     dateLine: "October 12–17, 2026",
     priceLine: "From US$4,500 per person",
     availability: "Limited Availability",
