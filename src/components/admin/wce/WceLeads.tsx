@@ -131,7 +131,7 @@ function RetreatReviewCell({ lead, onChanged }: { lead: Lead; onChanged: (values
       description: res.email_sent
         ? "The applicant has been emailed."
         : res.email_error ?? "Email was not sent; share the link manually.",
-      tone: res.email_sent || action === "reviewing" ? "success" : "error",
+      tone: res.email_sent || action === "reviewing" ? "ok" : "error",
     });
   };
 
