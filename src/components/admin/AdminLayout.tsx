@@ -60,6 +60,7 @@ export default function AdminLayout() {
   const [paymentAlerts, setPaymentAlerts] = useState(0);
   const [pendingConsults, setPendingConsults] = useState(0);
   const [newLeads, setNewLeads] = useState(0);
+  const [pendingOrders, setPendingOrders] = useState(0);
   const bellRef = useRef<HTMLDivElement | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -84,34 +85,55 @@ export default function AdminLayout() {
     paymentAlerts,
     consultations: pendingConsults,
     wholesaleLeads: newLeads,
+    orders: pendingOrders,
   };
 
   // Counts that make the navigation communicate state, not just destinations.
   useEffect(() => {
     if (!isAdmin && !consult.hasConsultationAccess) return;
     let active = true;
+    const nowIso = () => new Date().toISOString();
     const load = async () => {
-      const [consults, leads] = await Promise.all([
-        // Upcoming sessions plus anything still awaiting payment — the states
-        // that actually need attention.
+      const zero = Promise.resolve({ count: 0 } as { count: number | null });
+      const [upcoming, awaiting, leads, orders] = await Promise.all([
+        // Sessions still ahead of us that are not cancelled or written off.
         supabase
           .from("consultation_bookings")
           .select("id", { count: "exact", head: true })
-          .neq("status", "cancelled")
-          .gte("starts_at", new Date().toISOString()),
+          .not("status", "in", "(cancelled,no_show,completed)")
+          .gte("starts_at", nowIso()),
+        // Anything still awaiting payment, whenever it sits on the calendar.
+        supabase
+          .from("consultation_bookings")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending_payment")
+          .lt("starts_at", nowIso()),
         isAdmin
           ? supabase
               .from("wholesale_leads")
               .select("id", { count: "exact", head: true })
               .eq("status", "new")
-          : Promise.resolve({ count: 0 } as { count: number | null }),
+          : zero,
+        isAdmin
+          ? supabase
+              .from("orders")
+              .select("id", { count: "exact", head: true })
+              .eq("status", "pending")
+          : zero,
       ]);
       if (!active) return;
-      setPendingConsults(consults.count || 0);
+      setPendingConsults((upcoming.count || 0) + (awaiting.count || 0));
       setNewLeads(leads.count || 0);
+      setPendingOrders(orders.count || 0);
     };
     load();
-    return () => { active = false; };
+    const channel = supabase
+      .channel("admin-nav-badges")
+      .on("postgres_changes", { event: "*", schema: "public", table: "consultation_bookings" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "wholesale_leads" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, load)
+      .subscribe();
+    return () => { active = false; supabase.removeChannel(channel); };
   }, [isAdmin, consult.hasConsultationAccess]);
 
   useEffect(() => {
