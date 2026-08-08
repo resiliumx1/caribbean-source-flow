@@ -131,6 +131,15 @@ export function WceFinalCta() {
           ))}
         </div>
         <LeafDivider className="mt-16" />
+        <div className="mt-10">
+          <WceShareRow
+            url={WCE_PAGE_URL}
+            title="Caribbean Wellness Saint Lucia 2026"
+            text="Caribbean Wellness Saint Lucia 2026 — 11–17 October, Mount Kailash Rejuvenation Centre."
+            slug="main"
+            label="Share this event"
+          />
+        </div>
         <p className="mt-8 text-[0.875rem] uppercase leading-loose" style={{ color: "rgba(245,239,224,0.9)", letterSpacing: "0.22em" }}>
           {(settings?.event_dates ?? "11-17 October 2026").toUpperCase()}{" "}
           <span style={{ color: "var(--wce-gold)" }}>|</span>{" "}
