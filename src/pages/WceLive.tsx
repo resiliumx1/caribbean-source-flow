@@ -122,7 +122,7 @@ export default function WceLive() {
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="wce-input mt-2 w-full"
+                  className="wce-field mt-2 w-full"
                   placeholder="you@example.com"
                 />
                 <button type="submit" className="wce-btn wce-btn-gold mt-6 w-full" disabled={submitting}>
