@@ -357,16 +357,14 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           {/* ─── 1. Session type ─── */}
           {step === S_SERVICE && (
             <motion.div key="s-svc" {...fade}>
-              <p className="consult-eyebrow mb-2">Where to begin</p>
-              <h2 className="consult-serif" style={{ fontSize: "clamp(1.5rem,3.2vw,2rem)" }}>
-                Choose a consultation
-              </h2>
-              <p className="consult-body mt-3" style={{ maxWidth: "40rem" }}>
-                Every session is one to one with Rt. Hon. Priest Kailash. You can move back at any
-                point without losing anything.
+              <p className="consult-eyebrow mb-2.5">Consultations</p>
+              <h2 className="consult-h2">Choose a Consultation</h2>
+              <p className="consult-intro mt-3.5">
+                Select the session that best fits what you're seeking. Each is a one-to-one meeting
+                with Priest Kailash.
               </p>
 
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 items-stretch">
+              <div className="mt-7 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-stretch">
                 {allServices.map((s, idx) => {
                   const free = s.requires_payment === false;
                   return (
@@ -397,18 +395,24 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   );
                 })}
               </div>
+
+              <p className="consult-fine mt-6" style={{ maxWidth: "62ch" }}>
+                All sessions are held online. You'll receive joining details by email once your
+                booking is confirmed.
+              </p>
             </motion.div>
           )}
 
           {/* ─── 3. Format ─── */}
           {step === S_MODE && service && (
             <motion.div key="s-mode" {...fade}>
-              <p className="consult-eyebrow mb-2">Format</p>
-              <h2 className="consult-serif" style={{ fontSize: "clamp(1.5rem,3.2vw,2rem)" }}>
-                Online or in person?
-              </h2>
+              <p className="consult-eyebrow mb-2.5">Format</p>
+              <h2 className="consult-h2">Online or In Person</h2>
+              <p className="consult-intro mt-3.5">
+                Choose how you would like to meet.
+              </p>
 
-              <div className="mt-6 grid sm:grid-cols-2 gap-3">
+              <div className="mt-7 grid sm:grid-cols-2 gap-4">
                 <button
                   type="button" className="consult-choice"
                   aria-pressed={mode === "online"} onClick={() => setMode("online")}
@@ -487,16 +491,24 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                 </div>
               ) : availError || !availability ? (
                 <div className="text-center py-6">
-                  <p className="consult-serif" style={{ fontSize: "20px" }}>The calendar did not load</p>
-                  <p className="consult-body mt-2">
-                    {(availErrorObj as Error)?.message || "Please try again in a moment."}
+                  <p className="consult-h2">The calendar did not load</p>
+                  <p className="consult-body mt-3 mx-auto">
+                    {(availErrorObj as Error)?.message
+                      || "Something went wrong. Please try again, or contact us if it continues."}
                   </p>
                   <Button className="mt-5 min-h-[48px]" onClick={() => refetchAvailability()}>
                     Try again
                   </Button>
                 </div>
               ) : (
-                <SlotPicker
+                <>
+                  <p className="consult-eyebrow mb-2.5">Date and time</p>
+                  <h2 className="consult-h2">Choose a Date and Time</h2>
+                  <p className="consult-intro mt-3.5 mb-6">
+                    Consultations are held on Tuesdays and Thursdays. Select a date to see the times
+                    available.
+                  </p>
+                  <SlotPicker
                   slots={availability.slots}
                   timezone={timezone}
                   onTimezoneChange={setTimezone}
@@ -506,7 +518,8 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   onSelect={setSlot}
                   scheduleDates={availability.open_dates}
                   range={availability.range}
-                />
+                  />
+                </>
               )}
 
               <div className="mt-7 flex items-center justify-between gap-3">
@@ -523,12 +536,13 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           {/* ─── 5. Details ─── */}
           {step === S_DETAILS && (
             <motion.div key="s-details" {...fade}>
-              <p className="consult-eyebrow mb-2">Your details</p>
-              <h2 className="consult-serif" style={{ fontSize: "clamp(1.4rem,3vw,1.9rem)" }}>
-                A little about you
-              </h2>
+              <p className="consult-eyebrow mb-2.5">Your details</p>
+              <h2 className="consult-h2">Your Details</h2>
+              <p className="consult-intro mt-3.5">
+                We'll use these to confirm your booking and send your joining details.
+              </p>
               {slot && (
-                <p className="consult-fine mt-2">
+                <p className="consult-fine mt-3">
                   <Clock className="inline w-4 h-4 mr-1.5 -mt-0.5" aria-hidden />
                   {fullMoment(slot.start, timezone)}
                 </p>
@@ -623,17 +637,18 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
 
               <div className="flex flex-col">
                 <Label htmlFor="c-notes" className="consult-label">
-                  Anything you would like him to know beforehand
+                  Anything you'd like Priest Kailash to know beforehand
                 </Label>
                 <Textarea id="c-notes" rows={4} className="consult-input mt-1.5" value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Your history, anything you have already tried, and any medication you take." />
+                  placeholder="Optional." />
+                <p className="consult-fine mt-1.5">Optional.</p>
               </div>
 
               {requiresPayment && (
                 <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-3">
                   <div className="flex flex-col sm:w-[260px]">
-                    <Label htmlFor="c-coupon" className="consult-label">Discount code (optional)</Label>
+                    <Label htmlFor="c-coupon" className="consult-label">Discount code</Label>
                     <Input id="c-coupon" className="consult-input mt-1.5 uppercase"
                       placeholder="Enter a code"
                       value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
@@ -670,12 +685,13 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           {/* ─── 6. Review and pay ─── */}
           {step === S_REVIEW && hold && service && (
             <motion.div key="s-review" {...fade}>
-              <p className="consult-eyebrow mb-2">Review and pay</p>
-              <h2 className="consult-serif" style={{ fontSize: "clamp(1.4rem,3vw,1.9rem)" }}>
-                Confirm your session
-              </h2>
+              <p className="consult-eyebrow mb-2.5">Review</p>
+              <h2 className="consult-h2">Review Your Booking</h2>
+              <p className="consult-intro mt-3.5">
+                Please check the details below before continuing to payment.
+              </p>
 
-              <div className="consult-summary mt-5">
+              <div className="consult-summary mt-6">
                 <dl className="grid sm:grid-cols-2 gap-4">
                   <div><dt>Session</dt><dd>{service.name}</dd></div>
                   <div>
@@ -712,6 +728,9 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   {Math.floor(holdSecondsLeft / 60)}:{String(holdSecondsLeft % 60).padStart(2, "0")}
                 </strong>.
               </p>
+              <p className="consult-hold mt-1.5">
+                You'll be taken to secure checkout to complete your booking.
+              </p>
 
               <div className="consult-rule my-6" />
 
@@ -742,12 +761,13 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
           {step === S_DONE && paid && (
             <motion.div key="s-done" {...fade} className="text-center">
               <CalendarCheck className="w-10 h-10 mx-auto" style={{ color: "var(--c-gold-deep)" }} aria-hidden />
-              <h2 className="consult-serif mt-4" style={{ fontSize: "clamp(1.7rem,3.6vw,2.3rem)" }}>
-                Your session is confirmed
-              </h2>
-              <p className="consult-body mt-3">
-                Reference <strong>{paid.reference}</strong>. A confirmation with a calendar
-                invitation is on its way to {email}.
+              <h2 className="consult-h2 mt-4">Your Booking Is Confirmed</h2>
+              <p className="consult-body mt-3.5 mx-auto">
+                We've sent a confirmation to <strong>{email}</strong>, including your joining link
+                and a calendar invitation.
+              </p>
+              <p className="consult-fine mt-2.5 mx-auto" style={{ maxWidth: "62ch" }}>
+                Your booking reference is <strong>{paid.reference}</strong>. Keep this for your records.
               </p>
 
               <div className="consult-summary mt-6 text-left">
@@ -781,6 +801,11 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   <a href="/shop">Explore the herbs</a>
                 </Button>
               </div>
+
+              <p className="consult-fine mt-5 mx-auto" style={{ maxWidth: "62ch" }}>
+                Need to change your booking? You can reschedule or cancel using the link in your
+                confirmation email.
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
