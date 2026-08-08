@@ -3245,3 +3245,9 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
   .wce-root .sep { font-size: 0.875rem; }
   .wce-root .sep { opacity: 0.7; }
 }
+
+/* Tablet: the retreat teasers run to three lines at the larger size, so the
+   collapsed triggers need a taller shared floor to stay level in the row. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .wce-rcard-trigger { min-height: 10.75rem; }
+}
