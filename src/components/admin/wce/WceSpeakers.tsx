@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { inputCls, ImageUploadField, useDragReorder, DragHandle } from "./shared";
+import { parseBioLinks, type WceBioLink } from "@/components/wce/speaker-utils";
 import { wceToast, useSaveState, SaveBadge, CardsSkeleton, InfoTip, useConfirm, GuidedEmpty } from "./kit";
 
 type Speaker = {
