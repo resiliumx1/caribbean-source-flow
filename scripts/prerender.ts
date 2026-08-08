@@ -305,7 +305,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     ogImageAlt: "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre",
     // Secondary square card, after the primary landscape one. Platforms that
     // prefer 1:1 pick this up; the rest use the first image.
-    extraHead: `<meta property="og:image" content="${BASE_URL}/og/wce-2026-square.jpg" />
+    tailHead: `<meta property="og:image" content="${BASE_URL}/og/wce-2026-square.jpg" />
     <meta property="og:image:secure_url" content="${BASE_URL}/og/wce-2026-square.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1080" />
