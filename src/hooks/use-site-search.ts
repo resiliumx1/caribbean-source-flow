@@ -25,7 +25,7 @@ const PAGES: { title: string; subtitle: string; url: string; keywords: string }[
   { title: "Shop", subtitle: "Browse every herbal formulation", url: "/shop", keywords: "shop store products herbs buy catalogue" },
   { title: "The Answer", subtitle: "The flagship botanical formulation", url: "/the-answer", keywords: "the answer flagship tonic bottle" },
   { title: "Wholesale", subtitle: "Stock Mount Kailash in your store", url: "/wholesale", keywords: "wholesale b2b bulk trade reseller stockist distributor" },
-  { title: "School", subtitle: "Herbal Physician certification", url: "/school/herbal-physician", keywords: "school course herbal physician certification study training学" },
+  { title: "School", subtitle: "Herbal Physician certification", url: "/school/herbal-physician", keywords: "school course herbal physician certification study training" },
   { title: "WCE 2026", subtitle: "Caribbean Wellness Saint Lucia, 11–17 October 2026", url: "/wce-2026", keywords: "wce caribbean wellness experience 2026 saint lucia symposium retreat event" },
   { title: "Consultations", subtitle: "Book a session with our practitioners", url: "/consultations", keywords: "consultation consultations booking appointment practitioner session" },
   { title: "Retreats", subtitle: "Stay at Mount Kailash Rejuvenation Centre", url: "/retreats", keywords: "retreat retreats stay wellness immersion villa" },
