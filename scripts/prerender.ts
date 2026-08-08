@@ -314,6 +314,9 @@ async function main() {
       path: r.path,
       title: r.title,
       description: r.description,
+      ogImage: r.ogImage,
+      ogImageAlt: r.ogImageAlt,
+      jsonLd: r.jsonLd,
       bodyHtml: r.bodyHtml ?? extractDefaultFallback(shell),
     };
     writeRoute(r.path, buildShellTransform(shell, meta));
