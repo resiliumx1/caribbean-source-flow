@@ -60,6 +60,7 @@
   --wce-solid-btn-border: var(--wce-forest);
   --wce-focus-ring: #6E5410;
   /* online pathway tier: a cooler paper than the in-person card */
+  --wce-flyer-chip: rgba(255, 253, 243, 0.9);
   --wce-tier-online-a: #F8F7EC;
   --wce-tier-online-b: #F1F3E6;
   --wce-tier-online-border: rgba(45, 74, 53, 0.45);
@@ -123,6 +124,7 @@
   --wce-solid-btn-fg: var(--wce-cream);
   --wce-solid-btn-border: rgba(var(--wce-gold-rgb), 0.55);
   --wce-focus-ring: var(--wce-gold-light);
+  --wce-flyer-chip: rgba(10, 27, 19, 0.92);
   --wce-tier-online-a: #14291D;
   --wce-tier-online-b: #0F2318;
   --wce-tier-online-border: rgba(var(--wce-gold-rgb), 0.3);
