@@ -217,6 +217,14 @@ export default function AdminLayout() {
       ? "Consultations"
       : "Organiser";
 
+  const scopeNote = consultationOnly ? (
+    <>
+      <span className="block font-medium text-foreground mb-0.5">Consultation editor</span>
+      Your access covers the consultations area — bookings, session types, availability and the
+      practitioner profile. Other store sections are not part of this role.
+    </>
+  ) : null;
+
   const brand = (
     <Link to={groups[0]?.items[0]?.href ?? "/admin"} className="flex items-center gap-2.5 min-w-0">
       <img
@@ -375,6 +383,7 @@ export default function AdminLayout() {
         onToggleCollapsed={() => setCollapsed(!collapsed)}
         onOpenPalette={() => setPaletteOpen(true)}
         header={brand}
+        note={scopeNote}
         footer={
           <div className="text-[12px] text-muted-foreground px-2 py-1 truncate">
             {consultationOnly ? "Consultation editor access" : "Signed in as"}{" "}
@@ -406,6 +415,7 @@ export default function AdminLayout() {
                     variant="drawer"
                     onNavigate={() => setMobileOpen(false)}
                     onOpenPalette={() => { setMobileOpen(false); setPaletteOpen(true); }}
+                    note={scopeNote}
                   />
                 </div>
                 <div className="border-t border-border p-3 space-y-2">
