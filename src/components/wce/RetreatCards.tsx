@@ -276,7 +276,7 @@ export function WceRetreatDetailCards() {
             Open any card to read more. Several can stay open at once, so you can compare.
           </p>
         </Reveal>
-        <div className="wce-rcard-grid mt-12">
+        <div className="wce-rcard-grid mt-12" data-wce-retreat-cards>
           {CARDS.map((c, i) => (
             <RetreatDetailCard card={c} index={i} key={c.id} />
           ))}
