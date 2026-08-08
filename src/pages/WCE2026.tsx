@@ -3,10 +3,12 @@ import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import { WceThemeProvider } from "@/components/wce/WceThemeProvider";
 import { WceHero, WcePathwaysSection, WceSpeakersSection } from "@/components/wce/SectionsTop";
-import { WceMediaSection, WceActivitiesSection, WceCeremonySection, WceRetreatBand, WceApplicationForm } from "@/components/wce/SectionsMid";
+import { WceMediaSection, WceCeremonySection, WceRetreatBand, WceApplicationForm } from "@/components/wce/SectionsMid";
+import { WceItinerarySection } from "@/components/wce/Itinerary";
+import { WceWhoForSection, WceArcSection, WceIncludedSection, WceInvestmentSection, WceFortifiedBanner } from "@/components/wce/RetreatDetail";
 import { WceLifeCraftSection } from "@/components/wce/LifeCraft";
 import { WceFaqSection, WceFinalCta, WceFooter } from "@/components/wce/SectionsBottom";
-import { useWcePathways, useWceSettings, useWceSpeakers, pathwayFeatures } from "@/components/wce/useWceData";
+import { useWceFaqs, useWcePathways, useWceSettings, useWceSpeakers, pathwayFeatures } from "@/components/wce/useWceData";
 import { WceSubNav } from "@/components/wce/WceSubNav";
 import { WceStickyCta } from "@/components/wce/WceStickyCta";
 import { useWceAttribution } from "@/components/wce/useWceAttribution";
@@ -29,6 +31,7 @@ export default function WCE2026() {
   const { data: settings } = useWceSettings();
   const { data: pathways } = useWcePathways();
   const { data: speakers } = useWceSpeakers();
+  const { data: faqs } = useWceFaqs();
   const { slug } = useParams<{ slug?: string }>();
   const attribution = useWceAttribution();
 
@@ -108,6 +111,19 @@ export default function WCE2026() {
         endDate: RETREAT_END,
         eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
         url: `${PAGE_URL}#apply`,
+        // Described as an application-gated offer so the price is discoverable
+        // without ever presenting the retreat as directly purchasable.
+        offers: {
+          "@type": "Offer",
+          name: "Fortification Retreat place",
+          price: "4500.00",
+          priceCurrency: "USD",
+          availability: "https://schema.org/LimitedAvailability",
+          url: `${PAGE_URL}#apply`,
+          validFrom: "2026-01-01",
+          description:
+            "US$4,500 per person, including six nights of villa accommodation. A US$500 non-refundable deposit is requested after acceptance and credited toward the total.",
+        },
       },
     ],
     offers: (pathways ?? [])
@@ -125,6 +141,20 @@ export default function WCE2026() {
         description: pathwayFeatures(p.features).join(" · ") || undefined,
       })),
   };
+
+  const faqSchema = (faqs ?? []).filter((f) => !!f.answer).length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: (faqs ?? [])
+          .filter((f) => !!f.answer)
+          .map((f) => ({
+            "@type": "Question",
+            name: f.question,
+            acceptedAnswer: { "@type": "Answer", text: f.answer as string },
+          })),
+      }
+    : null;
 
   return (
     <WceThemeProvider>
@@ -153,6 +183,7 @@ export default function WCE2026() {
         <meta name="twitter:image:alt" content={speaker ? shareTitle : "Caribbean Wellness Saint Lucia 2026"} />
 
         <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
+        {faqSchema && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
       </Helmet>
       <WceSubNav />
       <main>
@@ -160,12 +191,17 @@ export default function WCE2026() {
         <WcePathwaysSection />
         <WceSpeakersSection />
         <WceMediaSection />
-        <WceActivitiesSection />
+        <WceItinerarySection />
         <WceLifeCraftSection />
+        <WceWhoForSection />
+        <WceArcSection />
+        <WceIncludedSection />
         <WceCeremonySection />
         <WceRetreatBand />
+        <WceInvestmentSection />
         <WceApplicationForm />
         <WceFaqSection />
+        <WceFortifiedBanner />
         <WceFinalCta />
       </main>
       <WceFooter />
