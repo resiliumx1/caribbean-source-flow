@@ -486,8 +486,8 @@ export function SiteSearch() {
 
       {overlayOpen && (
         <div
-          className="fixed inset-0 xl:hidden site-search-overlay bg-background"
-          style={{ zIndex: 100000 }}
+          className="fixed inset-0 xl:hidden site-search-overlay"
+          style={{ zIndex: 100000, background: "hsl(var(--background))", opacity: 1 }}
           role="dialog"
           aria-modal="true"
           aria-label="Search the site"
