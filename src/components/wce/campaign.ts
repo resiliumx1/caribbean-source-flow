@@ -58,7 +58,7 @@ export const PATHWAY_COPY: Record<WcePathwayKey, WcePathwayCopy> = {
   retreat: {
     title: "Fortification Retreat",
     dateLine: "October 12–17, 2026",
-    priceLine: "US$4,500 per person",
+    priceLine: "From US$4,500 per person",
     availability: "Limited Availability",
     lead: "Six days of deeper practice, beyond the Symposium.",
     bullets: [
