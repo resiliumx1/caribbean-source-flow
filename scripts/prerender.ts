@@ -64,6 +64,7 @@ interface RouteMeta {
   title: string;
   description: string;
   ogImage?: string;
+  ogImageAlt?: string;
   jsonLd?: Record<string, unknown>;
   bodyHtml: string;      // goes into #seo-static-fallback
   /** Extra raw <meta>/<link> markup injected high in <head> (after the <title>). */
@@ -75,6 +76,7 @@ function buildShellTransform(shell: string, m: RouteMeta): string {
   const title = esc(m.title);
   const desc = esc(m.description);
   const image = m.ogImage ? esc(m.ogImage) : null;
+  const imageAlt = esc(m.ogImageAlt || m.title);
 
   let html = shell;
 
@@ -135,7 +137,7 @@ function buildShellTransform(shell: string, m: RouteMeta): string {
     );
     html = html.replace(
       /<meta\s+property="og:image:alt"\s+content="[^"]*"\s*\/?>/i,
-      `<meta property="og:image:alt" content="${title}" />`,
+      `<meta property="og:image:alt" content="${imageAlt}" />`,
     );
     html = html.replace(
       /<meta\s+property="og:image:secure_url"\s+content="[^"]*"\s*\/?>/i,
@@ -143,7 +145,7 @@ function buildShellTransform(shell: string, m: RouteMeta): string {
     );
     html = html.replace(
       /<meta\s+name="twitter:image:alt"\s+content="[^"]*"\s*\/?>/i,
-      `<meta name="twitter:image:alt" content="${title}" />`,
+      `<meta name="twitter:image:alt" content="${imageAlt}" />`,
     );
   }
 
@@ -248,6 +250,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     description:
       "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Fortification Retreat.",
     ogImage: `${BASE_URL}/og/wce-2026.jpg`,
+    ogImageAlt: "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre",
     bodyHtml: `
       <header><a href="/" rel="home">Mount Kailash Rejuvenation Centre</a></header>
       <main>
