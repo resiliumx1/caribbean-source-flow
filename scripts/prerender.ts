@@ -69,6 +69,8 @@ interface RouteMeta {
   bodyHtml: string;      // goes into #seo-static-fallback
   /** Extra raw <meta>/<link> markup injected high in <head> (after the <title>). */
   extraHead?: string;
+  /** Extra raw markup injected just before </head>, i.e. after all default og:* tags. */
+  tailHead?: string;
 }
 
 function buildShellTransform(shell: string, m: RouteMeta): string {
@@ -154,6 +156,12 @@ function buildShellTransform(shell: string, m: RouteMeta): string {
   // small prefix of the response).
   if (m.extraHead) {
     html = html.replace(/<\/title>/i, `</title>\n    ${m.extraHead.trim()}`);
+  }
+
+  // Tail markup — anything that must come AFTER the default og:* block, such as
+  // the secondary square og:image.
+  if (m.tailHead) {
+    html = html.replace(/<\/head>/i, `${m.tailHead.trim()}\n</head>`);
   }
 
   // route-specific JSON-LD: inject just before </head>
