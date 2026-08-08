@@ -86,7 +86,7 @@ function ResultRow({
           </span>
           {(hit.subtitle || hit.meta) && (
             <span className="block truncate text-xs text-muted-foreground">
-              {hit.meta ? `${hit.meta} — ` : ""}
+              {hit.meta && hit.subtitle ? `${hit.meta} — ` : hit.meta || ""}
               {hit.subtitle ?? ""}
             </span>
           )}
