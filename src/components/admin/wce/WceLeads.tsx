@@ -382,6 +382,22 @@ export default function WceLeads() {
     load();
   };
 
+  /* Creates any Mailchimp merge fields the audience is missing (idempotent). */
+  const ensureMergeFields = async () => {
+    setFieldsBusy(true);
+    const { data, error } = await supabase.functions.invoke("mailchimp-sync", { body: { action: "ensure_merge_fields" } });
+    setFieldsBusy(false);
+    const res = data as { ok?: boolean; created?: string[]; error?: string } | null;
+    if (error || !res?.ok) {
+      wceToast({ title: "Could not update Mailchimp fields", description: res?.error ?? error?.message, tone: "error" });
+      return;
+    }
+    wceToast({
+      title: res.created?.length ? `Created ${res.created.length} Mailchimp field${res.created.length === 1 ? "" : "s"}` : "Mailchimp fields already complete",
+      description: res.created?.length ? res.created.join(", ") : undefined,
+    });
+  };
+
   return (
     <div className="space-y-5">
       <SectionHeading title="Leads" sub="Applications from the /wce-2026 landing page, with campaign attribution." />
@@ -468,6 +484,10 @@ export default function WceLeads() {
                 Retry {failedCount} failed Mailchimp sync{failedCount === 1 ? "" : "s"}
               </button>
             )}
+          <button type="button" className="wa-btn wa-btn-ghost" disabled={fieldsBusy} onClick={ensureMergeFields}>
+            {fieldsBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <ListChecks className="h-4 w-4" aria-hidden />}{" "}
+            Check Mailchimp fields
+          </button>
           <button type="button" className="wa-btn wa-btn-primary" onClick={exportCsv}>
             <Download className="h-4 w-4" /> Export CSV
           </button>
