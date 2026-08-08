@@ -1,10 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
 import { useArticles } from "@/hooks/use-articles";
 import { StoreFooter } from "@/components/store/StoreFooter";
 
 export default function Learn() {
-  const { data: articles = [], isLoading } = useArticles();
+  const { data: allArticles = [], isLoading } = useArticles();
+  const [searchParams] = useSearchParams();
+  const q = (searchParams.get("q") ?? "").trim().toLowerCase();
+  const articles = q
+    ? allArticles.filter((a) =>
+        [a.title, a.excerpt, a.body_markdown]
+          .filter(Boolean)
+          .some((field) => String(field).toLowerCase().includes(q)),
+      )
+    : allArticles;
 
   const collectionSchema = {
     "@context": "https://schema.org",
@@ -67,7 +76,7 @@ export default function Learn() {
           <p className="text-center text-muted-foreground py-12">Loading articles…</p>
         ) : articles.length === 0 ? (
           <p className="text-center text-muted-foreground py-12">
-            No articles published yet. Check back soon.
+            {q ? `No articles matched “${searchParams.get("q")}”.` : "No articles published yet. Check back soon."}
           </p>
         ) : (
           <ul className="grid gap-8">

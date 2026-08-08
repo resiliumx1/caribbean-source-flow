@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
 import { RelatedLinks } from "@/components/RelatedLinks";
 import { getBreadcrumbs } from "@/lib/internal-links";
