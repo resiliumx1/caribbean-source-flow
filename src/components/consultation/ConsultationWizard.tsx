@@ -655,8 +655,7 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
                   Anything you'd like Priest Kailash to know beforehand
                 </Label>
                 <Textarea id="c-notes" rows={4} className="consult-input mt-1.5" value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Optional." />
+                  onChange={(e) => setNotes(e.target.value)} />
                 <p className="consult-fine mt-1.5">Optional.</p>
               </div>
 
