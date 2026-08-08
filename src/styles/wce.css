@@ -3122,3 +3122,13 @@ body.wce-route .site-search-overlay {
 body.wce-route .site-search-overlay :is(input, span, a, button, p, mark) { color: #F2EDE0; }
 body.wce-route .site-search-overlay input::placeholder { color: rgba(242, 237, 224, 0.65); }
 body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28); }
+
+/* Pathway select: the campaign labels are long, so keep the selected value
+   readable (and ellipsised rather than hard-clipped) on narrow screens. */
+.wce-root select#wce-pathway {
+  text-overflow: ellipsis;
+  padding-right: 2.25rem;
+}
+@media (max-width: 480px) {
+  .wce-root select#wce-pathway { font-size: 0.8125rem; }
+}
