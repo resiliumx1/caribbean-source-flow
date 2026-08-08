@@ -4,7 +4,7 @@ import { useWceAccess } from "@/hooks/use-wce-access";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Users, Mic2, Route as RouteIcon, ShoppingBag, Ticket, HelpCircle,
-  Image as ImageIcon, Settings as SettingsIcon, ShieldCheck, LogOut,
+  Image as ImageIcon, Settings as SettingsIcon, ShieldCheck, LogOut, CalendarDays,
   Menu, X, Share2,
 } from "lucide-react";
 import { createPortal } from "react-dom";
@@ -14,6 +14,7 @@ import WcePathways from "@/components/admin/wce/WcePathways";
 import WceReferralCodes from "@/components/admin/wce/WceReferralCodes";
 import WceFaqs from "@/components/admin/wce/WceFaqs";
 import WceMedia from "@/components/admin/wce/WceMedia";
+import WceItinerary from "@/components/admin/wce/WceItinerary";
 import WceSettings from "@/components/admin/wce/WceSettings";
 import WceOrders from "@/components/admin/wce/WceOrders";
 import WceOrganisers from "@/components/admin/wce/WceOrganisers";
@@ -38,6 +39,7 @@ const GROUPS = [
       { key: "pathways", label: "Pathways", Icon: RouteIcon, Component: WcePathways },
       { key: "speakers", label: "Speakers", Icon: Mic2, Component: WceSpeakers },
       { key: "media", label: "Media", Icon: ImageIcon, Component: WceMedia },
+      { key: "itinerary", label: "Itinerary", Icon: CalendarDays, Component: WceItinerary },
       { key: "faqs", label: "FAQs", Icon: HelpCircle, Component: WceFaqs },
       { key: "share", label: "Share Assets", Icon: Share2, Component: WceShareKit },
     ],

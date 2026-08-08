@@ -8,6 +8,8 @@ export type WceCtaLocation =
   | "speakers"
   | "speaker_flyer"
   | "retreat_section"
+  | "investment_section"
+  | "fortified_banner"
   | "final_band"
   | "sticky_bar";
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const LINKS = [
   { id: "pathways", label: "Pathways" },
   { id: "speakers", label: "Speakers" },
-  { id: "activities", label: "Activities" },
+  { id: "itinerary", label: "Itinerary" },
   { id: "lifecraft", label: "LifeCraft" },
   { id: "ceremony", label: "Ceremony" },
   { id: "apply", label: "Apply" },

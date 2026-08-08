@@ -2704,6 +2704,39 @@ export type Database = {
         }
         Relationships: []
       }
+      wce_itinerary: {
+        Row: {
+          created_at: string
+          date_label: string
+          detail: string | null
+          display_order: number
+          id: string
+          published: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_label: string
+          detail?: string | null
+          display_order?: number
+          id?: string
+          published?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_label?: string
+          detail?: string | null
+          display_order?: number
+          id?: string
+          published?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       wce_leads: {
         Row: {
           application_status: string
@@ -2718,6 +2751,7 @@ export type Database = {
           created_at: string
           decline_reason: string | null
           declined_at: string | null
+          dietary_notes: string | null
           email: string | null
           full_name: string | null
           id: string
@@ -2730,6 +2764,7 @@ export type Database = {
           notes: string | null
           order_id: string | null
           paid_at: string | null
+          participation_notes: string | null
           pathway_interest: string | null
           preferred_contact: string | null
           reason: string | null
@@ -2758,6 +2793,7 @@ export type Database = {
           created_at?: string
           decline_reason?: string | null
           declined_at?: string | null
+          dietary_notes?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
@@ -2770,6 +2806,7 @@ export type Database = {
           notes?: string | null
           order_id?: string | null
           paid_at?: string | null
+          participation_notes?: string | null
           pathway_interest?: string | null
           preferred_contact?: string | null
           reason?: string | null
@@ -2798,6 +2835,7 @@ export type Database = {
           created_at?: string
           decline_reason?: string | null
           declined_at?: string | null
+          dietary_notes?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
@@ -2810,6 +2848,7 @@ export type Database = {
           notes?: string | null
           order_id?: string | null
           paid_at?: string | null
+          participation_notes?: string | null
           pathway_interest?: string | null
           preferred_contact?: string | null
           reason?: string | null

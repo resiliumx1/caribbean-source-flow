@@ -49,6 +49,18 @@ export function useWceFaqs() {
   });
 }
 
+export function useWceItinerary() {
+  return useQuery({
+    queryKey: ["wce_itinerary"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("wce_itinerary").select("*").eq("published", true).order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 export function useWceSettings() {
   return useQuery({
     queryKey: ["wce_settings"],
