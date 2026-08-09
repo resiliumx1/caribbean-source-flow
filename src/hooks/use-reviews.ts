@@ -141,12 +141,6 @@ export function useSubmitReview() {
         imageUrls.push(urlData.publicUrl);
       }
 
-      // Check verified purchase
-      const { data: verified } = await supabase.rpc("check_verified_purchase", {
-        p_email: input.user_email,
-        p_product_id: input.product_id,
-      });
-
       const { error } = await supabase.from("reviews").insert({
         product_id: input.product_id,
         user_name: input.user_name,
@@ -156,7 +150,6 @@ export function useSubmitReview() {
         content: input.content,
         images: imageUrls,
         status: "pending",
-        is_verified_purchase: !!verified,
       });
 
       if (error) throw error;

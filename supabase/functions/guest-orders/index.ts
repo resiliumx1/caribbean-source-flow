@@ -6,6 +6,43 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// Customer-safe column allowlist. Internal staff fields (admin_notes,
+// whatsapp_notes, note, is_test, utm_*, user_id) are never returned.
+const ORDER_FIELDS = [
+  "id",
+  "order_number",
+  "email",
+  "phone",
+  "customer_name",
+  "delivery_type",
+  "address_line1",
+  "address_line2",
+  "city",
+  "state_province",
+  "postal_code",
+  "country",
+  "shipping_address",
+  "subtotal_usd",
+  "subtotal_xcd",
+  "shipping_usd",
+  "shipping_xcd",
+  "discount_usd",
+  "total_usd",
+  "total_xcd",
+  "currency_used",
+  "coupon_code",
+  "refunded_usd",
+  "payment_method",
+  "payment_status",
+  "status",
+  "fulfillment_status",
+  "customer_notes",
+  "tracking_number",
+  "tracking_carrier",
+  "created_at",
+  "updated_at",
+].join(",");
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -60,7 +97,7 @@ Deno.serve(async (req) => {
 
     let query = supabase
       .from("orders")
-      .select("*")
+      .select(ORDER_FIELDS)
       .eq("email", email.toLowerCase().trim())
       .order("created_at", { ascending: false })
       .limit(20);
