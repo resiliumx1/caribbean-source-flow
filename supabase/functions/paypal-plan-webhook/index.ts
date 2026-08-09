@@ -115,6 +115,18 @@ Deno.serve(async (req) => {
       });
     }
 
+    let verifiedAmount: number;
+    try {
+      verifiedAmount = await verifyCapture(captureId, planId, amount);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      await logWebhookFailure("CaptureVerificationFailed", message, event);
+      return new Response(JSON.stringify({ error: "Capture verification failed" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { error: insErr } = await supabase
       .from("payments")
       .insert({ plan_id: planId, amount: verifiedAmount, paypal_capture_id: captureId });
