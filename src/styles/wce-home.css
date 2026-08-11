@@ -10,7 +10,7 @@
   padding: clamp(3.5rem, 7vw, 6rem) 1.25rem clamp(3rem, 6vw, 5rem);
 }
 
-/* --- Static poster background (no second video: keeps LCP and data use low) --- */
+/* --- Background: poster paints first, lazily-loaded footage fades over it --- */
 .wce-home-bg {
   position: absolute;
   inset: -12% 0 -12% 0;
@@ -19,6 +19,18 @@
   background-position: center 35%;
   will-change: transform;
 }
+.wce-home-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  opacity: 0;
+  transition: opacity 900ms ease;
+  pointer-events: none;
+}
+.wce-home-video.is-playing { opacity: 1; }
 .wce-home-scrim {
   position: absolute;
   inset: 0;
