@@ -713,10 +713,10 @@ html:not(.dark) select option {
 }
 @keyframes wce-specular{0%{background-position:180% 0}
   45%,100%{background-position:-80% 0}}
-.wce-cta:hover{transform:translateY(-3px);
+.wce-cta:hover{transform:translateY(-3px) translateZ(0);
   box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 0 1px rgba(243,226,168,.9),
              0 0 34px rgba(228,199,102,.45)}
-.wce-cta:active{transform:translateY(-1px)}
+.wce-cta:active{transform:translateY(-1px) translateZ(0)}
 .wce-cta:focus-visible{outline:2px solid #F3E2A8;outline-offset:4px}
 .wce-cta__arrow{transition:transform .35s cubic-bezier(.22,1,.36,1)}
 .wce-cta:hover .wce-cta__arrow{transform:translateX(5px)}
