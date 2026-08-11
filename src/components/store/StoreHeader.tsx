@@ -121,7 +121,6 @@ export function StoreHeader() {
         width: '100%',
       }}
     >
-      <style>{WCE_NAV_STYLES}</style>
       {/* Slim WCE announcement strip — every page except /wce-2026 itself.
           Lives inside the fixed header so the header stays sticky and all
           existing offsets remain correct. */}
