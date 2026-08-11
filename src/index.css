@@ -671,10 +671,12 @@ html:not(.dark) select option {
 /* Narrow phones: drop the countdown (and one separator) so the label and the
    CTA always stay on one line. */
 @media (max-width:479px){
-  .abar{gap:10px;padding:0 40px 0 12px}
+  .abar{gap:8px;padding:0 34px 0 12px}
   .abar__count,.abar__sep--count{display:none}
-  .abar__label{letter-spacing:1.4px;font-size:10.5px}
-  .abar__cta{letter-spacing:1.2px;font-size:10.5px}
+  .abar__label{letter-spacing:1.1px;font-size:10px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .abar__cta{letter-spacing:1.1px;font-size:10px;white-space:nowrap;flex:none}
+  .abar__peak{width:13px;height:13px}
+  .abar__close{right:8px}
 }
 
 /* ---------- WCE module CTA ---------- */
