@@ -612,3 +612,131 @@ html:not(.dark) select option {
   font-weight: 600;
   color: inherit;
 }
+
+/* =====================================================================
+   Caribbean Wellness Saint Lucia 2026 — announcement bar, module CTA and
+   nav item. Gold here is struck metal catching light: every animation is a
+   highlight travelling across a surface, never a neon pulse. Class names are
+   deliberately narrow (.abar*, .wce-cta*, .wce-nav*) and are used ONLY by the
+   announcement bar, the homepage WCE module CTA and the single WCE nav item —
+   never on any other button.
+   ===================================================================== */
+
+/* ---------- Announcement bar ---------- */
+.abar{
+  position:relative; overflow:hidden;
+  background:linear-gradient(90deg,#0B2016 0%,#143024 50%,#0B2016 100%);
+  border-bottom:1px solid rgba(201,162,39,.42);
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  height:42px; padding:0 46px 0 18px;
+}
+.abar::before{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(100deg,transparent 30%,rgba(228,199,102,.16) 45%,
+             rgba(255,243,196,.30) 50%,rgba(228,199,102,.16) 55%,transparent 70%);
+  transform:translateX(-60%); animation:abar-sweep 9s ease-in-out infinite;
+}
+.abar::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(228,199,102,.85),transparent);
+  opacity:.7;
+}
+@keyframes abar-sweep{0%{transform:translateX(-60%)}55%,100%{transform:translateX(160%)}}
+.abar__peak{width:15px;height:15px;flex:none;opacity:.95;color:#E4C766}
+.abar__label{position:relative;font-size:11.5px;font-weight:700;letter-spacing:2.1px;
+  color:#F5EFE0;white-space:nowrap}
+.abar__sep{position:relative;width:3px;height:3px;border-radius:50%;
+  background:#C9A227;opacity:.65;flex:none}
+.abar__count{position:relative;font-size:11.5px;font-weight:700;letter-spacing:1.6px;
+  color:#E4C766;font-variant-numeric:tabular-nums}
+.abar__cta{position:relative;display:inline-flex;align-items:center;gap:6px;
+  font-size:11.5px;font-weight:700;letter-spacing:1.7px;color:#E4C766;
+  text-decoration:none;padding-bottom:2px}
+.abar__cta::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:currentColor;transform:scaleX(0);transform-origin:right;
+  transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.abar:hover .abar__cta::after{transform:scaleX(1);transform-origin:left}
+.abar__arrow{transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.abar:hover .abar__arrow{transform:translateX(4px)}
+.abar__close{position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:0;color:#F5EFE0;opacity:.45;cursor:pointer;
+  font-size:15px;line-height:1;padding:4px}
+.abar__close:hover{opacity:.9}
+
+/* The bar is one big link; keep the whole row reachable and focus visible. */
+.abar__link{position:absolute;inset:0;z-index:1}
+.abar__link:focus-visible{outline:2px solid #E4C766;outline-offset:-3px}
+.abar__close:focus-visible{outline:2px solid #E4C766;outline-offset:2px;opacity:.9}
+
+/* Narrow phones: drop the countdown (and one separator) so the label and the
+   CTA always stay on one line. */
+@media (max-width:479px){
+  .abar{gap:10px;padding:0 40px 0 12px}
+  .abar__count,.abar__sep--count{display:none}
+  .abar__label{letter-spacing:1.4px;font-size:10.5px}
+  .abar__cta{letter-spacing:1.2px;font-size:10.5px}
+}
+
+/* ---------- WCE module CTA ---------- */
+.wce-cta{
+  position:relative;z-index:2;display:inline-flex;align-items:center;gap:12px;
+  padding:17px 40px;border:0;cursor:pointer;text-decoration:none;
+  font-size:13.5px;font-weight:800;letter-spacing:2.4px;color:#12261B;
+  background:linear-gradient(135deg,#F3E2A8 0%,#C9A227 38%,#B98F1C 100%);
+  border-radius:2px;isolation:isolate;
+  box-shadow:0 2px 10px rgba(0,0,0,.35),0 0 0 1px rgba(228,199,102,.5);
+  transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease;
+}
+.wce-cta::before{
+  content:"";position:absolute;inset:-14px;z-index:-1;border-radius:8px;
+  background:radial-gradient(closest-side,rgba(228,199,102,.42),transparent 72%);
+  filter:blur(9px);animation:wce-breathe 7s ease-in-out infinite;
+}
+@keyframes wce-breathe{0%,100%{opacity:.5;transform:scale(.97)}
+  50%{opacity:.95;transform:scale(1.04)}}
+.wce-cta::after{
+  content:"";position:absolute;inset:0;border-radius:2px;
+  background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.62) 48%,
+             rgba(255,255,255,.9) 51%,rgba(255,255,255,.62) 54%,transparent 64%);
+  background-size:260% 100%;background-position:180% 0;
+  animation:wce-specular 6s ease-in-out infinite;pointer-events:none;
+}
+@keyframes wce-specular{0%{background-position:180% 0}
+  45%,100%{background-position:-80% 0}}
+.wce-cta:hover{transform:translateY(-3px);
+  box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 0 1px rgba(243,226,168,.9),
+             0 0 34px rgba(228,199,102,.45)}
+.wce-cta:active{transform:translateY(-1px)}
+.wce-cta:focus-visible{outline:2px solid #F3E2A8;outline-offset:4px}
+.wce-cta__arrow{transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.wce-cta:hover .wce-cta__arrow{transform:translateX(5px)}
+.wce-cta__ring{position:absolute;inset:0;border:1px solid #E4C766;border-radius:2px;
+  opacity:0;pointer-events:none}
+.wce-cta:hover .wce-cta__ring{animation:wce-strike .85s cubic-bezier(.22,1,.36,1)}
+@keyframes wce-strike{0%{opacity:.9;transform:scale(1)}
+  100%{opacity:0;transform:scale(1.13)}}
+
+/* ---------- Nav item ---------- */
+.wce-nav{position:relative;display:inline-flex;align-items:center;gap:8px;
+  font-size:13.5px;font-weight:700;letter-spacing:.6px;color:#E4C766;padding:3px 0}
+.wce-nav__peak{width:13px;height:13px;flex:none;
+  animation:wce-peak 4s ease-in-out infinite}
+@keyframes wce-peak{0%,100%{opacity:.72;filter:drop-shadow(0 0 0 rgba(228,199,102,0))}
+  50%{opacity:1;filter:drop-shadow(0 0 4px rgba(228,199,102,.75))}}
+.wce-nav__label{position:relative}
+.wce-nav__label::after{content:"";position:absolute;left:0;right:0;bottom:-4px;
+  height:1.5px;background:linear-gradient(90deg,transparent,#C9A227,transparent);
+  transform:scaleX(.28);transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.wce-nav:hover .wce-nav__label::after{transform:scaleX(1)}
+.wce-nav__year{font-size:10px;font-weight:800;letter-spacing:1.4px;color:#12261B;
+  background:linear-gradient(135deg,#F3E2A8,#C9A227);
+  padding:2px 5px;border-radius:2px;line-height:1}
+
+/* Mobile drawer: same item, scaled to sit with the other drawer links. */
+.wce-nav--drawer{font-size:18px;letter-spacing:.8px;gap:10px}
+.wce-nav--drawer .wce-nav__peak{width:18px;height:18px}
+.wce-nav--drawer .wce-nav__year{font-size:12px;padding:3px 6px}
+
+@media (prefers-reduced-motion:reduce){
+  .abar::before,.wce-cta::before,.wce-cta::after,.wce-nav__peak{animation:none!important}
+}
