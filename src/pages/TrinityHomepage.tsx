@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { GateEntrance, isReturningVisitor } from "@/components/gate-entrance";
 import { SITE_URL } from "@/lib/site-config";
-import { DirectAnswer } from "@/components/DirectAnswer";
+
 import { WcePopup } from "@/components/wce/WcePopup";
 
 // Lazy load below-fold sections
@@ -124,10 +124,6 @@ const TrinityHomepage = () => {
       <Suspense fallback={<SectionFallback />}>
         <WceFeature />
       </Suspense>
-      <DirectAnswer
-        question="What is clinical wellness medicine?"
-        answer="Clinical wellness medicine is the traditional Caribbean practice of formulating, prescribing and overseeing wildcrafted herbal remedies in a structured clinical setting. At Mount Kailash in Soufrière, Saint Lucia, Rt. Hon. Priest Kailash K. Leonce blends generations of wellness medicine knowledge with intake consultations, batch-tracked tinctures and supervised retreats to support everyday wellness."
-      />
       <Suspense fallback={<SectionFallback />}>
         <SourceStory />
       </Suspense>
