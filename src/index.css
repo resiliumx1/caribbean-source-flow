@@ -700,7 +700,7 @@ html:not(.dark) select option {
   will-change:transform,opacity;
   backface-visibility:hidden;
   transform:scale3d(.97,.97,1) translateZ(0);
-  animation:wce-breathe 7s cubic-bezier(.45,0,.55,1) infinite;
+  animation:wce-breathe 7s cubic-bezier(.45,0,.55,1) infinite both;
 }
 @keyframes wce-breathe{0%,100%{opacity:.5;transform:scale3d(.97,.97,1) translateZ(0)}
   50%{opacity:.9;transform:scale3d(1.04,1.04,1) translateZ(0)}}
@@ -709,10 +709,12 @@ html:not(.dark) select option {
   background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.62) 48%,
              rgba(255,255,255,.9) 51%,rgba(255,255,255,.62) 54%,transparent 64%);
   background-size:260% 100%;background-position:180% 0;
-  animation:wce-specular 6s ease-in-out infinite;pointer-events:none;
+  animation:wce-specular 5.5s linear infinite both;pointer-events:none;
+  will-change:background-position;backface-visibility:hidden;
 }
-@keyframes wce-specular{0%{background-position:180% 0}
-  45%,100%{background-position:-80% 0}}
+/* One continuous pass per cycle — no hold frames, so the sweep never stutters. */
+@keyframes wce-specular{from{background-position:180% 0}
+  to{background-position:-120% 0}}
 .wce-cta:hover{transform:translateY(-3px) translateZ(0);
   box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 0 1px rgba(243,226,168,.9),
              0 0 34px rgba(228,199,102,.45)}
