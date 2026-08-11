@@ -6,6 +6,7 @@ import { useWebinarVideos, WebinarVideo } from "@/hooks/use-webinar-videos";
 import "@/styles/webinar.css";
 
 import WebinarHero from "@/components/webinar/WebinarHero";
+import { WceProgrammeLink } from "@/components/site/WceProgrammeLink";
 import WebinarFeatured from "@/components/webinar/WebinarFeatured";
 import WebinarCommunity from "@/components/webinar/WebinarCommunity";
 import WebinarShowcase from "@/components/webinar/WebinarShowcase";
@@ -79,6 +80,11 @@ export default function Webinars() {
         </Helmet>
       )}
       <WebinarHero />
+      <WceProgrammeLink
+        kicker="Live this October"
+        body="Online symposium access streams the full Caribbean Wellness Experience, 11–17 October 2026, direct from Mount Kailash Rejuvenation Centre in Saint Lucia."
+        anchor="Caribbean Wellness Experience 2026"
+      />
       <WebinarFeatured />
       <WebinarCommunity onVideoClick={setSelectedVideo} />
       <WebinarShowcase

@@ -3135,6 +3135,7 @@ export type Database = {
       }
       wce_settings: {
         Row: {
+          announcement_enabled: boolean
           created_at: string
           event_dates: string | null
           hero_headline: string | null
@@ -3159,6 +3160,7 @@ export type Database = {
           venue: string | null
         }
         Insert: {
+          announcement_enabled?: boolean
           created_at?: string
           event_dates?: string | null
           hero_headline?: string | null
@@ -3183,6 +3185,7 @@ export type Database = {
           venue?: string | null
         }
         Update: {
+          announcement_enabled?: boolean
           created_at?: string
           event_dates?: string | null
           hero_headline?: string | null

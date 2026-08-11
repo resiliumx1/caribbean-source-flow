@@ -10,6 +10,7 @@ import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { SiteSearch } from "./SiteSearch";
+import { AnnouncementBar } from "@/components/site/AnnouncementBar";
 
 const SCHOOL_URL = "https://herbalphysicianschoolmountkailash.netlify.app";
 
@@ -41,6 +42,7 @@ function WceNavLabel() {
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },
+  { label: "WCE 2026", to: "/wce-2026" },
   { label: "Shop", to: "/shop" },
   { label: "Wholesale", to: "/wholesale" },
   { label: "Retreats", to: "/retreats" },
@@ -48,7 +50,6 @@ const NAV_LINKS = [
   { label: "The Answer", to: "/the-answer" },
   { label: "Consultations", to: "/consultations" },
   { label: "Webinars", to: "/webinars" },
-  { label: "WCE 2026", to: "/wce-2026" },
 ];
 
 export function StoreHeader() {
@@ -133,6 +134,10 @@ export function StoreHeader() {
       }}
     >
       <style>{WCE_NAV_STYLES}</style>
+      {/* Slim WCE announcement strip — every page except /wce-2026 itself.
+          Lives inside the fixed header so the header stays sticky and all
+          existing offsets remain correct. */}
+      {!isWceRoute && <AnnouncementBar />}
       {isLocalVisitor && (
         <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
           <span className="inline-flex items-center gap-2">

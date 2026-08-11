@@ -157,6 +157,15 @@ export default function WCE2026() {
       }
     : null;
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "WCE 2026", item: PAGE_URL },
+    ],
+  };
+
   return (
     <WceThemeProvider>
       <Helmet>
@@ -184,6 +193,7 @@ export default function WCE2026() {
         <meta name="twitter:image:alt" content={speaker ? shareTitle : "Caribbean Wellness Saint Lucia 2026"} />
 
         <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         {faqSchema && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
       </Helmet>
       <WceSubNav />

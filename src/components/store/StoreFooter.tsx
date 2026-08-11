@@ -43,6 +43,15 @@ export function StoreFooter() {
             </p>
           </div>
 
+          {/* Current programme — crawlable link to the WCE 2026 event page */}
+          <div>
+            <h4 className="font-serif font-semibold mb-4">Current Programme</h4>
+            <a href="/wce-2026" className="text-sm font-medium text-gold hover:underline">
+              Caribbean Wellness Experience 2026
+            </a>
+            <p className="text-xs text-primary-foreground/70 mt-1">October 11–17, 2026 · Saint Lucia</p>
+          </div>
+
           {/* Shop */}
           <div>
             <h4 className="font-serif font-semibold mb-4">Shop</h4>

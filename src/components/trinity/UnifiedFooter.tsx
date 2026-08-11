@@ -14,7 +14,21 @@ export function UnifiedFooter() {
     <footer style={{ background: 'var(--site-footer-bg)', color: 'var(--site-footer-text)' }}>
       <FooterVine />
       <div className="container mx-auto max-w-6xl px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+          {/* Current programme — crawlable link to the WCE 2026 event page */}
+          <div className="lg:order-last">
+            <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: 'var(--site-footer-text)', marginBottom: '16px' }}>Current Programme</h2>
+            <a
+              href="/wce-2026"
+              className="inline-block py-2 hover:text-[#c9a84c] transition-colors"
+              style={{ color: '#E4C766', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: '14px' }}
+            >
+              Caribbean Wellness Experience 2026
+            </a>
+            <div style={{ color: 'var(--site-footer-muted)', fontSize: '13px', fontFamily: "'DM Sans', sans-serif" }}>
+              October 11–17, 2026 · Saint Lucia
+            </div>
+          </div>
           {/* Brand Column */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">

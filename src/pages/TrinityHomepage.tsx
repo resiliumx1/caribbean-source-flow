@@ -11,6 +11,7 @@ import { WcePopup } from "@/components/wce/WcePopup";
 
 // Lazy load below-fold sections
 const SourceStory = lazy(() => import("@/components/homepage/SourceStory").then(m => ({ default: m.SourceStory })));
+const WceFeature = lazy(() => import("@/components/homepage/WceFeature").then(m => ({ default: m.WceFeature })));
 const RotatingApothecary = lazy(() => import("@/components/homepage/RotatingApothecary").then(m => ({ default: m.RotatingApothecary })));
 const WholesaleAuthority = lazy(() => import("@/components/homepage/WholesaleAuthority").then(m => ({ default: m.WholesaleAuthority })));
 const RidgeRetreat = lazy(() => import("@/components/homepage/RidgeRetreat").then(m => ({ default: m.RidgeRetreat })));
@@ -119,6 +120,10 @@ const TrinityHomepage = () => {
       </Helmet>
 
       <HeroSection />
+      {/* Featured programme — sits directly beneath the hero, before any other block. */}
+      <Suspense fallback={<SectionFallback />}>
+        <WceFeature />
+      </Suspense>
       <DirectAnswer
         question="What is clinical wellness medicine?"
         answer="Clinical wellness medicine is the traditional Caribbean practice of formulating, prescribing and overseeing wildcrafted herbal remedies in a structured clinical setting. At Mount Kailash in Soufrière, Saint Lucia, Rt. Hon. Priest Kailash K. Leonce blends generations of wellness medicine knowledge with intake consultations, batch-tracked tinctures and supervised retreats to support everyday wellness."
