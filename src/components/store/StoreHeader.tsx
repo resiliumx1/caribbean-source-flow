@@ -270,7 +270,7 @@ export function StoreHeader() {
                         }`}
                       >
                         {isActive && "→ "}
-                        {link.label === WCE_LABEL ? <WceNavLabel /> : link.label}
+                        {link.label === WCE_LABEL ? <WceNavLabel drawer /> : link.label}
                       </Link>
                     );
                   })}
