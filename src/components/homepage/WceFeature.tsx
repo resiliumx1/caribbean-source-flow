@@ -174,8 +174,10 @@ export function WceFeature() {
           featuring the Wellness Symposium, Fortification Retreat and LifeCraft experiences.
         </p>
 
-        <a className="wce-home-cta" href="/wce-2026">
-          Explore WCE 2026 <span aria-hidden="true">→</span>
+        <a className="wce-cta" href="/wce-2026">
+          <span className="wce-cta__ring" aria-hidden="true" />
+          EXPLORE WCE 2026
+          <span className="wce-cta__arrow" aria-hidden="true">→</span>
         </a>
 
         <WceCountdown className="wce-home-countdown" />

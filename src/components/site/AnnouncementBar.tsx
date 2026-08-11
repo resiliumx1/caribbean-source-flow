@@ -6,44 +6,20 @@
  * height is published as `--announcement-h` and applied as body padding, so no
  * page content ends up underneath it.
  *
- * All styles are self-contained (no WCE tokens) so nothing leaks site-wide.
+ * Styling lives in src/index.css under the narrowly-named `.abar*` classes so
+ * nothing leaks site-wide. The gold treatment is a highlight sweeping across
+ * the metal, not a pulsing glow.
  * Dismissal is remembered for 7 days in localStorage.
  * Visibility is controlled from the admin via wce_settings.announcement_enabled.
  */
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
 import { useWceSettings } from "@/components/wce/useWceData";
+import { PeakGlyph } from "./PeakGlyph";
 
 const STORAGE_KEY = "mkrc-wce-announcement-dismissed";
 const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
-
-const STYLES = `
-.mk-announce{position:relative;overflow:hidden;background:#0F2A1D;border-bottom:1px solid rgba(201,162,39,.42)}
-.mk-announce-link{display:flex;align-items:center;justify-content:center;gap:.55rem;flex-wrap:wrap;
-  min-height:44px;padding:6px 44px;text-align:center;text-decoration:none;position:relative;z-index:2}
-.mk-announce-text{font-family:'Jost','DM Sans',system-ui,sans-serif;font-weight:500;font-size:12.5px;
-  letter-spacing:.13em;text-transform:uppercase;color:#F5EFE0}
-.mk-announce-dot{color:#C9A227;font-size:12px;line-height:1}
-.mk-announce-cta{font-family:'Jost','DM Sans',system-ui,sans-serif;font-weight:600;font-size:12.5px;
-  letter-spacing:.13em;text-transform:uppercase;color:#E4C766}
-.mk-announce-link:hover .mk-announce-cta{text-decoration:underline}
-.mk-announce-link:focus-visible{outline:2px solid #E4C766;outline-offset:-3px}
-.mk-announce-close{position:absolute;top:50%;right:6px;transform:translateY(-50%);z-index:3;
-  display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:0;background:none;
-  color:rgba(245,239,224,.72);cursor:pointer;border-radius:9999px}
-.mk-announce-close:hover{color:#E4C766;background:rgba(245,239,224,.08)}
-.mk-announce::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(100deg,transparent 42%,rgba(255,236,175,.22) 50%,transparent 58%);
-  background-size:260% 100%;background-repeat:no-repeat;background-position:170% 0;
-  animation:mk-announce-shimmer 9s ease-in-out infinite}
-@keyframes mk-announce-shimmer{0%,80%{background-position:170% 0}100%{background-position:-70% 0}}
-@media (min-width:768px){
-  .mk-announce-link{min-height:38px;padding:4px 48px}
-}
-@media (prefers-reduced-motion: reduce){
-  .mk-announce::after{animation:none;background:none}
-}
-`;
+const BAR_H = 42;
+const EVENT_START = new Date("2026-10-11T00:00:00-04:00").getTime();
 
 function dismissedRecently() {
   try {
@@ -55,9 +31,21 @@ function dismissedRecently() {
   }
 }
 
+/** Whole days left until the opening day — recomputed, never static copy. */
+function daysToGo(now = Date.now()) {
+  return Math.max(0, Math.ceil((EVENT_START - now) / 86400000));
+}
+
 export function AnnouncementBar() {
   const { data: settings } = useWceSettings();
   const [dismissed, setDismissed] = useState(() => dismissedRecently());
+  const [days, setDays] = useState(() => daysToGo());
+
+  // Keeps ticking across long-lived sessions and across midnight.
+  useEffect(() => {
+    const id = window.setInterval(() => setDays(daysToGo()), 60000);
+    return () => window.clearInterval(id);
+  }, []);
 
   // Only once the setting has loaded, so the bar never flashes when switched off.
   const enabled = !!settings && (settings as { announcement_enabled?: boolean }).announcement_enabled !== false;
@@ -73,9 +61,8 @@ export function AnnouncementBar() {
       return;
     }
     const apply = () => {
-      const h = window.matchMedia("(min-width: 768px)").matches ? 38 : 44;
-      root.style.setProperty("--announcement-h", `${h}px`);
-      document.body.style.paddingTop = `${h}px`;
+      root.style.setProperty("--announcement-h", `${BAR_H}px`);
+      document.body.style.paddingTop = `${BAR_H}px`;
     };
     apply();
     window.addEventListener("resize", apply);
@@ -100,15 +87,23 @@ export function AnnouncementBar() {
   };
 
   return (
-    <div className="mk-announce">
-      <style>{STYLES}</style>
-      <a className="mk-announce-link" href="/wce-2026">
-        <span className="mk-announce-text">Caribbean Wellness Saint Lucia 2026 · October 11–17</span>
-        <span className="mk-announce-dot" aria-hidden="true">•</span>
-        <span className="mk-announce-cta">Explore the Experience →</span>
-      </a>
-      <button type="button" className="mk-announce-close" onClick={close} aria-label="Dismiss announcement">
-        <X className="w-4 h-4" />
+    <div className="abar">
+      {/* The whole bar is clickable through to the event page. */}
+      <a className="abar__link" href="/wce-2026" aria-label="Caribbean Wellness Saint Lucia 2026 — explore the experience" />
+      <PeakGlyph className="abar__peak" />
+      <span className="abar__label">CARIBBEAN WELLNESS SAINT LUCIA 2026</span>
+      <span className="abar__sep" aria-hidden="true" />
+      {days > 0 && (
+        <span className="abar__count">
+          {days} {days === 1 ? "DAY" : "DAYS"} TO GO
+        </span>
+      )}
+      {days > 0 && <span className="abar__sep abar__sep--count" aria-hidden="true" />}
+      <span className="abar__cta">
+        Explore the Experience <span className="abar__arrow" aria-hidden="true">→</span>
+      </span>
+      <button type="button" className="abar__close" onClick={close} aria-label="Dismiss announcement">
+        ✕
       </button>
     </div>
   );
