@@ -1,0 +1,165 @@
+/* Homepage "featured programme" module — Caribbean Wellness Experience 2026.
+   Every rule is prefixed .wce-home and the module's wrapper also carries
+   .wce-root, so the WCE token set resolves inside this section only and
+   cannot leak into the rest of the homepage. */
+
+.wce-home {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(3.5rem, 7vw, 6rem) 1.25rem clamp(3rem, 6vw, 5rem);
+}
+
+/* --- Static poster background (no second video: keeps LCP and data use low) --- */
+.wce-home-bg {
+  position: absolute;
+  inset: -12% 0 -12% 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center 35%;
+  will-change: transform;
+}
+.wce-home-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(9, 20, 14, 0.82) 0%, rgba(9, 20, 14, 0.5) 45%, rgba(9, 20, 14, 0.88) 100%),
+    radial-gradient(120% 80% at 50% 20%, rgba(201, 162, 39, 0.16), transparent 70%);
+}
+.wce-home-watermark {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.wce-home-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* --- Type --- */
+.wce-home-eyebrow {
+  font-family: var(--wce-flyer);
+  font-weight: 500;
+  font-size: clamp(0.8125rem, 1.4vw, 0.9375rem);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--wce-gold-light);
+}
+.wce-home-lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 1.4vw, 1rem);
+  width: 100%;
+}
+.wce-home-title {
+  margin: 0;
+  font-family: var(--wce-banner);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 4.4vw, 3.1rem);
+  line-height: 1.05;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--wce-cream);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+}
+.wce-home-year {
+  width: clamp(180px, 34vw, 330px);
+}
+.wce-home-dates {
+  font-family: var(--wce-flyer);
+  font-weight: 600;
+  font-size: clamp(1rem, 1.9vw, 1.25rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--wce-gold-light);
+}
+.wce-home-lead {
+  max-width: 46rem;
+  margin: 0;
+  font-family: var(--wce-body);
+  font-weight: 300;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.7;
+  color: rgba(var(--wce-cream-rgb), 0.92);
+}
+
+/* --- CTA --- */
+.wce-home-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 52px;
+  padding: 0.9rem 1.9rem;
+  border: 1px solid var(--wce-gold);
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(201, 162, 39, 0.95), rgba(154, 123, 28, 0.95));
+  color: #10230f;
+  font-family: var(--wce-flyer);
+  font-weight: 600;
+  font-size: clamp(0.9375rem, 1.4vw, 1rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, filter 0.3s ease;
+}
+.wce-home-cta:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 10px 30px rgba(201, 162, 39, 0.28);
+}
+.wce-home-cta:focus-visible {
+  outline: 2px solid var(--wce-gold-light);
+  outline-offset: 3px;
+}
+
+.wce-home-countdown .wce-count-value {
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+}
+
+/* --- Gold corner ornaments, drawn in on scroll entry --- */
+.wce-home-corner {
+  position: absolute;
+  z-index: 2;
+  width: clamp(52px, 9vw, 104px);
+  height: clamp(52px, 9vw, 104px);
+  pointer-events: none;
+}
+.wce-home-corner path {
+  stroke: var(--wce-gold);
+  stroke-width: 1.1;
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1200ms cubic-bezier(0.22, 1, 0.36, 1) var(--wce-home-delay, 0ms);
+}
+.wce-home-corner.is-drawn path { stroke-dashoffset: 0; }
+.wce-home-corner.tl { top: 18px; left: 18px; }
+.wce-home-corner.tr { top: 18px; right: 18px; transform: scaleX(-1); }
+.wce-home-corner.bl { bottom: 18px; left: 18px; transform: scaleY(-1); }
+.wce-home-corner.br { bottom: 18px; right: 18px; transform: scale(-1, -1); }
+
+.wce-home-emblem { margin-top: 0.25rem; }
+
+@media (max-width: 640px) {
+  .wce-home-corner.tl, .wce-home-corner.tr { top: 10px; }
+  .wce-home-corner.bl, .wce-home-corner.br { bottom: 10px; }
+  .wce-home-corner.tl, .wce-home-corner.bl { left: 10px; }
+  .wce-home-corner.tr, .wce-home-corner.br { right: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wce-home-corner path { transition: none; stroke-dashoffset: 0; }
+  .wce-home-bg { transform: none !important; }
+}

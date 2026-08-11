@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { SEOHead } from "@/components/SEOHead";
 import { useRetreatDates } from "@/hooks/use-retreats";
 import { DirectAnswer } from "@/components/DirectAnswer";
+import { WceProgrammeLink } from "@/components/site/WceProgrammeLink";
 import retreatOg from "@/assets/retreat-hero-yoga.webp";
 import FadeInStagger from "@/components/FadeInStagger";
 import { RetreatsHero } from "@/components/retreats/RetreatsHero";
@@ -119,6 +120,10 @@ const Retreats = () => {
         schema={retreatsSchemas}
       />
       <RetreatsHero />
+      <WceProgrammeLink
+        kicker="Current programme"
+        body="The Caribbean Wellness Fortification Retreat runs as part of the Caribbean Wellness Experience, 11–17 October 2026 at Mount Kailash Rejuvenation Centre, alongside the Wellness Symposium and LifeCraft experiences."
+      />
       <DirectAnswer
         question="What is a Mount Kailash healing retreat?"
         answer="A Mount Kailash healing retreat is a seven-day immersive wellness stay in the volcanic highlands of Soufrière, Saint Lucia. Guests follow a guided traditional wellness medicine protocol with daily herbal feasts, steams, plant walks and a one-to-one consultation with Rt. Hon. Priest Kailash K. Leonce, paced for first-timers and seasoned wellness travellers alike."

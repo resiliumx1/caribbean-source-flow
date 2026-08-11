@@ -14,6 +14,7 @@ type Settings = {
   event_dates: string | null;
   venue: string | null;
   popup_enabled: boolean;
+  announcement_enabled: boolean;
   popup_flyer_url: string | null;
   popup_cta_text: string | null;
   livestream_provider: string | null;
@@ -122,12 +123,24 @@ export default function WceSettings() {
       <hr className="border-border wa-rule" />
       <div className="flex items-center gap-2">
         <label className="flex items-center gap-2 text-sm font-medium" style={{ minHeight: 44 }}>
+          <input type="checkbox" checked={draft.announcement_enabled !== false}
+            onChange={(e) => set({ announcement_enabled: e.target.checked })} />
+          Announcement bar enabled
+        </label>
+        <InfoTip label="Announcement bar enabled">
+          The slim strip above the site header on every page except the WCE 2026 page itself. Switch it off here and it
+          disappears immediately — no new release needed.
+        </InfoTip>
+      </div>
+      <div className="flex items-center gap-2">
+        <label className="flex items-center gap-2 text-sm font-medium" style={{ minHeight: 44 }}>
           <input type="checkbox" checked={draft.popup_enabled}
             onChange={(e) => set({ popup_enabled: e.target.checked })} />
           Popup enabled
         </label>
         <InfoTip label="Popup enabled">
           When on, this shows a site-wide flyer popup to every visitor across the whole site, not just the WCE 2026 page.
+          Currently off: the announcement bar carries the event instead. Keep this for a timed push closer to the event.
         </InfoTip>
       </div>
       <div>
