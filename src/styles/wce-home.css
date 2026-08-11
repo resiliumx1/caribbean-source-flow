@@ -174,4 +174,5 @@
 @media (prefers-reduced-motion: reduce) {
   .wce-home-corner path { transition: none; stroke-dashoffset: 0; }
   .wce-home-bg { transform: none !important; }
+  .wce-home-video { display: none; }
 }
