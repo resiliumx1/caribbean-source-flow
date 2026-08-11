@@ -11,31 +11,19 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { SiteSearch } from "./SiteSearch";
 import { AnnouncementBar } from "@/components/site/AnnouncementBar";
+import { PeakGlyph } from "@/components/site/PeakGlyph";
 
 const SCHOOL_URL = "https://herbalphysicianschoolmountkailash.netlify.app";
 
 const WCE_LABEL = "WCE 2026";
 
-/** Scoped, self-contained styles for the single WCE nav item (no global tokens). */
-const WCE_NAV_STYLES = `
-.wce-nav-item{position:relative;display:inline-flex;align-items:center;gap:.5rem;color:#c9a227;transition:color .3s ease}
-.wce-nav-item:hover{color:#e6c351}
-.wce-nav-dot{width:6px;height:6px;border-radius:9999px;background:#c9a227;box-shadow:0 0 6px rgba(201,162,39,.55);flex:none;animation:wce-nav-breath 3s ease-in-out infinite;transform-origin:center}
-.wce-nav-item:hover .wce-nav-dot{animation:none;opacity:1;transform:scale(1)}
-.wce-nav-text{position:relative;background-image:linear-gradient(100deg,transparent 35%,rgba(255,236,175,.85) 50%,transparent 65%);background-size:280% 100%;background-repeat:no-repeat;background-position:180% 0;-webkit-background-clip:text;background-clip:text;animation:wce-nav-shimmer 8s ease-in-out infinite}
-@keyframes wce-nav-breath{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
-@keyframes wce-nav-shimmer{0%,88%{background-position:180% 0}100%{background-position:-80% 0}}
-@media (prefers-reduced-motion: reduce){
-.wce-nav-dot{animation:none;opacity:1;transform:none}
-.wce-nav-text{animation:none;background-image:none}
-}
-`;
-
-function WceNavLabel() {
+/** The single WCE nav item — a date stamp, not decoration. Styles: index.css. */
+function WceNavLabel({ drawer = false }: { drawer?: boolean }) {
   return (
-    <span className="wce-nav-item">
-      <span className="wce-nav-dot" aria-hidden="true" />
-      <span className="wce-nav-text">{WCE_LABEL}</span>
+    <span className={`wce-nav${drawer ? " wce-nav--drawer" : ""}`}>
+      <PeakGlyph className="wce-nav__peak" />
+      <span className="wce-nav__label">WCE</span>
+      <span className="wce-nav__year">2026</span>
     </span>
   );
 }
