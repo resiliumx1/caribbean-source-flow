@@ -658,13 +658,13 @@ html:not(.dark) select option {
 .abar:hover .abar__cta::after{transform:scaleX(1);transform-origin:left}
 .abar__arrow{transition:transform .4s cubic-bezier(.22,1,.36,1)}
 .abar:hover .abar__arrow{transform:translateX(4px)}
-.abar__close{position:absolute;right:14px;top:50%;transform:translateY(-50%);
+.abar__close{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:4;
   background:none;border:0;color:#F5EFE0;opacity:.45;cursor:pointer;
   font-size:15px;line-height:1;padding:4px}
 .abar__close:hover{opacity:.9}
 
 /* The bar is one big link; keep the whole row reachable and focus visible. */
-.abar__link{position:absolute;inset:0;z-index:1}
+.abar__link{position:absolute;inset:0;z-index:3}
 .abar__link:focus-visible{outline:2px solid #E4C766;outline-offset:-3px}
 .abar__close:focus-visible{outline:2px solid #E4C766;outline-offset:2px;opacity:.9}
 
