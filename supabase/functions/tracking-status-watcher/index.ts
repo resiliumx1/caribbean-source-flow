@@ -6,12 +6,16 @@ import {
   unsubLink,
 } from "../_shared/tracking-notify.ts";
 import { carrierTrackingUrl } from "../_shared/delivery-windows.ts";
+import { cronUnauthorized, isAuthorizedCronCaller } from "../_shared/cron-auth.ts";
 
 function changed(a: unknown, b: unknown): boolean {
   return (a ?? null) !== (b ?? null);
 }
 
-serve(async (_req) => {
+serve(async (req) => {
+  // Scheduler-only: this dispatches real customer email.
+  if (!isAuthorizedCronCaller(req)) return cronUnauthorized();
+
   const sb = admin();
   const { data: subs, error } = await sb
     .from("tracking_subscriptions")

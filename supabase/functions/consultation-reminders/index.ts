@@ -4,6 +4,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { sendConsultationEmail } from "../_shared/consultation-email.ts";
+import { cronUnauthorized, isAuthorizedCronCaller } from "../_shared/cron-auth.ts";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -16,6 +17,9 @@ const SELECT =
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  // Scheduler-only: this dispatches real customer email.
+  if (!isAuthorizedCronCaller(req)) return cronUnauthorized(corsHeaders as Record<string, string>);
 
   try {
     const supabase = createClient(
