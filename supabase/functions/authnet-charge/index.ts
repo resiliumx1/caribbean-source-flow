@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
 import { logCartEvent, syncCartToCrm } from "../_shared/cart-recovery.ts";
 import { sanitizeAttribution, type OrderAttribution } from "../_shared/attribution.ts";
+import { invokeFunction } from "../_shared/invoke-function.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -286,11 +287,14 @@ Deno.serve(async (req) => {
       console.error("abandoned cart close failed:", e);
     }
 
-    // Fire-and-forget notifications
+    // Fire-and-forget notifications (signed with service role key so the
+    // internal functions can authenticate the caller).
     try {
-      await supabase.functions.invoke("send-order-emails", {
-        body: { orderId: order.id, emailType: "order_placed" },
+      const { error: emailErr } = await invokeFunction("send-order-emails", {
+        orderId: order.id,
+        emailType: "order_placed",
       });
+      if (emailErr) console.error("send-order-emails error:", emailErr);
     } catch (e) {
       console.error("send-order-emails threw:", e);
     }
@@ -313,21 +317,28 @@ Deno.serve(async (req) => {
         retreat: "Retreat-Applicant",
       };
       for (const key of purchasedKeys) {
-        await supabase.functions.invoke("mailchimp-sync", {
-          body: { action: "purchase", email: orderInsert.email, tier_tag: TIER_TAG[key] ?? "WCE2026" },
+        const { error: mcErr } = await invokeFunction("mailchimp-sync", {
+          action: "purchase",
+          email: orderInsert.email,
+          tier_tag: TIER_TAG[key] ?? "WCE2026",
         });
+        if (mcErr) console.error("mailchimp-sync error:", mcErr);
       }
     } catch (e) {
       console.error("mailchimp-sync (purchase) threw:", e);
     }
 
     try {
-      await supabase.functions.invoke("send-sms", {
-        body: { orderId: order.id, smsType: "order_placed" },
+      const { error: smsErr1 } = await invokeFunction("send-sms", {
+        orderId: order.id,
+        smsType: "order_placed",
       });
-      await supabase.functions.invoke("send-sms", {
-        body: { orderId: order.id, smsType: "admin_new_order" },
+      if (smsErr1) console.error("send-sms order_placed error:", smsErr1);
+      const { error: smsErr2 } = await invokeFunction("send-sms", {
+        orderId: order.id,
+        smsType: "admin_new_order",
       });
+      if (smsErr2) console.error("send-sms admin_new_order error:", smsErr2);
     } catch (e) {
       console.error("send-sms threw:", e);
     }

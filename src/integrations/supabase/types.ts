@@ -375,6 +375,13 @@ export type Database = {
             referencedRelation: "consultation_practitioners"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "consultation_availability_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_practitioners_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       consultation_availability_overrides: {
@@ -417,6 +424,13 @@ export type Database = {
             columns: ["practitioner_id"]
             isOneToOne: false
             referencedRelation: "consultation_practitioners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_availability_overrides_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_practitioners_public"
             referencedColumns: ["id"]
           },
         ]
@@ -585,6 +599,13 @@ export type Database = {
             columns: ["practitioner_id"]
             isOneToOne: false
             referencedRelation: "consultation_practitioners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_bookings_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_practitioners_public"
             referencedColumns: ["id"]
           },
           {
@@ -894,6 +915,13 @@ export type Database = {
             columns: ["practitioner_id"]
             isOneToOne: false
             referencedRelation: "consultation_practitioners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_services_practitioner_id_fkey"
+            columns: ["practitioner_id"]
+            isOneToOne: false
+            referencedRelation: "consultation_practitioners_public"
             referencedColumns: ["id"]
           },
           {
@@ -3351,6 +3379,39 @@ export type Database = {
       }
     }
     Views: {
+      consultation_practitioners_public: {
+        Row: {
+          bio: string | null
+          display_order: number | null
+          id: string | null
+          is_active: boolean | null
+          name: string | null
+          photo_url: string | null
+          timezone: string | null
+          title: string | null
+        }
+        Insert: {
+          bio?: string | null
+          display_order?: number | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          photo_url?: string | null
+          timezone?: string | null
+          title?: string | null
+        }
+        Update: {
+          bio?: string | null
+          display_order?: number | null
+          id?: string | null
+          is_active?: boolean | null
+          name?: string | null
+          photo_url?: string | null
+          timezone?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
       reviews_public: {
         Row: {
           content: string | null
