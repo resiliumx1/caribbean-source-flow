@@ -60,6 +60,14 @@ export default function Checkout() {
     postal_code: "",
     country: "LC",
     customer_notes: "",
+    billing_same_as_shipping: "true",
+    billing_name: "",
+    billing_address_line1: "",
+    billing_address_line2: "",
+    billing_city: "",
+    billing_state_province: "",
+    billing_postal_code: "",
+    billing_country: "LC",
   });
 
   const [couponCode, setCouponCode] = useState("");
@@ -126,6 +134,10 @@ export default function Checkout() {
 
   // Pickup doesn't need a shipping address.
   const isShipping = hasPhysical && form.delivery_type !== "pickup";
+  // A separate billing address is only collected when the shopper says the card's
+  // billing address differs from where the order is going.
+  const billingSame = form.billing_same_as_shipping === "true";
+  const needsBilling = !billingSame;
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
   const isFormValid = useMemo(() => {
     if (!form.customer_name.trim()) return false;
@@ -135,9 +147,14 @@ export default function Checkout() {
       if (!form.address_line1.trim()) return false;
       if (!form.city.trim()) return false;
     }
+    if (needsBilling) {
+      if (!form.billing_address_line1.trim()) return false;
+      if (!form.billing_city.trim()) return false;
+      if (!form.billing_country) return false;
+    }
     if (!form.country) return false;
     return true;
-  }, [form, isShipping, isEmailValid]);
+  }, [form, isShipping, isEmailValid, needsBilling]);
 
   const canPay = isFormValid && agreedToTerms && cartItems.length > 0 && !isProcessing;
 
