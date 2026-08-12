@@ -72,18 +72,20 @@ export default function AdminConsultations() {
 
   const load = async () => {
     setLoading(true);
-    const [b, s, p, w, o, c] = await Promise.all([
+    const [b, cat, w, o, c] = await Promise.all([
       supabase.from("consultation_bookings").select("*").order("starts_at", { ascending: true }),
-      supabase.from("consultation_services").select("*").order("display_order"),
-      supabase.from("consultation_practitioners").select("*").order("display_order"),
+      supabase.functions.invoke("consultation-admin", { body: { action: "admin_catalog" } }),
       supabase.from("consultation_availability").select("*").order("day_of_week"),
       supabase.from("consultation_availability_overrides").select("*").order("date"),
       supabase.from("consultation_calendly_events").select("*").order("starts_at", { ascending: false }),
     ]);
-    for (const r of [b, s, p, w, o, c]) if (r.error) toast.error(r.error.message);
+    for (const r of [b, w, o, c]) if (r.error) toast.error(r.error.message);
+    if (cat.error || (cat.data as any)?.error) {
+      toast.error((cat.data as any)?.error || cat.error?.message || "Could not load the catalogue");
+    }
     setBookings((b.data as Booking[]) ?? []);
-    setServices((s.data as Service[]) ?? []);
-    setPractitioners((p.data as Practitioner[]) ?? []);
+    setServices((((cat.data as any)?.services ?? []) as Service[]));
+    setPractitioners((((cat.data as any)?.practitioners ?? []) as Practitioner[]));
     setWindows((w.data as Window[]) ?? []);
     setOverrides((o.data as Override[]) ?? []);
     setCalendlyEvents((c.data as CalendlyEvent[]) ?? []);

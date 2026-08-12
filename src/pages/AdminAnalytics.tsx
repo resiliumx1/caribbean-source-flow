@@ -147,7 +147,7 @@ export default function AdminAnalytics() {
   const { data: allReviewsCount } = useQuery({
     queryKey: ["analytics-reviews-total"],
     queryFn: async () => {
-      const { count } = await supabase.from("reviews").select("*", { count: "exact", head: true });
+      const { count } = await supabase.from("reviews").select("id", { count: "exact", head: true });
       return count ?? 0;
     },
   });

@@ -14,7 +14,7 @@ import { isValidZone } from "../_shared/consultation.ts";
 const BodySchema = z.object({
   action: z.enum([
     "create", "reschedule", "cancel", "set_status", "resend_email", "update_notes",
-    "zoom_status",
+    "zoom_status", "admin_catalog",
   ]),
   booking_id: z.string().uuid().optional(),
   service_id: z.string().uuid().optional(),
@@ -62,6 +62,19 @@ Deno.serve(async (req) => {
     }
     const b = parsed.data;
     const supabase = serviceClient();
+
+    // ---- full services/practitioners rows for the admin screens -----------
+    // Client roles no longer have column-level access to admin_note or
+    // zoom_user_email, so staff read those through this service-role path.
+    if (b.action === "admin_catalog") {
+      const [svc, prac] = await Promise.all([
+        supabase.from("consultation_services").select("*").order("display_order"),
+        supabase.from("consultation_practitioners").select("*").order("display_order"),
+      ]);
+      if (svc.error) throw svc.error;
+      if (prac.error) throw prac.error;
+      return json({ success: true, services: svc.data ?? [], practitioners: prac.data ?? [] });
+    }
 
     // ---- Zoom health, for the admin status card ----------------------------
     if (b.action === "zoom_status") {
