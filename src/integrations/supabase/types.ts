@@ -1400,6 +1400,14 @@ export type Database = {
           address_line1: string
           address_line2: string | null
           admin_notes: string | null
+          billing_address_line1: string | null
+          billing_address_line2: string | null
+          billing_city: string | null
+          billing_country: string | null
+          billing_name: string | null
+          billing_postal_code: string | null
+          billing_same_as_shipping: boolean
+          billing_state_province: string | null
           city: string
           country: string
           coupon_code: string | null
@@ -1449,6 +1457,14 @@ export type Database = {
           address_line1: string
           address_line2?: string | null
           admin_notes?: string | null
+          billing_address_line1?: string | null
+          billing_address_line2?: string | null
+          billing_city?: string | null
+          billing_country?: string | null
+          billing_name?: string | null
+          billing_postal_code?: string | null
+          billing_same_as_shipping?: boolean
+          billing_state_province?: string | null
           city: string
           country?: string
           coupon_code?: string | null
@@ -1498,6 +1514,14 @@ export type Database = {
           address_line1?: string
           address_line2?: string | null
           admin_notes?: string | null
+          billing_address_line1?: string | null
+          billing_address_line2?: string | null
+          billing_city?: string | null
+          billing_country?: string | null
+          billing_name?: string | null
+          billing_postal_code?: string | null
+          billing_same_as_shipping?: boolean
+          billing_state_province?: string | null
           city?: string
           country?: string
           coupon_code?: string | null
