@@ -6,12 +6,42 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+/** Abuse guard: guest checkout is intentional, but a single client must not be
+ *  able to flood WooCommerce with orders. Keyed by caller IP. */
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const MAX_ORDERS_PER_WINDOW = 8;
+const orderRateStore = new Map<string, { count: number; windowStart: number }>();
+
+function callerKey(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for") ?? "";
+  return (fwd.split(",")[0] || req.headers.get("cf-connecting-ip") || "unknown").trim();
+}
+
+function overRateLimit(key: string): boolean {
+  const now = Date.now();
+  const entry = orderRateStore.get(key);
+  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
+    orderRateStore.set(key, { count: 1, windowStart: now });
+    return false;
+  }
+  if (entry.count >= MAX_ORDERS_PER_WINDOW) return true;
+  entry.count++;
+  return false;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    if (overRateLimit(callerKey(req))) {
+      return new Response(
+        JSON.stringify({ error: "Too many checkout attempts. Please wait a few minutes and try again." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "600" } }
+      );
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
