@@ -10,7 +10,28 @@ const corsHeaders = {
 
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 40;
+// Session ids come from the browser, so a per-session cap alone can be bypassed
+// by rotating ids. Cap by caller IP as well.
+const MAX_REQUESTS_PER_IP_WINDOW = 120;
 const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
+
+function callerIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for") ?? "";
+  return (fwd.split(",")[0] || req.headers.get("cf-connecting-ip") || "unknown").trim();
+}
+
+function checkIpRateLimit(req: Request): boolean {
+  const key = `ip:${callerIp(req)}`;
+  const now = Date.now();
+  const entry = rateLimitStore.get(key);
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    rateLimitStore.set(key, { count: 1, windowStart: now });
+    return true;
+  }
+  if (entry.count >= MAX_REQUESTS_PER_IP_WINDOW) return false;
+  entry.count++;
+  return true;
+}
 
 function checkRateLimit(sessionId: string): { allowed: boolean; remaining: number; resetIn: number } {
   const now = Date.now();
@@ -289,7 +310,7 @@ serve(async (req) => {
     }
 
     const rateLimit = checkRateLimit(sessionId);
-    if (!rateLimit.allowed) {
+    if (!rateLimit.allowed || !checkIpRateLimit(req)) {
       return new Response(
         JSON.stringify({ error: `I'm taking a short rest — please reach out on WhatsApp: ${WHATSAPP_LINK}` }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
