@@ -29,6 +29,15 @@ interface CheckoutPayload {
     postal_code?: string;
     country: string;
     customer_notes?: string;
+    /** "false" (or false) when the card's billing address differs from shipping. */
+    billing_same_as_shipping?: string | boolean;
+    billing_name?: string;
+    billing_address_line1?: string;
+    billing_address_line2?: string;
+    billing_city?: string;
+    billing_state_province?: string;
+    billing_postal_code?: string;
+    billing_country?: string;
   };
   opaqueData: OpaqueData;
   currency_used: "USD" | "XCD";
@@ -174,7 +183,30 @@ Deno.serve(async (req) => {
     if (total_usd <= 0) throw new Error("Order total must be greater than zero.");
 
     // Charge card via Authorize.net
-    const { firstName, lastName } = splitName(payload.form.customer_name);
+    const billingSame =
+      payload.form.billing_same_as_shipping === false ||
+      payload.form.billing_same_as_shipping === "false"
+        ? false
+        : true;
+    // Card verification (AVS) must use the billing address the bank has on file.
+    const bill = billingSame
+      ? {
+          name: payload.form.customer_name,
+          address: payload.form.address_line1,
+          city: payload.form.city,
+          state: payload.form.state_province,
+          zip: payload.form.postal_code,
+          country: payload.form.country,
+        }
+      : {
+          name: payload.form.billing_name || payload.form.customer_name,
+          address: payload.form.billing_address_line1,
+          city: payload.form.billing_city,
+          state: payload.form.billing_state_province,
+          zip: payload.form.billing_postal_code,
+          country: payload.form.billing_country,
+        };
+    const { firstName, lastName } = splitName(bill.name || payload.form.customer_name);
     const charge = await chargeCard({
       amount: total_usd,
       opaqueData: payload.opaqueData,
@@ -182,11 +214,11 @@ Deno.serve(async (req) => {
       billTo: {
         firstName,
         lastName,
-        address: (payload.form.address_line1 || "").slice(0, 60) || undefined,
-        city: (payload.form.city || "").slice(0, 40) || undefined,
-        state: (payload.form.state_province || "").slice(0, 40) || undefined,
-        zip: (payload.form.postal_code || "").slice(0, 20) || undefined,
-        country: (payload.form.country || "LC").slice(0, 60),
+        address: (bill.address || "").slice(0, 60) || undefined,
+        city: (bill.city || "").slice(0, 40) || undefined,
+        state: (bill.state || "").slice(0, 40) || undefined,
+        zip: (bill.zip || "").slice(0, 20) || undefined,
+        country: (bill.country || "LC").slice(0, 60),
         phoneNumber: (payload.form.phone || "").replace(/[^\d+\-() ]/g, "").slice(0, 25) || undefined,
       },
       customerEmail: payload.form.email.toLowerCase().trim(),
@@ -216,6 +248,14 @@ Deno.serve(async (req) => {
       payment_transaction_id: charge.transId,
       status: "pending",
       customer_notes: payload.form.customer_notes || null,
+      billing_same_as_shipping: billingSame,
+      billing_name: billingSame ? null : (payload.form.billing_name || null),
+      billing_address_line1: billingSame ? null : (payload.form.billing_address_line1 || null),
+      billing_address_line2: billingSame ? null : (payload.form.billing_address_line2 || null),
+      billing_city: billingSame ? null : (payload.form.billing_city || null),
+      billing_state_province: billingSame ? null : (payload.form.billing_state_province || null),
+      billing_postal_code: billingSame ? null : (payload.form.billing_postal_code || null),
+      billing_country: billingSame ? null : (payload.form.billing_country || null),
       discount_usd,
       coupon_code: appliedCoupon?.code ?? null,
       ...attribution,

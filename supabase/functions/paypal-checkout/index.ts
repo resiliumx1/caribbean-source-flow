@@ -28,6 +28,14 @@ interface CheckoutPayload {
     postal_code?: string;
     country: string;
     customer_notes?: string;
+    billing_same_as_shipping?: string | boolean;
+    billing_name?: string;
+    billing_address_line1?: string;
+    billing_address_line2?: string;
+    billing_city?: string;
+    billing_state_province?: string;
+    billing_postal_code?: string;
+    billing_country?: string;
   };
   paypal_order_id: string;
   paypal_capture_id: string;
@@ -44,6 +52,11 @@ Deno.serve(async (req) => {
   try {
     const payload = (await req.json()) as CheckoutPayload;
     const attribution = sanitizeAttribution(payload.attribution);
+    const billingSame =
+      payload.form?.billing_same_as_shipping === false ||
+      payload.form?.billing_same_as_shipping === "false"
+        ? false
+        : true;
 
     // Basic validation
     if (!payload?.items?.length) throw new Error("Cart is empty.");
@@ -174,6 +187,14 @@ Deno.serve(async (req) => {
       payment_transaction_id: payload.paypal_capture_id,
       status: "pending",
       customer_notes: payload.form.customer_notes || null,
+      billing_same_as_shipping: billingSame,
+      billing_name: billingSame ? null : (payload.form.billing_name || null),
+      billing_address_line1: billingSame ? null : (payload.form.billing_address_line1 || null),
+      billing_address_line2: billingSame ? null : (payload.form.billing_address_line2 || null),
+      billing_city: billingSame ? null : (payload.form.billing_city || null),
+      billing_state_province: billingSame ? null : (payload.form.billing_state_province || null),
+      billing_postal_code: billingSame ? null : (payload.form.billing_postal_code || null),
+      billing_country: billingSame ? null : (payload.form.billing_country || null),
       ...attribution,
     };
 
