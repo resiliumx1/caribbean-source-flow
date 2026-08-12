@@ -5,6 +5,7 @@ import {
   renderTemplate,
   syncCartToCrm,
 } from "../_shared/cart-recovery.ts";
+import { cronUnauthorized, isAuthorizedCronCaller } from "../_shared/cron-auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,6 +24,9 @@ const hoursSince = (iso: string | null) =>
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  // Scheduler-only: this dispatches real customer email.
+  if (!isAuthorizedCronCaller(req)) return cronUnauthorized(corsHeaders);
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
