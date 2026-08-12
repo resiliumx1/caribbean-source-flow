@@ -24,12 +24,13 @@ interface Access {
 
 export default function WceLive() {
   const [email, setEmail] = useState("");
+  const [orderNumber, setOrderNumber] = useState("");
   const [checking, setChecking] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [access, setAccess] = useState<Access | null>(null);
 
-  const request = async (body: { email?: string; access_token?: string }) => {
+  const request = async (body: { email?: string; access_token?: string; order_number?: string }) => {
     const { data, error } = await supabase.functions.invoke("wce-livestream-access", { body });
     const payload = data as
       | (Access & { entitled?: boolean; access_token?: string; message?: string; error?: string })
@@ -69,7 +70,7 @@ export default function WceLive() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    await request({ email: email.trim() });
+    await request({ email: email.trim(), order_number: orderNumber.trim() });
     setSubmitting(false);
   };
 
@@ -110,7 +111,7 @@ export default function WceLive() {
             {!checking && !access && (
               <form onSubmit={onSubmit} className="mt-8">
                 <p className="mx-auto max-w-[46ch] text-center text-[0.9375rem] leading-relaxed" style={{ color: "rgba(245,239,224,0.9)" }}>
-                  Enter the email address you used to purchase online access and the stream will open here.
+                  Enter the email address and order number from your online access purchase and the stream will open here.
                 </p>
                 <label htmlFor="wce-live-email" className="wce-label mt-7 block" style={{ color: "var(--wce-gold-light)" }}>
                   Email address
@@ -124,6 +125,18 @@ export default function WceLive() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="wce-field mt-2 w-full"
                   placeholder="you@example.com"
+                />
+                <label htmlFor="wce-live-order" className="wce-label mt-5 block" style={{ color: "var(--wce-gold-light)" }}>
+                  Order number
+                </label>
+                <input
+                  id="wce-live-order"
+                  type="text"
+                  required
+                  value={orderNumber}
+                  onChange={(e) => setOrderNumber(e.target.value)}
+                  className="wce-field mt-2 w-full"
+                  placeholder="From your order confirmation email"
                 />
                 <button type="submit" className="wce-btn wce-btn-gold mt-6 w-full" disabled={submitting}>
                   {submitting ? "Checking…" : "Unlock the Livestream"}
