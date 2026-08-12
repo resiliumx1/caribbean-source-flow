@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyPaypalCapture } from "../_shared/paypal-verify.ts";
 import { sanitizeAttribution, type OrderAttribution } from "../_shared/attribution.ts";
+import { invokeFunction } from "../_shared/invoke-function.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -201,8 +202,9 @@ Deno.serve(async (req) => {
 
     // Fire-and-forget order confirmation emails. Never block the order on email failure.
     try {
-      const { error: emailErr } = await supabase.functions.invoke("send-order-emails", {
-        body: { orderId: order.id, emailType: "order_placed" },
+      const { error: emailErr } = await invokeFunction("send-order-emails", {
+        orderId: order.id,
+        emailType: "order_placed",
       });
       if (emailErr) console.error("send-order-emails invoke error:", emailErr);
     } catch (e) {
@@ -211,12 +213,16 @@ Deno.serve(async (req) => {
 
     // Fire-and-forget SMS notifications. Never block the order on SMS failure.
     try {
-      await supabase.functions.invoke("send-sms", {
-        body: { orderId: order.id, smsType: "order_placed" },
+      const { error: smsErr1 } = await invokeFunction("send-sms", {
+        orderId: order.id,
+        smsType: "order_placed",
       });
-      await supabase.functions.invoke("send-sms", {
-        body: { orderId: order.id, smsType: "admin_new_order" },
+      if (smsErr1) console.error("send-sms order_placed invoke error:", smsErr1);
+      const { error: smsErr2 } = await invokeFunction("send-sms", {
+        orderId: order.id,
+        smsType: "admin_new_order",
       });
+      if (smsErr2) console.error("send-sms admin_new_order invoke error:", smsErr2);
     } catch (e) {
       console.error("send-sms threw (order still saved):", e);
     }
