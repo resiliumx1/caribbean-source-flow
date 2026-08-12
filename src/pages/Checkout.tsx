@@ -490,6 +490,111 @@ export default function Checkout() {
 
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
                 <h2 className="font-serif font-semibold text-lg text-foreground">
+                  Billing Address
+                </h2>
+                <label className="flex items-start gap-3 text-sm text-foreground cursor-pointer min-h-[44px] py-2">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 accent-primary"
+                    checked={billingSame}
+                    onChange={(e) =>
+                      update("billing_same_as_shipping", e.target.checked ? "true" : "false")
+                    }
+                  />
+                  <span>
+                    {isShipping
+                      ? "My billing address is the same as my delivery address"
+                      : "My billing address is the same as my contact details"}
+                  </span>
+                </label>
+
+                {needsBilling && (
+                  <>
+                    <div>
+                      <Label htmlFor="billing_name">Name on Card / Account</Label>
+                      <Input
+                        id="billing_name"
+                        maxLength={120}
+                        value={form.billing_name}
+                        onChange={(e) => update("billing_name", e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="billing_address_line1">Billing Address Line 1 *</Label>
+                      <Input
+                        id="billing_address_line1"
+                        required
+                        maxLength={200}
+                        value={form.billing_address_line1}
+                        onChange={(e) => update("billing_address_line1", e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="billing_address_line2">Billing Address Line 2</Label>
+                      <Input
+                        id="billing_address_line2"
+                        maxLength={200}
+                        value={form.billing_address_line2}
+                        onChange={(e) => update("billing_address_line2", e.target.value)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="billing_city">City *</Label>
+                        <Input
+                          id="billing_city"
+                          required
+                          maxLength={120}
+                          value={form.billing_city}
+                          onChange={(e) => update("billing_city", e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="billing_state_province">State / Parish</Label>
+                        <Input
+                          id="billing_state_province"
+                          maxLength={120}
+                          value={form.billing_state_province}
+                          onChange={(e) => update("billing_state_province", e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="billing_postal_code">Postal Code</Label>
+                        <Input
+                          id="billing_postal_code"
+                          maxLength={20}
+                          value={form.billing_postal_code}
+                          onChange={(e) => update("billing_postal_code", e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="billing_country">Country *</Label>
+                        <select
+                          id="billing_country"
+                          value={form.billing_country}
+                          onChange={(e) => update("billing_country", e.target.value)}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          {COUNTRIES.map((c) => (
+                            <option key={c.code} value={c.code}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Use the address your card statement is sent to — banks check this when
+                      approving the payment.
+                    </p>
+                  </>
+                )}
+              </div>
+
+              <div className="bg-card rounded-xl border border-border p-6 space-y-4">
+                <h2 className="font-serif font-semibold text-lg text-foreground">
                   Order Notes
                 </h2>
                 <Textarea
