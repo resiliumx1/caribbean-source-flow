@@ -14,6 +14,7 @@ import { WceSubNav } from "@/components/wce/WceSubNav";
 import { WceStickyCta } from "@/components/wce/WceStickyCta";
 import { useWceAttribution } from "@/components/wce/useWceAttribution";
 import { dataLayerPush } from "@/lib/tracking";
+import { observeWceSections, trackWceEvent } from "@/components/wce/analytics";
 import { SITE_URL } from "@/lib/site-config";
 import { EVENT_END, EVENT_START, RETREAT_END, RETREAT_START, SYMPOSIUM_DATE } from "@/components/wce/campaign";
 import { speakerOgDescription, speakerOgTitle, speakerShareUrl } from "@/components/wce/share";
@@ -56,8 +57,16 @@ export default function WCE2026() {
       page_title: "Caribbean Wellness Saint Lucia 2026",
       utm_source: attribution.utm_source,
     });
+    trackWceEvent("page_view", speaker?.slug ? `speaker:${speaker.slug}` : "/wce-2026");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attribution.user_agent, attribution.utm_source]);
+
+  /* First-party section reach. Registered after the sections have mounted. */
+  useEffect(() => {
+    let stop = () => {};
+    const t = window.setTimeout(() => { stop = observeWceSections(); }, 800);
+    return () => { window.clearTimeout(t); stop(); };
+  }, []);
 
   const name = settings?.hero_headline?.trim() || "Caribbean Wellness Saint Lucia 2026";
   const description =
