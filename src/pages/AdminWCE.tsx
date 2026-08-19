@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Users, Mic2, Route as RouteIcon, ShoppingBag, Ticket, HelpCircle,
   Image as ImageIcon, Settings as SettingsIcon, ShieldCheck, LogOut, CalendarDays,
-  Menu, X, Share2, Handshake,
+  Menu, X, Share2, Handshake, LineChart,
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import WceLeads from "@/components/admin/wce/WceLeads";
@@ -20,6 +20,7 @@ import WceOrders from "@/components/admin/wce/WceOrders";
 import WceOrganisers from "@/components/admin/wce/WceOrganisers";
 import WceShareKit from "@/components/admin/wce/WceShareKit";
 import WcePartners from "@/components/admin/wce/WcePartners";
+import WceAnalytics from "@/components/admin/wce/WceAnalytics";
 import { ConfirmProvider } from "@/components/admin/wce/kit";
 import { FlowerOfLifeField } from "@/components/wce/decor";
 import "@/styles/wce.css";
@@ -32,6 +33,7 @@ const GROUPS = [
       { key: "leads", label: "Leads", Icon: Users, Component: WceLeads },
       { key: "orders", label: "Orders", Icon: ShoppingBag, Component: WceOrders },
       { key: "referrals", label: "Referral Codes", Icon: Ticket, Component: WceReferralCodes },
+      { key: "analytics", label: "Analytics", Icon: LineChart, Component: WceAnalytics },
     ],
   },
   {

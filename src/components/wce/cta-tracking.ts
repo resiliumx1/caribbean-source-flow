@@ -2,6 +2,7 @@
  *  payload shape stay identical wherever a CTA lives. Pathway purchase intent is
  *  tracked separately in PathwayCard (pathway_click / begin_checkout). */
 import { dataLayerPush } from "@/lib/tracking";
+import { trackWceEvent } from "./analytics";
 
 export type WceCtaLocation =
   | "hero"
@@ -28,4 +29,6 @@ export function trackWceCta(
     cta_label: label,
     ...extra,
   });
+  // First-party record for the organiser analytics dashboard.
+  trackWceEvent("cta_click", label, { cta_intent: intent, cta_location: location, ...extra });
 }

@@ -13,6 +13,7 @@ import { FeaturedHalo } from "./FeaturedHalo";
 import { WceSpeaker, themeLines, speakerInitials } from "./speaker-utils";
 import { speakerPortrait } from "./speaker-portraits";
 import { trackWceCta } from "./cta-tracking";
+import { trackWceEvent } from "./analytics";
 import { WCE_PAGE_PATH, speakerPath } from "./share";
 
 /** Small gold ornament arrow used on the View Flyer action. */
@@ -238,6 +239,7 @@ export function WceSpeakersSection() {
   /** Opening a speaker pushes their shareable URL; slug-less rows fall back to local state. */
   const openSpeaker = useCallback(
     (s: WceSpeaker) => {
+      trackWceEvent("speaker_open", s.slug ?? s.name, { speaker_name: s.name });
       if (s.slug) navigate(speakerPath(s.slug));
       else setOpenId(s.id);
     },

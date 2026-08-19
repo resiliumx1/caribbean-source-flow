@@ -67,7 +67,7 @@ export const PATHWAY_COPY: Record<WcePathwayKey, WcePathwayCopy> = {
       "Application reviewed by the Mount Kailash team",
     ],
     body:
-      "Continue beyond the Caribbean Wellness Symposium with a deeper, six-day fortification experience at Mount Kailash Rejuvenation Centre. The Caribbean Wellness Fortification Retreat is designed for participants seeking more time for guided wellness practice, reflection, food, herbs, movement, discipline, community and restorative rhythms within the Mount Kailash environment. The six-day immersion will also feature LifeCraft experiences running throughout the retreat period, with Chalice Station and An Evening with Jah9 serving as key components of the wider retreat week. Retreat participation begins with an application, which will be reviewed by the Mount Kailash team.",
+      "Continue beyond the Caribbean Wellness Symposium with a deeper, six-day fortification experience at Mount Kailash Rejuvenation Centre. The Caribbean Wellness Fortification Retreat is designed for participants seeking more time for guided wellness practice, reflection, food, herbs, movement, discipline, community and restorative rhythms within the Mount Kailash environment. The six-day immersion will also feature LifeCraft experiences running throughout the retreat period, with Chalice Station serving as a key component of the wider retreat week. Retreat participation begins with an application, which will be reviewed by the Mount Kailash team.",
     cta: "Begin Your Application",
   },
 };
@@ -88,17 +88,13 @@ export const HERO_CIRCUIT_LINE = "What started in Jamaica continues in St. Lucia
 export const LIFECRAFT_HEADING = "LifeCraft Experience";
 
 export const LIFECRAFT_BODY =
-  "A series of guided experiences woven through the Caribbean Wellness Fortification Retreat, designed to support reflection, creative expression, intentional living, and deeper engagement with the week's themes. LifeCraft activities run in sync with the retreat programme, including access to Chalice Station and An Evening with Jah9 serving as key components of the experience.";
+  "A series of guided experiences woven through the Caribbean Wellness Fortification Retreat, designed to support reflection, creative expression, intentional living, and deeper engagement with the week's themes. LifeCraft activities run in sync with the retreat programme, including access to Chalice Station as a key component of the experience.";
 
 /** Fallback components, used until the organiser backend fills these in. */
 export const LIFECRAFT_COMPONENTS = [
   {
     title: "Chalice Station",
     body: "A guided space for stillness, reflection and shared presence within the retreat rhythm.",
-  },
-  {
-    title: "An Evening with Jah9",
-    body: "An evening of music, movement and reflection with our Host and Facilitator.",
   },
 ];
 

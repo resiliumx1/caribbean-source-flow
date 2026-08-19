@@ -11,6 +11,7 @@ import { ChevronDown } from "lucide-react";
 import { Reveal, MaskedHeading } from "./motion";
 import { CheckMark, LeafIcon, GoldFlourish, DiamondRule, FlowerOfLifeField } from "./decor";
 import { LotusMark } from "./ornaments";
+import { trackWceEvent } from "./analytics";
 
 /* ---------------- Card 1 — Who this experience is for ---------------- */
 const WHO_FOR = [
@@ -88,7 +89,7 @@ const INCLUDED = [
   "Herbal preparations and teaching drawn from the mineral rich soil gardens",
   "Daily guided practice: breath, movement, rest and reflection",
   "LifeCraft experiences running throughout the retreat week",
-  "Chalice Station and An Evening with Jah9 as part of the wider week",
+  "Chalice Station as part of the wider week",
   "The guided 21-day continuation framework and tracker",
 ];
 
@@ -233,7 +234,10 @@ function RetreatDetailCard({ card, index }: { card: CardDef; index: number }) {
           className="wce-rcard-trigger"
           aria-expanded={open}
           aria-controls={panelId}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            if (!open) trackWceEvent("retreat_card_expand", card.title);
+            setOpen((v) => !v);
+          }}
         >
           <span className="wce-rcard-ornament" aria-hidden="true">{card.ornament}</span>
           <span className="wce-rcard-titles">

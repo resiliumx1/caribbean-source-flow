@@ -8,6 +8,7 @@ import { LoveEmblem } from "./LoveEmblem";
 import { usePartnerList } from "./PartnerMarquee";
 import { trackWceCta, WceCtaIntent } from "./cta-tracking";
 import { WceShareRow, WCE_PAGE_URL } from "./share";
+import { trackWceEvent } from "./analytics";
 
 const FOOTER_NAV = [
   { label: "Pathways", href: "#pathways" },
@@ -56,7 +57,10 @@ export function WceFaqSection() {
                 <h3>
                   <button
                     type="button"
-                    onClick={() => setOpen(isOpen ? null : f.id)}
+                    onClick={() => {
+                      if (!isOpen) trackWceEvent("faq_open", f.question);
+                      setOpen(isOpen ? null : f.id);
+                    }}
                     aria-expanded={isOpen}
                     className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left"
                     style={{ minHeight: 56, color: "var(--wce-ink-strong)" }}
