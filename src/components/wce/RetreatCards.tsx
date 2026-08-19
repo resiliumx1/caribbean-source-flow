@@ -88,7 +88,7 @@ const INCLUDED = [
   "Herbal preparations and teaching drawn from the mineral rich soil gardens",
   "Daily guided practice: breath, movement, rest and reflection",
   "LifeCraft experiences running throughout the retreat week",
-  "Chalice Station and An Evening with Jah9 as part of the wider week",
+  "Chalice Station as part of the wider week",
   "The guided 21-day continuation framework and tracker",
 ];
 

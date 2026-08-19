@@ -13,7 +13,7 @@ const FALLBACK = [
   { id: "d4", date_label: "Wednesday, October 14", title: "Herbal traditions, reflection and the Chalice experience", detail: null },
   { id: "d5", date_label: "Thursday, October 15", title: "Care, family, community and order", detail: null },
   { id: "d6", date_label: "Friday, October 16", title: "Purpose, responsibility and the continuation plan", detail: null },
-  { id: "d7", date_label: "Saturday, October 17", title: "Closing, re-entry and An Evening with Jah9", detail: null },
+  { id: "d7", date_label: "Saturday, October 17", title: "Closing and re-entry", detail: null },
 ];
 
 export function WceItinerarySection() {
