@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/use-cart";
 import { rememberPathway } from "@/lib/wce-attribution";
 import { dataLayerPush } from "@/lib/tracking";
+import { trackWceEvent } from "./analytics";
 import { DiamondRule, PeakMark, WaveMark, RangeMark } from "./decor";
 import { MaskedHeading, useInView, useIsTouch, useWceReducedMotion } from "./motion";
 import { selectPathway } from "./pathway-select";
@@ -147,6 +148,11 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
     e.preventDefault();
     e.stopPropagation();
     dataLayerPush("pathway_click", { pathway_key: pathwayKey, pathway_label: label });
+    trackWceEvent("cta_click", copy?.cta ?? label, {
+      cta_location: "pathway_card",
+      pathway_key: pathwayKey,
+      pathway_label: label,
+    });
 
     // The retreat is NEVER purchasable from a public surface — the only route
     // is the application form, reviewed by the team before any payment link.

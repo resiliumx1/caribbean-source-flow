@@ -233,7 +233,10 @@ function RetreatDetailCard({ card, index }: { card: CardDef; index: number }) {
           className="wce-rcard-trigger"
           aria-expanded={open}
           aria-controls={panelId}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            if (!open) trackWceEvent("retreat_card_expand", card.title);
+            setOpen((v) => !v);
+          }}
         >
           <span className="wce-rcard-ornament" aria-hidden="true">{card.ornament}</span>
           <span className="wce-rcard-titles">

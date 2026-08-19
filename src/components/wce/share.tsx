@@ -45,6 +45,7 @@ type Channel = "native" | "whatsapp" | "facebook" | "x" | "linkedin" | "copy";
 
 function trackShare(channel: Channel, slug: string) {
   dataLayerPush("wce_share", { share_channel: channel, speaker_slug: slug, event_id: "wce-2026" });
+  trackWceEvent("flyer_share", slug, { channel });
 }
 
 const ICONS: Record<Exclude<Channel, "native" | "copy">, JSX.Element> = {
