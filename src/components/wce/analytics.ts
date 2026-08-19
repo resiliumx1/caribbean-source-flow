@@ -151,7 +151,7 @@ export function trackWceEvent(
     event_type,
     event_target: event_target ?? null,
     path: window.location.pathname,
-    referrer: attr?.referrer ?? document.referrer || null,
+    referrer: attr?.referrer ?? (document.referrer || null),
     utm_source: attr?.utm_source ?? null,
     utm_medium: attr?.utm_medium ?? null,
     utm_campaign: attr?.utm_campaign ?? null,
