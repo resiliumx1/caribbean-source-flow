@@ -15,6 +15,7 @@ import {
 } from "./motion";
 import { WCE_PATHWAY_EVENT } from "./pathway-select";
 import { trackWceCta } from "./cta-tracking";
+import { trackWceEvent } from "./analytics";
 import {
   FlowerOfLifeField, FlowerOfLifeMark, BotanicalBackdrop, DiamondRule, GoldFlourish,
   LeafIcon, CheckMark, RitualIcon, ConnectionIcon, TransformationIcon, EdgeBleed,
@@ -486,6 +487,14 @@ export function WceApplicationForm() {
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [pathwayFlash, setPathwayFlash] = useState(false);
+  const formStarted = useRef(false);
+
+  /** First field focus counts as a form start, once per visitor session. */
+  const onFormFocus = () => {
+    if (formStarted.current) return;
+    formStarted.current = true;
+    trackWceEvent("form_start", "Retreat Application", null, { once: "form_start" });
+  };
 
   // A pathway card CTA (or the sticky bar) can preselect the pathway field.
   useEffect(() => {
@@ -588,6 +597,9 @@ export function WceApplicationForm() {
     dataLayerPush("lead_submit", {
       pathway_interest: values.pathway_interest || null,
       referral_code: attribution.referral_code,
+    });
+    trackWceEvent("form_submit", "Retreat Application", {
+      pathway_interest: values.pathway_interest || null,
     });
     // An application is a Lead — never a Purchase. Purchase only fires once a
     // reviewed applicant completes payment on their private checkout link.
@@ -707,7 +719,7 @@ export function WceApplicationForm() {
             </motion.div>
           ) : (
             <motion.div key="form" exit={{ opacity: 0, y: -14, transition: { duration: 0.3, ease: "easeIn" } }}>
-          <form className="space-y-6" onSubmit={onSubmit} noValidate>
+          <form className="space-y-6" onSubmit={onSubmit} onFocus={onFormFocus} noValidate>
             {/* Honeypot — hidden from humans, tempting to bots */}
             <div aria-hidden="true" className="absolute h-0 w-0 overflow-hidden opacity-0">
               <label htmlFor="wce-company">Company</label>
