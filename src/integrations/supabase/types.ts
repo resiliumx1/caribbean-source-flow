@@ -3046,6 +3046,57 @@ export type Database = {
         }
         Relationships: []
       }
+      wce_page_events: {
+        Row: {
+          country: string | null
+          created_at: string
+          device_type: string | null
+          event_target: string | null
+          event_type: string
+          id: string
+          meta: Json | null
+          path: string | null
+          referral_code: string | null
+          referrer: string | null
+          session_id: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          event_target?: string | null
+          event_type: string
+          id?: string
+          meta?: Json | null
+          path?: string | null
+          referral_code?: string | null
+          referrer?: string | null
+          session_id: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          event_target?: string | null
+          event_type?: string
+          id?: string
+          meta?: Json | null
+          path?: string | null
+          referral_code?: string | null
+          referrer?: string | null
+          session_id?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
       wce_partners: {
         Row: {
           created_at: string
