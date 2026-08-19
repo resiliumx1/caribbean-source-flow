@@ -644,7 +644,7 @@ export function WceApplicationForm() {
           <CornerVine className="pointer-events-none absolute -left-2 bottom-0 opacity-40" />
           <p className="relative wce-eyebrow" style={{ color: "var(--wce-gold-text)" }}>Caribbean Wellness Saint Lucia 2026</p>
           <h2 className="relative mt-6 text-[clamp(2.05rem,4.6vw,3.05rem)] leading-[1.1]" style={{ color: "var(--wce-ink-strong)", fontFamily: "var(--wce-display)" }}>
-            Retreat Application / Lead Form
+            Retreat Application
           </h2>
           <DiamondRule className="relative mt-7 max-w-[9rem] lg:mx-0" />
           <p className="relative mt-7 max-w-md text-sm leading-relaxed lg:mx-0" style={{ color: "rgba(var(--wce-ink-rgb), 0.88)" }}>
