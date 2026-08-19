@@ -5,6 +5,7 @@ import { Check, Link as LinkIcon, Share2 } from "lucide-react";
 import { dataLayerPush } from "@/lib/tracking";
 import { SITE_URL } from "@/lib/site-config";
 import type { WceSpeaker } from "./speaker-utils";
+import { trackWceEvent } from "./analytics";
 
 export const WCE_PAGE_PATH = "/wce-2026";
 export const WCE_PAGE_URL = `${SITE_URL}${WCE_PAGE_PATH}`;

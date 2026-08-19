@@ -11,6 +11,7 @@ import { ChevronDown } from "lucide-react";
 import { Reveal, MaskedHeading } from "./motion";
 import { CheckMark, LeafIcon, GoldFlourish, DiamondRule, FlowerOfLifeField } from "./decor";
 import { LotusMark } from "./ornaments";
+import { trackWceEvent } from "./analytics";
 
 /* ---------------- Card 1 — Who this experience is for ---------------- */
 const WHO_FOR = [

@@ -8,6 +8,7 @@ import { LoveEmblem } from "./LoveEmblem";
 import { usePartnerList } from "./PartnerMarquee";
 import { trackWceCta, WceCtaIntent } from "./cta-tracking";
 import { WceShareRow, WCE_PAGE_URL } from "./share";
+import { trackWceEvent } from "./analytics";
 
 const FOOTER_NAV = [
   { label: "Pathways", href: "#pathways" },
