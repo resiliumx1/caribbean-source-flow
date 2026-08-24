@@ -614,6 +614,8 @@ export default function WceAnalytics() {
             first: firstSeen,
             last: lastSeen,
             headline: [
+              { label: "Visitors on the page now", value: String(d.liveVisitors) },
+              { label: "Visitors today", value: String(d.todayVisitors) },
               { label: "Visitors", value: String(d.visitors) },
               { label: "Page views", value: String(d.pageViews.length) },
               { label: "CTA clicks", value: String(d.ctaClicks.length) },
@@ -624,6 +626,11 @@ export default function WceAnalytics() {
               { label: "Leads recorded", value: leadCount === null ? "—" : String(leadCount) },
             ],
             tables: [
+              { title: "Visitors on the page in the last 5 minutes", head: ["Location", "Device", "Came from", "Page", "Last seen"], rows: d.liveVisitorRows.map((v) => [v.country, v.device, v.source, v.path, v.minutesAgo === 0 ? "just now" : `${v.minutesAgo} min ago`]) },
+              { title: "Where visitors are (unique visitors)", head: ["Location", "Visitors", "Share"], rows: [...d.locationVisitors.map((s) => [s.name, s.value, pctText(s.value, Math.max(1, d.visitors))]), ...(d.unknownLocation ? [["Unknown", d.unknownLocation, pctText(d.unknownLocation, Math.max(1, d.visitors))] as (string | number)[]] : [])] },
+              { title: "Devices (unique visitors)", head: ["Device", "Visitors", "Share"], rows: d.deviceVisitors.map((s) => [s.name, s.value, pctText(s.value, Math.max(1, d.visitors))]) },
+              { title: "Visitor time zones", head: ["Time zone", "Visitors"], rows: d.timezones.slice(0, 15).map((s) => [s.name, s.value]) },
+              { title: "Visitor languages", head: ["Language", "Visitors"], rows: d.languages.slice(0, 12).map((s) => [s.name, s.value]) },
               { title: "Journey funnel", head: ["Stage", "Count"], rows: d.funnel.map((f) => [f.stage, f.value]) },
               { title: "Acquisition channels", head: ["Channel", "Page views"], rows: d.channels.map((c) => [c.name, c.value]) },
               { title: "Traffic sources", head: ["Source", "Page views"], rows: d.sources.map((c) => [c.name, c.value]) },
@@ -633,9 +640,9 @@ export default function WceAnalytics() {
               { title: "Pathway interest", head: ["Pathway", "Clicks"], rows: d.pathwayInterest.map((s) => [s.name, s.value]) },
               { title: "Speaker engagement", head: ["Speaker", "Flyer opens", "Shares"], rows: d.speakerEngagement.map((s) => [s.name, s.opens, s.shares]) },
               { title: "Referral codes", head: ["Code", "Visits", "Clicks", "Applications", "Conv. rate"], rows: d.referralCodes.map((s) => [s.code, s.visits, s.clicks, s.conversions, `${s.rate.toFixed(1)}%`]) },
-              { title: "Devices", head: ["Device", "Events"], rows: d.devices.map((s) => [s.name, s.value]) },
-              { title: "Countries", head: ["Country", "Events"], rows: d.countries.map((s) => [s.name, s.value]) },
               { title: "Search and share readiness (SEO)", head: ["Check", "Status"], rows: SEO_CHECKS.map((s) => [s.item, s.value]) },
+            ],
+
             ],
           })}
           disabled={!hasData}
