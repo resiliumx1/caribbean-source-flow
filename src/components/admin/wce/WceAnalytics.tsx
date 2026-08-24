@@ -480,6 +480,36 @@ export default function WceAnalytics() {
       }))
       .sort((a, b) => b.opens + b.shares - (a.opens + a.shares));
 
+    // ---- Who is on the page right now --------------------------------------
+    const now = Date.now();
+    const liveRows = rows.filter((r) => now - new Date(r.created_at).getTime() <= 5 * 60 * 1000);
+    const last30Rows = rows.filter((r) => now - new Date(r.created_at).getTime() <= 30 * 60 * 1000);
+    const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0);
+    const todayRows = rows.filter((r) => new Date(r.created_at) >= startOfToday);
+
+    // One line per active visitor: where they are, what they are on, how long ago.
+    const liveMap = new Map<string, Ev[]>();
+    liveRows.forEach((r) => {
+      const list = liveMap.get(r.session_id) ?? [];
+      list.push(r);
+      liveMap.set(r.session_id, list);
+    });
+    const liveVisitorRows = [...liveMap.entries()]
+      .map(([session, evs]) => {
+        const sorted = [...evs].sort((a, b) => a.created_at.localeCompare(b.created_at));
+        const latest = sorted[sorted.length - 1];
+        return {
+          session,
+          country: latest.country ? countryName(latest.country) : "Unknown",
+          device: DEVICE_LABELS[latest.device_type ?? ""] ?? latest.device_type ?? "—",
+          source: sourceLabel(latest),
+          path: latest.path ?? "/wce-2026",
+          events: evs.length,
+          minutesAgo: Math.max(0, Math.round((now - new Date(latest.created_at).getTime()) / 60000)),
+        };
+      })
+      .sort((a, b) => a.minutesAgo - b.minutesAgo);
+
     // Previous-period comparisons for the headline cards.
     const prev = prevRows.length || rows.length
       ? {
@@ -490,6 +520,15 @@ export default function WceAnalytics() {
         }
       : null;
 
+    const deviceVisitors = sessionsBy(rows, (r) => DEVICE_LABELS[r.device_type ?? ""] ?? r.device_type);
+    const locationVisitors = sessionsBy(rows, (r) => (r.country ? countryName(r.country) : null));
+    const unknownLocation = uniqueSessions(rows.filter((r) => !r.country));
+    const timezones = sessionsBy(rows, (r) => metaStr(r, "tz"));
+    const languages = sessionsBy(rows, (r) => {
+      const l = metaStr(r, "lang");
+      return l ? l.toLowerCase() : null;
+    });
+
     return {
       pageViews, visitors, ctaClicks, formStarts, formSubmits, overTime, funnel,
       sources: countBy(pageViews, sourceLabel),
@@ -497,6 +536,12 @@ export default function WceAnalytics() {
 
       devices: countBy(rows, (r) => r.device_type),
       countries: countBy(rows, (r) => r.country),
+      deviceVisitors, locationVisitors, unknownLocation, timezones, languages,
+      liveVisitors: liveMap.size,
+      liveVisitorRows,
+      last30: uniqueSessions(last30Rows),
+      todayVisitors: uniqueSessions(todayRows),
+      todayViews: todayRows.filter((r) => r.event_type === "page_view").length,
       leaderboard: countBy(ctaClicks, (r) => r.event_target),
       sectionReach, referralCodes, speakerEngagement,
       faqOpens: countBy(of("faq_open"), (r) => r.event_target),
@@ -509,6 +554,7 @@ export default function WceAnalytics() {
       completion: pct(formSubmits.length, Math.max(1, formStarts.length)),
       prev,
     };
+
   }, [rows, prevRows]);
 
   const maxFunnel = Math.max(1, ...d.funnel.map((f) => f.value));
