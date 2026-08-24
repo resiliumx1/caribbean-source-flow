@@ -461,6 +461,8 @@ export default function WceAnalytics() {
     return {
       pageViews, visitors, ctaClicks, formStarts, formSubmits, overTime, funnel,
       sources: countBy(pageViews, sourceLabel),
+      channels: countBy(pageViews, channelOf),
+
       devices: countBy(rows, (r) => r.device_type),
       countries: countBy(rows, (r) => r.country),
       leaderboard: countBy(ctaClicks, (r) => r.event_target),
