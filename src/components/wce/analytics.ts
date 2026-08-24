@@ -71,17 +71,10 @@ function doNotTrack(): boolean {
   return flag === "1" || flag === "yes";
 }
 
-function consentGiven(): boolean {
-  try {
-    // The banner writes "accepted" once acknowledged. Until then we stay silent.
-    return localStorage.getItem(CONSENT_KEY) === "accepted";
-  } catch {
-    return false;
-  }
-}
-
 export function analyticsEnabled(): boolean {
-  return typeof window !== "undefined" && !doNotTrack() && consentGiven();
+  // Anonymous, first-party measurement: no cookie consent gate, Do Not Track honoured.
+  return typeof window !== "undefined" && !doNotTrack();
+
 }
 
 function deviceType(): string {
