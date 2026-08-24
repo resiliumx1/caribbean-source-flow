@@ -1038,7 +1038,37 @@ export default function WceAnalytics() {
             />
           </div>
 
+          {/* Always the trailing 30 calendar days, regardless of the range filter. */}
+          <Panel
+            title="Page visits · last 30 days"
+            hint={`${month.views.toLocaleString()} visits from ${month.visitors.toLocaleString()} visitors on the WCE 2026 page`}
+          >
+            {month.series.length ? (
+              <div style={{ height: 230, width: "100%", minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={month.series} margin={{ top: 4, right: 8, bottom: 0, left: -18 }}>
+                    <defs>
+                      <linearGradient id="waMonthFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={ACCENTS.teal.series} stopOpacity={0.5} />
+                        <stop offset="100%" stopColor={ACCENTS.teal.series} stopOpacity={0.04} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid stroke="rgba(245,239,224,0.08)" vertical={false} />
+                    <XAxis dataKey="label" tick={axisTick} stroke={axisStroke} interval={4} />
+                    <YAxis allowDecimals={false} tick={axisTick} stroke={axisStroke} />
+                    <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#E4C766" }} />
+                    <Area type="monotone" dataKey="views" name="Page visits" stroke={ACCENTS.teal.series} strokeWidth={2} fill="url(#waMonthFill)" />
+                    <Area type="monotone" dataKey="visitors" name="Visitors" stroke={ACCENTS.sage.series} strokeWidth={2} fill="none" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No visits recorded in the past 30 days yet.</p>
+            )}
+          </Panel>
+
           <Panel title={`Visitors and page views · ${rangeLabel}`}>
+
             {d.overTime.length ? (
               <div style={{ height: 230, width: "100%", minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
