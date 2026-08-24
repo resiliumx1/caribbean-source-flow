@@ -641,6 +641,8 @@ export default function WceAnalytics() {
       deviceVisitors, locationVisitors, unknownLocation, timezones, languages,
       liveVisitors: liveMap.size,
       liveVisitorRows,
+      visitorSessions: buildVisitorSessions(rows),
+
       last30: uniqueSessions(last30Rows),
       todayVisitors: uniqueSessions(todayRows),
       todayViews: todayRows.filter((r) => r.event_type === "page_view").length,
