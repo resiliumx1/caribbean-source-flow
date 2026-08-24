@@ -494,7 +494,8 @@ export default function WceAnalytics() {
       <p className="wa-muted" style={{ fontSize: "0.8rem", marginBottom: "1rem", maxWidth: "70ch" }}>
         This is first-party data collected on the Caribbean Wellness Experience page only. It is recorded by
         our own system with no personal identifiers and no IP addresses, so figures will differ slightly from
-        Google Analytics — ad blockers and privacy settings affect the two differently.
+        Google Analytics — ad blockers and privacy settings affect the two differently. "All time" covers every
+        visit since tracking went live on the page.
       </p>
 
       <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem", alignItems: "center" }}>
@@ -511,10 +512,46 @@ export default function WceAnalytics() {
         ))}
         <button
           type="button"
+          className="wa-btn wa-btn-primary"
+          onClick={() => openReport({
+            rangeLabel,
+            first: firstSeen,
+            last: lastSeen,
+            headline: [
+              { label: "Visitors", value: String(d.visitors) },
+              { label: "Page views", value: String(d.pageViews.length) },
+              { label: "CTA clicks", value: String(d.ctaClicks.length) },
+              { label: "Applications started", value: String(d.formStarts.length) },
+              { label: "Applications submitted", value: String(d.formSubmits.length) },
+              { label: "Click-through rate", value: `${d.clickThrough.toFixed(1)}%` },
+              { label: "Typical time on page", value: durationText(d.medianTime) },
+              { label: "Leads recorded", value: leadCount === null ? "—" : String(leadCount) },
+            ],
+            tables: [
+              { title: "Journey funnel", head: ["Stage", "Count"], rows: d.funnel.map((f) => [f.stage, f.value]) },
+              { title: "Acquisition channels", head: ["Channel", "Page views"], rows: d.channels.map((c) => [c.name, c.value]) },
+              { title: "Traffic sources", head: ["Source", "Page views"], rows: d.sources.map((c) => [c.name, c.value]) },
+              { title: "Campaign performance", head: ["Source", "Medium", "Campaign", "Visitors", "Clicks", "Applications", "Conv. rate"], rows: d.campaigns.map((c) => [c.source, c.medium, c.campaign, c.visitors, c.clicks, c.submits, `${c.rate.toFixed(1)}%`]) },
+              { title: "Section reach (visitors)", head: ["Section", "Visitors"], rows: d.sectionReach.map((s) => [s.name, s.value]) },
+              { title: "Most clicked calls to action", head: ["Label", "Clicks"], rows: d.leaderboard.map((s) => [s.name, s.value]) },
+              { title: "Pathway interest", head: ["Pathway", "Clicks"], rows: d.pathwayInterest.map((s) => [s.name, s.value]) },
+              { title: "Speaker engagement", head: ["Speaker", "Flyer opens", "Shares"], rows: d.speakerEngagement.map((s) => [s.name, s.opens, s.shares]) },
+              { title: "Referral codes", head: ["Code", "Visits", "Clicks", "Applications", "Conv. rate"], rows: d.referralCodes.map((s) => [s.code, s.visits, s.clicks, s.conversions, `${s.rate.toFixed(1)}%`]) },
+              { title: "Devices", head: ["Device", "Events"], rows: d.devices.map((s) => [s.name, s.value]) },
+              { title: "Countries", head: ["Country", "Events"], rows: d.countries.map((s) => [s.name, s.value]) },
+              { title: "Search and share readiness (SEO)", head: ["Check", "Status"], rows: SEO_CHECKS.map((s) => [s.item, s.value]) },
+            ],
+          })}
+          disabled={!hasData}
+          style={{ marginLeft: "auto" }}
+        >
+          <FileText className="h-4 w-4" aria-hidden /> Generate report
+        </button>
+        <button
+          type="button"
           className="wa-btn wa-btn-ghost"
           onClick={() => downloadCsv(rows)}
           disabled={!hasData}
-          style={{ marginLeft: "auto" }}
         >
           <Download className="h-4 w-4" aria-hidden /> Export CSV
         </button>
@@ -525,8 +562,9 @@ export default function WceAnalytics() {
       ) : !hasData ? (
         <EmptyState
           title="No activity recorded yet"
-          line="Visits to the WCE 2026 page will appear here within a minute of arriving. Visitors who decline cookies or use Do Not Track are never recorded."
+          line="Visits to the WCE 2026 page appear here within a minute of arriving. Visitors who switch on Do Not Track are never recorded."
         />
+
       ) : (
         <div style={{ display: "grid", gap: "0.85rem" }}>
           <div className="wa-stats" style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
