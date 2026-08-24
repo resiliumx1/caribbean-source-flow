@@ -435,6 +435,51 @@ export default function WceAnalytics() {
     return () => { cancelled = true; };
   }, [range, refreshKey]);
 
+  // Trailing 30 calendar days of page visits, fetched independently of the
+  // range filter so this panel is identical for every access level.
+  const [monthRows, setMonthRows] = useState<Array<{ created_at: string; session_id: string }>>([]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const from = new Date(Date.now() - 29 * 86400000);
+      from.setHours(0, 0, 0, 0);
+      const { data } = await supabase
+        .from("wce_page_events")
+        .select("created_at,session_id")
+        .eq("event_type", "page_view")
+        .gte("created_at", from.toISOString())
+        .order("created_at", { ascending: false })
+        .limit(30000);
+      if (!cancelled) setMonthRows((data ?? []) as Array<{ created_at: string; session_id: string }>);
+    })();
+    return () => { cancelled = true; };
+  }, [refreshKey]);
+
+  const month = useMemo(() => {
+    const byDay = new Map<string, { views: number; sessions: Set<string> }>();
+    for (let i = 29; i >= 0; i--) {
+      const dt = new Date(Date.now() - i * 86400000);
+      byDay.set(dt.toISOString().slice(0, 10), { views: 0, sessions: new Set<string>() });
+    }
+    monthRows.forEach((r) => {
+      const entry = byDay.get(r.created_at.slice(0, 10));
+      if (!entry) return;
+      entry.views += 1;
+      entry.sessions.add(r.session_id);
+    });
+    const series = [...byDay.entries()].map(([day, v]) => ({
+      label: new Date(`${day}T00:00:00`).toLocaleDateString(undefined, { day: "numeric", month: "short" }),
+      views: v.views,
+      visitors: v.sessions.size,
+    }));
+    return {
+      series,
+      views: monthRows.length,
+      visitors: new Set(monthRows.map((r) => r.session_id)).size,
+    };
+  }, [monthRows]);
+
+
   const d = useMemo(() => {
     const of = (t: string, source: Ev[] = rows) => source.filter((r) => r.event_type === t);
     const pageViews = of("page_view");
