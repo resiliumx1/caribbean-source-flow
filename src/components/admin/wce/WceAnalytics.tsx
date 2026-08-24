@@ -7,14 +7,17 @@ import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, Cell, PieChart, Pie, Legend,
 } from "recharts";
+import { Download } from "lucide-react";
 import { ACCENTS, SectionHeading, StatCard, EmptyState } from "./ui";
 import { StatsSkeleton, wceToast, InfoTip } from "./kit";
+import { wcePathwayLabel } from "@/lib/wce-pathway-labels";
 
 type Ev = {
   created_at: string;
   session_id: string;
   event_type: string;
   event_target: string | null;
+  path: string | null;
   referrer: string | null;
   utm_source: string | null;
   utm_medium: string | null;
@@ -47,13 +50,15 @@ const SECTIONS: { id: string; label: string }[] = [
   { id: "faq", label: "FAQ" },
 ];
 
-function rangeStart(key: RangeKey): string | null {
-  if (key === "all") return null;
+const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function rangeWindow(key: RangeKey): { start: Date | null; days: number | null } {
+  if (key === "all") return { start: null, days: null };
   const d = new Date();
-  if (key === "today") d.setHours(0, 0, 0, 0);
-  if (key === "7d") d.setDate(d.getDate() - 7);
-  if (key === "30d") d.setDate(d.getDate() - 30);
-  return d.toISOString();
+  if (key === "today") { d.setHours(0, 0, 0, 0); return { start: d, days: 1 }; }
+  const days = key === "7d" ? 7 : 30;
+  d.setDate(d.getDate() - days);
+  return { start: d, days };
 }
 
 const tooltipStyle = {
@@ -92,6 +97,24 @@ function uniqueSessions(rows: Ev[]) {
   return new Set(rows.map((r) => r.session_id)).size;
 }
 
+const pct = (num: number, den: number) => (den > 0 ? Math.round((num / den) * 1000) / 10 : 0);
+const pctText = (num: number, den: number) => `${pct(num, den).toFixed(1)}%`;
+
+function median(values: number[]): number {
+  if (!values.length) return 0;
+  const s = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : Math.round((s[mid - 1] + s[mid]) / 2);
+}
+
+function durationText(seconds: number) {
+  if (seconds <= 0) return "—";
+  if (seconds < 60) return `${seconds}s`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}m ${s.toString().padStart(2, "0")}s`;
+}
+
 /** Traffic source label: explicit utm_source, else referral host, else direct. */
 function sourceLabel(e: Ev): string {
   if (e.utm_source) return e.utm_source.toLowerCase();
@@ -104,33 +127,88 @@ function sourceLabel(e: Ev): string {
   return "direct";
 }
 
+function metaStr(e: Ev, key: string): string | null {
+  const v = e.meta?.[key];
+  return typeof v === "string" && v.trim() ? v.trim() : null;
+}
+
+/** Trend text comparing this period with the one immediately before it. */
+function trendOf(current: number, previous: number | null) {
+  if (previous === null) return undefined;
+  if (previous === 0) return current > 0 ? { direction: "up" as const, text: "new activity" } : undefined;
+  const change = Math.round(((current - previous) / previous) * 100);
+  if (change === 0) return { direction: "flat" as const, text: "same as previous period" };
+  return {
+    direction: change > 0 ? ("up" as const) : ("down" as const),
+    text: `${Math.abs(change)}% vs previous period`,
+  };
+}
+
+function downloadCsv(rows: Ev[]) {
+  const cols: (keyof Ev)[] = [
+    "created_at", "session_id", "event_type", "event_target", "path", "referrer",
+    "utm_source", "utm_medium", "utm_campaign", "referral_code", "device_type", "country",
+  ];
+  const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const body = rows.map((r) => cols.map((c) => esc(r[c])).join(","));
+  const csv = [cols.join(","), ...body].join("\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `wce-analytics-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function WceAnalytics() {
   const [range, setRange] = useState<RangeKey>("7d");
   const [rows, setRows] = useState<Ev[]>([]);
+  const [prevRows, setPrevRows] = useState<Ev[]>([]);
+  const [leadCount, setLeadCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     (async () => {
-      const start = rangeStart(range);
+      const { start, days } = rangeWindow(range);
+      // Fetch the current window plus the equal window before it, so every
+      // headline figure can be shown against the previous period.
+      const fetchFrom = start && days
+        ? new Date(start.getTime() - days * 86400000)
+        : null;
+
       let q = supabase
         .from("wce_page_events")
-        .select("created_at,session_id,event_type,event_target,referrer,utm_source,utm_medium,utm_campaign,referral_code,device_type,country,meta")
+        .select("created_at,session_id,event_type,event_target,path,referrer,utm_source,utm_medium,utm_campaign,referral_code,device_type,country,meta")
         .order("created_at", { ascending: false })
-        .limit(20000);
-      if (start) q = q.gte("created_at", start);
-      const { data, error } = await q;
+        .limit(30000);
+      if (fetchFrom) q = q.gte("created_at", fetchFrom.toISOString());
+
+      let leadQ = supabase.from("wce_leads").select("id", { count: "exact", head: true });
+      if (start) leadQ = leadQ.gte("created_at", start.toISOString());
+
+      const [{ data, error }, leadRes] = await Promise.all([q, leadQ]);
       if (cancelled) return;
       if (error) wceToast({ title: "Could not load analytics", description: error.message, tone: "error" });
-      setRows((data ?? []) as Ev[]);
+
+      const all = (data ?? []) as Ev[];
+      if (start) {
+        const cut = start.toISOString();
+        setRows(all.filter((r) => r.created_at >= cut));
+        setPrevRows(all.filter((r) => r.created_at < cut));
+      } else {
+        setRows(all);
+        setPrevRows([]);
+      }
+      setLeadCount(leadRes.error ? null : leadRes.count ?? 0);
       setLoading(false);
     })();
     return () => { cancelled = true; };
   }, [range]);
 
   const d = useMemo(() => {
-    const of = (t: string) => rows.filter((r) => r.event_type === t);
+    const of = (t: string, source: Ev[] = rows) => source.filter((r) => r.event_type === t);
     const pageViews = of("page_view");
     const sectionViews = of("section_view");
     const ctaClicks = of("cta_click");
@@ -156,6 +234,34 @@ export default function WceAnalytics() {
         visitors: v.sessions.size,
       }));
 
+    const visitors = uniqueSessions(rows);
+
+    // ---- Session-level quality metrics -------------------------------------
+    const sessions = new Map<string, { first: number; last: number; events: number; deepest: number }>();
+    rows.forEach((r) => {
+      const t = new Date(r.created_at).getTime();
+      const s = sessions.get(r.session_id) ?? { first: t, last: t, events: 0, deepest: -1 };
+      s.first = Math.min(s.first, t);
+      s.last = Math.max(s.last, t);
+      s.events += 1;
+      if (r.event_type === "section_view") {
+        const idx = SECTIONS.findIndex((x) => x.id === r.event_target);
+        if (idx > s.deepest) s.deepest = idx;
+      }
+      sessions.set(r.session_id, s);
+    });
+    const sessionList = [...sessions.values()];
+    const medianTime = Math.round(median(sessionList.map((s) => Math.round((s.last - s.first) / 1000))));
+    // A "bounce" is a session with a single recorded event — arrived and left.
+    const bounces = sessionList.filter((s) => s.events <= 1).length;
+    const engaged = sessionList.filter((s) => s.deepest >= 0 || s.events > 2).length;
+
+    // Scroll depth: deepest section each session reached.
+    const depth = SECTIONS.map((s, i) => ({
+      name: s.label,
+      value: sessionList.filter((x) => x.deepest >= i).length,
+    }));
+
     const pathwaySectionSessions = new Set(
       sectionViews.filter((r) => r.event_target === "pathways").map((r) => r.session_id),
     ).size;
@@ -173,48 +279,118 @@ export default function WceAnalytics() {
       value: new Set(sectionViews.filter((r) => r.event_target === s.id).map((r) => r.session_id)).size,
     }));
 
+    // ---- Campaign performance ---------------------------------------------
+    // Grouped by the exact source / medium / campaign trio, with the actions
+    // taken by those visitors, so spend can be judged per campaign.
+    type Camp = { sessions: Set<string>; clicks: number; starts: number; submits: number };
+    const campMap = new Map<string, Camp>();
+    rows.forEach((r) => {
+      const key = [sourceLabel(r), r.utm_medium ?? "—", r.utm_campaign ?? "—"].join(" | ");
+      const c = campMap.get(key) ?? { sessions: new Set<string>(), clicks: 0, starts: 0, submits: 0 };
+      c.sessions.add(r.session_id);
+      if (r.event_type === "cta_click") c.clicks += 1;
+      if (r.event_type === "form_start") c.starts += 1;
+      if (r.event_type === "form_submit") c.submits += 1;
+      campMap.set(key, c);
+    });
+    const campaigns = [...campMap.entries()]
+      .map(([key, c]) => {
+        const [source, medium, campaign] = key.split(" | ");
+        return {
+          key, source, medium, campaign,
+          visitors: c.sessions.size,
+          clicks: c.clicks,
+          submits: c.submits,
+          rate: pct(c.submits, c.sessions.size),
+        };
+      })
+      .sort((a, b) => b.visitors - a.visitors);
+
+    // ---- Demand mix --------------------------------------------------------
+    const intents = countBy(ctaClicks, (r) => {
+      const i = metaStr(r, "cta_intent");
+      if (!i) return null;
+      return i === "reserve" ? "Reserve seat" : i === "apply" ? "Apply for retreat" : i === "online" ? "Online access" : "Explore";
+    });
+    const pathwayInterest = countBy(ctaClicks, (r) => {
+      const k = metaStr(r, "pathway_key");
+      return k ? wcePathwayLabel(k) : null;
+    });
+    const applicationInterest = countBy(formSubmits, (r) => {
+      const k = metaStr(r, "pathway_interest");
+      return k ? wcePathwayLabel(k) : null;
+    });
+    const ctaLocations = countBy(ctaClicks, (r) => metaStr(r, "cta_location"));
+    const shareChannels = countBy(shares, (r) => metaStr(r, "channel"));
+    const landingPaths = countBy(pageViews, (r) => r.path);
+
+    // ---- Best time to reach people ----------------------------------------
+    const hours = Array.from({ length: 24 }, (_, h) => ({ name: `${h}:00`, value: 0 }));
+    const weekdays = DAY_LABELS.map((name) => ({ name, value: 0 }));
+    pageViews.forEach((r) => {
+      const dt = new Date(r.created_at);
+      hours[dt.getHours()].value += 1;
+      weekdays[dt.getDay()].value += 1;
+    });
+
     // Referral codes: visits (unique sessions) and conversions (form submits).
-    const codeMap = new Map<string, { sessions: Set<string>; conversions: number }>();
+    const codeMap = new Map<string, { sessions: Set<string>; conversions: number; clicks: number }>();
     rows.forEach((r) => {
       if (!r.referral_code) return;
-      const entry = codeMap.get(r.referral_code) ?? { sessions: new Set<string>(), conversions: 0 };
+      const entry = codeMap.get(r.referral_code) ?? { sessions: new Set<string>(), conversions: 0, clicks: 0 };
       entry.sessions.add(r.session_id);
       if (r.event_type === "form_submit") entry.conversions += 1;
+      if (r.event_type === "cta_click") entry.clicks += 1;
       codeMap.set(r.referral_code, entry);
     });
     const referralCodes = [...codeMap.entries()]
-      .map(([code, v]) => ({ code, visits: v.sessions.size, conversions: v.conversions }))
+      .map(([code, v]) => ({
+        code, visits: v.sessions.size, clicks: v.clicks, conversions: v.conversions,
+        rate: pct(v.conversions, v.sessions.size),
+      }))
       .sort((a, b) => b.visits - a.visits);
 
-    const speakerEngagement = SECTIONS.length
-      ? [...new Set([...speakerOpens, ...shares].map((r) => r.event_target ?? "—"))].map((slug) => ({
-          name: slug,
-          opens: speakerOpens.filter((r) => r.event_target === slug).length,
-          shares: shares.filter((r) => r.event_target === slug).length,
-        })).sort((a, b) => b.opens + b.shares - (a.opens + a.shares))
-      : [];
+    const speakerEngagement = [...new Set([...speakerOpens, ...shares].map((r) => r.event_target ?? "—"))]
+      .map((slug) => ({
+        name: slug,
+        opens: speakerOpens.filter((r) => r.event_target === slug).length,
+        shares: shares.filter((r) => r.event_target === slug).length,
+      }))
+      .sort((a, b) => b.opens + b.shares - (a.opens + a.shares));
+
+    // Previous-period comparisons for the headline cards.
+    const prev = prevRows.length || rows.length
+      ? {
+          visitors: uniqueSessions(prevRows),
+          views: of("page_view", prevRows).length,
+          clicks: of("cta_click", prevRows).length,
+          submits: of("form_submit", prevRows).length,
+        }
+      : null;
 
     return {
-      pageViews,
-      visitors: uniqueSessions(rows),
-      ctaClicks,
-      formSubmits,
-      overTime,
-      funnel,
+      pageViews, visitors, ctaClicks, formStarts, formSubmits, overTime, funnel,
       sources: countBy(pageViews, sourceLabel),
       devices: countBy(rows, (r) => r.device_type),
       countries: countBy(rows, (r) => r.country),
       leaderboard: countBy(ctaClicks, (r) => r.event_target),
-      sectionReach,
-      referralCodes,
-      speakerEngagement,
+      sectionReach, referralCodes, speakerEngagement,
       faqOpens: countBy(of("faq_open"), (r) => r.event_target),
       cardExpands: countBy(of("retreat_card_expand"), (r) => r.event_target),
+      campaigns, intents, pathwayInterest, applicationInterest, ctaLocations,
+      shareChannels, landingPaths, hours, weekdays, depth,
+      medianTime, bounces, engaged,
+      clickThrough: pct(new Set(ctaClicks.map((r) => r.session_id)).size, visitors),
+      startRate: pct(new Set(formStarts.map((r) => r.session_id)).size, visitors),
+      completion: pct(formSubmits.length, Math.max(1, formStarts.length)),
+      prev,
     };
-  }, [rows]);
+  }, [rows, prevRows]);
 
   const maxFunnel = Math.max(1, ...d.funnel.map((f) => f.value));
   const hasData = rows.length > 0;
+  const rangeLabel = RANGES.find((r) => r.key === range)?.label ?? "";
+  const sessionsCount = new Set(rows.map((r) => r.session_id)).size;
 
   return (
     <div>
@@ -229,7 +405,7 @@ export default function WceAnalytics() {
         Google Analytics — ad blockers and privacy settings affect the two differently.
       </p>
 
-      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem" }}>
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem", alignItems: "center" }}>
         {RANGES.map((r) => (
           <button
             key={r.key}
@@ -241,6 +417,15 @@ export default function WceAnalytics() {
             {r.label}
           </button>
         ))}
+        <button
+          type="button"
+          className="wa-btn wa-btn-ghost"
+          onClick={() => downloadCsv(rows)}
+          disabled={!hasData}
+          style={{ marginLeft: "auto" }}
+        >
+          <Download className="h-4 w-4" aria-hidden /> Export CSV
+        </button>
       </div>
 
       {loading ? (
@@ -253,13 +438,42 @@ export default function WceAnalytics() {
       ) : (
         <div style={{ display: "grid", gap: "0.85rem" }}>
           <div className="wa-stats" style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
-            <StatCard label="Visitors" value={d.visitors} accent="sage" hint="Unique browsing sessions" />
-            <StatCard label="Page views" value={d.pageViews.length} accent="gold" />
-            <StatCard label="CTA clicks" value={d.ctaClicks.length} accent="teal" />
-            <StatCard label="Applications submitted" value={d.formSubmits.length} accent="terracotta" />
+            <StatCard
+              label="Visitors" value={d.visitors} accent="sage"
+              hint="Unique browsing sessions"
+              trend={trendOf(d.visitors, d.prev?.visitors ?? null)}
+            />
+            <StatCard
+              label="Page views" value={d.pageViews.length} accent="gold"
+              trend={trendOf(d.pageViews.length, d.prev?.views ?? null)}
+            />
+            <StatCard
+              label="CTA clicks" value={d.ctaClicks.length} accent="teal"
+              trend={trendOf(d.ctaClicks.length, d.prev?.clicks ?? null)}
+            />
+            <StatCard
+              label="Applications submitted" value={d.formSubmits.length} accent="terracotta"
+              trend={trendOf(d.formSubmits.length, d.prev?.submits ?? null)}
+            />
           </div>
 
-          <Panel title={`Visitors and page views · ${RANGES.find((r) => r.key === range)?.label}`}>
+          {/* Quality of the traffic, not just its size. */}
+          <div className="wa-stats" style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+            <StatCard label="Click-through rate" value={`${d.clickThrough.toFixed(1)}%`} accent="gold" hint="Visitors who clicked any call to action" />
+            <StatCard label="Application rate" value={`${d.startRate.toFixed(1)}%`} accent="sage" hint="Visitors who began the application" />
+            <StatCard label="Form completion" value={`${d.completion.toFixed(0)}%`} accent="teal" hint="Started applications that were submitted" />
+            <StatCard label="Typical time on page" value={durationText(d.medianTime)} accent="terracotta" hint="Median engaged session length" />
+            <StatCard label="Engaged visitors" value={`${pct(d.engaged, Math.max(1, sessionsCount)).toFixed(0)}%`} accent="sage" hint="Scrolled into the page or interacted" />
+            <StatCard label="Left immediately" value={`${pct(d.bounces, Math.max(1, sessionsCount)).toFixed(0)}%`} accent="gold" hint="Sessions with a single recorded event" />
+            <StatCard
+              label={`Leads recorded · ${rangeLabel}`}
+              value={leadCount === null ? "—" : leadCount}
+              accent="teal"
+              hint="Rows saved in the Leads table"
+            />
+          </div>
+
+          <Panel title={`Visitors and page views · ${rangeLabel}`}>
             {d.overTime.length ? (
               <div style={{ height: 230, width: "100%", minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -313,6 +527,36 @@ export default function WceAnalytics() {
                   </div>
                 );
               })}
+            </div>
+          </Panel>
+
+          {/* Campaign performance — the table a marketer judges spend with. */}
+          <Panel
+            title="Campaign performance"
+            hint="Grouped by campaign source, medium and name. Tag your links with utm_source, utm_medium and utm_campaign to see them split here."
+          >
+            <div className="wa-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Source</th><th>Medium</th><th>Campaign</th>
+                    <th>Visitors</th><th>CTA clicks</th><th>Applications</th><th>Conv. rate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {d.campaigns.slice(0, 15).map((c) => (
+                    <tr key={c.key}>
+                      <td data-label="Source">{c.source}</td>
+                      <td data-label="Medium">{c.medium}</td>
+                      <td data-label="Campaign">{c.campaign}</td>
+                      <td data-label="Visitors">{c.visitors}</td>
+                      <td data-label="CTA clicks">{c.clicks}</td>
+                      <td data-label="Applications">{c.submits}</td>
+                      <td data-label="Conv. rate">{c.rate.toFixed(1)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </Panel>
 
@@ -387,6 +631,89 @@ export default function WceAnalytics() {
                 </ResponsiveContainer>
               </div>
             </Panel>
+
+            <Panel title="Scroll depth" hint="Visitors who reached at least this far down the page — where attention is lost.">
+              <div style={{ height: 280, width: "100%", minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={d.depth} layout="vertical" margin={{ left: 4, right: 12 }}>
+                    <CartesianGrid stroke="rgba(245,239,224,0.08)" horizontal={false} />
+                    <XAxis type="number" allowDecimals={false} tick={axisTick} stroke={axisStroke} />
+                    <YAxis type="category" dataKey="name" width={110} tick={axisTick} stroke={axisStroke} />
+                    <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#E4C766" }} />
+                    <Bar dataKey="value" name="Visitors reaching" fill={ACCENTS.terracotta.series} radius={[0, 2, 2, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Panel>
+
+            <Panel title="Demand mix" hint="What visitors clicked towards: attending in person, online access, or the retreat.">
+              {d.intents.length || d.pathwayInterest.length ? (
+                <div className="wa-table-wrap">
+                  <table>
+                    <thead><tr><th>Interest</th><th>Clicks</th><th>Share</th></tr></thead>
+                    <tbody>
+                      {[...d.pathwayInterest, ...d.intents].slice(0, 10).map((r) => (
+                        <tr key={r.name}>
+                          <td data-label="Interest">{r.name}</td>
+                          <td data-label="Clicks">{r.value}</td>
+                          <td data-label="Share">{pctText(r.value, Math.max(1, d.ctaClicks.length))}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No pathway clicks in this range yet.</p>
+              )}
+            </Panel>
+
+            <Panel title="Where CTAs are clicked" hint="The zone of the page each click came from — tells you which placements earn their space.">
+              {d.ctaLocations.length ? (
+                <div className="wa-table-wrap">
+                  <table>
+                    <thead><tr><th>Placement</th><th>Clicks</th></tr></thead>
+                    <tbody>
+                      {d.ctaLocations.map((c) => (
+                        <tr key={c.name}>
+                          <td data-label="Placement">{c.name.replace(/_/g, " ")}</td>
+                          <td data-label="Clicks">{c.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No placement data in this range yet.</p>
+              )}
+            </Panel>
+
+            <Panel title="Busiest hours" hint="Local time of the browser reading this page. Useful for timing posts and emails.">
+              <div style={{ height: 220, width: "100%", minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={d.hours} margin={{ top: 4, right: 8, bottom: 0, left: -20 }}>
+                    <CartesianGrid stroke="rgba(245,239,224,0.08)" vertical={false} />
+                    <XAxis dataKey="name" tick={{ ...axisTick, fontSize: 9 }} stroke={axisStroke} interval={2} />
+                    <YAxis allowDecimals={false} tick={axisTick} stroke={axisStroke} />
+                    <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#E4C766" }} />
+                    <Bar dataKey="value" name="Page views" fill={ACCENTS.gold.series} radius={[2, 2, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Panel>
+
+            <Panel title="Busiest days of the week">
+              <div style={{ height: 220, width: "100%", minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={d.weekdays} margin={{ top: 4, right: 8, bottom: 0, left: -20 }}>
+                    <CartesianGrid stroke="rgba(245,239,224,0.08)" vertical={false} />
+                    <XAxis dataKey="name" tick={axisTick} stroke={axisStroke} />
+                    <YAxis allowDecimals={false} tick={axisTick} stroke={axisStroke} />
+                    <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#E4C766" }} />
+                    <Bar dataKey="value" name="Page views" fill={ACCENTS.sage.series} radius={[2, 2, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Panel>
           </div>
 
           <Panel title="Click leaderboard" hint="Every tracked call to action, ranked by clicks.">
@@ -428,17 +755,36 @@ export default function WceAnalytics() {
               )}
             </Panel>
 
+            <Panel title="Share channels" hint="Where visitors sent the flyers — your strongest word-of-mouth channel.">
+              {d.shareChannels.length ? (
+                <div className="wa-table-wrap">
+                  <table>
+                    <thead><tr><th>Channel</th><th>Shares</th></tr></thead>
+                    <tbody>
+                      {d.shareChannels.map((c) => (
+                        <tr key={c.name}><td data-label="Channel">{c.name}</td><td data-label="Shares">{c.value}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No flyers shared in this range yet.</p>
+              )}
+            </Panel>
+
             <Panel title="Referral code performance" hint="Visits are unique sessions carrying the code; conversions are submitted applications.">
               {d.referralCodes.length ? (
                 <div className="wa-table-wrap">
                   <table>
-                    <thead><tr><th>Code</th><th>Visits</th><th>Conversions</th></tr></thead>
+                    <thead><tr><th>Code</th><th>Visits</th><th>Clicks</th><th>Conversions</th><th>Rate</th></tr></thead>
                     <tbody>
                       {d.referralCodes.map((r) => (
                         <tr key={r.code}>
                           <td data-label="Code">{r.code}</td>
                           <td data-label="Visits">{r.visits}</td>
+                          <td data-label="Clicks">{r.clicks}</td>
                           <td data-label="Conversions">{r.conversions}</td>
+                          <td data-label="Rate">{r.rate.toFixed(1)}%</td>
                         </tr>
                       ))}
                     </tbody>
@@ -446,6 +792,40 @@ export default function WceAnalytics() {
                 </div>
               ) : (
                 <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No traffic has arrived on a referral code yet.</p>
+              )}
+            </Panel>
+
+            <Panel title="Applications by pathway" hint="What submitted applicants asked for.">
+              {d.applicationInterest.length ? (
+                <div className="wa-table-wrap">
+                  <table>
+                    <thead><tr><th>Pathway</th><th>Applications</th></tr></thead>
+                    <tbody>
+                      {d.applicationInterest.map((r) => (
+                        <tr key={r.name}><td data-label="Pathway">{r.name}</td><td data-label="Applications">{r.value}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No applications submitted in this range yet.</p>
+              )}
+            </Panel>
+
+            <Panel title="Landing pages" hint="Speaker flyer links and share links each land on their own path.">
+              {d.landingPaths.length ? (
+                <div className="wa-table-wrap">
+                  <table>
+                    <thead><tr><th>Path</th><th>Views</th></tr></thead>
+                    <tbody>
+                      {d.landingPaths.slice(0, 12).map((c) => (
+                        <tr key={c.name}><td data-label="Path">{c.name}</td><td data-label="Views">{c.value}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No landing paths recorded yet.</p>
               )}
             </Panel>
 
