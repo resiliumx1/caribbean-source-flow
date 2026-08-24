@@ -166,8 +166,9 @@ export function trackWceEvent(
     utm_campaign: attr?.utm_campaign ?? null,
     referral_code: attr?.referral_code ?? null,
     device_type: deviceType(),
-    meta: meta ?? null,
+    meta: { ...context(), ...(meta ?? {}) },
   });
+
 
   bindFlushListeners();
   if (queue.length >= MAX_QUEUE) { flush(); return; }
