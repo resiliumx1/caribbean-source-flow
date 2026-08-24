@@ -144,6 +144,36 @@ function trendOf(current: number, previous: number | null) {
   };
 }
 
+/** Coarse acquisition channel, useful for SEO vs social vs paid reporting. */
+const SEARCH_HOSTS = ["google", "bing", "duckduckgo", "yahoo", "ecosia", "brave", "baidu", "yandex"];
+const SOCIAL_HOSTS = ["facebook", "instagram", "t.co", "twitter", "x.com", "linkedin", "tiktok", "youtube", "whatsapp", "pinterest", "reddit"];
+const EMAIL_HOSTS = ["mail.", "mailchi", "outlook", "gmail"];
+
+function channelOf(e: Ev): string {
+  const medium = (e.utm_medium ?? "").toLowerCase();
+  if (medium.includes("cpc") || medium.includes("paid") || medium.includes("ppc")) return "Paid";
+  if (medium.includes("email")) return "Email";
+  if (medium.includes("social")) return "Social";
+  if (medium.includes("organic")) return "Organic search";
+  const label = sourceLabel(e);
+  if (label === "direct") return "Direct";
+  if (SEARCH_HOSTS.some((h) => label.includes(h))) return "Organic search";
+  if (SOCIAL_HOSTS.some((h) => label.includes(h))) return "Social";
+  if (EMAIL_HOSTS.some((h) => label.includes(h))) return "Email";
+  return "Referral";
+}
+
+/** Head data shipped on /wce-2026 — kept in step with WCE2026.tsx. */
+const SEO_CHECKS: { item: string; value: string }[] = [
+  { item: "Page title", value: "Caribbean Wellness Saint Lucia 2026 | 11–17 October (57 characters)" },
+  { item: "Meta description", value: "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day retreat." },
+  { item: "Canonical URL", value: "https://mountkailashslu.com/wce-2026" },
+  { item: "Indexable", value: "Yes — allowed in robots.txt and listed in sitemap.xml" },
+  { item: "Social preview", value: "Landscape 1200×630 and square cards, per-speaker share images" },
+  { item: "Structured data", value: "Event (with sub-events and offers), FAQPage, BreadcrumbList" },
+  { item: "Speaker share routes", value: "7 flyer URLs, each with its own title, description and image" },
+];
+
 function downloadCsv(rows: Ev[]) {
   const cols: (keyof Ev)[] = [
     "created_at", "session_id", "event_type", "event_target", "path", "referrer",
@@ -160,8 +190,68 @@ function downloadCsv(rows: Ev[]) {
   URL.revokeObjectURL(url);
 }
 
+type Row = { name: string; value: number };
+
+/** Builds a printable activity report and opens it in a new tab. */
+function openReport(args: {
+  rangeLabel: string;
+  first: string | null;
+  last: string | null;
+  headline: { label: string; value: string }[];
+  tables: { title: string; head: string[]; rows: (string | number)[][] }[];
+}) {
+  const esc = (v: unknown) =>
+    String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const table = (t: { title: string; head: string[]; rows: (string | number)[][] }) =>
+    !t.rows.length ? "" : `<h2>${esc(t.title)}</h2><table><thead><tr>${t.head
+      .map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${t.rows
+      .map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>WCE 2026 activity report — ${esc(args.rangeLabel)}</title>
+<style>
+  body{font-family:'DM Sans',system-ui,sans-serif;color:#17301f;margin:0;padding:36px;max-width:900px}
+  h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;margin:0 0 4px}
+  h2{font-family:'Jost',system-ui,sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:.08em;margin:26px 0 8px;color:#4a6b52}
+  p.meta{color:#5d6b60;font-size:13px;margin:0 0 18px}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{border-bottom:1px solid #e2e6e0;padding:6px 8px;text-align:left}
+  th{color:#4a6b52;font-weight:600}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 6px}
+  .kpi{border:1px solid #e2e6e0;border-radius:10px;padding:10px 12px}
+  .kpi b{display:block;font-size:20px}
+  .kpi span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#5d6b60}
+  button{margin-bottom:18px;padding:8px 14px;border-radius:8px;border:1px solid #17301f;background:#17301f;color:#fff;cursor:pointer}
+  @media print{button{display:none}}
+</style></head><body>
+<button onclick="window.print()">Print or save as PDF</button>
+<h1>Caribbean Wellness Experience 2026 — activity report</h1>
+<p class="meta">Range: ${esc(args.rangeLabel)}${
+    args.first ? ` · Activity from ${esc(args.first)} to ${esc(args.last)}` : ""
+  } · Generated ${esc(new Date().toLocaleString())}</p>
+<div class="kpis">${args.headline
+    .map((k) => `<div class="kpi"><b>${esc(k.value)}</b><span>${esc(k.label)}</span></div>`)
+    .join("")}</div>
+${args.tables.map(table).join("")}
+</body></html>`;
+
+  const w = window.open("", "_blank");
+  if (!w) {
+    const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `wce-2026-report-${new Date().toISOString().slice(0, 10)}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    return;
+  }
+  w.document.write(html);
+  w.document.close();
+}
+
 export default function WceAnalytics() {
-  const [range, setRange] = useState<RangeKey>("7d");
+  const [range, setRange] = useState<RangeKey>("all");
+
   const [rows, setRows] = useState<Ev[]>([]);
   const [prevRows, setPrevRows] = useState<Ev[]>([]);
   const [leadCount, setLeadCount] = useState<number | null>(null);
