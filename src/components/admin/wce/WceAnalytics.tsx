@@ -297,9 +297,15 @@ export default function WceAnalytics() {
   const [leadCount, setLeadCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const lastRange = useRef<RangeKey | null>(null);
+
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
+    // Background refreshes must not blank the dashboard with a skeleton.
+    const silent = lastRange.current === range;
+    lastRange.current = range;
+    if (!silent) setLoading(true);
+
     (async () => {
       const { start, days } = rangeWindow(range);
       // Fetch the current window plus the equal window before it, so every
