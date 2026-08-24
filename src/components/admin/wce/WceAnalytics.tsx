@@ -435,6 +435,51 @@ export default function WceAnalytics() {
     return () => { cancelled = true; };
   }, [range, refreshKey]);
 
+  // Trailing 30 calendar days of page visits, fetched independently of the
+  // range filter so this panel is identical for every access level.
+  const [monthRows, setMonthRows] = useState<Array<{ created_at: string; session_id: string }>>([]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const from = new Date(Date.now() - 29 * 86400000);
+      from.setHours(0, 0, 0, 0);
+      const { data } = await supabase
+        .from("wce_page_events")
+        .select("created_at,session_id")
+        .eq("event_type", "page_view")
+        .gte("created_at", from.toISOString())
+        .order("created_at", { ascending: false })
+        .limit(30000);
+      if (!cancelled) setMonthRows((data ?? []) as Array<{ created_at: string; session_id: string }>);
+    })();
+    return () => { cancelled = true; };
+  }, [refreshKey]);
+
+  const month = useMemo(() => {
+    const byDay = new Map<string, { views: number; sessions: Set<string> }>();
+    for (let i = 29; i >= 0; i--) {
+      const dt = new Date(Date.now() - i * 86400000);
+      byDay.set(dt.toISOString().slice(0, 10), { views: 0, sessions: new Set<string>() });
+    }
+    monthRows.forEach((r) => {
+      const entry = byDay.get(r.created_at.slice(0, 10));
+      if (!entry) return;
+      entry.views += 1;
+      entry.sessions.add(r.session_id);
+    });
+    const series = [...byDay.entries()].map(([day, v]) => ({
+      label: new Date(`${day}T00:00:00`).toLocaleDateString(undefined, { day: "numeric", month: "short" }),
+      views: v.views,
+      visitors: v.sessions.size,
+    }));
+    return {
+      series,
+      views: monthRows.length,
+      visitors: new Set(monthRows.map((r) => r.session_id)).size,
+    };
+  }, [monthRows]);
+
+
   const d = useMemo(() => {
     const of = (t: string, source: Ev[] = rows) => source.filter((r) => r.event_type === t);
     const pageViews = of("page_view");
@@ -1038,7 +1083,37 @@ export default function WceAnalytics() {
             />
           </div>
 
+          {/* Always the trailing 30 calendar days, regardless of the range filter. */}
+          <Panel
+            title="Page visits · last 30 days"
+            hint={`${month.views.toLocaleString()} visits from ${month.visitors.toLocaleString()} visitors on the WCE 2026 page`}
+          >
+            {month.series.length ? (
+              <div style={{ height: 230, width: "100%", minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={month.series} margin={{ top: 4, right: 8, bottom: 0, left: -18 }}>
+                    <defs>
+                      <linearGradient id="waMonthFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={ACCENTS.teal.series} stopOpacity={0.5} />
+                        <stop offset="100%" stopColor={ACCENTS.teal.series} stopOpacity={0.04} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid stroke="rgba(245,239,224,0.08)" vertical={false} />
+                    <XAxis dataKey="label" tick={axisTick} stroke={axisStroke} interval={4} />
+                    <YAxis allowDecimals={false} tick={axisTick} stroke={axisStroke} />
+                    <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#E4C766" }} />
+                    <Area type="monotone" dataKey="views" name="Page visits" stroke={ACCENTS.teal.series} strokeWidth={2} fill="url(#waMonthFill)" />
+                    <Area type="monotone" dataKey="visitors" name="Visitors" stroke={ACCENTS.sage.series} strokeWidth={2} fill="none" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No visits recorded in the past 30 days yet.</p>
+            )}
+          </Panel>
+
           <Panel title={`Visitors and page views · ${rangeLabel}`}>
+
             {d.overTime.length ? (
               <div style={{ height: 230, width: "100%", minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
