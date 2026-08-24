@@ -222,7 +222,95 @@ function downloadCsv(rows: Ev[]) {
   URL.revokeObjectURL(url);
 }
 
+/** One row per anonymous browsing session — the detailed visitor history. */
+export type VisitorSession = {
+  session: string;
+  first: string;
+  last: string;
+  seconds: number;
+  country: string;
+  device: string;
+  source: string;
+  channel: string;
+  campaign: string;
+  referralCode: string;
+  landing: string;
+  tz: string;
+  lang: string;
+  views: number;
+  events: number;
+  sections: number;
+  clicks: number;
+  shares: number;
+  speakerOpens: number;
+  started: boolean;
+  submitted: boolean;
+};
+
+/** Groups every recorded event into per-session visitor histories. */
+function buildVisitorSessions(rows: Ev[]): VisitorSession[] {
+  const map = new Map<string, Ev[]>();
+  rows.forEach((r) => {
+    const list = map.get(r.session_id) ?? [];
+    list.push(r);
+    map.set(r.session_id, list);
+  });
+
+  return [...map.entries()]
+    .map(([session, evs]) => {
+      const sorted = [...evs].sort((a, b) => a.created_at.localeCompare(b.created_at));
+      const first = sorted[0];
+      const last = sorted[sorted.length - 1];
+      const count = (t: string) => evs.filter((e) => e.event_type === t).length;
+      return {
+        session,
+        first: first.created_at,
+        last: last.created_at,
+        seconds: Math.max(
+          0,
+          Math.round((new Date(last.created_at).getTime() - new Date(first.created_at).getTime()) / 1000),
+        ),
+        country: last.country ? countryName(last.country) : "Unknown",
+        device: DEVICE_LABELS[last.device_type ?? ""] ?? last.device_type ?? "—",
+        source: sourceLabel(first),
+        channel: channelOf(first),
+        campaign: first.utm_campaign ?? "—",
+        referralCode: evs.find((e) => e.referral_code)?.referral_code ?? "—",
+        landing: first.path ?? "/wce-2026",
+        tz: metaStr(last, "tz") ?? "—",
+        lang: (metaStr(last, "lang") ?? "—").toLowerCase(),
+        views: count("page_view"),
+        events: evs.length,
+        sections: new Set(evs.filter((e) => e.event_type === "section_view").map((e) => e.event_target)).size,
+        clicks: count("cta_click"),
+        shares: count("flyer_share"),
+        speakerOpens: count("speaker_open"),
+        started: count("form_start") > 0,
+        submitted: count("form_submit") > 0,
+      };
+    })
+    .sort((a, b) => b.last.localeCompare(a.last));
+}
+
+/** Exports the per-visitor history, one line per session. */
+function downloadVisitorCsv(sessions: VisitorSession[]) {
+  const cols: (keyof VisitorSession)[] = [
+    "first", "last", "seconds", "country", "device", "channel", "source", "campaign",
+    "referralCode", "landing", "tz", "lang", "views", "events", "sections", "clicks",
+    "speakerOpens", "shares", "started", "submitted", "session",
+  ];
+  const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const csv = [cols.join(","), ...sessions.map((s) => cols.map((c) => esc(s[c])).join(","))].join("\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `wce-visitors-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 type Row = { name: string; value: number };
+
 
 /** Builds a printable activity report and opens it in a new tab. */
 function openReport(args: {
@@ -283,6 +371,10 @@ ${args.tables.map(table).join("")}
 
 export default function WceAnalytics() {
   const [range, setRange] = useState<RangeKey>("all");
+  // Detailed visitor history: free-text filter and how many rows are shown.
+  const [visitorQuery, setVisitorQuery] = useState("");
+  const [visitorLimit, setVisitorLimit] = useState(25);
+
   // Bumped every 30 seconds so the live panel and figures stay current.
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -553,6 +645,8 @@ export default function WceAnalytics() {
       deviceVisitors, locationVisitors, unknownLocation, timezones, languages,
       liveVisitors: liveMap.size,
       liveVisitorRows,
+      visitorSessions: buildVisitorSessions(rows),
+
       last30: uniqueSessions(last30Rows),
       todayVisitors: uniqueSessions(todayRows),
       todayViews: todayRows.filter((r) => r.event_type === "page_view").length,
@@ -571,7 +665,20 @@ export default function WceAnalytics() {
 
   }, [rows, prevRows, refreshKey]);
 
+  // Free-text filter across the visitor history table.
+  const filteredVisitors = useMemo(() => {
+    const q = visitorQuery.trim().toLowerCase();
+    if (!q) return d.visitorSessions;
+    return d.visitorSessions.filter((v) =>
+      [v.country, v.device, v.channel, v.source, v.campaign, v.referralCode, v.landing, v.tz, v.lang]
+        .join(" ")
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [d.visitorSessions, visitorQuery]);
+
   const maxFunnel = Math.max(1, ...d.funnel.map((f) => f.value));
+
   const hasData = rows.length > 0;
   const rangeLabel = RANGES.find((r) => r.key === range)?.label ?? "";
   const sessionsCount = new Set(rows.map((r) => r.session_id)).size;
@@ -640,7 +747,9 @@ export default function WceAnalytics() {
               { title: "Pathway interest", head: ["Pathway", "Clicks"], rows: d.pathwayInterest.map((s) => [s.name, s.value]) },
               { title: "Speaker engagement", head: ["Speaker", "Flyer opens", "Shares"], rows: d.speakerEngagement.map((s) => [s.name, s.opens, s.shares]) },
               { title: "Referral codes", head: ["Code", "Visits", "Clicks", "Applications", "Conv. rate"], rows: d.referralCodes.map((s) => [s.code, s.visits, s.clicks, s.conversions, `${s.rate.toFixed(1)}%`]) },
+              { title: "Visitor history (most recent 200 visits)", head: ["Arrived", "Stayed", "Location", "Device", "Channel", "Came from", "Campaign", "Code", "Sections", "Clicks", "Application"], rows: d.visitorSessions.slice(0, 200).map((v) => [new Date(v.first).toLocaleString(), durationText(v.seconds), v.country, v.device, v.channel, v.source, v.campaign, v.referralCode, `${v.sections} of ${SECTIONS.length}`, v.clicks, v.submitted ? "Submitted" : v.started ? "Started" : "—"]) },
               { title: "Search and share readiness (SEO)", head: ["Check", "Status"], rows: SEO_CHECKS.map((s) => [s.item, s.value]) },
+
             ],
 
           })}
@@ -708,7 +817,86 @@ export default function WceAnalytics() {
             )}
           </Panel>
 
+          {/* Full past visitor history — one row per anonymous session. */}
+          <Panel
+            title={`Visitor history · ${rangeLabel}`}
+            hint="Every past visit in the selected range, one row per anonymous browsing session: when they arrived, how long they stayed, where they came from, how far they read and whether they applied. No personal data, no IP address."
+          >
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem", alignItems: "center", marginBottom: "0.7rem" }}>
+              <input
+                type="search"
+                className="wa-search-input"
+                placeholder="Filter by country, device, source, campaign or code"
+                value={visitorQuery}
+                onChange={(e) => { setVisitorQuery(e.target.value); setVisitorLimit(25); }}
+                aria-label="Filter visitor history"
+                style={{ flex: "1 1 260px", minWidth: 0 }}
+              />
+              <span className="wa-muted" style={{ fontSize: "0.78rem" }}>
+                {filteredVisitors.length} of {d.visitorSessions.length} visits
+              </span>
+              <button
+                type="button"
+                className="wa-btn wa-btn-ghost"
+                onClick={() => downloadVisitorCsv(filteredVisitors)}
+                disabled={!filteredVisitors.length}
+              >
+                <Download className="h-4 w-4" aria-hidden /> Export visitors
+              </button>
+            </div>
+
+            {filteredVisitors.length ? (
+              <>
+                <div className="wa-table-wrap">
+                  <table className="wa-table">
+                    <thead>
+                      <tr>
+                        <th>Arrived</th><th>Stayed</th><th>Location</th><th>Device</th>
+                        <th>Channel</th><th>Came from</th><th>Campaign</th><th>Code</th>
+                        <th>Landed on</th><th>Sections</th><th>Clicks</th><th>Flyers</th><th>Application</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredVisitors.slice(0, visitorLimit).map((v) => (
+                        <tr key={v.session}>
+                          <td data-label="Arrived">{new Date(v.first).toLocaleString()}</td>
+                          <td data-label="Stayed">{durationText(v.seconds)}</td>
+                          <td data-label="Location">{v.country}</td>
+                          <td data-label="Device">{v.device}</td>
+                          <td data-label="Channel">{v.channel}</td>
+                          <td data-label="Came from">{v.source}</td>
+                          <td data-label="Campaign">{v.campaign}</td>
+                          <td data-label="Code">{v.referralCode}</td>
+                          <td data-label="Landed on">{v.landing}</td>
+                          <td data-label="Sections">{v.sections} of {SECTIONS.length}</td>
+                          <td data-label="Clicks">{v.clicks}</td>
+                          <td data-label="Flyers">{v.speakerOpens + v.shares}</td>
+                          <td data-label="Application">
+                            {v.submitted ? "Submitted" : v.started ? "Started" : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {filteredVisitors.length > visitorLimit && (
+                  <button
+                    type="button"
+                    className="wa-btn wa-btn-ghost"
+                    style={{ marginTop: "0.7rem" }}
+                    onClick={() => setVisitorLimit((n) => n + 50)}
+                  >
+                    Show 50 more
+                  </button>
+                )}
+              </>
+            ) : (
+              <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No visits match that filter.</p>
+            )}
+          </Panel>
+
           {/* Where visitors are, and what they browse on. */}
+
           <div style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
             <Panel title={`Where visitors are · ${rangeLabel}`} hint="Unique visitors by country, from the network edge or the browser time zone. No IP address is ever stored.">
               {d.locationVisitors.length || d.unknownLocation ? (
