@@ -569,7 +569,7 @@ export default function WceAnalytics() {
       prev,
     };
 
-  }, [rows, prevRows]);
+  }, [rows, prevRows, refreshKey]);
 
   const maxFunnel = Math.max(1, ...d.funnel.map((f) => f.value));
   const hasData = rows.length > 0;
