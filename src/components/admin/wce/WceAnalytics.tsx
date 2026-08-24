@@ -7,7 +7,7 @@ import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, Cell, PieChart, Pie, Legend,
 } from "recharts";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import { ACCENTS, SectionHeading, StatCard, EmptyState } from "./ui";
 import { StatsSkeleton, wceToast, InfoTip } from "./kit";
 import { wcePathwayLabel } from "@/lib/wce-pathway-labels";
