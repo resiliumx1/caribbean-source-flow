@@ -3,6 +3,8 @@
 // role. No IP address is stored; country comes from the edge header only.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { countryFromTimeZone } from "../_shared/tz-country.ts";
+
 
 const MAX_BATCH = 40;
 const ALLOWED = new Set([
@@ -45,16 +47,26 @@ Deno.serve(async (req) => {
   const list = Array.isArray(body.events) ? body.events.slice(0, MAX_BATCH) : [];
   if (!sessionId || !list.length) return json({ error: "session_id and events are required" }, 400);
 
-  const country =
+  // Country comes from the network edge only. Several gateways are supported so
+  // the figure keeps working regardless of who fronts the request.
+  const edgeCountry =
     req.headers.get("cf-ipcountry") ??
     req.headers.get("x-vercel-ip-country") ??
+    req.headers.get("x-country") ??
+    req.headers.get("x-geo-country") ??
+    req.headers.get("x-client-geo-country") ??
+    req.headers.get("fly-client-country") ??
     null;
+  const country = edgeCountry && edgeCountry !== "XX" ? edgeCountry.slice(0, 4).toUpperCase() : null;
 
   const rows = list
     .map((raw) => {
       const e = (raw ?? {}) as Record<string, unknown>;
       const type = str(e.event_type, 40);
       if (!type || !ALLOWED.has(type)) return null;
+      const meta = e.meta && typeof e.meta === "object" ? (e.meta as Record<string, unknown>) : null;
+      // Fallback: the browser's own time zone, which is not personal data.
+      const tzCountry = countryFromTimeZone(meta?.tz);
       return {
         session_id: sessionId,
         event_type: type,
@@ -66,11 +78,12 @@ Deno.serve(async (req) => {
         utm_campaign: str(e.utm_campaign, 120),
         referral_code: str(e.referral_code, 60),
         device_type: str(e.device_type, 20),
-        country: country && country !== "XX" ? country.slice(0, 4) : null,
-        meta: e.meta && typeof e.meta === "object" ? e.meta : null,
+        country: country ?? tzCountry,
+        meta,
       };
     })
     .filter(Boolean);
+
 
   if (!rows.length) return json({ inserted: 0 });
 

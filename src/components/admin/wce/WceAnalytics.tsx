@@ -1,7 +1,7 @@
 /** First-party analytics for the /wce-2026 landing page.
  *  Reads public.wce_page_events, which is written only by the wce-track edge
  *  function and readable only by admins and organisers. No personal data. */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -96,6 +96,38 @@ function countBy<T>(rows: T[], key: (r: T) => string | null | undefined) {
 function uniqueSessions(rows: Ev[]) {
   return new Set(rows.map((r) => r.session_id)).size;
 }
+
+/** Counts unique visitors (sessions) per key, rather than raw events. */
+function sessionsBy(rows: Ev[], key: (r: Ev) => string | null | undefined) {
+  const map = new Map<string, Set<string>>();
+  rows.forEach((r) => {
+    const k = key(r);
+    if (!k) return;
+    const set = map.get(k) ?? new Set<string>();
+    set.add(r.session_id);
+    map.set(k, set);
+  });
+  return [...map.entries()]
+    .map(([name, set]) => ({ name, value: set.size }))
+    .sort((a, b) => b.value - a.value);
+}
+
+let displayNames: Intl.DisplayNames | null = null;
+/** "LC" -> "Saint Lucia". Falls back to the raw code. */
+function countryName(code: string): string {
+  if (!/^[A-Za-z]{2}$/.test(code)) return code;
+  try {
+    displayNames ??= new Intl.DisplayNames(undefined, { type: "region" });
+    return displayNames.of(code.toUpperCase()) ?? code;
+  } catch {
+    return code;
+  }
+}
+
+const DEVICE_LABELS: Record<string, string> = {
+  mobile: "Mobile", tablet: "Tablet", desktop: "Desktop",
+};
+
 
 const pct = (num: number, den: number) => (den > 0 ? Math.round((num / den) * 1000) / 10 : 0);
 const pctText = (num: number, den: number) => `${pct(num, den).toFixed(1)}%`;
@@ -251,15 +283,29 @@ ${args.tables.map(table).join("")}
 
 export default function WceAnalytics() {
   const [range, setRange] = useState<RangeKey>("all");
+  // Bumped every 30 seconds so the live panel and figures stay current.
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setRefreshKey((n) => n + 1), 30000);
+    return () => window.clearInterval(id);
+  }, []);
+
 
   const [rows, setRows] = useState<Ev[]>([]);
   const [prevRows, setPrevRows] = useState<Ev[]>([]);
   const [leadCount, setLeadCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const lastRange = useRef<RangeKey | null>(null);
+
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
+    // Background refreshes must not blank the dashboard with a skeleton.
+    const silent = lastRange.current === range;
+    lastRange.current = range;
+    if (!silent) setLoading(true);
+
     (async () => {
       const { start, days } = rangeWindow(range);
       // Fetch the current window plus the equal window before it, so every
@@ -295,7 +341,7 @@ export default function WceAnalytics() {
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [range]);
+  }, [range, refreshKey]);
 
   const d = useMemo(() => {
     const of = (t: string, source: Ev[] = rows) => source.filter((r) => r.event_type === t);
@@ -448,6 +494,36 @@ export default function WceAnalytics() {
       }))
       .sort((a, b) => b.opens + b.shares - (a.opens + a.shares));
 
+    // ---- Who is on the page right now --------------------------------------
+    const now = Date.now();
+    const liveRows = rows.filter((r) => now - new Date(r.created_at).getTime() <= 5 * 60 * 1000);
+    const last30Rows = rows.filter((r) => now - new Date(r.created_at).getTime() <= 30 * 60 * 1000);
+    const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0);
+    const todayRows = rows.filter((r) => new Date(r.created_at) >= startOfToday);
+
+    // One line per active visitor: where they are, what they are on, how long ago.
+    const liveMap = new Map<string, Ev[]>();
+    liveRows.forEach((r) => {
+      const list = liveMap.get(r.session_id) ?? [];
+      list.push(r);
+      liveMap.set(r.session_id, list);
+    });
+    const liveVisitorRows = [...liveMap.entries()]
+      .map(([session, evs]) => {
+        const sorted = [...evs].sort((a, b) => a.created_at.localeCompare(b.created_at));
+        const latest = sorted[sorted.length - 1];
+        return {
+          session,
+          country: latest.country ? countryName(latest.country) : "Unknown",
+          device: DEVICE_LABELS[latest.device_type ?? ""] ?? latest.device_type ?? "—",
+          source: sourceLabel(latest),
+          path: latest.path ?? "/wce-2026",
+          events: evs.length,
+          minutesAgo: Math.max(0, Math.round((now - new Date(latest.created_at).getTime()) / 60000)),
+        };
+      })
+      .sort((a, b) => a.minutesAgo - b.minutesAgo);
+
     // Previous-period comparisons for the headline cards.
     const prev = prevRows.length || rows.length
       ? {
@@ -458,6 +534,15 @@ export default function WceAnalytics() {
         }
       : null;
 
+    const deviceVisitors = sessionsBy(rows, (r) => DEVICE_LABELS[r.device_type ?? ""] ?? r.device_type);
+    const locationVisitors = sessionsBy(rows, (r) => (r.country ? countryName(r.country) : null));
+    const unknownLocation = uniqueSessions(rows.filter((r) => !r.country));
+    const timezones = sessionsBy(rows, (r) => metaStr(r, "tz"));
+    const languages = sessionsBy(rows, (r) => {
+      const l = metaStr(r, "lang");
+      return l ? l.toLowerCase() : null;
+    });
+
     return {
       pageViews, visitors, ctaClicks, formStarts, formSubmits, overTime, funnel,
       sources: countBy(pageViews, sourceLabel),
@@ -465,6 +550,12 @@ export default function WceAnalytics() {
 
       devices: countBy(rows, (r) => r.device_type),
       countries: countBy(rows, (r) => r.country),
+      deviceVisitors, locationVisitors, unknownLocation, timezones, languages,
+      liveVisitors: liveMap.size,
+      liveVisitorRows,
+      last30: uniqueSessions(last30Rows),
+      todayVisitors: uniqueSessions(todayRows),
+      todayViews: todayRows.filter((r) => r.event_type === "page_view").length,
       leaderboard: countBy(ctaClicks, (r) => r.event_target),
       sectionReach, referralCodes, speakerEngagement,
       faqOpens: countBy(of("faq_open"), (r) => r.event_target),
@@ -477,7 +568,8 @@ export default function WceAnalytics() {
       completion: pct(formSubmits.length, Math.max(1, formStarts.length)),
       prev,
     };
-  }, [rows, prevRows]);
+
+  }, [rows, prevRows, refreshKey]);
 
   const maxFunnel = Math.max(1, ...d.funnel.map((f) => f.value));
   const hasData = rows.length > 0;
@@ -522,6 +614,8 @@ export default function WceAnalytics() {
             first: firstSeen,
             last: lastSeen,
             headline: [
+              { label: "Visitors on the page now", value: String(d.liveVisitors) },
+              { label: "Visitors today", value: String(d.todayVisitors) },
               { label: "Visitors", value: String(d.visitors) },
               { label: "Page views", value: String(d.pageViews.length) },
               { label: "CTA clicks", value: String(d.ctaClicks.length) },
@@ -532,6 +626,11 @@ export default function WceAnalytics() {
               { label: "Leads recorded", value: leadCount === null ? "—" : String(leadCount) },
             ],
             tables: [
+              { title: "Visitors on the page in the last 5 minutes", head: ["Location", "Device", "Came from", "Page", "Last seen"], rows: d.liveVisitorRows.map((v) => [v.country, v.device, v.source, v.path, v.minutesAgo === 0 ? "just now" : `${v.minutesAgo} min ago`]) },
+              { title: "Where visitors are (unique visitors)", head: ["Location", "Visitors", "Share"], rows: [...d.locationVisitors.map((s) => [s.name, s.value, pctText(s.value, Math.max(1, d.visitors))]), ...(d.unknownLocation ? [["Unknown", d.unknownLocation, pctText(d.unknownLocation, Math.max(1, d.visitors))] as (string | number)[]] : [])] },
+              { title: "Devices (unique visitors)", head: ["Device", "Visitors", "Share"], rows: d.deviceVisitors.map((s) => [s.name, s.value, pctText(s.value, Math.max(1, d.visitors))]) },
+              { title: "Visitor time zones", head: ["Time zone", "Visitors"], rows: d.timezones.slice(0, 15).map((s) => [s.name, s.value]) },
+              { title: "Visitor languages", head: ["Language", "Visitors"], rows: d.languages.slice(0, 12).map((s) => [s.name, s.value]) },
               { title: "Journey funnel", head: ["Stage", "Count"], rows: d.funnel.map((f) => [f.stage, f.value]) },
               { title: "Acquisition channels", head: ["Channel", "Page views"], rows: d.channels.map((c) => [c.name, c.value]) },
               { title: "Traffic sources", head: ["Source", "Page views"], rows: d.sources.map((c) => [c.name, c.value]) },
@@ -541,10 +640,9 @@ export default function WceAnalytics() {
               { title: "Pathway interest", head: ["Pathway", "Clicks"], rows: d.pathwayInterest.map((s) => [s.name, s.value]) },
               { title: "Speaker engagement", head: ["Speaker", "Flyer opens", "Shares"], rows: d.speakerEngagement.map((s) => [s.name, s.opens, s.shares]) },
               { title: "Referral codes", head: ["Code", "Visits", "Clicks", "Applications", "Conv. rate"], rows: d.referralCodes.map((s) => [s.code, s.visits, s.clicks, s.conversions, `${s.rate.toFixed(1)}%`]) },
-              { title: "Devices", head: ["Device", "Events"], rows: d.devices.map((s) => [s.name, s.value]) },
-              { title: "Countries", head: ["Country", "Events"], rows: d.countries.map((s) => [s.name, s.value]) },
               { title: "Search and share readiness (SEO)", head: ["Check", "Status"], rows: SEO_CHECKS.map((s) => [s.item, s.value]) },
             ],
+
           })}
           disabled={!hasData}
           style={{ marginLeft: "auto" }}
@@ -571,7 +669,152 @@ export default function WceAnalytics() {
 
       ) : (
         <div style={{ display: "grid", gap: "0.85rem" }}>
+          {/* Who is on the page right now — refreshes every 30 seconds. */}
           <div className="wa-stats" style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+            <StatCard label="On the page now" value={d.liveVisitors} accent="gold" hint="Visitors active in the last 5 minutes" />
+            <StatCard label="Last 30 minutes" value={d.last30} accent="teal" hint="Visitors seen in the past half hour" />
+            <StatCard label="Visitors today" value={d.todayVisitors} accent="sage" hint="Unique visitors since midnight" />
+            <StatCard label="Page views today" value={d.todayViews} accent="terracotta" />
+          </div>
+
+          <Panel
+            title="Live visitors · last 5 minutes"
+            hint="Each row is one anonymous browsing session, with its location, device and referring source. Refreshes automatically every 30 seconds."
+          >
+            {d.liveVisitorRows.length ? (
+              <div className="wa-table-wrap">
+                <table className="wa-table">
+                  <thead>
+                    <tr><th>Location</th><th>Device</th><th>Came from</th><th>Page</th><th>Events</th><th>Last seen</th></tr>
+                  </thead>
+                  <tbody>
+                    {d.liveVisitorRows.slice(0, 25).map((v) => (
+                      <tr key={v.session}>
+                        <td data-label="Location">{v.country}</td>
+                        <td data-label="Device">{v.device}</td>
+                        <td data-label="Came from">{v.source}</td>
+                        <td data-label="Page">{v.path}</td>
+                        <td data-label="Events">{v.events}</td>
+                        <td data-label="Last seen">{v.minutesAgo === 0 ? "just now" : `${v.minutesAgo} min ago`}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="wa-muted" style={{ fontSize: "0.8rem" }}>
+                Nobody is on the page at this moment. This list fills in as visitors arrive.
+              </p>
+            )}
+          </Panel>
+
+          {/* Where visitors are, and what they browse on. */}
+          <div style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+            <Panel title={`Where visitors are · ${rangeLabel}`} hint="Unique visitors by country, from the network edge or the browser time zone. No IP address is ever stored.">
+              {d.locationVisitors.length || d.unknownLocation ? (
+                <div className="wa-table-wrap">
+                  <table className="wa-table">
+                    <thead><tr><th>Location</th><th>Visitors</th><th>Share</th></tr></thead>
+                    <tbody>
+                      {d.locationVisitors.slice(0, 12).map((c) => (
+                        <tr key={c.name}>
+                          <td data-label="Location">{c.name}</td>
+                          <td data-label="Visitors">{c.value}</td>
+                          <td data-label="Share">{pctText(c.value, Math.max(1, d.visitors))}</td>
+                        </tr>
+                      ))}
+                      {d.unknownLocation > 0 && (
+                        <tr>
+                          <td data-label="Location">Unknown</td>
+                          <td data-label="Visitors">{d.unknownLocation}</td>
+                          <td data-label="Share">{pctText(d.unknownLocation, Math.max(1, d.visitors))}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No location data yet.</p>
+              )}
+            </Panel>
+
+            <Panel title={`Devices · ${rangeLabel}`} hint="Unique visitors by device class — mobile, tablet or desktop.">
+              {d.deviceVisitors.length ? (
+                <>
+                  <div style={{ height: 200, width: "100%", minWidth: 0 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={d.deviceVisitors} dataKey="value" nameKey="name" innerRadius={45} outerRadius={80} paddingAngle={2}>
+                          {d.deviceVisitors.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                        </Pie>
+                        <Legend wrapperStyle={{ fontSize: 11, color: "#F5EFE0" }} />
+                        <Tooltip contentStyle={tooltipStyle} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="wa-table-wrap">
+                    <table className="wa-table">
+                      <thead><tr><th>Device</th><th>Visitors</th><th>Share</th></tr></thead>
+                      <tbody>
+                        {d.deviceVisitors.map((s) => (
+                          <tr key={s.name}>
+                            <td data-label="Device">{s.name}</td>
+                            <td data-label="Visitors">{s.value}</td>
+                            <td data-label="Share">{pctText(s.value, Math.max(1, d.visitors))}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No device data yet.</p>
+              )}
+            </Panel>
+
+            <Panel title="Visitor time zones" hint="Useful for scheduling posts, emails and the livestream start time.">
+              {d.timezones.length ? (
+                <div className="wa-table-wrap">
+                  <table className="wa-table">
+                    <thead><tr><th>Time zone</th><th>Visitors</th></tr></thead>
+                    <tbody>
+                      {d.timezones.slice(0, 10).map((s) => (
+                        <tr key={s.name}>
+                          <td data-label="Time zone">{s.name}</td>
+                          <td data-label="Visitors">{s.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>Time zone data appears for visits recorded from now on.</p>
+              )}
+            </Panel>
+
+            <Panel title="Visitor languages" hint="Browser language, handy for ad copy and translations.">
+              {d.languages.length ? (
+                <div className="wa-table-wrap">
+                  <table className="wa-table">
+                    <thead><tr><th>Language</th><th>Visitors</th></tr></thead>
+                    <tbody>
+                      {d.languages.slice(0, 10).map((s) => (
+                        <tr key={s.name}>
+                          <td data-label="Language">{s.name}</td>
+                          <td data-label="Visitors">{s.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>Language data appears for visits recorded from now on.</p>
+              )}
+            </Panel>
+          </div>
+
+          <div className="wa-stats" style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+
             <StatCard
               label="Visitors" value={d.visitors} accent="sage"
               hint="Unique browsing sessions"
@@ -757,40 +1000,6 @@ export default function WceAnalytics() {
               )}
             </Panel>
 
-            <Panel title="Device split">
-              {d.devices.length ? (
-                <div style={{ height: 240, width: "100%", minWidth: 0 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={d.devices} dataKey="value" nameKey="name" innerRadius={45} outerRadius={80} paddingAngle={2}>
-                        {d.devices.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                      </Pie>
-                      <Legend wrapperStyle={{ fontSize: 11, color: "#F5EFE0" }} />
-                      <Tooltip contentStyle={tooltipStyle} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              ) : (
-                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No device data recorded yet.</p>
-              )}
-            </Panel>
-
-            <Panel title="Countries" hint="Derived from the network edge, never from an IP address we store.">
-              {d.countries.length ? (
-                <div className="wa-table-wrap">
-                  <table>
-                    <thead><tr><th>Country</th><th>Events</th></tr></thead>
-                    <tbody>
-                      {d.countries.slice(0, 12).map((c) => (
-                        <tr key={c.name}><td data-label="Country">{c.name}</td><td data-label="Events">{c.value}</td></tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>Country is not being reported for this traffic.</p>
-              )}
-            </Panel>
 
             <Panel title="Section reach" hint="How many visitors scrolled far enough to see each section.">
               <div style={{ height: 280, width: "100%", minWidth: 0 }}>
