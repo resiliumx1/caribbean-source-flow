@@ -222,7 +222,95 @@ function downloadCsv(rows: Ev[]) {
   URL.revokeObjectURL(url);
 }
 
+/** One row per anonymous browsing session — the detailed visitor history. */
+export type VisitorSession = {
+  session: string;
+  first: string;
+  last: string;
+  seconds: number;
+  country: string;
+  device: string;
+  source: string;
+  channel: string;
+  campaign: string;
+  referralCode: string;
+  landing: string;
+  tz: string;
+  lang: string;
+  views: number;
+  events: number;
+  sections: number;
+  clicks: number;
+  shares: number;
+  speakerOpens: number;
+  started: boolean;
+  submitted: boolean;
+};
+
+/** Groups every recorded event into per-session visitor histories. */
+function buildVisitorSessions(rows: Ev[]): VisitorSession[] {
+  const map = new Map<string, Ev[]>();
+  rows.forEach((r) => {
+    const list = map.get(r.session_id) ?? [];
+    list.push(r);
+    map.set(r.session_id, list);
+  });
+
+  return [...map.entries()]
+    .map(([session, evs]) => {
+      const sorted = [...evs].sort((a, b) => a.created_at.localeCompare(b.created_at));
+      const first = sorted[0];
+      const last = sorted[sorted.length - 1];
+      const count = (t: string) => evs.filter((e) => e.event_type === t).length;
+      return {
+        session,
+        first: first.created_at,
+        last: last.created_at,
+        seconds: Math.max(
+          0,
+          Math.round((new Date(last.created_at).getTime() - new Date(first.created_at).getTime()) / 1000),
+        ),
+        country: last.country ? countryName(last.country) : "Unknown",
+        device: DEVICE_LABELS[last.device_type ?? ""] ?? last.device_type ?? "—",
+        source: sourceLabel(first),
+        channel: channelOf(first),
+        campaign: first.utm_campaign ?? "—",
+        referralCode: evs.find((e) => e.referral_code)?.referral_code ?? "—",
+        landing: first.path ?? "/wce-2026",
+        tz: metaStr(last, "tz") ?? "—",
+        lang: (metaStr(last, "lang") ?? "—").toLowerCase(),
+        views: count("page_view"),
+        events: evs.length,
+        sections: new Set(evs.filter((e) => e.event_type === "section_view").map((e) => e.event_target)).size,
+        clicks: count("cta_click"),
+        shares: count("flyer_share"),
+        speakerOpens: count("speaker_open"),
+        started: count("form_start") > 0,
+        submitted: count("form_submit") > 0,
+      };
+    })
+    .sort((a, b) => b.last.localeCompare(a.last));
+}
+
+/** Exports the per-visitor history, one line per session. */
+function downloadVisitorCsv(sessions: VisitorSession[]) {
+  const cols: (keyof VisitorSession)[] = [
+    "first", "last", "seconds", "country", "device", "channel", "source", "campaign",
+    "referralCode", "landing", "tz", "lang", "views", "events", "sections", "clicks",
+    "speakerOpens", "shares", "started", "submitted", "session",
+  ];
+  const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const csv = [cols.join(","), ...sessions.map((s) => cols.map((c) => esc(s[c])).join(","))].join("\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `wce-visitors-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 type Row = { name: string; value: number };
+
 
 /** Builds a printable activity report and opens it in a new tab. */
 function openReport(args: {
