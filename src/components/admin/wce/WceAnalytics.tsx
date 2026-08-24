@@ -283,6 +283,14 @@ ${args.tables.map(table).join("")}
 
 export default function WceAnalytics() {
   const [range, setRange] = useState<RangeKey>("all");
+  // Bumped every 30 seconds so the live panel and figures stay current.
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setRefreshKey((n) => n + 1), 30000);
+    return () => window.clearInterval(id);
+  }, []);
+
 
   const [rows, setRows] = useState<Ev[]>([]);
   const [prevRows, setPrevRows] = useState<Ev[]>([]);
