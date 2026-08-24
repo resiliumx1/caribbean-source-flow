@@ -23,7 +23,7 @@ export type WceEventType =
 
 const SESSION_KEY = "wce-analytics-session";
 const SEEN_KEY = "wce-analytics-seen";
-const CONSENT_KEY = "mkrc-cookie-consent";
+
 const FLUSH_MS = 2500;
 const MAX_QUEUE = 30;
 
