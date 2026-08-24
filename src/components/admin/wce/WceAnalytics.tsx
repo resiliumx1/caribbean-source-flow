@@ -669,7 +669,152 @@ export default function WceAnalytics() {
 
       ) : (
         <div style={{ display: "grid", gap: "0.85rem" }}>
+          {/* Who is on the page right now — refreshes every 30 seconds. */}
           <div className="wa-stats" style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+            <StatCard label="On the page now" value={d.liveVisitors} accent="gold" hint="Visitors active in the last 5 minutes" />
+            <StatCard label="Last 30 minutes" value={d.last30} accent="teal" hint="Visitors seen in the past half hour" />
+            <StatCard label="Visitors today" value={d.todayVisitors} accent="sage" hint="Unique visitors since midnight" />
+            <StatCard label="Page views today" value={d.todayViews} accent="terracotta" />
+          </div>
+
+          <Panel
+            title="Live visitors · last 5 minutes"
+            hint="Each row is one anonymous browsing session, with its location, device and referring source. Refreshes automatically every 30 seconds."
+          >
+            {d.liveVisitorRows.length ? (
+              <div className="wa-table-wrap">
+                <table className="wa-table">
+                  <thead>
+                    <tr><th>Location</th><th>Device</th><th>Came from</th><th>Page</th><th>Events</th><th>Last seen</th></tr>
+                  </thead>
+                  <tbody>
+                    {d.liveVisitorRows.slice(0, 25).map((v) => (
+                      <tr key={v.session}>
+                        <td data-label="Location">{v.country}</td>
+                        <td data-label="Device">{v.device}</td>
+                        <td data-label="Came from">{v.source}</td>
+                        <td data-label="Page">{v.path}</td>
+                        <td data-label="Events">{v.events}</td>
+                        <td data-label="Last seen">{v.minutesAgo === 0 ? "just now" : `${v.minutesAgo} min ago`}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="wa-muted" style={{ fontSize: "0.8rem" }}>
+                Nobody is on the page at this moment. This list fills in as visitors arrive.
+              </p>
+            )}
+          </Panel>
+
+          {/* Where visitors are, and what they browse on. */}
+          <div style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+            <Panel title={`Where visitors are · ${rangeLabel}`} hint="Unique visitors by country, from the network edge or the browser time zone. No IP address is ever stored.">
+              {d.locationVisitors.length || d.unknownLocation ? (
+                <div className="wa-table-wrap">
+                  <table className="wa-table">
+                    <thead><tr><th>Location</th><th>Visitors</th><th>Share</th></tr></thead>
+                    <tbody>
+                      {d.locationVisitors.slice(0, 12).map((c) => (
+                        <tr key={c.name}>
+                          <td data-label="Location">{c.name}</td>
+                          <td data-label="Visitors">{c.value}</td>
+                          <td data-label="Share">{pctText(c.value, Math.max(1, d.visitors))}</td>
+                        </tr>
+                      ))}
+                      {d.unknownLocation > 0 && (
+                        <tr>
+                          <td data-label="Location">Unknown</td>
+                          <td data-label="Visitors">{d.unknownLocation}</td>
+                          <td data-label="Share">{pctText(d.unknownLocation, Math.max(1, d.visitors))}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No location data yet.</p>
+              )}
+            </Panel>
+
+            <Panel title={`Devices · ${rangeLabel}`} hint="Unique visitors by device class — mobile, tablet or desktop.">
+              {d.deviceVisitors.length ? (
+                <>
+                  <div style={{ height: 200, width: "100%", minWidth: 0 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={d.deviceVisitors} dataKey="value" nameKey="name" innerRadius={45} outerRadius={80} paddingAngle={2}>
+                          {d.deviceVisitors.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                        </Pie>
+                        <Legend wrapperStyle={{ fontSize: 11, color: "#F5EFE0" }} />
+                        <Tooltip contentStyle={tooltipStyle} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="wa-table-wrap">
+                    <table className="wa-table">
+                      <thead><tr><th>Device</th><th>Visitors</th><th>Share</th></tr></thead>
+                      <tbody>
+                        {d.deviceVisitors.map((s) => (
+                          <tr key={s.name}>
+                            <td data-label="Device">{s.name}</td>
+                            <td data-label="Visitors">{s.value}</td>
+                            <td data-label="Share">{pctText(s.value, Math.max(1, d.visitors))}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No device data yet.</p>
+              )}
+            </Panel>
+
+            <Panel title="Visitor time zones" hint="Useful for scheduling posts, emails and the livestream start time.">
+              {d.timezones.length ? (
+                <div className="wa-table-wrap">
+                  <table className="wa-table">
+                    <thead><tr><th>Time zone</th><th>Visitors</th></tr></thead>
+                    <tbody>
+                      {d.timezones.slice(0, 10).map((s) => (
+                        <tr key={s.name}>
+                          <td data-label="Time zone">{s.name}</td>
+                          <td data-label="Visitors">{s.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>Time zone data appears for visits recorded from now on.</p>
+              )}
+            </Panel>
+
+            <Panel title="Visitor languages" hint="Browser language, handy for ad copy and translations.">
+              {d.languages.length ? (
+                <div className="wa-table-wrap">
+                  <table className="wa-table">
+                    <thead><tr><th>Language</th><th>Visitors</th></tr></thead>
+                    <tbody>
+                      {d.languages.slice(0, 10).map((s) => (
+                        <tr key={s.name}>
+                          <td data-label="Language">{s.name}</td>
+                          <td data-label="Visitors">{s.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>Language data appears for visits recorded from now on.</p>
+              )}
+            </Panel>
+          </div>
+
+          <div className="wa-stats" style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
+
             <StatCard
               label="Visitors" value={d.visitors} accent="sage"
               hint="Unique browsing sessions"
