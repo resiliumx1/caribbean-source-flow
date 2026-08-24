@@ -483,6 +483,10 @@ export default function WceAnalytics() {
   const hasData = rows.length > 0;
   const rangeLabel = RANGES.find((r) => r.key === range)?.label ?? "";
   const sessionsCount = new Set(rows.map((r) => r.session_id)).size;
+  // Rows arrive newest-first, so the window bounds are the last and first entries.
+  const fmt = (iso?: string) => (iso ? new Date(iso).toLocaleString() : null);
+  const firstSeen = rows.length ? fmt(rows[rows.length - 1].created_at) : null;
+  const lastSeen = rows.length ? fmt(rows[0].created_at) : null;
 
   return (
     <div>
