@@ -825,7 +825,7 @@ export default function WceAnalytics() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem", alignItems: "center", marginBottom: "0.7rem" }}>
               <input
                 type="search"
-                className="wa-input"
+                className="wa-search-input"
                 placeholder="Filter by country, device, source, campaign or code"
                 value={visitorQuery}
                 onChange={(e) => { setVisitorQuery(e.target.value); setVisitorLimit(25); }}
