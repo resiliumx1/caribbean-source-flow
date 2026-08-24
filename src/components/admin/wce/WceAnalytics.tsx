@@ -643,7 +643,6 @@ export default function WceAnalytics() {
               { title: "Search and share readiness (SEO)", head: ["Check", "Status"], rows: SEO_CHECKS.map((s) => [s.item, s.value]) },
             ],
 
-            ],
           })}
           disabled={!hasData}
           style={{ marginLeft: "auto" }}
