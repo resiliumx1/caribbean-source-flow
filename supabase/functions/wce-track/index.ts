@@ -3,6 +3,8 @@
 // role. No IP address is stored; country comes from the edge header only.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { countryFromTimeZone } from "../_shared/tz-country.ts";
+
 
 const MAX_BATCH = 40;
 const ALLOWED = new Set([
