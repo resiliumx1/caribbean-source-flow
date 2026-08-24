@@ -1,7 +1,7 @@
 /** First-party analytics for the /wce-2026 landing page.
  *  Reads public.wce_page_events, which is written only by the wce-track edge
  *  function and readable only by admins and organisers. No personal data. */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
