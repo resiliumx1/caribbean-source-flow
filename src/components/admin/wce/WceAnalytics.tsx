@@ -747,7 +747,9 @@ export default function WceAnalytics() {
               { title: "Pathway interest", head: ["Pathway", "Clicks"], rows: d.pathwayInterest.map((s) => [s.name, s.value]) },
               { title: "Speaker engagement", head: ["Speaker", "Flyer opens", "Shares"], rows: d.speakerEngagement.map((s) => [s.name, s.opens, s.shares]) },
               { title: "Referral codes", head: ["Code", "Visits", "Clicks", "Applications", "Conv. rate"], rows: d.referralCodes.map((s) => [s.code, s.visits, s.clicks, s.conversions, `${s.rate.toFixed(1)}%`]) },
+              { title: "Visitor history (most recent 200 visits)", head: ["Arrived", "Stayed", "Location", "Device", "Channel", "Came from", "Campaign", "Code", "Sections", "Clicks", "Application"], rows: d.visitorSessions.slice(0, 200).map((v) => [new Date(v.first).toLocaleString(), durationText(v.seconds), v.country, v.device, v.channel, v.source, v.campaign, v.referralCode, `${v.sections} of ${SECTIONS.length}`, v.clicks, v.submitted ? "Submitted" : v.started ? "Started" : "—"]) },
               { title: "Search and share readiness (SEO)", head: ["Check", "Status"], rows: SEO_CHECKS.map((s) => [s.item, s.value]) },
+
             ],
 
           })}
