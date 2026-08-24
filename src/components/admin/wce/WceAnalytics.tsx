@@ -341,7 +341,7 @@ export default function WceAnalytics() {
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [range]);
+  }, [range, refreshKey]);
 
   const d = useMemo(() => {
     const of = (t: string, source: Ev[] = rows) => source.filter((r) => r.event_type === t);
