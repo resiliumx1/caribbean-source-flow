@@ -2,11 +2,13 @@
  *
  *  Privacy: the session id is a random value in sessionStorage, never linked to
  *  a lead or an identity. No IP address is ever sent. Recording is skipped when
- *  Do Not Track is on, or while the cookie banner has not been accepted.
+ *  Do Not Track is on. Measurement is first-party and anonymous, so it runs
+ *  without waiting for the cookie banner.
  *  Events are queued and flushed in batches so scrolling never fires requests.
  */
 import { supabase } from "@/integrations/supabase/client";
 import { readAttribution } from "@/lib/wce-attribution";
+
 
 export type WceEventType =
   | "page_view"
