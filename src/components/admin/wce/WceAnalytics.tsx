@@ -97,6 +97,38 @@ function uniqueSessions(rows: Ev[]) {
   return new Set(rows.map((r) => r.session_id)).size;
 }
 
+/** Counts unique visitors (sessions) per key, rather than raw events. */
+function sessionsBy(rows: Ev[], key: (r: Ev) => string | null | undefined) {
+  const map = new Map<string, Set<string>>();
+  rows.forEach((r) => {
+    const k = key(r);
+    if (!k) return;
+    const set = map.get(k) ?? new Set<string>();
+    set.add(r.session_id);
+    map.set(k, set);
+  });
+  return [...map.entries()]
+    .map(([name, set]) => ({ name, value: set.size }))
+    .sort((a, b) => b.value - a.value);
+}
+
+let displayNames: Intl.DisplayNames | null = null;
+/** "LC" -> "Saint Lucia". Falls back to the raw code. */
+function countryName(code: string): string {
+  if (!/^[A-Za-z]{2}$/.test(code)) return code;
+  try {
+    displayNames ??= new Intl.DisplayNames(undefined, { type: "region" });
+    return displayNames.of(code.toUpperCase()) ?? code;
+  } catch {
+    return code;
+  }
+}
+
+const DEVICE_LABELS: Record<string, string> = {
+  mobile: "Mobile", tablet: "Tablet", desktop: "Desktop",
+};
+
+
 const pct = (num: number, den: number) => (den > 0 ? Math.round((num / den) * 1000) / 10 : 0);
 const pctText = (num: number, den: number) => `${pct(num, den).toFixed(1)}%`;
 
