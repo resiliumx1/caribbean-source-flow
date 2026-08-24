@@ -371,6 +371,10 @@ ${args.tables.map(table).join("")}
 
 export default function WceAnalytics() {
   const [range, setRange] = useState<RangeKey>("all");
+  // Detailed visitor history: free-text filter and how many rows are shown.
+  const [visitorQuery, setVisitorQuery] = useState("");
+  const [visitorLimit, setVisitorLimit] = useState(25);
+
   // Bumped every 30 seconds so the live panel and figures stay current.
   const [refreshKey, setRefreshKey] = useState(0);
 
