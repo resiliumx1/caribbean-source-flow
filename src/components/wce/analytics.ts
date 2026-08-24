@@ -2,11 +2,13 @@
  *
  *  Privacy: the session id is a random value in sessionStorage, never linked to
  *  a lead or an identity. No IP address is ever sent. Recording is skipped when
- *  Do Not Track is on, or while the cookie banner has not been accepted.
+ *  Do Not Track is on. Measurement is first-party and anonymous, so it runs
+ *  without waiting for the cookie banner.
  *  Events are queued and flushed in batches so scrolling never fires requests.
  */
 import { supabase } from "@/integrations/supabase/client";
 import { readAttribution } from "@/lib/wce-attribution";
+
 
 export type WceEventType =
   | "page_view"
@@ -21,7 +23,7 @@ export type WceEventType =
 
 const SESSION_KEY = "wce-analytics-session";
 const SEEN_KEY = "wce-analytics-seen";
-const CONSENT_KEY = "mkrc-cookie-consent";
+
 const FLUSH_MS = 2500;
 const MAX_QUEUE = 30;
 
@@ -69,17 +71,10 @@ function doNotTrack(): boolean {
   return flag === "1" || flag === "yes";
 }
 
-function consentGiven(): boolean {
-  try {
-    // The banner writes "accepted" once acknowledged. Until then we stay silent.
-    return localStorage.getItem(CONSENT_KEY) === "accepted";
-  } catch {
-    return false;
-  }
-}
-
 export function analyticsEnabled(): boolean {
-  return typeof window !== "undefined" && !doNotTrack() && consentGiven();
+  // Anonymous, first-party measurement: no cookie consent gate, Do Not Track honoured.
+  return typeof window !== "undefined" && !doNotTrack();
+
 }
 
 function deviceType(): string {

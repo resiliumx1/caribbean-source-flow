@@ -7,7 +7,7 @@ import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, Cell, PieChart, Pie, Legend,
 } from "recharts";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 import { ACCENTS, SectionHeading, StatCard, EmptyState } from "./ui";
 import { StatsSkeleton, wceToast, InfoTip } from "./kit";
 import { wcePathwayLabel } from "@/lib/wce-pathway-labels";
@@ -144,6 +144,36 @@ function trendOf(current: number, previous: number | null) {
   };
 }
 
+/** Coarse acquisition channel, useful for SEO vs social vs paid reporting. */
+const SEARCH_HOSTS = ["google", "bing", "duckduckgo", "yahoo", "ecosia", "brave", "baidu", "yandex"];
+const SOCIAL_HOSTS = ["facebook", "instagram", "t.co", "twitter", "x.com", "linkedin", "tiktok", "youtube", "whatsapp", "pinterest", "reddit"];
+const EMAIL_HOSTS = ["mail.", "mailchi", "outlook", "gmail"];
+
+function channelOf(e: Ev): string {
+  const medium = (e.utm_medium ?? "").toLowerCase();
+  if (medium.includes("cpc") || medium.includes("paid") || medium.includes("ppc")) return "Paid";
+  if (medium.includes("email")) return "Email";
+  if (medium.includes("social")) return "Social";
+  if (medium.includes("organic")) return "Organic search";
+  const label = sourceLabel(e);
+  if (label === "direct") return "Direct";
+  if (SEARCH_HOSTS.some((h) => label.includes(h))) return "Organic search";
+  if (SOCIAL_HOSTS.some((h) => label.includes(h))) return "Social";
+  if (EMAIL_HOSTS.some((h) => label.includes(h))) return "Email";
+  return "Referral";
+}
+
+/** Head data shipped on /wce-2026 — kept in step with WCE2026.tsx. */
+const SEO_CHECKS: { item: string; value: string }[] = [
+  { item: "Page title", value: "Caribbean Wellness Saint Lucia 2026 | 11–17 October (57 characters)" },
+  { item: "Meta description", value: "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day retreat." },
+  { item: "Canonical URL", value: "https://mountkailashslu.com/wce-2026" },
+  { item: "Indexable", value: "Yes — allowed in robots.txt and listed in sitemap.xml" },
+  { item: "Social preview", value: "Landscape 1200×630 and square cards, per-speaker share images" },
+  { item: "Structured data", value: "Event (with sub-events and offers), FAQPage, BreadcrumbList" },
+  { item: "Speaker share routes", value: "7 flyer URLs, each with its own title, description and image" },
+];
+
 function downloadCsv(rows: Ev[]) {
   const cols: (keyof Ev)[] = [
     "created_at", "session_id", "event_type", "event_target", "path", "referrer",
@@ -160,8 +190,68 @@ function downloadCsv(rows: Ev[]) {
   URL.revokeObjectURL(url);
 }
 
+type Row = { name: string; value: number };
+
+/** Builds a printable activity report and opens it in a new tab. */
+function openReport(args: {
+  rangeLabel: string;
+  first: string | null;
+  last: string | null;
+  headline: { label: string; value: string }[];
+  tables: { title: string; head: string[]; rows: (string | number)[][] }[];
+}) {
+  const esc = (v: unknown) =>
+    String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const table = (t: { title: string; head: string[]; rows: (string | number)[][] }) =>
+    !t.rows.length ? "" : `<h2>${esc(t.title)}</h2><table><thead><tr>${t.head
+      .map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${t.rows
+      .map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>WCE 2026 activity report — ${esc(args.rangeLabel)}</title>
+<style>
+  body{font-family:'DM Sans',system-ui,sans-serif;color:#17301f;margin:0;padding:36px;max-width:900px}
+  h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;margin:0 0 4px}
+  h2{font-family:'Jost',system-ui,sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:.08em;margin:26px 0 8px;color:#4a6b52}
+  p.meta{color:#5d6b60;font-size:13px;margin:0 0 18px}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{border-bottom:1px solid #e2e6e0;padding:6px 8px;text-align:left}
+  th{color:#4a6b52;font-weight:600}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 6px}
+  .kpi{border:1px solid #e2e6e0;border-radius:10px;padding:10px 12px}
+  .kpi b{display:block;font-size:20px}
+  .kpi span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#5d6b60}
+  button{margin-bottom:18px;padding:8px 14px;border-radius:8px;border:1px solid #17301f;background:#17301f;color:#fff;cursor:pointer}
+  @media print{button{display:none}}
+</style></head><body>
+<button onclick="window.print()">Print or save as PDF</button>
+<h1>Caribbean Wellness Experience 2026 — activity report</h1>
+<p class="meta">Range: ${esc(args.rangeLabel)}${
+    args.first ? ` · Activity from ${esc(args.first)} to ${esc(args.last)}` : ""
+  } · Generated ${esc(new Date().toLocaleString())}</p>
+<div class="kpis">${args.headline
+    .map((k) => `<div class="kpi"><b>${esc(k.value)}</b><span>${esc(k.label)}</span></div>`)
+    .join("")}</div>
+${args.tables.map(table).join("")}
+</body></html>`;
+
+  const w = window.open("", "_blank");
+  if (!w) {
+    const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `wce-2026-report-${new Date().toISOString().slice(0, 10)}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    return;
+  }
+  w.document.write(html);
+  w.document.close();
+}
+
 export default function WceAnalytics() {
-  const [range, setRange] = useState<RangeKey>("7d");
+  const [range, setRange] = useState<RangeKey>("all");
+
   const [rows, setRows] = useState<Ev[]>([]);
   const [prevRows, setPrevRows] = useState<Ev[]>([]);
   const [leadCount, setLeadCount] = useState<number | null>(null);
@@ -371,6 +461,8 @@ export default function WceAnalytics() {
     return {
       pageViews, visitors, ctaClicks, formStarts, formSubmits, overTime, funnel,
       sources: countBy(pageViews, sourceLabel),
+      channels: countBy(pageViews, channelOf),
+
       devices: countBy(rows, (r) => r.device_type),
       countries: countBy(rows, (r) => r.country),
       leaderboard: countBy(ctaClicks, (r) => r.event_target),
@@ -391,6 +483,10 @@ export default function WceAnalytics() {
   const hasData = rows.length > 0;
   const rangeLabel = RANGES.find((r) => r.key === range)?.label ?? "";
   const sessionsCount = new Set(rows.map((r) => r.session_id)).size;
+  // Rows arrive newest-first, so the window bounds are the last and first entries.
+  const fmt = (iso?: string) => (iso ? new Date(iso).toLocaleString() : null);
+  const firstSeen = rows.length ? fmt(rows[rows.length - 1].created_at) : null;
+  const lastSeen = rows.length ? fmt(rows[0].created_at) : null;
 
   return (
     <div>
@@ -402,7 +498,8 @@ export default function WceAnalytics() {
       <p className="wa-muted" style={{ fontSize: "0.8rem", marginBottom: "1rem", maxWidth: "70ch" }}>
         This is first-party data collected on the Caribbean Wellness Experience page only. It is recorded by
         our own system with no personal identifiers and no IP addresses, so figures will differ slightly from
-        Google Analytics — ad blockers and privacy settings affect the two differently.
+        Google Analytics — ad blockers and privacy settings affect the two differently. "All time" covers every
+        visit since tracking went live on the page.
       </p>
 
       <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem", alignItems: "center" }}>
@@ -419,10 +516,46 @@ export default function WceAnalytics() {
         ))}
         <button
           type="button"
+          className="wa-btn wa-btn-primary"
+          onClick={() => openReport({
+            rangeLabel,
+            first: firstSeen,
+            last: lastSeen,
+            headline: [
+              { label: "Visitors", value: String(d.visitors) },
+              { label: "Page views", value: String(d.pageViews.length) },
+              { label: "CTA clicks", value: String(d.ctaClicks.length) },
+              { label: "Applications started", value: String(d.formStarts.length) },
+              { label: "Applications submitted", value: String(d.formSubmits.length) },
+              { label: "Click-through rate", value: `${d.clickThrough.toFixed(1)}%` },
+              { label: "Typical time on page", value: durationText(d.medianTime) },
+              { label: "Leads recorded", value: leadCount === null ? "—" : String(leadCount) },
+            ],
+            tables: [
+              { title: "Journey funnel", head: ["Stage", "Count"], rows: d.funnel.map((f) => [f.stage, f.value]) },
+              { title: "Acquisition channels", head: ["Channel", "Page views"], rows: d.channels.map((c) => [c.name, c.value]) },
+              { title: "Traffic sources", head: ["Source", "Page views"], rows: d.sources.map((c) => [c.name, c.value]) },
+              { title: "Campaign performance", head: ["Source", "Medium", "Campaign", "Visitors", "Clicks", "Applications", "Conv. rate"], rows: d.campaigns.map((c) => [c.source, c.medium, c.campaign, c.visitors, c.clicks, c.submits, `${c.rate.toFixed(1)}%`]) },
+              { title: "Section reach (visitors)", head: ["Section", "Visitors"], rows: d.sectionReach.map((s) => [s.name, s.value]) },
+              { title: "Most clicked calls to action", head: ["Label", "Clicks"], rows: d.leaderboard.map((s) => [s.name, s.value]) },
+              { title: "Pathway interest", head: ["Pathway", "Clicks"], rows: d.pathwayInterest.map((s) => [s.name, s.value]) },
+              { title: "Speaker engagement", head: ["Speaker", "Flyer opens", "Shares"], rows: d.speakerEngagement.map((s) => [s.name, s.opens, s.shares]) },
+              { title: "Referral codes", head: ["Code", "Visits", "Clicks", "Applications", "Conv. rate"], rows: d.referralCodes.map((s) => [s.code, s.visits, s.clicks, s.conversions, `${s.rate.toFixed(1)}%`]) },
+              { title: "Devices", head: ["Device", "Events"], rows: d.devices.map((s) => [s.name, s.value]) },
+              { title: "Countries", head: ["Country", "Events"], rows: d.countries.map((s) => [s.name, s.value]) },
+              { title: "Search and share readiness (SEO)", head: ["Check", "Status"], rows: SEO_CHECKS.map((s) => [s.item, s.value]) },
+            ],
+          })}
+          disabled={!hasData}
+          style={{ marginLeft: "auto" }}
+        >
+          <FileText className="h-4 w-4" aria-hidden /> Generate report
+        </button>
+        <button
+          type="button"
           className="wa-btn wa-btn-ghost"
           onClick={() => downloadCsv(rows)}
           disabled={!hasData}
-          style={{ marginLeft: "auto" }}
         >
           <Download className="h-4 w-4" aria-hidden /> Export CSV
         </button>
@@ -433,8 +566,9 @@ export default function WceAnalytics() {
       ) : !hasData ? (
         <EmptyState
           title="No activity recorded yet"
-          line="Visits to the WCE 2026 page will appear here within a minute of arriving. Visitors who decline cookies or use Do Not Track are never recorded."
+          line="Visits to the WCE 2026 page appear here within a minute of arriving. Visitors who switch on Do Not Track are never recorded."
         />
+
       ) : (
         <div style={{ display: "grid", gap: "0.85rem" }}>
           <div className="wa-stats" style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
@@ -561,6 +695,46 @@ export default function WceAnalytics() {
           </Panel>
 
           <div style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+            <Panel title="Acquisition channels" hint="Organic search, social, email, paid, referral or direct.">
+              {d.channels.length ? (
+                <div style={{ height: 240, width: "100%", minWidth: 0 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={d.channels} layout="vertical" margin={{ left: 4, right: 12 }}>
+                      <CartesianGrid stroke="rgba(245,239,224,0.08)" horizontal={false} />
+                      <XAxis type="number" allowDecimals={false} tick={axisTick} stroke={axisStroke} />
+                      <YAxis type="category" dataKey="name" width={110} tick={axisTick} stroke={axisStroke} />
+                      <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#E4C766" }} />
+                      <Bar dataKey="value" name="Views" radius={[0, 2, 2, 0]}>
+                        {d.channels.map((_, i) => (
+                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No channel data yet.</p>
+              )}
+            </Panel>
+
+            <Panel title="Search and share readiness" hint="Head data and structured markup currently published on the WCE 2026 page.">
+              <div className="wa-table-wrap">
+                <table className="wa-table">
+                  <tbody>
+                    {SEO_CHECKS.map((s) => (
+                      <tr key={s.item}>
+                        <th scope="row" style={{ whiteSpace: "nowrap" }}>{s.item}</th>
+                        <td data-label={s.item}>{s.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Panel>
+          </div>
+
+          <div style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+
             <Panel title="Traffic sources" hint="Campaign source where tagged, otherwise the referring site or direct.">
               {d.sources.length ? (
                 <div style={{ height: 240, width: "100%", minWidth: 0 }}>
