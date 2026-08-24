@@ -802,7 +802,86 @@ export default function WceAnalytics() {
             )}
           </Panel>
 
+          {/* Full past visitor history — one row per anonymous session. */}
+          <Panel
+            title={`Visitor history · ${rangeLabel}`}
+            hint="Every past visit in the selected range, one row per anonymous browsing session: when they arrived, how long they stayed, where they came from, how far they read and whether they applied. No personal data, no IP address."
+          >
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem", alignItems: "center", marginBottom: "0.7rem" }}>
+              <input
+                type="search"
+                className="wa-input"
+                placeholder="Filter by country, device, source, campaign or code"
+                value={visitorQuery}
+                onChange={(e) => { setVisitorQuery(e.target.value); setVisitorLimit(25); }}
+                aria-label="Filter visitor history"
+                style={{ flex: "1 1 260px", minWidth: 0 }}
+              />
+              <span className="wa-muted" style={{ fontSize: "0.78rem" }}>
+                {filteredVisitors.length} of {d.visitorSessions.length} visits
+              </span>
+              <button
+                type="button"
+                className="wa-btn wa-btn-ghost"
+                onClick={() => downloadVisitorCsv(filteredVisitors)}
+                disabled={!filteredVisitors.length}
+              >
+                <Download className="h-4 w-4" aria-hidden /> Export visitors
+              </button>
+            </div>
+
+            {filteredVisitors.length ? (
+              <>
+                <div className="wa-table-wrap">
+                  <table className="wa-table">
+                    <thead>
+                      <tr>
+                        <th>Arrived</th><th>Stayed</th><th>Location</th><th>Device</th>
+                        <th>Channel</th><th>Came from</th><th>Campaign</th><th>Code</th>
+                        <th>Landed on</th><th>Sections</th><th>Clicks</th><th>Flyers</th><th>Application</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredVisitors.slice(0, visitorLimit).map((v) => (
+                        <tr key={v.session}>
+                          <td data-label="Arrived">{new Date(v.first).toLocaleString()}</td>
+                          <td data-label="Stayed">{durationText(v.seconds)}</td>
+                          <td data-label="Location">{v.country}</td>
+                          <td data-label="Device">{v.device}</td>
+                          <td data-label="Channel">{v.channel}</td>
+                          <td data-label="Came from">{v.source}</td>
+                          <td data-label="Campaign">{v.campaign}</td>
+                          <td data-label="Code">{v.referralCode}</td>
+                          <td data-label="Landed on">{v.landing}</td>
+                          <td data-label="Sections">{v.sections} of {SECTIONS.length}</td>
+                          <td data-label="Clicks">{v.clicks}</td>
+                          <td data-label="Flyers">{v.speakerOpens + v.shares}</td>
+                          <td data-label="Application">
+                            {v.submitted ? "Submitted" : v.started ? "Started" : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {filteredVisitors.length > visitorLimit && (
+                  <button
+                    type="button"
+                    className="wa-btn wa-btn-ghost"
+                    style={{ marginTop: "0.7rem" }}
+                    onClick={() => setVisitorLimit((n) => n + 50)}
+                  >
+                    Show 50 more
+                  </button>
+                )}
+              </>
+            ) : (
+              <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No visits match that filter.</p>
+            )}
+          </Panel>
+
           {/* Where visitors are, and what they browse on. */}
+
           <div style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
             <Panel title={`Where visitors are · ${rangeLabel}`} hint="Unique visitors by country, from the network edge or the browser time zone. No IP address is ever stored.">
               {d.locationVisitors.length || d.unknownLocation ? (
