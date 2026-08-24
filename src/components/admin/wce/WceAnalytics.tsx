@@ -1000,40 +1000,6 @@ export default function WceAnalytics() {
               )}
             </Panel>
 
-            <Panel title="Device split">
-              {d.devices.length ? (
-                <div style={{ height: 240, width: "100%", minWidth: 0 }}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={d.devices} dataKey="value" nameKey="name" innerRadius={45} outerRadius={80} paddingAngle={2}>
-                        {d.devices.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
-                      </Pie>
-                      <Legend wrapperStyle={{ fontSize: 11, color: "#F5EFE0" }} />
-                      <Tooltip contentStyle={tooltipStyle} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              ) : (
-                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No device data recorded yet.</p>
-              )}
-            </Panel>
-
-            <Panel title="Countries" hint="Derived from the network edge, never from an IP address we store.">
-              {d.countries.length ? (
-                <div className="wa-table-wrap">
-                  <table>
-                    <thead><tr><th>Country</th><th>Events</th></tr></thead>
-                    <tbody>
-                      {d.countries.slice(0, 12).map((c) => (
-                        <tr key={c.name}><td data-label="Country">{c.name}</td><td data-label="Events">{c.value}</td></tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>Country is not being reported for this traffic.</p>
-              )}
-            </Panel>
 
             <Panel title="Section reach" hint="How many visitors scrolled far enough to see each section.">
               <div style={{ height: 280, width: "100%", minWidth: 0 }}>
