@@ -84,6 +84,20 @@ function deviceType(): string {
   return "desktop";
 }
 
+/** Coarse, non-identifying context attached to every event.
+ *  The time zone lets the server report a country when the network edge does
+ *  not supply one. No IP address, no fingerprinting. */
+function context(): Record<string, unknown> {
+  let tz: string | null = null;
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? null; } catch { tz = null; }
+  return {
+    tz,
+    lang: typeof navigator !== "undefined" ? navigator.language ?? null : null,
+    viewport: `${window.innerWidth}x${window.innerHeight}`,
+  };
+}
+
+
 /** Session-scoped dedupe keys, so section_view records once per session. */
 function seen(key: string): boolean {
   try {
