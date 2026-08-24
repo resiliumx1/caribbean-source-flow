@@ -695,6 +695,46 @@ export default function WceAnalytics() {
           </Panel>
 
           <div style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+            <Panel title="Acquisition channels" hint="Organic search, social, email, paid, referral or direct.">
+              {d.channels.length ? (
+                <div style={{ height: 240, width: "100%", minWidth: 0 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={d.channels} layout="vertical" margin={{ left: 4, right: 12 }}>
+                      <CartesianGrid stroke="rgba(245,239,224,0.08)" horizontal={false} />
+                      <XAxis type="number" allowDecimals={false} tick={axisTick} stroke={axisStroke} />
+                      <YAxis type="category" dataKey="name" width={110} tick={axisTick} stroke={axisStroke} />
+                      <Tooltip contentStyle={tooltipStyle} labelStyle={{ color: "#E4C766" }} />
+                      <Bar dataKey="value" name="Views" radius={[0, 2, 2, 0]}>
+                        {d.channels.map((_, i) => (
+                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p className="wa-muted" style={{ fontSize: "0.8rem" }}>No channel data yet.</p>
+              )}
+            </Panel>
+
+            <Panel title="Search and share readiness" hint="Head data and structured markup currently published on the WCE 2026 page.">
+              <div className="wa-table-wrap">
+                <table className="wa-table">
+                  <tbody>
+                    {SEO_CHECKS.map((s) => (
+                      <tr key={s.item}>
+                        <th scope="row" style={{ whiteSpace: "nowrap" }}>{s.item}</th>
+                        <td data-label={s.item}>{s.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Panel>
+          </div>
+
+          <div style={{ display: "grid", gap: "0.85rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+
             <Panel title="Traffic sources" hint="Campaign source where tagged, otherwise the referring site or direct.">
               {d.sources.length ? (
                 <div style={{ height: 240, width: "100%", minWidth: 0 }}>
