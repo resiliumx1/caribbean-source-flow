@@ -665,7 +665,20 @@ export default function WceAnalytics() {
 
   }, [rows, prevRows, refreshKey]);
 
+  // Free-text filter across the visitor history table.
+  const filteredVisitors = useMemo(() => {
+    const q = visitorQuery.trim().toLowerCase();
+    if (!q) return d.visitorSessions;
+    return d.visitorSessions.filter((v) =>
+      [v.country, v.device, v.channel, v.source, v.campaign, v.referralCode, v.landing, v.tz, v.lang]
+        .join(" ")
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [d.visitorSessions, visitorQuery]);
+
   const maxFunnel = Math.max(1, ...d.funnel.map((f) => f.value));
+
   const hasData = rows.length > 0;
   const rangeLabel = RANGES.find((r) => r.key === range)?.label ?? "";
   const sessionsCount = new Set(rows.map((r) => r.session_id)).size;
