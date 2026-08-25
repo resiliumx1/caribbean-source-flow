@@ -5,6 +5,7 @@ import {
   CardsSkeleton, DirtyFlag, GuidedEmpty, InfoTip, SaveBadge, TipLabel,
   useConfirm, useSaveState, useUnsavedChanges, wceToast, WarnBadge,
 } from "./kit";
+import { buildCampaignUrl, pathwayLinkSlug } from "@/lib/wce-links";
 
 type Pathway = {
   id: string;
@@ -19,6 +20,7 @@ type Pathway = {
   is_highlighted: boolean;
   display_order: number;
   product_id: string | null;
+  link_slug: string | null;
 };
 
 type ProductOption = {
@@ -84,12 +86,14 @@ function PathwayRow({
   const [priceDraft, setPriceDraft] = useState(String(p.price));
   const [capacityDraft, setCapacityDraft] = useState(p.capacity == null ? "" : String(p.capacity));
   const [featuresDraft, setFeaturesDraft] = useState(Array.isArray(p.features) ? p.features.join("\n") : "");
+  const [slugDraft, setSlugDraft] = useState(pathwayLinkSlug(p));
 
   const rowDirty =
     labelDraft !== p.label ||
     priceDraft !== String(p.price) ||
     capacityDraft !== (p.capacity == null ? "" : String(p.capacity)) ||
-    featuresDraft !== (Array.isArray(p.features) ? p.features.join("\n") : "");
+    featuresDraft !== (Array.isArray(p.features) ? p.features.join("\n") : "") ||
+    slugDraft !== pathwayLinkSlug(p);
 
   useEffect(() => {
     setDirty((d) => ({ ...d, [p.id]: rowDirty }));
@@ -208,6 +212,26 @@ function PathwayRow({
             onBlur={() => patch({ capacity: capacityDraft === "" ? null : Number(capacityDraft) }, "Capacity")} />
         </div>
       </div>
+      <div>
+        <TipLabel tip="The direct campaign link for this pathway. Paid social can send people straight to the right action instead of the landing page.">
+          Campaign link slug
+        </TipLabel>
+        <input
+          className={inputCls}
+          value={slugDraft}
+          onChange={(e) => setSlugDraft(e.target.value)}
+          onBlur={() => {
+            const clean = slugDraft.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+            setSlugDraft(clean || pathwayLinkSlug(p));
+            if (clean && clean !== p.link_slug) patch({ link_slug: clean }, "Campaign link slug");
+          }}
+        />
+        <p className="wa-muted mt-1" style={{ fontSize: "0.8rem", wordBreak: "break-all" }}>
+          {buildCampaignUrl(slugDraft || pathwayLinkSlug(p))}
+          {p.key === "retreat" && " — opens the application view, never checkout."}
+        </p>
+      </div>
+
       <div>
         <label className="wa-field-label">Features (one per line)</label>
         <textarea
