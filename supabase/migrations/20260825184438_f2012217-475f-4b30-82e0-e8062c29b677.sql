@@ -1,0 +1,1 @@
+REVOKE SELECT ON public.wce_page_events FROM anon;

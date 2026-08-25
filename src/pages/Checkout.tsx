@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Minus, Plus, Trash2, Check } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,12 +42,16 @@ const COUNTRIES: Array<{ code: string; name: string }> = [
 ];
 
 export default function Checkout() {
-  const { cartItems, cartCount, clearCart } = useCart();
+  const { cartItems, cartCount, clearCart, updateQuantity, removeFromCart } = useCart();
   const { formatPriceBoth, currency } = useStore();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  // Inline validation: a field only shows an error once the shopper has left it.
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const blur = (field: string) => () => setTouched((p) => ({ ...p, [field]: true }));
+
 
   const [form, setForm] = useState({
     customer_name: "",
@@ -139,24 +144,31 @@ export default function Checkout() {
   const billingSame = form.billing_same_as_shipping === "true";
   const needsBilling = !billingSame;
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
-  const isFormValid = useMemo(() => {
-    if (!form.customer_name.trim()) return false;
-    if (!isEmailValid) return false;
-    if (!form.phone.trim()) return false;
-    if (isShipping) {
-      if (!form.address_line1.trim()) return false;
-      if (!form.city.trim()) return false;
-    }
-    if (needsBilling) {
-      if (!form.billing_address_line1.trim()) return false;
-      if (!form.billing_city.trim()) return false;
-      if (!form.billing_country) return false;
-    }
-    if (!form.country) return false;
-    return true;
-  }, [form, isShipping, isEmailValid, needsBilling]);
+  // Phone is only genuinely needed when something has to be delivered.
+  const phoneRequired = hasPhysical;
+  const contactComplete =
+    !!form.customer_name.trim() && isEmailValid && (!phoneRequired || !!form.phone.trim());
+  const shippingComplete =
+    !isShipping || (!!form.address_line1.trim() && !!form.city.trim() && !!form.country);
+  const billingComplete =
+    !needsBilling ||
+    (!!form.billing_address_line1.trim() && !!form.billing_city.trim() && !!form.billing_country);
+  const isFormValid = useMemo(
+    () => contactComplete && shippingComplete && billingComplete,
+    [contactComplete, shippingComplete, billingComplete]
+  );
 
   const canPay = isFormValid && agreedToTerms && cartItems.length > 0 && !isProcessing;
+
+  const steps = [
+    { label: "Your order", done: cartItems.length > 0 },
+    { label: "Contact", done: contactComplete },
+    ...(hasPhysical ? [{ label: "Delivery", done: shippingComplete }] : []),
+    { label: "Payment", done: false },
+  ];
+  const activeStep = steps.findIndex((s) => !s.done);
+
+
 
   // Called by <AuthorizeNetCardForm> after the browser tokenizes the card.
   // Capture the cart for recovery once we have a usable email (debounced).
@@ -338,14 +350,174 @@ export default function Checkout() {
           <ArrowLeft className="w-4 h-4" /> Back to Cart
         </Link>
 
-        <h1 className="text-3xl font-serif font-bold text-foreground mb-8">
+        <h1 className="text-3xl font-serif font-bold text-foreground mb-4">
           Checkout
         </h1>
 
+        {/* Step indication — shows how far through the shopper is. */}
+        <ol className="flex flex-wrap items-center gap-x-2 gap-y-2 mb-8" aria-label="Checkout progress">
+          {steps.map((step, i) => {
+            const isActive = i === activeStep || (activeStep === -1 && i === steps.length - 1);
+            return (
+              <li key={step.label} className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium ${
+                    step.done
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : isActive
+                      ? "border-foreground/30 bg-muted text-foreground"
+                      : "border-border text-muted-foreground"
+                  }`}
+                  aria-current={isActive ? "step" : undefined}
+                >
+                  {step.done ? <Check className="w-3 h-3" /> : <span>{i + 1}</span>}
+                  {step.label}
+                </span>
+                {i < steps.length - 1 && (
+                  <span className="hidden sm:block w-6 h-px bg-border" aria-hidden="true" />
+                )}
+              </li>
+            );
+          })}
+        </ol>
+
         <fieldset disabled={isProcessing} className="contents">
-          <div className="grid lg:grid-cols-5 gap-8">
-            {/* Form fields */}
-            <div className="lg:col-span-3 space-y-6">
+          <div className="grid lg:grid-cols-5 gap-8 pb-28 lg:pb-0">
+            {/* Order summary — first in the DOM so mobile sees the cart before
+                being asked for details; sits in the right column on desktop. */}
+            <div className="lg:col-span-2 lg:order-2">
+              <div className="lg:sticky lg:top-24 space-y-4">
+                <div className="bg-card rounded-xl border border-border p-6 space-y-4">
+                  <h2 className="font-serif font-semibold text-lg text-foreground">
+                    Your Order
+                  </h2>
+
+                  <div className="space-y-4">
+                    {cartItems.map((item) => {
+                      if (!item.product) return null;
+                      const itemPrices = formatPriceBoth(
+                        item.product.price_usd * item.quantity,
+                        item.product.price_xcd * item.quantity
+                      );
+                      return (
+                        <div key={item.id} className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-sm text-foreground font-medium leading-snug">
+                              {item.product.name}
+                            </p>
+                            <div className="flex items-center gap-1 mt-2">
+                              <button
+                                type="button"
+                                aria-label={`Decrease quantity of ${item.product.name}`}
+                                onClick={() =>
+                                  updateQuantity({
+                                    productId: item.product_id,
+                                    quantity: item.quantity - 1,
+                                  })
+                                }
+                                className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-border text-foreground hover:bg-muted"
+                              >
+                                <Minus className="w-3.5 h-3.5" />
+                              </button>
+                              <span className="w-8 text-center text-sm text-foreground">
+                                {item.quantity}
+                              </span>
+                              <button
+                                type="button"
+                                aria-label={`Increase quantity of ${item.product.name}`}
+                                onClick={() =>
+                                  updateQuantity({
+                                    productId: item.product_id,
+                                    quantity: item.quantity + 1,
+                                  })
+                                }
+                                className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-border text-foreground hover:bg-muted"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                aria-label={`Remove ${item.product.name}`}
+                                onClick={() => removeFromCart(item.product_id)}
+                                className="h-9 w-9 ml-1 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-destructive"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                          <span className="text-sm text-foreground font-medium whitespace-nowrap">
+                            {itemPrices.primary}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="border-t border-border pt-4 space-y-2">
+                    <div className="pb-2">
+                      <div className="flex gap-2">
+                        <input
+                          value={couponCode}
+                          onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(null); }}
+                          placeholder="Discount or referral code"
+                          aria-label="Discount or referral code"
+                          className="flex-1 h-11 rounded-md border border-border bg-background px-3 text-sm uppercase"
+                        />
+                        <button
+                          type="button"
+                          onClick={applyCoupon}
+                          disabled={checkingCoupon || !couponCode.trim()}
+                          className="h-11 px-4 rounded-md border border-border text-sm font-medium disabled:opacity-50"
+                        >
+                          {checkingCoupon ? "Checking…" : appliedCoupon ? "Applied" : "Apply"}
+                        </button>
+                      </div>
+                      {couponError && <p className="text-xs text-destructive mt-1.5">{couponError}</p>}
+                      {appliedCoupon && (
+                        <p className="text-xs mt-1.5" style={{ color: "#15803d" }}>
+                          {appliedCoupon.code} applied
+                          {appliedCoupon.discount_type === "percent"
+                            ? ` — ${Number(appliedCoupon.discount_value)}% off`
+                            : ` — $${Number(appliedCoupon.discount_value).toFixed(2)} off`}
+                        </p>
+                      )}
+                      {!appliedCoupon && couponCode && !couponError && (
+                        <p className="text-xs text-muted-foreground mt-1.5">
+                          Referral code added from your link — tap Apply to use it.
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>Subtotal</span>
+                      <span>{subtotalPrices.primary}</span>
+                    </div>
+                    {appliedCoupon && (
+                      <div className="flex justify-between text-sm" style={{ color: "#15803d" }}>
+                        <span>Discount ({appliedCoupon.code})</span>
+                        <span>−{discountPrices.primary}</span>
+                      </div>
+                    )}
+                    {hasPhysical && (
+                      <div className="flex justify-between text-sm text-muted-foreground">
+                        <span>Shipping</span>
+                        <span>{shippingUsd > 0 ? shippingPrices.primary : "Free"}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between pt-2 border-t border-border">
+                      <span className="font-semibold text-foreground">Total</span>
+                      <div className="text-right">
+                        <p className="font-semibold text-foreground">{prices.primary}</p>
+                        <p className="text-xs text-muted-foreground">{prices.secondary}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <FDADisclaimer variant="compact" />
+              </div>
+            </div>
+
+            {/* Details and payment */}
+            <div className="lg:col-span-3 lg:order-1 space-y-6">
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
                 <h2 className="font-serif font-semibold text-lg text-foreground">
                   Contact Information
@@ -357,8 +529,12 @@ export default function Checkout() {
                     required
                     maxLength={120}
                     value={form.customer_name}
+                    onBlur={blur("customer_name")}
                     onChange={(e) => update("customer_name", e.target.value)}
                   />
+                  {touched.customer_name && !form.customer_name.trim() && (
+                    <p className="text-xs text-destructive mt-1">Please enter your name.</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="email">Email *</Label>
@@ -368,31 +544,41 @@ export default function Checkout() {
                     required
                     maxLength={255}
                     value={form.email}
+                    onBlur={blur("email")}
                     onChange={(e) => update("email", e.target.value)}
                   />
-                  {form.email && !isEmailValid && (
+                  {(touched.email || form.email) && !isEmailValid && (
                     <p className="text-xs text-destructive mt-1">
-                      Enter a valid email address.
+                      Enter a valid email address — your confirmation goes here.
                     </p>
                   )}
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone *</Label>
+                  <Label htmlFor="phone">
+                    Phone {phoneRequired ? "*" : <span className="text-muted-foreground font-normal">(optional)</span>}
+                  </Label>
                   <Input
                     id="phone"
-                    required
+                    required={phoneRequired}
                     maxLength={30}
                     value={form.phone}
+                    onBlur={blur("phone")}
                     onChange={(e) => update("phone", e.target.value)}
                   />
+                  {phoneRequired && touched.phone && !form.phone.trim() && (
+                    <p className="text-xs text-destructive mt-1">
+                      We need a number for delivery updates.
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <div className="bg-card rounded-xl border border-border p-6 space-y-4">
-                <h2 className="font-serif font-semibold text-lg text-foreground">
-                  Delivery
-                </h2>
-                {hasPhysical ? (
+              {/* Delivery only exists when something physical is in the cart. */}
+              {hasPhysical && (
+                <div className="bg-card rounded-xl border border-border p-6 space-y-4">
+                  <h2 className="font-serif font-semibold text-lg text-foreground">
+                    Delivery
+                  </h2>
                   <div>
                     <Label htmlFor="delivery_type">Delivery Method *</Label>
                     <select
@@ -410,83 +596,87 @@ export default function Checkout() {
                       <option value="international">International Shipping — $30 USD</option>
                     </select>
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    Your order is fully digital — no shipping required.
-                  </p>
-                )}
 
-                {isShipping && (
-                  <>
-                    <div>
-                      <Label htmlFor="address_line1">Address Line 1 *</Label>
-                      <Input
-                        id="address_line1"
-                        required
-                        maxLength={200}
-                        value={form.address_line1}
-                        onChange={(e) => update("address_line1", e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="address_line2">Address Line 2</Label>
-                      <Input
-                        id="address_line2"
-                        maxLength={200}
-                        value={form.address_line2}
-                        onChange={(e) => update("address_line2", e.target.value)}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+                  {isShipping && (
+                    <>
                       <div>
-                        <Label htmlFor="city">City *</Label>
+                        <Label htmlFor="address_line1">Address Line 1 *</Label>
                         <Input
-                          id="city"
+                          id="address_line1"
                           required
-                          maxLength={120}
-                          value={form.city}
-                          onChange={(e) => update("city", e.target.value)}
+                          maxLength={200}
+                          value={form.address_line1}
+                          onBlur={blur("address_line1")}
+                          onChange={(e) => update("address_line1", e.target.value)}
                         />
+                        {touched.address_line1 && !form.address_line1.trim() && (
+                          <p className="text-xs text-destructive mt-1">Please enter an address.</p>
+                        )}
                       </div>
                       <div>
-                        <Label htmlFor="state_province">State / Parish</Label>
+                        <Label htmlFor="address_line2">Address Line 2</Label>
                         <Input
-                          id="state_province"
-                          maxLength={120}
-                          value={form.state_province}
-                          onChange={(e) => update("state_province", e.target.value)}
+                          id="address_line2"
+                          maxLength={200}
+                          value={form.address_line2}
+                          onChange={(e) => update("address_line2", e.target.value)}
                         />
                       </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="postal_code">Postal Code</Label>
-                        <Input
-                          id="postal_code"
-                          maxLength={20}
-                          value={form.postal_code}
-                          onChange={(e) => update("postal_code", e.target.value)}
-                        />
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="city">City *</Label>
+                          <Input
+                            id="city"
+                            required
+                            maxLength={120}
+                            value={form.city}
+                            onBlur={blur("city")}
+                            onChange={(e) => update("city", e.target.value)}
+                          />
+                          {touched.city && !form.city.trim() && (
+                            <p className="text-xs text-destructive mt-1">Please enter a city.</p>
+                          )}
+                        </div>
+                        <div>
+                          <Label htmlFor="state_province">State / Parish</Label>
+                          <Input
+                            id="state_province"
+                            maxLength={120}
+                            value={form.state_province}
+                            onChange={(e) => update("state_province", e.target.value)}
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <Label htmlFor="country">Country *</Label>
-                        <select
-                          id="country"
-                          value={form.country}
-                          onChange={(e) => update("country", e.target.value)}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        >
-                          {COUNTRIES.map((c) => (
-                            <option key={c.code} value={c.code}>
-                              {c.name}
-                            </option>
-                          ))}
-                        </select>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="postal_code">Postal Code</Label>
+                          <Input
+                            id="postal_code"
+                            maxLength={20}
+                            value={form.postal_code}
+                            onChange={(e) => update("postal_code", e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="country">Country *</Label>
+                          <select
+                            id="country"
+                            value={form.country}
+                            onChange={(e) => update("country", e.target.value)}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            {COUNTRIES.map((c) => (
+                              <option key={c.code} value={c.code}>
+                                {c.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
-              </div>
+                    </>
+                  )}
+                </div>
+              )}
 
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
                 <h2 className="font-serif font-semibold text-lg text-foreground">
@@ -526,8 +716,14 @@ export default function Checkout() {
                         required
                         maxLength={200}
                         value={form.billing_address_line1}
+                        onBlur={blur("billing_address_line1")}
                         onChange={(e) => update("billing_address_line1", e.target.value)}
                       />
+                      {touched.billing_address_line1 && !form.billing_address_line1.trim() && (
+                        <p className="text-xs text-destructive mt-1">
+                          Please enter the billing address.
+                        </p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="billing_address_line2">Billing Address Line 2</Label>
@@ -546,8 +742,12 @@ export default function Checkout() {
                           required
                           maxLength={120}
                           value={form.billing_city}
+                          onBlur={blur("billing_city")}
                           onChange={(e) => update("billing_city", e.target.value)}
                         />
+                        {touched.billing_city && !form.billing_city.trim() && (
+                          <p className="text-xs text-destructive mt-1">Please enter a city.</p>
+                        )}
                       </div>
                       <div>
                         <Label htmlFor="billing_state_province">State / Parish</Label>
@@ -595,7 +795,7 @@ export default function Checkout() {
 
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
                 <h2 className="font-serif font-semibold text-lg text-foreground">
-                  Order Notes
+                  Order Notes <span className="text-sm font-sans font-normal text-muted-foreground">(optional)</span>
                 </h2>
                 <Textarea
                   placeholder="Any special requests or delivery instructions..."
@@ -605,155 +805,91 @@ export default function Checkout() {
                   rows={3}
                 />
               </div>
-            </div>
 
-            {/* Order summary */}
-            <div className="lg:col-span-2">
-              <div className="sticky top-24 space-y-4">
-                <FDADisclaimer variant="compact" />
-                <div className="bg-card rounded-xl border border-border p-6 space-y-4">
-                  <h2 className="font-serif font-semibold text-lg text-foreground">
-                    Order Summary
-                  </h2>
+              {/* Payment */}
+              <div className="bg-card rounded-xl border border-border p-6 space-y-4">
+                <div className="flex items-baseline justify-between gap-4">
+                  <h2 className="font-serif font-semibold text-lg text-foreground">Payment</h2>
+                  <span className="text-sm text-muted-foreground">
+                    Total <span className="font-semibold text-foreground">{prices.primary}</span>
+                  </span>
+                </div>
 
-                  <div className="space-y-3">
-                    {cartItems.map((item) => {
-                      if (!item.product) return null;
-                      const itemPrices = formatPriceBoth(
-                        item.product.price_usd * item.quantity,
-                        item.product.price_xcd * item.quantity
-                      );
-                      return (
-                        <div key={item.id} className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">
-                            {item.product.name} × {item.quantity}
-                          </span>
-                          <span className="text-foreground font-medium">
-                            {itemPrices.primary}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                <label className="flex items-start gap-3 text-sm text-foreground cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-border accent-primary shrink-0"
+                    aria-label="Agree to Terms and Conditions and Privacy Policy"
+                  />
+                  <span className="leading-relaxed">
+                    I have read and agree to the{" "}
+                    <Link
+                      to="/terms-and-conditions"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:opacity-80"
+                    >
+                      Terms &amp; Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      to="/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:opacity-80"
+                    >
+                      Privacy Policy
+                    </Link>
+                    .
+                  </span>
+                </label>
 
-                  <div className="border-t border-border pt-4 space-y-2">
-                    <div className="pb-2">
-                      <div className="flex gap-2">
-                        <input
-                          value={couponCode}
-                          onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(null); }}
-                          placeholder="Discount code"
-                          aria-label="Discount code"
-                          className="flex-1 h-11 rounded-md border border-border bg-background px-3 text-sm uppercase"
-                        />
-                        <button
-                          type="button"
-                          onClick={applyCoupon}
-                          disabled={checkingCoupon || !couponCode.trim()}
-                          className="h-11 px-4 rounded-md border border-border text-sm font-medium disabled:opacity-50"
-                        >
-                          {checkingCoupon ? "Checking…" : appliedCoupon ? "Applied" : "Apply"}
-                        </button>
-                      </div>
-                      {couponError && <p className="text-xs text-destructive mt-1.5">{couponError}</p>}
-                      {appliedCoupon && (
-                        <p className="text-xs mt-1.5" style={{ color: "#15803d" }}>
-                          {appliedCoupon.code} applied
-                          {appliedCoupon.discount_type === "percent"
-                            ? ` — ${Number(appliedCoupon.discount_value)}% off`
-                            : ` — $${Number(appliedCoupon.discount_value).toFixed(2)} off`}
-                        </p>
-                      )}
-                      {!appliedCoupon && couponCode && !couponError && (
-                        <p className="text-xs text-muted-foreground mt-1.5">
-                          Referral code added from your link — tap Apply to use it.
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Subtotal</span>
-                      <span>{subtotalPrices.primary}</span>
-                    </div>
-                    {appliedCoupon && (
-                      <div className="flex justify-between text-sm" style={{ color: "#15803d" }}>
-                        <span>Discount ({appliedCoupon.code})</span>
-                        <span>−{discountPrices.primary}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Shipping</span>
-                      <span>
-                        {hasPhysical && shippingUsd > 0
-                          ? shippingPrices.primary
-                          : "Free"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between pt-2 border-t border-border">
-                      <span className="font-semibold text-foreground">Total</span>
-                      <div className="text-right">
-                        <p className="font-semibold text-foreground">{prices.primary}</p>
-                        <p className="text-xs text-muted-foreground">{prices.secondary}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <label className="flex items-start gap-3 text-sm text-foreground cursor-pointer select-none pt-1">
-                    <input
-                      type="checkbox"
-                      checked={agreedToTerms}
-                      onChange={(e) => setAgreedToTerms(e.target.checked)}
-                      className="mt-1 h-4 w-4 rounded border-border accent-primary shrink-0"
-                      aria-label="Agree to Terms and Conditions and Privacy Policy"
-                    />
-                    <span className="leading-relaxed">
-                      I have read and agree to the{" "}
-                      <Link
-                        to="/terms-and-conditions"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline hover:opacity-80"
-                      >
-                        Terms &amp; Conditions
-                      </Link>{" "}
-                      and{" "}
-                      <Link
-                        to="/privacy-policy"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline hover:opacity-80"
-                      >
-                        Privacy Policy
-                      </Link>
-                      .
-                    </span>
-                  </label>
-
-                  {/* Authorize.net card form */}
-                  <div className="relative pt-1">
-                    {!canPay && (
-                      <p className="text-xs text-muted-foreground text-center px-4 pb-2">
-                        {!isFormValid
-                          ? "Complete your contact & delivery details above."
-                          : !agreedToTerms
-                          ? "Please agree to the Terms & Privacy Policy."
-                          : ""}
-                      </p>
-                    )}
-                    <AuthorizeNetCardForm
-                      amountUsd={totalUsd}
-                      disabled={!canPay}
-                      processing={isProcessing}
-                      defaultCardholderName={form.customer_name}
-                      defaultZip={form.postal_code}
-                      onToken={handleAuthNetToken}
-                    />
-                  </div>
+                <div className="relative pt-1">
+                  {!canPay && !isProcessing && (
+                    <p className="text-xs text-muted-foreground px-1 pb-2">
+                      {!contactComplete
+                        ? "Add your contact details to continue."
+                        : !shippingComplete
+                        ? "Complete your delivery address to continue."
+                        : !billingComplete
+                        ? "Complete your billing address to continue."
+                        : !agreedToTerms
+                        ? "Please agree to the Terms & Privacy Policy."
+                        : ""}
+                    </p>
+                  )}
+                  <AuthorizeNetCardForm
+                    amountUsd={totalUsd}
+                    disabled={!canPay}
+                    processing={isProcessing}
+                    defaultCardholderName={form.customer_name}
+                    defaultZip={form.postal_code}
+                    onToken={handleAuthNetToken}
+                  />
                 </div>
               </div>
             </div>
           </div>
         </fieldset>
       </main>
+
+      {/* Order total stays visible while scrolling on small screens. */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur px-4 py-3 flex items-center justify-between">
+        <div>
+          <p className="text-xs text-muted-foreground">Order total</p>
+          <p className="text-base font-semibold text-foreground">{prices.primary}</p>
+        </div>
+        <p className="text-xs text-muted-foreground max-w-[55%] text-right">
+          {isProcessing
+            ? "Processing payment…"
+            : canPay
+            ? "Ready to pay below"
+            : `${steps.filter((s) => s.done).length} of ${steps.length} steps complete`}
+        </p>
+      </div>
+
       <StoreFooter />
     </div>
   );
