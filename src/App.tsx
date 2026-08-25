@@ -147,7 +147,8 @@ function AppContent() {
   const isAdminRoute =
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/wce-admin");
-  const isWceRoute = location.pathname.startsWith("/wce-2026");
+  const isWceRoute =
+    location.pathname.startsWith("/wce-2026") || location.pathname.startsWith("/wce/go");
 
   // Google Tag Manager / Meta Pixel container (IDs live in src/lib/tracking.ts)
   useEffect(() => { initTracking(); }, []);
