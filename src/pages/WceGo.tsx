@@ -79,7 +79,7 @@ export default function WceGo() {
           cta_location: "campaign_link",
           pathway_key: p.key,
         });
-        wceMetaTrack(WCE_META_EVENTS.retreatLeadIntent ?? WCE_META_EVENTS.lead, {
+        wceMetaTrack(WCE_META_EVENTS.retreatView, {
           content_name: copy?.title ?? p.label,
           funnel: "retreat",
         });
