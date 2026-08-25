@@ -79,6 +79,11 @@ export default function WceGo() {
           cta_location: "campaign_link",
           pathway_key: p.key,
         });
+        trackWceEvent("campaign_link_click", p.key, {
+          pathway_key: p.key,
+          pathway_label: p.label,
+          destination: "application",
+        });
         wceMetaTrack(WCE_META_EVENTS.retreatView, {
           content_name: copy?.title ?? p.label,
           funnel: "retreat",
@@ -109,6 +114,11 @@ export default function WceGo() {
       trackWceEvent("cta_click", `Campaign link · ${p.label}`, {
         cta_location: "campaign_link",
         pathway_key: p.key,
+      });
+      trackWceEvent("campaign_link_click", p.key, {
+        pathway_key: p.key,
+        pathway_label: p.label,
+        destination: "checkout",
       });
       wceMetaTrack(WCE_META_EVENTS.initiateCheckout, {
         content_name: copy?.title ?? p.label,

@@ -19,7 +19,10 @@ export type WceEventType =
   | "faq_open"
   | "retreat_card_expand"
   | "form_start"
-  | "form_submit";
+  | "form_submit"
+  /** Fired by the /go/ campaign routes with the pathway and traffic source. */
+  | "campaign_link_click";
+
 
 const SESSION_KEY = "wce-analytics-session";
 const SEEN_KEY = "wce-analytics-seen";
