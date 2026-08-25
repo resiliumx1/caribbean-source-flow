@@ -275,7 +275,7 @@ export default function WceCampaignLinks() {
                   className="wa-btn"
                   style={{ minHeight: 44 }}
                   onClick={async () => {
-                    const ok = await confirmDelete({ title: "Delete this campaign link?", body: `"${l.name}" and its click history will be removed.` });
+                    const ok = await confirmDelete({ title: "Delete this campaign link?", item: `${l.name} — its click history will be removed.` });
                     if (!ok) return;
                     const { error } = await supabase.from("wce_campaign_links").delete().eq("id", l.id);
                     if (error) { wceToast({ title: "Delete failed", description: error.message, tone: "error" }); return; }
