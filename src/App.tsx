@@ -77,6 +77,8 @@ const WceAdminAccept = lazy(() => import("./pages/WceAdminAccept"));
 const WCE2026 = lazy(() => import("./pages/WCE2026"));
 const WceLive = lazy(() => import("./pages/WceLive"));
 const WceRetreatCheckout = lazy(() => import("./pages/WceRetreatCheckout"));
+const WceGo = lazy(() => import("./pages/WceGo"));
+const WceApply = lazy(() => import("./pages/WceApply"));
 
 const queryClient = new QueryClient();
 
@@ -112,7 +114,7 @@ queryClient.prefetchQuery({
 const COMING_SOON = false;
 
 // Pages that should NOT show the header
-const pagesWithoutHeader = ["/admin", "/wce-admin", "/wce-2026/live", "/wce-2026/retreat-checkout"];
+const pagesWithoutHeader = ["/admin", "/wce-admin", "/wce-2026/live", "/wce-2026/retreat-checkout", "/wce-2026/go", "/wce/go", "/wce-2026/apply"];
 
 // Loading fallback
 function PageLoader() {
@@ -184,6 +186,11 @@ function AppContent() {
           {/* Shareable per-speaker links — same landing page with the flyer open. */}
           <Route path="/wce-2026/speakers/:slug" element={<WCE2026 />} />
           {/* Gated online symposium stream — entitlement checked server-side. */}
+          {/* Focused retreat application view — the campaign-link landing target. */}
+          <Route path="/wce-2026/apply" element={<WceApply />} />
+          {/* Direct campaign links (with the shorter /wce/go alias for print + bios). */}
+          <Route path="/wce-2026/go/:slug" element={<WceGo />} />
+          <Route path="/wce/go/:slug" element={<WceGo />} />
           <Route path="/wce-2026/live" element={<WceLive />} />
           {/* Private retreat payment link. No public entry point; noindex. */}
           <Route path="/wce-2026/retreat-checkout/:token" element={<WceRetreatCheckout />} />
