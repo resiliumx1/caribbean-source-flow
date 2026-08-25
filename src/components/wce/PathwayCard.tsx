@@ -2,7 +2,7 @@
  *  Ascent stagger, gold bloom on threshold, drawn vines, tiered CTAs.
  *  Every effect is disabled under prefers-reduced-motion; on touch the
  *  bloom + vine draw fire once on scroll-into-view instead of on hover. */
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/use-cart";
 import { rememberPathway } from "@/lib/wce-attribution";
@@ -117,9 +117,11 @@ export interface PathwayCardProps {
   price: number;
   /** Linked shop product; when absent the CTA falls back to the application form. */
   productId?: string | null;
+  /** Ring + auto-scroll, used when a campaign link falls back to this section. */
+  highlight?: boolean;
 }
 
-export function PathwayCard({ index, pathwayKey, label, currency, price, productId }: PathwayCardProps) {
+export function PathwayCard({ index, pathwayKey, label, currency, price, productId, highlight = false }: PathwayCardProps) {
   const reduced = useWceReducedMotion();
   const touch = useIsTouch();
   const { ref, inView } = useInView<HTMLDivElement>();
@@ -206,6 +208,16 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
     );
   };
 
+  useEffect(() => {
+    if (!highlight) return;
+    const t = window.setTimeout(
+      () => ref.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" }),
+      280,
+    );
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [highlight]);
+
   const toggleExpanded = () => {
     const next = !expanded;
     setExpanded(next);
@@ -215,7 +227,7 @@ export function PathwayCard({ index, pathwayKey, label, currency, price, product
   return (
     <div
       ref={ref}
-      className={`wce-path-slot wce-path-slot-${index + 1} h-full`}
+      className={`wce-path-slot wce-path-slot-${index + 1} h-full ${highlight ? "is-highlighted" : ""}`}
       style={{
         opacity: entered ? 1 : 0,
         transform: entered

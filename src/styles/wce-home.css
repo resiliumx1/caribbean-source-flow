@@ -182,3 +182,10 @@
   .wce-home-bg { transform: none !important; }
   .wce-home-video { display: none; }
 }
+/* Campaign-link fallback: the pathway named in ?pathway= is ringed in gold so
+   a visitor arriving from an ad sees exactly which card they came for. */
+.wce-path-slot.is-highlighted .wce-path-card {
+  outline: 1px solid rgba(var(--wce-gold-rgb), 0.95);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 6px rgba(var(--wce-gold-rgb), 0.14);
+}
