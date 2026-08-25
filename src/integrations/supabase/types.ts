@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -2729,6 +2729,54 @@ export type Database = {
         }
         Relationships: []
       }
+      wce_campaign_links: {
+        Row: {
+          click_count: number
+          created_at: string
+          id: string
+          is_active: boolean
+          last_clicked_at: string | null
+          name: string
+          pathway_key: string
+          referral_code: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          click_count?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_clicked_at?: string | null
+          name: string
+          pathway_key: string
+          referral_code?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          click_count?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_clicked_at?: string | null
+          name?: string
+          pathway_key?: string
+          referral_code?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
       wce_faqs: {
         Row: {
           answer: string | null
@@ -3145,6 +3193,7 @@ export type Database = {
           is_open: boolean
           key: string
           label: string
+          link_slug: string | null
           price: number
           product_id: string | null
           sold_count: number
@@ -3160,6 +3209,7 @@ export type Database = {
           is_open?: boolean
           key: string
           label: string
+          link_slug?: string | null
           price?: number
           product_id?: string | null
           sold_count?: number
@@ -3175,6 +3225,7 @@ export type Database = {
           is_open?: boolean
           key?: string
           label?: string
+          link_slug?: string | null
           price?: number
           product_id?: string | null
           sold_count?: number
@@ -3633,6 +3684,7 @@ export type Database = {
       }
       is_wce_order: { Args: { _order_id: string }; Returns: boolean }
       wce_accept_own_invite: { Args: never; Returns: boolean }
+      wce_campaign_link_click: { Args: { _id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "wce_admin" | "consultation_editor"

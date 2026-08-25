@@ -160,6 +160,11 @@ export function WcePathwaysSection() {
 function PathwaysInner() {
   const { data: pathways, isLoading } = useWcePathways();
   const lift = useSectionLift<HTMLElement>();
+  /* A campaign link whose product is missing or closed falls back here with
+     ?pathway=<key> so the visitor still lands on the right card. */
+  const highlightKey = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search).get("pathway")
+    : null;
 
   return (
     <section ref={lift.ref} id="pathways" className="wce-surface px-6 py-24 sm:py-32" style={{ background: "var(--wce-panel)", ...lift.style }}>
@@ -195,6 +200,7 @@ function PathwaysInner() {
               currency={p.currency}
               price={Number(p.price)}
               productId={(p as { product_id?: string | null }).product_id ?? null}
+              highlight={highlightKey === p.key}
             />
           ))}
         </div>
