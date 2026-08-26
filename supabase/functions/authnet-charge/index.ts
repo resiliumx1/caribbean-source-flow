@@ -189,23 +189,30 @@ Deno.serve(async (req) => {
         ? false
         : true;
     // Card verification (AVS) must use the billing address the bank has on file.
+    // If the shipping address is absent (digital-only or pickup order) we fall back
+    // to the explicit billing fields — submitting an empty street/zip makes the
+    // gateway's Enhanced AVS filter decline an otherwise good card.
+    const shippingBill = {
+      name: payload.form.customer_name,
+      address: payload.form.address_line1,
+      city: payload.form.city,
+      state: payload.form.state_province,
+      zip: payload.form.postal_code,
+      country: payload.form.country,
+    };
+    const explicitBill = {
+      name: payload.form.billing_name || payload.form.customer_name,
+      address: payload.form.billing_address_line1,
+      city: payload.form.billing_city,
+      state: payload.form.billing_state_province,
+      zip: payload.form.billing_postal_code,
+      country: payload.form.billing_country,
+    };
+    const usable = (b: { address?: string }) =>
+      !!b.address && b.address.trim() !== "" && b.address.trim() !== "—";
     const bill = billingSame
-      ? {
-          name: payload.form.customer_name,
-          address: payload.form.address_line1,
-          city: payload.form.city,
-          state: payload.form.state_province,
-          zip: payload.form.postal_code,
-          country: payload.form.country,
-        }
-      : {
-          name: payload.form.billing_name || payload.form.customer_name,
-          address: payload.form.billing_address_line1,
-          city: payload.form.billing_city,
-          state: payload.form.billing_state_province,
-          zip: payload.form.billing_postal_code,
-          country: payload.form.billing_country,
-        };
+      ? (usable(shippingBill) ? shippingBill : usable(explicitBill) ? explicitBill : shippingBill)
+      : (usable(explicitBill) ? explicitBill : shippingBill);
     const { firstName, lastName } = splitName(bill.name || payload.form.customer_name);
     const charge = await chargeCard({
       amount: total_usd,
