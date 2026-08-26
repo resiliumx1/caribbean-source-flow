@@ -663,13 +663,22 @@ export default function Checkout() {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="postal_code">Postal Code</Label>
+                          <Label htmlFor="postal_code">
+                            Postal / ZIP Code{shippingZipRequired ? " *" : ""}
+                          </Label>
                           <Input
                             id="postal_code"
+                            required={shippingZipRequired}
                             maxLength={20}
                             value={form.postal_code}
+                            onBlur={blur("postal_code")}
                             onChange={(e) => update("postal_code", e.target.value)}
                           />
+                          {shippingZipRequired && touched.postal_code && !form.postal_code.trim() && (
+                            <p className="text-xs text-destructive mt-1">
+                              Your bank checks this — please enter the ZIP/postal code.
+                            </p>
+                          )}
                         </div>
                         <div>
                           <Label htmlFor="country">Country *</Label>
