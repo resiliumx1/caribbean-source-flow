@@ -152,7 +152,11 @@ export default function Checkout() {
   const contactComplete =
     !!form.customer_name.trim() && isEmailValid && (!phoneRequired || !!form.phone.trim());
   const shippingComplete =
-    !isShipping || (!!form.address_line1.trim() && !!form.city.trim() && !!form.country);
+    !isShipping ||
+    (!!form.address_line1.trim() &&
+      !!form.city.trim() &&
+      !!form.country &&
+      (!zipCountriesEarly.includes(form.country) || !!form.postal_code.trim()));
   // Countries where the bank checks a postal/ZIP code — required there for AVS.
   const zipCountries = ["US", "CA", "GB"];
   const billingZipRequired = zipCountries.includes(form.billing_country);
