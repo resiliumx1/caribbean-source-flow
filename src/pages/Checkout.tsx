@@ -694,23 +694,27 @@ export default function Checkout() {
 
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
                 <h2 className="font-serif font-semibold text-lg text-foreground">
-                  Billing Address
+                  Card Billing Address
                 </h2>
-                <label className="flex items-start gap-3 text-sm text-foreground cursor-pointer min-h-[44px] py-2">
-                  <input
-                    type="checkbox"
-                    className="mt-1 h-4 w-4 accent-primary"
-                    checked={billingSame}
-                    onChange={(e) =>
-                      update("billing_same_as_shipping", e.target.checked ? "true" : "false")
-                    }
-                  />
-                  <span>
-                    {isShipping
-                      ? "My billing address is the same as my delivery address"
-                      : "My billing address is the same as my contact details"}
-                  </span>
-                </label>
+                {isShipping ? (
+                  <label className="flex items-start gap-3 text-sm text-foreground cursor-pointer min-h-[44px] py-2">
+                    <input
+                      type="checkbox"
+                      className="mt-1 h-4 w-4 accent-primary"
+                      checked={billingSame}
+                      onChange={(e) =>
+                        update("billing_same_as_shipping", e.target.checked ? "true" : "false")
+                      }
+                    />
+                    <span>My billing address is the same as my delivery address</span>
+                  </label>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Your bank checks this address against the card before approving the payment,
+                    so it is required even though nothing is being shipped.
+                  </p>
+                )}
+
 
                 {needsBilling && (
                   <>
