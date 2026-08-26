@@ -140,8 +140,11 @@ export default function Checkout() {
   // Pickup doesn't need a shipping address.
   const isShipping = hasPhysical && form.delivery_type !== "pickup";
   // A separate billing address is only collected when the shopper says the card's
-  // billing address differs from where the order is going.
-  const billingSame = form.billing_same_as_shipping === "true";
+  // billing address differs from where the order is going. When there is no
+  // delivery address at all (digital-only cart or pickup) we must still collect
+  // the card's billing address — the gateway's AVS filter declines a card when
+  // no street/postal code is submitted with it.
+  const billingSame = form.billing_same_as_shipping === "true" && isShipping;
   const needsBilling = !billingSame;
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
   // Phone is only genuinely needed when something has to be delivered.
@@ -150,9 +153,16 @@ export default function Checkout() {
     !!form.customer_name.trim() && isEmailValid && (!phoneRequired || !!form.phone.trim());
   const shippingComplete =
     !isShipping || (!!form.address_line1.trim() && !!form.city.trim() && !!form.country);
+  // Countries where the bank checks a postal/ZIP code — required there for AVS.
+  const zipCountries = ["US", "CA", "GB"];
+  const billingZipRequired = zipCountries.includes(form.billing_country);
+  const shippingZipRequired = zipCountries.includes(form.country);
   const billingComplete =
     !needsBilling ||
-    (!!form.billing_address_line1.trim() && !!form.billing_city.trim() && !!form.billing_country);
+    (!!form.billing_address_line1.trim() &&
+      !!form.billing_city.trim() &&
+      !!form.billing_country &&
+      (!billingZipRequired || !!form.billing_postal_code.trim()));
   const isFormValid = useMemo(
     () => contactComplete && shippingComplete && billingComplete,
     [contactComplete, shippingComplete, billingComplete]
