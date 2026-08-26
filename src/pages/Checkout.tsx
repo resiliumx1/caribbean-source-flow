@@ -151,16 +151,16 @@ export default function Checkout() {
   const phoneRequired = hasPhysical;
   const contactComplete =
     !!form.customer_name.trim() && isEmailValid && (!phoneRequired || !!form.phone.trim());
+  // Countries where the bank checks a postal/ZIP code — required there for AVS.
+  const zipCountries = ["US", "CA", "GB"];
+  const billingZipRequired = zipCountries.includes(form.billing_country);
+  const shippingZipRequired = zipCountries.includes(form.country);
   const shippingComplete =
     !isShipping ||
     (!!form.address_line1.trim() &&
       !!form.city.trim() &&
       !!form.country &&
-      (!zipCountriesEarly.includes(form.country) || !!form.postal_code.trim()));
-  // Countries where the bank checks a postal/ZIP code — required there for AVS.
-  const zipCountries = ["US", "CA", "GB"];
-  const billingZipRequired = zipCountries.includes(form.billing_country);
-  const shippingZipRequired = zipCountries.includes(form.country);
+      (!shippingZipRequired || !!form.postal_code.trim()));
   const billingComplete =
     !needsBilling ||
     (!!form.billing_address_line1.trim() &&
