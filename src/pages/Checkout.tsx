@@ -140,19 +140,33 @@ export default function Checkout() {
   // Pickup doesn't need a shipping address.
   const isShipping = hasPhysical && form.delivery_type !== "pickup";
   // A separate billing address is only collected when the shopper says the card's
-  // billing address differs from where the order is going.
-  const billingSame = form.billing_same_as_shipping === "true";
+  // billing address differs from where the order is going. When there is no
+  // delivery address at all (digital-only cart or pickup) we must still collect
+  // the card's billing address — the gateway's AVS filter declines a card when
+  // no street/postal code is submitted with it.
+  const billingSame = form.billing_same_as_shipping === "true" && isShipping;
   const needsBilling = !billingSame;
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
   // Phone is only genuinely needed when something has to be delivered.
   const phoneRequired = hasPhysical;
   const contactComplete =
     !!form.customer_name.trim() && isEmailValid && (!phoneRequired || !!form.phone.trim());
+  // Countries where the bank checks a postal/ZIP code — required there for AVS.
+  const zipCountries = ["US", "CA", "GB"];
+  const billingZipRequired = zipCountries.includes(form.billing_country);
+  const shippingZipRequired = zipCountries.includes(form.country);
   const shippingComplete =
-    !isShipping || (!!form.address_line1.trim() && !!form.city.trim() && !!form.country);
+    !isShipping ||
+    (!!form.address_line1.trim() &&
+      !!form.city.trim() &&
+      !!form.country &&
+      (!shippingZipRequired || !!form.postal_code.trim()));
   const billingComplete =
     !needsBilling ||
-    (!!form.billing_address_line1.trim() && !!form.billing_city.trim() && !!form.billing_country);
+    (!!form.billing_address_line1.trim() &&
+      !!form.billing_city.trim() &&
+      !!form.billing_country &&
+      (!billingZipRequired || !!form.billing_postal_code.trim()));
   const isFormValid = useMemo(
     () => contactComplete && shippingComplete && billingComplete,
     [contactComplete, shippingComplete, billingComplete]
@@ -649,13 +663,22 @@ export default function Checkout() {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="postal_code">Postal Code</Label>
+                          <Label htmlFor="postal_code">
+                            Postal / ZIP Code{shippingZipRequired ? " *" : ""}
+                          </Label>
                           <Input
                             id="postal_code"
+                            required={shippingZipRequired}
                             maxLength={20}
                             value={form.postal_code}
+                            onBlur={blur("postal_code")}
                             onChange={(e) => update("postal_code", e.target.value)}
                           />
+                          {shippingZipRequired && touched.postal_code && !form.postal_code.trim() && (
+                            <p className="text-xs text-destructive mt-1">
+                              Your bank checks this — please enter the ZIP/postal code.
+                            </p>
+                          )}
                         </div>
                         <div>
                           <Label htmlFor="country">Country *</Label>
@@ -680,23 +703,27 @@ export default function Checkout() {
 
               <div className="bg-card rounded-xl border border-border p-6 space-y-4">
                 <h2 className="font-serif font-semibold text-lg text-foreground">
-                  Billing Address
+                  Card Billing Address
                 </h2>
-                <label className="flex items-start gap-3 text-sm text-foreground cursor-pointer min-h-[44px] py-2">
-                  <input
-                    type="checkbox"
-                    className="mt-1 h-4 w-4 accent-primary"
-                    checked={billingSame}
-                    onChange={(e) =>
-                      update("billing_same_as_shipping", e.target.checked ? "true" : "false")
-                    }
-                  />
-                  <span>
-                    {isShipping
-                      ? "My billing address is the same as my delivery address"
-                      : "My billing address is the same as my contact details"}
-                  </span>
-                </label>
+                {isShipping ? (
+                  <label className="flex items-start gap-3 text-sm text-foreground cursor-pointer min-h-[44px] py-2">
+                    <input
+                      type="checkbox"
+                      className="mt-1 h-4 w-4 accent-primary"
+                      checked={billingSame}
+                      onChange={(e) =>
+                        update("billing_same_as_shipping", e.target.checked ? "true" : "false")
+                      }
+                    />
+                    <span>My billing address is the same as my delivery address</span>
+                  </label>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Your bank checks this address against the card before approving the payment,
+                    so it is required even though nothing is being shipped.
+                  </p>
+                )}
+
 
                 {needsBilling && (
                   <>
@@ -761,13 +788,24 @@ export default function Checkout() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="billing_postal_code">Postal Code</Label>
+                        <Label htmlFor="billing_postal_code">
+                          Postal / ZIP Code{billingZipRequired ? " *" : ""}
+                        </Label>
                         <Input
                           id="billing_postal_code"
+                          required={billingZipRequired}
                           maxLength={20}
                           value={form.billing_postal_code}
+                          onBlur={blur("billing_postal_code")}
                           onChange={(e) => update("billing_postal_code", e.target.value)}
                         />
+                        {billingZipRequired &&
+                          touched.billing_postal_code &&
+                          !form.billing_postal_code.trim() && (
+                            <p className="text-xs text-destructive mt-1">
+                              Your bank checks this — please enter the ZIP/postal code on the card.
+                            </p>
+                          )}
                       </div>
                       <div>
                         <Label htmlFor="billing_country">Country *</Label>
