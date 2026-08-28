@@ -181,6 +181,7 @@ export default function WCE2026() {
         <title>{speaker ? shareTitle : "Caribbean Wellness Saint Lucia 2026 | 11–17 October"}</title>
         <meta name="description" content={speaker ? shareDescription : "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Caribbean Wellness Fortification Retreat."} />
         <link rel="canonical" href={pageUrl} />
+        <meta name="robots" content="index, follow, max-image-preview:large" />
 
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Mount Kailash Rejuvenation Centre" />
