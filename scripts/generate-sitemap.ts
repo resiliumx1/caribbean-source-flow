@@ -88,7 +88,7 @@ async function fetchDynamic(): Promise<Entry[]> {
   // Published WCE speaker share pages — prerendered, crawlable routes.
   const { data: speakers, error: sErr } = await sb
     .from("wce_speakers")
-    .select("slug, updated_at")
+    .select("slug")
     .eq("published", true)
     .not("slug", "is", null);
   if (sErr) console.warn("[sitemap] speakers error:", sErr.message);
@@ -96,7 +96,7 @@ async function fetchDynamic(): Promise<Entry[]> {
     if (!s.slug) continue;
     out.push({
       loc: `/wce-2026/speakers/${s.slug}`,
-      lastmod: (s.updated_at || today).toString().slice(0, 10),
+      lastmod: today,
       changefreq: "monthly",
       priority: "0.6",
     });
