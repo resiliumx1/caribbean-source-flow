@@ -537,9 +537,45 @@ async function main() {
 
   const [products, retreats] = await Promise.all([loadProducts(), loadRetreats()]);
   const speakers = await loadSpeakers();
+  const wce = await loadWceData();
   let count = 0;
 
+  // WCE 2026 — the landing page and the focused application page, both with the
+  // full event text and Event/Breadcrumb schema in the raw HTML.
+  const wceRoutes: RouteMeta[] = [
+    {
+      path: "/wce-2026",
+      title: "Caribbean Wellness Experience Saint Lucia 2026 | 11–17 October",
+      description:
+        "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Caribbean Wellness Fortification Retreat.",
+      ogImage: `${BASE_URL}/og/wce-2026.jpg`,
+      ogImageAlt:
+        "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre",
+      tailHead: WCE_TAIL_HEAD,
+      jsonLd: [
+        wceEventSchema(wce.pathways),
+        wceBreadcrumb("/wce-2026", "Caribbean Wellness Saint Lucia 2026"),
+      ] as unknown as Record<string, unknown>,
+      bodyHtml: wceBodyHtml(wce.pathways, speakers, wce.faqs, wce.itinerary),
+    },
+    {
+      path: "/wce-2026/apply",
+      title: "Retreat Application — Caribbean Wellness Fortification Retreat 2026",
+      description:
+        "Apply for the six-day Caribbean Wellness Fortification Retreat, 12–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Application only, reviewed by our team.",
+      ogImage: `${BASE_URL}/og/wce-2026.jpg`,
+      ogImageAlt: "Caribbean Wellness Fortification Retreat, 12–17 October 2026, Saint Lucia",
+      jsonLd: wceBreadcrumb("/wce-2026/apply", "Retreat Application"),
+      bodyHtml: wceApplyBodyHtml(),
+    },
+  ];
+  for (const r of wceRoutes) {
+    writeRoute(r.path, buildShellTransform(shell, r));
+    count++;
+  }
+
   // Static marketing pages — replace head only, keep existing body fallback.
+
   for (const r of STATIC_ROUTES) {
     const meta: RouteMeta = {
       path: r.path,
