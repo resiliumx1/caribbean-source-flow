@@ -41,6 +41,7 @@ export default function WceApply() {
         <title>{TITLE}</title>
         <meta name="description" content={DESCRIPTION} />
         <link rel="canonical" href={PAGE_URL} />
+        <meta name="robots" content="index, follow, max-image-preview:large" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Mount Kailash Rejuvenation Centre" />
         <meta property="og:title" content="Apply · Caribbean Wellness Fortification Retreat" />
