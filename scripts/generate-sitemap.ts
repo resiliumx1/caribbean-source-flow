@@ -196,6 +196,8 @@ const LLMS = `# Mount Kailash Rejuvenation Centre
 - [Home](${BASE_URL}/): Overview of Mount Kailash and its four pillars — apothecary, retreats, school, wholesale.
 - [Apothecary / Shop](${BASE_URL}/shop): Wildcrafted herbal tinctures, capsules, teas, and raw herbs from Saint Lucia.
 - [The Answer](${BASE_URL}/the-answer): Signature immune tincture with Anamu, Vervain, and Soursop leaves — steeped 21 days in oak barrels.
+- [Caribbean Wellness Experience Saint Lucia 2026](${BASE_URL}/wce-2026): 11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia — wellness symposium (in person US$70 or online US$50, 11 October) plus the six-day Caribbean Wellness Fortification Retreat (12–17 October, application only) and the LifeCraft experience.
+- [Retreat Application](${BASE_URL}/wce-2026/apply): Apply for the Caribbean Wellness Fortification Retreat, 12–17 October 2026; applications are reviewed by the Mount Kailash team.
 - [Webinars](${BASE_URL}/webinars): Free live and on-demand herbal medicine webinars with Priest Kailash Leonce.
 - [Healing Retreats](${BASE_URL}/retreats): 7-day immersive cellular detox and wellness retreats in the volcanic highlands of Saint Lucia.
 - [School of Wellness Medicine](${BASE_URL}/school/herbal-physician): Clinical wellness medicine training program; 500+ graduates worldwide.
