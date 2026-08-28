@@ -37,6 +37,8 @@ const staticEntries: Entry[] = [
   { loc: "/webinars",                  changefreq: "weekly",  priority: "0.8", lastmod: today },
   { loc: "/retreats",                  changefreq: "weekly",  priority: "0.8", lastmod: today },
   { loc: "/wce-2026",                  changefreq: "weekly",  priority: "0.9", lastmod: today },
+  { loc: "/wce-2026/apply",            changefreq: "weekly",  priority: "0.7", lastmod: today },
+
   { loc: "/school/herbal-physician",   changefreq: "monthly", priority: "0.8", lastmod: today },
   { loc: "/wholesale",                 changefreq: "monthly", priority: "0.8", lastmod: today },
   { loc: "/learn",                     changefreq: "weekly",  priority: "0.7", lastmod: today },
