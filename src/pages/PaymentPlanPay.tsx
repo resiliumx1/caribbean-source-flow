@@ -125,9 +125,9 @@ export default function PaymentPlanPay() {
   const paid = plan.status === "paid" || Number(plan.balance_remaining) <= 0;
   const min = Number(plan.min_payment ?? 1);
   const remaining = Number(plan.balance_remaining);
-  const amtNum = Number(amount);
+  const amtNum = parseAmount(amount);
   const validAmount =
-    Number.isFinite(amtNum) && amtNum > 0 && amtNum >= Math.min(min, remaining) && amtNum <= remaining;
+    amtNum !== null && amtNum > 0 && amtNum >= Math.min(min, remaining) && amtNum <= remaining;
 
   return (
     <div
@@ -236,11 +236,8 @@ export default function PaymentPlanPay() {
                   <div className="relative mt-1.5">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-lg">$</span>
                     <Input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      min={Math.min(min, remaining)}
-                      max={remaining}
-                      step="0.01"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       className="text-lg h-12 pl-7 font-semibold"
@@ -331,7 +328,7 @@ export default function PaymentPlanPay() {
                   </div>
                 )}
 
-                {validAmount ? (
+                {validAmount && amtNum !== null ? (
                   <AuthorizeNetCardForm
                     amountUsd={amtNum}
                     processing={processing}
@@ -356,7 +353,7 @@ export default function PaymentPlanPay() {
                             },
                           });
                           if (error || !res?.success) {
-                            const msg = res?.error || error?.message || "Could not set up automatic payments.";
+                            const msg = await extractFnError(error, res?.error, "Could not set up automatic payments.");
                             setError(msg);
                             throw new Error(msg);
                           }
@@ -374,7 +371,7 @@ export default function PaymentPlanPay() {
                           },
                         });
                         if (error || !res?.success) {
-                          const msg = res?.error || error?.message || "Payment failed.";
+                          const msg = await extractFnError(error, res?.error);
                           setError(msg);
                           throw new Error(msg);
                         }
