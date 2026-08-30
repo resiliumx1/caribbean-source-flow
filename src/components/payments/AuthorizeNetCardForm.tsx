@@ -107,6 +107,34 @@ function formatCardNumber(v: string) {
   return d.replace(/(.{4})/g, "$1 ").trim();
 }
 
+function luhnValid(num: string): boolean {
+  if (num.length < 13 || num.length > 19) return false;
+  let sum = 0;
+  let dbl = false;
+  for (let i = num.length - 1; i >= 0; i--) {
+    let d = num.charCodeAt(i) - 48;
+    if (d < 0 || d > 9) return false;
+    if (dbl) {
+      d *= 2;
+      if (d > 9) d -= 9;
+    }
+    sum += d;
+    dbl = !dbl;
+  }
+  return sum % 10 === 0;
+}
+
+function expiryValid(mm: string, yy: string): boolean {
+  if (!/^\d{2}$/.test(mm) || !/^\d{2}$/.test(yy)) return false;
+  const m = Number(mm);
+  if (m < 1 || m > 12) return false;
+  const now = new Date();
+  const curYY = now.getFullYear() % 100;
+  const curMM = now.getMonth() + 1;
+  const y = Number(yy);
+  return y > curYY || (y === curYY && m >= curMM);
+}
+
 export function AuthorizeNetCardForm({
   amountUsd,
   buttonLabel,
