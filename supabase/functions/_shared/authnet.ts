@@ -544,6 +544,7 @@ export interface ArbArgs {
   opaqueData: OpaqueData;
   firstName?: string;
   lastName?: string;
+  zip?: string;
   email?: string;
 }
 
@@ -564,6 +565,7 @@ export async function createSubscription(args: ArbArgs): Promise<string> {
         billTo: {
           firstName: (args.firstName || "Customer").slice(0, 50),
           lastName: (args.lastName || "").slice(0, 50),
+          zip: args.zip?.slice(0, 20),
         },
       },
     },

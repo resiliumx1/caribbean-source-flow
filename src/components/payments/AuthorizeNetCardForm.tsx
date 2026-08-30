@@ -95,7 +95,7 @@ export interface AuthorizeNetCardFormProps {
   defaultCardholderName?: string;
   defaultZip?: string;
   processing?: boolean;
-  onToken: (data: { opaqueData: OpaqueData; cardholderName: string }) => Promise<void> | void;
+  onToken: (data: { opaqueData: OpaqueData; cardholderName: string; billingZip: string }) => Promise<void> | void;
 }
 
 function digitsOnly(v: string) {
@@ -238,6 +238,7 @@ export function AuthorizeNetCardForm({
           await onToken({
             opaqueData: response.opaqueData,
             cardholderName: cardholder.trim(),
+            billingZip: zip.trim(),
           });
         } catch (e: any) {
           if (mountedRef.current) setError(e?.message || "Payment failed. Please try again.");

@@ -336,7 +336,7 @@ export default function PaymentPlanPay() {
                     buttonLabel={mode === "auto" && !schedule
                       ? `Start ${cadence} payments of $${amtNum.toFixed(2)}`
                       : undefined}
-                    onToken={async ({ opaqueData, cardholderName }: { opaqueData: OpaqueData; cardholderName: string }) => {
+                    onToken={async ({ opaqueData, cardholderName, billingZip }: { opaqueData: OpaqueData; cardholderName: string; billingZip: string }) => {
                       setError(null);
                       setProcessing(true);
                       try {
@@ -349,6 +349,7 @@ export default function PaymentPlanPay() {
                               cadence,
                               opaqueData,
                               cardholderName,
+                              billingZip,
                               email: plan.customer_email ?? undefined,
                             },
                           });
@@ -367,6 +368,7 @@ export default function PaymentPlanPay() {
                             requestedAmount: amtNum,
                             opaqueData,
                             cardholderName,
+                            billingZip,
                             email: plan.customer_email ?? undefined,
                           },
                         });
