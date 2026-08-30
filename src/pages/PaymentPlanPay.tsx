@@ -22,6 +22,52 @@ type Plan = {
 
 const fmt = (n: number | string) => `$${Number(n).toFixed(2)}`;
 
+/** Normalise a user-typed money string to a plain number.
+ *  Strips currency symbols/spaces, removes thousands separators, and converts
+ *  comma decimals ("1227,60") to period decimals. Returns null on NaN. */
+function parseAmount(raw: string): number | null {
+  let s = raw.trim().replace(/[$€£\s ]/g, "");
+  if (!s) return null;
+  const lastComma = s.lastIndexOf(",");
+  const lastDot = s.lastIndexOf(".");
+  if (lastComma > lastDot) {
+    // comma is the decimal separator: drop dots (thousands), swap comma
+    s = s.replace(/\./g, "").replace(",", ".");
+  } else {
+    // dot is decimal (or none): drop commas (thousands)
+    s = s.replace(/,/g, "");
+  }
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Pull the real error message out of a failed edge-function call. */
+async function extractFnError(error: any, resError?: string | null, fallback = "Payment failed."): Promise<string> {
+  if (resError) return resError;
+  if (error) {
+    try {
+      const ctx = error?.context;
+      if (ctx && typeof ctx.json === "function") {
+        const body = await ctx.json().catch(() => null);
+        console.log("Edge function error body:", body);
+        if (body?.error) return String(body.error);
+        if (body?.message) return String(body.message);
+      } else if (ctx && typeof ctx.text === "function") {
+        const text = await ctx.text().catch(() => "");
+        console.log("Edge function error text:", text);
+        try {
+          const body = JSON.parse(text);
+          if (body?.error) return String(body.error);
+          if (body?.message) return String(body.message);
+        } catch { /* not JSON */ }
+        if (text) return text.slice(0, 300);
+      }
+    } catch { /* fall through */ }
+    if (error?.message) return String(error.message);
+  }
+  return fallback;
+}
+
 export default function PaymentPlanPay() {
   const { planId } = useParams<{ planId: string }>();
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -79,9 +125,9 @@ export default function PaymentPlanPay() {
   const paid = plan.status === "paid" || Number(plan.balance_remaining) <= 0;
   const min = Number(plan.min_payment ?? 1);
   const remaining = Number(plan.balance_remaining);
-  const amtNum = Number(amount);
+  const amtNum = parseAmount(amount);
   const validAmount =
-    Number.isFinite(amtNum) && amtNum > 0 && amtNum >= Math.min(min, remaining) && amtNum <= remaining;
+    amtNum !== null && amtNum > 0 && amtNum >= Math.min(min, remaining) && amtNum <= remaining;
 
   return (
     <div
@@ -190,11 +236,8 @@ export default function PaymentPlanPay() {
                   <div className="relative mt-1.5">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-lg">$</span>
                     <Input
-                      type="number"
+                      type="text"
                       inputMode="decimal"
-                      min={Math.min(min, remaining)}
-                      max={remaining}
-                      step="0.01"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       className="text-lg h-12 pl-7 font-semibold"
@@ -285,7 +328,7 @@ export default function PaymentPlanPay() {
                   </div>
                 )}
 
-                {validAmount ? (
+                {validAmount && amtNum !== null ? (
                   <AuthorizeNetCardForm
                     amountUsd={amtNum}
                     processing={processing}
@@ -310,7 +353,7 @@ export default function PaymentPlanPay() {
                             },
                           });
                           if (error || !res?.success) {
-                            const msg = res?.error || error?.message || "Could not set up automatic payments.";
+                            const msg = await extractFnError(error, res?.error, "Could not set up automatic payments.");
                             setError(msg);
                             throw new Error(msg);
                           }
@@ -328,7 +371,7 @@ export default function PaymentPlanPay() {
                           },
                         });
                         if (error || !res?.success) {
-                          const msg = res?.error || error?.message || "Payment failed.";
+                          const msg = await extractFnError(error, res?.error);
                           setError(msg);
                           throw new Error(msg);
                         }

@@ -107,6 +107,34 @@ function formatCardNumber(v: string) {
   return d.replace(/(.{4})/g, "$1 ").trim();
 }
 
+function luhnValid(num: string): boolean {
+  if (num.length < 13 || num.length > 19) return false;
+  let sum = 0;
+  let dbl = false;
+  for (let i = num.length - 1; i >= 0; i--) {
+    let d = num.charCodeAt(i) - 48;
+    if (d < 0 || d > 9) return false;
+    if (dbl) {
+      d *= 2;
+      if (d > 9) d -= 9;
+    }
+    sum += d;
+    dbl = !dbl;
+  }
+  return sum % 10 === 0;
+}
+
+function expiryValid(mm: string, yy: string): boolean {
+  if (!/^\d{2}$/.test(mm) || !/^\d{2}$/.test(yy)) return false;
+  const m = Number(mm);
+  if (m < 1 || m > 12) return false;
+  const now = new Date();
+  const curYY = now.getFullYear() % 100;
+  const curMM = now.getMonth() + 1;
+  const y = Number(yy);
+  return y > curYY || (y === curYY && m >= curMM);
+}
+
 export function AuthorizeNetCardForm({
   amountUsd,
   buttonLabel,
@@ -126,6 +154,28 @@ export function AuthorizeNetCardForm({
   const [exp, setExp] = useState(""); // MM/YY
   const [cvv, setCvv] = useState("");
   const [zip, setZip] = useState(defaultZip ?? "");
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const blur = (field: string) => () => setTouched((p) => ({ ...p, [field]: true }));
+
+  // Derived per-field validity
+  const cn = digitsOnly(cardNumber);
+  const cvvClean = digitsOnly(cvv);
+  const [mmRaw = "", yyRaw = ""] = exp.split("/").map((s) => s?.trim() ?? "");
+  const mm = digitsOnly(mmRaw).padStart(2, "0").slice(0, 2);
+  const yy = digitsOnly(yyRaw).slice(-2);
+
+  const fieldErrors = {
+    cardholder: cardholder.trim() ? null : "Cardholder name is required.",
+    cardNumber: luhnValid(cn) ? null : "Enter a valid card number.",
+    exp: expiryValid(mm, yy)
+      ? null
+      : /^\d{2}$/.test(mm) && /^\d{2}$/.test(yy)
+        ? "This card is expired."
+        : "Enter expiry as MM/YY.",
+    cvv: cvvClean.length >= 3 && cvvClean.length <= 4 ? null : "Enter the 3–4 digit CVV / CVC.",
+    zip: zip.trim() ? null : "Zip / postal code is required.",
+  };
+  const formValid = !Object.values(fieldErrors).some(Boolean);
 
   const mountedRef = useRef(true);
   useEffect(() => () => { mountedRef.current = false; }, []);
@@ -151,18 +201,11 @@ export function AuthorizeNetCardForm({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setTouched({ cardholder: true, cardNumber: true, exp: true, cvv: true, zip: true });
 
-    const cn = digitsOnly(cardNumber);
-    const cvvClean = digitsOnly(cvv);
-    const [mmRaw, yyRaw] = exp.split("/").map((s) => s?.trim() ?? "");
-    const mm = digitsOnly(mmRaw).padStart(2, "0").slice(0, 2);
-    const yy = digitsOnly(yyRaw).slice(-2);
-
-    if (!cardholder.trim()) return setError("Cardholder name is required.");
-    if (cn.length < 13 || cn.length > 19) return setError("Enter a valid card number.");
-    if (!/^\d{2}$/.test(mm) || Number(mm) < 1 || Number(mm) > 12) return setError("Enter expiry as MM/YY.");
-    if (!/^\d{2}$/.test(yy)) return setError("Enter expiry as MM/YY.");
-    if (cvvClean.length < 3 || cvvClean.length > 4) return setError("Enter the CVV / CVC.");
+    if (!formValid) {
+      return setError("Please correct the highlighted fields.");
+    }
 
     if (!window.Accept) return setError("Secure payment form isn't ready yet.");
     let cfg;
@@ -206,7 +249,12 @@ export function AuthorizeNetCardForm({
   };
 
   const busy = tokenizing || !!processing;
-  const canSubmit = ready && !disabled && !busy;
+  const canSubmit = ready && !disabled && !busy && formValid;
+
+  const fieldError = (name: keyof typeof fieldErrors) =>
+    touched[name] && fieldErrors[name] ? (
+      <p className="text-xs text-destructive mt-1" role="alert">{fieldErrors[name]}</p>
+    ) : null;
 
   if (loadError) {
     return (
@@ -225,9 +273,11 @@ export function AuthorizeNetCardForm({
           autoComplete="cc-name"
           value={cardholder}
           onChange={(e) => setCardholder(e.target.value)}
+          onBlur={blur("cardholder")}
           maxLength={64}
           disabled={busy}
         />
+        {fieldError("cardholder")}
       </div>
       <div>
         <Label htmlFor="an_number">Card Number</Label>
@@ -238,8 +288,10 @@ export function AuthorizeNetCardForm({
           placeholder="1234 5678 9012 3456"
           value={cardNumber}
           onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+          onBlur={blur("cardNumber")}
           disabled={busy}
         />
+        {fieldError("cardNumber")}
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div>
@@ -254,8 +306,10 @@ export function AuthorizeNetCardForm({
               const d = digitsOnly(e.target.value).slice(0, 4);
               setExp(d.length >= 3 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
             }}
+            onBlur={blur("exp")}
             disabled={busy}
           />
+          {fieldError("exp")}
         </div>
         <div>
           <Label htmlFor="an_cvv">CVV</Label>
@@ -266,9 +320,11 @@ export function AuthorizeNetCardForm({
             placeholder="123"
             value={cvv}
             onChange={(e) => setCvv(digitsOnly(e.target.value).slice(0, 4))}
+            onBlur={blur("cvv")}
             maxLength={4}
             disabled={busy}
           />
+          {fieldError("cvv")}
         </div>
         <div>
           <Label htmlFor="an_zip">Zip / Postal</Label>
@@ -277,9 +333,11 @@ export function AuthorizeNetCardForm({
             autoComplete="postal-code"
             value={zip}
             onChange={(e) => setZip(e.target.value)}
+            onBlur={blur("zip")}
             maxLength={20}
             disabled={busy}
           />
+          {fieldError("zip")}
         </div>
       </div>
 
