@@ -154,6 +154,28 @@ export function AuthorizeNetCardForm({
   const [exp, setExp] = useState(""); // MM/YY
   const [cvv, setCvv] = useState("");
   const [zip, setZip] = useState(defaultZip ?? "");
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const blur = (field: string) => () => setTouched((p) => ({ ...p, [field]: true }));
+
+  // Derived per-field validity
+  const cn = digitsOnly(cardNumber);
+  const cvvClean = digitsOnly(cvv);
+  const [mmRaw, yyRaw] = exp.split("/").map((s) => s?.trim() ?? "");
+  const mm = digitsOnly(mmRaw).padStart(2, "0").slice(0, 2);
+  const yy = digitsOnly(yyRaw).slice(-2);
+
+  const fieldErrors = {
+    cardholder: cardholder.trim() ? null : "Cardholder name is required.",
+    cardNumber: luhnValid(cn) ? null : "Enter a valid card number.",
+    exp: expiryValid(mm, yy)
+      ? null
+      : /^\d{2}$/.test(mm) && /^\d{2}$/.test(yy)
+        ? "This card is expired."
+        : "Enter expiry as MM/YY.",
+    cvv: cvvClean.length >= 3 && cvvClean.length <= 4 ? null : "Enter the 3–4 digit CVV / CVC.",
+    zip: zip.trim() ? null : "Zip / postal code is required.",
+  };
+  const formValid = !Object.values(fieldErrors).some(Boolean);
 
   const mountedRef = useRef(true);
   useEffect(() => () => { mountedRef.current = false; }, []);
