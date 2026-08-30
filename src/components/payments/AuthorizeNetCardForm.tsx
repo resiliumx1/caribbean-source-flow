@@ -249,7 +249,12 @@ export function AuthorizeNetCardForm({
   };
 
   const busy = tokenizing || !!processing;
-  const canSubmit = ready && !disabled && !busy;
+  const canSubmit = ready && !disabled && !busy && formValid;
+
+  const fieldError = (name: keyof typeof fieldErrors) =>
+    touched[name] && fieldErrors[name] ? (
+      <p className="text-xs text-destructive mt-1" role="alert">{fieldErrors[name]}</p>
+    ) : null;
 
   if (loadError) {
     return (
