@@ -22,6 +22,52 @@ type Plan = {
 
 const fmt = (n: number | string) => `$${Number(n).toFixed(2)}`;
 
+/** Normalise a user-typed money string to a plain number.
+ *  Strips currency symbols/spaces, removes thousands separators, and converts
+ *  comma decimals ("1227,60") to period decimals. Returns null on NaN. */
+function parseAmount(raw: string): number | null {
+  let s = raw.trim().replace(/[$€£\s ]/g, "");
+  if (!s) return null;
+  const lastComma = s.lastIndexOf(",");
+  const lastDot = s.lastIndexOf(".");
+  if (lastComma > lastDot) {
+    // comma is the decimal separator: drop dots (thousands), swap comma
+    s = s.replace(/\./g, "").replace(",", ".");
+  } else {
+    // dot is decimal (or none): drop commas (thousands)
+    s = s.replace(/,/g, "");
+  }
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Pull the real error message out of a failed edge-function call. */
+async function extractFnError(error: any, resError?: string | null, fallback = "Payment failed."): Promise<string> {
+  if (resError) return resError;
+  if (error) {
+    try {
+      const ctx = error?.context;
+      if (ctx && typeof ctx.json === "function") {
+        const body = await ctx.json().catch(() => null);
+        console.log("Edge function error body:", body);
+        if (body?.error) return String(body.error);
+        if (body?.message) return String(body.message);
+      } else if (ctx && typeof ctx.text === "function") {
+        const text = await ctx.text().catch(() => "");
+        console.log("Edge function error text:", text);
+        try {
+          const body = JSON.parse(text);
+          if (body?.error) return String(body.error);
+          if (body?.message) return String(body.message);
+        } catch { /* not JSON */ }
+        if (text) return text.slice(0, 300);
+      }
+    } catch { /* fall through */ }
+    if (error?.message) return String(error.message);
+  }
+  return fallback;
+}
+
 export default function PaymentPlanPay() {
   const { planId } = useParams<{ planId: string }>();
   const [plan, setPlan] = useState<Plan | null>(null);
