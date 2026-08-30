@@ -11,17 +11,20 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { planId, requestedAmount, opaqueData, cardholderName, email } =
+    const { planId, requestedAmount, opaqueData, cardholderName, billingZip, email } =
       (await req.json()) as {
         planId: string;
         requestedAmount: number;
         opaqueData: OpaqueData;
         cardholderName?: string;
+        billingZip?: string;
         email?: string;
       };
 
     if (!planId) throw new Error("planId required");
     if (!opaqueData?.dataValue) throw new Error("Missing payment token.");
+    const zip = String(billingZip ?? "").trim();
+    if (!zip) throw new Error("Billing zip / postal code is required.");
     const reqAmt = Number(requestedAmount);
     if (!Number.isFinite(reqAmt) || reqAmt <= 0) throw new Error("Invalid amount");
 
@@ -54,7 +57,7 @@ Deno.serve(async (req) => {
       billTo: {
         firstName,
         lastName,
-        country: "US",
+        zip: zip.slice(0, 20),
       },
       customerEmail: (email || "").toLowerCase().trim() || undefined,
     });

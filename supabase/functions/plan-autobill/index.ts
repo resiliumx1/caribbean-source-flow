@@ -17,6 +17,7 @@ type Body = {
   startDate?: string;         // YYYY-MM-DD
   opaqueData?: OpaqueData;
   cardholderName?: string;
+  billingZip?: string;
   email?: string;
 };
 
@@ -44,6 +45,8 @@ Deno.serve(async (req) => {
       if (!body.planId || !body.opaqueData?.dataValue) {
         return json({ error: "Missing plan or payment details." }, 400);
       }
+      const billingZip = String(body.billingZip ?? "").trim();
+      if (!billingZip) return json({ error: "Billing zip / postal code is required." }, 400);
       const cadence = CADENCE[body.cadence ?? "monthly"];
       if (!cadence) return json({ error: "Invalid payment frequency." }, 400);
 
@@ -79,6 +82,7 @@ Deno.serve(async (req) => {
         opaqueData: body.opaqueData,
         firstName,
         lastName,
+        zip: billingZip.slice(0, 20),
         email: (body.email || plan.customer_email || "").toLowerCase().trim() || undefined,
       });
 
