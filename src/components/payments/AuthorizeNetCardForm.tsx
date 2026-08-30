@@ -160,7 +160,7 @@ export function AuthorizeNetCardForm({
   // Derived per-field validity
   const cn = digitsOnly(cardNumber);
   const cvvClean = digitsOnly(cvv);
-  const [mmRaw, yyRaw] = exp.split("/").map((s) => s?.trim() ?? "");
+  const [mmRaw = "", yyRaw = ""] = exp.split("/").map((s) => s?.trim() ?? "");
   const mm = digitsOnly(mmRaw).padStart(2, "0").slice(0, 2);
   const yy = digitsOnly(yyRaw).slice(-2);
 
