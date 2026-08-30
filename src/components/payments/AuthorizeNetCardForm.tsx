@@ -273,9 +273,11 @@ export function AuthorizeNetCardForm({
           autoComplete="cc-name"
           value={cardholder}
           onChange={(e) => setCardholder(e.target.value)}
+          onBlur={blur("cardholder")}
           maxLength={64}
           disabled={busy}
         />
+        {fieldError("cardholder")}
       </div>
       <div>
         <Label htmlFor="an_number">Card Number</Label>
@@ -286,8 +288,10 @@ export function AuthorizeNetCardForm({
           placeholder="1234 5678 9012 3456"
           value={cardNumber}
           onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+          onBlur={blur("cardNumber")}
           disabled={busy}
         />
+        {fieldError("cardNumber")}
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div>
@@ -302,8 +306,10 @@ export function AuthorizeNetCardForm({
               const d = digitsOnly(e.target.value).slice(0, 4);
               setExp(d.length >= 3 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
             }}
+            onBlur={blur("exp")}
             disabled={busy}
           />
+          {fieldError("exp")}
         </div>
         <div>
           <Label htmlFor="an_cvv">CVV</Label>
@@ -314,9 +320,11 @@ export function AuthorizeNetCardForm({
             placeholder="123"
             value={cvv}
             onChange={(e) => setCvv(digitsOnly(e.target.value).slice(0, 4))}
+            onBlur={blur("cvv")}
             maxLength={4}
             disabled={busy}
           />
+          {fieldError("cvv")}
         </div>
         <div>
           <Label htmlFor="an_zip">Zip / Postal</Label>
@@ -325,9 +333,11 @@ export function AuthorizeNetCardForm({
             autoComplete="postal-code"
             value={zip}
             onChange={(e) => setZip(e.target.value)}
+            onBlur={blur("zip")}
             maxLength={20}
             disabled={busy}
           />
+          {fieldError("zip")}
         </div>
       </div>
 
