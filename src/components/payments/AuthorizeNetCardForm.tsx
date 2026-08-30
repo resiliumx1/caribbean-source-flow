@@ -201,18 +201,11 @@ export function AuthorizeNetCardForm({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setTouched({ cardholder: true, cardNumber: true, exp: true, cvv: true, zip: true });
 
-    const cn = digitsOnly(cardNumber);
-    const cvvClean = digitsOnly(cvv);
-    const [mmRaw, yyRaw] = exp.split("/").map((s) => s?.trim() ?? "");
-    const mm = digitsOnly(mmRaw).padStart(2, "0").slice(0, 2);
-    const yy = digitsOnly(yyRaw).slice(-2);
-
-    if (!cardholder.trim()) return setError("Cardholder name is required.");
-    if (cn.length < 13 || cn.length > 19) return setError("Enter a valid card number.");
-    if (!/^\d{2}$/.test(mm) || Number(mm) < 1 || Number(mm) > 12) return setError("Enter expiry as MM/YY.");
-    if (!/^\d{2}$/.test(yy)) return setError("Enter expiry as MM/YY.");
-    if (cvvClean.length < 3 || cvvClean.length > 4) return setError("Enter the CVV / CVC.");
+    if (!formValid) {
+      return setError("Please correct the highlighted fields.");
+    }
 
     if (!window.Accept) return setError("Secure payment form isn't ready yet.");
     let cfg;
