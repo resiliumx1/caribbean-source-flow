@@ -10,6 +10,7 @@ import { WceRetreatDetailCards } from "@/components/wce/RetreatCards";
 import { WceLifeCraftSection } from "@/components/wce/LifeCraft";
 import { WceFaqSection, WceFinalCta, WceFooter } from "@/components/wce/SectionsBottom";
 import { useWceFaqs, useWcePathways, useWceSettings, useWceSpeakers, pathwayFeatures } from "@/components/wce/useWceData";
+import { WceExploreLinks } from "@/components/wce/WceExploreLinks";
 import { WceSubNav } from "@/components/wce/WceSubNav";
 import { WceStickyCta } from "@/components/wce/WceStickyCta";
 import { useWceAttribution } from "@/components/wce/useWceAttribution";
@@ -220,6 +221,7 @@ export default function WCE2026() {
         <WceApplicationForm />
         <WceFaqSection />
         <WceFortifiedBanner />
+        <WceExploreLinks />
         <WceFinalCta />
       </main>
       <WceFooter />
