@@ -493,40 +493,124 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
 
   {
     path: "/shop",
-    title: "Shop — Mount Kailash Apothecary | Caribbean Herbal Tinctures, Sea Moss & Wellness Medicine",
-    description: "Browse the Mount Kailash apothecary: herbal tinctures, sea moss, capsules, teas, and traditional Caribbean wellness medicine, hand-formulated in Saint Lucia.",
+    title: "Apothecary — Herbal Tinctures & Sea Moss | Mount Kailash Rejuvenation Centre, Saint Lucia",
+    description: "Browse the Mount Kailash Rejuvenation Centre apothecary in Soufriere, Saint Lucia: herbal tinctures, sea moss, capsules, teas and raw Caribbean herbs, formulated in small batches.",
+    jsonLd: [
+      wceBreadcrumb("/shop", "Apothecary"),
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "Mount Kailash Rejuvenation Centre Apothecary",
+        url: `${BASE_URL}/shop`,
+        about: "Caribbean herbal tinctures, sea moss and wellness medicine from Soufriere, Saint Lucia",
+      },
+    ] as unknown as Record<string, unknown>,
   },
   {
     path: "/the-answer",
-    title: "The Answer Tincture — Foy Duran, Vervain & Soursop Leaves | Mount Kailash",
-    description: "The Answer is Mount Kailash's flagship botanical formulation: Foy Duran, Vervain, and Soursop Leaves steeped 21 days in oak barrels for cellular detox and rejuvenation.",
+    title: "The Answer Tincture — Foy Duran, Vervain & Soursop | Mount Kailash Rejuvenation Centre",
+    description: "The Answer is the flagship botanical tincture of Mount Kailash Rejuvenation Centre, Saint Lucia: Foy Duran, Vervain and Soursop leaves steeped 21 days in oak barrels.",
+    jsonLd: [
+      wceBreadcrumb("/the-answer", "The Answer"),
+      faqPageSchema(theAnswerFaqs) as unknown as Record<string, unknown>,
+    ] as unknown as Record<string, unknown>,
   },
   {
     path: "/webinars",
-    title: "Webinars — Live & On-Demand Wellness Medicine with Priest Kailash | Mount Kailash",
-    description: "Free and paid webinars on clinical wellness medicine, herbal protocols, and healing practices led by Rt. Hon. Priest Kailash K. Leonce.",
+    title: "Wellness Medicine Webinars with Priest Kailash | Mount Kailash Rejuvenation Centre",
+    description: "Free live and on-demand webinars on Caribbean clinical wellness medicine and herbal protocols, hosted by Rt Hon Priest Kailash K Leonce from Soufriere, Saint Lucia.",
+    jsonLd: wceBreadcrumb("/webinars", "Webinars"),
   },
   {
     path: "/retreats",
-    title: "Healing Retreats in Saint Lucia — 7-Day Cellular Detox & Wellness Immersion | Mount Kailash",
-    description: "7-day immersive wellness retreats in the volcanic highlands of Saint Lucia. Daily herbal feasts, wellness medicine protocols, and clinical consultations with Priest Kailash.",
+    title: "Wellness Retreats in Saint Lucia — 7-Day Immersion | Mount Kailash Rejuvenation Centre",
+    description: "Seven-day wellness retreats in the volcanic highlands of Soufriere, Saint Lucia. Herbal feasts, bush-medicine protocols and a consultation with Rt Hon Priest Kailash K Leonce.",
+    jsonLd: [
+      wceBreadcrumb("/retreats", "Retreats"),
+      faqPageSchema(retreatFaqs) as unknown as Record<string, unknown>,
+    ] as unknown as Record<string, unknown>,
   },
   {
     path: "/school/herbal-physician",
-    title: "School of Wellness Medicine — Clinical Herbal Physician Certification | Mount Kailash",
-    description: "Train as a Clinical Herbal Physician with Mount Kailash. Cohorts up to 50 students, 500+ graduates worldwide. Apply to the next intake.",
+    title: "Herbal Physician Certification — School of Wellness Medicine | Mount Kailash, Saint Lucia",
+    description: "Train as a Clinical Herbal Physician with Mount Kailash Rejuvenation Centre in Saint Lucia. Limited cohorts, 500+ graduates worldwide, taught by Rt Hon Priest Kailash K Leonce.",
+    jsonLd: [
+      wceBreadcrumb("/school/herbal-physician", "School of Wellness Medicine"),
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        name: "Clinical Herbal Physician Certification",
+        description:
+          "Certification programme in Caribbean clinical wellness medicine: materia medica, clinical assessment, formulation, detoxification protocols and practice building.",
+        url: `${BASE_URL}/school/herbal-physician`,
+        inLanguage: "en",
+        provider: {
+          "@type": "Organization",
+          name: "Mount Kailash Rejuvenation Centre",
+          url: BASE_URL,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Soufriere",
+            addressRegion: "Saint Lucia",
+            addressCountry: "LC",
+          },
+        },
+      },
+    ] as unknown as Record<string, unknown>,
   },
   {
     path: "/wholesale",
-    title: "Wholesale Caribbean Botanicals — Practitioner Supply, Miami Warehouse, 3-Day US Delivery",
-    description: "Premium Caribbean botanicals for clinics, retailers, and wellness brands. COA documentation, Miami warehouse, 3-day US delivery. Request a wholesale conversation.",
+    title: "Wholesale Caribbean Botanicals — Practitioner Supply | Mount Kailash, Saint Lucia",
+    description: "Single-origin Saint Lucia botanicals, tinctures and sea moss for clinics and practitioners. Batch documentation, bulk pricing and 3-day US delivery from Miami.",
+    jsonLd: [
+      wceBreadcrumb("/wholesale", "Wholesale"),
+      faqPageSchema(wholesaleFaqs) as unknown as Record<string, unknown>,
+    ] as unknown as Record<string, unknown>,
   },
   {
     path: "/learn",
-    title: "Learn — Caribbean Herbal Medicine Library | Mount Kailash",
-    description: "Articles and guides on Caribbean wellness medicine, clinical herbal protocols, and traditional formulations from Mount Kailash Rejuvenation Centre.",
+    title: "Learn — Caribbean Herbal Medicine Library | Mount Kailash Rejuvenation Centre",
+    description: "Articles and guides on Caribbean wellness medicine, clinical herbal protocols and traditional formulations from Mount Kailash Rejuvenation Centre, Saint Lucia.",
+    jsonLd: [
+      wceBreadcrumb("/learn", "Learn"),
+      {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        name: "Mount Kailash Rejuvenation Centre — Learn",
+        url: `${BASE_URL}/learn`,
+        inLanguage: "en",
+        publisher: { "@type": "Organization", name: "Mount Kailash Rejuvenation Centre", url: BASE_URL },
+      },
+    ] as unknown as Record<string, unknown>,
   },
 ];
+
+/** Route-specific static bodies, so no two routes ship the same HTML body. */
+function staticBodyFor(path: string, products: ProductRow[]): string | undefined {
+  switch (path) {
+    case "/retreats":
+      return retreatsBody();
+    case "/the-answer":
+      return theAnswerBody();
+    case "/wholesale":
+      return wholesaleBody();
+    case "/school/herbal-physician":
+      return schoolBody();
+    case "/webinars":
+      return webinarsBody();
+    case "/shop":
+      return shopBody(
+        products.map((p) => ({
+          slug: p.slug as string,
+          name: p.name,
+          blurb: clip(stripHtml(p.short_description || p.description), 140),
+          price: p.price_usd,
+        })),
+      );
+    default:
+      return undefined;
+  }
+}
 
 async function main() {
   if (!existsSync(SHELL_PATH)) {
