@@ -186,6 +186,15 @@ export interface ChargeResult {
   authCode: string;
   accountNumber: string;          // masked, e.g. XXXX1111
   accountType: string;            // Visa/Mastercard/…
+  /**
+   * True when Authorize.net returned responseCode "4" (Held for Review) —
+   * typically a Fraud Detection Suite filter such as the Default Amount
+   * Filter. The transaction EXISTS at the gateway and may settle later, so
+   * callers must record it instead of treating it as a decline.
+   */
+  held?: boolean;
+  /** FDS filter names / review reason, when the gateway supplies them. */
+  reviewReason?: string;
 }
 
 /**
