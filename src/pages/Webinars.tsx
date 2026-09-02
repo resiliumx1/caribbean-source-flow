@@ -73,7 +73,7 @@ export default function Webinars() {
 
   return (
     <div style={{ backgroundColor: "var(--site-bg-primary)", color: "var(--site-text-primary)" }}>
-      <SEOHead title="Wellness Medicine Webinars & Herbal Education | Mount Kailash" description="Free and paid webinars on clinical wellness medicine, herbal protocols and healing practices, led by Priest Kailash." path="/webinars" ogImage={webinarOg} />
+      <SEOHead title="Free Herbal Medicine Webinars | Mount Kailash" description="Free and paid webinars on clinical wellness medicine, herbal protocols and healing practices, led by Priest Kailash." path="/webinars" ogImage={webinarOg} />
       {dbVideos.length > 0 && (
         <Helmet>
           <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>

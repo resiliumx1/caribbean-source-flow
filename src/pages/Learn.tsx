@@ -39,8 +39,8 @@ export default function Learn() {
   return (
     <main className="min-h-screen bg-background">
       <SEOHead
-        title="Learn — Articles on Caribbean Wellness Medicine | Mount Kailash"
-        description="Plain-language articles on Caribbean clinical wellness medicine, herbal formulations, and traditional wellness practice from Mount Kailash Rejuvenation Centre."
+        title="Caribbean Herbal Medicine Articles | Mount Kailash"
+        description="Plain-language articles on Caribbean clinical wellness medicine, herbal formulations and traditional practice from Mount Kailash, Saint Lucia."
         path="/learn"
         breadcrumbs={[{ name: "Learn", path: "/learn" }]}
         schema={collectionSchema}

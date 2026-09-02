@@ -55,7 +55,7 @@ export default function HerbalPhysicianCourse() {
   return (
     <>
       <SEOHead
-        title="Clinical Herbal Physician Certification | Mount Kailash School of Wellness Medicine"
+        title="Herbal Physician Certification | Mount Kailash School"
         description="Train as a clinical herbal physician with Priest Kailash. 500+ graduates. Cohort-based certification in Caribbean clinical wellness medicine."
         path="/school/herbal-physician"
         breadcrumbs={getBreadcrumbs("school")}

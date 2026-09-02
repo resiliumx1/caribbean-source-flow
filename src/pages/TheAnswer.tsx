@@ -183,8 +183,8 @@ export default function TheAnswer() {
   return (
     <div className="the-answer-page min-h-screen">
       <SEOHead
-        title="The Answer Tincture — Foy Duran, Vervain & Soursop | Mount Kailash"
-        description="Our flagship botanical formulation — Foy Duran, Vervain and Soursop leaves, used in clinical practice for cellular detox and rejuvenation. Made in Soufrière, Saint Lucia."
+        title="The Answer Tincture — Anamu & Soursop | Mount Kailash"
+        description="Flagship botanical formulation of Foy Duran, Vervain and Soursop leaf, made in Soufrière, Saint Lucia for cellular detox and rejuvenation."
         path="/the-answer"
         ogImage={heroBottle}
         breadcrumbs={getBreadcrumbs("the-answer")}

@@ -70,21 +70,8 @@ async function fetchDynamic(): Promise<Entry[]> {
     });
   }
 
-  const { data: retreats, error: rErr } = await sb
-    .from("retreat_types")
-    .select("slug, updated_at")
-    .eq("is_active", true)
-    .not("slug", "is", null);
-  if (rErr) console.warn("[sitemap] retreats error:", rErr.message);
-  for (const r of retreats || []) {
-    if (!r.slug) continue;
-    out.push({
-      loc: `/retreats/book/${r.slug}`,
-      lastmod: (r.updated_at || today).toString().slice(0, 10),
-      changefreq: "monthly",
-      priority: "0.7",
-    });
-  }
+  // /retreats/book/<slug> is a booking form, not indexable content — it is
+  // prerendered with noindex and deliberately left out of the sitemap.
 
   // Published WCE speaker share pages — prerendered, crawlable routes.
   const { data: speakers, error: sErr } = await sb

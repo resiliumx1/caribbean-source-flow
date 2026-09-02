@@ -123,15 +123,16 @@ export default function ProductDetail() {
 
   // SEO: per-product title, description, canonical, og tags, and Product JSON-LD.
   // Title pattern keeps the product name front-loaded and uniquely identifies the page.
-  const seoTitle = `${product.name} — Saint Lucia Herbal Formulation | Mount Kailash`.slice(0, 70);
+  const seoTitle = `${product.name} | Mount Kailash Apothecary`.slice(0, 60);
   // Strip HTML tags from descriptions before using as meta — traditional-use framing only.
   const stripHtml = (s: string) => s.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ");
   const rawDesc =
     product.short_description ||
     product.description ||
     `${product.name} — single-origin Caribbean botanical formulation hand-crafted in Soufrière, Saint Lucia, for traditional wellness use.`;
-  const seoDesc = stripHtml(rawDesc).replace(/\s+/g, " ").trim().slice(0, 158);
-  const canonical = `${SITE_URL}/shop/${slug}`;
+  const seoDesc = stripHtml(rawDesc).replace(/\s+/g, " ").trim().slice(0, 155);
+  // /shop/the-answer duplicates the dedicated /the-answer page — canonicalise there.
+  const canonical = slug === "the-answer" ? `${SITE_URL}/the-answer` : `${SITE_URL}/shop/${slug}`;
   const productImage = product.image_url || undefined;
   const categoryName = (product as any).product_categories?.name as string | undefined;
   const isTheAnswer = slug === "the-answer";

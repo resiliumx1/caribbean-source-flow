@@ -26,8 +26,12 @@ import {
   schoolBody,
   webinarsBody,
   shopBody,
+  learnBody,
+  consultationsBody,
+  PRODUCT_EXTRA,
 } from "./prerender-bodies";
 import { faqPageSchema, retreatFaqs, theAnswerFaqs, wholesaleFaqs } from "../src/content/faqs";
+
 
 const BASE_URL = "https://mountkailashslu.com";
 const DIST = resolve("dist");
@@ -76,11 +80,16 @@ interface RouteMeta {
   ogImageAlt?: string;
   jsonLd?: Record<string, unknown>;
   bodyHtml: string;      // goes into #seo-static-fallback
+  /** Absolute canonical URL override (e.g. a duplicate URL pointing at the primary page). */
+  canonical?: string;
+  /** Keep this route out of search indexes (booking forms, transactional pages). */
+  noindex?: boolean;
   /** Extra raw <meta>/<link> markup injected high in <head> (after the <title>). */
   extraHead?: string;
   /** Extra raw markup injected just before </head>, i.e. after all default og:* tags. */
   tailHead?: string;
 }
+
 
 function buildShellTransform(shell: string, m: RouteMeta): string {
   const url = `${BASE_URL}${m.path}`;
@@ -100,18 +109,26 @@ function buildShellTransform(shell: string, m: RouteMeta): string {
     `<meta name="description" content="${desc}" />`,
   );
 
-  // canonical — insert or replace
+  // canonical — insert or replace (an override lets duplicate URLs point at the primary page)
+  const canonical = esc(m.canonical || url);
   if (/<link\s+rel="canonical"/i.test(html)) {
     html = html.replace(
       /<link\s+rel="canonical"[^>]*>/i,
-      `<link rel="canonical" href="${url}" />`,
+      `<link rel="canonical" href="${canonical}" />`,
     );
   } else {
     html = html.replace(
       /<\/head>/i,
-      `  <link rel="canonical" href="${url}" />\n</head>`,
+      `  <link rel="canonical" href="${canonical}" />\n</head>`,
     );
   }
+
+  // robots
+  html = html.replace(
+    /<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i,
+    `<meta name="robots" content="${m.noindex ? "noindex, follow" : "index, follow"}" />`,
+  );
+
 
   // og:url
   html = html.replace(
@@ -203,17 +220,19 @@ function productBody(p: ProductRow): string {
       <nav aria-label="Breadcrumb"><a href="/shop">Shop</a> · ${esc(p.name)}</nav>
     </header>
     <main>
-      <h1>${esc(p.name)}</h1>
+      <h1>${esc(p.name)} — Mount Kailash Rejuvenation Centre, Saint Lucia</h1>
       ${p.short_description ? `<p>${esc(stripHtml(p.short_description))}</p>` : ""}
       ${priceLine}
       ${p.description ? `<section><h2>Description</h2><p>${esc(stripHtml(p.description))}</p></section>` : ""}
       ${p.ingredients ? `<section><h2>Ingredients</h2><p>${esc(stripHtml(p.ingredients))}</p></section>` : ""}
       ${p.traditional_use ? `<section><h2>Traditional Use</h2><p>${esc(stripHtml(p.traditional_use))}</p></section>` : ""}
       ${p.dosage_instructions ? `<section><h2>Dosage</h2><p>${esc(stripHtml(p.dosage_instructions))}</p></section>` : ""}
+      ${PRODUCT_EXTRA[p.slug] ?? ""}
       <p><a href="/shop">Browse the full apothecary</a></p>
     </main>
   `;
 }
+
 
 interface ProductRow {
   slug: string;
@@ -288,7 +307,7 @@ async function loadSpeakers(): Promise<SpeakerRow[]> {
 /** Mirrors src/components/wce/share.tsx so the static head matches the app. */
 function speakerOgTitle(s: SpeakerRow) {
   const prefix = (s.prefix || "").trim();
-  return `${prefix ? `${prefix} ` : ""}${s.name} — Caribbean Wellness Saint Lucia 2026`;
+  return clip(`${prefix ? `${prefix} ` : ""}${s.name} — Caribbean Wellness 2026`, 60);
 }
 
 function speakerOgDescription(s: SpeakerRow) {
@@ -301,8 +320,9 @@ function speakerOgDescription(s: SpeakerRow) {
     text = (m?.[0] ?? bio).trim();
   }
   if (!text) text = "Caribbean Wellness Saint Lucia 2026 · 11–17 October";
-  return clip(text, 198);
+  return clip(text, 155);
 }
+
 
 /* ---------------- WCE 2026 event data (for rich static HTML + schema) ---------------- */
 
@@ -502,8 +522,8 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
 
   {
     path: "/shop",
-    title: "Apothecary — Herbal Tinctures & Sea Moss | Mount Kailash Rejuvenation Centre, Saint Lucia",
-    description: "Browse the Mount Kailash Rejuvenation Centre apothecary in Soufriere, Saint Lucia: herbal tinctures, sea moss, capsules, teas and raw Caribbean herbs, formulated in small batches.",
+    title: "Herbal Tinctures & Sea Moss Apothecary | Mount Kailash",
+    description: "Herbal tinctures, sea moss, capsules, teas and raw Caribbean herbs from the Mount Kailash apothecary in Soufriere, Saint Lucia.",
     jsonLd: [
       wceBreadcrumb("/shop", "Apothecary"),
       {
@@ -517,8 +537,8 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
   },
   {
     path: "/the-answer",
-    title: "The Answer Tincture — Foy Duran, Vervain & Soursop | Mount Kailash Rejuvenation Centre",
-    description: "The Answer is the flagship botanical tincture of Mount Kailash Rejuvenation Centre, Saint Lucia: Foy Duran, Vervain and Soursop leaves steeped 21 days in oak barrels.",
+    title: "The Answer Tincture — Anamu & Soursop | Mount Kailash",
+    description: "The Answer is the flagship tincture of Mount Kailash, Saint Lucia: Anamu, Vervain and Soursop leaf, wildcrafted and steeped in small batches.",
     jsonLd: [
       wceBreadcrumb("/the-answer", "The Answer"),
       faqPageSchema(theAnswerFaqs) as unknown as Record<string, unknown>,
@@ -526,14 +546,14 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
   },
   {
     path: "/webinars",
-    title: "Wellness Medicine Webinars with Priest Kailash | Mount Kailash Rejuvenation Centre",
-    description: "Free live and on-demand webinars on Caribbean clinical wellness medicine and herbal protocols, hosted by Rt Hon Priest Kailash K Leonce from Soufriere, Saint Lucia.",
+    title: "Free Herbal Medicine Webinars | Mount Kailash",
+    description: "Free live and on-demand webinars on Caribbean clinical wellness medicine and herbal protocols with Rt Hon Priest Kailash K Leonce, Saint Lucia.",
     jsonLd: wceBreadcrumb("/webinars", "Webinars"),
   },
   {
     path: "/retreats",
-    title: "Wellness Retreats in Saint Lucia — 7-Day Immersion | Mount Kailash Rejuvenation Centre",
-    description: "Seven-day wellness retreats in the volcanic highlands of Soufriere, Saint Lucia. Herbal feasts, bush-medicine protocols and a consultation with Rt Hon Priest Kailash K Leonce.",
+    title: "7-Day Wellness Retreats in Saint Lucia | Mount Kailash",
+    description: "Seven-day wellness retreats in the volcanic highlands of Soufriere, Saint Lucia: herbal feasts, bush-medicine protocols and a consultation.",
     jsonLd: [
       wceBreadcrumb("/retreats", "Retreats"),
       faqPageSchema(retreatFaqs) as unknown as Record<string, unknown>,
@@ -541,8 +561,8 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
   },
   {
     path: "/school/herbal-physician",
-    title: "Herbal Physician Certification — School of Wellness Medicine | Mount Kailash, Saint Lucia",
-    description: "Train as a Clinical Herbal Physician with Mount Kailash Rejuvenation Centre in Saint Lucia. Limited cohorts, 500+ graduates worldwide, taught by Rt Hon Priest Kailash K Leonce.",
+    title: "Herbal Physician Certification | Mount Kailash School",
+    description: "Train as a Clinical Herbal Physician in Saint Lucia with Rt Hon Priest Kailash K Leonce. Limited cohorts, 500+ graduates practising worldwide.",
     jsonLd: [
       wceBreadcrumb("/school/herbal-physician", "School of Wellness Medicine"),
       {
@@ -569,8 +589,8 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
   },
   {
     path: "/wholesale",
-    title: "Wholesale Caribbean Botanicals — Practitioner Supply | Mount Kailash, Saint Lucia",
-    description: "Single-origin Saint Lucia botanicals, tinctures and sea moss for clinics and practitioners. Batch documentation, bulk pricing and 3-day US delivery from Miami.",
+    title: "Wholesale Caribbean Botanicals | Mount Kailash",
+    description: "Single-origin Saint Lucia botanicals, tinctures and sea moss for clinics and practitioners. Batch documentation, bulk pricing, 3-day US delivery.",
     jsonLd: [
       wceBreadcrumb("/wholesale", "Wholesale"),
       faqPageSchema(wholesaleFaqs) as unknown as Record<string, unknown>,
@@ -578,8 +598,8 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
   },
   {
     path: "/learn",
-    title: "Learn — Caribbean Herbal Medicine Library | Mount Kailash Rejuvenation Centre",
-    description: "Articles and guides on Caribbean wellness medicine, clinical herbal protocols and traditional formulations from Mount Kailash Rejuvenation Centre, Saint Lucia.",
+    title: "Caribbean Herbal Medicine Articles | Mount Kailash",
+    description: "Articles and guides on Caribbean wellness medicine, clinical herbal protocols and traditional formulations from Mount Kailash, Saint Lucia.",
     jsonLd: [
       wceBreadcrumb("/learn", "Learn"),
       {
@@ -592,7 +612,35 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
       },
     ] as unknown as Record<string, unknown>,
   },
+  {
+    path: "/consultations",
+    title: "Private Herbal Consultations | Mount Kailash",
+    description: "Private wellness medicine consultations with Rt Hon Priest Kailash K Leonce and the Mount Kailash team, in Saint Lucia or by video worldwide.",
+    jsonLd: [
+      wceBreadcrumb("/consultations", "Consultations"),
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: "Wellness medicine consultation",
+        serviceType: "Traditional Caribbean wellness medicine consultation",
+        url: `${BASE_URL}/consultations`,
+        areaServed: ["Saint Lucia", "Caribbean", "United States", "United Kingdom", "Canada"],
+        provider: {
+          "@type": "Organization",
+          name: "Mount Kailash Rejuvenation Centre",
+          url: BASE_URL,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Soufriere",
+            addressRegion: "Saint Lucia",
+            addressCountry: "LC",
+          },
+        },
+      },
+    ] as unknown as Record<string, unknown>,
+  },
 ];
+
 
 /** Route-specific static bodies, so no two routes ship the same HTML body. */
 function staticBodyFor(path: string, products: ProductRow[]): string | undefined {
@@ -607,6 +655,11 @@ function staticBodyFor(path: string, products: ProductRow[]): string | undefined
       return schoolBody();
     case "/webinars":
       return webinarsBody();
+    case "/learn":
+      return learnBody();
+    case "/consultations":
+      return consultationsBody();
+
     case "/shop":
       return shopBody(
         products.map((p) => ({
@@ -638,10 +691,11 @@ async function main() {
   const wceRoutes: RouteMeta[] = [
     {
       path: "/wce-2026",
-      title: "Caribbean Wellness Experience Saint Lucia 2026 | 11–17 October",
+      title: "Caribbean Wellness Experience Saint Lucia 2026",
       description:
-        "11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Attend the symposium in person or online, or apply for the six-day Caribbean Wellness Fortification Retreat.",
+        "11–17 October 2026 in Soufriere, Saint Lucia. Attend the wellness symposium in person or online, or apply for the six-day fortification retreat.",
       ogImage: `${BASE_URL}/og/wce-2026.jpg`,
+
       ogImageAlt:
         "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre",
       tailHead: WCE_TAIL_HEAD,
@@ -653,9 +707,10 @@ async function main() {
     },
     {
       path: "/wce-2026/apply",
-      title: "Retreat Application — Caribbean Wellness Fortification Retreat 2026",
+      title: "Fortification Retreat Application 2026 | Mount Kailash",
       description:
-        "Apply for the six-day Caribbean Wellness Fortification Retreat, 12–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia. Application only, reviewed by our team.",
+        "Apply for the six-day Caribbean Wellness Fortification Retreat, 12–17 October 2026 at Mount Kailash, Saint Lucia. Application only.",
+
       ogImage: `${BASE_URL}/og/wce-2026.jpg`,
       ogImageAlt: "Caribbean Wellness Fortification Retreat, 12–17 October 2026, Saint Lucia",
       jsonLd: wceBreadcrumb("/wce-2026/apply", "Retreat Application"),
@@ -731,7 +786,7 @@ async function main() {
 
   // Products
   for (const p of products) {
-    const title = `${p.name} — Mount Kailash Apothecary`;
+    const title = clip(`${p.name} | Mount Kailash Apothecary`, 60);
     const description = clip(stripHtml(p.short_description || p.description || `${p.name} — Caribbean herbal formulation from Mount Kailash, Saint Lucia.`), 155);
     const meta: RouteMeta = {
       path: `/shop/${p.slug}`,
@@ -739,6 +794,9 @@ async function main() {
       description,
       ogImage: p.image_url || undefined,
       bodyHtml: productBody(p),
+      // /shop/the-answer and /the-answer are the same product — the dedicated
+      // page is the primary URL.
+      canonical: p.slug === "the-answer" ? `${BASE_URL}/the-answer` : undefined,
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "Product",
@@ -746,7 +804,7 @@ async function main() {
         description: stripHtml(p.description || p.short_description || ""),
         image: p.image_url || undefined,
         brand: { "@type": "Brand", name: "Mount Kailash Rejuvenation Centre" },
-        url: `${BASE_URL}/shop/${p.slug}`,
+        url: p.slug === "the-answer" ? `${BASE_URL}/the-answer` : `${BASE_URL}/shop/${p.slug}`,
         offers: p.price_usd
           ? {
               "@type": "Offer",
@@ -765,13 +823,14 @@ async function main() {
     count++;
   }
 
-  // Retreats
+  // Retreats — booking forms, not indexable content.
   for (const r of retreats) {
     const description = clip(stripHtml(r.description || `${r.name} — wellness retreat with Mount Kailash in Saint Lucia.`), 155);
     const meta: RouteMeta = {
       path: `/retreats/book/${r.slug}`,
-      title: `${r.name} — Healing Retreat in Saint Lucia | Mount Kailash`,
+      title: clip(`Book ${r.name} | Mount Kailash`, 60),
       description,
+      noindex: true,
       bodyHtml: `
         <header><a href="/" rel="home">Mount Kailash Rejuvenation Centre</a></header>
         <main>
@@ -784,6 +843,7 @@ async function main() {
     writeRoute(`/retreats/book/${r.slug}`, buildShellTransform(shell, meta));
     count++;
   }
+
 
   console.log(`[prerender] wrote ${count} static HTML files into dist/`);
 }
