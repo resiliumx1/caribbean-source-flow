@@ -42,6 +42,7 @@ const staticEntries: Entry[] = [
   { loc: "/school/herbal-physician",   changefreq: "monthly", priority: "0.8", lastmod: today },
   { loc: "/wholesale",                 changefreq: "monthly", priority: "0.8", lastmod: today },
   { loc: "/learn",                     changefreq: "weekly",  priority: "0.7", lastmod: today },
+  { loc: "/consultations",             changefreq: "monthly", priority: "0.8", lastmod: today },
 ];
 
 async function fetchDynamic(): Promise<Entry[]> {
@@ -150,6 +151,20 @@ const ROBOTS = `User-agent: *
 Allow: /
 Disallow: /account
 Disallow: /customer-portal
+Disallow: /admin
+Disallow: /wce-admin
+Disallow: /pay/
+Disallow: /wce-2026/go/
+
+# Removed legacy WordPress URLs — permanently gone.
+Disallow: /wp-content/
+Disallow: /wp-admin
+Disallow: /wp-includes/
+Disallow: /wp-login.php
+Disallow: /xmlrpc.php
+Disallow: /category/
+Disallow: /tag/
+Disallow: /*?p=
 
 User-agent: GPTBot
 Allow: /
