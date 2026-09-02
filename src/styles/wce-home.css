@@ -189,3 +189,36 @@
   outline-offset: 4px;
   box-shadow: 0 0 0 6px rgba(var(--wce-gold-rgb), 0.14);
 }
+
+/* ---- Internal-link block (WceExploreLinks) ---- */
+.wce-explore {
+  padding: clamp(3rem, 7vw, 5.5rem) 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.wce-explore__inner { max-width: 1080px; margin: 0 auto; }
+.wce-explore__heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.wce-explore__list {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.wce-explore__link {
+  display: block;
+  min-height: 44px;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+}
+.wce-explore__link:hover { border-color: rgba(255, 255, 255, 0.4); }
+.wce-explore__name { display: block; font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
+.wce-explore__blurb { display: block; font-size: 0.9rem; opacity: 0.75; line-height: 1.5; }

@@ -2,6 +2,20 @@ User-agent: *
 Allow: /
 Disallow: /account
 Disallow: /customer-portal
+Disallow: /admin
+Disallow: /wce-admin
+Disallow: /pay/
+Disallow: /wce-2026/go/
+
+# Removed legacy WordPress URLs — permanently gone.
+Disallow: /wp-content/
+Disallow: /wp-admin
+Disallow: /wp-includes/
+Disallow: /wp-login.php
+Disallow: /xmlrpc.php
+Disallow: /category/
+Disallow: /tag/
+Disallow: /*?p=
 
 User-agent: GPTBot
 Allow: /

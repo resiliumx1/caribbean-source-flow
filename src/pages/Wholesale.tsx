@@ -1,5 +1,7 @@
 import { useRef, useEffect } from "react";
 import { SEOHead } from "@/components/SEOHead";
+import { FaqSection } from "@/components/FaqSection";
+import { wholesaleFaqs } from "@/content/faqs";
 import FadeInStagger from "@/components/FadeInStagger";
 import { Hero } from "@/components/wholesale/Hero";
 import { DirectAnswer } from "@/components/DirectAnswer";
@@ -58,6 +60,7 @@ const Wholesale = () => {
       <FadeInStagger delay={0.1}>
         <PartnershipGuarantees />
       </FadeInStagger>
+      <FaqSection items={wholesaleFaqs} heading="Wholesale — frequently asked questions" />
       <FadeInStagger delay={0.1}>
         <Footer />
       </FadeInStagger>

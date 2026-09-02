@@ -17,8 +17,29 @@ const PARTICLES = Array.from({ length: 14 }).map((_, i) => ({
   size: 2 + (i % 3),
 }));
 
+/**
+ * Dead WordPress URLs from the previous site. These are permanently gone, not
+ * merely missing: we tell crawlers so explicitly (noindex + "Gone" copy), and
+ * robots.txt disallows the same prefixes so they stop being requested.
+ */
+const GONE_PATTERNS = [
+  /^\/wp-content\//i,
+  /^\/wp-admin\/?/i,
+  /^\/wp-includes\//i,
+  /^\/wp-login\.php/i,
+  /^\/xmlrpc\.php/i,
+  /^\/category\//i,
+  /^\/tag\//i,
+];
+
+function isGonePath(pathname: string, search: string): boolean {
+  if (/[?&]p=\d+/.test(search)) return true;
+  return GONE_PATTERNS.some((re) => re.test(pathname));
+}
+
 const NotFound = () => {
   const location = useLocation();
+  const gone = isGonePath(location.pathname, location.search);
 
   useEffect(() => {
     console.error(
@@ -30,7 +51,11 @@ const NotFound = () => {
   return (
     <>
       <Helmet>
-        <title>Lost in the Forest — 404 | Mount Kailash</title>
+        <title>
+          {gone
+            ? "Page Removed — Mount Kailash Rejuvenation Centre, Saint Lucia"
+            : "Lost in the Forest — 404 | Mount Kailash Rejuvenation Centre"}
+        </title>
         <meta
           name="description"
           content="The page you're looking for may have moved, but your journey back to balance starts here. Return home or explore the Mount Kailash apothecary."
@@ -178,7 +203,7 @@ const NotFound = () => {
               letterSpacing: "-0.01em",
             }}
           >
-            Lost in the Forest?
+            {gone ? "This page is gone for good" : "Lost in the Forest?"}
           </h2>
 
           <p
@@ -191,8 +216,9 @@ const NotFound = () => {
               color: "rgba(216,205,177,0.85)",
             }}
           >
-            The path you're looking for may have moved, but your journey back to
-            balance starts here.
+            {gone
+              ? "This address belonged to our old website and has been permanently removed. Everything from Mount Kailash Rejuvenation Centre in Soufriere, Saint Lucia now lives on the pages below."
+              : "The path you're looking for may have moved, but your journey back to balance starts here."}
           </p>
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">

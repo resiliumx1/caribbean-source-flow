@@ -42,6 +42,7 @@ const staticEntries: Entry[] = [
   { loc: "/school/herbal-physician",   changefreq: "monthly", priority: "0.8", lastmod: today },
   { loc: "/wholesale",                 changefreq: "monthly", priority: "0.8", lastmod: today },
   { loc: "/learn",                     changefreq: "weekly",  priority: "0.7", lastmod: today },
+  { loc: "/consultations",             changefreq: "monthly", priority: "0.8", lastmod: today },
 ];
 
 async function fetchDynamic(): Promise<Entry[]> {
@@ -150,6 +151,20 @@ const ROBOTS = `User-agent: *
 Allow: /
 Disallow: /account
 Disallow: /customer-portal
+Disallow: /admin
+Disallow: /wce-admin
+Disallow: /pay/
+Disallow: /wce-2026/go/
+
+# Removed legacy WordPress URLs — permanently gone.
+Disallow: /wp-content/
+Disallow: /wp-admin
+Disallow: /wp-includes/
+Disallow: /wp-login.php
+Disallow: /xmlrpc.php
+Disallow: /category/
+Disallow: /tag/
+Disallow: /*?p=
 
 User-agent: GPTBot
 Allow: /
@@ -191,6 +206,10 @@ const LLMS = `# Mount Kailash Rejuvenation Centre
 
 > Caribbean clinical wellness medicine from Soufrière, Saint Lucia, led by Rt. Hon. Priest Kailash K. Leonce. 21+ years of practice, 500+ herbal physicians trained, 43,000+ bottles formulated annually, 3-day US delivery.
 
+## About
+
+Mount Kailash Rejuvenation Centre is located in Soufriere, Saint Lucia. It operates an apothecary of wildcrafted Caribbean herbal formulations, seven-day wellness retreats, a school certifying clinical herbal physicians, and a wholesale botanical supply line. Founder: Rt Hon Priest Kailash K Leonce, Grand Master Herbal Physician.
+
 ## Pages
 
 - [Home](${BASE_URL}/): Overview of Mount Kailash and its four pillars — apothecary, retreats, school, wholesale.
@@ -201,6 +220,8 @@ const LLMS = `# Mount Kailash Rejuvenation Centre
 - [Webinars](${BASE_URL}/webinars): Free live and on-demand herbal medicine webinars with Priest Kailash Leonce.
 - [Healing Retreats](${BASE_URL}/retreats): 7-day immersive cellular detox and wellness retreats in the volcanic highlands of Saint Lucia.
 - [School of Wellness Medicine](${BASE_URL}/school/herbal-physician): Clinical wellness medicine training program; 500+ graduates worldwide.
+- [Consultations](${BASE_URL}/consultations): One-to-one wellness medicine consultations with Rt Hon Priest Kailash K Leonce and the Mount Kailash team.
+- [Learn](${BASE_URL}/learn): Articles and guides on Caribbean herbal medicine, protocols and formulations.
 - [Wholesale](${BASE_URL}/wholesale): Bulk botanical supply for clinics, retailers, and wellness brands; Miami warehouse, 3-day US delivery.
 `;
 

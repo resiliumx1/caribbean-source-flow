@@ -2,6 +2,8 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { RelatedLinks } from "@/components/RelatedLinks";
+import { FaqSection } from "@/components/FaqSection";
+import { theAnswerFaqs } from "@/content/faqs";
 import { getBreadcrumbs } from "@/lib/internal-links";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { useProduct } from "@/hooks/use-products";
@@ -500,6 +502,8 @@ export default function TheAnswer() {
           </p>
         </div>
       </section>
+
+      <FaqSection items={theAnswerFaqs} heading="The Answer — frequently asked questions" />
 
       <RelatedLinks nodeId="the-answer" />
       <StoreFooter />
