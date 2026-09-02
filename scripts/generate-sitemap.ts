@@ -62,6 +62,8 @@ async function fetchDynamic(): Promise<Entry[]> {
   if (pErr) console.warn("[sitemap] products error:", pErr.message);
   for (const p of products || []) {
     if (!p.slug) continue;
+    // /shop/the-answer canonicalises to the dedicated /the-answer page — don't submit both.
+    if (p.slug === "the-answer") continue;
     out.push({
       loc: `/shop/${p.slug}`,
       lastmod: (p.updated_at || today).toString().slice(0, 10),
