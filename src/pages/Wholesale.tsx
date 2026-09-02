@@ -58,6 +58,7 @@ const Wholesale = () => {
       <FadeInStagger delay={0.1}>
         <PartnershipGuarantees />
       </FadeInStagger>
+      <FaqSection items={wholesaleFaqs} heading="Wholesale — frequently asked questions" />
       <FadeInStagger delay={0.1}>
         <Footer />
       </FadeInStagger>
