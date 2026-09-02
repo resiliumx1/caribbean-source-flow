@@ -394,7 +394,8 @@ export default function PaymentPlanPay() {
                           throw new Error(msg);
                         }
                         if (res.plan) setPlan(res.plan);
-                        setReceipt({ amount: Number(res.amount) });
+                        if (res.held) console.warn("[plan payment held for review]", res.reviewReason);
+                        setReceipt({ amount: Number(res.amount), held: !!res.held });
                         load();
                       } finally {
                         setProcessing(false);
