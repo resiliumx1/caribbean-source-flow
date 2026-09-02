@@ -191,13 +191,27 @@ export function shopBody(products: ShopProduct[]): string {
       <p>${CENTRE_LINE} The apothecary carries the centre's own herbal tinctures, sea moss preparations, capsules, teas and raw herbs, wildcrafted from mineral rich soil in Saint Lucia and formulated in small batches.</p>
 
       <section>
-        <h2>What we make</h2>
+        <h2>What the apothecary makes</h2>
+        <p>The apothecary is organised around four families of preparation, each drawn from the same Saint Lucian materia medica and each suited to a different way of taking herbs.</p>
         <ul>
-          <li><strong>Tinctures</strong> — long-steeped botanical extractions, including <a href="/the-answer">The Answer</a>.</li>
-          <li><strong>Sea moss</strong> — wildcrafted Saint Lucian sea moss gels and blends.</li>
-          <li><strong>Capsules and powders</strong> — single herbs and clinical formulas.</li>
-          <li><strong>Teas and raw herbs</strong> — loose bush medicine for daily brewing.</li>
+          <li><strong>Tinctures</strong> — long-steeped botanical extractions, including <a href="/the-answer">The Answer</a>, the centre's oak-aged immune formulation built on anamu, vervain and soursop leaf. Tinctures are the workhorse of the apothecary: concentrated, shelf stable, and easy to dose by the dropper for people following a protocol over several weeks.</li>
+          <li><strong>Sea moss</strong> — wildcrafted Saint Lucian sea moss, sold as gel, dried whole moss and blended preparations. Harvested from the island's coastal waters, sun-cured and rinsed in fresh water before it is turned into gel, it is used at Mount Kailash as a daily mineral food rather than as a short course.</li>
+          <li><strong>Capsules and powders</strong> — encapsulated single herbs and clinical formulas for people who prefer no taste and a fixed measure. These are milled from the same dried plant material used in the teas, so the plant and the batch remain traceable.</li>
+          <li><strong>Teas and raw herbs</strong> — loose bush medicine for daily brewing, including St John's bush, blue vervain and the leaves and barks used in Caribbean household practice. Raw herbs are the oldest part of the catalogue and remain the least processed way to work with the plants.</li>
         </ul>
+        <p>Alongside the single preparations, the apothecary assembles multi-product wellness packages that group the tinctures, teas and sea moss used together in one protocol — for example the women's wellness package and the seasonal fortification sets.</p>
+      </section>
+
+      <section>
+        <h2>How the formulations are prepared</h2>
+        <p>Every formulation is made in-house in Soufriere, in small batches, by the same team that trains herbal physicians at the school. Fresh and dried plant material is sorted and cleaned by hand, then either macerated in menstruum for a set number of days or decocted, depending on the plant part: leaves and flowers are steeped, while barks, roots and seeds are simmered to draw the constituents out.</p>
+        <p>The Answer is steeped for twenty-one days in oak before it is pressed and bottled, and the longer aged tinctures are held and turned rather than rushed to bottle. Batches are pressed, filtered, filled and labelled with a batch reference so a bottle can be traced back to its harvest. Nothing is standardised with isolated actives and nothing is heat-treated to shorten the process; the intent is a whole-plant preparation consistent with how these remedies have been made in the Caribbean for generations. Around 43,000 bottles are formulated each year at this scale.</p>
+      </section>
+
+      <section>
+        <h2>Sourcing</h2>
+        <p>The plants come from the volcanic highlands and coastal belt around Soufriere, where mineral rich soil fed by the Pitons and the island's geothermal valley produces dense, aromatic growth. Most material is grown on the centre's own land or wildcrafted by harvesters the centre has worked with for years; sea moss comes from Saint Lucian waters. Harvest is timed to the plant rather than the order book, which is why some items move in and out of stock through the year.</p>
+        <p>Where a plant cannot be grown or wildcrafted locally at quality, it is sourced from named Caribbean growers rather than commodity brokers. The same supply feeds the clinical practice, the retreats and the <a href="/wholesale">wholesale line</a>, so the material in a retail bottle is the material used with patients at the centre.</p>
       </section>
 
       <section>
@@ -209,6 +223,7 @@ export function shopBody(products: ShopProduct[]): string {
         <h2>Shipping and delivery</h2>
         <p>Orders ship from Saint Lucia and from a Miami fulfilment point; most United States deliveries arrive in about three business days. Local Saint Lucia delivery and international shipping are available at checkout.</p>
       </section>
+
 
       ${relatedHtml([
         ["/the-answer", "The Answer tincture", "The centre's signature oak-aged formulation."],
@@ -500,3 +515,25 @@ export const PRODUCT_EXTRA: Record<string, string> = {
 
 export { faqPageSchema, retreatFaqs, theAnswerFaqs, wholesaleFaqs };
 
+
+/* ------------------------------------------------------------------ 404 page */
+
+/**
+ * Crawler-readable body for the catch-all 404 document (dist/404.html). The page
+ * is served with an HTTP 404 status and marked noindex, follow.
+ */
+export function notFoundBody(): string {
+  return `${siteHeader("Page not found")}
+    <main>
+      <h1>Page not found — ${BRAND}, Saint Lucia</h1>
+      <p>The address you requested does not exist on this site. ${CENTRE_LINE} Use the links below to reach the section you were looking for.</p>
+      ${relatedHtml([
+        ["/", "Home", "Overview of the apothecary, retreats, school and wholesale supply."],
+        ["/shop", "Apothecary", "Herbal tinctures, sea moss, capsules, teas and raw herbs."],
+        ["/the-answer", "The Answer", "The centre's oak-aged signature tincture."],
+        ["/retreats", "Healing retreats", "Seven-day wellness immersions in Soufriere, Saint Lucia."],
+        ["/school/herbal-physician", "School of Wellness Medicine", "Clinical herbal physician certification."],
+        ["/consultations", "Consultations", "One-to-one sessions with the wellness medicine team."],
+      ])}
+    </main>`;
+}
