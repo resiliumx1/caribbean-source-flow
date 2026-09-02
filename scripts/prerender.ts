@@ -28,6 +28,7 @@ import {
   shopBody,
   learnBody,
   consultationsBody,
+  notFoundBody,
   PRODUCT_EXTRA,
 } from "./prerender-bodies";
 import { faqPageSchema, retreatFaqs, theAnswerFaqs, wholesaleFaqs } from "../src/content/faqs";
@@ -844,6 +845,21 @@ async function main() {
     count++;
   }
 
+
+  // Catch-all 404 document. Static hosting serves this with an HTTP 404 status
+  // for any path that does not match a known route, so unknown URLs no longer
+  // return the homepage with a 200.
+  const notFound = buildShellTransform(shell, {
+    path: "/404",
+    title: "Page not found (404) | Mount Kailash Rejuvenation Centre",
+    description:
+      "This page does not exist. Find the Mount Kailash apothecary, healing retreats, school of wellness medicine and consultations in Saint Lucia.",
+    noindex: true,
+    canonical: `${BASE_URL}/404`,
+    bodyHtml: notFoundBody(),
+  });
+  writeFileSync(resolve(DIST, "404.html"), notFound);
+  count++;
 
   console.log(`[prerender] wrote ${count} static HTML files into dist/`);
 }
