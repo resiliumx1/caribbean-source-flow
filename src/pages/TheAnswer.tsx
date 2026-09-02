@@ -501,6 +501,8 @@ export default function TheAnswer() {
         </div>
       </section>
 
+      <FaqSection items={theAnswerFaqs} heading="The Answer — frequently asked questions" />
+
       <RelatedLinks nodeId="the-answer" />
       <StoreFooter />
     </div>
