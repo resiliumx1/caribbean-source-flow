@@ -515,3 +515,25 @@ export const PRODUCT_EXTRA: Record<string, string> = {
 
 export { faqPageSchema, retreatFaqs, theAnswerFaqs, wholesaleFaqs };
 
+
+/* ------------------------------------------------------------------ 404 page */
+
+/**
+ * Crawler-readable body for the catch-all 404 document (dist/404.html). The page
+ * is served with an HTTP 404 status and marked noindex, follow.
+ */
+export function notFoundBody(): string {
+  return `${siteHeader("Page not found")}
+    <main>
+      <h1>Page not found — ${BRAND}, Saint Lucia</h1>
+      <p>The address you requested does not exist on this site. ${CENTRE_LINE} Use the links below to reach the section you were looking for.</p>
+      ${relatedHtml([
+        ["/", "Home", "Overview of the apothecary, retreats, school and wholesale supply."],
+        ["/shop", "Apothecary", "Herbal tinctures, sea moss, capsules, teas and raw herbs."],
+        ["/the-answer", "The Answer", "The centre's oak-aged signature tincture."],
+        ["/retreats", "Healing retreats", "Seven-day wellness immersions in Soufriere, Saint Lucia."],
+        ["/school/herbal-physician", "School of Wellness Medicine", "Clinical herbal physician certification."],
+        ["/consultations", "Consultations", "One-to-one sessions with the wellness medicine team."],
+      ])}
+    </main>`;
+}
