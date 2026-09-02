@@ -251,10 +251,14 @@ Deno.serve(async (req) => {
       total_xcd,
       currency_used: payload.currency_used,
       payment_method: "authorize_net",
-      payment_status: "paid",
+      // A held transaction exists at the gateway but has not settled yet.
+      payment_status: charge.held ? "pending_review" : "paid",
       payment_transaction_id: charge.transId,
       status: "pending",
       customer_notes: payload.form.customer_notes || null,
+      admin_notes: charge.held
+        ? `Authorize.net held this transaction for review${charge.reviewReason ? `: ${charge.reviewReason}` : ""}. Approve or void it in the gateway before fulfilling.`
+        : null,
       billing_same_as_shipping: billingSame,
       billing_name: billingSame ? null : (payload.form.billing_name || null),
       billing_address_line1: billingSame ? null : (payload.form.billing_address_line1 || null),
