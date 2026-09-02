@@ -75,7 +75,7 @@ export default function PaymentPlanPay() {
   const [notFound, setNotFound] = useState(false);
   const [amount, setAmount] = useState("");
   const [processing, setProcessing] = useState(false);
-  const [receipt, setReceipt] = useState<{ amount: number } | null>(null);
+  const [receipt, setReceipt] = useState<{ amount: number; held?: boolean } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"once" | "auto">("once");
   const [cadence, setCadence] = useState<"weekly" | "biweekly" | "monthly">("monthly");
