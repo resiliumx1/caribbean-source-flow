@@ -85,9 +85,58 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
+      "@type": ["LocalBusiness", "HealthAndBeautyBusiness"],
+      "@id": "https://mountkailashslu.com/#localbusiness",
       "name": "Mount Kailash Rejuvenation Centre",
       "url": "https://mountkailashslu.com",
+      "image": "https://mountkailashslu.com/__l5e/assets-v1/81539928-61dc-4de9-85fd-67094b8a487e/og-default.jpg",
+      "description": "Mount Kailash Rejuvenation Centre is a clinical wellness medicine centre, apothecary, retreat and herbal school in Soufrière, Saint Lucia, led by Rt Hon Priest Kailash K Leonce.",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Soufriere",
+        "addressLocality": "Soufriere",
+        "addressRegion": "Saint Lucia",
+        "addressCountry": "LC"
+      },
+      "areaServed": ["Saint Lucia", "Caribbean", "United States", "United Kingdom", "Canada"],
+      "founder": {
+        "@type": "Person",
+        "@id": "https://mountkailashslu.com/#priest-kailash"
+      },
+      "sameAs": [
+        "https://www.instagram.com/mountkailashslu/",
+        "https://twitter.com/MountKailash"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": "https://mountkailashslu.com/#priest-kailash",
+      "name": "Rt Hon Priest Kailash K Leonce",
+      "honorificPrefix": "Rt Hon Priest",
+      "jobTitle": "Grand Master Herbal Physician, Founder of Mount Kailash Rejuvenation Centre",
+      "description": "Rt Hon Priest Kailash K Leonce is a Saint Lucian herbal physician with more than 21 years of clinical practice, founder of Mount Kailash Rejuvenation Centre in Soufriere, Saint Lucia, and teacher of over 500 certified herbal physicians.",
+      "nationality": { "@type": "Country", "name": "Saint Lucia" },
+      "worksFor": { "@id": "https://mountkailashslu.com/#localbusiness" },
+      "knowsAbout": ["Clinical wellness medicine", "Caribbean bush medicine", "Herbal tinctures", "Sea moss", "Herbal physician training"],
+      "sameAs": [
+        "https://www.linkedin.com/in/hon-priest-kailash-leonce-0259271b",
+        "https://www.instagram.com/mountkailashslu/"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://mountkailashslu.com/#website",
+      "name": "Mount Kailash Rejuvenation Centre",
+      "url": "https://mountkailashslu.com",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://mountkailashslu.com/#localbusiness" },
       "potentialAction": {
         "@type": "SearchAction",
         "target": "https://mountkailashslu.com/shop?q={search_term_string}",
