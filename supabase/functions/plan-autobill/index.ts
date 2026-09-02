@@ -147,9 +147,14 @@ Deno.serve(async (req) => {
         : [];
 
       let recorded = 0;
+      let held = 0;
       for (const tx of txs) {
         const transId = String(tx?.transId ?? "");
-        if (!transId || String(tx?.responseCode ?? "") !== "1") continue;
+        const code = String(tx?.responseCode ?? "");
+        // "1" = approved, "4" = held for review (fraud filter). Anything else
+        // is a genuine decline/error and is not recorded.
+        if (!transId || (code !== "1" && code !== "4")) continue;
+        const isHeld = code === "4";
 
         const { data: seen } = await svc
           .from("payments").select("id").eq("paypal_capture_id", transId).maybeSingle();
@@ -160,9 +165,13 @@ Deno.serve(async (req) => {
           amount: Number(schedule.amount),
           paypal_capture_id: transId,
           type: "payment",
-          status: "succeeded",
-          reason: "Automatic instalment",
+          status: isHeld ? "pending_review" : "succeeded",
+          reason: isHeld ? "Automatic instalment — held for review" : "Automatic instalment",
         });
+        if (isHeld) {
+          held++;
+          continue;
+        }
         await svc.rpc("apply_payment", { p_plan_id: schedule.plan_id, p_amount: Number(schedule.amount) });
         recorded++;
       }
