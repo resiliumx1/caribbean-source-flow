@@ -112,8 +112,8 @@ const Retreats = () => {
   return (
     <main className="min-h-screen">
       <SEOHead
-        title="Healing Retreats in Saint Lucia — 7-Day Herbal Detox | Mount Kailash"
-        description="Immersive 7-day wellness retreats in the volcanic highlands of Soufrière, Saint Lucia. Herbal feasts, bush-medicine protocols and clinical consultations with Priest Kailash."
+        title="7-Day Wellness Retreats in Saint Lucia | Mount Kailash"
+        description="Immersive 7-day wellness retreats in the volcanic highlands of Soufrière, Saint Lucia: herbal feasts, bush-medicine protocols and consultations."
         path="/retreats"
         ogImage={retreatOg}
         breadcrumbs={[{ name: "Retreats", path: "/retreats" }]}

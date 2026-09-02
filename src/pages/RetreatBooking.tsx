@@ -89,14 +89,16 @@ export default function RetreatBooking() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title={`${retreatType.name} — Healing Retreat in Saint Lucia | Mount Kailash`.slice(0, 70)}
+        title={`Book ${retreatType.name} | Mount Kailash`.slice(0, 60)}
         description={(
           retreatType.description
             ? String(retreatType.description).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
             : `${retreatType.name} — an immersive ${retreatType.min_nights ?? 7}-night herbal retreat in Soufrière, Saint Lucia with daily bush-medicine feasts and clinical guidance.`
         ).slice(0, 158)}
         path={`/retreats/book/${slug}`}
+        noindex
       />
+
       <main className="container mx-auto px-4 py-10 max-w-4xl">
         <Link to="/retreats" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Retreats

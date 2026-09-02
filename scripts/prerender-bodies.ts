@@ -337,4 +337,166 @@ export function webinarsBody(): string {
     </main>`;
 }
 
+/* -------------------------------------------------------------------- learn */
+
+export function learnBody(): string {
+  return `${siteHeader("Learn")}
+    <main>
+      <h1>Learn — Caribbean Herbal Medicine Library from ${BRAND}, Saint Lucia</h1>
+      <p>${CENTRE_LINE} The Learn library collects the teaching notes behind that practice: how each Caribbean botanical is identified and prepared, how protocols are sequenced, and what the clinic in Soufriere has observed over more than twenty-one years of case work.</p>
+
+      <section>
+        <h2>What you will find here</h2>
+        <ul>
+          <li>Materia medica notes on Anamu, Soursop leaf, Vervain, St. John's Bush, Fey Duvan and sea moss</li>
+          <li>Preparation guides — decoctions, infusions, tinctures, syrups and correct dosing</li>
+          <li>Protocol walkthroughs for cleansing, blood support, digestion, sleep and women's wellness</li>
+          <li>Sourcing and quality: wildcrafting in volcanic soil, drying, and why single-origin matters</li>
+          <li>Clinical case discussions and answers to the questions asked most often in consultation</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>How the articles are written</h2>
+        <p>Every article is written or reviewed by Rt Hon Priest Kailash K Leonce and the Mount Kailash team, drawing on Saint Lucian bush-medicine tradition and on what has held up in clinic. Articles describe traditional use and preparation; they are education, not diagnosis, and do not replace care from a licensed physician.</p>
+      </section>
+
+      ${relatedHtml([
+        ["/consultations", "Consultations", "Apply the reading to your own case, one to one."],
+        ["/shop", "The apothecary", "Order the formulations discussed in the articles."],
+        ["/webinars", "Webinars", "Watch the same material taught live."],
+      ])}
+    </main>`;
+}
+
+/* ------------------------------------------------------------ consultations */
+
+export function consultationsBody(): string {
+  return `${siteHeader("Consultations")}
+    <main>
+      <h1>Private Wellness Medicine Consultations — ${BRAND}, Saint Lucia</h1>
+      <p>${CENTRE_LINE} Consultations are the heart of the practice: a private session in which your history, diet, digestion, sleep, stress and current medication are reviewed before any herbal protocol is proposed. Sessions are held in person in Soufriere, Saint Lucia, or by video for clients in the United States, Canada, the United Kingdom and across the Caribbean.</p>
+
+      <section>
+        <h2>How a consultation works</h2>
+        <ol>
+          <li>Choose a session type and a time in your own timezone.</li>
+          <li>Complete a short intake so the practitioner can prepare beforehand.</li>
+          <li>Meet by video or in person for a full assessment and discussion.</li>
+          <li>Receive a written protocol — formulations, dosing, sequencing, diet and lifestyle notes.</li>
+          <li>Review progress in a follow-up session and adjust the protocol as your body responds.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>What clients bring to us</h2>
+        <p>Common reasons for booking include digestive complaints, low energy and fatigue, inflammation, sleep disturbance, blood building, fertility and women's wellness, men's wellness, blood-sugar and pressure support, skin conditions, and structured whole-body cleansing. Practitioners and students of herbal medicine also book sessions to discuss formulation and case management.</p>
+      </section>
+
+      <section>
+        <h2>Important</h2>
+        <p>Mount Kailash Rejuvenation Centre practises traditional Caribbean wellness medicine. Consultations do not diagnose, treat or cure disease and are not a substitute for care from a licensed medical doctor. If you are pregnant, nursing, or taking prescription medication, tell us during intake and consult your physician before starting any protocol.</p>
+      </section>
+
+      ${relatedHtml([
+        ["/retreats", "Healing retreats", "A seven-day immersion with daily practitioner contact."],
+        ["/shop", "The apothecary", "The formulations prescribed in consultation."],
+        ["/learn", "Learn", "Articles on the protocols discussed in session."],
+      ])}
+    </main>`;
+}
+
+/* -------------------------------------------------- product copy supplements */
+
+/**
+ * Extra crawlable copy for products whose database description is a single line.
+ * Appended to the prerendered product body — botanical names, traditional use,
+ * preparation and sourcing — so each product URL carries real text.
+ */
+export const PRODUCT_EXTRA: Record<string, string> = {
+  "the-answer": `
+      <section>
+        <h2>About the formulation</h2>
+        <p>The Answer is the flagship tincture of ${BRAND}. It is built around Anamu (Petiveria alliacea, known locally as gully root) and Soursop leaf (Annona muricata), with Vervain and a proprietary blend of supporting Saint Lucian herbs. The plant material is wildcrafted in the volcanic hills around Soufriere, cleaned by hand, and steeped in organic cane alcohol and distilled water for a full extraction cycle rather than being rushed to bottle.</p>
+      </section>
+      <section>
+        <h2>Traditional use and preparation</h2>
+        <p>Saint Lucian bush-medicine practitioners have used Anamu and Soursop leaf for generations as protective, fortifying herbs, taken as a bitter tea during periods of illness or seasonal weakness. The Answer concentrates that same pairing into a tincture so the dose is consistent and portable. It can be taken undiluted or dropped into a little water, and is traditionally taken daily as a fortifying tonic.</p>
+      </section>
+      <section>
+        <h2>Sourcing</h2>
+        <p>Single origin, Saint Lucia. Wildcrafted from mineral rich volcanic soil, processed on the island, bottled in small batches. Nothing irradiated and no isolated compounds added. <a href="/the-answer">Read the full story of The Answer</a>.</p>
+      </section>`,
+  "blue-vervain": `
+      <section>
+        <h2>About the herb</h2>
+        <p>Blue Vervain (Verbena hastata) is a slender flowering nervine long carried in Caribbean household medicine cabinets. ${BRAND} supplies it as 100% dried, wildcrafted aerial parts — leaf, stem and flowering top — with nothing added, so you control the strength of the preparation.</p>
+      </section>
+      <section>
+        <h2>Traditional use</h2>
+        <p>Vervain is deeply respected in Caribbean herbalism as a bitter nervine: traditionally taken for nervous tension and restlessness, to encourage sweating during fever, and as a bitter to wake up sluggish digestion. In Saint Lucia it is commonly drunk in the evening as a calming tea.</p>
+      </section>
+      <section>
+        <h2>Preparation</h2>
+        <p>Steep 1–2 teaspoons of the dried herb in 8oz of boiling water for ten minutes, strain, and drink one to three cups daily. Vervain is a bitter herb and is traditionally used in cycles — a week or two on, then a rest — rather than continuously. Not for use in pregnancy without practitioner guidance.</p>
+      </section>
+      <section>
+        <h2>Sourcing</h2>
+        <p>Wildcrafted and shade-dried in Saint Lucia, sorted by hand, packed whole rather than powdered so the aroma and bitterness survive storage.</p>
+      </section>`,
+  "st-johns-bush": `
+      <section>
+        <h2>About the herb</h2>
+        <p>St. John's Bush (Justicia secunda) is one of Saint Lucia's most treasured plants, known across the Caribbean as a blood-building herb and recognisable by the deep red infusion its leaves give up. ${BRAND} supplies it as 100% dried wildcrafted leaf from the hills around Soufriere.</p>
+      </section>
+      <section>
+        <h2>Traditional use</h2>
+        <p>Traditionally used for blood deficiency and low iron, for recovery after childbirth and heavy menstruation, and as a general strengthening tea during convalescence. It is a staple of women's health in Saint Lucian bush medicine and is often taken alongside a nourishing diet rather than on its own.</p>
+      </section>
+      <section>
+        <h2>Preparation</h2>
+        <p>Boil 1–2 tablespoons of the dried leaf in 2 cups of water for 15–20 minutes, strain, and drink one cup daily. The infusion should run a clear ruby red; that colour is the sign of good, properly dried leaf.</p>
+      </section>
+      <section>
+        <h2>Sourcing</h2>
+        <p>Wildcrafted in Saint Lucia's volcanic highlands, shade-dried to preserve the pigment, single origin and single ingredient.</p>
+      </section>`,
+  "super-female-wellness-package": `
+      <section>
+        <h2>What is in the package</h2>
+        <p>The Super Female Wellness Package is the most complete women's protocol offered by ${BRAND}: seven formulations — Colax, Blood Detox, Fey Duvan Syrup, Pure Gold, Pure Green, Fertility and The Answer — supplied together at a saving of more than $50 against buying each bottle individually.</p>
+      </section>
+      <section>
+        <h2>How the protocol is sequenced</h2>
+        <p>The package follows the same order used in clinic. Weeks one and two open with Colax and Blood Detox to support elimination and cleanse the blood. Weeks three and four add Fey Duvan Syrup for the chest and respiratory tract along with Pure Gold and Pure Green for mineral and green-food nourishment. Fertility and The Answer are then continued daily as the ongoing fortifying pair.</p>
+      </section>
+      <section>
+        <h2>Who it is for</h2>
+        <p>Built for women who want a structured, staged reset rather than a single bottle: cleansing, blood health, respiratory support and targeted female formulations in one protocol. Anyone pregnant, nursing or taking prescription medication should consult a physician first, and a <a href="/consultations">consultation</a> is recommended if you want the sequence adapted to your own case.</p>
+      </section>
+      <section>
+        <h2>Sourcing</h2>
+        <p>Every bottle is formulated at Mount Kailash in Soufriere, Saint Lucia, from wildcrafted botanicals grown in mineral rich volcanic soil.</p>
+      </section>`,
+  "symposium-experience-in-person": `
+      <section>
+        <h2>What this ticket includes</h2>
+        <p>In-person admission to the Caribbean Wellness Symposium on Sunday 11 October 2026, held at ${BRAND} in Soufriere, Saint Lucia. The day opens the Caribbean Wellness Experience Saint Lucia 2026 week and includes the full speaker programme, live demonstrations, and direct access to Rt Hon Priest Kailash K Leonce and the visiting faculty.</p>
+      </section>
+      <section>
+        <h2>Good to know</h2>
+        <p>Travel and accommodation are arranged by the attendee. This ticket covers the symposium day only; the six-day Caribbean Wellness Fortification Retreat that follows (12–17 October 2026) is application only. <a href="/wce-2026">See the full programme</a> or <a href="/wce-2026/apply">apply for the retreat</a>.</p>
+      </section>`,
+  "symposium-experience-online": `
+      <section>
+        <h2>What this ticket includes</h2>
+        <p>Livestream access to the Caribbean Wellness Symposium on Sunday 11 October 2026, broadcast from ${BRAND} in Soufriere, Saint Lucia. You receive a private link to the full speaker programme and can watch from anywhere in the world.</p>
+      </section>
+      <section>
+        <h2>Good to know</h2>
+        <p>The livestream covers the symposium day only. The six-day Caribbean Wellness Fortification Retreat that follows in Saint Lucia (12–17 October 2026) is in person and application only. <a href="/wce-2026">See the full programme</a> or <a href="/wce-2026/apply">apply for the retreat</a>.</p>
+      </section>`,
+};
+
 export { faqPageSchema, retreatFaqs, theAnswerFaqs, wholesaleFaqs };
+

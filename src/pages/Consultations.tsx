@@ -87,8 +87,8 @@ export default function Consultations() {
   return (
     <main className="consult min-h-screen" style={{ background: "var(--c-bg)" }}>
       <SEOHead
-        title="Book a Private Consultation with Rt. Hon. Priest Kailash"
-        description="Book a private 30 to 45 minute consultation with Rt. Hon. Priest Kailash of Mount Kailash Rejuvenation Centre, Saint Lucia. Held online, from USD 300, confirmed the moment you pay."
+        title="Private Herbal Consultations | Mount Kailash"
+        description="Book a private 30–45 minute consultation with Rt Hon Priest Kailash of Mount Kailash Rejuvenation Centre, Saint Lucia. Online, from USD 300."
         path="/consultations"
       />
       <Helmet>

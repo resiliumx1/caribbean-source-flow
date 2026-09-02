@@ -28,7 +28,7 @@ const Wholesale = () => {
 
   return (
     <main className="min-h-screen pt-0">
-      <SEOHead title="Caribbean Botanicals Wholesale — COA, Fast US Delivery | Mount Kailash" description="Single-origin Saint Lucia botanicals, tinctures and sea moss for clinics and practitioners. COA documentation, bulk pricing, 3-day US delivery." path="/wholesale" />
+      <SEOHead title="Wholesale Caribbean Botanicals | Mount Kailash" description="Single-origin Saint Lucia botanicals, tinctures and sea moss for clinics and practitioners. COA documentation, bulk pricing, 3-day US delivery." path="/wholesale" />
       <FadeInStagger delay={0.08}>
         <Hero onScrollToForm={scrollToForm} />
       </FadeInStagger>
