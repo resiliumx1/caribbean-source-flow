@@ -75,7 +75,7 @@ export default function PaymentPlanPay() {
   const [notFound, setNotFound] = useState(false);
   const [amount, setAmount] = useState("");
   const [processing, setProcessing] = useState(false);
-  const [receipt, setReceipt] = useState<{ amount: number } | null>(null);
+  const [receipt, setReceipt] = useState<{ amount: number; held?: boolean } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"once" | "auto">("once");
   const [cadence, setCadence] = useState<"weekly" | "biweekly" | "monthly">("monthly");
@@ -209,6 +209,22 @@ export default function PaymentPlanPay() {
                   Paid in full
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">Thank you for completing your payment.</p>
+              </div>
+            ) : receipt?.held ? (
+              <div className="text-center py-10">
+                <ShieldCheck className="h-14 w-14 mx-auto mb-4" style={{ color: "#b45309" }} />
+                <p className="text-2xl font-semibold" style={{ color: "#b45309", fontFamily: "Cormorant Garamond, serif" }}>
+                  Payment received — under review
+                </p>
+                <p className="text-sm text-muted-foreground mt-3 max-w-md mx-auto">
+                  Your card payment of <strong>{fmt(receipt.amount)}</strong> was accepted by our payment
+                  processor and is being reviewed before it settles. Your balance will update automatically
+                  once it clears, usually within one business day.
+                </p>
+                <p className="text-sm text-muted-foreground mt-3">
+                  Please don't submit this payment again — you would be charged twice. Questions? Email{" "}
+                  <a href="mailto:info@mountkailashslu.com" className="underline">info@mountkailashslu.com</a>.
+                </p>
               </div>
             ) : receipt ? (
               <div className="text-center py-10">
@@ -378,7 +394,8 @@ export default function PaymentPlanPay() {
                           throw new Error(msg);
                         }
                         if (res.plan) setPlan(res.plan);
-                        setReceipt({ amount: Number(res.amount) });
+                        if (res.held) console.warn("[plan payment held for review]", res.reviewReason);
+                        setReceipt({ amount: Number(res.amount), held: !!res.held });
                         load();
                       } finally {
                         setProcessing(false);

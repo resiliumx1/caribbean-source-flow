@@ -78,23 +78,35 @@ Deno.serve(async (req) => {
           amount,
           paypal_capture_id: charge.transId,
           type: "payment",
-          status: "succeeded",
+          // A held transaction exists at the gateway but has not settled, so it
+          // is recorded without touching the plan balance.
+          status: charge.held ? "pending_review" : "succeeded",
           card_last4: String(charge.accountNumber ?? "").replace(/[^0-9]/g, "").slice(-4) || null,
           card_type: charge.accountType || null,
+          notes: charge.held
+            ? `Held for review by Authorize.net${charge.reviewReason ? `: ${charge.reviewReason}` : ""}`
+            : null,
         });
       if (insErr && !String(insErr.message || "").toLowerCase().includes("duplicate")) throw insErr;
 
-      const { data: applied, error: applyErr } = await supabase.rpc("apply_payment", {
-        p_plan_id: planId,
-        p_amount: amount,
-      });
-      if (applyErr) throw applyErr;
-      updatedPlan = Array.isArray(applied) ? applied[0] : applied;
+      if (charge.held) {
+        const { data } = await supabase.from("payment_plans").select("*").eq("id", planId).maybeSingle();
+        updatedPlan = data;
+      } else {
+        const { data: applied, error: applyErr } = await supabase.rpc("apply_payment", {
+          p_plan_id: planId,
+          p_amount: amount,
+        });
+        if (applyErr) throw applyErr;
+        updatedPlan = Array.isArray(applied) ? applied[0] : applied;
+      }
     }
 
     return new Response(
       JSON.stringify({
         success: true,
+        held: !!charge.held,
+        reviewReason: charge.reviewReason ?? null,
         captureId: charge.transId,
         amount,
         plan: updatedPlan,

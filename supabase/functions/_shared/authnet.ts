@@ -186,6 +186,15 @@ export interface ChargeResult {
   authCode: string;
   accountNumber: string;          // masked, e.g. XXXX1111
   accountType: string;            // Visa/Mastercard/…
+  /**
+   * True when Authorize.net returned responseCode "4" (Held for Review) —
+   * typically a Fraud Detection Suite filter such as the Default Amount
+   * Filter. The transaction EXISTS at the gateway and may settle later, so
+   * callers must record it instead of treating it as a decline.
+   */
+  held?: boolean;
+  /** FDS filter names / review reason, when the gateway supplies them. */
+  reviewReason?: string;
 }
 
 /**
@@ -299,6 +308,35 @@ export async function chargeCard(args: ChargeArgs): Promise<ChargeResult> {
   const tr = json?.transactionResponse;
   const topOk = json?.messages?.resultCode === "Ok";
   const approved = tr?.responseCode === "1";
+  const held = tr?.responseCode === "4";
+
+  if (held && tr?.transId) {
+    const filters: string[] = Array.isArray(tr?.prePaidCard?.filters)
+      ? tr.prePaidCard.filters
+      : [];
+    const messages: string[] = Array.isArray(tr?.messages)
+      ? tr.messages.map((m: { description?: string }) => String(m?.description ?? "")).filter(Boolean)
+      : [];
+    const reviewReason = [...filters, ...messages].join("; ") || "Held for review";
+
+    // Not a decline — the gateway accepted the transaction pending review.
+    console.warn("[authnet held for review]", JSON.stringify({
+      transId: String(tr.transId),
+      responseCode: tr?.responseCode,
+      reviewReason,
+      avsResultCode: tr?.avsResultCode,
+      cvvResultCode: tr?.cvvResultCode,
+    }));
+
+    return {
+      transId: String(tr.transId),
+      authCode: String(tr.authCode ?? ""),
+      accountNumber: String(tr.accountNumber ?? ""),
+      accountType: String(tr.accountType ?? ""),
+      held: true,
+      reviewReason,
+    };
+  }
 
   if (!approved) {
     const rawCode =
