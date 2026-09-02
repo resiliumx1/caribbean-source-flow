@@ -19,6 +19,15 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { createClient } from "@supabase/supabase-js";
+import {
+  retreatsBody,
+  theAnswerBody,
+  wholesaleBody,
+  schoolBody,
+  webinarsBody,
+  shopBody,
+} from "./prerender-bodies";
+import { faqPageSchema, retreatFaqs, theAnswerFaqs, wholesaleFaqs } from "../src/content/faqs";
 
 const BASE_URL = "https://mountkailashslu.com";
 const DIST = resolve("dist");
@@ -670,7 +679,7 @@ async function main() {
       jsonLd: r.jsonLd,
       extraHead: r.extraHead,
       tailHead: r.tailHead,
-      bodyHtml: r.bodyHtml ?? extractDefaultFallback(shell),
+      bodyHtml: r.bodyHtml ?? staticBodyFor(r.path, products) ?? extractDefaultFallback(shell),
     };
     writeRoute(r.path, buildShellTransform(shell, meta));
     count++;
