@@ -182,7 +182,7 @@ Deno.serve(async (req) => {
           : sub?.status === "expired" ? "completed" : schedule.status,
       }).eq("id", schedule.id);
 
-      return json({ success: true, recorded, providerStatus: sub?.status ?? "unknown" });
+      return json({ success: true, recorded, held, providerStatus: sub?.status ?? "unknown" });
     }
 
     return json({ error: "Unsupported action." }, 400);
