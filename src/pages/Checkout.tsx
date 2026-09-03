@@ -274,7 +274,9 @@ export default function Checkout() {
             product_id: i.product_id,
             quantity: i.quantity,
           })),
-          form,
+          // Digital-only / pickup carts collect a separate billing address, so the
+          // flag must reflect what was actually entered — otherwise it is discarded.
+          form: { ...form, billing_same_as_shipping: billingSame ? "true" : "false" },
             opaqueData,
           currency_used: currency,
           coupon_code: appliedCoupon?.code ?? undefined,

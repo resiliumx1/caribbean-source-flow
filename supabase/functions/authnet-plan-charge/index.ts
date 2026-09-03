@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
           status: charge.held ? "pending_review" : "succeeded",
           card_last4: String(charge.accountNumber ?? "").replace(/[^0-9]/g, "").slice(-4) || null,
           card_type: charge.accountType || null,
-          notes: charge.held
+          admin_note: charge.held
             ? `Held for review by Authorize.net${charge.reviewReason ? `: ${charge.reviewReason}` : ""}`
             : null,
         });

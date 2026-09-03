@@ -48,21 +48,35 @@ export default function WceOrders() {
         const orderIds = Array.from(new Set((lines ?? []).map((l) => l.order_id)));
         if (orderIds.length === 0) { setLoading(false); return; }
 
-        // 3. The real orders themselves.
-        const { data: orders, error: oErr } = await supabase
-          .from("orders")
-          .select("id, created_at, order_number, email, customer_name, total_usd, currency_used, payment_status, status, coupon_code, referral_code, utm_source, is_digital")
-          .in("id", orderIds)
-          .order("created_at", { ascending: false });
+        // 3. The real orders themselves. Fulfilment is derived from the products —
+        //    `is_digital` lives on products, not on orders.
+        const [{ data: orders, error: oErr }, { data: prods, error: prErr }] = await Promise.all([
+          supabase
+            .from("orders")
+            .select("id, created_at, order_number, email, customer_name, total_usd, currency_used, payment_status, status, coupon_code, referral_code, utm_source")
+            .in("id", orderIds)
+            .order("created_at", { ascending: false }),
+          supabase.from("products").select("id, is_digital").in("id", productIds),
+        ]);
         if (oErr) throw oErr;
+        if (prErr) throw prErr;
+        const digitalById = new Map((prods ?? []).map((p) => [p.id as string, !!p.is_digital]));
 
         const tiersByOrder = new Map<string, string[]>();
+        const digitalByOrder = new Map<string, boolean>();
         for (const l of lines ?? []) {
           const list = tiersByOrder.get(l.order_id) ?? [];
           if (!list.includes(l.product_name)) list.push(l.product_name);
           tiersByOrder.set(l.order_id, list);
+          const prev = digitalByOrder.get(l.order_id);
+          const isDigital = digitalById.get(l.product_id as string) ?? false;
+          digitalByOrder.set(l.order_id, prev === undefined ? isDigital : prev && isDigital);
         }
-        setRows(((orders ?? []) as any[]).map((o) => ({ ...o, tiers: tiersByOrder.get(o.id) ?? [] })));
+        setRows(((orders ?? []) as any[]).map((o) => ({
+          ...o,
+          tiers: tiersByOrder.get(o.id) ?? [],
+          is_digital: digitalByOrder.get(o.id) ?? null,
+        })));
       } catch (e: any) {
         wceToast({ title: "Load failed", description: e?.message ?? "Unknown error", tone: "error" });
       }
