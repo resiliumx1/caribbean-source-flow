@@ -252,7 +252,8 @@ Deno.serve(async (req) => {
       currency_used: payload.currency_used,
       payment_method: "authorize_net",
       // A held transaction exists at the gateway but has not settled yet.
-      payment_status: charge.held ? "pending_review" : "paid",
+      // 'pending' is the allowed status value for a gateway hold; admin_notes explains it.
+      payment_status: charge.held ? "pending" : "paid",
       payment_transaction_id: charge.transId,
       status: "pending",
       customer_notes: payload.form.customer_notes || null,
