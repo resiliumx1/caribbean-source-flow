@@ -459,6 +459,7 @@ function buildTransactionRequest(args: ChargeArgs, amount: number) {
       ? { email: args.customerEmail.slice(0, 255) }
       : undefined,
     billTo: billToRaw,
+    cardholderAuthentication,
   } as Record<string, unknown>, TX_REQUEST_ORDER);
 
   validateOrder(tr, TX_REQUEST_ORDER, "transactionRequest");
