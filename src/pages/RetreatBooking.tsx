@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { AuthorizeNetCardForm, type OpaqueData } from "@/components/payments/AuthorizeNetCardForm";
+import { AuthorizeNetCardForm, type OpaqueData, type ThreeDSResult } from "@/components/payments/AuthorizeNetCardForm";
 import { SEOHead } from "@/components/SEOHead";
 import { useRetreatTypes, useRetreatDates, useSoloPricingTiers, calculateSoloPrice } from "@/hooks/use-retreats";
 import { format, addDays } from "date-fns";
@@ -254,7 +254,7 @@ export default function RetreatBooking() {
                   disabled={!canPay}
                   processing={isProcessing}
                   defaultCardholderName={form.contact_name}
-                  onToken={async ({ opaqueData }: { opaqueData: OpaqueData }) => {
+                  onToken={async ({ opaqueData, threeDS }: { opaqueData: OpaqueData; threeDS?: ThreeDSResult }) => {
                     setIsProcessing(true);
                     try {
                       const { data: sessionData } = await supabase.auth.getSession();
@@ -278,6 +278,7 @@ export default function RetreatBooking() {
                             guest_count: guests,
                             payment_option: paymentOption,
                             opaqueData,
+                            threeDS,
                             contact_name: form.contact_name,
                             contact_email: form.contact_email,
                             contact_phone: form.contact_phone,

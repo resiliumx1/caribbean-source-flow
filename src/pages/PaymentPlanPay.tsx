@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { AuthorizeNetCardForm, type OpaqueData } from "@/components/payments/AuthorizeNetCardForm";
+import { AuthorizeNetCardForm, type OpaqueData, type ThreeDSResult } from "@/components/payments/AuthorizeNetCardForm";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -352,7 +352,7 @@ export default function PaymentPlanPay() {
                     buttonLabel={mode === "auto" && !schedule
                       ? `Start ${cadence} payments of $${amtNum.toFixed(2)}`
                       : undefined}
-                    onToken={async ({ opaqueData, cardholderName, billingZip }: { opaqueData: OpaqueData; cardholderName: string; billingZip: string }) => {
+                    onToken={async ({ opaqueData, cardholderName, billingZip, threeDS }: { opaqueData: OpaqueData; cardholderName: string; billingZip: string; threeDS?: ThreeDSResult }) => {
                       setError(null);
                       setProcessing(true);
                       try {
@@ -364,6 +364,7 @@ export default function PaymentPlanPay() {
                               amount: amtNum,
                               cadence,
                               opaqueData,
+                              threeDS,
                               cardholderName,
                               billingZip,
                               email: plan.customer_email ?? undefined,
@@ -383,6 +384,7 @@ export default function PaymentPlanPay() {
                             planId: plan.id,
                             requestedAmount: amtNum,
                             opaqueData,
+                            threeDS,
                             cardholderName,
                             billingZip,
                             email: plan.customer_email ?? undefined,

@@ -171,6 +171,62 @@ export interface BillTo {
   phoneNumber?: string;
 }
 
+/**
+ * 3-D Secure (EMV 3DS / SCA) authentication result produced by Cardinal
+ * Cruise in the browser and verified server-side before the charge.
+ * Authorize.net accepts these as `cardholderAuthentication`.
+ */
+export interface ThreeDSecureResult {
+  /** ECI flag returned by the directory server, e.g. "05" / "02". */
+  eci?: string;
+  /** Cardholder Authentication Verification Value (base64). */
+  cavv?: string;
+  /** Directory-server transaction id (EMV 3DS). */
+  dsTransactionId?: string;
+  /** 3DS protocol version, e.g. "2.2.0". */
+  version?: string;
+  /** Cardinal ActionCode: SUCCESS / NOACTION / FAILURE / ERROR. */
+  actionCode?: string;
+}
+
+/**
+ * Map a Cardinal ECI flag to the Authorize.net authenticationIndicator.
+ * Visa: 05 = fully authenticated, 06 = attempted.
+ * Mastercard: 02 = fully authenticated, 01 = attempted.
+ */
+function authenticationIndicatorFromEci(eci: string): string | undefined {
+  switch (eci) {
+    case "05":
+    case "02":
+      return "5";
+    case "06":
+    case "01":
+      return "6";
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Validate/normalise a client-supplied 3-D Secure payload. Only ECI + CAVV
+ * pairs are accepted; anything else is dropped so a malicious client cannot
+ * fabricate authentication data.
+ */
+export function sanitizeThreeDS(v: unknown): ThreeDSecureResult | undefined {
+  if (!v || typeof v !== "object") return undefined;
+  const o = v as Record<string, unknown>;
+  const str = (x: unknown, max = 128) =>
+    typeof x === "string" && x.trim() ? x.trim().slice(0, max) : undefined;
+  const out: ThreeDSecureResult = {
+    eci: str(o.eci, 2),
+    cavv: str(o.cavv),
+    dsTransactionId: str(o.dsTransactionId, 64),
+    version: str(o.version, 16),
+    actionCode: str(o.actionCode, 16),
+  };
+  return out.eci && out.cavv ? out : undefined;
+}
+
 export interface ChargeArgs {
   amount: number;                 // USD
   opaqueData: OpaqueData;
@@ -179,6 +235,8 @@ export interface ChargeArgs {
   billTo?: BillTo;
   customerEmail?: string;
   refId?: string;
+  /** 3-D Secure (SCA) authentication result from Cardinal Cruise, if any. */
+  authentication?: ThreeDSecureResult;
 }
 
 export interface ChargeResult {
@@ -392,6 +450,20 @@ function buildTransactionRequest(args: ChargeArgs, amount: number) {
     : undefined;
   if (billToRaw) validateOrder(billToRaw, BILL_TO_ORDER, "billTo");
 
+  // 3-D Secure (SCA). Only sent when the browser completed a Cardinal Cruise
+  // authentication and the issuer returned usable ECI + CAVV values.
+  let cardholderAuthentication: Record<string, string> | undefined;
+  const auth = args.authentication;
+  if (auth?.eci && auth?.cavv) {
+    const indicator = authenticationIndicatorFromEci(String(auth.eci).padStart(2, "0"));
+    if (indicator) {
+      cardholderAuthentication = {
+        authenticationIndicator: indicator,
+        cardholderAuthenticationValue: String(auth.cavv).slice(0, 128),
+      };
+    }
+  }
+
   const tr = orderedObject({
     transactionType: "authCaptureTransaction",
     amount: amount.toFixed(2),
@@ -407,6 +479,7 @@ function buildTransactionRequest(args: ChargeArgs, amount: number) {
       ? { email: args.customerEmail.slice(0, 255) }
       : undefined,
     billTo: billToRaw,
+    cardholderAuthentication,
   } as Record<string, unknown>, TX_REQUEST_ORDER);
 
   validateOrder(tr, TX_REQUEST_ORDER, "transactionRequest");

@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
+import { chargeCard, splitName, type OpaqueData, sanitizeThreeDS } from "../_shared/authnet.ts";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,7 +12,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { planId, requestedAmount, opaqueData, cardholderName, billingZip, email } =
+    const { planId, requestedAmount, opaqueData, cardholderName, billingZip, email, threeDS } =
       (await req.json()) as {
         planId: string;
         requestedAmount: number;
@@ -19,6 +20,7 @@ Deno.serve(async (req) => {
         cardholderName?: string;
         billingZip?: string;
         email?: string;
+        threeDS?: unknown;
       };
 
     if (!planId) throw new Error("planId required");
@@ -60,6 +62,7 @@ Deno.serve(async (req) => {
         zip: zip.slice(0, 20),
       },
       customerEmail: (email || "").toLowerCase().trim() || undefined,
+      authentication: sanitizeThreeDS(threeDS),
     });
 
     // Idempotent write

@@ -1,8 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
+import { chargeCard, splitName, type OpaqueData, sanitizeThreeDS } from "../_shared/authnet.ts";
 import { logCartEvent, syncCartToCrm } from "../_shared/cart-recovery.ts";
 import { sanitizeAttribution, type OrderAttribution } from "../_shared/attribution.ts";
 import { invokeFunction } from "../_shared/invoke-function.ts";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,6 +41,7 @@ interface CheckoutPayload {
     billing_country?: string;
   };
   opaqueData: OpaqueData;
+  threeDS?: unknown;
   currency_used: "USD" | "XCD";
   coupon_code?: string;
   /** Marketing attribution only — never used for pricing. */
@@ -229,6 +231,7 @@ Deno.serve(async (req) => {
         phoneNumber: (payload.form.phone || "").replace(/[^\d+\-() ]/g, "").slice(0, 25) || undefined,
       },
       customerEmail: payload.form.email.toLowerCase().trim(),
+      authentication: sanitizeThreeDS(payload.threeDS),
     });
 
     const orderInsert = {

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { authenticateCard } from "@/lib/cardinal-3ds";
 
 /**
  * Authorize.net Accept.js card form.
@@ -88,6 +89,15 @@ export interface OpaqueData {
   dataValue: string;
 }
 
+/** 3-D Secure result handed to the backend with the payment token. */
+export interface ThreeDSResult {
+  eci?: string;
+  cavv?: string;
+  dsTransactionId?: string;
+  version?: string;
+  actionCode?: string;
+}
+
 export interface AuthorizeNetCardFormProps {
   amountUsd: number;
   buttonLabel?: string;
@@ -95,7 +105,12 @@ export interface AuthorizeNetCardFormProps {
   defaultCardholderName?: string;
   defaultZip?: string;
   processing?: boolean;
-  onToken: (data: { opaqueData: OpaqueData; cardholderName: string; billingZip: string }) => Promise<void> | void;
+  onToken: (data: {
+    opaqueData: OpaqueData;
+    cardholderName: string;
+    billingZip: string;
+    threeDS?: ThreeDSResult;
+  }) => Promise<void> | void;
 }
 
 function digitsOnly(v: string) {
@@ -148,6 +163,7 @@ export function AuthorizeNetCardForm({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [tokenizing, setTokenizing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [statusNote, setStatusNote] = useState<string | null>(null);
 
   const [cardholder, setCardholder] = useState(defaultCardholderName ?? "");
   const [cardNumber, setCardNumber] = useState("");
@@ -216,6 +232,35 @@ export function AuthorizeNetCardForm({
     }
 
     setTokenizing(true);
+
+    // 3-D Secure (SCA) — required for European cards. Runs before tokenising
+    // so the issuer challenge, if any, is completed first. Returns "disabled"
+    // when Cardinal isn't configured, leaving the previous behaviour intact.
+    let threeDS: ThreeDSResult | undefined;
+    try {
+      setStatusNote("Verifying your card with your bank…");
+      const outcome = await authenticateCard({
+        amountUsd,
+        cardNumber: cn,
+        month: mm,
+        year: yy,
+        cvv: cvvClean,
+        cardholderName: cardholder.trim(),
+        billingZip: zip.trim() || undefined,
+      });
+      if (outcome.status === "failed") {
+        setStatusNote(null);
+        setTokenizing(false);
+        return setError(outcome.message);
+      }
+      if (outcome.status === "ok") threeDS = outcome.result;
+    } catch (e: any) {
+      setStatusNote(null);
+      setTokenizing(false);
+      return setError(e?.message || "The 3-D Secure check could not be completed.");
+    }
+    setStatusNote(null);
+
     window.Accept.dispatchData(
       {
         authData: { clientKey: cfg.clientKey, apiLoginID: cfg.apiLoginId },
@@ -239,6 +284,7 @@ export function AuthorizeNetCardForm({
             opaqueData: response.opaqueData,
             cardholderName: cardholder.trim(),
             billingZip: zip.trim(),
+            threeDS,
           });
         } catch (e: any) {
           if (mountedRef.current) setError(e?.message || "Payment failed. Please try again.");
@@ -346,9 +392,13 @@ export function AuthorizeNetCardForm({
         <p className="text-sm text-destructive" role="alert">{error}</p>
       )}
 
+      {statusNote && (
+        <p className="text-sm text-muted-foreground" role="status">{statusNote}</p>
+      )}
+
       <Button type="submit" disabled={!canSubmit} className="w-full">
         {busy ? (
-          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing…</>
+          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {statusNote ? "Verifying…" : "Processing…"}</>
         ) : (
           <>{buttonLabel ?? `Pay $${amountUsd.toFixed(2)} USD`}</>
         )}

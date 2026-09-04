@@ -18,8 +18,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { dataLayerPush, pixelTrack } from "@/lib/tracking";
 import {
-  AuthorizeNetCardForm, type OpaqueData,
-} from "@/components/payments/AuthorizeNetCardForm";
+  AuthorizeNetCardForm, type OpaqueData, type ThreeDSResult } from "@/components/payments/AuthorizeNetCardForm";
 import { SlotPicker } from "@/components/consultation/SlotPicker";
 import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
 import { ServiceCard } from "@/components/consultations/ServiceCard";
@@ -279,13 +278,13 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     }
   };
 
-  const payNow = async ({ opaqueData, cardholderName }: { opaqueData: OpaqueData; cardholderName: string }) => {
+  const payNow = async ({ opaqueData, cardholderName, threeDS }: { opaqueData: OpaqueData; cardholderName: string; threeDS?: ThreeDSResult }) => {
     if (!hold) return;
     setPaying(true);
     setFormError(null);
     try {
       const { data: res, error: fnError } = await supabase.functions.invoke("consultation-pay", {
-        body: { booking_id: hold.id, opaqueData, cardholder_name: cardholderName },
+        body: { booking_id: hold.id, opaqueData, cardholder_name: cardholderName, threeDS },
       });
       if (fnError) throw new Error(fnError.message);
       if (res?.error) throw new Error(res.error);
