@@ -1,24 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { chargeCard, splitName, type OpaqueData, type ThreeDSecureResult } from "../_shared/authnet.ts";
+import { chargeCard, splitName, type OpaqueData, sanitizeThreeDS } from "../_shared/authnet.ts";
 import { logCartEvent, syncCartToCrm } from "../_shared/cart-recovery.ts";
 import { sanitizeAttribution, type OrderAttribution } from "../_shared/attribution.ts";
 import { invokeFunction } from "../_shared/invoke-function.ts";
 
-/** Accept only the 3DS fields we forward to Authorize.net. */
-function sanitizeThreeDS(v: unknown): ThreeDSecureResult | undefined {
-  if (!v || typeof v !== "object") return undefined;
-  const o = v as Record<string, unknown>;
-  const str = (x: unknown, max = 128) =>
-    typeof x === "string" && x.trim() ? x.trim().slice(0, max) : undefined;
-  const out: ThreeDSecureResult = {
-    eci: str(o.eci, 2),
-    cavv: str(o.cavv),
-    dsTransactionId: str(o.dsTransactionId, 64),
-    version: str(o.version, 16),
-    actionCode: str(o.actionCode, 16),
-  };
-  return out.eci && out.cavv ? out : undefined;
-}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

@@ -207,6 +207,26 @@ function authenticationIndicatorFromEci(eci: string): string | undefined {
   }
 }
 
+/**
+ * Validate/normalise a client-supplied 3-D Secure payload. Only ECI + CAVV
+ * pairs are accepted; anything else is dropped so a malicious client cannot
+ * fabricate authentication data.
+ */
+export function sanitizeThreeDS(v: unknown): ThreeDSecureResult | undefined {
+  if (!v || typeof v !== "object") return undefined;
+  const o = v as Record<string, unknown>;
+  const str = (x: unknown, max = 128) =>
+    typeof x === "string" && x.trim() ? x.trim().slice(0, max) : undefined;
+  const out: ThreeDSecureResult = {
+    eci: str(o.eci, 2),
+    cavv: str(o.cavv),
+    dsTransactionId: str(o.dsTransactionId, 64),
+    version: str(o.version, 16),
+    actionCode: str(o.actionCode, 16),
+  };
+  return out.eci && out.cavv ? out : undefined;
+}
+
 export interface ChargeArgs {
   amount: number;                 // USD
   opaqueData: OpaqueData;
