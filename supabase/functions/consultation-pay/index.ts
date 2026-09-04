@@ -4,7 +4,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod@3.23.8";
-import { chargeCard, splitName } from "../_shared/authnet.ts";
+import { chargeCard, splitName, sanitizeThreeDS } from "../_shared/authnet.ts";
 import { createZoomMeeting, zoomConfigured } from "../_shared/zoom.ts";
 import { sendConsultationEmail } from "../_shared/consultation-email.ts";
 
@@ -14,6 +14,7 @@ const BodySchema = z.object({
     dataDescriptor: z.string().max(255),
     dataValue: z.string().max(20000),
   }).optional(),
+  threeDS: z.unknown().optional(),
 });
 
 const json = (body: unknown, status = 200) =>
@@ -31,7 +32,7 @@ Deno.serve(async (req) => {
     if (!parsed.success) {
       return json({ error: "Invalid input", details: parsed.error.flatten().fieldErrors }, 400);
     }
-    const { booking_id, opaqueData } = parsed.data;
+    const { booking_id, opaqueData, threeDS } = parsed.data;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -86,6 +87,7 @@ Deno.serve(async (req) => {
             : undefined,
         },
         customerEmail: booking.customer_email,
+        authentication: sanitizeThreeDS(threeDS),
       });
       transId = charge.transId;
     }

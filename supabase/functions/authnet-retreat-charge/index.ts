@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
+import { chargeCard, splitName, type OpaqueData, sanitizeThreeDS } from "../_shared/authnet.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,6 +15,7 @@ interface Payload {
   guest_count: number;
   payment_option: "full" | "deposit";
   opaqueData: OpaqueData;
+  threeDS?: unknown;
   contact_name: string;
   contact_email: string;
   contact_phone?: string;
@@ -101,6 +102,7 @@ Deno.serve(async (req) => {
         phoneNumber: (payload.contact_phone || "").replace(/[^\d+\-() ]/g, "").slice(0, 25) || undefined,
       },
       customerEmail: payload.contact_email.toLowerCase().trim(),
+      authentication: sanitizeThreeDS(payload.threeDS),
     });
 
     const { data: booking, error: bookErr } = await supabase

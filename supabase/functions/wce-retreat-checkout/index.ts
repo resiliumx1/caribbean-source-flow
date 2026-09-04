@@ -10,7 +10,7 @@
  */
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
+import { chargeCard, splitName, type OpaqueData, sanitizeThreeDS } from "../_shared/authnet.ts";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -22,6 +22,7 @@ interface Payload {
   action: "verify" | "pay";
   token: string;
   opaqueData?: OpaqueData;
+  threeDS?: unknown;
   phone?: string;
   country?: string;
   notes?: string;
@@ -109,6 +110,7 @@ Deno.serve(async (req) => {
         phoneNumber: (payload.phone || lead.whatsapp || "").replace(/[^\d+\-() ]/g, "").slice(0, 25) || undefined,
       },
       customerEmail: lead.email.toLowerCase().trim(),
+      authentication: sanitizeThreeDS(payload.threeDS),
     });
 
     const orderInsert = {
