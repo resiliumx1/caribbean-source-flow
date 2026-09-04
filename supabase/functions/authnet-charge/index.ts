@@ -1,8 +1,24 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
+import { chargeCard, splitName, type OpaqueData, type ThreeDSecureResult } from "../_shared/authnet.ts";
 import { logCartEvent, syncCartToCrm } from "../_shared/cart-recovery.ts";
 import { sanitizeAttribution, type OrderAttribution } from "../_shared/attribution.ts";
 import { invokeFunction } from "../_shared/invoke-function.ts";
+
+/** Accept only the 3DS fields we forward to Authorize.net. */
+function sanitizeThreeDS(v: unknown): ThreeDSecureResult | undefined {
+  if (!v || typeof v !== "object") return undefined;
+  const o = v as Record<string, unknown>;
+  const str = (x: unknown, max = 128) =>
+    typeof x === "string" && x.trim() ? x.trim().slice(0, max) : undefined;
+  const out: ThreeDSecureResult = {
+    eci: str(o.eci, 2),
+    cavv: str(o.cavv),
+    dsTransactionId: str(o.dsTransactionId, 64),
+    version: str(o.version, 16),
+    actionCode: str(o.actionCode, 16),
+  };
+  return out.eci && out.cavv ? out : undefined;
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,6 +56,7 @@ interface CheckoutPayload {
     billing_country?: string;
   };
   opaqueData: OpaqueData;
+  threeDS?: unknown;
   currency_used: "USD" | "XCD";
   coupon_code?: string;
   /** Marketing attribution only — never used for pricing. */
@@ -229,6 +246,7 @@ Deno.serve(async (req) => {
         phoneNumber: (payload.form.phone || "").replace(/[^\d+\-() ]/g, "").slice(0, 25) || undefined,
       },
       customerEmail: payload.form.email.toLowerCase().trim(),
+      authentication: sanitizeThreeDS(payload.threeDS),
     });
 
     const orderInsert = {

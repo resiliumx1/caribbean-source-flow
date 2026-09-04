@@ -1,5 +1,21 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { chargeCard, splitName, type OpaqueData } from "../_shared/authnet.ts";
+import { chargeCard, splitName, type OpaqueData, type ThreeDSecureResult } from "../_shared/authnet.ts";
+
+/** Accept only the 3DS fields we forward to Authorize.net. */
+function sanitizeThreeDS(v: unknown): ThreeDSecureResult | undefined {
+  if (!v || typeof v !== "object") return undefined;
+  const o = v as Record<string, unknown>;
+  const str = (x: unknown, max = 128) =>
+    typeof x === "string" && x.trim() ? x.trim().slice(0, max) : undefined;
+  const out: ThreeDSecureResult = {
+    eci: str(o.eci, 2),
+    cavv: str(o.cavv),
+    dsTransactionId: str(o.dsTransactionId, 64),
+    version: str(o.version, 16),
+    actionCode: str(o.actionCode, 16),
+  };
+  return out.eci && out.cavv ? out : undefined;
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,7 +27,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { planId, requestedAmount, opaqueData, cardholderName, billingZip, email } =
+    const { planId, requestedAmount, opaqueData, cardholderName, billingZip, email, threeDS } =
       (await req.json()) as {
         planId: string;
         requestedAmount: number;
@@ -19,6 +35,7 @@ Deno.serve(async (req) => {
         cardholderName?: string;
         billingZip?: string;
         email?: string;
+        threeDS?: unknown;
       };
 
     if (!planId) throw new Error("planId required");
@@ -60,6 +77,7 @@ Deno.serve(async (req) => {
         zip: zip.slice(0, 20),
       },
       customerEmail: (email || "").toLowerCase().trim() || undefined,
+      authentication: sanitizeThreeDS(threeDS),
     });
 
     // Idempotent write
