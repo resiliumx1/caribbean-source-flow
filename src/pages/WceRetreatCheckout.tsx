@@ -62,14 +62,16 @@ export default function WceRetreatCheckout() {
   const onToken = async ({
     opaqueData,
     cardholderName,
+    threeDS,
   }: {
     opaqueData: { dataDescriptor: string; dataValue: string };
     cardholderName: string;
+    threeDS?: ThreeDSResult;
   }) => {
     setProcessing(true);
     setPayError(null);
     const { data, error } = await supabase.functions.invoke("wce-retreat-checkout", {
-      body: { action: "pay", token, opaqueData, cardholder_name: cardholderName },
+      body: { action: "pay", token, opaqueData, cardholder_name: cardholderName, threeDS },
     });
     const payload = data as { ok?: boolean; error?: string; order_number?: string; amount_usd?: number } | null;
     setProcessing(false);

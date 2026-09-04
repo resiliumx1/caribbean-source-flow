@@ -279,13 +279,13 @@ export function ConsultationWizard({ serviceSlug }: { serviceSlug?: string }) {
     }
   };
 
-  const payNow = async ({ opaqueData, cardholderName }: { opaqueData: OpaqueData; cardholderName: string }) => {
+  const payNow = async ({ opaqueData, cardholderName, threeDS }: { opaqueData: OpaqueData; cardholderName: string; threeDS?: ThreeDSResult }) => {
     if (!hold) return;
     setPaying(true);
     setFormError(null);
     try {
       const { data: res, error: fnError } = await supabase.functions.invoke("consultation-pay", {
-        body: { booking_id: hold.id, opaqueData, cardholder_name: cardholderName },
+        body: { booking_id: hold.id, opaqueData, cardholder_name: cardholderName, threeDS },
       });
       if (fnError) throw new Error(fnError.message);
       if (res?.error) throw new Error(res.error);

@@ -251,7 +251,7 @@ export default function Checkout() {
     setAppliedCoupon(data);
   };
 
-  const handleAuthNetToken = async ({ opaqueData }: { opaqueData: OpaqueData }) => {
+  const handleAuthNetToken = async ({ opaqueData, threeDS }: { opaqueData: OpaqueData; threeDS?: ThreeDSResult }) => {
     setIsProcessing(true);
     const attribution = readAttribution();
     const pathwayKey = readPathway();
@@ -278,6 +278,7 @@ export default function Checkout() {
           // flag must reflect what was actually entered — otherwise it is discarded.
           form: { ...form, billing_same_as_shipping: billingSame ? "true" : "false" },
             opaqueData,
+            threeDS,
           currency_used: currency,
           coupon_code: appliedCoupon?.code ?? undefined,
           // Attribution only — never used for pricing.
