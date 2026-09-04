@@ -171,6 +171,42 @@ export interface BillTo {
   phoneNumber?: string;
 }
 
+/**
+ * 3-D Secure (EMV 3DS / SCA) authentication result produced by Cardinal
+ * Cruise in the browser and verified server-side before the charge.
+ * Authorize.net accepts these as `cardholderAuthentication`.
+ */
+export interface ThreeDSecureResult {
+  /** ECI flag returned by the directory server, e.g. "05" / "02". */
+  eci?: string;
+  /** Cardholder Authentication Verification Value (base64). */
+  cavv?: string;
+  /** Directory-server transaction id (EMV 3DS). */
+  dsTransactionId?: string;
+  /** 3DS protocol version, e.g. "2.2.0". */
+  version?: string;
+  /** Cardinal ActionCode: SUCCESS / NOACTION / FAILURE / ERROR. */
+  actionCode?: string;
+}
+
+/**
+ * Map a Cardinal ECI flag to the Authorize.net authenticationIndicator.
+ * Visa: 05 = fully authenticated, 06 = attempted.
+ * Mastercard: 02 = fully authenticated, 01 = attempted.
+ */
+function authenticationIndicatorFromEci(eci: string): string | undefined {
+  switch (eci) {
+    case "05":
+    case "02":
+      return "5";
+    case "06":
+    case "01":
+      return "6";
+    default:
+      return undefined;
+  }
+}
+
 export interface ChargeArgs {
   amount: number;                 // USD
   opaqueData: OpaqueData;
