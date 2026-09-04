@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { authenticateCard } from "@/lib/cardinal-3ds";
 
 /**
  * Authorize.net Accept.js card form.
@@ -162,6 +163,7 @@ export function AuthorizeNetCardForm({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [tokenizing, setTokenizing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [statusNote, setStatusNote] = useState<string | null>(null);
 
   const [cardholder, setCardholder] = useState(defaultCardholderName ?? "");
   const [cardNumber, setCardNumber] = useState("");
@@ -282,6 +284,7 @@ export function AuthorizeNetCardForm({
             opaqueData: response.opaqueData,
             cardholderName: cardholder.trim(),
             billingZip: zip.trim(),
+            threeDS,
           });
         } catch (e: any) {
           if (mountedRef.current) setError(e?.message || "Payment failed. Please try again.");
