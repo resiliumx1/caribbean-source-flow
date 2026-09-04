@@ -430,6 +430,20 @@ function buildTransactionRequest(args: ChargeArgs, amount: number) {
     : undefined;
   if (billToRaw) validateOrder(billToRaw, BILL_TO_ORDER, "billTo");
 
+  // 3-D Secure (SCA). Only sent when the browser completed a Cardinal Cruise
+  // authentication and the issuer returned usable ECI + CAVV values.
+  let cardholderAuthentication: Record<string, string> | undefined;
+  const auth = args.authentication;
+  if (auth?.eci && auth?.cavv) {
+    const indicator = authenticationIndicatorFromEci(String(auth.eci).padStart(2, "0"));
+    if (indicator) {
+      cardholderAuthentication = {
+        authenticationIndicator: indicator,
+        cardholderAuthenticationValue: String(auth.cavv).slice(0, 128),
+      };
+    }
+  }
+
   const tr = orderedObject({
     transactionType: "authCaptureTransaction",
     amount: amount.toFixed(2),
