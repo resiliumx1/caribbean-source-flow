@@ -12,7 +12,7 @@ import { useStore } from "@/lib/store-context";
 import { useToast } from "@/hooks/use-toast";
 import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { supabase } from "@/integrations/supabase/client";
-import { AuthorizeNetCardForm, type OpaqueData } from "@/components/payments/AuthorizeNetCardForm";
+import { AuthorizeNetCardForm, type OpaqueData, type ThreeDSResult } from "@/components/payments/AuthorizeNetCardForm";
 import { readAttribution, readPathway } from "@/lib/wce-attribution";
 import { dataLayerPush, pixelTrack } from "@/lib/tracking";
 

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { AuthorizeNetCardForm, type OpaqueData } from "@/components/payments/AuthorizeNetCardForm";
+import { AuthorizeNetCardForm, type OpaqueData, type ThreeDSResult } from "@/components/payments/AuthorizeNetCardForm";
 import { SEOHead } from "@/components/SEOHead";
 import { useRetreatTypes, useRetreatDates, useSoloPricingTiers, calculateSoloPrice } from "@/hooks/use-retreats";
 import { format, addDays } from "date-fns";

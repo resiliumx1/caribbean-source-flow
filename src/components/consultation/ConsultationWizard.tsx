@@ -18,8 +18,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { dataLayerPush, pixelTrack } from "@/lib/tracking";
 import {
-  AuthorizeNetCardForm, type OpaqueData,
-} from "@/components/payments/AuthorizeNetCardForm";
+  AuthorizeNetCardForm, type OpaqueData, type ThreeDSResult } from "@/components/payments/AuthorizeNetCardForm";
 import { SlotPicker } from "@/components/consultation/SlotPicker";
 import { ZoomJoinPanel } from "@/components/consultation/ZoomJoinPanel";
 import { ServiceCard } from "@/components/consultations/ServiceCard";
