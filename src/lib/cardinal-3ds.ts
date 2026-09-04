@@ -122,21 +122,45 @@ export async function authenticateCard(args: AuthenticateArgs): Promise<ThreeDSO
   try {
     cfg = await fetchJwt(args.amountUsd, args.referenceId);
   } catch {
-    // Never block a payment because our own JWT service hiccuped.
-    return { status: "disabled" };
+    // The JWT endpoint always answers (with `enabled:false` when Cardinal is
+    // not configured), so a hard error means we cannot prove authentication
+    // happened. SCA is mandatory in Europe, so fail closed.
+    return {
+      status: "failed",
+      message: "We couldn't run the bank security check right now. Please try again in a moment.",
+    };
   }
   if (!cfg.enabled || !cfg.jwt) return { status: "disabled" };
 
   const env: CardinalEnv = cfg.environment === "production" ? "production" : "sandbox";
-  await loadSongbird(env);
+  try {
+    await loadSongbird(env);
+  } catch {
+    return {
+      status: "failed",
+      message: "The bank security check (3-D Secure) could not be loaded. Please try again.",
+    };
+  }
   const cardinal = window.Cardinal;
-  if (!cardinal) return { status: "disabled" };
+  if (!cardinal) {
+    return {
+      status: "failed",
+      message: "The bank security check (3-D Secure) is unavailable. Please try again.",
+    };
+  }
 
   cardinal.configure({ logging: { level: "off" } });
 
-  const setup = waitForSetup();
-  cardinal.setup("init", { jwt: cfg.jwt });
-  await setup;
+  try {
+    const setup = waitForSetup();
+    cardinal.setup("init", { jwt: cfg.jwt });
+    await setup;
+  } catch (e: any) {
+    return {
+      status: "failed",
+      message: e?.message || "The bank security check timed out. Please try again.",
+    };
+  }
 
   // Give Cardinal the BIN so it can pre-warm the correct directory server.
   try {
