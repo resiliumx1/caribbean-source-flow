@@ -230,6 +230,35 @@ export function AuthorizeNetCardForm({
     }
 
     setTokenizing(true);
+
+    // 3-D Secure (SCA) — required for European cards. Runs before tokenising
+    // so the issuer challenge, if any, is completed first. Returns "disabled"
+    // when Cardinal isn't configured, leaving the previous behaviour intact.
+    let threeDS: ThreeDSResult | undefined;
+    try {
+      setStatusNote("Verifying your card with your bank…");
+      const outcome = await authenticateCard({
+        amountUsd,
+        cardNumber: cn,
+        month: mm,
+        year: yy,
+        cvv: cvvClean,
+        cardholderName: cardholder.trim(),
+        billingZip: zip.trim() || undefined,
+      });
+      if (outcome.status === "failed") {
+        setStatusNote(null);
+        setTokenizing(false);
+        return setError(outcome.message);
+      }
+      if (outcome.status === "ok") threeDS = outcome.result;
+    } catch (e: any) {
+      setStatusNote(null);
+      setTokenizing(false);
+      return setError(e?.message || "The 3-D Secure check could not be completed.");
+    }
+    setStatusNote(null);
+
     window.Accept.dispatchData(
       {
         authData: { clientKey: cfg.clientKey, apiLoginID: cfg.apiLoginId },
