@@ -392,9 +392,13 @@ export function AuthorizeNetCardForm({
         <p className="text-sm text-destructive" role="alert">{error}</p>
       )}
 
+      {statusNote && (
+        <p className="text-sm text-muted-foreground" role="status">{statusNote}</p>
+      )}
+
       <Button type="submit" disabled={!canSubmit} className="w-full">
         {busy ? (
-          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing…</>
+          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {statusNote ? "Verifying…" : "Processing…"}</>
         ) : (
           <>{buttonLabel ?? `Pay $${amountUsd.toFixed(2)} USD`}</>
         )}
