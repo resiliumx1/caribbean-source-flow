@@ -88,6 +88,15 @@ export interface OpaqueData {
   dataValue: string;
 }
 
+/** 3-D Secure result handed to the backend with the payment token. */
+export interface ThreeDSResult {
+  eci?: string;
+  cavv?: string;
+  dsTransactionId?: string;
+  version?: string;
+  actionCode?: string;
+}
+
 export interface AuthorizeNetCardFormProps {
   amountUsd: number;
   buttonLabel?: string;
@@ -95,7 +104,12 @@ export interface AuthorizeNetCardFormProps {
   defaultCardholderName?: string;
   defaultZip?: string;
   processing?: boolean;
-  onToken: (data: { opaqueData: OpaqueData; cardholderName: string; billingZip: string }) => Promise<void> | void;
+  onToken: (data: {
+    opaqueData: OpaqueData;
+    cardholderName: string;
+    billingZip: string;
+    threeDS?: ThreeDSResult;
+  }) => Promise<void> | void;
 }
 
 function digitsOnly(v: string) {
