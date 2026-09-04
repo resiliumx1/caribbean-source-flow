@@ -179,6 +179,8 @@ export interface ChargeArgs {
   billTo?: BillTo;
   customerEmail?: string;
   refId?: string;
+  /** 3-D Secure (SCA) authentication result from Cardinal Cruise, if any. */
+  authentication?: ThreeDSecureResult;
 }
 
 export interface ChargeResult {
