@@ -82,8 +82,7 @@ export function WceThemeProvider({ children }: { children: React.ReactNode }) {
       {/* data-wce-theme is rendered, not assigned in an effect, so the first
           paint of this route is already in the right theme. */}
       <div className="wce-root" data-wce-theme={themeState.theme}>
-        {/* Mobile: the sub-nav rail is desktop-only, so the switch also lives
-            as a floating control that is reachable from the hero. */}
+        {/* Mobile: keep the route switch below the menu rather than inside the header. */}
         <WceThemeToggle className="wce-floating-toggle" />
         {children}
       </div>
