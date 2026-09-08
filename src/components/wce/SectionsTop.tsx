@@ -10,7 +10,7 @@ import {
   Reveal, useInView, useWceReducedMotion,
   MaskedHeading, ClipReveal, useSectionLift,
 } from "./motion";
-import { WceCountdown, WceHeroTrust } from "./WceCountdown";
+import { WceHeroTrust } from "./WceCountdown";
 import { WceTitleLockup } from "./HeroLockup";
 import { WcePartnerMarquee } from "./PartnerMarquee";
 import { LoveEmblem } from "./LoveEmblem";
