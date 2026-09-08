@@ -3317,6 +3317,7 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
   background: var(--wce-gold);
 }
 .wce-hero-symposium__time {
+  white-space: nowrap;
   font-weight: 600;
   font-size: clamp(0.68rem, 1.5vw, 0.85rem);
   letter-spacing: 0.16em;
