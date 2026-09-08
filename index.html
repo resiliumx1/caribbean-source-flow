@@ -184,8 +184,12 @@
         // MKRC theme
         var mkrcTheme = localStorage.getItem('mkrc-theme') || 'dark';
         document.documentElement.setAttribute('data-mkrc-theme', mkrcTheme);
+        // Marks JS-capable clients so the static text fallback never flashes
+        // before React mounts. Crawlers without JS still get the full content.
+        document.documentElement.className += ' js-active';
       })();
     </script>
+    <style>html.js-active #seo-static-fallback{display:none!important}</style>
     <div id="root">
       <!--
         Static gate skeleton. Hidden in the delivered HTML and only promoted to a
