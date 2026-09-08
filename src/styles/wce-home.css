@@ -145,6 +145,14 @@
 .wce-home-countdown .wce-count-value {
   font-size: clamp(1.4rem, 2.4vw, 1.9rem);
 }
+.wce-home-countdown {
+  margin-top: 0.15rem;
+  padding: 0.85rem clamp(0.45rem, 2vw, 1.2rem);
+  border-top: 1px solid rgba(var(--wce-gold-rgb), 0.34);
+  border-bottom: 1px solid rgba(var(--wce-gold-rgb), 0.34);
+  background: rgba(var(--wce-scrim-rgb), 0.28);
+  backdrop-filter: blur(3px);
+}
 
 /* --- Gold corner ornaments, drawn in on scroll entry --- */
 .wce-home-corner {

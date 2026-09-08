@@ -865,6 +865,22 @@ body.wce-route.wce-dark .wce-sticky-cta { background: rgba(8, 23, 18, 0.96); }
 }
 
 /* ============ COUNTDOWN — inline figures split by gold hairlines ============ */
+.wce-countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+.wce-count-kicker {
+  margin: 0;
+  font-family: var(--wce-flyer);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(var(--wce-cream-rgb), 0.9);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
 .wce-count-row {
   display: flex;
   align-items: stretch;
@@ -908,6 +924,10 @@ body.wce-route.wce-dark .wce-sticky-cta { background: rgba(8, 23, 18, 0.96); }
   text-transform: uppercase;
   color: rgba(var(--wce-cream-rgb), 0.82);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+@media (max-width: 420px) {
+  .wce-count-block { min-width: 0; padding: 0 0.72rem; }
+  .wce-count-label { font-size: 0.625rem; letter-spacing: 0.14em; }
 }
 
 /* ============ STICKY MOBILE CTA ============ */
@@ -3396,34 +3416,55 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
   color: #FFFDF6;
 }
 
-/* Distinct, restrained invitations: a warm gleam for in-person, a breathing
-   outline for online. Animations pause on interaction so clicks feel precise. */
+/* Distinct continuous invitations: a bright travelling gleam for in-person,
+   and a cooler illuminated-border sweep for online. Both remain composed. */
 .wce-hero-cta-inperson {
-  animation: wce-hero-gold-invite 3.8s ease-in-out 2.2s infinite;
+  animation: wce-hero-gold-invite 3.2s ease-in-out 1.8s infinite;
+  will-change: transform, box-shadow, filter;
 }
 .wce-hero-cta-inperson::before {
-  animation: wce-hero-gold-sheen 3.8s cubic-bezier(0.22, 1, 0.36, 1) 2.2s infinite;
+  width: 42%;
+  inset: -20% auto -20% 0;
+  background: linear-gradient(100deg, transparent 0%, rgba(255,253,236,0.82) 48%, transparent 100%);
+  transform: translateX(-150%) skewX(-16deg);
+  animation: wce-hero-gold-sheen 3.2s cubic-bezier(0.22, 1, 0.36, 1) 1.8s infinite;
 }
 .wce-hero-cta-online {
-  animation: wce-hero-outline-invite 4.4s ease-in-out 2.7s infinite;
+  animation: wce-hero-outline-invite 3.8s ease-in-out 2.15s infinite;
+  will-change: transform, box-shadow;
 }
-.wce-hero-cta-inperson:hover,
-.wce-hero-cta-inperson:focus-visible,
-.wce-hero-cta-online:hover,
-.wce-hero-cta-online:focus-visible {
-  animation-play-state: paused;
+.wce-hero-cta-online::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 1.5px solid transparent;
+  background: linear-gradient(105deg, transparent 18%, rgba(255,253,246,0.95) 48%, transparent 76%) border-box;
+  background-size: 250% 100%;
+  background-position: 140% 0;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: wce-hero-border-travel 3.8s ease-in-out 2.15s infinite;
 }
 @keyframes wce-hero-gold-invite {
-  0%, 70%, 100% { box-shadow: 0 14px 34px -18px rgba(0,0,0,0.9), 0 0 0 0 rgba(var(--wce-gold-rgb), 0); }
-  82% { box-shadow: 0 16px 38px -16px rgba(0,0,0,0.92), 0 0 0 6px rgba(var(--wce-gold-rgb), 0.14); }
+  0%, 100% { transform: translateY(0); filter: brightness(1); box-shadow: 0 14px 34px -18px rgba(0,0,0,0.9), 0 0 0 0 rgba(var(--wce-gold-rgb), 0); }
+  48% { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 18px 38px -16px rgba(0,0,0,0.94), 0 0 20px rgba(var(--wce-goldlight-rgb), 0.28); }
 }
 @keyframes wce-hero-gold-sheen {
-  0%, 66% { transform: translateX(-110%); }
-  84%, 100% { transform: translateX(110%); }
+  0%, 18% { transform: translateX(-150%) skewX(-16deg); opacity: 0; }
+  30% { opacity: 1; }
+  58%, 100% { transform: translateX(340%) skewX(-16deg); opacity: 0; }
 }
 @keyframes wce-hero-outline-invite {
-  0%, 72%, 100% { border-color: var(--wce-gold); box-shadow: inset 0 0 0 0 rgba(var(--wce-gold-rgb), 0), 0 0 0 0 rgba(var(--wce-gold-rgb), 0); }
-  84% { border-color: var(--wce-gold-light); box-shadow: inset 0 0 18px rgba(var(--wce-gold-rgb), 0.12), 0 0 18px rgba(var(--wce-gold-rgb), 0.2); }
+  0%, 100% { transform: translateY(0); border-color: var(--wce-gold); box-shadow: inset 0 0 0 rgba(var(--wce-gold-rgb), 0), 0 0 0 rgba(var(--wce-gold-rgb), 0); }
+  50% { transform: translateY(-1px); border-color: var(--wce-gold-light); box-shadow: inset 0 0 20px rgba(var(--wce-gold-rgb), 0.11), 0 0 16px rgba(var(--wce-gold-rgb), 0.24); }
+}
+@keyframes wce-hero-border-travel {
+  0%, 12% { background-position: 140% 0; opacity: 0.35; }
+  50% { opacity: 1; }
+  78%, 100% { background-position: -140% 0; opacity: 0.35; }
 }
 @media (max-width: 639px) {
   .wce-hero-symposium { gap: 0.7rem; }
@@ -3432,5 +3473,6 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
 @media (prefers-reduced-motion: reduce) {
   .wce-hero-cta-inperson,
   .wce-hero-cta-inperson::before,
-  .wce-hero-cta-online { animation: none; }
+  .wce-hero-cta-online,
+  .wce-hero-cta-online::after { animation: none; }
 }
