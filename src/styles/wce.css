@@ -3264,3 +3264,134 @@ body.wce-route .site-search-overlay mark { background: rgba(228, 199, 102, 0.28)
 @media (max-width: 380px) {
   .wce-sticky-cta .wce-btn { letter-spacing: 0; padding-inline: 0.35rem; }
 }
+
+/* ============ HERO — SYMPOSIUM CONVERSION LOCKUP ============ */
+.wce-hero-symposium {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.6rem);
+  text-align: left;
+}
+.wce-hero-symposium__title {
+  font-family: var(--wce-banner);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+  font-size: clamp(1.5rem, 4.4vw, 3rem);
+  color: var(--wce-gold-light);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.65), 0 4px 22px rgba(0,0,0,0.5);
+}
+.wce-hero-symposium__divider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(to bottom, transparent, rgba(var(--wce-gold-rgb), 0.65), transparent);
+}
+.wce-hero-symposium__when {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: var(--wce-banner);
+  text-transform: uppercase;
+  color: #FBF7EC;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+}
+.wce-hero-symposium__day {
+  font-weight: 800;
+  font-size: clamp(1.25rem, 3.2vw, 2.1rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.wce-hero-symposium__month {
+  font-weight: 700;
+  font-size: clamp(0.8rem, 1.9vw, 1.15rem);
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+}
+.wce-hero-symposium__bar {
+  display: block;
+  width: 100%;
+  height: 2px;
+  margin: 0.3rem 0;
+  background: var(--wce-gold);
+}
+.wce-hero-symposium__time {
+  font-weight: 600;
+  font-size: clamp(0.68rem, 1.5vw, 0.85rem);
+  letter-spacing: 0.16em;
+  color: rgba(251, 247, 236, 0.92);
+}
+
+/* Lead paragraph — high contrast over any video frame */
+.wce-hero-lead {
+  max-width: 46ch;
+  font-family: var(--wce-body);
+  font-size: clamp(1rem, 1.35vw, 1.1875rem);
+  line-height: 1.6;
+  color: #FFFDF6;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.75), 0 3px 18px rgba(0,0,0,0.55);
+}
+
+/* Secondary retreat link */
+.wce-hero-retreatlink {
+  font-family: var(--wce-body);
+  font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
+  color: var(--wce-gold-light);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color .25s ease, transform .25s ease;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+.wce-hero-retreatlink:hover { color: #FFFDF6; transform: translateY(-1px); }
+
+/* Trust strip */
+.wce-hero-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.9rem, 3vw, 2rem);
+  flex-wrap: wrap;
+}
+.wce-hero-trust__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--wce-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(251, 247, 236, 0.9);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+.wce-hero-trust__count {
+  font-family: var(--wce-banner);
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: 0;
+  color: var(--wce-gold-light);
+}
+.wce-hero-trust__rule {
+  width: clamp(28px, 8vw, 70px);
+  height: 1px;
+  background: rgba(var(--wce-gold-rgb), 0.5);
+}
+
+/* CTA pair: wider to hold the priced labels, stacked on phones */
+.wce-hero-ctas .wce-btn { min-width: 280px; letter-spacing: 0.14em; }
+.wce-hero-ctas .wce-btn-gold { box-shadow: 0 14px 34px -18px rgba(0,0,0,0.9); }
+.wce-hero-ctas .wce-btn-outline {
+  background: rgba(11, 26, 18, 0.42);
+  backdrop-filter: blur(3px);
+  border-width: 1.5px;
+  color: #FFFDF6;
+}
+@media (max-width: 639px) {
+  .wce-hero-symposium { gap: 0.7rem; }
+  .wce-hero-ctas .wce-btn { min-width: 0; font-size: 0.8125rem; }
+}
