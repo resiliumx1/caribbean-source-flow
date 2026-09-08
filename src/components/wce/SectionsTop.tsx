@@ -41,11 +41,18 @@ export function WceHero() {
   return (
     <section className="wce-hero-section relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[168px] pt-[clamp(2.5rem,5vh,4rem)] text-center sm:pb-[200px] xl:pb-[230px]">
       <WceHeroMedia />
+      {/* Deeper scrim so the copy and CTAs stay high-contrast over every video frame */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[66%]"
-        style={{ background: "linear-gradient(to top, rgba(var(--wce-forest-rgb), 0.97) 0%, rgba(var(--wce-forest-rgb), 0.88) 24%, rgba(var(--wce-forest-rgb), 0.62) 46%, rgba(var(--wce-forest-rgb), 0.28) 66%, rgba(var(--wce-forest-rgb), 0) 88%)" }}
+        className="absolute inset-0"
+        style={{ background: "radial-gradient(115% 85% at 50% 45%, rgba(var(--wce-forest-rgb), 0.62) 0%, rgba(var(--wce-forest-rgb), 0.5) 55%, rgba(var(--wce-forest-rgb), 0.3) 100%)" }}
       />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-[72%]"
+        style={{ background: "linear-gradient(to top, rgba(var(--wce-forest-rgb), 0.98) 0%, rgba(var(--wce-forest-rgb), 0.92) 26%, rgba(var(--wce-forest-rgb), 0.7) 48%, rgba(var(--wce-forest-rgb), 0.34) 70%, rgba(var(--wce-forest-rgb), 0) 92%)" }}
+      />
+
       <WceHeroParticles />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-70 sm:right-10 sm:top-10" />
