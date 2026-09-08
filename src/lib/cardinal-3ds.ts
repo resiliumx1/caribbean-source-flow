@@ -51,6 +51,7 @@ export type ThreeDSOutcome =
   | { status: "failed"; message: string };
 
 let scriptPromise: Promise<void> | null = null;
+let setupPromise: Promise<void> | null = null;
 function loadSongbird(env: CardinalEnv): Promise<void> {
   if (window.Cardinal) return Promise.resolve();
   if (scriptPromise) return scriptPromise;
