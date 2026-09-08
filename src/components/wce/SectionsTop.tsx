@@ -10,13 +10,13 @@ import {
   Reveal, useInView, useWceReducedMotion,
   MaskedHeading, ClipReveal, useSectionLift,
 } from "./motion";
-import { WceCountdown } from "./WceCountdown";
+import { WceHeroTrust } from "./WceCountdown";
 import { WceTitleLockup } from "./HeroLockup";
 import { WcePartnerMarquee } from "./PartnerMarquee";
 import { LoveEmblem } from "./LoveEmblem";
 import { PathwayCardsSkeleton, SpeakersSkeleton } from "./Skeletons";
 import { PathwayCard } from "./PathwayCard";
-import { HERO_CIRCUIT_LINE, HERO_DATE_SUPPORT, PATHWAY_COPY } from "./campaign";
+import { PATHWAY_COPY } from "./campaign";
 
 const PARTNERS = [
   "Mount Kailash",
@@ -41,11 +41,18 @@ export function WceHero() {
   return (
     <section className="wce-hero-section relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-[168px] pt-[clamp(2.5rem,5vh,4rem)] text-center sm:pb-[200px] xl:pb-[230px]">
       <WceHeroMedia />
+      {/* Deeper scrim so the copy and CTAs stay high-contrast over every video frame */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[66%]"
-        style={{ background: "linear-gradient(to top, rgba(var(--wce-forest-rgb), 0.97) 0%, rgba(var(--wce-forest-rgb), 0.88) 24%, rgba(var(--wce-forest-rgb), 0.62) 46%, rgba(var(--wce-forest-rgb), 0.28) 66%, rgba(var(--wce-forest-rgb), 0) 88%)" }}
+        className="absolute inset-0"
+        style={{ background: "radial-gradient(115% 85% at 50% 45%, rgba(var(--wce-forest-rgb), 0.62) 0%, rgba(var(--wce-forest-rgb), 0.5) 55%, rgba(var(--wce-forest-rgb), 0.3) 100%)" }}
       />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-[72%]"
+        style={{ background: "linear-gradient(to top, rgba(var(--wce-forest-rgb), 0.98) 0%, rgba(var(--wce-forest-rgb), 0.92) 26%, rgba(var(--wce-forest-rgb), 0.7) 48%, rgba(var(--wce-forest-rgb), 0.34) 70%, rgba(var(--wce-forest-rgb), 0) 92%)" }}
+      />
+
       <WceHeroParticles />
       <CornerVine className="pointer-events-none absolute left-4 top-4 opacity-70 sm:left-10 sm:top-10" />
       <CornerVine flip className="pointer-events-none absolute right-4 top-4 opacity-70 sm:right-10 sm:top-10" />
@@ -55,68 +62,76 @@ export function WceHero() {
           <LotusMark size={40} />
         </div>
 
-        {/* Banner lockup: title | outlined year | stacked dates + green bar */}
-        <WceTitleLockup reduced={reduced} />
+        {/* Banner lockup: title | outlined year */}
+        <WceTitleLockup reduced={reduced} showDates={false} />
 
-        <p
-          className="wce-banner-subline mt-[clamp(0.7rem,1.8vh,1.3rem)]"
-          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.3s both" }}
-        >
-          Holistic Symposium <span className="sep">|</span> Fortification Retreat{" "}
-          <span className="sep">|</span> LifeCraft Experience
-        </p>
-        <p
-          className="wce-hero-datesupport mt-[clamp(0.5rem,1.4vh,0.9rem)]"
-          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.34s both" }}
-        >
-          {HERO_DATE_SUPPORT}
-        </p>
-        <p
-          className="wce-hero-circuit mt-[clamp(0.6rem,1.6vh,1.1rem)]"
-          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.4s both" }}
-        >
-          {HERO_CIRCUIT_LINE}
-        </p>
-        <p
-          className="wce-banner-venue mt-[clamp(0.35rem,1vh,0.6rem)]"
-          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.3s both" }}
-        >
-          {venue}
-        </p>
-
+        {/* Symposium + day/time block */}
         <div
-          className="wce-hero-emblem mt-[clamp(0.7rem,1.8vh,1.3rem)]"
-          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.45s both" }}
+          className="wce-hero-symposium mt-[clamp(0.8rem,2vh,1.5rem)]"
+          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.2s both" }}
         >
-          <LoveEmblem size={200} variant="cream" />
+          <span className="wce-hero-symposium__title">
+            Wellness
+            <br className="hidden sm:block" /> Symposium
+          </span>
+          <span aria-hidden="true" className="wce-hero-symposium__divider" />
+          <span className="wce-hero-symposium__when">
+            <span className="wce-hero-symposium__day">Sun 11</span>
+            <span className="wce-hero-symposium__month">October</span>
+            <span aria-hidden="true" className="wce-hero-symposium__bar" />
+            <span className="wce-hero-symposium__time">10am to 6pm</span>
+          </span>
         </div>
 
-        <div className={cls("my-[clamp(0.8rem,2vh,1.6rem)] w-full max-w-sm")} style={stage(0.95)}>
-          <LeafDivider />
-        </div>
-
-        <WceCountdown className={cls("mt-[clamp(0.5rem,1.6vh,1.4rem)]")} />
+        <p
+          className="wce-hero-lead mt-[clamp(0.9rem,2.2vh,1.6rem)]"
+          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.3s both" }}
+        >
+          One transformative day of food, herbs, movement and conscious living — with
+          Priest Kailash, Jah9, Dr Bobby Price, Rizza Islam and more.
+        </p>
 
         {/* CTAs render fully interactive from first paint; only opacity is animated. */}
-        <div className="wce-hero-ctas mt-[clamp(1.75rem,3.6vh,3.25rem)] mb-[clamp(1rem,2vh,2rem)] w-full sm:w-auto">
+        <div className="wce-hero-ctas mt-[clamp(1.5rem,3.2vh,2.5rem)] w-full sm:w-auto">
           <a
-            href="#pathways"
+            href="/wce-2026/go/in-person"
             className={`wce-btn wce-btn-gold ${reduced ? "" : "wce-hero-cta-enter"}`}
-            style={reduced ? undefined : { animationDelay: "1.6s" }}
-            onClick={() => trackWceCta("reserve", "hero", "Choose Your Pathway")}
+            style={reduced ? undefined : { animationDelay: "1.45s" }}
+            onClick={() => trackWceCta("reserve", "hero", "Attend In Person — US$70")}
           >
-            Choose Your Pathway
+            Attend In Person — US$70
           </a>
           <a
-            href="#apply"
+            href="/wce-2026/go/online"
             className={`wce-btn wce-btn-outline ${reduced ? "" : "wce-hero-cta-enter"}`}
-            style={reduced ? undefined : { animationDelay: "1.69s" }}
-            onClick={() => trackWceCta("apply", "hero", "Begin Your Application")}
+            style={reduced ? undefined : { animationDelay: "1.54s" }}
+            onClick={() => trackWceCta("reserve", "hero", "Watch Online — US$50")}
           >
-            Begin Your Application
+            Watch Online — US$50
           </a>
         </div>
+
+        <a
+          href="#retreat-detail"
+          className={`wce-hero-retreatlink mt-[clamp(0.9rem,2vh,1.4rem)] ${reduced ? "" : "wce-hero-cta-enter"}`}
+          style={reduced ? undefined : { animationDelay: "1.62s" }}
+          onClick={() => trackWceCta("explore", "hero", "Explore the 12-17 October retreat")}
+        >
+          Explore the 12-17 October retreat →
+        </a>
+
+        <div
+          className="wce-hero-emblem mt-[clamp(1rem,2.4vh,1.8rem)]"
+          style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.7s both" }}
+        >
+          <LoveEmblem size={168} variant="cream" />
+        </div>
+
+        <WceHeroTrust className={cls("mt-[clamp(0.9rem,2.2vh,1.6rem)]")} />
+
+        <p className="wce-banner-venue mt-[clamp(0.6rem,1.4vh,1rem)]">{venue}</p>
       </div>
+
 
       <WcePartnerMarquee />
     </section>
