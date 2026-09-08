@@ -95,7 +95,7 @@ export function WceHero() {
         <div className="wce-hero-ctas mt-[clamp(1.5rem,3.2vh,2.5rem)] w-full sm:w-auto">
           <a
             href="/wce-2026/go/in-person"
-            className={`wce-btn wce-btn-gold ${reduced ? "" : "wce-hero-cta-enter"}`}
+            className={`wce-btn wce-btn-gold wce-hero-cta-inperson ${reduced ? "" : "wce-hero-cta-enter"}`}
             style={reduced ? undefined : { animationDelay: "1.45s" }}
             onClick={() => trackWceCta("reserve", "hero", "Attend In Person — US$70")}
           >
@@ -103,7 +103,7 @@ export function WceHero() {
           </a>
           <a
             href="/wce-2026/go/online"
-            className={`wce-btn wce-btn-outline ${reduced ? "" : "wce-hero-cta-enter"}`}
+            className={`wce-btn wce-btn-outline wce-hero-cta-online ${reduced ? "" : "wce-hero-cta-enter"}`}
             style={reduced ? undefined : { animationDelay: "1.54s" }}
             onClick={() => trackWceCta("reserve", "hero", "Watch Online — US$50")}
           >
