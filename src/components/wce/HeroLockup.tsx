@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { Year2026 } from "./Year2026";
 
-export function WceTitleLockup({ reduced }: { reduced: boolean }) {
+export function WceTitleLockup({ reduced, showDates = true }: { reduced: boolean; showDates?: boolean }) {
   const lines = ["Caribbean", "Wellness", "Saint Lucia"];
+
   // The year draws on as the second stage-in step, after the title lines slide up.
   const [yearStart, setYearStart] = useState(reduced);
   useEffect(() => {
