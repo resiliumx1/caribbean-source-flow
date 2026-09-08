@@ -123,13 +123,11 @@ export async function authenticateCard(args: AuthenticateArgs): Promise<ThreeDSO
   try {
     cfg = await fetchJwt(args.amountUsd, args.referenceId);
   } catch {
-    // The JWT endpoint always answers (with `enabled:false` when Cardinal is
-    // not configured), so a hard error means we cannot prove authentication
-    // happened. SCA is mandatory in Europe, so fail closed.
-    return {
-      status: "failed",
-      message: "We couldn't run the bank security check right now. Please try again in a moment.",
-    };
+    // We could not reach the 3DS setup service, so we cannot even tell whether
+    // Cardinal is configured. Blocking here would stop every card payment for a
+    // transient blip, so treat it the same as "not configured" and let the
+    // gateway's own rules apply.
+    return { status: "disabled" };
   }
   if (!cfg.enabled || !cfg.jwt) return { status: "disabled" };
 
