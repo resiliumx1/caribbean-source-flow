@@ -135,30 +135,30 @@ export async function authenticateCard(args: AuthenticateArgs): Promise<ThreeDSO
   try {
     await loadSongbird(env);
   } catch {
-    return {
-      status: "failed",
-      message: "The bank security check (3-D Secure) could not be loaded. Please try again.",
-    };
+    // Script blocked (ad-blocker, CSP, network). Skip 3DS rather than block the
+    // payment entirely; the gateway still applies its own rules.
+    return { status: "disabled" };
   }
   const cardinal = window.Cardinal;
-  if (!cardinal) {
-    return {
-      status: "failed",
-      message: "The bank security check (3-D Secure) is unavailable. Please try again.",
-    };
-  }
+  if (!cardinal) return { status: "disabled" };
 
   cardinal.configure({ logging: { level: "off" } });
 
   try {
-    const setup = waitForSetup();
-    cardinal.setup("init", { jwt: cfg.jwt });
-    await setup;
-  } catch (e: any) {
-    return {
-      status: "failed",
-      message: e?.message || "The bank security check timed out. Please try again.",
-    };
+    // Songbird can only be initialised once per page load — cache it so a
+    // retry after a failed attempt doesn't wait on an event that never re-fires.
+    if (!setupPromise) {
+      setupPromise = (async () => {
+        const setup = waitForSetup();
+        cardinal.setup("init", { jwt: cfg.jwt });
+        await setup;
+      })();
+    }
+    await setupPromise;
+  } catch {
+    setupPromise = null;
+    // Setup never completed — proceed without 3DS instead of stranding the customer.
+    return { status: "disabled" };
   }
 
   // Give Cardinal the BIN so it can pre-warm the correct directory server.
