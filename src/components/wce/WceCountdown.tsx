@@ -39,3 +39,34 @@ export function WceCountdown({ className = "" }: { className?: string }) {
     </div>
   );
 }
+/** Compact trust strip: secure checkout reassurance + days remaining. */
+export function WceHeroTrust({ className = "" }: { className?: string }) {
+  const [remaining, setRemaining] = useState(() => TARGET - Date.now());
+
+  useEffect(() => {
+    const id = window.setInterval(() => setRemaining(TARGET - Date.now()), 60000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const days = Math.max(0, Math.ceil(remaining / 86400000));
+
+  return (
+    <div className={`wce-hero-trust ${className}`}>
+      <span className="wce-hero-trust__item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="4" y="10.5" width="16" height="10.5" rx="2" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M8 10.5V8a4 4 0 1 1 8 0v2.5" stroke="currentColor" strokeWidth="1.8" />
+        </svg>
+        Secure Checkout
+      </span>
+      {remaining > 0 && (
+        <>
+          <span aria-hidden="true" className="wce-hero-trust__rule" />
+          <span className="wce-hero-trust__item">
+            <strong className="wce-hero-trust__count">{days}</strong> Days To Go
+          </span>
+        </>
+      )}
+    </div>
+  );
+}
