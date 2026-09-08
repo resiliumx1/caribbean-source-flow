@@ -10,13 +10,13 @@ import {
   Reveal, useInView, useWceReducedMotion,
   MaskedHeading, ClipReveal, useSectionLift,
 } from "./motion";
-import { WceCountdown } from "./WceCountdown";
+import { WceCountdown, WceHeroTrust } from "./WceCountdown";
 import { WceTitleLockup } from "./HeroLockup";
 import { WcePartnerMarquee } from "./PartnerMarquee";
 import { LoveEmblem } from "./LoveEmblem";
 import { PathwayCardsSkeleton, SpeakersSkeleton } from "./Skeletons";
 import { PathwayCard } from "./PathwayCard";
-import { HERO_CIRCUIT_LINE, HERO_DATE_SUPPORT, PATHWAY_COPY } from "./campaign";
+import { PATHWAY_COPY } from "./campaign";
 
 const PARTNERS = [
   "Mount Kailash",
@@ -105,10 +105,10 @@ export function WceHero() {
         </div>
 
         <a
-          href="#retreat"
+          href="#retreat-detail"
           className={`wce-hero-retreatlink mt-[clamp(0.9rem,2vh,1.4rem)] ${reduced ? "" : "wce-hero-cta-enter"}`}
           style={reduced ? undefined : { animationDelay: "1.62s" }}
-          onClick={() => trackWceCta("retreat", "hero", "Explore the 12-17 October retreat")}
+          onClick={() => trackWceCta("explore", "hero", "Explore the 12-17 October retreat")}
         >
           Explore the 12-17 October retreat →
         </a>
