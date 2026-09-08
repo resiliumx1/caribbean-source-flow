@@ -39,28 +39,31 @@ export function WceTitleLockup({ reduced, showDates = true }: { reduced: boolean
       </div>
 
       {/* Right: rule + dates + green bar */}
-      <div className="wce-banner-dates">
-        <span aria-hidden="true" className="wce-banner-daterule" />
-        <div className="wce-banner-datestack">
-          <span
-            className="wce-banner-day"
-            style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 0.95s both" }}
-          >
-            11-17
-          </span>
-          <span
-            className="wce-banner-month"
-            style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.02s both" }}
-          >
-            October
-          </span>
-          <span
-            aria-hidden="true"
-            className="wce-banner-bar"
-            style={reduced ? undefined : { animation: "wce-wipe-x 0.55s cubic-bezier(0.22,1,0.36,1) 1.18s both" }}
-          />
+      {showDates && (
+        <div className="wce-banner-dates">
+          <span aria-hidden="true" className="wce-banner-daterule" />
+          <div className="wce-banner-datestack">
+            <span
+              className="wce-banner-day"
+              style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 0.95s both" }}
+            >
+              11-17
+            </span>
+            <span
+              className="wce-banner-month"
+              style={reduced ? undefined : { animation: "wce-rise 0.6s cubic-bezier(0.22,1,0.36,1) 1.02s both" }}
+            >
+              October
+            </span>
+            <span
+              aria-hidden="true"
+              className="wce-banner-bar"
+              style={reduced ? undefined : { animation: "wce-wipe-x 0.55s cubic-bezier(0.22,1,0.36,1) 1.18s both" }}
+            />
+          </div>
         </div>
-      </div>
+      )}
+
     </div>
   );
 }
