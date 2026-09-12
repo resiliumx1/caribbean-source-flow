@@ -594,6 +594,14 @@ export function WceApplicationForm() {
         /* list sync must never affect the applicant's journey */
       });
 
+    /* Organisers are notified by email for every application. Like Mailchimp,
+       this never blocks the applicant — the row is already stored. */
+    void supabase.functions
+      .invoke("wce-lead-notify", { body: { action: "notify_lead", lead_id: leadId } })
+      .catch(() => {
+        /* notification failure must never affect the applicant's journey */
+      });
+
     dataLayerPush("lead_submit", {
       pathway_interest: values.pathway_interest || null,
       referral_code: attribution.referral_code,
