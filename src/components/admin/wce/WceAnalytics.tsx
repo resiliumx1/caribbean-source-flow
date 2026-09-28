@@ -369,6 +369,32 @@ ${args.tables.map(table).join("")}
   w.document.close();
 }
 
+/** The database returns at most 1000 rows per request, so every history read
+ *  has to be paged through. Without this, "All time" and "30 days" silently
+ *  showed only the most recent 1000 events and under-reported every figure. */
+const PAGE_SIZE = 1000;
+const MAX_ROWS = 60000;
+
+async function fetchAllEvents<T>(
+  columns: string,
+  build: (q: ReturnType<typeof supabase.from<"wce_page_events">>["select"]> extends never ? never : any) => any,
+): Promise<{ data: T[]; error: { message: string } | null }> {
+  const out: T[] = [];
+  for (let from = 0; from < MAX_ROWS; from += PAGE_SIZE) {
+    let q = supabase.from("wce_page_events").select(columns);
+    q = build(q);
+    const { data, error } = await q
+      .order("created_at", { ascending: false })
+      .range(from, from + PAGE_SIZE - 1);
+    if (error) return { data: out, error };
+    const page = (data ?? []) as T[];
+    out.push(...page);
+    if (page.length < PAGE_SIZE) break;
+  }
+  return { data: out, error: null };
+}
+
+
 export default function WceAnalytics() {
   const [range, setRange] = useState<RangeKey>("all");
   // Detailed visitor history: free-text filter and how many rows are shown.
