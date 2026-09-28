@@ -467,13 +467,10 @@ export default function WceAnalytics() {
     (async () => {
       const from = new Date(Date.now() - 29 * 86400000);
       from.setHours(0, 0, 0, 0);
-      const { data } = await supabase
-        .from("wce_page_events")
-        .select("created_at,session_id")
-        .eq("event_type", "page_view")
-        .gte("created_at", from.toISOString())
-        .order("created_at", { ascending: false })
-        .limit(30000);
+      const { data } = await fetchAllEvents<{ created_at: string; session_id: string }>(
+        "created_at,session_id",
+        (q) => q.eq("event_type", "page_view").gte("created_at", from.toISOString()),
+      );
       if (!cancelled) setMonthRows((data ?? []) as Array<{ created_at: string; session_id: string }>);
     })();
     return () => { cancelled = true; };
