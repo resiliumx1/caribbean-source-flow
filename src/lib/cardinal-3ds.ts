@@ -131,16 +131,19 @@ export async function authenticateCard(args: AuthenticateArgs): Promise<ThreeDSO
   }
   if (!cfg.enabled || !cfg.jwt) return { status: "disabled" };
 
+  // From here on Cardinal IS configured, so 3-D Secure is required. Any failure
+  // must stop the charge (fail closed) with a retry message — never silently
+  // send an unauthenticated transaction.
+  const retryMsg =
+    "We couldn't run your bank's security check. Please disable any ad-blocker, check your connection and try again.";
   const env: CardinalEnv = cfg.environment === "production" ? "production" : "sandbox";
   try {
     await loadSongbird(env);
   } catch {
-    // Script blocked (ad-blocker, CSP, network). Skip 3DS rather than block the
-    // payment entirely; the gateway still applies its own rules.
-    return { status: "disabled" };
+    return { status: "failed", message: retryMsg };
   }
   const cardinal = window.Cardinal;
-  if (!cardinal) return { status: "disabled" };
+  if (!cardinal) return { status: "failed", message: retryMsg };
 
   cardinal.configure({ logging: { level: "off" } });
 
@@ -157,8 +160,7 @@ export async function authenticateCard(args: AuthenticateArgs): Promise<ThreeDSO
     await setupPromise;
   } catch {
     setupPromise = null;
-    // Setup never completed — proceed without 3DS instead of stranding the customer.
-    return { status: "disabled" };
+    return { status: "failed", message: retryMsg };
   }
 
   // Give Cardinal the BIN so it can pre-warm the correct directory server.
