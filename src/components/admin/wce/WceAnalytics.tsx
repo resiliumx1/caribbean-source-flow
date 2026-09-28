@@ -369,6 +369,32 @@ ${args.tables.map(table).join("")}
   w.document.close();
 }
 
+/** The database returns at most 1000 rows per request, so every history read
+ *  has to be paged through. Without this, "All time" and "30 days" silently
+ *  showed only the most recent 1000 events and under-reported every figure. */
+const PAGE_SIZE = 1000;
+const MAX_ROWS = 60000;
+
+async function fetchAllEvents<T>(
+  columns: string,
+  build: (q: any) => any = (q) => q,
+): Promise<{ data: T[]; error: { message: string } | null }> {
+  const out: T[] = [];
+  for (let from = 0; from < MAX_ROWS; from += PAGE_SIZE) {
+    let q = supabase.from("wce_page_events").select(columns);
+    q = build(q);
+    const { data, error } = await q
+      .order("created_at", { ascending: false })
+      .range(from, from + PAGE_SIZE - 1);
+    if (error) return { data: out, error };
+    const page = (data ?? []) as T[];
+    out.push(...page);
+    if (page.length < PAGE_SIZE) break;
+  }
+  return { data: out, error: null };
+}
+
+
 export default function WceAnalytics() {
   const [range, setRange] = useState<RangeKey>("all");
   // Detailed visitor history: free-text filter and how many rows are shown.
@@ -406,17 +432,15 @@ export default function WceAnalytics() {
         ? new Date(start.getTime() - days * 86400000)
         : null;
 
-      let q = supabase
-        .from("wce_page_events")
-        .select("created_at,session_id,event_type,event_target,path,referrer,utm_source,utm_medium,utm_campaign,referral_code,device_type,country,meta")
-        .order("created_at", { ascending: false })
-        .limit(30000);
-      if (fetchFrom) q = q.gte("created_at", fetchFrom.toISOString());
+      const eventsP = fetchAllEvents<Ev>(
+        "created_at,session_id,event_type,event_target,path,referrer,utm_source,utm_medium,utm_campaign,referral_code,device_type,country,meta",
+        (q) => (fetchFrom ? q.gte("created_at", fetchFrom.toISOString()) : q),
+      );
 
       let leadQ = supabase.from("wce_leads").select("id", { count: "exact", head: true });
       if (start) leadQ = leadQ.gte("created_at", start.toISOString());
 
-      const [{ data, error }, leadRes] = await Promise.all([q, leadQ]);
+      const [{ data, error }, leadRes] = await Promise.all([eventsP, leadQ]);
       if (cancelled) return;
       if (error) wceToast({ title: "Could not load analytics", description: error.message, tone: "error" });
 
@@ -443,13 +467,10 @@ export default function WceAnalytics() {
     (async () => {
       const from = new Date(Date.now() - 29 * 86400000);
       from.setHours(0, 0, 0, 0);
-      const { data } = await supabase
-        .from("wce_page_events")
-        .select("created_at,session_id")
-        .eq("event_type", "page_view")
-        .gte("created_at", from.toISOString())
-        .order("created_at", { ascending: false })
-        .limit(30000);
+      const { data } = await fetchAllEvents<{ created_at: string; session_id: string }>(
+        "created_at,session_id",
+        (q) => q.eq("event_type", "page_view").gte("created_at", from.toISOString()),
+      );
       if (!cancelled) setMonthRows((data ?? []) as Array<{ created_at: string; session_id: string }>);
     })();
     return () => { cancelled = true; };
