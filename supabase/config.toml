@@ -56,3 +56,6 @@ verify_jwt = false
 
 [functions.consultation-reminders]
 verify_jwt = false
+
+[functions.ebook-download]
+verify_jwt = false
