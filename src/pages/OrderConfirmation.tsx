@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { CheckCircle2, Mail, Loader2 } from "lucide-react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { CheckCircle2, Mail, Loader2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +9,20 @@ export default function OrderConfirmation() {
   const { orderNumber } = useParams();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [params] = useSearchParams();
+  const orderId = params.get("o");
+  const [ebooks, setEbooks] = useState<{ product_id: string; title: string }[]>([]);
+  const ebookBase = orderId
+    ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ebook-download?order=${encodeURIComponent(orderId)}`
+    : null;
+
+  useEffect(() => {
+    if (!ebookBase) return;
+    fetch(`${ebookBase}&check=1`)
+      .then((r) => r.json())
+      .then((d) => setEbooks(Array.isArray(d?.ebooks) ? d.ebooks : []))
+      .catch(() => setEbooks([]));
+  }, [ebookBase]);
 
   useEffect(() => {
     if (!orderNumber) {
@@ -54,6 +68,26 @@ export default function OrderConfirmation() {
               {orderNumber || "—"}
             </p>
           </div>
+
+          {ebookBase && ebooks.length > 0 && (
+            <div className="border-2 border-primary/40 bg-primary/5 rounded-xl p-5 mb-6">
+              <p className="font-serif text-lg font-semibold text-foreground mb-3">
+                Your ebook is ready to download
+              </p>
+              <div className="flex flex-col gap-2 items-center">
+                {ebooks.map((e) => (
+                  <Button asChild key={e.product_id} size="lg">
+                    <a href={`${ebookBase}&product=${e.product_id}`}>
+                      <Download className="w-4 h-4 mr-2" /> Download {e.title} (PDF)
+                    </a>
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                We've also emailed you this download link.
+              </p>
+            </div>
+          )}
 
           {loading ? (
             <div className="flex justify-center text-muted-foreground text-sm mb-6">

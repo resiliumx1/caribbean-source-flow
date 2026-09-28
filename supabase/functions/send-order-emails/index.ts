@@ -13,6 +13,24 @@ const BRAND_TEXT = "#2b2b2b";
 const BRAND_MUTED = "#6b6b6b";
 const SITE_URL = "https://mountkailashslu.com";
 const SUPPORT_EMAIL = "info@mountkailashslu.com";
+// Paid ebooks: product_id -> title. Files are served by the ebook-download function.
+const EBOOK_PRODUCTS: Record<string, string> = {
+  "d70d72e7-9542-45b7-b15c-16d68f1b5bac": "The NEW Herbal Manual",
+};
+function ebookBlock(order: any, items: any[]): string {
+  if (order.payment_status !== "paid") return "";
+  const ids = [...new Set(items.map((i: any) => i.product_id))].filter((id) => EBOOK_PRODUCTS[id]);
+  if (!ids.length) return "";
+  const base = `${Deno.env.get("SUPABASE_URL")}/functions/v1/ebook-download?order=${encodeURIComponent(order.id)}`;
+  const buttons = ids.map((id) => `<a href="${base}&product=${id}" style="display:inline-block;background:${BRAND_DARK};color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:6px;font-weight:bold;margin:6px 0;">Download ${esc(EBOOK_PRODUCTS[id])} (PDF)</a>`).join("<br>");
+  return `<tr><td style="padding:8px 28px 16px 28px;">
+    <div style="border:2px solid ${BRAND_GOLD};border-radius:10px;padding:18px;background:${BRAND_CREAM};text-align:center;">
+      <div style="font-family:Georgia,serif;font-weight:bold;color:${BRAND_DARK};font-size:17px;margin-bottom:8px;">Your ebook is ready</div>
+      ${buttons}
+      <div style="font-size:12px;color:${BRAND_MUTED};margin-top:8px;">Keep this email — you can use this link again anytime.</div>
+    </div>
+  </td></tr>`;
+}
 const SUPPORT_PHONE = "+1 (758) 285-5195";
 
 const FROM_CUSTOMER = "Mount Kailash <orders@mountkailashslu.com>";
@@ -337,6 +355,7 @@ function customerOrderPlacedHtml(order: any, items: any[], digitalOnly = false):
           : "Your order has been received and is being prepared with care."}
       </p>
     </td></tr>
+    ${ebookBlock(order, items)}
     <tr><td style="padding:16px 28px;">
       <div style="border:1px solid #ece4d4;border-radius:10px;padding:18px;background:#fffdf8;">
         <div style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px;">

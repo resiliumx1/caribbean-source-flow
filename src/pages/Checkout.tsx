@@ -315,7 +315,7 @@ export default function Checkout() {
         title: "Order placed!",
         description: `Confirmation #${result.order_number}`,
       });
-      navigate(`/order-confirmation/${result.order_number}`);
+      navigate(`/order-confirmation/${result.order_number}${result.order_id ? `?o=${result.order_id}` : ""}`);
     } catch (err: any) {
       toast({
         title: "Payment failed",
