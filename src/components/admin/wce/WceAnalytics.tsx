@@ -432,17 +432,15 @@ export default function WceAnalytics() {
         ? new Date(start.getTime() - days * 86400000)
         : null;
 
-      let q = supabase
-        .from("wce_page_events")
-        .select("created_at,session_id,event_type,event_target,path,referrer,utm_source,utm_medium,utm_campaign,referral_code,device_type,country,meta")
-        .order("created_at", { ascending: false })
-        .limit(30000);
-      if (fetchFrom) q = q.gte("created_at", fetchFrom.toISOString());
+      const eventsP = fetchAllEvents<Ev>(
+        "created_at,session_id,event_type,event_target,path,referrer,utm_source,utm_medium,utm_campaign,referral_code,device_type,country,meta",
+        (q) => (fetchFrom ? q.gte("created_at", fetchFrom.toISOString()) : q),
+      );
 
       let leadQ = supabase.from("wce_leads").select("id", { count: "exact", head: true });
       if (start) leadQ = leadQ.gte("created_at", start.toISOString());
 
-      const [{ data, error }, leadRes] = await Promise.all([q, leadQ]);
+      const [{ data, error }, leadRes] = await Promise.all([eventsP, leadQ]);
       if (cancelled) return;
       if (error) wceToast({ title: "Could not load analytics", description: error.message, tone: "error" });
 
