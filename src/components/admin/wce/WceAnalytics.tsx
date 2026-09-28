@@ -377,7 +377,7 @@ const MAX_ROWS = 60000;
 
 async function fetchAllEvents<T>(
   columns: string,
-  build: (q: ReturnType<typeof supabase.from<"wce_page_events">>["select"]> extends never ? never : any) => any,
+  build: (q: any) => any = (q) => q,
 ): Promise<{ data: T[]; error: { message: string } | null }> {
   const out: T[] = [];
   for (let from = 0; from < MAX_ROWS; from += PAGE_SIZE) {
