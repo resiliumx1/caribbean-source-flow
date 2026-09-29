@@ -3677,6 +3677,10 @@ export type Database = {
         Returns: boolean
       }
       has_wce_access: { Args: { _user_id: string }; Returns: boolean }
+      increment_review_helpful: {
+        Args: { p_review_id: string }
+        Returns: undefined
+      }
       is_admin: { Args: never; Returns: boolean }
       is_order_owner_or_admin: {
         Args: { target_order_id: string }

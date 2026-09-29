@@ -184,19 +184,8 @@ export function useMarkHelpful() {
         throw voteError;
       }
 
-      // Increment count
-      const { data: review } = await supabase
-        .from("reviews")
-        .select("helpful_count")
-        .eq("id", reviewId)
-        .single();
-
-      if (review) {
-        await supabase
-          .from("reviews")
-          .update({ helpful_count: (review.helpful_count || 0) + 1 })
-          .eq("id", reviewId);
-      }
+      // Increment count (server-side, only for approved reviews)
+      await supabase.rpc("increment_review_helpful" as any, { p_review_id: reviewId });
 
       return productId;
     },
