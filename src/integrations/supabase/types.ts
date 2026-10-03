@@ -1853,6 +1853,51 @@ export type Database = {
           },
         ]
       }
+      powertranz_test_log: {
+        Row: {
+          amount: number | null
+          approved: boolean
+          card_brand: string | null
+          card_last4: string | null
+          created_at: string
+          created_by: string | null
+          currency: string | null
+          id: string
+          iso_response_code: string | null
+          order_id: string
+          response_message: string | null
+          transaction_identifier: string | null
+        }
+        Insert: {
+          amount?: number | null
+          approved?: boolean
+          card_brand?: string | null
+          card_last4?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string | null
+          id?: string
+          iso_response_code?: string | null
+          order_id: string
+          response_message?: string | null
+          transaction_identifier?: string | null
+        }
+        Update: {
+          amount?: number | null
+          approved?: boolean
+          card_brand?: string | null
+          card_last4?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string | null
+          id?: string
+          iso_response_code?: string | null
+          order_id?: string
+          response_message?: string | null
+          transaction_identifier?: string | null
+        }
+        Relationships: []
+      }
       product_categories: {
         Row: {
           created_at: string | null

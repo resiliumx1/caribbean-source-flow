@@ -69,6 +69,7 @@ const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
 const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
 const AdminWCE = lazy(() => import("./pages/AdminWCE"));
 const AdminConsultations = lazy(() => import("./pages/AdminConsultations"));
+const AdminPowertranzTest = lazy(() => import("./pages/AdminPowertranzTest"));
 const ConsultationAdminAccept = lazy(() => import("./pages/ConsultationAdminAccept"));
 const Consultations = lazy(() => import("./pages/Consultations"));
 const ConsultationManage = lazy(() => import("./pages/ConsultationManage"));
@@ -235,6 +236,7 @@ function AppContent() {
             <Route path="abandoned-carts" element={<ConsultationOnlyGuard><AdminAbandonedCarts /></ConsultationOnlyGuard>} />
             <Route path="consultations" element={<AdminConsultations />} />
             <Route path="wce" element={<ConsultationOnlyGuard><AdminWCE /></ConsultationOnlyGuard>} />
+            <Route path="powertranz-test" element={<ConsultationOnlyGuard><AdminPowertranzTest /></ConsultationOnlyGuard>} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
