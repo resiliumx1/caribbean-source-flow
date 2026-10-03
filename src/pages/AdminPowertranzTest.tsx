@@ -7,10 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
+// Card numbers and expected outcomes are PowerTranz's documented staging test cases.
 const TEST_CARDS = [
   { label: "Visa (approve)", pan: "4333333333332222" },
   { label: "Mastercard (approve)", pan: "5333333333332222" },
-  { label: "Visa (decline test)", pan: "4111111111119999" },
+  { label: "Visa (decline test)", pan: "4012000000020121" },
 ];
 
 type LogRow = {
@@ -31,6 +32,7 @@ export default function AdminPowertranzTest() {
   });
   const [busy, setBusy] = useState(false);
   const [log, setLog] = useState<LogRow[]>([]);
+  const [last, setLast] = useState<Record<string, unknown> | null>(null);
 
   const loadLog = async () => {
     const { data } = await supabase.from("powertranz_test_log").select("*").order("created_at", { ascending: false }).limit(50);
@@ -57,6 +59,7 @@ export default function AdminPowertranzTest() {
       try { msg = (await (error as any).context?.json())?.error ?? msg; } catch { /* */ }
       toast.error(msg);
     } else {
+      setLast((data as Record<string, unknown>) ?? null);
       toast[data.approved ? "success" : "error"](`${data.approved ? "Approved" : "Declined"} — ISO ${data.isoResponseCode ?? "?"}`);
     }
     loadLog();
@@ -94,6 +97,25 @@ export default function AdminPowertranzTest() {
         <div><Label>Postal</Label><Input value={form.postalCode} onChange={set("postalCode")} /></div>
         <div className="col-span-2 md:col-span-4"><Button disabled={busy} onClick={() => run()}>{busy ? "Running…" : "Run with form values"}</Button></div>
       </div>
+
+      {last && (
+        <div className="border rounded-lg p-4 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-sm font-medium">Response from PowerTranz</h2>
+            <Button size="sm" variant="outline" onClick={() => copy(JSON.stringify(last.raw ?? last, null, 2))}>
+              <Copy className="h-4 w-4 mr-1" /> Copy response
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Sending merchant ID {String(last.merchantIdMasked ?? "—")} ({String(last.merchantIdLength ?? "?")} chars),
+            password {String(last.passwordLength ?? "?")} chars, gateway key {last.gatewayKeySent ? "sent" : "not sent"}
+            {" "}→ {String(last.endpoint ?? "—")}
+          </p>
+          <pre className="text-xs bg-muted rounded p-3 overflow-x-auto max-h-80 whitespace-pre-wrap break-all">
+            {JSON.stringify(last.raw ?? last, null, 2)}
+          </pre>
+        </div>
+      )}
 
       <div className="border rounded-lg overflow-x-auto">
         <table className="w-full text-sm">

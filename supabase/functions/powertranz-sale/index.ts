@@ -37,6 +37,23 @@ function brand(pan: string) {
   return "Other";
 }
 
+// Diagnostic payloads must never carry card data: mask long digit runs and
+// drop any key that looks like a PAN / CVV / credential.
+function sanitize(v: unknown): unknown {
+  if (typeof v === "string") return v.replace(/\d[\d\s-]{9,24}\d/g, "****");
+  if (typeof v === "number") return v;
+  if (Array.isArray(v)) return v.map(sanitize);
+  if (v && typeof v === "object") {
+    const o: Record<string, unknown> = {};
+    for (const [k, val] of Object.entries(v as Record<string, unknown>)) {
+      if (/pan|cvv|cvc|cvv2|password|securitycode|track/i.test(k)) { o[k] = "****"; continue; }
+      o[k] = sanitize(val);
+    }
+    return o;
+  }
+  return v;
+}
+
 const json = (b: unknown, status = 200) =>
   new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
@@ -47,9 +64,12 @@ Deno.serve(async (req) => {
   let admin;
   try { admin = await requireAdmin(req); } catch (e) { return json({ error: (e as Error).message }, 401); }
 
-  const id = Deno.env.get("POWERTRANZ_ID");
-  const pw = Deno.env.get("POWERTRANZ_PASSWORD");
-  const base = Deno.env.get("POWERTRANZ_BASE_URL");
+  // Trimmed: values pasted from a secure message often carry a stray space or
+  // newline, which PowerTranz reports as "Invalid merchant".
+  const id = (Deno.env.get("POWERTRANZ_ID") ?? "").trim();
+  const pw = (Deno.env.get("POWERTRANZ_PASSWORD") ?? "").trim();
+  const base = (Deno.env.get("POWERTRANZ_BASE_URL") ?? "").trim();
+  const gw = (Deno.env.get("POWERTRANZ_GATEWAY_KEY") ?? "").trim();
   if (!id || !pw || !base) return json({ error: "PowerTranz secrets are not configured." }, 500);
   let host = "";
   try { const u = new URL(base); host = u.hostname; if (u.protocol !== "https:") host = ""; } catch { /* */ }
@@ -85,20 +105,25 @@ Deno.serve(async (req) => {
   const cardBrand = brand(d.cardNumber);
   const last4 = d.cardNumber.slice(-4);
   let result: Record<string, unknown> = {};
+  let raw: unknown = null;
   let httpStatus = 0;
   try {
-    const res = await fetch(`${base.replace(/\/+$/, "")}/api/sale`, {
+    const res = await fetch(`${base.replace(/\/+$/, "")}/Api/Sale`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
         "PowerTranz-PowerTranzId": id,
         "PowerTranz-PowerTranzPassword": pw,
+        // Only sent when PowerTranz has actually issued one.
+        ...(gw ? { "PowerTranz-GatewayKey": gw } : {}),
       },
       body: JSON.stringify(payload),
     });
     httpStatus = res.status;
-    result = await res.json().catch(() => ({}));
+    const text = await res.text();
+    try { result = JSON.parse(text) as Record<string, unknown>; } catch { result = {}; }
+    raw = sanitize(result && Object.keys(result).length ? result : text);
   } catch (_e) {
     return json({ error: "Could not reach PowerTranz staging." }, 502);
   }
@@ -114,6 +139,15 @@ Deno.serve(async (req) => {
     transactionIdentifier: (result.TransactionIdentifier as string) ?? txnId,
     authorizationCode: (result.AuthorizationCode as string) ?? null,
     rrn: (result.RRN as string) ?? null,
+    httpStatus,
+    // Fingerprint only — lets you confirm the saved values match what PowerTranz
+    // issued without exposing the password.
+    merchantIdMasked: id.length > 5 ? `${id.slice(0, 3)}${"*".repeat(id.length - 5)}${id.slice(-2)}` : "****",
+    merchantIdLength: id.length,
+    passwordLength: pw.length,
+    gatewayKeySent: Boolean(gw),
+    endpoint: `${base.replace(/\/+$/, "")}/Api/Sale`,
+    raw,
   };
 
   console.log("powertranz-sale", { orderId: out.orderId, brand: cardBrand, last4, approved: out.approved, iso: out.isoResponseCode });
