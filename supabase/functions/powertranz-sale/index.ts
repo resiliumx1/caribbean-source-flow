@@ -140,6 +140,13 @@ Deno.serve(async (req) => {
     authorizationCode: (result.AuthorizationCode as string) ?? null,
     rrn: (result.RRN as string) ?? null,
     httpStatus,
+    // Fingerprint only — lets you confirm the saved values match what PowerTranz
+    // issued without exposing the password.
+    merchantIdMasked: id.length > 5 ? `${id.slice(0, 3)}${"*".repeat(id.length - 5)}${id.slice(-2)}` : "****",
+    merchantIdLength: id.length,
+    passwordLength: pw.length,
+    gatewayKeySent: Boolean(gw),
+    endpoint: `${base.replace(/\/+$/, "")}/Api/Sale`,
     raw,
   };
 
