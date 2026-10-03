@@ -106,6 +106,11 @@ export default function AdminPowertranzTest() {
               <Copy className="h-4 w-4 mr-1" /> Copy response
             </Button>
           </div>
+          <p className="text-xs text-muted-foreground">
+            Sending merchant ID {String(last.merchantIdMasked ?? "—")} ({String(last.merchantIdLength ?? "?")} chars),
+            password {String(last.passwordLength ?? "?")} chars, gateway key {last.gatewayKeySent ? "sent" : "not sent"}
+            {" "}→ {String(last.endpoint ?? "—")}
+          </p>
           <pre className="text-xs bg-muted rounded p-3 overflow-x-auto max-h-80 whitespace-pre-wrap break-all">
             {JSON.stringify(last.raw ?? last, null, 2)}
           </pre>
