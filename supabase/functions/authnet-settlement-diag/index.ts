@@ -31,13 +31,22 @@ function auth(apiLoginId: string, transactionKey: string) {
   return { merchantAuthentication: { name: apiLoginId, transactionKey } };
 }
 
-Deno.serve(async (req) => {
+function req(key: string, payload: Record<string, unknown>): Record<string, unknown> {
+  const apiLoginId = Deno.env.get("AUTHORIZENET_API_LOGIN_ID");
+  const transactionKey = Deno.env.get("AUTHORIZENET_TRANSACTION_KEY");
+  return {
+    [key]: {
+      merchantAuthentication: { name: apiLoginId, transactionKey },
+      refId: "diag",
+      ...payload,
+    },
+  };
+}
+
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
     await requireAdmin(req);
-    const apiLoginId = Deno.env.get("AUTHORIZENET_API_LOGIN_ID")!;
-    const transactionKey = Deno.env.get("AUTHORIZENET_TRANSACTION_KEY")!;
-    const base = auth(apiLoginId, transactionKey);
 
     // Specific transactions to inspect (recent orders passed in body, or defaults).
     let transIds: string[] = [];
@@ -53,45 +62,27 @@ Deno.serve(async (req) => {
     }
 
     // 1. Merchant/account details (test mode, processor, etc.)
-    const merchantDetails = await authnet({
-      ...base,
-      refId: "diag",
-      getMerchantDetailsRequest: { refId: "diag" },
-    });
+    const merchantDetails = await authnet(req("getMerchantDetailsRequest", {}));
 
     // 2. Unsettled transactions (pending capture / pending settlement)
-    const unsettled = await authnet({
-      ...base,
-      refId: "diag",
-      getUnsettledTransactionListRequest: {
-        refId: "diag",
-        paging: { limit: "100", offset: "1" },
-        sorting: { orderBy: "submitTimeLocal", orderDescending: "true" },
-      },
-    });
+    const unsettled = await authnet(req("getUnsettledTransactionListRequest", {
+      paging: { limit: "100", offset: "1" },
+      sorting: { orderBy: "submitTimeLocal", orderDescending: "true" },
+    }));
 
     // 3. Settled batches for the last 30 days
     const from = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString().slice(0, 10) + "T00:00:00Z";
     const to = new Date().toISOString().slice(0, 10) + "T23:59:59Z";
-    const batches = await authnet({
-      ...base,
-      refId: "diag",
-      getSettledBatchListRequest: {
-        refId: "diag",
-        includeStatistics: "true",
-        firstSettlementDate: from,
-        lastSettlementDate: to,
-      },
-    });
+    const batches = await authnet(req("getSettledBatchListRequest", {
+      includeStatistics: "true",
+      firstSettlementDate: from,
+      lastSettlementDate: to,
+    }));
 
     // 4. Per-transaction detail for the requested IDs
     const details = [];
     for (const id of transIds) {
-      const d = await authnet({
-        ...base,
-        refId: id,
-        getTransactionDetailsRequest: { refId: id, transId: id },
-      });
+      const d = await authnet(req("getTransactionDetailsRequest", { transId: id }));
       const tr = (d as any)?.transaction;
       details.push({
         transId: id,
@@ -119,10 +110,6 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({
       messages: (merchantDetails as any)?.messages ?? null,
       merchant: {
-        testMode: (merchantDetails as any)?.merchant?.isTestMode ?? null,
-        processor: (merchantDetails as any)?.merchant?.processor ?? null,
-        merchantId: (merchantDetails as any)?.merchant?.merchantId ?? null,
-        accountStatus: (merchantDetails as any)?.merchant?.accountStatus ?? null,
         merchantRaw: (merchantDetails as any)?.merchant ?? null,
       },
       unsettledMessages: u?.messages ?? null,
