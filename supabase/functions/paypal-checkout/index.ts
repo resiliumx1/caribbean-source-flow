@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyPaypalCapture } from "../_shared/paypal-verify.ts";
 import { sanitizeAttribution, type OrderAttribution } from "../_shared/attribution.ts";
 import { invokeFunction } from "../_shared/invoke-function.ts";
+import { priceCart } from "../_shared/cart-pricing.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,6 +41,7 @@ interface CheckoutPayload {
   paypal_order_id: string;
   paypal_capture_id: string;
   currency_used: "USD" | "XCD";
+  coupon_code?: string;
   /** Marketing attribution only — never used for pricing. */
   attribution?: OrderAttribution;
 }
@@ -96,63 +98,11 @@ Deno.serve(async (req) => {
         ? incomingDt
         : (payload.form.country?.toUpperCase() === "LC" ? "local" : "international");
 
-    // Re-fetch products from DB to get authoritative pricing (never trust client prices)
-    const productIds = [...new Set(payload.items.map((i) => i.product_id))];
-    const { data: products, error: prodErr } = await supabase
-      .from("products")
-      .select("id, name, price_usd, price_xcd, is_digital, is_active")
-      .in("id", productIds);
-    if (prodErr) throw prodErr;
-    if (!products || products.length !== productIds.length) {
-      throw new Error("One or more cart items are no longer available.");
-    }
-    // Mirrors authnet-charge: withdrawn products (e.g. application-only retreats)
-    // can never be bought by pushing their ID straight into a cart.
-    const withdrawn = products.find((p: any) => p.is_active === false);
-    if (withdrawn) {
-      throw new Error(`${withdrawn.name} is no longer available for purchase.`);
-    }
-
-    const productMap = new Map(products.map((p: any) => [p.id, p]));
-
-    let subtotal_usd = 0;
-    let subtotal_xcd = 0;
-    let hasPhysical = false;
-    const itemRows = payload.items.map((line) => {
-      const p: any = productMap.get(line.product_id);
-      if (!p) throw new Error(`Product not found: ${line.product_id}`);
-      const qty = Math.max(1, Math.floor(line.quantity));
-      subtotal_usd += Number(p.price_usd) * qty;
-      subtotal_xcd += Number(p.price_xcd) * qty;
-      if (!p.is_digital) hasPhysical = true;
-      return {
-        product_id: p.id,
-        product_name: p.name,
-        quantity: qty,
-        price_usd: Number(p.price_usd),
-        price_xcd: Number(p.price_xcd),
-      };
-    });
-
-    // Shipping rules (must match Checkout.tsx):
-    //   - No physical items → free
-    //   - pickup → free
-    //   - local → 30 XCD (~$11.11 USD)
-    //   - international → $30 USD (81 XCD)
-    const EXCHANGE = 2.7;
-    let shipping_usd = 0;
-    let shipping_xcd = 0;
-    if (hasPhysical) {
-      if (deliveryType === "local") {
-        shipping_xcd = 30;
-        shipping_usd = +(30 / EXCHANGE).toFixed(2);
-      } else if (deliveryType === "international") {
-        shipping_usd = 30;
-        shipping_xcd = +(30 * EXCHANGE).toFixed(2);
-      }
-    }
-    const total_usd = subtotal_usd + shipping_usd;
-    const total_xcd = subtotal_xcd + shipping_xcd;
+    // Authoritative pricing (products, shipping, coupon) computed server-side.
+    const {
+      productMap, itemRows, subtotal_usd, subtotal_xcd, shipping_usd, shipping_xcd,
+      discount_usd, appliedCoupon, total_usd, total_xcd,
+    } = await priceCart(supabase, payload.items, deliveryType, payload.coupon_code);
 
     // Server-side PayPal verification: confirm the capture really completed
     // for the amount we just computed. Never trust the client-supplied capture id alone.
@@ -181,6 +131,8 @@ Deno.serve(async (req) => {
       shipping_xcd,
       total_usd,
       total_xcd,
+      discount_usd,
+      coupon_code: appliedCoupon?.code ?? null,
       currency_used: payload.currency_used,
       payment_method: "paypal",
       payment_status: "paid", // allowed: pending|paid|failed|refunded
@@ -219,6 +171,31 @@ Deno.serve(async (req) => {
       await supabase.from("orders").delete().eq("id", order.id);
       await logFailedOrder(supabase, payload, orderInsert, `order_items: ${itemsErr.message}`);
       throw itemsErr;
+    }
+
+    // Record coupon redemption + decrement tracked inventory (non-fatal).
+    try {
+      if (appliedCoupon) {
+        await supabase.from("coupon_redemptions").insert({
+          coupon_id: appliedCoupon.id,
+          order_id: order.id,
+          email: orderInsert.email,
+          discount_usd,
+        });
+        await supabase.from("coupons")
+          .update({ used_count: Number(appliedCoupon.used_count) + 1 })
+          .eq("id", appliedCoupon.id);
+      }
+      for (const row of itemRows) {
+        const p: any = productMap.get(row.product_id);
+        if (p?.track_inventory) {
+          await supabase.from("products")
+            .update({ stock_quantity: Math.max(0, Number(p.stock_quantity) - row.quantity) })
+            .eq("id", p.id);
+        }
+      }
+    } catch (e) {
+      console.error("post-order bookkeeping failed:", e);
     }
 
     // Fire-and-forget order confirmation emails. Never block the order on email failure.

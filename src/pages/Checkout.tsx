@@ -12,6 +12,7 @@ import { useStore } from "@/lib/store-context";
 import { useToast } from "@/hooks/use-toast";
 import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { supabase } from "@/integrations/supabase/client";
+import { PayPalButtons } from "@paypal/react-paypal-js";
 import { AuthorizeNetCardForm, type OpaqueData, type ThreeDSResult } from "@/components/payments/AuthorizeNetCardForm";
 import { readAttribution, readPathway } from "@/lib/wce-attribution";
 import { dataLayerPush, pixelTrack } from "@/lib/tracking";
@@ -325,6 +326,96 @@ export default function Checkout() {
         duration: 20000,
       });
       throw err; // let the form clear its "processing" state
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // ---- PayPal (primary payment method) ----
+  // The PayPal order amount is computed on the server from database prices,
+  // shipping and the validated coupon; the capture is verified again before
+  // the order is saved.
+  const createPayPalOrder = async () => {
+    const { data, error } = await supabase.functions.invoke("paypal-create-order", {
+      body: {
+        items: cartItems.map((i) => ({ product_id: i.product_id, quantity: i.quantity })),
+        delivery_type: form.delivery_type,
+        coupon_code: appliedCoupon?.code ?? undefined,
+      },
+    });
+    if (error || !data?.orderID) {
+      const msg = (data as any)?.error || "Could not start PayPal checkout. Please try again.";
+      toast({ title: "PayPal error", description: msg, variant: "destructive" });
+      throw new Error(msg);
+    }
+    return data.orderID as string;
+  };
+
+  const handlePayPalApprove = async (orderID: string, actions: any) => {
+    setIsProcessing(true);
+    const attribution = readAttribution();
+    const pathwayKey = readPathway();
+    try {
+      const details = await actions.order.capture();
+      const capture = details?.purchase_units?.[0]?.payments?.captures?.[0];
+      if (!capture?.id) throw new Error("PayPal did not confirm the payment.");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/paypal-checkout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${
+              sessionData?.session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+            }`,
+          },
+          body: JSON.stringify({
+            items: cartItems.map((i) => ({ product_id: i.product_id, quantity: i.quantity })),
+            form: { ...form, billing_same_as_shipping: billingSame ? "true" : "false" },
+            paypal_order_id: orderID,
+            paypal_capture_id: capture.id,
+            currency_used: currency,
+            coupon_code: appliedCoupon?.code ?? undefined,
+            attribution: attribution
+              ? {
+                  utm_source: attribution.utm_source,
+                  utm_medium: attribution.utm_medium,
+                  utm_campaign: attribution.utm_campaign,
+                  utm_content: attribution.utm_content,
+                  utm_term: attribution.utm_term,
+                  referral_code: appliedCoupon?.code ?? attribution.referral_code,
+                  landing_path: attribution.landing_path,
+                }
+              : undefined,
+          }),
+        }
+      );
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || !result?.order_number) {
+        throw new Error(result?.error || "We could not save your order.");
+      }
+      clearCart();
+      dataLayerPush("purchase", {
+        order_number: result.order_number,
+        transaction_id: result.order_number,
+        value: totalUsd,
+        currency: "USD",
+        pathway_key: pathwayKey,
+        referral_code: appliedCoupon?.code ?? attribution?.referral_code ?? null,
+        utm_source: attribution?.utm_source ?? null,
+      });
+      pixelTrack("Purchase", { value: totalUsd, currency: "USD" });
+      toast({ title: "Order placed!", description: `Confirmation #${result.order_number}` });
+      navigate(`/order-confirmation/${result.order_number}${result.order_id ? `?o=${result.order_id}` : ""}`);
+    } catch (err: any) {
+      toast({
+        title: "PayPal payment problem",
+        description: `${err?.message ?? "Payment failed."} If PayPal charged you but you don't see a confirmation, email info@mountkailashslu.com.`,
+        variant: "destructive",
+        duration: 20000,
+      });
     } finally {
       setIsProcessing(false);
     }
@@ -901,6 +992,29 @@ export default function Checkout() {
                         : ""}
                     </p>
                   )}
+                  <div className={canPay ? "" : "opacity-50 pointer-events-none"} aria-disabled={!canPay}>
+                    <PayPalButtons
+                      key={`${totalUsd}-${form.delivery_type}-${appliedCoupon?.code ?? ""}`}
+                      style={{ layout: "vertical", shape: "rect", label: "paypal", height: 48 }}
+                      disabled={!canPay}
+                      forceReRender={[totalUsd, form.delivery_type, appliedCoupon?.code]}
+                      createOrder={createPayPalOrder}
+                      onApprove={(data, actions) => handlePayPalApprove(data.orderID, actions)}
+                      onError={(err) => {
+                        console.error("PayPal error", err);
+                        toast({
+                          title: "PayPal error",
+                          description: "PayPal could not complete this payment. You can try again or pay by card.",
+                          variant: "destructive",
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-3 py-3" aria-hidden>
+                    <span className="h-px flex-1 bg-border" />
+                    <span className="text-xs uppercase tracking-wide text-muted-foreground">or pay by card</span>
+                    <span className="h-px flex-1 bg-border" />
+                  </div>
                   <AuthorizeNetCardForm
                     amountUsd={totalUsd}
                     disabled={!canPay}
