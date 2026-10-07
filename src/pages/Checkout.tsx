@@ -992,6 +992,19 @@ export default function Checkout() {
                         : ""}
                     </p>
                   )}
+                  <AuthorizeNetCardForm
+                    amountUsd={totalUsd}
+                    disabled={!canPay}
+                    processing={isProcessing}
+                    defaultCardholderName={form.customer_name}
+                    defaultZip={form.postal_code}
+                    onToken={handleAuthNetToken}
+                  />
+                  <div className="flex items-center gap-3 py-3" aria-hidden>
+                    <span className="h-px flex-1 bg-border" />
+                    <span className="text-xs uppercase tracking-wide text-muted-foreground">or pay with PayPal</span>
+                    <span className="h-px flex-1 bg-border" />
+                  </div>
                   <div className={canPay ? "" : "opacity-50 pointer-events-none"} aria-disabled={!canPay}>
                     <PayPalButtons
                       key={`${totalUsd}-${form.delivery_type}-${appliedCoupon?.code ?? ""}`}
@@ -1010,19 +1023,6 @@ export default function Checkout() {
                       }}
                     />
                   </div>
-                  <div className="flex items-center gap-3 py-3" aria-hidden>
-                    <span className="h-px flex-1 bg-border" />
-                    <span className="text-xs uppercase tracking-wide text-muted-foreground">or pay by card</span>
-                    <span className="h-px flex-1 bg-border" />
-                  </div>
-                  <AuthorizeNetCardForm
-                    amountUsd={totalUsd}
-                    disabled={!canPay}
-                    processing={isProcessing}
-                    defaultCardholderName={form.customer_name}
-                    defaultZip={form.postal_code}
-                    onToken={handleAuthNetToken}
-                  />
                 </div>
               </div>
             </div>
