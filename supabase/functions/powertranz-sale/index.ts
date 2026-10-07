@@ -5,12 +5,19 @@ import { z } from "npm:zod@3";
 import { requireAdmin, serviceClient } from "../_shared/admin-auth.ts";
 
 const STAGING_HOST = "staging.ptranz.com";
+const ALLOWED_ORIGIN = /^https:\/\/([a-z0-9-]+\.)*(mountkailashslu\.com|lovable\.app|lovableproject\.com)$|^http:\/\/localhost(:\d+)?$/;
+const Complete = z.object({
+  action: z.literal("complete"), spiToken: z.string().min(10).max(500),
+  orderId: z.string().max(60), cardBrand: z.string().max(20), last4: z.string().regex(/^[0-9]{4}$/),
+  amount: z.number(), currency: z.string().length(3),
+});
 
 const CURRENCY_NUMERIC: Record<string, string> = { USD: "840", XCD: "951", TTD: "780", JMD: "388", BBD: "052" };
 
 const Body = z.object({
   amount: z.number().positive().max(1000),
-  currency: z.string().length(3).default("USD"),
+  currency: z.string().length(3).default("XCD"),
+  returnOrigin: z.string().url().max(200),
   orderId: z.string().min(1).max(60).regex(/^[A-Za-z0-9\-_]+$/),
   cardNumber: z.string().regex(/^[0-9]{12,19}$/),
   expiryMonth: z.string().regex(/^(0[1-9]|1[0-2])$/),
@@ -61,6 +68,23 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
+  const url = new URL(req.url);
+  // 3DS2 callback: PowerTranz posts the authentication result here (form field
+  // "Response"). We bounce the browser back to our own site so the page can
+  // finish the payment. No card data is in this payload.
+  if (url.searchParams.get("cb") === "1") {
+    const origin = url.searchParams.get("o") ?? "";
+    if (!ALLOWED_ORIGIN.test(origin)) return new Response("Bad origin", { status: 400 });
+    let spiToken = ""; let iso = "";
+    try {
+      const form = await req.formData();
+      const r = JSON.parse(String(form.get("Response") ?? "{}"));
+      spiToken = r.SpiToken ?? ""; iso = r.IsoResponseCode ?? "";
+    } catch { /* */ }
+    const q = new URLSearchParams({ spiToken, iso });
+    return new Response(null, { status: 303, headers: { Location: `${origin}/ptz-3ds-done.html?${q}` } });
+  }
+
   let admin;
   try { admin = await requireAdmin(req); } catch (e) { return json({ error: (e as Error).message }, 401); }
 
@@ -75,7 +99,41 @@ Deno.serve(async (req) => {
   try { const u = new URL(base); host = u.hostname; if (u.protocol !== "https:") host = ""; } catch { /* */ }
   if (host !== STAGING_HOST) return json({ error: "Refusing to run: POWERTRANZ_BASE_URL must point at the staging host." }, 400);
 
-  const parsed = Body.safeParse(await req.json().catch(() => null));
+  const bodyIn = await req.json().catch(() => null);
+  const headers = {
+    "Content-Type": "application/json", Accept: "application/json",
+    "PowerTranz-PowerTranzId": id, "PowerTranz-PowerTranzPassword": pw,
+    ...(gw ? { "PowerTranz-GatewayKey": gw } : {}),
+  };
+  const root = base.replace(/\/+$/, "");
+
+  if (bodyIn?.action === "complete") {
+    const c = Complete.safeParse(bodyIn);
+    if (!c.success) return json({ error: "Invalid input" }, 400);
+    let r: Record<string, unknown> = {}; let st = 0;
+    try {
+      const res = await fetch(`${root}/Api/spi/Payment`, { method: "POST", headers, body: JSON.stringify(c.data.spiToken) });
+      st = res.status; const t = await res.text(); try { r = JSON.parse(t); } catch { r = { text: t }; }
+    } catch { return json({ error: "Could not reach PowerTranz staging." }, 502); }
+    const errs = Array.isArray(r.Errors) ? (r.Errors as { Message?: string }[]).map((e) => e.Message).join("; ") : "";
+    const out = {
+      stage: "complete", orderId: c.data.orderId, cardBrand: c.data.cardBrand, last4: c.data.last4,
+      approved: r.Approved === true, isoResponseCode: (r.IsoResponseCode as string) ?? null,
+      responseMessage: (r.ResponseMessage as string) || errs || (st >= 400 ? `HTTP ${st}` : null),
+      transactionIdentifier: (r.TransactionIdentifier as string) ?? null,
+      authorizationCode: (r.AuthorizationCode as string) ?? null, rrn: (r.RRN as string) ?? null,
+      httpStatus: st, endpoint: `${root}/Api/spi/Payment`, raw: sanitize(r),
+    };
+    await serviceClient().from("powertranz_test_log").insert({
+      order_id: out.orderId, card_brand: out.cardBrand, card_last4: out.last4, approved: out.approved,
+      iso_response_code: out.isoResponseCode, response_message: out.responseMessage,
+      transaction_identifier: out.transactionIdentifier, amount: c.data.amount,
+      currency: c.data.currency.toUpperCase(), created_by: admin.id,
+    });
+    return json(out);
+  }
+
+  const parsed = Body.safeParse(bodyIn);
   if (!parsed.success) return json({ error: "Invalid input", fields: Object.keys(parsed.error.flatten().fieldErrors) }, 400);
   const d = parsed.data;
   const currency = CURRENCY_NUMERIC[d.currency.toUpperCase()];
@@ -86,7 +144,7 @@ Deno.serve(async (req) => {
     TransactionIdentifier: txnId,
     TotalAmount: Math.round(d.amount * 100) / 100,
     CurrencyCode: currency,
-    ThreeDSecure: false,
+    ThreeDSecure: true, // RBL mandates 3DS2
     Source: {
       CardPan: d.cardNumber,
       CardCvv: d.cvv,
@@ -100,7 +158,12 @@ Deno.serve(async (req) => {
       CountryCode: d.billing.countryCode, EmailAddress: d.billing.email, PhoneNumber: d.billing.phone,
     },
     AddressMatch: false,
+    ExtendedData: {
+      ThreeDSecure: { ChallengeWindowSize: 4, ChallengeIndicator: "01" },
+      MerchantResponseUrl: `${Deno.env.get("SUPABASE_URL")}/functions/v1/powertranz-sale?cb=1&o=${encodeURIComponent(d.returnOrigin)}`,
+    },
   };
+  if (!ALLOWED_ORIGIN.test(d.returnOrigin)) return json({ error: "Bad origin" }, 400);
 
   const cardBrand = brand(d.cardNumber);
   const last4 = d.cardNumber.slice(-4);
@@ -108,16 +171,9 @@ Deno.serve(async (req) => {
   let raw: unknown = null;
   let httpStatus = 0;
   try {
-    const res = await fetch(`${base.replace(/\/+$/, "")}/Api/Sale`, {
+    const res = await fetch(`${root}/Api/spi/Sale`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "PowerTranz-PowerTranzId": id,
-        "PowerTranz-PowerTranzPassword": pw,
-        // Only sent when PowerTranz has actually issued one.
-        ...(gw ? { "PowerTranz-GatewayKey": gw } : {}),
-      },
+      headers,
       body: JSON.stringify(payload),
     });
     httpStatus = res.status;
@@ -130,6 +186,9 @@ Deno.serve(async (req) => {
 
   const errs = Array.isArray(result.Errors) ? (result.Errors as { Message?: string }[]).map((e) => e.Message).join("; ") : "";
   const out = {
+    stage: "start",
+    spiToken: (result.SpiToken as string) ?? null,
+    redirectData: (result.RedirectData as string) ?? null,
     orderId: d.orderId,
     cardBrand,
     last4,
@@ -146,13 +205,13 @@ Deno.serve(async (req) => {
     merchantIdLength: id.length,
     passwordLength: pw.length,
     gatewayKeySent: Boolean(gw),
-    endpoint: `${base.replace(/\/+$/, "")}/Api/Sale`,
+    endpoint: `${root}/Api/spi/Sale`,
     raw,
   };
 
   console.log("powertranz-sale", { orderId: out.orderId, brand: cardBrand, last4, approved: out.approved, iso: out.isoResponseCode });
 
-  await serviceClient().from("powertranz_test_log").insert({
+  if (!out.redirectData) await serviceClient().from("powertranz_test_log").insert({
     order_id: out.orderId, card_brand: cardBrand, card_last4: last4, approved: out.approved,
     iso_response_code: out.isoResponseCode, response_message: out.responseMessage,
     transaction_identifier: out.transactionIdentifier, amount: payload.TotalAmount,
