@@ -26,13 +26,33 @@ const newOrderId = () => `MK-PTZ-${Date.now()}-${Math.random().toString(36).slic
 export default function AdminPowertranzTest() {
   const [form, setForm] = useState({
     cardNumber: TEST_CARDS[0].pan, expiryMonth: "12", expiryYear: nextYear, cvv: "123",
-    cardholderName: "Test Cardholder", amount: "1.00", currency: "USD",
+    cardholderName: "Test Cardholder", amount: "2.70", currency: "XCD",
     line1: "1 Test Street", city: "Soufriere", postalCode: "00000", countryCode: "662",
     email: "info@mountkailashslu.com",
   });
   const [busy, setBusy] = useState(false);
   const [log, setLog] = useState<LogRow[]>([]);
   const [last, setLast] = useState<Record<string, unknown> | null>(null);
+  const [challenge, setChallenge] = useState<{ html: string; meta: Record<string, unknown> } | null>(null);
+
+  // 3DS2: the bank page (in the iframe) redirects to /ptz-3ds-done.html, which
+  // posts the SpiToken back here; we then ask PowerTranz to complete the sale.
+  useEffect(() => {
+    const onMsg = async (e: MessageEvent) => {
+      if (e.origin !== window.location.origin || e.data?.type !== "ptz-3ds-done" || !challenge) return;
+      const meta = challenge.meta; setChallenge(null);
+      const { data, error } = await supabase.functions.invoke("powertranz-sale", {
+        body: { action: "complete", spiToken: e.data.spiToken || meta.spiToken, orderId: meta.orderId,
+          cardBrand: meta.cardBrand, last4: meta.last4, amount: Number(form.amount), currency: form.currency },
+      });
+      setBusy(false);
+      if (error) toast.error(error.message);
+      else { setLast(data); toast[data.approved ? "success" : "error"](`${data.approved ? "Approved" : "Declined"} — ISO ${data.isoResponseCode ?? "?"}`); }
+      loadLog();
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, [challenge, form.amount, form.currency]);
 
   const loadLog = async () => {
     const { data } = await supabase.from("powertranz_test_log").select("*").order("created_at", { ascending: false }).limit(50);
@@ -48,11 +68,15 @@ export default function AdminPowertranzTest() {
       body: {
         amount: Number(form.amount), currency: form.currency, orderId: newOrderId(),
         cardNumber, expiryMonth: form.expiryMonth, expiryYear: form.expiryYear, cvv: form.cvv,
-        cardholderName: form.cardholderName,
+        cardholderName: form.cardholderName, returnOrigin: window.location.origin,
         billing: { firstName: "Test", lastName: "Cardholder", line1: form.line1, city: form.city,
           postalCode: form.postalCode, countryCode: form.countryCode, email: form.email },
       },
     });
+    if (!error && data?.redirectData) {
+      setLast(data); setChallenge({ html: data.redirectData, meta: data });
+      return; // stays busy until the bank step finishes
+    }
     setBusy(false);
     if (error) {
       let msg = error.message;
@@ -97,6 +121,16 @@ export default function AdminPowertranzTest() {
         <div><Label>Postal</Label><Input value={form.postalCode} onChange={set("postalCode")} /></div>
         <div className="col-span-2 md:col-span-4"><Button disabled={busy} onClick={() => run()}>{busy ? "Running…" : "Run with form values"}</Button></div>
       </div>
+
+      {challenge && (
+        <div className="border rounded-lg p-4 space-y-2">
+          <div className="flex justify-between items-center">
+            <h2 className="text-sm font-medium">Bank verification (3-D Secure)</h2>
+            <Button size="sm" variant="ghost" onClick={() => { setChallenge(null); setBusy(false); }}>Cancel</Button>
+          </div>
+          <iframe title="3-D Secure" srcDoc={challenge.html} className="w-full h-[520px] border rounded bg-background" />
+        </div>
+      )}
 
       {last && (
         <div className="border rounded-lg p-4 space-y-2">
