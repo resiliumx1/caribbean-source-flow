@@ -1,0 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>Verifying…</title></head>
+<body style="font-family:sans-serif;padding:16px">Finishing bank verification…
+<script>
+  var p = new URLSearchParams(location.search);
+  var msg = { type: "ptz-3ds-done", spiToken: p.get("spiToken"), iso: p.get("iso") };
+  try { window.top.postMessage(msg, location.origin); } catch (e) {}
+</script></body></html>
