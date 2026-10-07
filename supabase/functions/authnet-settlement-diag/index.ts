@@ -31,7 +31,7 @@ function auth(apiLoginId: string, transactionKey: string) {
   return { merchantAuthentication: { name: apiLoginId, transactionKey } };
 }
 
-function req(key: string, payload: Record<string, unknown>): Record<string, unknown> {
+function authnetReq(key: string, payload: Record<string, unknown>): Record<string, unknown> {
   const apiLoginId = Deno.env.get("AUTHORIZENET_API_LOGIN_ID");
   const transactionKey = Deno.env.get("AUTHORIZENET_TRANSACTION_KEY");
   return {
@@ -62,10 +62,10 @@ Deno.serve(async (req: Request) => {
     }
 
     // 1. Merchant/account details (test mode, processor, etc.)
-    const merchantDetails = await authnet(req("getMerchantDetailsRequest", {}));
+    const merchantDetails = await authnet(authnetReq("getMerchantDetailsRequest", {}));
 
     // 2. Unsettled transactions (pending capture / pending settlement)
-    const unsettled = await authnet(req("getUnsettledTransactionListRequest", {
+    const unsettled = await authnet(authnetReq("getUnsettledTransactionListRequest", {
       paging: { limit: "100", offset: "1" },
       sorting: { orderBy: "submitTimeLocal", orderDescending: "true" },
     }));
@@ -73,7 +73,7 @@ Deno.serve(async (req: Request) => {
     // 3. Settled batches for the last 30 days
     const from = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString().slice(0, 10) + "T00:00:00Z";
     const to = new Date().toISOString().slice(0, 10) + "T23:59:59Z";
-    const batches = await authnet(req("getSettledBatchListRequest", {
+    const batches = await authnet(authnetReq("getSettledBatchListRequest", {
       includeStatistics: "true",
       firstSettlementDate: from,
       lastSettlementDate: to,
@@ -82,7 +82,7 @@ Deno.serve(async (req: Request) => {
     // 4. Per-transaction detail for the requested IDs
     const details = [];
     for (const id of transIds) {
-      const d = await authnet(req("getTransactionDetailsRequest", { transId: id }));
+      const d = await authnet(authnetReq("getTransactionDetailsRequest", { transId: id }));
       const tr = (d as any)?.transaction;
       details.push({
         transId: id,
