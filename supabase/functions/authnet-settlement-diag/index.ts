@@ -67,7 +67,6 @@ Deno.serve(async (req: Request) => {
     // 2. Unsettled transactions (pending capture / pending settlement)
     const unsettled = await authnet(authnetReq("getUnsettledTransactionListRequest", {
       paging: { limit: "100", offset: "1" },
-      sorting: { orderBy: "submitTimeLocal", orderDescending: "true" },
     }));
 
     // 3. Settled batches for the last 30 days
