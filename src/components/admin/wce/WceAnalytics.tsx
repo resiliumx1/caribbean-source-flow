@@ -761,10 +761,11 @@ export default function WceAnalytics() {
       />
 
       <p className="wa-muted" style={{ fontSize: "0.8rem", marginBottom: "1rem", maxWidth: "70ch" }}>
-        This is first-party data collected on the Caribbean Wellness Experience page only. It is recorded by
-        our own system with no personal identifiers and no IP addresses, so figures will differ slightly from
-        Google Analytics — ad blockers and privacy settings affect the two differently. "All time" covers every
-        visit since tracking went live on the page.
+        Source: WCE page tracking, separate from Lovable’s site-wide analytics. Counts are anonymous
+        browsing sessions, not unique people. “All time” includes the records available here, not all
+        historical website traffic. Do Not Track is respected; blocked or undelivered tracking requests
+        are not counted. The two systems’ totals are not directly interchangeable.
+        {firstSeen && <> Available records: {firstSeen} to {lastSeen}.</>}
       </p>
 
       <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem", alignItems: "center" }}>

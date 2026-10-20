@@ -45,6 +45,8 @@ type Payload = {
 
 let queue: Payload[] = [];
 let timer: number | null = null;
+// Keep separate visitors separate even when browser storage is unavailable.
+let fallbackSessionId: string | null = null;
 
 function randomId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
@@ -62,7 +64,8 @@ export function wceSessionId(): string {
     }
     return id;
   } catch {
-    return "unavailable";
+    fallbackSessionId ??= randomId();
+    return fallbackSessionId;
   }
 }
 
@@ -174,6 +177,8 @@ export function trackWceEvent(
 
 
   bindFlushListeners();
+  // Record arrivals immediately; only interaction events wait for a batch.
+  if (event_type === "page_view") { flush(); return; }
   if (queue.length >= MAX_QUEUE) { flush(); return; }
   if (!timer) timer = window.setTimeout(() => flush(), FLUSH_MS);
 }
