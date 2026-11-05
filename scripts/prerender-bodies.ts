@@ -26,7 +26,6 @@ function siteHeader(crumb?: string): string {
     <header>
       <a href="/" rel="home">${BRAND}</a>
       <nav aria-label="Main navigation">
-        <a href="/wce-2026">Caribbean Wellness Saint Lucia 2026</a>
         <a href="/shop">Apothecary</a>
         <a href="/wholesale">Wholesale</a>
         <a href="/retreats">Retreats</a>
@@ -80,7 +79,6 @@ export function retreatsBody(): string {
         <ul>
           <li><strong>Group retreat</strong> — fixed calendar dates, shared teaching sessions, single or shared lodging.</li>
           <li><strong>Private retreat</strong> — designed around one guest, couple or family, on dates of your choosing.</li>
-          <li><strong>Caribbean Wellness Fortification Retreat</strong> — the six-day October 2026 programme, 12–17 October, offered by application as part of <a href="/wce-2026">Caribbean Wellness Saint Lucia 2026</a>.</li>
         </ul>
       </section>
 
@@ -112,7 +110,6 @@ export function retreatsBody(): string {
         ["/the-answer", "The Answer tincture", "The oak-aged botanical formulation used throughout the retreat protocol."],
         ["/school/herbal-physician", "School of Wellness Medicine", "Train as a certified clinical herbal physician in Saint Lucia."],
         ["/webinars", "Wellness medicine webinars", "Free teachings with Rt Hon Priest Kailash K Leonce."],
-        ["/wce-2026", "Caribbean Wellness Saint Lucia 2026", "The 11–17 October 2026 symposium and fortification retreat."],
       ])}
     </main>`;
 }
@@ -492,24 +489,6 @@ export const PRODUCT_EXTRA: Record<string, string> = {
       <section>
         <h2>Sourcing</h2>
         <p>Every bottle is formulated at Mount Kailash in Soufriere, Saint Lucia, from wildcrafted botanicals grown in mineral rich volcanic soil.</p>
-      </section>`,
-  "symposium-experience-in-person": `
-      <section>
-        <h2>What this ticket includes</h2>
-        <p>In-person admission to the Caribbean Wellness Symposium on Sunday 11 October 2026, held at ${BRAND} in Soufriere, Saint Lucia. The day opens the Caribbean Wellness Experience Saint Lucia 2026 week and includes the full speaker programme, live demonstrations, and direct access to Rt Hon Priest Kailash K Leonce and the visiting faculty.</p>
-      </section>
-      <section>
-        <h2>Good to know</h2>
-        <p>Travel and accommodation are arranged by the attendee. This ticket covers the symposium day only; the six-day Caribbean Wellness Fortification Retreat that follows (12–17 October 2026) is application only. <a href="/wce-2026">See the full programme</a> or <a href="/wce-2026/apply">apply for the retreat</a>.</p>
-      </section>`,
-  "symposium-experience-online": `
-      <section>
-        <h2>What this ticket includes</h2>
-        <p>Livestream access to the Caribbean Wellness Symposium on Sunday 11 October 2026, broadcast from ${BRAND} in Soufriere, Saint Lucia. You receive a private link to the full speaker programme and can watch from anywhere in the world.</p>
-      </section>
-      <section>
-        <h2>Good to know</h2>
-        <p>The livestream covers the symposium day only. The six-day Caribbean Wellness Fortification Retreat that follows in Saint Lucia (12–17 October 2026) is in person and application only. <a href="/wce-2026">See the full programme</a> or <a href="/wce-2026/apply">apply for the retreat</a>.</p>
       </section>`,
 };
 
