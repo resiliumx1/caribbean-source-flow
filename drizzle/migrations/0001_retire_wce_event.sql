@@ -1,0 +1,15 @@
+DROP POLICY IF EXISTS "wce admin select wce only" ON public.orders;
+DROP POLICY IF EXISTS "wce admin select wce only" ON public.order_items;
+COMMENT ON TABLE public.wce_campaign_links IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_faqs IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_itinerary IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_leads IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_livestream_entitlements IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_media IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_organiser_invites IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_page_events IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_partners IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_pathways IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_referral_codes IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_settings IS 'DEPRECATED: WCE event retired';
+COMMENT ON TABLE public.wce_speakers IS 'DEPRECATED: WCE event retired';
