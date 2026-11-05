@@ -10,27 +10,11 @@ import { useStore } from "@/lib/store-context";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { SiteSearch } from "./SiteSearch";
-import { AnnouncementBar } from "@/components/site/AnnouncementBar";
-import { PeakGlyph } from "@/components/site/PeakGlyph";
 
 const SCHOOL_URL = "https://herbalphysicianschoolmountkailash.netlify.app";
 
-const WCE_LABEL = "WCE 2026";
-
-/** The single WCE nav item — a date stamp, not decoration. Styles: index.css. */
-function WceNavLabel({ drawer = false }: { drawer?: boolean }) {
-  return (
-    <span className={`wce-nav${drawer ? " wce-nav--drawer" : ""}`}>
-      <PeakGlyph className="wce-nav__peak" />
-      <span className="wce-nav__label">WCE</span>
-      <span className="wce-nav__year">2026</span>
-    </span>
-  );
-}
-
 const NAV_LINKS = [
   { label: "Home", to: "/" },
-  { label: "WCE 2026", to: "/wce-2026" },
   { label: "Shop", to: "/shop" },
   { label: "Wholesale", to: "/wholesale" },
   { label: "Retreats", to: "/retreats" },
@@ -50,17 +34,6 @@ export function StoreHeader() {
   const hydratedRef = useRef(false);
   const [cartBounce, setCartBounce] = useState(false);
   const isHomepage = location.pathname === "/";
-  const isWceRoute = location.pathname.startsWith("/wce-2026");
-
-  // The WCE hero uses Lenis smooth scrolling; pause it while the panel is open
-  // so the page underneath cannot scroll behind the menu.
-  useEffect(() => {
-    if (!isWceRoute) return;
-    window.dispatchEvent(new CustomEvent("wce:scroll-lock", { detail: mobileMenuOpen }));
-    return () => {
-      window.dispatchEvent(new CustomEvent("wce:scroll-lock", { detail: false }));
-    };
-  }, [isWceRoute, mobileMenuOpen]);
 
   // Gate visibility: hidden until gate-complete on homepage first visit
   const [headerVisible, setHeaderVisible] = useState(() => {
@@ -121,10 +94,6 @@ export function StoreHeader() {
         width: '100%',
       }}
     >
-      {/* Slim WCE announcement strip — every page except /wce-2026 itself.
-          Lives inside the fixed header so the header stays sticky and all
-          existing offsets remain correct. */}
-      {!isWceRoute && <AnnouncementBar />}
       {isLocalVisitor && (
         <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
           <span className="inline-flex items-center gap-2">
@@ -182,7 +151,7 @@ export function StoreHeader() {
                       : 'text-foreground hover:text-primary'
                   }`}
                 >
-                  {link.label === WCE_LABEL ? <WceNavLabel /> : link.label}
+                  {link.label}
                 </Link>
               );
             })}
@@ -238,8 +207,7 @@ export function StoreHeader() {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className={`w-72 ${isWceRoute ? "wce-mobile-nav" : ""}`}
-                overlayClassName={isWceRoute ? "wce-mobile-nav-overlay" : undefined}
+                className="w-72"
                 aria-label="Mobile navigation"
               >
                 <nav className="flex flex-col gap-4 mt-8">
@@ -270,7 +238,7 @@ export function StoreHeader() {
                         }`}
                       >
                         {isActive && "→ "}
-                        {link.label === WCE_LABEL ? <WceNavLabel drawer /> : link.label}
+                        {link.label}
                       </Link>
                     );
                   })}
