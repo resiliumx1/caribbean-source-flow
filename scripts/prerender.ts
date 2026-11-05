@@ -292,231 +292,16 @@ async function loadRetreats(): Promise<RetreatRow[]> {
   return (data || []).filter((r) => r.slug) as RetreatRow[];
 }
 
-async function loadSpeakers(): Promise<SpeakerRow[]> {
-  if (!SUPABASE_URL || !SUPABASE_KEY) return [];
-  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-  const { data, error } = await sb
-    .from("wce_speakers")
-    .select("slug,name,prefix,title,theme,bio,session_title,session_time,og_image_url")
-    .eq("published", true)
-    .not("slug", "is", null)
-    .order("display_order");
-  if (error) { console.warn("[prerender] speakers error:", error.message); return []; }
-  return (data || []).filter((s) => s.slug) as SpeakerRow[];
-}
-
-/** Mirrors src/components/wce/share.tsx so the static head matches the app. */
-function speakerOgTitle(s: SpeakerRow) {
-  const prefix = (s.prefix || "").trim();
-  return clip(`${prefix ? `${prefix} ` : ""}${s.name} — Caribbean Wellness 2026`, 60);
-}
-
-function speakerOgDescription(s: SpeakerRow) {
-  const theme = (s.theme || "").trim();
-  const session = (s.session_title || "").trim();
-  let text = [theme, session].filter(Boolean).join(" — ");
-  if (!text) {
-    const bio = stripHtml(s.bio);
-    const m = bio.match(/^.*?[.!?](\s|$)/);
-    text = (m?.[0] ?? bio).trim();
-  }
-  if (!text) text = "Caribbean Wellness Saint Lucia 2026 · 11–17 October";
-  return clip(text, 155);
-}
-
-
-/* ---------------- WCE 2026 event data (for rich static HTML + schema) ---------------- */
-
-const EVENT_START = "2026-10-11";
-const EVENT_END = "2026-10-17";
-const SYMPOSIUM_DATE = "2026-10-11";
-const RETREAT_START = "2026-10-12";
-const RETREAT_END = "2026-10-17";
-
-interface PathwayRow {
-  key: string;
-  label: string;
-  price: number | null;
-  currency: string | null;
-  is_open: boolean | null;
-  display_order: number | null;
-}
-interface FaqRow { question: string; answer: string | null }
-interface ItineraryRow { date_label: string | null; title: string | null; detail: string | null }
-
-async function loadWceData(): Promise<{
-  pathways: PathwayRow[];
-  faqs: FaqRow[];
-  itinerary: ItineraryRow[];
-}> {
-  if (!SUPABASE_URL || !SUPABASE_KEY) return { pathways: [], faqs: [], itinerary: [] };
-  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-  const [p, f, i] = await Promise.all([
-    sb.from("wce_pathways").select("key,label,price,currency,is_open,display_order").order("display_order"),
-    sb.from("wce_faqs").select("question,answer").eq("published", true).order("display_order"),
-    sb.from("wce_itinerary").select("date_label,title,detail").eq("published", true).order("display_order"),
-  ]);
-  if (p.error) console.warn("[prerender] pathways error:", p.error.message);
-  if (f.error) console.warn("[prerender] faqs error:", f.error.message);
-  if (i.error) console.warn("[prerender] itinerary error:", i.error.message);
-  return {
-    pathways: (p.data || []) as PathwayRow[],
-    faqs: ((f.data || []) as FaqRow[]).filter((x) => !!x.answer),
-    itinerary: (i.data || []) as ItineraryRow[],
-  };
-}
-
-const WCE_TAIL_HEAD = `<meta property="og:image" content="${BASE_URL}/og/wce-2026-square.jpg" />
-    <meta property="og:image:secure_url" content="${BASE_URL}/og/wce-2026-square.jpg" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1080" />
-    <meta property="og:image:height" content="1080" />
-    <meta property="og:image:alt" content="Caribbean Wellness Saint Lucia 2026 — 11–17 October" />`;
-
-/** Event JSON-LD mirroring src/pages/WCE2026.tsx, built from live pathway rows. */
-function wceEventSchema(pathways: PathwayRow[]): Record<string, unknown> {
-  const pageUrl = `${BASE_URL}/wce-2026`;
+/** Two-level Home › page breadcrumb for static routes. */
+function pageBreadcrumb(path: string, name: string): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
-    "@type": "Event",
-    name: "Caribbean Wellness Experience Saint Lucia 2026",
-    description:
-      "Caribbean Wellness Saint Lucia 2026: wellness symposium, six-day fortification retreat and LifeCraft experience at Mount Kailash Rejuvenation Centre, 11–17 October 2026.",
-    startDate: EVENT_START,
-    endDate: EVENT_END,
-    eventStatus: "https://schema.org/EventScheduled",
-    eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
-    image: [`${BASE_URL}/og/wce-2026.jpg`, `${BASE_URL}/og/wce-2026-square.jpg`],
-    url: pageUrl,
-    inLanguage: "en",
-    location: {
-      "@type": "Place",
-      name: "Mount Kailash Rejuvenation Centre",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Soufrière",
-        addressRegion: "Saint Lucia",
-        addressCountry: "LC",
-      },
-    },
-    organizer: {
-      "@type": "Organization",
-      name: "Mount Kailash Rejuvenation Centre",
-      url: BASE_URL,
-    },
-    subEvent: [
-      {
-        "@type": "Event",
-        name: "Caribbean Wellness Symposium",
-        startDate: SYMPOSIUM_DATE,
-        endDate: SYMPOSIUM_DATE,
-        eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
-        url: `${pageUrl}#pathways`,
-      },
-      {
-        "@type": "Event",
-        name: "Caribbean Wellness Fortification Retreat",
-        description:
-          "Six-day fortification retreat at Mount Kailash Rejuvenation Centre, including LifeCraft experiences. Participation begins with an application reviewed by the Mount Kailash team.",
-        startDate: RETREAT_START,
-        endDate: RETREAT_END,
-        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-        url: `${BASE_URL}/wce-2026/apply`,
-      },
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE_URL}/` },
+      { "@type": "ListItem", position: 2, name, item: `${BASE_URL}${path}` },
     ],
-    // Only the symposium tiers are purchasable — the retreat is application-only
-    // and must never be described as directly buyable.
-    offers: pathways
-      .filter((p) => Number(p.price) > 0 && p.key !== "retreat")
-      .map((p) => ({
-        "@type": "Offer",
-        name: p.label,
-        price: Number(p.price).toFixed(2),
-        priceCurrency: p.currency || "USD",
-        availability: p.is_open ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
-        url: `${pageUrl}#pathways`,
-        validFrom: "2026-01-01",
-      })),
   };
-}
-
-function wceBreadcrumb(path: string, name: string): Record<string, unknown> {
-  const items = [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${BASE_URL}/` },
-    { "@type": "ListItem", position: 2, name: "Caribbean Wellness Saint Lucia 2026", item: `${BASE_URL}/wce-2026` },
-  ];
-  if (path !== "/wce-2026") {
-    items.push({ "@type": "ListItem", position: 3, name, item: `${BASE_URL}${path}` });
-  }
-  return { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: items };
-}
-
-/** Rich, crawlable text for the WCE landing page — what AI crawlers actually read. */
-function wceBodyHtml(
-  pathways: PathwayRow[],
-  speakers: SpeakerRow[],
-  faqs: FaqRow[],
-  itinerary: ItineraryRow[],
-): string {
-  const pathwayList = pathways
-    .map((p) => {
-      const price =
-        Number(p.price) > 0
-          ? p.key === "retreat"
-            ? ` — from ${p.currency || "US"}$${Number(p.price).toFixed(0)} per person, application only`
-            : ` — ${p.currency || "US"}$${Number(p.price).toFixed(0)} per person`
-          : "";
-      return `<li><strong>${esc(p.label)}</strong>${esc(price)}</li>`;
-    })
-    .join("");
-  const speakerList = speakers
-    .map(
-      (s) =>
-        `<li><a href="/wce-2026/speakers/${esc(s.slug!)}">${esc(
-          [(s.prefix || "").trim(), s.name].filter(Boolean).join(" "),
-        )}</a>${s.theme ? ` — ${esc(s.theme)}` : ""}</li>`,
-    )
-    .join("");
-  const days = itinerary
-    .map(
-      (d) =>
-        `<li><strong>${esc(d.date_label)}</strong>${d.title ? ` — ${esc(d.title)}` : ""}${
-          d.detail ? ` ${esc(stripHtml(d.detail))}` : ""
-        }</li>`,
-    )
-    .join("");
-  const faqBlocks = faqs
-    .map((f) => `<h3>${esc(f.question)}</h3><p>${esc(stripHtml(f.answer))}</p>`)
-    .join("");
-
-  return `
-      <header><a href="/" rel="home">Mount Kailash Rejuvenation Centre</a></header>
-      <main>
-        <h1>Caribbean Wellness Experience Saint Lucia 2026</h1>
-        <p>11–17 October 2026 at Mount Kailash Rejuvenation Centre, Soufrière, Saint Lucia. A holistic wellness symposium, a six-day fortification retreat and the LifeCraft experience, hosted by Rt. Hon. Priest Kailash K. Leonce. What started in Jamaica continues in St. Lucia.</p>
-        <p>The Caribbean Wellness Symposium opens the week on Sunday 11 October 2026 and can be attended in person in Saint Lucia or online from anywhere. The Caribbean Wellness Fortification Retreat runs 12–17 October 2026 and is application only.</p>
-        ${pathwayList ? `<section><h2>Ways to attend</h2><ul>${pathwayList}</ul></section>` : ""}
-        ${speakerList ? `<section><h2>Speakers, hosts and facilitators</h2><ul>${speakerList}</ul></section>` : ""}
-        ${days ? `<section><h2>Programme</h2><ul>${days}</ul></section>` : ""}
-        ${faqBlocks ? `<section><h2>Frequently asked questions</h2>${faqBlocks}</section>` : ""}
-        <p><a href="/wce-2026#pathways">See the pathways</a> · <a href="/wce-2026/apply">Apply for the fortification retreat</a></p>
-      </main>
-    `;
-}
-
-function wceApplyBodyHtml(): string {
-  return `
-      <header>
-        <a href="/" rel="home">Mount Kailash Rejuvenation Centre</a>
-        <nav aria-label="Breadcrumb"><a href="/wce-2026">Caribbean Wellness Saint Lucia 2026</a> · Retreat Application</nav>
-      </header>
-      <main>
-        <h1>Caribbean Wellness Fortification Retreat Application</h1>
-        <p>Apply for the six-day Caribbean Wellness Fortification Retreat, 12–17 October 2026, at Mount Kailash Rejuvenation Centre in Soufrière, Saint Lucia.</p>
-        <p>Retreat participation is application only. Every application is reviewed personally by the Mount Kailash team, who then contact you to discuss your goals, confirm availability, arrange your stay and walk you through payment.</p>
-        <p><a href="/wce-2026">Read the full Caribbean Wellness Saint Lucia 2026 programme</a></p>
-      </main>
-    `;
 }
 
 const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> = [
@@ -526,7 +311,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     title: "Herbal Tinctures & Sea Moss Apothecary | Mount Kailash",
     description: "Herbal tinctures, sea moss, capsules, teas and raw Caribbean herbs from the Mount Kailash apothecary in Soufriere, Saint Lucia.",
     jsonLd: [
-      wceBreadcrumb("/shop", "Apothecary"),
+      pageBreadcrumb("/shop", "Apothecary"),
       {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
@@ -541,7 +326,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     title: "The Answer Tincture — Anamu & Soursop | Mount Kailash",
     description: "The Answer is the flagship tincture of Mount Kailash, Saint Lucia: Anamu, Vervain and Soursop leaf, wildcrafted and steeped in small batches.",
     jsonLd: [
-      wceBreadcrumb("/the-answer", "The Answer"),
+      pageBreadcrumb("/the-answer", "The Answer"),
       faqPageSchema(theAnswerFaqs) as unknown as Record<string, unknown>,
     ] as unknown as Record<string, unknown>,
   },
@@ -549,14 +334,14 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     path: "/webinars",
     title: "Free Herbal Medicine Webinars | Mount Kailash",
     description: "Free live and on-demand webinars on Caribbean clinical wellness medicine and herbal protocols with Rt Hon Priest Kailash K Leonce, Saint Lucia.",
-    jsonLd: wceBreadcrumb("/webinars", "Webinars"),
+    jsonLd: pageBreadcrumb("/webinars", "Webinars"),
   },
   {
     path: "/retreats",
     title: "7-Day Wellness Retreats in Saint Lucia | Mount Kailash",
     description: "Seven-day wellness retreats in the volcanic highlands of Soufriere, Saint Lucia: herbal feasts, bush-medicine protocols and a consultation.",
     jsonLd: [
-      wceBreadcrumb("/retreats", "Retreats"),
+      pageBreadcrumb("/retreats", "Retreats"),
       faqPageSchema(retreatFaqs) as unknown as Record<string, unknown>,
     ] as unknown as Record<string, unknown>,
   },
@@ -565,7 +350,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     title: "Herbal Physician Certification | Mount Kailash School",
     description: "Train as a Clinical Herbal Physician in Saint Lucia with Rt Hon Priest Kailash K Leonce. Limited cohorts, 500+ graduates practising worldwide.",
     jsonLd: [
-      wceBreadcrumb("/school/herbal-physician", "School of Wellness Medicine"),
+      pageBreadcrumb("/school/herbal-physician", "School of Wellness Medicine"),
       {
         "@context": "https://schema.org",
         "@type": "Course",
@@ -593,7 +378,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     title: "Wholesale Caribbean Botanicals | Mount Kailash",
     description: "Single-origin Saint Lucia botanicals, tinctures and sea moss for clinics and practitioners. Batch documentation, bulk pricing, 3-day US delivery.",
     jsonLd: [
-      wceBreadcrumb("/wholesale", "Wholesale"),
+      pageBreadcrumb("/wholesale", "Wholesale"),
       faqPageSchema(wholesaleFaqs) as unknown as Record<string, unknown>,
     ] as unknown as Record<string, unknown>,
   },
@@ -602,7 +387,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     title: "Caribbean Herbal Medicine Articles | Mount Kailash",
     description: "Articles and guides on Caribbean wellness medicine, clinical herbal protocols and traditional formulations from Mount Kailash, Saint Lucia.",
     jsonLd: [
-      wceBreadcrumb("/learn", "Learn"),
+      pageBreadcrumb("/learn", "Learn"),
       {
         "@context": "https://schema.org",
         "@type": "Blog",
@@ -618,7 +403,7 @@ const STATIC_ROUTES: Array<Omit<RouteMeta, "bodyHtml"> & { bodyHtml?: string }> 
     title: "Private Herbal Consultations | Mount Kailash",
     description: "Private wellness medicine consultations with Rt Hon Priest Kailash K Leonce and the Mount Kailash team, in Saint Lucia or by video worldwide.",
     jsonLd: [
-      wceBreadcrumb("/consultations", "Consultations"),
+      pageBreadcrumb("/consultations", "Consultations"),
       {
         "@context": "https://schema.org",
         "@type": "Service",
@@ -683,45 +468,7 @@ async function main() {
   const shell = readFileSync(SHELL_PATH, "utf8");
 
   const [products, retreats] = await Promise.all([loadProducts(), loadRetreats()]);
-  const speakers = await loadSpeakers();
-  const wce = await loadWceData();
   let count = 0;
-
-  // WCE 2026 — the landing page and the focused application page, both with the
-  // full event text and Event/Breadcrumb schema in the raw HTML.
-  const wceRoutes: RouteMeta[] = [
-    {
-      path: "/wce-2026",
-      title: "Caribbean Wellness Experience Saint Lucia 2026",
-      description:
-        "11–17 October 2026 in Soufriere, Saint Lucia. Attend the wellness symposium in person or online, or apply for the six-day fortification retreat.",
-      ogImage: `${BASE_URL}/og/wce-2026.jpg`,
-
-      ogImageAlt:
-        "Caribbean Wellness Saint Lucia 2026, 11–17 October, Mount Kailash Rejuvenation Centre",
-      tailHead: WCE_TAIL_HEAD,
-      jsonLd: [
-        wceEventSchema(wce.pathways),
-        wceBreadcrumb("/wce-2026", "Caribbean Wellness Saint Lucia 2026"),
-      ] as unknown as Record<string, unknown>,
-      bodyHtml: wceBodyHtml(wce.pathways, speakers, wce.faqs, wce.itinerary),
-    },
-    {
-      path: "/wce-2026/apply",
-      title: "Fortification Retreat Application 2026 | Mount Kailash",
-      description:
-        "Apply for the six-day Caribbean Wellness Fortification Retreat, 12–17 October 2026 at Mount Kailash, Saint Lucia. Application only.",
-
-      ogImage: `${BASE_URL}/og/wce-2026.jpg`,
-      ogImageAlt: "Caribbean Wellness Fortification Retreat, 12–17 October 2026, Saint Lucia",
-      jsonLd: wceBreadcrumb("/wce-2026/apply", "Retreat Application"),
-      bodyHtml: wceApplyBodyHtml(),
-    },
-  ];
-  for (const r of wceRoutes) {
-    writeRoute(r.path, buildShellTransform(shell, r));
-    count++;
-  }
 
   // Static marketing pages — replace head only, keep existing body fallback.
 
@@ -738,50 +485,6 @@ async function main() {
       bodyHtml: r.bodyHtml ?? staticBodyFor(r.path, products) ?? extractDefaultFallback(shell),
     };
     writeRoute(r.path, buildShellTransform(shell, meta));
-    count++;
-  }
-
-  // Shareable speaker routes — each needs its own OG tags in the raw HTML,
-  // because WhatsApp and Facebook never execute JavaScript.
-  for (const s of speakers) {
-    const path = `/wce-2026/speakers/${s.slug}`;
-    const image = s.og_image_url
-      ? (s.og_image_url.startsWith("http") ? s.og_image_url : `${BASE_URL}${s.og_image_url}`)
-      : `${BASE_URL}/og/wce-2026.jpg`;
-    const title = speakerOgTitle(s);
-    const description = speakerOgDescription(s);
-    const meta: RouteMeta = {
-      path,
-      title,
-      description,
-      ogImage: image,
-      ogImageAlt: title,
-      jsonLd: {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        name: s.name,
-        honorificPrefix: (s.prefix || "").trim() || undefined,
-        jobTitle: (s.title || "").trim() || undefined,
-        description: stripHtml(s.bio) || description,
-        image,
-        url: `${BASE_URL}${path}`,
-      },
-      bodyHtml: `
-        <header>
-          <a href="/" rel="home">Mount Kailash Rejuvenation Centre</a>
-          <nav aria-label="Breadcrumb"><a href="/wce-2026">Caribbean Wellness Saint Lucia 2026</a> · ${esc(s.name)}</nav>
-        </header>
-        <main>
-          <h1>${esc(title)}</h1>
-          ${s.theme ? `<p><strong>${esc(s.theme)}</strong></p>` : ""}
-          ${s.session_title ? `<p>${esc(s.session_title)}${s.session_time ? ` · ${esc(s.session_time)}` : ""}</p>` : ""}
-          ${s.bio ? `<p>${esc(stripHtml(s.bio))}</p>` : ""}
-          <p>11–17 October 2026 at Mount Kailash Rejuvenation Centre, Saint Lucia.</p>
-          <p><a href="/wce-2026#speakers">See the full line-up</a> · <a href="/wce-2026#pathways">Reserve your place</a></p>
-        </main>
-      `,
-    };
-    writeRoute(path, buildShellTransform(shell, meta));
     count++;
   }
 
