@@ -14,7 +14,9 @@ import { FDADisclaimer } from "@/components/FDADisclaimer";
 import { supabase } from "@/integrations/supabase/client";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { AuthorizeNetCardForm, type OpaqueData, type ThreeDSResult } from "@/components/payments/AuthorizeNetCardForm";
-import { readAttribution, readPathway } from "@/lib/wce-attribution";
+// Campaign attribution was tied to the retired event; nothing is captured now.
+const readAttribution = (): { utm_source?: string; utm_medium?: string; utm_campaign?: string; utm_content?: string; utm_term?: string; referral_code?: string; landing_path?: string } | null => null;
+const readPathway = (): string | null => null;
 import { dataLayerPush, pixelTrack } from "@/lib/tracking";
 
 const COUNTRIES: Array<{ code: string; name: string }> = [

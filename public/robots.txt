@@ -3,9 +3,7 @@ Allow: /
 Disallow: /account
 Disallow: /customer-portal
 Disallow: /admin
-Disallow: /wce-admin
 Disallow: /pay/
-Disallow: /wce-2026/go/
 
 # Removed legacy WordPress URLs — permanently gone.
 Disallow: /wp-content/

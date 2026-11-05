@@ -7,11 +7,9 @@ import { useState } from "react";
 import { GateEntrance, isReturningVisitor } from "@/components/gate-entrance";
 import { SITE_URL } from "@/lib/site-config";
 
-import { WcePopup } from "@/components/wce/WcePopup";
 
 // Lazy load below-fold sections
 const SourceStory = lazy(() => import("@/components/homepage/SourceStory").then(m => ({ default: m.SourceStory })));
-const WceFeature = lazy(() => import("@/components/homepage/WceFeature").then(m => ({ default: m.WceFeature })));
 const RotatingApothecary = lazy(() => import("@/components/homepage/RotatingApothecary").then(m => ({ default: m.RotatingApothecary })));
 const WholesaleAuthority = lazy(() => import("@/components/homepage/WholesaleAuthority").then(m => ({ default: m.WholesaleAuthority })));
 const RidgeRetreat = lazy(() => import("@/components/homepage/RidgeRetreat").then(m => ({ default: m.RidgeRetreat })));
@@ -120,10 +118,6 @@ const TrinityHomepage = () => {
       </Helmet>
 
       <HeroSection />
-      {/* Featured programme — sits directly beneath the hero, before any other block. */}
-      <Suspense fallback={<SectionFallback />}>
-        <WceFeature />
-      </Suspense>
       <Suspense fallback={<SectionFallback />}>
         <SourceStory />
       </Suspense>
@@ -153,7 +147,6 @@ const TrinityHomepage = () => {
 
       <GoddessWhatsApp />
       <ConsultationToast />
-      <WcePopup />
     </main>
   );
 };

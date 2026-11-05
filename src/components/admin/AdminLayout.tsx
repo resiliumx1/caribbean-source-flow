@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation, Outlet, Link } from "react-router-dom";
 import { useAdmin } from "@/hooks/use-admin";
-import { useWceAccess } from "@/hooks/use-wce-access";
 import { useConsultationAccess } from "@/hooks/use-consultation-access";
-import { WceAdminShell } from "@/components/wce-admin/WceAdminShell";
 import { Loader2, Home, Sun, Moon, Bell, ShoppingBag, MessageSquare, Wallet, AlertTriangle, Mail, Menu, ChevronRight, LogOut, MoreVertical, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -44,13 +42,9 @@ function relativeTime(iso: string) {
 
 export default function AdminLayout() {
   const { user, isAdmin, isLoading, signOut } = useAdmin();
-  const wce = useWceAccess();
   const consult = useConsultationAccess();
   const navigate = useNavigate();
   const location = useLocation();
-  const isWceRoute = location.pathname.startsWith("/admin/wce");
-  // A WCE organiser who is not a full store admin.
-  const wceOnly = !isLoading && !wce.isLoading && !isAdmin && wce.hasWceAccess;
   const consultationOnly =
     !isLoading && !consult.isLoading && !isAdmin && consult.hasConsultationAccess;
   const { theme, setTheme } = useTheme();
@@ -71,9 +65,8 @@ export default function AdminLayout() {
       visibleGroups({
         isFullAdmin: isAdmin,
         hasConsultationAccess: consult.hasConsultationAccess,
-        hasWceAccess: wce.hasWceAccess,
       }),
-    [isAdmin, consult.hasConsultationAccess, wce.hasWceAccess],
+    [isAdmin, consult.hasConsultationAccess],
   );
   const activeItem = useMemo(() => findActiveItem(location.pathname), [location.pathname]);
   const activeGroup = useMemo(
@@ -188,17 +181,12 @@ export default function AdminLayout() {
   };
 
   useEffect(() => {
-    if (isLoading || wce.isLoading || consult.isLoading) return;
+    if (isLoading || consult.isLoading) return;
     if (!user) {
-      navigate(isWceRoute ? "/wce-admin/login" : "/admin/login", { replace: true });
+      navigate("/admin/login", { replace: true });
       return;
     }
     if (isAdmin) return; // full admins: unchanged, everything reachable
-    if (wce.hasWceAccess) {
-      // Organisers live only inside /admin/wce — never show them the store admin.
-      if (!isWceRoute) navigate("/admin/wce", { replace: true });
-      return;
-    }
     if (consult.hasConsultationAccess) {
       // Consultation editors live only inside /admin/consultations.
       if (!location.pathname.startsWith("/admin/consultations")) {
@@ -206,10 +194,10 @@ export default function AdminLayout() {
       }
       return;
     }
-    navigate(isWceRoute ? "/wce-admin/login" : "/", { replace: true });
-  }, [user, isAdmin, isLoading, wce.isLoading, wce.hasWceAccess, consult.isLoading, consult.hasConsultationAccess, isWceRoute, location.pathname, navigate]);
+    navigate("/", { replace: true });
+  }, [user, isAdmin, isLoading, consult.isLoading, consult.hasConsultationAccess, location.pathname, navigate]);
 
-  if (isLoading || wce.isLoading || consult.isLoading) {
+  if (isLoading || consult.isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -218,18 +206,8 @@ export default function AdminLayout() {
   }
 
   // Never flash admin contents before the check resolves.
-  if (!user || (!isAdmin && !wce.hasWceAccess && !consult.hasConsultationAccess)) {
+  if (!user || (!isAdmin && !consult.hasConsultationAccess)) {
     return null;
-  }
-
-  if (wceOnly) {
-    // Organisers get the event-branded shell with no store navigation at all.
-    if (!isWceRoute) return null;
-    return (
-      <WceAdminShell email={user.email ?? ""} onSignOut={signOut}>
-        <Outlet />
-      </WceAdminShell>
-    );
   }
 
   const initial = (user.email ?? "?").charAt(0).toUpperCase();
