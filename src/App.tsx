@@ -67,19 +67,11 @@ const AdminCoupons = lazy(() => import("./pages/AdminCoupons"));
 const AdminAbandonedCarts = lazy(() => import("./pages/AdminAbandonedCarts"));
 const AdminWholesaleLeads = lazy(() => import("./pages/AdminWholesaleLeads"));
 const AdminPaymentAlerts = lazy(() => import("./pages/AdminPaymentAlerts"));
-const AdminWCE = lazy(() => import("./pages/AdminWCE"));
 const AdminConsultations = lazy(() => import("./pages/AdminConsultations"));
 const AdminPowertranzTest = lazy(() => import("./pages/AdminPowertranzTest"));
 const ConsultationAdminAccept = lazy(() => import("./pages/ConsultationAdminAccept"));
 const Consultations = lazy(() => import("./pages/Consultations"));
 const ConsultationManage = lazy(() => import("./pages/ConsultationManage"));
-const WceAdminLogin = lazy(() => import("./pages/WceAdminLogin"));
-const WceAdminAccept = lazy(() => import("./pages/WceAdminAccept"));
-const WCE2026 = lazy(() => import("./pages/WCE2026"));
-const WceLive = lazy(() => import("./pages/WceLive"));
-const WceRetreatCheckout = lazy(() => import("./pages/WceRetreatCheckout"));
-const WceGo = lazy(() => import("./pages/WceGo"));
-const WceApply = lazy(() => import("./pages/WceApply"));
 
 const queryClient = new QueryClient();
 
@@ -115,7 +107,7 @@ queryClient.prefetchQuery({
 const COMING_SOON = false;
 
 // Pages that should NOT show the header
-const pagesWithoutHeader = ["/admin", "/wce-admin", "/wce-2026/live", "/wce-2026/retreat-checkout", "/wce-2026/go", "/wce/go", "/wce-2026/apply"];
+const pagesWithoutHeader = ["/admin"];
 
 // Loading fallback
 function PageLoader() {
@@ -146,10 +138,7 @@ function AppContent() {
     (path) => location.pathname.startsWith(path)
   );
   const isAdminRoute =
-    location.pathname.startsWith("/admin") ||
-    location.pathname.startsWith("/wce-admin");
-  const isWceRoute =
-    location.pathname.startsWith("/wce-2026") || location.pathname.startsWith("/wce/go");
+    location.pathname.startsWith("/admin") ;
 
   // Google Tag Manager / Meta Pixel container (IDs live in src/lib/tracking.ts)
   useEffect(() => { initTracking(); }, []);
@@ -184,18 +173,10 @@ function AppContent() {
           <Route path="/learn/:slug" element={<LearnArticle />} />
           <Route path="/gate" element={<GateEntrancePage />} />
           <Route path="/goddess" element={<GoddessCard />} />
-          <Route path="/wce-2026" element={<WCE2026 />} />
-          {/* Shareable per-speaker links — same landing page with the flyer open. */}
-          <Route path="/wce-2026/speakers/:slug" element={<WCE2026 />} />
-          {/* Gated online symposium stream — entitlement checked server-side. */}
-          {/* Focused retreat application view — the campaign-link landing target. */}
-          <Route path="/wce-2026/apply" element={<WceApply />} />
-          {/* Direct campaign links (with the shorter /wce/go alias for print + bios). */}
-          <Route path="/wce-2026/go/:slug" element={<WceGo />} />
-          <Route path="/wce/go/:slug" element={<WceGo />} />
-          <Route path="/wce-2026/live" element={<WceLive />} />
-          {/* Private retreat payment link. No public entry point; noindex. */}
-          <Route path="/wce-2026/retreat-checkout/:token" element={<WceRetreatCheckout />} />
+          {/* The event has been retired — old links land on the homepage. */}
+          <Route path="/wce-2026/*" element={<Navigate to="/" replace />} />
+          <Route path="/wce/*" element={<Navigate to="/" replace />} />
+          <Route path="/wce-admin/*" element={<Navigate to="/" replace />} />
           <Route path="/account" element={<CustomerAccountPage />} />
           <Route path="/account/orders" element={<MyOrders />} />
           <Route path="/account/orders/:orderNumber" element={<MyOrderDetail />} />
@@ -209,8 +190,6 @@ function AppContent() {
           <Route path="/product/:slug" element={<RedirectProductToShop />} />
           <Route path="/pay/:planId" element={<PaymentPlanPay />} />
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/wce-admin/login" element={<WceAdminLogin />} />
-          <Route path="/wce-admin/accept" element={<WceAdminAccept />} />
           <Route path="/consultation-admin/accept" element={<ConsultationAdminAccept />} />
           <Route path="/admin" element={<AdminLayout />}>
             {/* Every child route except "consultations" is wrapped in
@@ -235,14 +214,13 @@ function AppContent() {
             <Route path="coupons" element={<ConsultationOnlyGuard><AdminCoupons /></ConsultationOnlyGuard>} />
             <Route path="abandoned-carts" element={<ConsultationOnlyGuard><AdminAbandonedCarts /></ConsultationOnlyGuard>} />
             <Route path="consultations" element={<AdminConsultations />} />
-            <Route path="wce" element={<ConsultationOnlyGuard><AdminWCE /></ConsultationOnlyGuard>} />
             <Route path="powertranz-test" element={<ConsultationOnlyGuard><AdminPowertranzTest /></ConsultationOnlyGuard>} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       <CompareBar />
-      {!isAdminRoute && !isWceRoute && (
+      {!isAdminRoute && (
         <Suspense fallback={null}>
           <ChatWidget />
         </Suspense>

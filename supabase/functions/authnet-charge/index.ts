@@ -354,35 +354,6 @@ Deno.serve(async (req) => {
       console.error("send-order-emails threw:", e);
     }
 
-    /* Symposium ticket purchase → Mailchimp, tagged by the tier bought.
-       The sync function itself enforces marketing consent, and only ever
-       handles marketing list membership — order confirmations stay with our
-       own transactional email system. */
-    try {
-      const { data: pathwayRows } = await supabase
-        .from("wce_pathways")
-        .select("key, product_id")
-        .not("product_id", "is", null);
-      const purchasedKeys = (pathwayRows ?? [])
-        .filter((p: any) => itemRows.some((row) => row.product_id === p.product_id))
-        .map((p: any) => String(p.key));
-      const TIER_TAG: Record<string, string> = {
-        in_person: "Symposium-InPerson",
-        online: "Symposium-Online",
-        retreat: "Retreat-Applicant",
-      };
-      for (const key of purchasedKeys) {
-        const { error: mcErr } = await invokeFunction("mailchimp-sync", {
-          action: "purchase",
-          email: orderInsert.email,
-          tier_tag: TIER_TAG[key] ?? "WCE2026",
-        });
-        if (mcErr) console.error("mailchimp-sync error:", mcErr);
-      }
-    } catch (e) {
-      console.error("mailchimp-sync (purchase) threw:", e);
-    }
-
     try {
       const { error: smsErr1 } = await invokeFunction("send-sms", {
         orderId: order.id,

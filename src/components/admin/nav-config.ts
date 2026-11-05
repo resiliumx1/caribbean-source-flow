@@ -36,7 +36,7 @@ export type BadgeKey =
   | "orders";
 
 /** Which access scope may see a group. */
-export type NavScope = "admin" | "consultations" | "wce";
+export type NavScope = "admin" | "consultations";
 
 export interface AdminNavGroup {
   id: string;
@@ -150,35 +150,6 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       },
     ],
   },
-  {
-    // Single page — promoted to a top-level item rather than nested.
-    id: "consultations",
-    label: "Consultations",
-    scope: "consultations",
-    items: [
-      {
-        label: "Consultations",
-        href: "/admin/consultations",
-        icon: Stethoscope,
-        description: "Bookings, services, availability and joining links.",
-        badgeKey: "consultations",
-      },
-    ],
-  },
-  {
-    // Single page — promoted to a top-level item rather than nested.
-    id: "wce",
-    label: "WCE 2026",
-    scope: "wce",
-    items: [
-      {
-        label: "WCE 2026",
-        href: "/admin/wce",
-        icon: Sparkles,
-        description: "Caribbean Wellness Experience applications, orders and organisers.",
-      },
-    ],
-  },
 ];
 
 /** Flat list of every destination, for the command palette and lookups. */
@@ -201,12 +172,10 @@ export function findActiveItem(pathname: string) {
 export function visibleGroups(opts: {
   isFullAdmin: boolean;
   hasConsultationAccess: boolean;
-  hasWceAccess: boolean;
 }) {
   if (opts.isFullAdmin) return ADMIN_NAV;
   return ADMIN_NAV.filter((g) => {
     if (g.scope === "consultations") return opts.hasConsultationAccess;
-    if (g.scope === "wce") return opts.hasWceAccess;
     return false;
   });
 }
