@@ -18,7 +18,7 @@ const EBOOK_PRODUCTS: Record<string, string> = {
   "d70d72e7-9542-45b7-b15c-16d68f1b5bac": "The NEW Herbal Manual",
 };
 function ebookBlock(order: any, items: any[]): string {
-  if (order.payment_status !== "paid") return "";
+  if (order.payment_status !== "paid" && order.payment_status !== "partially_refunded") return "";
   const ids = [...new Set(items.map((i: any) => i.product_id))].filter((id) => EBOOK_PRODUCTS[id]);
   if (!ids.length) return "";
   const base = `${Deno.env.get("SUPABASE_URL")}/functions/v1/ebook-download?order=${encodeURIComponent(order.id)}`;
