@@ -40,7 +40,8 @@ Deno.serve(async (req) => {
   const { data: order } = await supabase
     .from("orders").select("id, payment_status").eq("id", orderId).maybeSingle();
   if (!order) return check ? json({ ebooks: [] }, 404) : page("We couldn't find this order.", 404);
-  if (order.payment_status !== "paid") {
+  // A partial refund (e.g. another item refunded) still leaves the ebook paid for.
+  if (order.payment_status !== "paid" && order.payment_status !== "partially_refunded") {
     return check ? json({ ebooks: [] }) : page("Your download will be available once payment is confirmed.", 403);
   }
 
