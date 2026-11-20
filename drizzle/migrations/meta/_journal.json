@@ -15,6 +15,13 @@
       "when": 1793880906858,
       "tag": "0001_retire_wce_event",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795139248433,
+      "tag": "0002_tighten_open_access_rules",
+      "breakpoints": true
     }
   ]
 }
