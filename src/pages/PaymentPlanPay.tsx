@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Helmet } from "react-helmet-async";
+import { PayPalButtons } from "@paypal/react-paypal-js";
 import { CheckCircle2, Loader2, ShieldCheck, Lock, CalendarClock, RefreshCw } from "lucide-react";
 
 type Plan = {
@@ -410,9 +411,52 @@ export default function PaymentPlanPay() {
                   </div>
                 )}
 
+                {validAmount && amtNum !== null && !(mode === "auto" && !schedule) && (
+                  <div className="mt-6">
+                    <div className="flex items-center gap-3 mb-4 text-xs uppercase tracking-wide text-muted-foreground">
+                      <span className="h-px flex-1 bg-border" /> or pay with PayPal <span className="h-px flex-1 bg-border" />
+                    </div>
+                    <PayPalButtons
+                      style={{ layout: "vertical", shape: "rect", label: "pay" }}
+                      forceReRender={[amtNum]}
+                      disabled={processing}
+                      createOrder={async () => {
+                        setError(null);
+                        const { data: res, error } = await supabase.functions.invoke("create-paypal-plan-order", {
+                          body: { planId: plan.id, requestedAmount: amtNum },
+                        });
+                        if (error || !res?.orderID) {
+                          const msg = await extractFnError(error, res?.error, "Could not start PayPal payment.");
+                          setError(msg);
+                          throw new Error(msg);
+                        }
+                        return res.orderID as string;
+                      }}
+                      onApprove={async (data) => {
+                        setProcessing(true);
+                        try {
+                          const { data: res, error } = await supabase.functions.invoke("capture-paypal-plan-order", {
+                            body: { orderID: data.orderID },
+                          });
+                          if (error || !res?.success) {
+                            setError(await extractFnError(error, res?.error, "PayPal payment could not be completed."));
+                            return;
+                          }
+                          if (res.plan) setPlan(res.plan);
+                          setReceipt({ amount: Number(res.amount) });
+                          load();
+                        } finally {
+                          setProcessing(false);
+                        }
+                      }}
+                      onError={() => setError("PayPal could not complete the payment. Please try again or use a card.")}
+                    />
+                  </div>
+                )}
+
                 <div className="mt-5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
                   <ShieldCheck className="h-3.5 w-3.5" />
-                  Encrypted &amp; processed securely by Authorize.net
+                  Encrypted &amp; processed securely by Authorize.net and PayPal
                 </div>
               </>
             )}

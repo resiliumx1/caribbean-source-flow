@@ -24,6 +24,8 @@ const COUNTRIES: Array<{ code: string; name: string }> = [
   { code: "US", name: "United States" },
   { code: "CA", name: "Canada" },
   { code: "GB", name: "United Kingdom" },
+  { code: "AU", name: "Australia" },
+  { code: "NZ", name: "New Zealand" },
   { code: "AG", name: "Antigua and Barbuda" },
   { code: "BS", name: "Bahamas" },
   { code: "BB", name: "Barbados" },
